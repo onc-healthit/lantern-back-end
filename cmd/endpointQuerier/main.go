@@ -1,0 +1,156 @@
+package main
+
+import (
+	"encoding/xml"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptrace"
+	"os"
+	"runtime"
+	"strconv"
+	"strings"
+	"time"
+
+	"../../internal/endpoints"
+	"../../internal/fhir"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+// Metrics collected inside build-in prometheus vector. Each METRIC has its own registrations
+var httpCodesGaugeVec *prometheus.GaugeVec
+var responseTimeGaugeVec *prometheus.GaugeVec
+var tlsVersionGaugeVec *prometheus.GaugeVec
+var fhirVersionGaugeVec *prometheus.GaugeVec
+var totalUptimeChecksCounterVec *prometheus.CounterVec
+var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
+
+// Need to define timeout or else it is infinite
+var netClient = &http.Client{
+	Timeout: time.Second * 30,
+}
+
+func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunning bool) {
+	// Specifically query the FHIR endpoint metadata
+	url += "metadata"
+	req, _ := http.NewRequest("GET", url, nil)
+
+	var start time.Time
+	trace := &httptrace.ClientTrace{}
+
+	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
+	start = time.Now()
+	resp, err := netClient.Do(req)
+	responseTimeGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(time.Since(start).Seconds()))
+
+	// Need to think about wether or not an errored request is considered a failed uptime check
+	if err != nil || (resp != nil && resp.StatusCode != http.StatusOK) {
+		totalFailedUptimeChecksCounterVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Inc()
+	}
+	if resp != nil {
+		if resp.StatusCode == http.StatusOK {
+			recordLongRunningStats(resp, organizationName)
+		}
+		httpCodesGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(resp.StatusCode))
+	}
+	totalUptimeChecksCounterVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Inc()
+}
+
+func recordLongRunningStats(resp *http.Response, organizationName string) {
+	defer resp.Body.Close()
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	var conformanceStatement fhir.Conformance
+	xml.Unmarshal(bodyBytes, &conformanceStatement)
+	var fhirVersionString string = conformanceStatement.FhirVersion.Value
+	var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
+	fhirVersionGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(fhirVersionAsNumber))
+	tlsVersionGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(resp.TLS.Version))
+}
+
+func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
+	httpCodesGaugeVec = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "AllEndpoints",
+			Name:      "http_request_responses",
+			Help:      "HTTP requests partitioned by OrgName",
+		},
+		[]string{"orgName"})
+
+	responseTimeGaugeVec = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "AllEndpoints",
+			Name:      "http_response_time",
+			Help:      "HTTP response time partitioned by OrgName",
+		},
+		[]string{"orgName"})
+
+	tlsVersionGaugeVec = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "AllEndpoints",
+			Name:      "tls_version",
+			Help:      "TLS version reported in the response header",
+		},
+		[]string{"orgName"})
+
+	fhirVersionGaugeVec = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "AllEndpoints",
+			Name:      "fhir_version",
+			Help:      "FHIR version reported in the conformance statement",
+		},
+		[]string{"orgName"})
+
+	totalUptimeChecksCounterVec = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "AllEndpoints",
+			Name:      "total_uptime_checks",
+			Help:      "Total number of uptime checks partitioned by OrgName",
+		},
+		[]string{"orgName"})
+
+	totalFailedUptimeChecksCounterVec = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "AllEndpoints",
+			Name:      "total_failed_uptime_checks",
+			Help:      "Total number of failed uptime checks partitioned by OrgName",
+		},
+		[]string{"orgName"})
+
+	prometheus.MustRegister(httpCodesGaugeVec)
+	prometheus.MustRegister(responseTimeGaugeVec)
+	prometheus.MustRegister(tlsVersionGaugeVec)
+	prometheus.MustRegister(fhirVersionGaugeVec)
+	prometheus.MustRegister(totalUptimeChecksCounterVec)
+	prometheus.MustRegister(totalFailedUptimeChecksCounterVec)
+
+}
+
+func main() {
+	// Setup hosted metrics endpoint
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe(":8080", nil)
+
+	var endpointsFile = os.Args[1]
+	// Data in resources/EndpointSources was taken from https://fhirendpoints.github.io/data.json
+	var listOfEndpoints = endpoints.GetListOfEndpoints(endpointsFile)
+	initializeMetrics(listOfEndpoints)
+
+	var queryCount = 0
+	// Infinite query loop
+	for {
+		for _, endpointEntry := range listOfEndpoints.Entries {
+			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
+			var url = endpointEntry.FHIRPatientFacingURI
+			var orgName = endpointEntry.OrganizationName
+			// Long polling stats will be queried for every 6 hours
+			var longPollingInterval = (queryCount%72 == 0)
+			getHTTPRequestTimingFor(url, orgName, longPollingInterval)
+		}
+		runtime.GC()
+		// Polling interval, only necessary when running http calls asynchronously
+		// time.Sleep(5 * time.Minute)
+		queryCount += 1
+	}
+
+}
