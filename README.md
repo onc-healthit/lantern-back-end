@@ -75,3 +75,15 @@ Using the generated coverage file you can use `go tool cover` to view the covera
 ```bash
 go tool cover -html=coverage.out
 ```
+
+# Contributing
+## Lintr
+Code going through PR should pass the lintr invoked by running:
+```bash
+golangci-lint run
+```
+You may have to install golangci-lint first. To do this on a Mac you can run:
+```bash
+brew install golangci/tap/golangci-lint
+```
+More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
