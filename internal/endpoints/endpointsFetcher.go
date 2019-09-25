@@ -33,7 +33,10 @@ func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
 	var result ListOfEndpoints
-	json.Unmarshal([]byte(byteValue), &result)
+	err = json.Unmarshal([]byte(byteValue), &result)
+	if err != nil {
+		println("Endpoint List Parsing Error: %s", err)
+	}
 
 	return result
 }

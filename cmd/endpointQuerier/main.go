@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/xml"
 	"io/ioutil"
 	"net/http"
@@ -28,18 +29,26 @@ var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
 // Need to define timeout or else it is infinite
 var netClient = &http.Client{
-	Timeout: time.Second * 30,
+	Timeout: time.Second * 35,
 }
 
 func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunning bool) {
 	// Specifically query the FHIR endpoint metadata
 	url += "metadata"
-	req, _ := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		println("HTTP Request Error: %s", err)
+	}
 
 	var start time.Time
 	trace := &httptrace.ClientTrace{}
 
-	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
+	// Drop connection if no reply within 30 seconds
+	ctx, cancel := context.WithDeadline(req.Context(), time.Now().Add(30*time.Second))
+	// Cancel the context once we are done with this function so that context does not remain in memory (causing a leak)
+	defer cancel()
+	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
+
 	start = time.Now()
 	resp, err := netClient.Do(req)
 	responseTimeGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(time.Since(start).Seconds()))
@@ -61,7 +70,10 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	defer resp.Body.Close()
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
 	var conformanceStatement fhir.Conformance
-	xml.Unmarshal(bodyBytes, &conformanceStatement)
+	var err = xml.Unmarshal(bodyBytes, &conformanceStatement)
+	if err != nil {
+		println("Conformance Statement Parsing Error: %s", err)
+	}
 	var fhirVersionString string = conformanceStatement.FhirVersion.Value
 	var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
 	fhirVersionGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(fhirVersionAsNumber))
@@ -126,10 +138,18 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 
 }
 
-func main() {
+func setupServer() {
 	// Setup hosted metrics endpoint
 	http.Handle("/metrics", promhttp.Handler())
-	go http.ListenAndServe(":8080", nil)
+	var err = http.ListenAndServe(":8443", nil)
+	if err != nil {
+		println("HTTP Request Error: %s", err)
+	}
+}
+
+func main() {
+
+	go setupServer()
 
 	var endpointsFile = os.Args[1]
 	// Data in resources/EndpointSources was taken from https://fhirendpoints.github.io/data.json
