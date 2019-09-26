@@ -19,7 +19,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Metrics collected inside build-in prometheus vector. Each METRIC has its own registrations
+// Metrics collected inside built-in prometheus vector. Each METRIC has its own registrations
 var httpCodesGaugeVec *prometheus.GaugeVec
 var responseTimeGaugeVec *prometheus.GaugeVec
 var tlsVersionGaugeVec *prometheus.GaugeVec
@@ -32,7 +32,7 @@ var netClient = &http.Client{
 	Timeout: time.Second * 35,
 }
 
-func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunning bool) {
+func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunningMetrics bool) {
 	// Specifically query the FHIR endpoint metadata
 	url += "metadata"
 	req, err := http.NewRequest("GET", url, nil)
@@ -58,7 +58,7 @@ func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunn
 		totalFailedUptimeChecksCounterVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Inc()
 	}
 	if resp != nil {
-		if resp.StatusCode == http.StatusOK {
+		if resp.StatusCode == http.StatusOK && recordLongRunningMetrics {
 			recordLongRunningStats(resp, organizationName)
 		}
 		httpCodesGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(resp.StatusCode))
