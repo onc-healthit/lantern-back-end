@@ -42,12 +42,14 @@ func getHTTPRequestTimingFor(urlString string, organizationName string, recordLo
 	// Specifically query the FHIR endpoint metadata
 	u, err := url.Parse(urlString)
 	if err != nil {
+		// TODO: Use a logging solution instead of pringln
 		println("URL Parsing Error: ", err.Error())
 	}
 	u.Path = path.Join(u.Path, "metadata")
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
+		// TODO: Use a logging solution instead of pringln
 		println("HTTP Request Error: ", err.Error())
 	}
 
@@ -83,6 +85,7 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	var conformanceStatement fhir.Conformance
 	var err = xml.Unmarshal(bodyBytes, &conformanceStatement)
 	if err != nil {
+		// TODO: Use a logging solution instead of pringln
 		println("Conformance Statement Parsing Error: ", err.Error())
 	}
 	var fhirVersionString string = conformanceStatement.FhirVersion.Value
@@ -154,6 +157,7 @@ func setupServer() {
 	http.Handle("/metrics", promhttp.Handler())
 	var err = http.ListenAndServe(":8443", nil)
 	if err != nil {
+		// TODO: Use a logging solution instead of pringln
 		println("HTTP Request Error: ", err.Error())
 	}
 }
