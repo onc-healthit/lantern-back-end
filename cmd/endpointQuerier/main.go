@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptrace"
+	"net/url"
 	"os"
+	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -32,12 +34,21 @@ var netClient = &http.Client{
 	Timeout: time.Second * 35,
 }
 
-func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunningMetrics bool) {
+func getHTTPRequestTimingFor(urlString string, organizationName string, recordLongRunningMetrics bool) {
+	// recover from fatal errors
+	if err := recover(); err != nil {
+		println(err)
+	}
 	// Specifically query the FHIR endpoint metadata
-	url += "metadata"
-	req, err := http.NewRequest("GET", url, nil)
+	u, err := url.Parse(urlString)
 	if err != nil {
-		println("HTTP Request Error: %s", err)
+		println("URL Parsing Error: ", err.Error())
+	}
+	u.Path = path.Join(u.Path, "metadata")
+
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		println("HTTP Request Error: ", err.Error())
 	}
 
 	var start time.Time
@@ -51,19 +62,19 @@ func getHTTPRequestTimingFor(url string, organizationName string, recordLongRunn
 
 	start = time.Now()
 	resp, err := netClient.Do(req)
-	responseTimeGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(time.Since(start).Seconds()))
+	responseTimeGaugeVec.WithLabelValues(organizationName).Set(float64(time.Since(start).Seconds()))
 
 	// Need to think about wether or not an errored request is considered a failed uptime check
 	if err != nil || (resp != nil && resp.StatusCode != http.StatusOK) {
-		totalFailedUptimeChecksCounterVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Inc()
+		totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 	}
 	if resp != nil {
 		if resp.StatusCode == http.StatusOK && recordLongRunningMetrics {
 			recordLongRunningStats(resp, organizationName)
 		}
-		httpCodesGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(resp.StatusCode))
+		httpCodesGaugeVec.WithLabelValues(organizationName).Set(float64(resp.StatusCode))
 	}
-	totalUptimeChecksCounterVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Inc()
+	totalUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 }
 
 func recordLongRunningStats(resp *http.Response, organizationName string) {
@@ -72,12 +83,12 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	var conformanceStatement fhir.Conformance
 	var err = xml.Unmarshal(bodyBytes, &conformanceStatement)
 	if err != nil {
-		println("Conformance Statement Parsing Error: %s", err)
+		println("Conformance Statement Parsing Error: ", err.Error())
 	}
 	var fhirVersionString string = conformanceStatement.FhirVersion.Value
 	var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
-	fhirVersionGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(fhirVersionAsNumber))
-	tlsVersionGaugeVec.WithLabelValues(endpoints.NamespaceifyString(organizationName)).Set(float64(resp.TLS.Version))
+	fhirVersionGaugeVec.WithLabelValues(organizationName).Set(float64(fhirVersionAsNumber))
+	tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
 }
 
 func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
@@ -143,7 +154,7 @@ func setupServer() {
 	http.Handle("/metrics", promhttp.Handler())
 	var err = http.ListenAndServe(":8443", nil)
 	if err != nil {
-		println("HTTP Request Error: %s", err)
+		println("HTTP Request Error: ", err.Error())
 	}
 }
 

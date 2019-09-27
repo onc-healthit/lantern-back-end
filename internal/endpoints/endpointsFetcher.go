@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 )
 
 // Schema for data pulled out of EndpointSources file
@@ -25,7 +24,7 @@ func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	jsonFile, err := os.Open(filePath)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err.Error())
 	}
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
@@ -35,26 +34,8 @@ func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	var result ListOfEndpoints
 	err = json.Unmarshal([]byte(byteValue), &result)
 	if err != nil {
-		println("Endpoint List Parsing Error: %s", err)
+		println("Endpoint List Parsing Error: ", err.Error())
 	}
 
 	return result
-}
-
-// Prometheus doesn't allow special characters in the namespace, strip them out
-func NamespaceifyString(name string) string {
-	var nameString = strings.Replace(name, " ", "", -1)
-	nameString = strings.Replace(nameString, "-", "", -1)
-	nameString = strings.Replace(nameString, "–", "", -1)
-	nameString = strings.Replace(nameString, "_", "", -1)
-	nameString = strings.Replace(nameString, "&", "", -1)
-	nameString = strings.Replace(nameString, "(", "", -1)
-	nameString = strings.Replace(nameString, ")", "", -1)
-	nameString = strings.Replace(nameString, ".", "", -1)
-	nameString = strings.Replace(nameString, ",", "", -1)
-	nameString = strings.Replace(nameString, "/", "", -1)
-	nameString = strings.Replace(nameString, "+", "", -1)
-	nameString = strings.Replace(nameString, "'", "", -1)
-	nameString = strings.Replace(nameString, "’", "", -1)
-	return strings.Replace(nameString, "'", "", -1)
 }
