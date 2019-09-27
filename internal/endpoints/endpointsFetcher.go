@@ -22,12 +22,12 @@ type ListOfEndpoints struct {
 
 func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	jsonFile, err := os.Open(filePath)
-	// if we os.Open returns an error then handle it
+	// If we os.Open returns an error then handle it
 	if err != nil {
 		// TODO: Use a logging solution instead of pringln
 		fmt.Println(err.Error())
 	}
-	// defer the closing of our jsonFile so that we can parse it later on
+	// Defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)

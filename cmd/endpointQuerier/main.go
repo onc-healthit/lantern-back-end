@@ -21,7 +21,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Metrics collected inside built-in prometheus vector. Each METRIC has its own registrations
+// Metrics collected inside built-in prometheus vector.
+// Each METRIC has its own registrations
 var httpCodesGaugeVec *prometheus.GaugeVec
 var responseTimeGaugeVec *prometheus.GaugeVec
 var tlsVersionGaugeVec *prometheus.GaugeVec
@@ -155,6 +156,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 func setupServer() {
 	// Setup hosted metrics endpoint
 	http.Handle("/metrics", promhttp.Handler())
+	// TODO: Configure port in configureation file
 	var err = http.ListenAndServe(":8443", nil)
 	if err != nil {
 		// TODO: Use a logging solution instead of pringln
@@ -166,7 +168,13 @@ func main() {
 
 	go setupServer()
 
-	var endpointsFile = os.Args[1]
+	var endpointsFile string
+	if len(os.Args) != 1 {
+		endpointsFile = os.Args[1]
+	} else {
+		println("ERROR: Missing endpoints list command-line arguemnt")
+		return
+	}
 	// Data in resources/EndpointSources was taken from https://fhirendpoints.github.io/data.json
 	var listOfEndpoints = endpoints.GetListOfEndpoints(endpointsFile)
 	initializeMetrics(listOfEndpoints)
