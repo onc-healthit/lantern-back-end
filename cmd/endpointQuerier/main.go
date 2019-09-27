@@ -67,7 +67,7 @@ func getHTTPRequestTimingFor(urlString string, organizationName string, recordLo
 	resp, err := netClient.Do(req)
 	responseTimeGaugeVec.WithLabelValues(organizationName).Set(float64(time.Since(start).Seconds()))
 
-	// Need to think about wether or not an errored request is considered a failed uptime check
+	// Need to think about whether or not an errored request is considered a failed uptime check
 	if err != nil || (resp != nil && resp.StatusCode != http.StatusOK) {
 		totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 	}
@@ -100,7 +100,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "http_request_responses",
-			Help:      "HTTP requests partitioned by OrgName",
+			Help:      "HTTP request responses partitioned by orgName",
 		},
 		[]string{"orgName"})
 
@@ -108,7 +108,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "http_response_time",
-			Help:      "HTTP response time partitioned by OrgName",
+			Help:      "HTTP response time partitioned by orgName",
 		},
 		[]string{"orgName"})
 
@@ -116,7 +116,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "tls_version",
-			Help:      "TLS version reported in the response header",
+			Help:      "TLS version reported in the response header partitioned by orgName",
 		},
 		[]string{"orgName"})
 
@@ -124,7 +124,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "fhir_version",
-			Help:      "FHIR version reported in the conformance statement",
+			Help:      "FHIR version reported in the conformance statement partitioned by orgName",
 		},
 		[]string{"orgName"})
 
@@ -132,7 +132,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.CounterOpts{
 			Namespace: "AllEndpoints",
 			Name:      "total_uptime_checks",
-			Help:      "Total number of uptime checks partitioned by OrgName",
+			Help:      "Total number of uptime checks partitioned by orgName",
 		},
 		[]string{"orgName"})
 
@@ -140,7 +140,7 @@ func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
 		prometheus.CounterOpts{
 			Namespace: "AllEndpoints",
 			Name:      "total_failed_uptime_checks",
-			Help:      "Total number of failed uptime checks partitioned by OrgName",
+			Help:      "Total number of failed uptime checks partitioned by orgName",
 		},
 		[]string{"orgName"})
 
