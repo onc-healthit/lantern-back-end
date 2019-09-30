@@ -35,22 +35,23 @@ var netClient = &http.Client{
 	Timeout: time.Second * 35,
 }
 
-func getHTTPRequestTimingFor(urlString string, organizationName string, recordLongRunningMetrics bool) {
+func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
 	// recover from fatal errors
 	if err := recover(); err != nil {
+		// TODO: Use a logging solution instead of println
 		println(err)
 	}
 	// Specifically query the FHIR endpoint metadata
 	u, err := url.Parse(urlString)
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		println("URL Parsing Error: ", err.Error())
 	}
 	u.Path = path.Join(u.Path, "metadata")
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		println("HTTP Request Error: ", err.Error())
 	}
 
@@ -86,7 +87,7 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	var conformanceStatement fhir.Conformance
 	var err = xml.Unmarshal(bodyBytes, &conformanceStatement)
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		println("Conformance Statement Parsing Error: ", err.Error())
 	}
 	var fhirVersionString string = conformanceStatement.FhirVersion.Value
@@ -159,7 +160,7 @@ func setupServer() {
 	// TODO: Configure port in configureation file
 	var err = http.ListenAndServe(":8443", nil)
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		println("HTTP Request Error: ", err.Error())
 	}
 }
@@ -172,7 +173,7 @@ func main() {
 	if len(os.Args) != 1 {
 		endpointsFile = os.Args[1]
 	} else {
-		println("ERROR: Missing endpoints list command-line arguemnt")
+		println("ERROR: Missing endpoints list command-line arguement")
 		return
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
@@ -188,7 +189,7 @@ func main() {
 			var orgName = endpointEntry.OrganizationName
 			// Long polling stats will be queried for every 6 hours
 			var longPollingInterval = (queryCount%72 == 0)
-			getHTTPRequestTimingFor(url, orgName, longPollingInterval)
+			getHTTPRequestTiming(url, orgName, longPollingInterval)
 		}
 		runtime.GC()
 		// Polling interval, only necessary when running http calls asynchronously

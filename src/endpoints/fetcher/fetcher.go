@@ -24,7 +24,7 @@ func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		fmt.Println(err.Error())
 	}
 	// Defer the closing of our jsonFile so that we can parse it later on
@@ -35,7 +35,7 @@ func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	var result ListOfEndpoints
 	err = json.Unmarshal([]byte(byteValue), &result)
 	if err != nil {
-		// TODO: Use a logging solution instead of pringln
+		// TODO: Use a logging solution instead of println
 		println("Endpoint List Parsing Error: ", err.Error())
 	}
 
