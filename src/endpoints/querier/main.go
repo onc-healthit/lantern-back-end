@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"../../internal/endpoints"
-	"../../internal/fhir"
+	"endpoints/fetcher"
+	"fhir"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -95,7 +95,7 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
 }
 
-func initializeMetrics(listOfEndpoints endpoints.ListOfEndpoints) {
+func initializeMetrics(listOfEndpoints fetcher.ListOfEndpoints) {
 	httpCodesGaugeVec = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
@@ -175,8 +175,8 @@ func main() {
 		println("ERROR: Missing endpoints list command-line arguemnt")
 		return
 	}
-	// Data in resources/EndpointSources was taken from https://fhirendpoints.github.io/data.json
-	var listOfEndpoints = endpoints.GetListOfEndpoints(endpointsFile)
+	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
+	var listOfEndpoints = fetcher.GetListOfEndpoints(endpointsFile)
 	initializeMetrics(listOfEndpoints)
 
 	var queryCount = 0

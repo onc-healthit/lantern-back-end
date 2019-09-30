@@ -6,7 +6,8 @@ A service to send http requests to get capability statements from FHIR endpoints
 The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `./resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
 
 ```bash
-go run cmd/endpointQuerier/*.go ./resources/EndpointSources.json
+go install ./...
+go run src/endpoints/querier/*.go ./resources/EndpointSources.json
 ```
 
 ## Starting Prometheus via Docker Container
