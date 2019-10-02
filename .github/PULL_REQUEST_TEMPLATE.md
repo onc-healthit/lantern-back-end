@@ -10,6 +10,7 @@ Pull requests into this repository require the following checks to be completed 
   - Tests have been run locally and pass.
 - [ ] Code review has been performed.
   - Code diff has been done and checked to ensure only expected code is being committed.
+  - A linter for the language has been run.
 
 **Primary Reviewer:**
 
@@ -19,7 +20,7 @@ Pull requests into this repository require the following checks to be completed 
 - [ ] Code review has been performed.
   - Code is maintainable, reusable, efficient, and correct.
   - Code accomplishes the tasks purpose.
-  - Code follows style guidance appropriate for the language.
+  - Code follows style guidance appropriate for the language, including passing linter checks.
   - Code is well commented (which does not mean verbosely commented).
 - [ ] Tests are complete.
   - Tests are included and test edge cases.
@@ -34,3 +35,7 @@ Pull requests into this repository require the following checks to be completed 
   - Code accomplishes the tasks purpose.
 - [ ] Tests are complete.
   - Tests have been run locally and pass.
+
+**Merger:**
+
+Prior to merging, ensure that all checks have been completed. Delete the branch after the merge is complete.
