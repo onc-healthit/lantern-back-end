@@ -7,7 +7,7 @@ The Endpoint Querier takes one arguement, a JSON file containing the endpoints w
 
 ```bash
 go install ./...
-go run src/endpoints/querier/*.go ./resources/EndpointSources.json
+go run src/endpoints/*.go ./resources/EndpointSources.json
 ```
 
 ## Starting Prometheus via Docker Container

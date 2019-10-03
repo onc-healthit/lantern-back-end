@@ -1,22 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/xml"
+	"endpoints/querier"
+	"endpoints/fetcher"
 	"io/ioutil"
 	"endpoints/querier"
 	"endpoints/fetcher"
 	"net/http"
-	"net/http/httptrace"
-	"net/url"
 	"os"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 
-	"endpoints/fetcher"
 	"fhir"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -32,44 +28,10 @@ var fhirVersionGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
-// Need to define timeout or else it is infinite
-var netClient = &http.Client{
-	Timeout: time.Second * 35,
-}
-
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
-	// recover from fatal errors
-	if err := recover(); err != nil {
-		// TODO: Use a logging solution instead of println
-		println(err)
-	}
-	// Specifically query the FHIR endpoint metadata
-	u, err := url.Parse(urlString)
-	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("URL Parsing Error: ", err.Error())
-	}
-	u.Path = path.Join(u.Path, "metadata")
+	var resp, responeTime, err = querier.GetResponseAndTiming(urlString)
 
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("HTTP Request Error: ", err.Error())
-	}
-
-	var start time.Time
-	trace := &httptrace.ClientTrace{}
-
-	// Drop connection if no reply within 30 seconds
-	ctx, cancel := context.WithDeadline(req.Context(), time.Now().Add(30*time.Second))
-	// Cancel the context once we are done with this function so that context does not remain in memory (causing a leak)
-	defer cancel()
-	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
-
-	start = time.Now()
-	resp, err := netClient.Do(req)
-	responseTimeGaugeVec.WithLabelValues(organizationName).Set(float64(time.Since(start).Seconds()))
-
+	responseTimeGaugeVec.WithLabelValues(organizationName).Set(responeTime)
 	// Need to think about whether or not an errored request is considered a failed uptime check
 	if err != nil || (resp != nil && resp.StatusCode != http.StatusOK) {
 		totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
@@ -91,7 +53,7 @@ func recordLongRunningStats(resp *http.Response, organizationName string) {
 	tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
 }
 
-func initializeMetrics(listOfEndpoints fetcher.ListOfEndpoints) {
+func initializeMetrics() {
 	httpCodesGaugeVec = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
@@ -173,7 +135,7 @@ func main() {
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
 	var listOfEndpoints = fetcher.GetListOfEndpoints(endpointsFile)
-	initializeMetrics(listOfEndpoints)
+	initializeMetrics()
 
 	var queryCount = 0
 	// Infinite query loop
