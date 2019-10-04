@@ -3,13 +3,46 @@ package fhir
 import "encoding/xml"
 
 type CapabilityStatement struct {
-	XMLName xml.Name `xml:"Conformance"`
-	Text    string   `xml:",chardata"`
-	Xmlns   string   `xml:"xmlns,attr"`
-	ID      struct {
+	XMLName  xml.Name `xml:"CapabilityStatement"`
+	Chardata string   `xml:",chardata"`
+	Xmlns    string   `xml:"xmlns,attr"`
+	ID       struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
 	} `xml:"id"`
+	Text struct {
+		Text   string `xml:",chardata"`
+		Status struct {
+			Text  string `xml:",chardata"`
+			Value string `xml:"value,attr"`
+		} `xml:"status"`
+		Div struct {
+			Text  string `xml:",chardata"`
+			Xmlns string `xml:"xmlns,attr"`
+			H2    string `xml:"h2"`
+			Div   struct {
+				Text string `xml:",chardata"`
+				P    string `xml:"p"`
+			} `xml:"div"`
+			Table []struct {
+				Text string `xml:",chardata"`
+				Tr   []struct {
+					Text string `xml:",chardata"`
+					Td   []struct {
+						Text string `xml:",chardata"`
+						A    struct {
+							Text string `xml:",chardata"`
+							Href string `xml:"href,attr"`
+						} `xml:"a"`
+					} `xml:"td"`
+					Th []struct {
+						Text string `xml:",chardata"`
+						B    string `xml:"b"`
+					} `xml:"th"`
+				} `xml:"tr"`
+			} `xml:"table"`
+		} `xml:"div"`
+	} `xml:"text"`
 	URL struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
@@ -18,6 +51,10 @@ type CapabilityStatement struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
 	} `xml:"version"`
+	Name struct {
+		Text  string `xml:",chardata"`
+		Value string `xml:"value,attr"`
+	} `xml:"name"`
 	Status struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
@@ -30,10 +67,28 @@ type CapabilityStatement struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
 	} `xml:"date"`
-	Copyright struct {
+	Publisher struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
-	} `xml:"copyright"`
+	} `xml:"publisher"`
+	Contact struct {
+		Text    string `xml:",chardata"`
+		Telecom struct {
+			Text   string `xml:",chardata"`
+			System struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"system"`
+			Value struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"value"`
+		} `xml:"telecom"`
+	} `xml:"contact"`
+	Description struct {
+		Text  string `xml:",chardata"`
+		Value string `xml:"value,attr"`
+	} `xml:"description"`
 	Kind struct {
 		Text  string `xml:",chardata"`
 		Value string `xml:"value,attr"`
@@ -44,14 +99,6 @@ type CapabilityStatement struct {
 			Text  string `xml:",chardata"`
 			Value string `xml:"value,attr"`
 		} `xml:"name"`
-		Version struct {
-			Text  string `xml:",chardata"`
-			Value string `xml:"value,attr"`
-		} `xml:"version"`
-		ReleaseDate struct {
-			Text  string `xml:",chardata"`
-			Value string `xml:"value,attr"`
-		} `xml:"releaseDate"`
 	} `xml:"software"`
 	FhirVersion struct {
 		Text  string `xml:",chardata"`
@@ -71,13 +118,17 @@ type CapabilityStatement struct {
 			Text  string `xml:",chardata"`
 			Value string `xml:"value,attr"`
 		} `xml:"mode"`
+		Documentation struct {
+			Text  string `xml:",chardata"`
+			Value string `xml:"value,attr"`
+		} `xml:"documentation"`
 		Security struct {
 			Text string `xml:",chardata"`
 			Cors struct {
 				Text  string `xml:",chardata"`
 				Value string `xml:"value,attr"`
 			} `xml:"cors"`
-			Service []struct {
+			Service struct {
 				Chardata string `xml:",chardata"`
 				Coding   struct {
 					Text   string `xml:",chardata"`
@@ -99,18 +150,10 @@ type CapabilityStatement struct {
 					Value string `xml:"value,attr"`
 				} `xml:"text"`
 			} `xml:"service"`
-			Extension struct {
-				Text      string `xml:",chardata"`
-				URL       string `xml:"url,attr"`
-				Extension []struct {
-					Text     string `xml:",chardata"`
-					URL      string `xml:"url,attr"`
-					ValueUri struct {
-						Text  string `xml:",chardata"`
-						Value string `xml:"value,attr"`
-					} `xml:"valueUri"`
-				} `xml:"extension"`
-			} `xml:"extension"`
+			Description struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"description"`
 		} `xml:"security"`
 		Resource []struct {
 			Text string `xml:",chardata"`
@@ -118,14 +161,24 @@ type CapabilityStatement struct {
 				Text  string `xml:",chardata"`
 				Value string `xml:"value,attr"`
 			} `xml:"type"`
-			ReadHistory struct {
-				Text  string `xml:",chardata"`
-				Value string `xml:"value,attr"`
-			} `xml:"readHistory"`
-			UpdateCreate struct {
-				Text  string `xml:",chardata"`
-				Value string `xml:"value,attr"`
-			} `xml:"updateCreate"`
+			Profile struct {
+				Text      string `xml:",chardata"`
+				Reference struct {
+					Text  string `xml:",chardata"`
+					Value string `xml:"value,attr"`
+				} `xml:"reference"`
+			} `xml:"profile"`
+			Interaction []struct {
+				Text string `xml:",chardata"`
+				Code struct {
+					Text  string `xml:",chardata"`
+					Value string `xml:"value,attr"`
+				} `xml:"code"`
+				Documentation struct {
+					Text  string `xml:",chardata"`
+					Value string `xml:"value,attr"`
+				} `xml:"documentation"`
+			} `xml:"interaction"`
 			ConditionalCreate struct {
 				Text  string `xml:",chardata"`
 				Value string `xml:"value,attr"`
@@ -138,19 +191,28 @@ type CapabilityStatement struct {
 				Text  string `xml:",chardata"`
 				Value string `xml:"value,attr"`
 			} `xml:"conditionalDelete"`
-			Interaction []struct {
-				Text string `xml:",chardata"`
-				Code struct {
-					Text  string `xml:",chardata"`
-					Value string `xml:"value,attr"`
-				} `xml:"code"`
-			} `xml:"interaction"`
+			ReferencePolicy []struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"referencePolicy"`
+			SearchInclude []struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"searchInclude"`
+			SearchRevInclude []struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"searchRevInclude"`
 			SearchParam []struct {
 				Text string `xml:",chardata"`
 				Name struct {
 					Text  string `xml:",chardata"`
 					Value string `xml:"value,attr"`
 				} `xml:"name"`
+				Definition struct {
+					Text  string `xml:",chardata"`
+					Value string `xml:"value,attr"`
+				} `xml:"definition"`
 				Type struct {
 					Text  string `xml:",chardata"`
 					Value string `xml:"value,attr"`
@@ -161,5 +223,49 @@ type CapabilityStatement struct {
 				} `xml:"documentation"`
 			} `xml:"searchParam"`
 		} `xml:"resource"`
+		Interaction []struct {
+			Text string `xml:",chardata"`
+			Code struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"code"`
+			Documentation struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"documentation"`
+		} `xml:"interaction"`
+		SearchParam []struct {
+			Text string `xml:",chardata"`
+			Name struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"name"`
+			Definition struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"definition"`
+			Type struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"type"`
+			Documentation struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"documentation"`
+		} `xml:"searchParam"`
+		Operation []struct {
+			Text string `xml:",chardata"`
+			Name struct {
+				Text  string `xml:",chardata"`
+				Value string `xml:"value,attr"`
+			} `xml:"name"`
+			Definition struct {
+				Text      string `xml:",chardata"`
+				Reference struct {
+					Text  string `xml:",chardata"`
+					Value string `xml:"value,attr"`
+				} `xml:"reference"`
+			} `xml:"definition"`
+		} `xml:"operation"`
 	} `xml:"rest"`
-}
+} 

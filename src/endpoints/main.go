@@ -24,6 +24,9 @@ var fhirVersionGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
+// Record the http request charactaristics for the endpoint specified by urlString
+// Record the metrics into the appropriate prometheus register under the label specified by organizationName
+// recordLongRunningMetrics specifies wether or not to record information contained in the capability statment
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
 	var resp, responeTime, err = querier.GetResponseAndTiming(urlString)
 
@@ -43,8 +46,9 @@ func getHTTPRequestTiming(urlString string, organizationName string, recordLongR
 	}
 }
 
+// Records information gathered from the capability statment into prometheus
 func recordLongRunningStats(resp *http.Response, organizationName string) {
-	var capabilityStatement = fhir.ParseConformanceStatement(resp)
+	var capabilityStatement = fhir.ParseCapabilityStatement(resp)
 	var fhirVersionString string = capabilityStatement.FhirVersion.Value
 	var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
 	fhirVersionGaugeVec.WithLabelValues(organizationName).Set(float64(fhirVersionAsNumber))
@@ -149,7 +153,7 @@ func main() {
 		}
 		runtime.GC()
 		// Polling interval, only necessary when running http calls asynchronously
-		//TODO: Config file
+		// TODO: Config file
 		// time.Sleep(5 * time.Minute)
 		queryCount += 1
 	}

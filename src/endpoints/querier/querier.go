@@ -14,6 +14,7 @@ var netClient = &http.Client{
 	Timeout: time.Second * 35,
 }
 
+// Returns the http response, the reponse time and any errors for an http request to the endpoint at urlString
 func GetResponseAndTiming(urlString string) (*http.Response, float64, error) {
 	// recover from fatal errors
 	if err := recover(); err != nil {
