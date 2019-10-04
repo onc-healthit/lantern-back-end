@@ -1,10 +1,6 @@
 package main
 
 import (
-	"encoding/xml"
-	"endpoints/querier"
-	"endpoints/fetcher"
-	"io/ioutil"
 	"endpoints/querier"
 	"endpoints/fetcher"
 	"net/http"

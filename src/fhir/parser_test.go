@@ -4,13 +4,8 @@ import (
 	"testing"
 	"io/ioutil"
 	"net/http"
-	"time"
 	"bytes"
 )
-
-var netClient = &http.Client{
-	Timeout: time.Second * 35,
-}
 
 func Test_ParseConformanceStatement(t *testing.T) {
 	var EXPECTED_FHIR_VERSION = "1.0.1"
