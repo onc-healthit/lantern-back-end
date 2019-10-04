@@ -21,7 +21,8 @@ notifications:
 # build and immediately stop. It's sorta like having set -e enabled in bash.
 # Make sure golangci-lint is vendored.
 before_script:
-  - export GOPATH="${TRAVIS_BUILD_DIR}"
+  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
+  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
   - go get github.com/golangci/golangci-lint/cmd/golangci-lint
   - go get github.com/prometheus/client_golang/prometheus/promhttp
   - go get github.com/prometheus/client_golang/prometheus
