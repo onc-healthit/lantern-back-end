@@ -46,6 +46,11 @@ func GetResponseAndTiming(urlString string) (*http.Response, float64, error) {
 	start = time.Now()
 	resp, err := netClient.Do(req)
 
+	if err != nil {
+		// TODO: Use a logging solution instead of println
+		println("HTTP Request Error: ", err.Error())
+	}
+
 	var responseTime = float64(time.Since(start).Seconds())
 
 	return resp, responseTime, err

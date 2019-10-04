@@ -27,18 +27,20 @@ var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
 	var resp, responeTime, err = querier.GetResponseAndTiming(urlString)
 
-	responseTimeGaugeVec.WithLabelValues(organizationName).Set(responeTime)
-	// Need to think about whether or not an errored request is considered a failed uptime check
-	if err != nil || (resp != nil && resp.StatusCode != http.StatusOK) {
-		totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
-	}
-	if resp != nil {
-		if resp.StatusCode == http.StatusOK && recordLongRunningMetrics {
-			recordLongRunningStats(resp, organizationName)
+	if err != nil {
+		responseTimeGaugeVec.WithLabelValues(organizationName).Set(responeTime)
+
+		if resp != nil && resp.StatusCode != http.StatusOK {
+			totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 		}
-		httpCodesGaugeVec.WithLabelValues(organizationName).Set(float64(resp.StatusCode))
+		if resp != nil {
+			if resp.StatusCode == http.StatusOK && recordLongRunningMetrics {
+				recordLongRunningStats(resp, organizationName)
+			}
+			httpCodesGaugeVec.WithLabelValues(organizationName).Set(float64(resp.StatusCode))
+		}
+		totalUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 	}
-	totalUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 }
 
 func recordLongRunningStats(resp *http.Response, organizationName string) {
@@ -141,11 +143,13 @@ func main() {
 			var url = endpointEntry.FHIRPatientFacingURI
 			var orgName = endpointEntry.OrganizationName
 			// Long polling stats will be queried for every 6 hours
+			//TODO: Config file
 			var longPollingInterval = (queryCount%72 == 0)
 			getHTTPRequestTiming(url, orgName, longPollingInterval)
 		}
 		runtime.GC()
 		// Polling interval, only necessary when running http calls asynchronously
+		//TODO: Config file
 		// time.Sleep(5 * time.Minute)
 		queryCount += 1
 	}
