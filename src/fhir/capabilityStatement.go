@@ -2,7 +2,7 @@ package fhir
 
 import "encoding/xml"
 
-type Conformance struct {
+type CapabilityStatement struct {
 	XMLName xml.Name `xml:"Conformance"`
 	Text    string   `xml:",chardata"`
 	Xmlns   string   `xml:"xmlns,attr"`
