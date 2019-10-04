@@ -1,11 +1,5 @@
 language: go
 
-# Force-enable Go modules. Also force go to use the code in vendor/
-# These will both be unnecessary when Go 1.13 lands.
-env:
-  - GO111MODULE=on
-  - GOFLAGS='-mod vendor'
-
 # You don't need to test on very old versions of the Go compiler. It's the user's
 # responsibility to keep their compiler up to date.
 go:
@@ -27,6 +21,8 @@ notifications:
 # build and immediately stop. It's sorta like having set -e enabled in bash.
 # Make sure golangci-lint is vendored.
 before_script:
+  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
+  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
   - go install github.com/golangci/golangci-lint/cmd/golangci-lint
   - go install ./...
 
