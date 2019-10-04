@@ -10,8 +10,7 @@ git:
   depth: 1
 
 env:
-  - GO111MODULE=on
-  - GOFLAGS='-mod vendor'
+  - GO111MODULE=auto
 
 # Skip the install step. Don't `go get` dependencies. Only build with the code
 # in vendor/
