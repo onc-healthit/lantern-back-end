@@ -16,7 +16,7 @@ env:
 # in vendor/
 install: true
 
-go_import_path: github.com/onc-healthit/lantern-back-end/pkg/linux_amd64
+go_import_path: github.com/onc-healthit/lantern-back-end/
 
 # Don't email me the results of the test runs.
 notifications:
