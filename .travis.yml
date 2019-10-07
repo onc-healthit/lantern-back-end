@@ -16,6 +16,8 @@ env:
 # in vendor/
 install: true
 
+go_import_path: github.com/onc-healthit/lantern-back-end/pkg
+
 # Don't email me the results of the test runs.
 notifications:
   email: false
