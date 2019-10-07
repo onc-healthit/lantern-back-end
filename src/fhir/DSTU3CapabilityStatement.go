@@ -2,7 +2,7 @@ package fhir
 
 import "encoding/xml"
 
-type CapabilityStatement struct {
+type DSTU3CapabilityStatement struct {
 	XMLName  xml.Name `xml:"CapabilityStatement"`
 	Chardata string   `xml:",chardata"`
 	Xmlns    string   `xml:"xmlns,attr"`
