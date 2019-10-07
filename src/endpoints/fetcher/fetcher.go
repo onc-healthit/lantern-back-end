@@ -20,6 +20,7 @@ type ListOfEndpoints struct {
 	} `json:"Entries"`
 }
 
+// GetListOfEndpoints parsers a list of endpoints out of the file at the provided path
 func GetListOfEndpoints(filePath string) ListOfEndpoints {
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it

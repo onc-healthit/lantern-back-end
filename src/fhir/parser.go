@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// Parse the Capability Statement in the body of the provided http response into a CapabilityStatement struct
+// ParseCapabilityStatement parses the Capability Statement in the body of the provided http response into a CapabilityStatement struct
 // TODO: Make this function return appropriate version (DSTU2, DSTU3...)
 func ParseCapabilityStatement(resp *http.Response) (DSTU2CapabilityStatement){
 	defer resp.Body.Close()

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"endpoints/querier"
 	"endpoints/fetcher"
+	"endpoints/querier"
 	"net/http"
 	"os"
 	"runtime"
@@ -24,7 +24,7 @@ var fhirVersionGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
-// Record the http request charactaristics for the endpoint specified by urlString
+// getHTTPRequestTiming records the http request charactaristics for the endpoint specified by urlString
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
 // recordLongRunningMetrics specifies wether or not to record information contained in the capability statment
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
