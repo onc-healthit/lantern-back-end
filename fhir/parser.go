@@ -8,7 +8,7 @@ import (
 
 // ParseCapabilityStatement parses the Capability Statement in the body of the provided http response into a CapabilityStatement struct
 // TODO: Make this function return appropriate version (DSTU2, DSTU3...)
-func ParseCapabilityStatement(resp *http.Response) (DSTU2CapabilityStatement){
+func ParseCapabilityStatement(resp *http.Response) DSTU2CapabilityStatement {
 	defer resp.Body.Close()
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

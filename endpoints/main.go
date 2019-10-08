@@ -1,15 +1,15 @@
 package main
 
 import (
-	"endpoints/fetcher"
-	"endpoints/querier"
+	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpoints/querier"
 	"net/http"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
 
-	"fhir"
+	"github.com/onc-healthit/lantern-back-end/fhir"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -24,7 +24,7 @@ var fhirVersionGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
-// getHTTPRequestTiming records the http request charactaristics for the endpoint specified by urlString
+// getHTTPRequestTiming records the http request characteristics for the endpoint specified by urlString
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
 // recordLongRunningMetrics specifies wether or not to record information contained in the capability statment
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {

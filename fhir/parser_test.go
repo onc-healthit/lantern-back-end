@@ -1,18 +1,18 @@
 package fhir
 
 import (
-	"testing"
+	"bytes"
 	"io/ioutil"
 	"net/http"
-	"bytes"
+	"testing"
 )
 
 func Test_ParseConformanceStatement(t *testing.T) {
 	var EXPECTED_FHIR_VERSION = "1.0.2"
 	contents, err := ioutil.ReadFile("testdata/DSTU2CapabilityStatement.xml")
 	resp := http.Response{
-        Body: ioutil.NopCloser(bytes.NewBufferString(string(contents))),
-    }
+		Body: ioutil.NopCloser(bytes.NewBufferString(string(contents))),
+	}
 	if err != nil {
 		t.Errorf("Error in sending mock request in test %s", err.Error())
 	}
