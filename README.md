@@ -3,7 +3,7 @@ A service to send http requests to get capability statements from FHIR endpoints
 
 ## Building And Running
 
-The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `./resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
+The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `<project_root>/resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
 
 ```bash
 go install ./...
@@ -13,14 +13,16 @@ go run src/endpoints/*.go ./resources/EndpointSources.json
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
 ```bash
-docker run --network=host -v <absolute path to config>/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+docker run -p 9090:9090 -v <absolute path to config>/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 ```
+***IMPORTANT:*** If running docker on a Mac you'll have to configure the target location to be `host.docker.internal:8443` instead of localhost. For Linux systems, starting the Prometheus docker container with `--network=host` instead of `-p 9090:9090` will work and you can specify the target location to be `localhost:8443`.
 
 ## Starting Prometheus via Local Clone
 Alternatively you can checkout Prometheus source code and run it locally
 ```bash
 git clone https://github.com/prometheus/prometheus.git
 cd prometheus
+make build
 ```
 Configure prometheus.yml to scrape from the fhir_target.
 For our current purposes the example prometheus configuration at `prometheus/documentation/examples/prometheus.yml` will suffice
@@ -81,7 +83,7 @@ go tool cover -html=coverage.out
 ## Lintr
 Code going through PR should pass the lintr invoked by running:
 ```bash
-golangci-lint run
+golangci-lint run -E gofmt
 ```
 You may have to install golangci-lint first. To do this on a Mac you can run:
 ```bash
