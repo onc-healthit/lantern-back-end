@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - 1.12.x
+
+# Only clone the most recent commit.
+git:
+  depth: 1
+
+# Don't email me the results of the test runs.
+notifications:
+  email: false
+
+before_script:
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+
+script:
+  - golangci-lint run -E gofmt
+  - go test -v -race ./...  # Run all the tests with the race detector enabled
