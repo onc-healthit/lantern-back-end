@@ -26,6 +26,7 @@ func MetadataResponseStub(t *testing.T) *httptest.Server {
 func Test_GetHTTP200Response(t *testing.T) {
 	server := MetadataResponseStub(t)
 	defer server.Close()
+
 	var resp, responseTime, err = GetResponseAndTiming(server.URL)
 
 	if err != nil {

@@ -2,7 +2,6 @@ package fetcher
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -21,24 +20,20 @@ type ListOfEndpoints struct {
 }
 
 // GetListOfEndpoints parsers a list of endpoints out of the file at the provided path
-func GetListOfEndpoints(filePath string) ListOfEndpoints {
+func GetListOfEndpoints(filePath string) (ListOfEndpoints, error) {
+	var result ListOfEndpoints
+
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
-		// TODO: Use a logging solution instead of println
-		fmt.Println(err.Error())
+		return result, err
 	}
 	// Defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var result ListOfEndpoints
 	err = json.Unmarshal([]byte(byteValue), &result)
-	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("Endpoint List Parsing Error: ", err.Error())
-	}
 
-	return result
+	return result, err
 }

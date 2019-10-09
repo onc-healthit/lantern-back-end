@@ -18,8 +18,7 @@ var netClient = &http.Client{
 func GetResponseAndTiming(urlString string) (*http.Response, float64, error) {
 	// recover from fatal errors
 	if err := recover(); err != nil {
-		// TODO: Use a logging solution instead of println
-		println(err)
+		return nil, -1, err.(error)
 	}
 	// Specifically query the FHIR endpoint metadata
 	u, err := url.Parse(urlString)
@@ -31,8 +30,7 @@ func GetResponseAndTiming(urlString string) (*http.Response, float64, error) {
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("HTTP Request Error: ", err.Error())
+		return nil, -1, err
 	}
 
 	var start time.Time
@@ -48,8 +46,7 @@ func GetResponseAndTiming(urlString string) (*http.Response, float64, error) {
 	resp, err := netClient.Do(req)
 
 	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("HTTP Request Error: ", err.Error())
+		return nil, -1, err
 	}
 
 	var responseTime = float64(time.Since(start).Seconds())
