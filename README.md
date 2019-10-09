@@ -16,7 +16,7 @@ You'll still need a prometheus.yml configuration file for this, see https://gith
 ```bash
 docker run -p 9090:9090 -v <absolute path to config>/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 ```
-***IMPORTANT:*** If running docker on a Mac you'll have to configure the target location to be `host.docker.internal:8443` instead of localhost. For Linux systems, starting the Prometheus docker container with `--network=host` instead of `-p 9090:9090` will work and you can specify the target location to be `localhost:8443`.
+***IMPORTANT:*** If running docker on a Mac you'll have to configure the [FHIR Querier Target](#adding-the-fhir-querier-service-as-a-target) to be `host.docker.internal:<endpoint_port>` instead of localhost. For Linux systems, starting the Prometheus docker container with `--network=host` instead of `-p 9090:9090` will work and you can specify the target location to be `localhost:<endpoint_port>`.
 
 ## Starting Prometheus via Local Clone
 Alternatively you can checkout Prometheus source code and run it locally
@@ -39,7 +39,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-    - targets: ['localhost:8080']
+    - targets: ['localhost:<endpoint_port>']
 ```
 Finally, you can start an instance of prometheus by running:
 ```bash
