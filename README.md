@@ -51,7 +51,7 @@ docker run --name prometheus_postgresql_adapter --link pg_prometheus -d -p 9201:
 ```
 3. [Prometheus instance with remote storage adapter configuration](https://github.com/timescale/prometheus-postgresql-adapter)
 ```bash
-docker run -p 8080:9090 --link prometheus_postgresql_adapter -v /home/centos/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
+docker run -p 8080:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
 ```
 
 #### Adding the FHIR Querier service as a target
