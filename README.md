@@ -86,7 +86,9 @@ docker run -d -p 3000:3000 grafana/grafana
 ## Viewing Colllected Data In Grafana
 1. Navigate to `http://localhost:3000/` in a web browser
 2. Login using Username: admin, Password admin
-3. Add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
+3. Add a datasource
+  - If using Prometheus without remote storage, add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
+  - If using PostgreSQL remote storage, add a PostgreSQL data source, running on `localhost:5432` or `host.docker.internal:5432` (if on a MAC). Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
 
 # Testing
