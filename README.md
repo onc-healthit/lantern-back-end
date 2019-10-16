@@ -27,6 +27,33 @@ make build
 ```
 Configure prometheus.yml to scrape from the fhir_target.
 For our current purposes the example prometheus configuration at `prometheus/documentation/examples/prometheus.yml` will suffice
+Finally, you can start an instance of prometheus by running:
+```bash
+./prometheus --config.file=prometheus.yml
+```
+
+## Prometheus With Remote Storage (PostgreSQL)
+In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter)
+If you haven't created docker volumes for Prometheus pr PostgreSQL, you'll have to run the following commands.
+```bash
+docker volume ls # To list already created volumes
+docker volume create prometheusData # Volume to persist Prometheus data
+docker volume create pgdata # Volume to persist data written to PostgreSQL database
+```
+1. [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
+```bash
+docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
+```
+2. [PostgreSQL remote storage adapter to facilitate communication between Prometheus and the Database](https://github.com/timescale/prometheus-postgresql-adapter)
+It is important that the pg_prometheus container started in step 1 is up and running before starting the prometheus-postgresql-adapter, as the prometheus-postgresql-adapter will need to run database setup tasks the first time that it is run.
+```bash
+docker run --name prometheus_postgresql_adapter --link pg_prometheus -d -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-prometheus-log-samples
+```
+3. [Prometheus instance with remote storage adapter configuration](https://github.com/timescale/prometheus-postgresql-adapter)
+```bash
+docker run -p 8080:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
+```
+
 #### Adding the FHIR Querier service as a target
 Make sure the config file contains the following:
 ```yaml
@@ -41,9 +68,13 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:<endpoint_port>']
 ```
-Finally, you can start an instance of prometheus by running:
-```bash
-./prometheus --config.file=prometheus.yml
+In order to instruct Prometheus to write the collected data to a Postgres database, you'll have to configure the location of the Postgres remote storage adapter.
+**Important:** If you are on a MAC you may have to use host.docker.internal instead of localhost here.
+```yml
+remote_write:
+    - url: "http://localhost:9201/write"
+remote_read:
+    - url: "http://localhost:9201/read"
 ```
 
 ## Starting Grafana
@@ -55,7 +86,9 @@ docker run -d -p 3000:3000 grafana/grafana
 ## Viewing Colllected Data In Grafana
 1. Navigate to `http://localhost:3000/` in a web browser
 2. Login using Username: admin, Password admin
-3. Add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
+3. Add a datasource
+  - If using Prometheus without remote storage, add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
+  - If using PostgreSQL remote storage, add a PostgreSQL data source, running on `localhost:5432` or `host.docker.internal:5432` (if on a MAC). Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
 
 # Testing
