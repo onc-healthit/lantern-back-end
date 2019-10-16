@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
 	"github.com/onc-healthit/lantern-back-end/endpoints/querier"
 	"github.com/onc-healthit/lantern-back-end/fhir"
@@ -32,8 +33,13 @@ var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
 // recordLongRunningMetrics specifies wether or not to record information contained in the capability statment
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
+	ctx := context.Background()
+	// Closing context if HTTP request and response processing is not completed within 30 seconds.
+	// This includes dropping the request connection if there's no reply within 30 seconds.
+	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))
+	defer cancelFunc()
 
-	var resp, responseTime, err = querier.GetResponseAndTiming(urlString)
+	var resp, responseTime, err = querier.GetResponseAndTiming(ctx, urlString)
 
 	if err != nil {
 		log.WithFields(log.Fields{"organization": organizationName, "url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
@@ -159,7 +165,6 @@ func main() {
 	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
 	if err != nil {
 		log.Fatal("Endpoint List Parsing Error: ", err.Error())
-		return
 	}
 	initializeMetrics()
 
