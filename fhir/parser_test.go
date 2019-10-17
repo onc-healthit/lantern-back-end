@@ -16,7 +16,10 @@ func Test_ParseConformanceStatement(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error in sending mock request in test %s", err.Error())
 	}
-	var capabilityStatement = ParseCapabilityStatement(&resp)
+	capabilityStatement, err := ParseCapabilityStatement(&resp)
+	if err != nil {
+		t.Errorf("Error parsing capability statemen t %s", err.Error())
+	}
 	var FHIRVersion = capabilityStatement.FhirVersion.Value
 	if FHIRVersion != EXPECTED_FHIR_VERSION {
 		t.Errorf("Parsed incorrect FHIR version from capability statement got: %s, want: %s.", FHIRVersion, EXPECTED_FHIR_VERSION)

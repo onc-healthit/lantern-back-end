@@ -1,18 +1,23 @@
 package main
 
 import (
+	"context"
 	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
 	"github.com/onc-healthit/lantern-back-end/endpoints/querier"
+	"github.com/onc-healthit/lantern-back-end/fhir"
 	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"runtime"
 	"strconv"
 	"strings"
-
-	"github.com/onc-healthit/lantern-back-end/fhir"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Metrics collected inside built-in prometheus vector.
@@ -28,17 +33,25 @@ var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
 // recordLongRunningMetrics specifies wether or not to record information contained in the capability statment
 func getHTTPRequestTiming(urlString string, organizationName string, recordLongRunningMetrics bool) {
-	var resp, responeTime, err = querier.GetResponseAndTiming(urlString)
+	ctx := context.Background()
+	// Closing context if HTTP request and response processing is not completed within 30 seconds.
+	// This includes dropping the request connection if there's no reply within 30 seconds.
+	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))
+	defer cancelFunc()
+
+	var resp, responseTime, err = querier.GetResponseAndTiming(ctx, urlString)
 
 	if err != nil {
-		responseTimeGaugeVec.WithLabelValues(organizationName).Set(responeTime)
+		log.WithFields(log.Fields{"organization": organizationName, "url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
+	} else {
+		responseTimeGaugeVec.WithLabelValues(organizationName).Set(responseTime)
 
 		if resp != nil && resp.StatusCode != http.StatusOK {
 			totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
 		}
 		if resp != nil {
 			if resp.StatusCode == http.StatusOK && recordLongRunningMetrics {
-				recordLongRunningStats(resp, organizationName)
+				recordLongRunningStats(resp, organizationName, urlString)
 			}
 			httpCodesGaugeVec.WithLabelValues(organizationName).Set(float64(resp.StatusCode))
 		}
@@ -47,12 +60,16 @@ func getHTTPRequestTiming(urlString string, organizationName string, recordLongR
 }
 
 // Records information gathered from the capability statment into prometheus
-func recordLongRunningStats(resp *http.Response, organizationName string) {
-	var capabilityStatement = fhir.ParseCapabilityStatement(resp)
-	var fhirVersionString string = capabilityStatement.FhirVersion.Value
-	var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
-	fhirVersionGaugeVec.WithLabelValues(organizationName).Set(float64(fhirVersionAsNumber))
-	tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
+func recordLongRunningStats(resp *http.Response, organizationName string, urlString string) {
+	var capabilityStatement, err = fhir.ParseCapabilityStatement(resp)
+	if err != nil {
+		log.WithFields(log.Fields{"organization": organizationName, "url": urlString}).Warn("Capability Statement Response Parsing Error: ", err.Error())
+	} else {
+		var fhirVersionString string = capabilityStatement.FhirVersion.Value
+		var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
+		fhirVersionGaugeVec.WithLabelValues(organizationName).Set(float64(fhirVersionAsNumber))
+		tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
+	}
 }
 
 func initializeMetrics() {
@@ -116,16 +133,25 @@ func initializeMetrics() {
 func setupServer() {
 	// Setup hosted metrics endpoint
 	http.Handle("/metrics", promhttp.Handler())
-	// TODO: Configure port in configureation file
+	// TODO: Configure port in configuration file
 	var err = http.ListenAndServe(":8443", nil)
 	if err != nil {
-		// TODO: Use a logging solution instead of println
-		println("HTTP Request Error: ", err.Error())
+		log.Fatal("HTTP Server Creation Error: ", err.Error())
 	}
 }
 
-func main() {
+func initializeLogger() {
+	log.SetFormatter(&log.JSONFormatter{})
+	// TODO: Configuration file for logfile name/location
+	f, err := os.OpenFile("endpointQuerierLog.json", os.O_WRONLY|os.O_CREATE, 0755)
+	if err != nil {
+		log.Fatal("LogFile creation error: ", err.Error())
+	}
+	log.SetOutput(f)
+}
 
+func main() {
+	initializeLogger()
 	go setupServer()
 
 	var endpointsFile string
@@ -136,7 +162,10 @@ func main() {
 		return
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
-	var listOfEndpoints = fetcher.GetListOfEndpoints(endpointsFile)
+	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
+	if err != nil {
+		log.Fatal("Endpoint List Parsing Error: ", err.Error())
+	}
 	initializeMetrics()
 
 	var queryCount = 0
@@ -144,12 +173,19 @@ func main() {
 	for {
 		for _, endpointEntry := range listOfEndpoints.Entries {
 			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
-			var url = endpointEntry.FHIRPatientFacingURI
+			var urlString = endpointEntry.FHIRPatientFacingURI
 			var orgName = endpointEntry.OrganizationName
 			// Long polling stats will be queried for every 6 hours
 			//TODO: Config file
 			var longPollingInterval = (queryCount%72 == 0)
-			getHTTPRequestTiming(url, orgName, longPollingInterval)
+			// Specifically query the FHIR endpoint metadata
+			metadataURL, err := url.Parse(urlString)
+			if err != nil {
+				log.Warn("Endpoint URL Parsing Error: ", err.Error())
+			} else {
+				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+				getHTTPRequestTiming(metadataURL.String(), orgName, longPollingInterval)
+			}
 		}
 		runtime.GC()
 		// Polling interval, only necessary when running http calls asynchronously

@@ -1,9 +1,11 @@
 package querier
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func MetadataResponseStub(t *testing.T) *httptest.Server {
@@ -26,7 +28,13 @@ func MetadataResponseStub(t *testing.T) *httptest.Server {
 func Test_GetHTTP200Response(t *testing.T) {
 	server := MetadataResponseStub(t)
 	defer server.Close()
-	var resp, responseTime, err = GetResponseAndTiming(server.URL)
+	var capabilityStatmentURL = server.URL + "/metadata"
+	ctx := context.Background()
+	// Drop connection if no reply within 30 seconds
+	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))
+	defer cancelFunc()
+
+	var resp, responseTime, err = GetResponseAndTiming(ctx, capabilityStatmentURL)
 
 	if err != nil {
 		t.Errorf("GetResponseAndTiming should not return an error, recieved error %s", err.Error())
