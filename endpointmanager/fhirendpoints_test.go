@@ -59,7 +59,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
-	if !e1.Equals(endpoint1) {
+	if !e1.Equal(endpoint1) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
@@ -67,7 +67,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
-	if !e2.Equals(endpoint2) {
+	if !e2.Equal(endpoint2) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
@@ -87,7 +87,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
-	if e1.Equals(endpoint1) {
+	if e1.Equal(endpoint1) {
 		t.Errorf("retrieved UPDATED endpoint is equal to original endpoint.")
 	}
 	if e1.UpdatedAt.Equal(e1.CreatedAt) {

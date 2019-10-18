@@ -21,6 +21,7 @@ type FHIREndpoint struct {
 	UpdatedAt             time.Time
 }
 
+// GetFHIREndpoint gets a FHIREndpoint from the database using the given url as a key.
 func GetFHIREndpoint(url string) (*FHIREndpoint, error) {
 	// TODO: missing metadata and location.
 	sqlStatement := `SELECT url,
@@ -42,6 +43,7 @@ func GetFHIREndpoint(url string) (*FHIREndpoint, error) {
 	return &endpoint, err
 }
 
+// Add adds the FHIREndpoint to the database.
 func (e *FHIREndpoint) Add() error {
 	// TODO: missing metadata and location.
 	sqlStatement := `
@@ -58,6 +60,7 @@ func (e *FHIREndpoint) Add() error {
 	return err
 }
 
+// Update updates the FHIREndpoint in the database using the FHIREndpoint's URL as the key.
 func (e *FHIREndpoint) Update() error {
 	// TODO: missing metadata and location.
 	sqlStatement := `
@@ -75,6 +78,7 @@ func (e *FHIREndpoint) Update() error {
 	return err
 }
 
+// Delete deletes the FHIREndpoint from the databse using the FHIREndpoint's URL as the key.
 func (e *FHIREndpoint) Delete() error {
 	sqlStatement := `
 	DELETE FROM fhir_endpoints
@@ -85,24 +89,25 @@ func (e *FHIREndpoint) Delete() error {
 	return err
 }
 
-func (e1 *FHIREndpoint) Equals(e2 *FHIREndpoint) bool {
+// Equal checks each field of the two FHIREndpoints except for the CreatedAt and UpdatedAt fields to see if they are equal.
+func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e2 == nil {
 		return false
 	}
 
-	if e1.URL != e2.URL {
+	if e.URL != e2.URL {
 		return false
 	}
-	if e1.FHIRVersion != e2.FHIRVersion {
+	if e.FHIRVersion != e2.FHIRVersion {
 		return false
 	}
-	if e1.AuthorizationStandard != e2.AuthorizationStandard {
+	if e.AuthorizationStandard != e2.AuthorizationStandard {
 		return false
 	}
-	if e1.Location != e2.Location {
+	if e.Location != e2.Location {
 		return false
 	}
-	if e1.Metadata != e2.Metadata {
+	if e.Metadata != e2.Metadata {
 		return false
 	}
 
