@@ -110,7 +110,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 }
 
-func Test_PersistHealhtITProduct(t *testing.T) {
+func Test_PersistHealthITProduct(t *testing.T) {
 	var err error
 
 	var hitp1 = &HealthITProduct{
@@ -194,5 +194,94 @@ func Test_PersistHealhtITProduct(t *testing.T) {
 	err = hitp2.Delete()
 	if err != nil {
 		t.Errorf("Error deleting health it product: %s", err.Error())
+	}
+}
+
+func Test_PersistProviderOrganization(t *testing.T) {
+	var err error
+
+	var po1 = &ProviderOrganization{
+		Name:             "Hospital #1 of America",
+		URL:              "hospital.example.com",
+		OrganizationType: "hospital",
+		HospitalType:     "Acute Care",
+		Ownership:        "Volunary non-profit",
+		Beds:             250}
+	var po2 = &ProviderOrganization{
+		Name:             "Group Practice #1 of America",
+		URL:              "grouppractice.example.com",
+		OrganizationType: "group practice",
+		HospitalType:     "",
+		Ownership:        "",
+		Beds:             -1}
+
+	db = connectToDB(t)
+	defer db.Close()
+
+	// add organizations
+
+	err = po1.Add()
+	if err != nil {
+		t.Errorf("Error adding provider organization: %s", err.Error())
+	}
+
+	err = po2.Add()
+	if err != nil {
+		t.Errorf("Error adding provider organization: %s", err.Error())
+	}
+
+	// retrieve organizations
+
+	p1, err := GetProviderOrganization(po1.OrganizationID)
+	if err != nil {
+		t.Errorf("Error getting provider organization: %s", err.Error())
+	}
+	if !p1.Equal(po1) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	p2, err := GetProviderOrganization(po2.OrganizationID)
+	if err != nil {
+		t.Errorf("Error getting provider organization: %s", err.Error())
+	}
+	if !p2.Equal(po2) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	// update organization
+
+	p1.HospitalType = "Critical Access"
+
+	err = p1.Update()
+	if err != nil {
+		t.Errorf("Error updating provider organization: %s", err.Error())
+	}
+
+	p1, err = GetProviderOrganization(po1.OrganizationID)
+	if err != nil {
+		t.Errorf("Error getting provider organization: %s", err.Error())
+	}
+	if p1.Equal(po1) {
+		t.Errorf("retrieved UPDATED organization is equal to original organization.")
+	}
+	if p1.UpdatedAt.Equal(p1.CreatedAt) {
+		t.Errorf("UpdatedAt is not being properly set on update.")
+	}
+
+	// delete organizations
+
+	err = po1.Delete()
+	if err != nil {
+		t.Errorf("Error deleting provider organization: %s", err.Error())
+	}
+
+	p2, err = GetProviderOrganization(po2.OrganizationID) // ensure we haven't deleted all entries
+	if err != nil {
+		t.Errorf("po2 no longer exists in DB after deleting po1: %s", err.Error())
+	}
+
+	err = po2.Delete()
+	if err != nil {
+		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
 }

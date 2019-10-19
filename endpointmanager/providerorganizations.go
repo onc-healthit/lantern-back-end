@@ -21,7 +21,7 @@ type ProviderOrganization struct {
 }
 
 // GetProviderOrganization gets a ProviderOrganization from the database using the given url as a key.
-func GetProviderOrganization(organizationID string) (*ProviderOrganization, error) {
+func GetProviderOrganization(organizationID int) (*ProviderOrganization, error) {
 	// TODO: location
 	sqlStatement := `SELECT organization_id,
 							name,
@@ -32,7 +32,7 @@ func GetProviderOrganization(organizationID string) (*ProviderOrganization, erro
 							beds,
 							created_at,
 							updated_at
-					FROM provider_organizations WHERE name=$1 AND value=$2`
+					FROM provider_organizations WHERE organization_id=$1`
 	row := db.QueryRow(sqlStatement, organizationID)
 	var po ProviderOrganization
 
@@ -55,23 +55,24 @@ func (po *ProviderOrganization) Add() error {
 	// TODO: location
 	sqlStatement := `
 	INSERT INTO provider_organizations (
-		organization_id,
 		name,
 		url,
 		organization_type,
 		hospital_type,
 		ownership,
 		beds)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING organization_id`
 
-	_, err := db.Exec(sqlStatement,
-		po.OrganizationID,
+	row := db.QueryRow(sqlStatement,
 		po.Name,
 		po.URL,
 		po.OrganizationType,
 		po.HospitalType,
 		po.Ownership,
 		po.Beds)
+
+	err := row.Scan(&po.OrganizationID)
 
 	return err
 }
