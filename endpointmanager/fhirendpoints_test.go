@@ -9,14 +9,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var endpoint1 = &FHIREndpoint{URL: "example.com/FHIR/DSTU2",
-	FHIRVersion:           "DSTU2",
-	AuthorizationStandard: "OAuth 2.0"}
-
-var endpoint2 = &FHIREndpoint{URL: "other.example.com/FHIR/DSTU2",
-	FHIRVersion:           "DSTU2",
-	AuthorizationStandard: "R4 2.0"}
-
 func connectToDB(t *testing.T) *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=%s",
@@ -39,7 +31,16 @@ func connectToDB(t *testing.T) *sql.DB {
 
 func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
+
+	var endpoint1 = &FHIREndpoint{URL: "example.com/FHIR/DSTU2",
+		FHIRVersion:           "DSTU2",
+		AuthorizationStandard: "OAuth 2.0"}
+	var endpoint2 = &FHIREndpoint{URL: "other.example.com/FHIR/DSTU2",
+		FHIRVersion:           "DSTU2",
+		AuthorizationStandard: "R4 2.0"}
+
 	db = connectToDB(t)
+	defer db.Close()
 
 	// add endpoints
 
@@ -72,13 +73,10 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 
 	// update endpoint
+
 	e1.FHIRVersion = "Unknown"
 
 	err = e1.Update()
-	if err != nil {
-		t.Errorf("Error updating fhir endpoint: %s", err.Error())
-	}
-	err = e2.Update()
 	if err != nil {
 		t.Errorf("Error updating fhir endpoint: %s", err.Error())
 	}
@@ -110,6 +108,91 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
+}
 
-	db.Close()
+func Test_PersistHealhtITProduct(t *testing.T) {
+	var err error
+
+	var hitp1 = &HealthITProduct{
+		Name:                 "Health IT System 1",
+		Version:              "1.0",
+		Developer:            "Epic",
+		APISyntax:            "FHIR R4",
+		CertificationEdition: "2015"}
+	var hitp2 = &HealthITProduct{
+		Name:                 "Health IT System 2",
+		Version:              "2.0",
+		Developer:            "Cerner",
+		APISyntax:            "FHIR DSTU2",
+		CertificationEdition: "2014"}
+
+	db = connectToDB(t)
+	defer db.Close()
+
+	// add products
+
+	err = hitp1.Add()
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	err = hitp2.Add()
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	// retrieve products
+
+	h1, err := GetHealthITProduct(hitp1.Name, hitp1.Version)
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if !h1.Equal(hitp1) {
+		t.Errorf("retrieved product is not equal to saved product.")
+	}
+
+	h2, err := GetHealthITProduct(hitp2.Name, hitp2.Version)
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if !h2.Equal(hitp2) {
+		t.Errorf("retrieved product is not equal to saved product.")
+	}
+
+	// update product
+
+	h1.APISyntax = "FHIR R5"
+
+	err = h1.Update()
+	if err != nil {
+		t.Errorf("Error updating health it product: %s", err.Error())
+	}
+
+	h1, err = GetHealthITProduct(hitp1.Name, hitp1.Version)
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if h1.Equal(hitp1) {
+		t.Errorf("retrieved UPDATED product is equal to original product.")
+	}
+	if h1.UpdatedAt.Equal(h1.CreatedAt) {
+		t.Errorf("UpdatedAt is not being properly set on update.")
+	}
+
+	// delete products
+
+	err = hitp1.Delete()
+	if err != nil {
+		t.Errorf("Error deleting health it product: %s", err.Error())
+	}
+
+	h2, err = GetHealthITProduct(hitp2.Name, hitp2.Version) // ensure we haven't deleted all entries
+	if err != nil {
+		t.Errorf("hitp2 no longer exists in DB after deleting hitp1: %s", err.Error())
+	}
+
+	err = hitp2.Delete()
+	if err != nil {
+		t.Errorf("Error deleting health it product: %s", err.Error())
+	}
 }

@@ -17,7 +17,7 @@ const (
 	sslmode  = "disable"
 )
 
-const db_setup = `
+const dbSetup = `
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -68,8 +68,18 @@ CREATE TABLE healthit_products (
     PRIMARY KEY (name, version)
 );
 
-CREATE TRIGGER set_timestamp
+CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_provider_organizations
+BEFORE UPDATE ON provider_organizations
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_healthit_products
+BEFORE UPDATE ON healthit_products
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 `

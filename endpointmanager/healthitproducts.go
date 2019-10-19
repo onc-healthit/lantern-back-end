@@ -1,6 +1,10 @@
 package main
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/go-cmp/cmp"
+)
 
 // HealthITProduct represents a health IT vendor product such as an
 // EHR. This information is gathered from the Certified Health IT Products List
@@ -21,4 +25,170 @@ type HealthITProduct struct {
 	CHPLID                string // the product's unique ID within the CHPL system.
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
+}
+
+// GetHealthITProduct gets a HealthITProduct from the database using the given url as a key.
+func GetHealthITProduct(name string, version string) (*HealthITProduct, error) {
+	// TODO: location, certification_criteria.
+	sqlStatement := `SELECT name,
+							version,
+							developer,
+							authorization_standard,
+							api_syntax,
+							api_url,
+							certification_status,
+							certification_date,
+							certification_edition,
+							last_modified_in_chpl,
+							chpl_id,
+							created_at,
+							updated_at
+					FROM healthit_products WHERE name=$1 AND version=$2`
+	row := db.QueryRow(sqlStatement, name, version)
+	var hitp HealthITProduct
+
+	err := row.Scan(
+		&hitp.Name,
+		&hitp.Version,
+		&hitp.Developer,
+		&hitp.AuthorizationStandard,
+		&hitp.APISyntax,
+		&hitp.APIURL,
+		&hitp.CertificationStatus,
+		&hitp.CertificationDate,
+		&hitp.CertificationEdition,
+		&hitp.LastModifiedInCHPL,
+		&hitp.CHPLID,
+		&hitp.CreatedAt,
+		&hitp.UpdatedAt)
+
+	return &hitp, err
+}
+
+// Add adds the HealthITProduct to the database.
+func (hitp *HealthITProduct) Add() error {
+	// TODO: location, certification_criteria.
+	sqlStatement := `
+	INSERT INTO healthit_products (
+		name,
+		version,
+		developer,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+
+	_, err := db.Exec(sqlStatement,
+		hitp.Name,
+		hitp.Version,
+		hitp.Developer,
+		hitp.AuthorizationStandard,
+		hitp.APISyntax,
+		hitp.APIURL,
+		hitp.CertificationStatus,
+		hitp.CertificationDate,
+		hitp.CertificationEdition,
+		hitp.LastModifiedInCHPL,
+		hitp.CHPLID)
+
+	return err
+}
+
+// Update updates the HealthITProduct in the database using the HealthITProduct's URL as the key.
+func (hitp *HealthITProduct) Update() error {
+	// TODO: location, certification_criteria.
+	sqlStatement := `
+	UPDATE healthit_products
+	SET name = $1,
+		version = $2,
+		developer = $3,
+		authorization_standard = $4,
+		api_syntax = $5,
+		api_url = $6,
+		certification_status = $7,
+		certification_date = $8,
+		certification_edition = $9,
+		last_modified_in_chpl = $10,
+		chpl_id = $11
+	WHERE name = $1 AND version = $2`
+
+	_, err := db.Exec(sqlStatement,
+		hitp.Name,
+		hitp.Version,
+		hitp.Developer,
+		hitp.AuthorizationStandard,
+		hitp.APISyntax,
+		hitp.APIURL,
+		hitp.CertificationStatus,
+		hitp.CertificationDate,
+		hitp.CertificationEdition,
+		hitp.LastModifiedInCHPL,
+		hitp.CHPLID)
+
+	return err
+}
+
+// Delete deletes the HealthITProduct from the databse using the HealthITProduct's URL as the key.
+func (hitp *HealthITProduct) Delete() error {
+	sqlStatement := `
+	DELETE FROM healthit_products
+	WHERE name = $1 AND version = $2`
+
+	_, err := db.Exec(sqlStatement, hitp.Name, hitp.Version)
+
+	return err
+}
+
+// Equal checks each field of the two HealthITProducts except for the CreatedAt and UpdatedAt fields to see if they are equal.
+func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
+	if hitp2 == nil {
+		return false
+	}
+
+	if hitp.Name != hitp2.Name {
+		return false
+	}
+	if hitp.Version != hitp2.Version {
+		return false
+	}
+	if hitp.Developer != hitp2.Developer {
+		return false
+	}
+	if hitp.Location != hitp2.Location {
+		return false
+	}
+	if hitp.AuthorizationStandard != hitp2.AuthorizationStandard {
+		return false
+	}
+	if hitp.APISyntax != hitp2.APISyntax {
+		return false
+	}
+	if hitp.APIURL != hitp2.APIURL {
+		return false
+	}
+	if !cmp.Equal(hitp.CertificationCriteria, hitp2.CertificationCriteria) {
+		return false
+	}
+	if hitp.CertificationStatus != hitp2.CertificationStatus {
+		return false
+	}
+	if !hitp.CertificationDate.Equal(hitp2.CertificationDate) {
+		return false
+	}
+	if hitp.CertificationEdition != hitp2.CertificationEdition {
+		return false
+	}
+	if !hitp.LastModifiedInCHPL.Equal(hitp2.LastModifiedInCHPL) {
+		return false
+	}
+	if hitp.CHPLID != hitp2.CHPLID {
+		return false
+	}
+
+	return true
 }
