@@ -10,6 +10,7 @@ import (
 // EHR. This information is gathered from the Certified Health IT Products List
 // (CHPL).
 type HealthITProduct struct {
+	id                    int
 	Name                  string
 	Version               string
 	Developer             string   // the name of the vendor that creates the product.
@@ -27,10 +28,51 @@ type HealthITProduct struct {
 	UpdatedAt             time.Time
 }
 
-// GetHealthITProduct gets a HealthITProduct from the database using the given url as a key.
-func GetHealthITProduct(name string, version string) (*HealthITProduct, error) {
+// GetHealthITProduct gets a HealthITProduct from the database using the database id as a key.
+func GetHealthITProduct(id int) (*HealthITProduct, error) {
 	// TODO: location, certification_criteria.
-	sqlStatement := `SELECT name,
+	sqlStatement := `SELECT id,
+							name,
+							version,
+							developer,
+							authorization_standard,
+							api_syntax,
+							api_url,
+							certification_status,
+							certification_date,
+							certification_edition,
+							last_modified_in_chpl,
+							chpl_id,
+							created_at,
+							updated_at
+					FROM healthit_products WHERE id=$1`
+	row := db.QueryRow(sqlStatement, id)
+	var hitp HealthITProduct
+
+	err := row.Scan(
+		&hitp.id,
+		&hitp.Name,
+		&hitp.Version,
+		&hitp.Developer,
+		&hitp.AuthorizationStandard,
+		&hitp.APISyntax,
+		&hitp.APIURL,
+		&hitp.CertificationStatus,
+		&hitp.CertificationDate,
+		&hitp.CertificationEdition,
+		&hitp.LastModifiedInCHPL,
+		&hitp.CHPLID,
+		&hitp.CreatedAt,
+		&hitp.UpdatedAt)
+
+	return &hitp, err
+}
+
+// GetHealthITProductUsingNameAndVersion gets a HealthITProduct from the database using the given url as a key.
+func GetHealthITProductUsingNameAndVersion(name string, version string) (*HealthITProduct, error) {
+	// TODO: location, certification_criteria.
+	sqlStatement := `SELECT id,
+							name,
 							version,
 							developer,
 							authorization_standard,
@@ -48,6 +90,7 @@ func GetHealthITProduct(name string, version string) (*HealthITProduct, error) {
 	var hitp HealthITProduct
 
 	err := row.Scan(
+		&hitp.id,
 		&hitp.Name,
 		&hitp.Version,
 		&hitp.Developer,
@@ -63,6 +106,11 @@ func GetHealthITProduct(name string, version string) (*HealthITProduct, error) {
 		&hitp.UpdatedAt)
 
 	return &hitp, err
+}
+
+// GetID returns the database ID for the HealthITProduct.
+func (hitp *HealthITProduct) GetID() int {
+	return hitp.id
 }
 
 // Add adds the HealthITProduct to the database.
@@ -81,9 +129,10 @@ func (hitp *HealthITProduct) Add() error {
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	RETURNING id`
 
-	_, err := db.Exec(sqlStatement,
+	row := db.QueryRow(sqlStatement,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -95,6 +144,8 @@ func (hitp *HealthITProduct) Add() error {
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID)
+
+	err := row.Scan(&hitp.id)
 
 	return err
 }
@@ -115,7 +166,7 @@ func (hitp *HealthITProduct) Update() error {
 		certification_edition = $9,
 		last_modified_in_chpl = $10,
 		chpl_id = $11
-	WHERE name = $1 AND version = $2`
+	WHERE id=$12`
 
 	_, err := db.Exec(sqlStatement,
 		hitp.Name,
@@ -128,7 +179,8 @@ func (hitp *HealthITProduct) Update() error {
 		hitp.CertificationDate,
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
-		hitp.CHPLID)
+		hitp.CHPLID,
+		hitp.id)
 
 	return err
 }
@@ -137,9 +189,9 @@ func (hitp *HealthITProduct) Update() error {
 func (hitp *HealthITProduct) Delete() error {
 	sqlStatement := `
 	DELETE FROM healthit_products
-	WHERE name = $1 AND version = $2`
+	WHERE id=$1`
 
-	_, err := db.Exec(sqlStatement, hitp.Name, hitp.Version)
+	_, err := db.Exec(sqlStatement, hitp.id)
 
 	return err
 }
@@ -150,6 +202,9 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 		return false
 	}
 
+	if hitp.id != hitp2.id {
+		return false
+	}
 	if hitp.Name != hitp2.Name {
 		return false
 	}

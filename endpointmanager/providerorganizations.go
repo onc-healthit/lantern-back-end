@@ -8,7 +8,7 @@ import (
 // Other organization types may be added in the future.
 // From https://data.medicare.gov/Hospital-Compare/Hospital-General-Information/xubh-q36u
 type ProviderOrganization struct {
-	OrganizationID   int
+	id               int
 	Name             string
 	URL              string
 	Location         Location
@@ -20,10 +20,10 @@ type ProviderOrganization struct {
 	UpdatedAt        time.Time
 }
 
-// GetProviderOrganization gets a ProviderOrganization from the database using the given url as a key.
-func GetProviderOrganization(organizationID int) (*ProviderOrganization, error) {
+// GetProviderOrganization gets a ProviderOrganization from the database using the database id as a key.
+func GetProviderOrganization(id int) (*ProviderOrganization, error) {
 	// TODO: location
-	sqlStatement := `SELECT organization_id,
+	sqlStatement := `SELECT id,
 							name,
 							url,
 							organization_type,
@@ -32,12 +32,12 @@ func GetProviderOrganization(organizationID int) (*ProviderOrganization, error) 
 							beds,
 							created_at,
 							updated_at
-					FROM provider_organizations WHERE organization_id=$1`
-	row := db.QueryRow(sqlStatement, organizationID)
+					FROM provider_organizations WHERE id=$1`
+	row := db.QueryRow(sqlStatement, id)
 	var po ProviderOrganization
 
 	err := row.Scan(
-		&po.OrganizationID,
+		&po.id,
 		&po.Name,
 		&po.URL,
 		&po.OrganizationType,
@@ -48,6 +48,11 @@ func GetProviderOrganization(organizationID int) (*ProviderOrganization, error) 
 		&po.UpdatedAt)
 
 	return &po, err
+}
+
+// GetID returns the database ID for the ProviderOrganization.
+func (po *ProviderOrganization) GetID() int {
+	return po.id
 }
 
 // Add adds the ProviderOrganization to the database.
@@ -62,7 +67,7 @@ func (po *ProviderOrganization) Add() error {
 		ownership,
 		beds)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING organization_id`
+	RETURNING id`
 
 	row := db.QueryRow(sqlStatement,
 		po.Name,
@@ -72,7 +77,7 @@ func (po *ProviderOrganization) Add() error {
 		po.Ownership,
 		po.Beds)
 
-	err := row.Scan(&po.OrganizationID)
+	err := row.Scan(&po.id)
 
 	return err
 }
@@ -82,17 +87,16 @@ func (po *ProviderOrganization) Update() error {
 	// TODO: location
 	sqlStatement := `
 	UPDATE provider_organizations
-	SET organization_id = $1,
-		name = $2,
+	SET name = $2,
 		url = $3,
 		organization_type = $4,
 		hospital_type = $5,
 		ownership = $6,
 		beds = $7
-	WHERE organization_id = $1`
+	WHERE id = $1`
 
 	_, err := db.Exec(sqlStatement,
-		po.OrganizationID,
+		po.id,
 		po.Name,
 		po.URL,
 		po.OrganizationType,
@@ -107,9 +111,9 @@ func (po *ProviderOrganization) Update() error {
 func (po *ProviderOrganization) Delete() error {
 	sqlStatement := `
 	DELETE FROM provider_organizations
-	WHERE organization_id=$1`
+	WHERE id=$1`
 
-	_, err := db.Exec(sqlStatement, po.OrganizationID)
+	_, err := db.Exec(sqlStatement, po.id)
 
 	return err
 }
@@ -120,7 +124,7 @@ func (po *ProviderOrganization) Equal(po2 *ProviderOrganization) bool {
 		return false
 	}
 
-	if po.OrganizationID != po2.OrganizationID {
+	if po.id != po2.id {
 		return false
 	}
 	if po.Name != po2.Name {

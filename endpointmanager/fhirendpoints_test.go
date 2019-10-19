@@ -56,7 +56,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// retrieve endpoints
 
-	e1, err := GetFHIREndpoint(endpoint1.URL)
+	e1, err := GetFHIREndpoint(endpoint1.GetID())
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -64,7 +64,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
-	e2, err := GetFHIREndpoint(endpoint2.URL)
+	e2, err := GetFHIREndpoint(endpoint2.GetID())
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -81,7 +81,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Error updating fhir endpoint: %s", err.Error())
 	}
 
-	e1, err = GetFHIREndpoint(endpoint1.URL)
+	e1, err = GetFHIREndpoint(endpoint1.GetID())
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -99,7 +99,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
 
-	e2, err = GetFHIREndpoint(endpoint2.URL) // ensure we haven't deleted all entries
+	e2, err = GetFHIREndpoint(endpoint2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("endpoint2 no longer exists in DB after deleting endpoint1: %s", err.Error())
 	}
@@ -143,7 +143,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 
 	// retrieve products
 
-	h1, err := GetHealthITProduct(hitp1.Name, hitp1.Version)
+	h1, err := GetHealthITProduct(hitp1.GetID())
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -151,7 +151,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
-	h2, err := GetHealthITProduct(hitp2.Name, hitp2.Version)
+	h2, err := GetHealthITProduct(hitp2.GetID())
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -168,7 +168,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error updating health it product: %s", err.Error())
 	}
 
-	h1, err = GetHealthITProduct(hitp1.Name, hitp1.Version)
+	h1, err = GetHealthITProduct(hitp1.GetID())
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -186,7 +186,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}
 
-	h2, err = GetHealthITProduct(hitp2.Name, hitp2.Version) // ensure we haven't deleted all entries
+	h2, err = GetHealthITProduct(hitp2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("hitp2 no longer exists in DB after deleting hitp1: %s", err.Error())
 	}
@@ -232,7 +232,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 
 	// retrieve organizations
 
-	p1, err := GetProviderOrganization(po1.OrganizationID)
+	p1, err := GetProviderOrganization(po1.GetID())
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -240,7 +240,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	p2, err := GetProviderOrganization(po2.OrganizationID)
+	p2, err := GetProviderOrganization(po2.GetID())
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -257,7 +257,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("Error updating provider organization: %s", err.Error())
 	}
 
-	p1, err = GetProviderOrganization(po1.OrganizationID)
+	p1, err = GetProviderOrganization(po1.GetID())
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -275,7 +275,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
 
-	p2, err = GetProviderOrganization(po2.OrganizationID) // ensure we haven't deleted all entries
+	p2, err = GetProviderOrganization(po2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("po2 no longer exists in DB after deleting po1: %s", err.Error())
 	}

@@ -17,8 +17,7 @@ const (
 	sslmode  = "disable"
 )
 
-const dbSetup = `
-CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+const dbSetup = `CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
@@ -27,7 +26,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TABLE fhir_endpoints (
-    url                     VARCHAR(500) PRIMARY KEY,
+    id                      SERIAL PRIMARY KEY,
+    url                     VARCHAR(500) UNIQUE,
     fhir_version            VARCHAR(500),
     authorization_standard  VARCHAR(500),
     location                JSONB, -- location of IP address from ipstack.com.
@@ -37,7 +37,7 @@ CREATE TABLE fhir_endpoints (
 );
 
 CREATE TABLE provider_organizations ( -- https://data.medicare.gov/Hospital-Compare/Hospital-General-Information/xubh-q36u. Group practices:  https://data.medicare.gov/Physician-Compare/Physician-Compare-National-Downloadable-File/mj5m-pzi6 could get each group practice and address from this if can’t find a better data source
-    organization_id         SERIAL PRIMARY KEY,
+    id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
     url                     VARCHAR(500),
     location                JSONB,
@@ -50,6 +50,7 @@ CREATE TABLE provider_organizations ( -- https://data.medicare.gov/Hospital-Comp
 );
 
 CREATE TABLE healthit_products (
+    id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
     version                 VARCHAR(500),
     developer               VARCHAR(500),
@@ -65,7 +66,7 @@ CREATE TABLE healthit_products (
     chpl_id                 VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (name, version)
+    CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
