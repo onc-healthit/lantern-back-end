@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -30,14 +31,19 @@ type HealthITProduct struct {
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database id as a key.
 func GetHealthITProduct(id int) (*HealthITProduct, error) {
-	// TODO: location, certification_criteria.
+	var hitp HealthITProduct
+	var locationJSON []byte
+	var certificationCriteriaJSON []byte
+
 	sqlStatement := `SELECT id,
 							name,
 							version,
 							developer,
+							location,
 							authorization_standard,
 							api_syntax,
 							api_url,
+							certification_criteria,
 							certification_status,
 							certification_date,
 							certification_edition,
@@ -47,16 +53,17 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 							updated_at
 					FROM healthit_products WHERE id=$1`
 	row := db.QueryRow(sqlStatement, id)
-	var hitp HealthITProduct
 
 	err := row.Scan(
 		&hitp.id,
 		&hitp.Name,
 		&hitp.Version,
 		&hitp.Developer,
+		&locationJSON,
 		&hitp.AuthorizationStandard,
 		&hitp.APISyntax,
 		&hitp.APIURL,
+		&certificationCriteriaJSON,
 		&hitp.CertificationStatus,
 		&hitp.CertificationDate,
 		&hitp.CertificationEdition,
@@ -65,19 +72,27 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 
+	json.Unmarshal(locationJSON, &hitp.Location)
+	json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
+
 	return &hitp, err
 }
 
 // GetHealthITProductUsingNameAndVersion gets a HealthITProduct from the database using the given url as a key.
 func GetHealthITProductUsingNameAndVersion(name string, version string) (*HealthITProduct, error) {
-	// TODO: location, certification_criteria.
+	var hitp HealthITProduct
+	var locationJSON []byte
+	var certificationCriteriaJSON []byte
+
 	sqlStatement := `SELECT id,
 							name,
 							version,
 							developer,
+							location,
 							authorization_standard,
 							api_syntax,
 							api_url,
+							certification_criteria,
 							certification_status,
 							certification_date,
 							certification_edition,
@@ -87,16 +102,17 @@ func GetHealthITProductUsingNameAndVersion(name string, version string) (*Health
 							updated_at
 					FROM healthit_products WHERE name=$1 AND version=$2`
 	row := db.QueryRow(sqlStatement, name, version)
-	var hitp HealthITProduct
 
 	err := row.Scan(
 		&hitp.id,
 		&hitp.Name,
 		&hitp.Version,
 		&hitp.Developer,
+		&locationJSON,
 		&hitp.AuthorizationStandard,
 		&hitp.APISyntax,
 		&hitp.APIURL,
+		&certificationCriteriaJSON,
 		&hitp.CertificationStatus,
 		&hitp.CertificationDate,
 		&hitp.CertificationEdition,
@@ -104,6 +120,9 @@ func GetHealthITProductUsingNameAndVersion(name string, version string) (*Health
 		&hitp.CHPLID,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
+
+	json.Unmarshal(locationJSON, &hitp.Location)
+	json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
 
 	return &hitp, err
 }
@@ -115,44 +134,56 @@ func (hitp *HealthITProduct) GetID() int {
 
 // Add adds the HealthITProduct to the database.
 func (hitp *HealthITProduct) Add() error {
-	// TODO: location, certification_criteria.
 	sqlStatement := `
 	INSERT INTO healthit_products (
 		name,
 		version,
 		developer,
+		location,
 		authorization_standard,
 		api_syntax,
 		api_url,
+		certification_criteria,
 		certification_status,
 		certification_date,
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 	RETURNING id`
+
+	locationJSON, err := json.Marshal(hitp.Location)
+	if err != nil {
+		return err
+	}
+
+	certificationCriteriaJSON, err := json.Marshal(hitp.CertificationCriteria)
+	if err != nil {
+		return err
+	}
 
 	row := db.QueryRow(sqlStatement,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
+		locationJSON,
 		hitp.AuthorizationStandard,
 		hitp.APISyntax,
 		hitp.APIURL,
+		certificationCriteriaJSON,
 		hitp.CertificationStatus,
 		hitp.CertificationDate,
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID)
 
-	err := row.Scan(&hitp.id)
+	err = row.Scan(&hitp.id)
 
 	return err
 }
 
 // Update updates the HealthITProduct in the database using the HealthITProduct's URL as the key.
 func (hitp *HealthITProduct) Update() error {
-	// TODO: location, certification_criteria.
 	sqlStatement := `
 	UPDATE healthit_products
 	SET name = $1,
@@ -165,10 +196,22 @@ func (hitp *HealthITProduct) Update() error {
 		certification_date = $8,
 		certification_edition = $9,
 		last_modified_in_chpl = $10,
-		chpl_id = $11
-	WHERE id=$12`
+		chpl_id = $11,
+		location = $12,
+		certification_criteria = $13
+	WHERE id=$14`
 
-	_, err := db.Exec(sqlStatement,
+	locationJSON, err := json.Marshal(hitp.Location)
+	if err != nil {
+		return err
+	}
+
+	certificationCriteriaJSON, err := json.Marshal(hitp.CertificationCriteria)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(sqlStatement,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -180,6 +223,8 @@ func (hitp *HealthITProduct) Update() error {
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
+		locationJSON,
+		certificationCriteriaJSON,
 		hitp.id)
 
 	return err

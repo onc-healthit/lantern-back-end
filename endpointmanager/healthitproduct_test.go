@@ -12,11 +12,24 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	var err error
 
 	var hitp1 = &HealthITProduct{
-		Name:                 "Health IT System 1",
-		Version:              "1.0",
-		Developer:            "Epic",
-		APISyntax:            "FHIR R4",
-		CertificationEdition: "2015"}
+		Name:      "Health IT System 1",
+		Version:   "1.0",
+		Developer: "Epic",
+		Location: &Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		AuthorizationStandard: "OAuth 2.0",
+		APISyntax:             "FHIR R4",
+		APIURL:                "example.com",
+		CertificationCriteria: []string{"criteria1", "criteria2"},
+		CertificationStatus:   "Active",
+		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
+		CertificationEdition:  "2015",
+		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
+		CHPLID:                "ID"}
 	var hitp2 = &HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",

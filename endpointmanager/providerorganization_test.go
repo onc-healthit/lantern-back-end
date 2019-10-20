@@ -10,8 +10,14 @@ func Test_PersistProviderOrganization(t *testing.T) {
 	var err error
 
 	var po1 = &ProviderOrganization{
-		Name:             "Hospital #1 of America",
-		URL:              "hospital.example.com",
+		Name: "Hospital #1 of America",
+		URL:  "hospital.example.com",
+		Location: &Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
 		OrganizationType: "hospital",
 		HospitalType:     "Acute Care",
 		Ownership:        "Volunary non-profit",

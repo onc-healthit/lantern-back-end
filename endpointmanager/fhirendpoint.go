@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -24,48 +25,62 @@ type FHIREndpoint struct {
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
-	// TODO: missing metadata and location.
+	// TODO: missing metadata
+
+	var endpoint FHIREndpoint
+	var locationJSON []byte
+
 	sqlStatement := `SELECT id,
 							url,
 							fhir_version,
 							authorization_standard,
+							location,
 							created_at,
 							updated_at
 					FROM fhir_endpoints WHERE id=$1`
 	row := db.QueryRow(sqlStatement, id)
-	var endpoint FHIREndpoint
 
 	err := row.Scan(
 		&endpoint.id,
 		&endpoint.URL,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&locationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
+
+	json.Unmarshal(locationJSON, &endpoint.Location)
 
 	return &endpoint, err
 }
 
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
 func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
-	// TODO: missing metadata and location.
+	// TODO: missing metadata
+
+	var endpoint FHIREndpoint
+	var locationJSON []byte
+
 	sqlStatement := `SELECT id,
 							url,
 							fhir_version,
 							authorization_standard,
+							location,
 							created_at,
 							updated_at
 					FROM fhir_endpoints WHERE url=$1`
 	row := db.QueryRow(sqlStatement, url)
-	var endpoint FHIREndpoint
 
 	err := row.Scan(
 		&endpoint.id,
 		&endpoint.URL,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&locationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
+
+	json.Unmarshal(locationJSON, &endpoint.Location)
 
 	return &endpoint, err
 }
@@ -77,38 +92,52 @@ func (e *FHIREndpoint) GetID() int {
 
 // Add adds the FHIREndpoint to the database.
 func (e *FHIREndpoint) Add() error {
-	// TODO: missing metadata and location.
+	// TODO: missing metadata
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
 		fhir_version,
-		authorization_standard)
-	VALUES ($1, $2, $3)
+		authorization_standard,
+		location)
+	VALUES ($1, $2, $3, $4)
 	RETURNING id`
+
+	locationJSON, err := json.Marshal(e.Location)
+	if err != nil {
+		return err
+	}
 
 	row := db.QueryRow(sqlStatement,
 		e.URL,
 		e.FHIRVersion,
-		e.AuthorizationStandard)
+		e.AuthorizationStandard,
+		locationJSON)
 
-	err := row.Scan(&e.id)
+	err = row.Scan(&e.id)
 
 	return err
 }
 
 // Update updates the FHIREndpoint in the database using the FHIREndpoint's URL as the key.
 func (e *FHIREndpoint) Update() error {
-	// TODO: missing metadata and location.
+	// TODO: missing metadata
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
 		fhir_version = $2,
-		authorization_standard = $3
-	WHERE id = $4`
+		authorization_standard = $3,
+		location = $4
+	WHERE id = $5`
 
-	_, err := db.Exec(sqlStatement,
+	locationJSON, err := json.Marshal(e.Location)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(sqlStatement,
 		e.URL,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
+		locationJSON,
 		e.id)
 
 	return err

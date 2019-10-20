@@ -32,10 +32,18 @@ func connectToDB(t *testing.T) *sql.DB {
 func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
 
-	var endpoint1 = &FHIREndpoint{URL: "example.com/FHIR/DSTU2",
+	var endpoint1 = &FHIREndpoint{
+		URL:                   "example.com/FHIR/DSTU2",
 		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0"}
-	var endpoint2 = &FHIREndpoint{URL: "other.example.com/FHIR/DSTU2",
+		AuthorizationStandard: "OAuth 2.0",
+		Location: &Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"}} // TODO: add metadata field once implemented
+	var endpoint2 = &FHIREndpoint{
+		URL:                   "other.example.com/FHIR/DSTU2",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "R4 2.0"}
 
