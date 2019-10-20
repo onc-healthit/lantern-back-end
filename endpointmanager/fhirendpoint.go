@@ -127,7 +127,11 @@ func (e *FHIREndpoint) Delete() error {
 
 // Equal checks each field of the two FHIREndpoints except for the CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
-	if e2 == nil {
+	if e == nil && e2 == nil {
+		return true
+	} else if e == nil {
+		return false
+	} else if e2 == nil {
 		return false
 	}
 
@@ -143,7 +147,7 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.AuthorizationStandard != e2.AuthorizationStandard {
 		return false
 	}
-	if e.Location != e2.Location {
+	if !e.Location.Equal(e2.Location) {
 		return false
 	}
 	if e.Metadata != e2.Metadata {

@@ -11,7 +11,7 @@ type ProviderOrganization struct {
 	id               int
 	Name             string
 	URL              string
-	Location         Location
+	Location         *Location
 	OrganizationType string // "hospital" or "group practice"
 	HospitalType     string // only applicable if the OrganizationType is "hospital". Otherwise, this should be "". Examples: "Acute Care", "Critical Access", "Psychiatric", etc.
 	Ownership        string // The organization type that owns the hospital. Only applicable if the OrganizationType is "hospital". Otherwise, this should be nil. Examples: "Volunary non-profit", "Government - State", "Proprietary", etc.
@@ -120,7 +120,11 @@ func (po *ProviderOrganization) Delete() error {
 
 // Equal checks each field of the two ProviderOrganizations except for the CreatedAt and UpdatedAt fields to see if they are equal.
 func (po *ProviderOrganization) Equal(po2 *ProviderOrganization) bool {
-	if po2 == nil {
+	if po == nil && po2 == nil {
+		return true
+	} else if po == nil {
+		return false
+	} else if po2 == nil {
 		return false
 	}
 
@@ -133,7 +137,7 @@ func (po *ProviderOrganization) Equal(po2 *ProviderOrganization) bool {
 	if po.URL != po2.URL {
 		return false
 	}
-	if po.Location != po2.Location {
+	if !po.Location.Equal(po2.Location) {
 		return false
 	}
 	if po.OrganizationType != po2.OrganizationType {

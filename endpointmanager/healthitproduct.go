@@ -13,13 +13,13 @@ type HealthITProduct struct {
 	id                    int
 	Name                  string
 	Version               string
-	Developer             string   // the name of the vendor that creates the product.
-	Location              Location // the address listed in CHPL for the Developer.
-	AuthorizationStandard string   // examples: OAuth 2.0, Basic, etc.
-	APISyntax             string   // the format of the information provided by the API, for example, REST, FHIR STU3, etc.
-	APIURL                string   // the URL to the API documentation for the product.
-	CertificationCriteria []string // the ONC criteria that the product was certified to, for example, ["170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"]
-	CertificationStatus   string   // the ONC certification status, for example, "Active", "Retired", "Suspended by ONC", etc.
+	Developer             string    // the name of the vendor that creates the product.
+	Location              *Location // the address listed in CHPL for the Developer.
+	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
+	APISyntax             string    // the format of the information provided by the API, for example, REST, FHIR STU3, etc.
+	APIURL                string    // the URL to the API documentation for the product.
+	CertificationCriteria []string  // the ONC criteria that the product was certified to, for example, ["170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"]
+	CertificationStatus   string    // the ONC certification status, for example, "Active", "Retired", "Suspended by ONC", etc.
 	CertificationDate     time.Time
 	CertificationEdition  string // the product's certification edition for the ONC Health IT certification program, for example, "2014", "2015".
 	LastModifiedInCHPL    time.Time
@@ -198,7 +198,11 @@ func (hitp *HealthITProduct) Delete() error {
 
 // Equal checks each field of the two HealthITProducts except for the CreatedAt and UpdatedAt fields to see if they are equal.
 func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
-	if hitp2 == nil {
+	if hitp == nil && hitp2 == nil {
+		return true
+	} else if hitp == nil {
+		return false
+	} else if hitp2 == nil {
 		return false
 	}
 
@@ -214,7 +218,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp.Developer != hitp2.Developer {
 		return false
 	}
-	if hitp.Location != hitp2.Location {
+	if !hitp.Location.Equal(hitp2.Location) {
 		return false
 	}
 	if hitp.AuthorizationStandard != hitp2.AuthorizationStandard {
