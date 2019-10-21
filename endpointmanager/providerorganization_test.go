@@ -90,9 +90,14 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
 
+	_, err = GetProviderOrganization(po1.GetID()) // ensure we deleted the entry
+	if err == nil {
+		t.Errorf("po1 was not deleted: %s", err.Error())
+	}
+
 	_, err = GetProviderOrganization(po2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
-		t.Errorf("po2 no longer exists in DB after deleting po1: %s", err.Error())
+		t.Errorf("error retrieving po2 after deleting po1: %s", err.Error())
 	}
 
 	err = po2.Delete()
@@ -137,8 +142,8 @@ func Test_ProviderOrganizationEqual(t *testing.T) {
 	}
 
 	po2.id = 2
-	if po1.Equal(po2) {
-		t.Errorf("Did not expect provider organization 1 to equal provider organization 2. id should be different. %d vs %d", po2.id, po2.id)
+	if !po1.Equal(po2) {
+		t.Errorf("Expect provider organization 1 to equal provider organization 2. ids should be ignored. id should be different. %d vs %d", po2.id, po2.id)
 	}
 	po2.id = po1.id
 

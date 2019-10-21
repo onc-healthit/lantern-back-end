@@ -22,21 +22,24 @@ type ProviderOrganization struct {
 }
 
 // GetProviderOrganization gets a ProviderOrganization from the database using the database id as a key.
+// If the ProviderOrganization does not exist in the database, sql.ErrNoRows will be returned.
 func GetProviderOrganization(id int) (*ProviderOrganization, error) {
 	var po ProviderOrganization
 	var locationJSON []byte
 
-	sqlStatement := `SELECT id,
-							name,
-							url,
-							location,
-							organization_type,
-							hospital_type,
-							ownership,
-							beds,
-							created_at,
-							updated_at
-					FROM provider_organizations WHERE id=$1`
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		url,
+		location,
+		organization_type,
+		hospital_type,
+		ownership,
+		beds,
+		created_at,
+		updated_at
+	FROM provider_organizations WHERE id=$1`
 	row := db.QueryRow(sqlStatement, id)
 
 	err := row.Scan(
@@ -97,7 +100,7 @@ func (po *ProviderOrganization) Add() error {
 	return err
 }
 
-// Update updates the ProviderOrganization in the database using the ProviderOrganization's URL as the key.
+// Update updates the ProviderOrganization in the database using the ProviderOrganization's database ID as the key.
 func (po *ProviderOrganization) Update() error {
 	sqlStatement := `
 	UPDATE provider_organizations
@@ -128,7 +131,7 @@ func (po *ProviderOrganization) Update() error {
 	return err
 }
 
-// Delete deletes the ProviderOrganization from the databse using the ProviderOrganization's URL as the key.
+// Delete deletes the ProviderOrganization from the database using the ProviderOrganization's database ID as the key.
 func (po *ProviderOrganization) Delete() error {
 	sqlStatement := `
 	DELETE FROM provider_organizations
@@ -139,7 +142,7 @@ func (po *ProviderOrganization) Delete() error {
 	return err
 }
 
-// Equal checks each field of the two ProviderOrganizations except for the CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two ProviderOrganizations except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (po *ProviderOrganization) Equal(po2 *ProviderOrganization) bool {
 	if po == nil && po2 == nil {
 		return true
@@ -149,9 +152,6 @@ func (po *ProviderOrganization) Equal(po2 *ProviderOrganization) bool {
 		return false
 	}
 
-	if po.id != po2.id {
-		return false
-	}
 	if po.Name != po2.Name {
 		return false
 	}

@@ -24,20 +24,23 @@ type FHIREndpoint struct {
 }
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
+// If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 	// TODO: missing metadata
 
 	var endpoint FHIREndpoint
 	var locationJSON []byte
 
-	sqlStatement := `SELECT id,
-							url,
-							fhir_version,
-							authorization_standard,
-							location,
-							created_at,
-							updated_at
-					FROM fhir_endpoints WHERE id=$1`
+	sqlStatement := `
+	SELECT
+		id,
+		url,
+		fhir_version,
+		authorization_standard,
+		location,
+		created_at,
+		updated_at
+	FROM fhir_endpoints WHERE id=$1`
 	row := db.QueryRow(sqlStatement, id)
 
 	err := row.Scan(
@@ -58,20 +61,24 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 }
 
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
+// If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 	// TODO: missing metadata
 
 	var endpoint FHIREndpoint
 	var locationJSON []byte
 
-	sqlStatement := `SELECT id,
-							url,
-							fhir_version,
-							authorization_standard,
-							location,
-							created_at,
-							updated_at
-					FROM fhir_endpoints WHERE url=$1`
+	sqlStatement := `
+	SELECT
+		id,
+		url,
+		fhir_version,
+		authorization_standard,
+		location,
+		created_at,
+		updated_at
+	FROM fhir_endpoints WHERE url=$1`
+
 	row := db.QueryRow(sqlStatement, url)
 
 	err := row.Scan(
@@ -123,7 +130,7 @@ func (e *FHIREndpoint) Add() error {
 	return err
 }
 
-// Update updates the FHIREndpoint in the database using the FHIREndpoint's URL as the key.
+// Update updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (e *FHIREndpoint) Update() error {
 	// TODO: missing metadata
 	sqlStatement := `
@@ -149,7 +156,7 @@ func (e *FHIREndpoint) Update() error {
 	return err
 }
 
-// Delete deletes the FHIREndpoint from the databse using the FHIREndpoint's URL as the key.
+// Delete deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (e *FHIREndpoint) Delete() error {
 	sqlStatement := `
 	DELETE FROM fhir_endpoints
@@ -160,7 +167,7 @@ func (e *FHIREndpoint) Delete() error {
 	return err
 }
 
-// Equal checks each field of the two FHIREndpoints except for the CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e == nil && e2 == nil {
 		return true
@@ -170,9 +177,6 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 		return false
 	}
 
-	if e.id != e2.id {
-		return false
-	}
 	if e.URL != e2.URL {
 		return false
 	}

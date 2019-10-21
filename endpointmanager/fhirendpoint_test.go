@@ -107,9 +107,14 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
 
+	_, err = GetFHIREndpoint(endpoint1.GetID()) // ensure we deleted the entry
+	if err == nil {
+		t.Errorf("endpoint1 was not deleted: %s", err.Error())
+	}
+
 	_, err = GetFHIREndpoint(endpoint2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
-		t.Errorf("endpoint2 no longer exists in DB after deleting endpoint1: %s", err.Error())
+		t.Errorf("error retrieving endpoint2 after deleting endpoint1: %s", err.Error())
 	}
 
 	err = endpoint2.Delete()
@@ -149,8 +154,8 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 
 	endpoint2.id = 2
-	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. id should be different. %d vs %d", endpoint1.id, endpoint2.id)
+	if !endpoint1.Equal(endpoint2) {
+		t.Errorf("Expect endpoint 1 to equal endpoint 2. ids should be ignored. %d vs %d", endpoint1.id, endpoint2.id)
 	}
 	endpoint2.id = endpoint1.id
 

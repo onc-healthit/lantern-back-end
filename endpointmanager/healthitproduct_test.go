@@ -97,9 +97,14 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}
 
+	_, err = GetHealthITProduct(hitp1.GetID()) // ensure we deleted the entry
+	if err == nil {
+		t.Errorf("hitp1 was not deleted: %s", err.Error())
+	}
+
 	_, err = GetHealthITProduct(hitp2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
-		t.Errorf("hitp2 no longer exists in DB after deleting hitp1: %s", err.Error())
+		t.Errorf("error retrieving hitp2 after deleting hitp1: %s", err.Error())
 	}
 
 	err = hitp2.Delete()
@@ -156,8 +161,8 @@ func Test_HealthITProductEqual(t *testing.T) {
 	}
 
 	hitp2.id = 2
-	if hitp1.Equal(hitp2) {
-		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. id should be different. %d vs %d", hitp1.id, hitp2.id)
+	if !hitp1.Equal(hitp2) {
+		t.Errorf("Expect healthit product 1 to equal healthit product 2. ids should be ignored. %d vs %d", hitp1.id, hitp2.id)
 	}
 	hitp2.id = hitp1.id
 

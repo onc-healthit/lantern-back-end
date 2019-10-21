@@ -29,29 +29,32 @@ type HealthITProduct struct {
 	UpdatedAt             time.Time
 }
 
-// GetHealthITProduct gets a HealthITProduct from the database using the database id as a key.
+// GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
+// If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
 func GetHealthITProduct(id int) (*HealthITProduct, error) {
 	var hitp HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 
-	sqlStatement := `SELECT id,
-							name,
-							version,
-							developer,
-							location,
-							authorization_standard,
-							api_syntax,
-							api_url,
-							certification_criteria,
-							certification_status,
-							certification_date,
-							certification_edition,
-							last_modified_in_chpl,
-							chpl_id,
-							created_at,
-							updated_at
-					FROM healthit_products WHERE id=$1`
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		version,
+		developer,
+		location,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_criteria,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id,
+		created_at,
+		updated_at
+	FROM healthit_products WHERE id=$1`
 	row := db.QueryRow(sqlStatement, id)
 
 	err := row.Scan(
@@ -85,29 +88,32 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 	return &hitp, err
 }
 
-// GetHealthITProductUsingNameAndVersion gets a HealthITProduct from the database using the given url as a key.
+// GetHealthITProductUsingNameAndVersion gets a HealthITProduct from the database using the healthit product's name and version as a key.
+// If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
 func GetHealthITProductUsingNameAndVersion(name string, version string) (*HealthITProduct, error) {
 	var hitp HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 
-	sqlStatement := `SELECT id,
-							name,
-							version,
-							developer,
-							location,
-							authorization_standard,
-							api_syntax,
-							api_url,
-							certification_criteria,
-							certification_status,
-							certification_date,
-							certification_edition,
-							last_modified_in_chpl,
-							chpl_id,
-							created_at,
-							updated_at
-					FROM healthit_products WHERE name=$1 AND version=$2`
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		version,
+		developer,
+		location,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_criteria,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id,
+		created_at,
+		updated_at
+	FROM healthit_products WHERE name=$1 AND version=$2`
 	row := db.QueryRow(sqlStatement, name, version)
 
 	err := row.Scan(
@@ -196,7 +202,7 @@ func (hitp *HealthITProduct) Add() error {
 	return err
 }
 
-// Update updates the HealthITProduct in the database using the HealthITProduct's URL as the key.
+// Update updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
 func (hitp *HealthITProduct) Update() error {
 	sqlStatement := `
 	UPDATE healthit_products
@@ -244,7 +250,7 @@ func (hitp *HealthITProduct) Update() error {
 	return err
 }
 
-// Delete deletes the HealthITProduct from the databse using the HealthITProduct's URL as the key.
+// Delete deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
 func (hitp *HealthITProduct) Delete() error {
 	sqlStatement := `
 	DELETE FROM healthit_products
@@ -255,7 +261,7 @@ func (hitp *HealthITProduct) Delete() error {
 	return err
 }
 
-// Equal checks each field of the two HealthITProducts except for the CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two HealthITProducts except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp == nil && hitp2 == nil {
 		return true
@@ -265,9 +271,6 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 		return false
 	}
 
-	if hitp.id != hitp2.id {
-		return false
-	}
 	if hitp.Name != hitp2.Name {
 		return false
 	}
