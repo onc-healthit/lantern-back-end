@@ -71,9 +71,16 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 		&hitp.CHPLID,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(locationJSON, &hitp.Location)
-	json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
+	err = json.Unmarshal(locationJSON, &hitp.Location)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
 
 	return &hitp, err
 }
@@ -120,9 +127,16 @@ func GetHealthITProductUsingNameAndVersion(name string, version string) (*Health
 		&hitp.CHPLID,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(locationJSON, &hitp.Location)
-	json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
+	err = json.Unmarshal(locationJSON, &hitp.Location)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
 
 	return &hitp, err
 }

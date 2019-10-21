@@ -107,7 +107,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
 
-	e2, err = GetFHIREndpoint(endpoint2.GetID()) // ensure we haven't deleted all entries
+	_, err = GetFHIREndpoint(endpoint2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("endpoint2 no longer exists in DB after deleting endpoint1: %s", err.Error())
 	}

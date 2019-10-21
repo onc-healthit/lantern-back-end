@@ -97,7 +97,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}
 
-	h2, err = GetHealthITProduct(hitp2.GetID()) // ensure we haven't deleted all entries
+	_, err = GetHealthITProduct(hitp2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("hitp2 no longer exists in DB after deleting hitp1: %s", err.Error())
 	}

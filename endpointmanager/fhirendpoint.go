@@ -48,8 +48,11 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 		&locationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(locationJSON, &endpoint.Location)
+	err = json.Unmarshal(locationJSON, &endpoint.Location)
 
 	return &endpoint, err
 }
@@ -79,8 +82,11 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 		&locationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(locationJSON, &endpoint.Location)
+	err = json.Unmarshal(locationJSON, &endpoint.Location)
 
 	return &endpoint, err
 }

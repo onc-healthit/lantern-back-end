@@ -50,8 +50,11 @@ func GetProviderOrganization(id int) (*ProviderOrganization, error) {
 		&po.Beds,
 		&po.CreatedAt,
 		&po.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(locationJSON, &po.Location)
+	err = json.Unmarshal(locationJSON, &po.Location)
 
 	return &po, err
 }

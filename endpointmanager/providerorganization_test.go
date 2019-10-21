@@ -90,7 +90,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
 
-	p2, err = GetProviderOrganization(po2.GetID()) // ensure we haven't deleted all entries
+	_, err = GetProviderOrganization(po2.GetID()) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("po2 no longer exists in DB after deleting po1: %s", err.Error())
 	}
