@@ -11,8 +11,12 @@ git:
 notifications:
   email: false
 
+services:
+  - postgresql
+
 before_script:
   - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+  - psql -h localhost -p 5432 -U postgres -d postgres -a -f endpointmanager/dbsetup.sql
 
 script:
   - golangci-lint run -E gofmt

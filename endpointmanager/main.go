@@ -12,7 +12,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "password" // NOTE: this needs to be replaced with the appropriate password
+	password = "" // NOTE: this needs to be replaced with the appropriate password
 	dbname   = "postgres"
 	sslmode  = "disable"
 )
