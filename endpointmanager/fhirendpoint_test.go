@@ -41,7 +41,8 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
-			ZipCode:  "00000"}} // TODO: add capability statement field once implemented
+			ZipCode:  "00000"},
+		CapabilityStatement: &CapabilityStatement{}}
 	var endpoint2 = &FHIREndpoint{
 		URL:                   "other.example.com/FHIR/DSTU2",
 		FHIRVersion:           "DSTU2",
@@ -135,7 +136,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		CapabilityStatement: "some capability statement"}
+		CapabilityStatement: &CapabilityStatement{}}
 	var endpoint2 = &FHIREndpoint{
 		id:                    1,
 		URL:                   "example.com/FHIR/DSTU2",
@@ -147,7 +148,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		CapabilityStatement: "some capability statement"}
+		CapabilityStatement: &CapabilityStatement{}}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
@@ -183,7 +184,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.Location.Address1 = endpoint1.Location.Address1
 
-	endpoint2.CapabilityStatement = "other"
+	endpoint2.CapabilityStatement = nil
 	if endpoint1.Equal(endpoint2) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. CapabilityStatement should be different. %s vs %s", endpoint1.CapabilityStatement, endpoint2.CapabilityStatement)
 	}

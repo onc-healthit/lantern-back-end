@@ -16,9 +16,9 @@ type FHIREndpoint struct {
 	id                    int
 	URL                   string
 	FHIRVersion           string
-	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
-	Location              *Location // location of the FHIR API endpoint's IP address from ipstack.com.
-	CapabilityStatement   string    // the JSON representation of the FHIR capability statement
+	AuthorizationStandard string               // examples: OAuth 2.0, Basic, etc.
+	Location              *Location            // location of the FHIR API endpoint's IP address from ipstack.com.
+	CapabilityStatement   *CapabilityStatement // the JSON representation of the FHIR capability statement
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -26,10 +26,9 @@ type FHIREndpoint struct {
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
-	// TODO: missing capability statement
-
 	var endpoint FHIREndpoint
 	var locationJSON []byte
+	var capabilityStatementJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -38,6 +37,7 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 		fhir_version,
 		authorization_standard,
 		location,
+		capability_statement,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
@@ -49,6 +49,7 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&locationJSON,
+		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -56,6 +57,10 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 	}
 
 	err = json.Unmarshal(locationJSON, &endpoint.Location)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
 
 	return &endpoint, err
 }
@@ -63,10 +68,9 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
-	// TODO: missing capability statement
-
 	var endpoint FHIREndpoint
 	var locationJSON []byte
+	var capabilityStatementJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -75,6 +79,7 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 		fhir_version,
 		authorization_standard,
 		location,
+		capability_statement,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE url=$1`
@@ -87,6 +92,7 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&locationJSON,
+		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -94,6 +100,10 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 	}
 
 	err = json.Unmarshal(locationJSON, &endpoint.Location)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
 
 	return &endpoint, err
 }
@@ -105,16 +115,20 @@ func (e *FHIREndpoint) GetID() int {
 
 // Add adds the FHIREndpoint to the database.
 func (e *FHIREndpoint) Add() error {
-	// TODO: missing capability statement
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
 		fhir_version,
 		authorization_standard,
-		location)
-	VALUES ($1, $2, $3, $4)
+		location,
+		capability_statement)
+	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
+	if err != nil {
+		return err
+	}
+	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
 	if err != nil {
 		return err
 	}
@@ -123,7 +137,8 @@ func (e *FHIREndpoint) Add() error {
 		e.URL,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
-		locationJSON)
+		locationJSON,
+		capabilityStatementJSON)
 
 	err = row.Scan(&e.id)
 
@@ -132,16 +147,20 @@ func (e *FHIREndpoint) Add() error {
 
 // Update updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (e *FHIREndpoint) Update() error {
-	// TODO: missing capability statement
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
 		fhir_version = $2,
 		authorization_standard = $3,
-		location = $4
-	WHERE id = $5`
+		location = $4,
+		capability_statement = $5
+	WHERE id = $6`
 
 	locationJSON, err := json.Marshal(e.Location)
+	if err != nil {
+		return err
+	}
+	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
 	if err != nil {
 		return err
 	}
@@ -151,6 +170,7 @@ func (e *FHIREndpoint) Update() error {
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		locationJSON,
+		capabilityStatementJSON,
 		e.id)
 
 	return err
@@ -189,7 +209,7 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if !e.Location.Equal(e2.Location) {
 		return false
 	}
-	if e.CapabilityStatement != e2.CapabilityStatement {
+	if !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
 		return false
 	}
 
