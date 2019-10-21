@@ -12,7 +12,7 @@ CREATE TABLE fhir_endpoints (
     fhir_version            VARCHAR(500),
     authorization_standard  VARCHAR(500),
     location                JSONB, -- location of IP address from ipstack.com.
-    metadata                JSONB,
+    capability_statement    JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

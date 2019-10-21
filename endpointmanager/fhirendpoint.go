@@ -18,7 +18,7 @@ type FHIREndpoint struct {
 	FHIRVersion           string
 	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
 	Location              *Location // location of the FHIR API endpoint's IP address from ipstack.com.
-	Metadata              string    // the JSON representation of the FHIR capability statement
+	CapabilityStatement   string    // the JSON representation of the FHIR capability statement
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -26,7 +26,7 @@ type FHIREndpoint struct {
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
-	// TODO: missing metadata
+	// TODO: missing capability statement
 
 	var endpoint FHIREndpoint
 	var locationJSON []byte
@@ -63,7 +63,7 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
-	// TODO: missing metadata
+	// TODO: missing capability statement
 
 	var endpoint FHIREndpoint
 	var locationJSON []byte
@@ -105,7 +105,7 @@ func (e *FHIREndpoint) GetID() int {
 
 // Add adds the FHIREndpoint to the database.
 func (e *FHIREndpoint) Add() error {
-	// TODO: missing metadata
+	// TODO: missing capability statement
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
 		fhir_version,
@@ -132,7 +132,7 @@ func (e *FHIREndpoint) Add() error {
 
 // Update updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (e *FHIREndpoint) Update() error {
-	// TODO: missing metadata
+	// TODO: missing capability statement
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
@@ -189,7 +189,7 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if !e.Location.Equal(e2.Location) {
 		return false
 	}
-	if e.Metadata != e2.Metadata {
+	if e.CapabilityStatement != e2.CapabilityStatement {
 		return false
 	}
 
