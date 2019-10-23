@@ -11,6 +11,17 @@ go install ./...
 go run endpoints/*.go ./endpoints/resources/EndpointSources.json
 ```
 
+## Building And Running via Docker Container
+To build Docker container run the following command. NOTE: If you are behind a corperate proxy, the dependencies might not be able to be pulled down.
+```bash
+cd endpoints
+docker build -t endpoint_querier .
+```
+To start the Docker container that you just bult run:
+```bash
+docker run -p 8443:8443 -it endpoint_querier
+```
+
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
 ```bash
