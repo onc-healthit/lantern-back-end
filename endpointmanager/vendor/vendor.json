@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "T202gGG48fSwWZ2YrnYr/j2Y6RQ=",
+			"path": "github.com/google/go-cmp/cmp",
+			"revision": "b1c9c4891a6525d98001fea424c8926c6d77bb56",
+			"revisionTime": "2019-08-29T22:54:27Z"
+		},
+		{
+			"checksumSHA1": "FUnTgtE5i3f8asIvicGkJSFlrts=",
+			"path": "github.com/google/go-cmp/cmp/internal/diff",
+			"revision": "b1c9c4891a6525d98001fea424c8926c6d77bb56",
+			"revisionTime": "2019-08-29T22:54:27Z"
+		},
+		{
+			"checksumSHA1": "nR8EJ8i8lqxxmtLPnXI7WlYANiE=",
+			"path": "github.com/google/go-cmp/cmp/internal/flags",
+			"revision": "b1c9c4891a6525d98001fea424c8926c6d77bb56",
+			"revisionTime": "2019-08-29T22:54:27Z"
+		},
+		{
+			"checksumSHA1": "0pcLJsUQUaBdPXM5LuL9uFeuETs=",
+			"path": "github.com/google/go-cmp/cmp/internal/function",
+			"revision": "b1c9c4891a6525d98001fea424c8926c6d77bb56",
+			"revisionTime": "2019-08-29T22:54:27Z"
+		},
+		{
+			"checksumSHA1": "zQxhgAvWmYtrTZjxRenQQYiDX50=",
+			"path": "github.com/google/go-cmp/cmp/internal/value",
+			"revision": "b1c9c4891a6525d98001fea424c8926c6d77bb56",
+			"revisionTime": "2019-08-29T22:54:27Z"
+		},
+		{
+			"checksumSHA1": "GKTFbGomCP1fhH7mFecvwKvh7bc=",
+			"path": "github.com/lib/pq",
+			"revision": "f91d3411e481ed313eeab65ebfe9076466c39d01",
+			"revisionTime": "2019-10-11T15:32:32Z"
+		},
+		{
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "f91d3411e481ed313eeab65ebfe9076466c39d01",
+			"revisionTime": "2019-10-11T15:32:32Z"
+		},
+		{
+			"checksumSHA1": "n0MMCrKKsQuuhv7vLsrtRUGJVA8=",
+			"path": "github.com/lib/pq/scram",
+			"revision": "f91d3411e481ed313eeab65ebfe9076466c39d01",
+			"revisionTime": "2019-10-11T15:32:32Z"
+		},
+		{
+			"checksumSHA1": "f+VYT08tsvFW/XBXs3+eFS54CRI=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager",
+			"revision": "1eb2eeb2d23d58567a5de034394513d022ac2c4a",
+			"revisionTime": "2019-10-23T19:26:46Z"
+		}
+	],
+	"rootPath": "github.com/onc-healthit/lantern-back-end/endpointmanager"
+}

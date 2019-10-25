@@ -12,7 +12,7 @@ go run endpoints/*.go ./endpoints/resources/EndpointSources.json
 ```
 
 ## Building And Running via Docker Container
-To build Docker container run the following command. NOTE: If you are behind a corperate proxy, the dependencies might not be able to be pulled down.
+To build Docker container run the following command.
 ```bash
 cd endpoints
 docker build -t endpoint_querier .
@@ -135,3 +135,18 @@ You may have to install golangci-lint first. To do this on a Mac you can run:
 brew install golangci/tap/golangci-lint
 ```
 More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
+## Govendor
+Dependencies required for each package are cached in a `vendor/` directory within each package. Go will search for dependencies within the `vendor/` directory at build-time.
+To cache dependencies for a package using the govendor tool:
+```bash
+go get -u github.com/kardianos/govendor # Download govendor
+cd <your package>
+govendor init # You may need to add your go/bin directory to your PATH if govendor is not found. This will create a vendor directory
+govendor add +external # Copy external package dependencies into vendor directory, dependencies will appear the same as they do in src/
+govendor add +local # Copy package dependencies that share the same project root into the vendor directory
+```
+If you add dependencies to your package, or there are updates to dependencies (either local or external) you will have to run the following commands in order to make sure that the vendor directory reflects the updates.
+```bash
+govendor update +external # Update external dependencies
+govendor update +local # Update dependencies that share the same project root
+```
