@@ -7,7 +7,7 @@ The Endpoint Querier takes one arguement, a JSON file containing the endpoints w
 
 ```bash
 go get ./...
-go install ./...
+go mod download
 go run endpoints/*.go ./endpoints/resources/EndpointSources.json
 ```
 
