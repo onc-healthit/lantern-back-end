@@ -6,15 +6,18 @@ import (
 
 type MessageHandler func([]byte, *map[string]interface{}) error
 
+type ChannelID string
+
 type MessageQueue interface {
-	Connect(username string, password string, host string, port string) (*amqp.Connection, error)
-	CreateChannel(conn *amqp.Connection) (*amqp.Channel, error)
-	NumConcurrentMsgs(ch *amqp.Channel, num int) error
-	DeclareQueue(ch *amqp.Channel, name string) error
-	PublishToQueue(ch *amqp.Channel, qName string, message string) error
-	ConsumeFromQueue(ch *amqp.Channel, qName string) (<-chan amqp.Delivery, error)
+	Connect(username string, password string, host string, port string) error
+	CreateChannel() (ChannelID, error)
+	NumConcurrentMsgs(chID ChannelID, num int) error
+	DeclareQueue(chID ChannelID, name string) error
+	PublishToQueue(chID ChannelID, qName string, message string) error
+	ConsumeFromQueue(chID ChannelID, qName string) (<-chan amqp.Delivery, error)
 	ProcessMessages(msgs <-chan amqp.Delivery, handler MessageHandler, args *map[string]interface{}) error
-	DeclareTarget(ch *amqp.Channel, name string) error
-	PublishToTarget(ch *amqp.Channel, name string, routingKey string, message string) error
-	DeclareTargetReceiveQueue(ch *amqp.Channel, targetName string, qName string, routingKey string) error
+	DeclareTarget(chID ChannelID, name string) error
+	PublishToTarget(chID ChannelID, name string, routingKey string, message string) error
+	DeclareTargetReceiveQueue(chID ChannelID, targetName string, qName string, routingKey string) error
+	Close()
 }

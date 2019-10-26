@@ -9,65 +9,68 @@ import (
 var _ lanternmq.MessageQueue = &MessageQueue{}
 
 type MessageQueue struct {
-	ConnectFn      func(username string, password string, host string, port string) (*amqp.Connection, error)
+	ConnectFn      func(username string, password string, host string, port string) error
 	ConnectInvoked bool
 
-	CreateChannelFn      func(conn *amqp.Connection) (*amqp.Channel, error)
+	CreateChannelFn      func() (lanternmq.ChannelID, error)
 	CreateChannelInvoked bool
 
-	NumConcurrentMsgsFn      func(ch *amqp.Channel, num int) error
+	NumConcurrentMsgsFn      func(chID lanternmq.ChannelID, num int) error
 	NumConcurrentMsgsInvoked bool
 
-	DeclareQueueFn      func(ch *amqp.Channel, name string) error
+	DeclareQueueFn      func(chID lanternmq.ChannelID, name string) error
 	DeclareQueueInvoked bool
 
-	PublishToQueueFn      func(ch *amqp.Channel, qName string, message string) error
+	PublishToQueueFn      func(chID lanternmq.ChannelID, qName string, message string) error
 	PublishToQueueInvoked bool
 
-	ConsumeFromQueueFn      func(ch *amqp.Channel, qName string) (<-chan amqp.Delivery, error)
+	ConsumeFromQueueFn      func(chID lanternmq.ChannelID, qName string) (<-chan amqp.Delivery, error)
 	ConsumeFromQueueInvoked bool
 
 	ProcessMessagesFn      func(msgs <-chan amqp.Delivery, handler lanternmq.MessageHandler, args *map[string]interface{}) error
 	ProcessMessagesInvoked bool
 
-	DeclareTargetFn      func(ch *amqp.Channel, name string) error
+	DeclareTargetFn      func(chID lanternmq.ChannelID, name string) error
 	DeclareTargetInvoked bool
 
-	PublishToTargetFn      func(ch *amqp.Channel, name string, routingKey string, message string) error
+	PublishToTargetFn      func(chID lanternmq.ChannelID, name string, routingKey string, message string) error
 	PublishToTargetInvoked bool
 
-	DeclareTargetReceiveQueueFn      func(ch *amqp.Channel, targetName string, qName string, routingKey string) error
+	DeclareTargetReceiveQueueFn      func(chID lanternmq.ChannelID, targetName string, qName string, routingKey string) error
 	DeclareTargetReceiveQueueInvoked bool
+
+	CloseFn      func()
+	CloseInvoked bool
 }
 
-func (mq *MessageQueue) Connect(username string, password string, host string, port string) (*amqp.Connection, error) {
+func (mq *MessageQueue) Connect(username string, password string, host string, port string) error {
 	mq.ConnectInvoked = true
 	return mq.ConnectFn(username, password, host, port)
 }
 
-func (mq *MessageQueue) CreateChannel(conn *amqp.Connection) (*amqp.Channel, error) {
+func (mq *MessageQueue) CreateChannel() (lanternmq.ChannelID, error) {
 	mq.CreateChannelInvoked = true
 	return mq.CreateChannelFn(conn)
 }
 
-func (mq *MessageQueue) NumConcurrentMsgs(ch *amqp.Channel, num int) error {
+func (mq *MessageQueue) NumConcurrentMsgs(chID lanternmq.ChannelID, num int) error {
 	mq.NumConcurrentMsgsInvoked = true
-	return mq.NumConcurrentMsgsFn(ch, num)
+	return mq.NumConcurrentMsgsFn(chID, num)
 }
 
-func (mq *MessageQueue) DeclareQueue(ch *amqp.Channel, name string) error {
+func (mq *MessageQueue) DeclareQueue(chID lanternmq.ChannelID, name string) error {
 	mq.DeclareQueueInvoked = true
-	return mq.DeclareQueueFn(ch, name)
+	return mq.DeclareQueueFn(chID, name)
 }
 
-func (mq *MessageQueue) PublishToQueue(ch *amqp.Channel, qName string, message string) error {
+func (mq *MessageQueue) PublishToQueue(chID lanternmq.ChannelID, qName string, message string) error {
 	mq.PublishToQueueInvoked = true
-	return mq.PublishToQueueFn(ch, qName, message)
+	return mq.PublishToQueueFn(chID, qName, message)
 }
 
-func (mq *MessageQueue) ConsumeFromQueue(ch *amqp.Channel, qName string) (<-chan amqp.Delivery, error) {
+func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string) (<-chan amqp.Delivery, error) {
 	mq.ConsumeFromQueueInvoked = true
-	return mq.ConsumeFromQueueFn(ch, qName)
+	return mq.ConsumeFromQueueFn(chID, qName)
 }
 
 func (mq *MessageQueue) ProcessMessages(msgs <-chan amqp.Delivery, handler lanternmq.MessageHandler, args *map[string]interface{}) error {
@@ -75,17 +78,22 @@ func (mq *MessageQueue) ProcessMessages(msgs <-chan amqp.Delivery, handler lante
 	return mq.ProcessMessagesFn(msgs, handler, args)
 }
 
-func (mq *MessageQueue) DeclareTarget(ch *amqp.Channel, name string) error {
+func (mq *MessageQueue) DeclareTarget(chID lanternmq.ChannelID, name string) error {
 	mq.DeclareTargetInvoked = true
-	return mq.DeclareTargetFn(ch, name)
+	return mq.DeclareTargetFn(chID, name)
 }
 
-func (mq *MessageQueue) PublishToTarget(ch *amqp.Channel, name string, routingKey string, message string) error {
+func (mq *MessageQueue) PublishToTarget(chID lanternmq.ChannelID, name string, routingKey string, message string) error {
 	mq.PublishToTargetInvoked = true
-	return mq.PublishToTargetFn(ch, name, routingKey, message)
+	return mq.PublishToTargetFn(chID, name, routingKey, message)
 }
 
-func (mq *MessageQueue) DeclareTargetReceiveQueue(ch *amqp.Channel, targetName string, qName string, routingKey string) error {
+func (mq *MessageQueue) DeclareTargetReceiveQueue(chID lanternmq.ChannelID, targetName string, qName string, routingKey string) error {
 	mq.DeclareTargetReceiveQueueInvoked = true
-	return mq.DeclareTargetReceiveQueueFn(ch, targetName, qName, routingKey)
+	return mq.DeclareTargetReceiveQueueFn(chID, targetName, qName, routingKey)
+}
+
+func (mq *MessageQueue) Close() {
+	mq.CloseInvoked = true
+	mq.CloseFn()
 }
