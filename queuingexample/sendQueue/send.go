@@ -32,11 +32,11 @@ func main() {
 	failOnError(err)
 	defer ch.Close()
 
-	q, err := lanternmq.CreateQueue(ch, "hello")
+	err = lanternmq.CreateQueue(ch, "hello")
 	failOnError(err)
 
 	body := bodyFrom(os.Args)
-	err = lanternmq.PublishToQueue(ch, q, body)
+	err = lanternmq.PublishToQueue(ch, "hello", body)
 	log.Printf(" [x] Sent %s", body)
 	failOnError(err)
 }

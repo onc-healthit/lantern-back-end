@@ -40,21 +40,20 @@ func main() {
 	lanternmq.NumConcurrentMsgs(ch, 1)
 
 	// Queue
-	q, err := lanternmq.CreateQueue(ch, "hello")
+	err = lanternmq.CreateQueue(ch, "hello")
 	failOnError(err)
-
-	msgs, err := lanternmq.ConsumeFromQueue(ch, q)
+	msgs, err := lanternmq.ConsumeFromQueue(ch, "hello")
 	failOnError(err)
 
 	// Topic
 	tqName := os.Args[1]
 	err = lanternmq.DeclareTarget(ch, "logs_topic")
 	failOnError(err)
-	tq, err := lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
+	err = lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
 	failOnError(err)
-	tq, err = lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "error")
+	err = lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "error")
 	failOnError(err)
-	tmsgs, err := lanternmq.ConsumeFromQueue(ch, tq)
+	tmsgs, err := lanternmq.ConsumeFromQueue(ch, tqName)
 	failOnError(err)
 
 	forever := make(chan bool)
