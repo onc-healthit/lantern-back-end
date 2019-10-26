@@ -43,7 +43,7 @@ func NumConcurrentMsgs(ch *amqp.Channel, num int) error {
 	return err
 }
 
-func CreateQueue(ch *amqp.Channel, name string) error {
+func DeclareQueue(ch *amqp.Channel, name string) error {
 	_, err := ch.QueueDeclare(
 		name,  // name
 		true,  // durable
@@ -131,7 +131,7 @@ func PublishToTarget(ch *amqp.Channel, name string, routingKey string, message s
 	return err
 }
 
-func CreateTargetReceiveQueue(ch *amqp.Channel, targetName string, qName string, routingKey string) error {
+func DeclareTargetReceiveQueue(ch *amqp.Channel, targetName string, qName string, routingKey string) error {
 	_, err := ch.QueueDeclare(
 		qName, // name
 		false, // durable
