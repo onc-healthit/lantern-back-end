@@ -88,6 +88,27 @@ remote_read:
     - url: "http://localhost:9201/read"
 ```
 
+## Starting RabbitMQ
+
+Modified from https://hub.docker.com/_/rabbitmq:
+
+```bash
+docker run -d --hostname lantern-mq --name lantern-mq -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+```
+
+This will start a RabbitMQ container listening on the default port of 5672. If you give that a minute, then do `docker logs lantern-mq`, you'll see in the output a block similar to:
+
+```
+ node           : rabbit@lantern-mq
+ home dir       : /var/lib/rabbitmq
+ config file(s) : /etc/rabbitmq/rabbitmq.conf
+ cookie hash    : 2VgNGhlcNws2enUk77Sv9w==
+ log(s)         : <stdout>
+ database dir   : /var/lib/rabbitmq/mnesia/rabbit@lantern-mq
+```
+
+You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `guest:guest`.
+
 ## Starting Grafana
 Make sure that you have Docker installed and running on your machine
 ```bash
