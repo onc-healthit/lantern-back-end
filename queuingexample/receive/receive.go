@@ -7,7 +7,10 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 )
+
+var mq lanternmq.MessageQueue
 
 func failOnError(err error) {
 	if err != nil {
@@ -30,36 +33,38 @@ func handleTargetMessage(msg []byte, _ *map[string]interface{}) error {
 }
 
 func main() {
-	conn, err := lanternmq.Connect("guest", "guest", "localhost", "5672")
+	mq = &rabbitmq.MessageQueue{}
+
+	conn, err := mq.Connect("guest", "guest", "localhost", "5672")
 	failOnError(err)
 	defer conn.Close()
-	ch, err := lanternmq.CreateChannel(conn)
+	ch, err := mq.CreateChannel(conn)
 	failOnError(err)
 	defer ch.Close()
 
-	lanternmq.NumConcurrentMsgs(ch, 1)
+	mq.NumConcurrentMsgs(ch, 1)
 
 	// Queue
-	err = lanternmq.DeclareQueue(ch, "hello")
+	err = mq.DeclareQueue(ch, "hello")
 	failOnError(err)
-	msgs, err := lanternmq.ConsumeFromQueue(ch, "hello")
+	msgs, err := mq.ConsumeFromQueue(ch, "hello")
 	failOnError(err)
 
 	// Topic
 	tqName := os.Args[1]
-	err = lanternmq.DeclareTarget(ch, "logs_topic")
+	err = mq.DeclareTarget(ch, "logs_topic")
 	failOnError(err)
-	err = lanternmq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
+	err = mq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
 	failOnError(err)
-	err = lanternmq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "error")
+	err = mq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "error")
 	failOnError(err)
-	tmsgs, err := lanternmq.ConsumeFromQueue(ch, tqName)
+	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
 	failOnError(err)
 
 	forever := make(chan bool)
 
-	go lanternmq.ProcessMessages(msgs, handleQueueMessage, nil)
-	go lanternmq.ProcessMessages(tmsgs, handleTargetMessage, nil)
+	go mq.ProcessMessages(msgs, handleQueueMessage, nil)
+	go mq.ProcessMessages(tmsgs, handleTargetMessage, nil)
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever

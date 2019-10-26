@@ -6,7 +6,10 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 )
+
+var mq lanternmq.MessageQueue
 
 func failOnError(err error) {
 	if err != nil {
@@ -25,18 +28,20 @@ func bodyFrom(args []string) string {
 }
 
 func main() {
-	conn, err := lanternmq.Connect("guest", "guest", "localhost", "5672")
+	mq = &rabbitmq.MessageQueue{}
+
+	conn, err := mq.Connect("guest", "guest", "localhost", "5672")
 	failOnError(err)
 	defer conn.Close()
-	ch, err := lanternmq.CreateChannel(conn)
+	ch, err := mq.CreateChannel(conn)
 	failOnError(err)
 	defer ch.Close()
 
-	err = lanternmq.DeclareQueue(ch, "hello")
+	err = mq.DeclareQueue(ch, "hello")
 	failOnError(err)
 
 	body := bodyFrom(os.Args)
-	err = lanternmq.PublishToQueue(ch, "hello", body)
+	err = mq.PublishToQueue(ch, "hello", body)
 	log.Printf(" [x] Sent %s", body)
 	failOnError(err)
 }
