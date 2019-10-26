@@ -43,8 +43,8 @@ func NumConcurrentMsgs(ch *amqp.Channel, num int) error {
 	return err
 }
 
-func CreateQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
-	q, err := ch.QueueDeclare(
+func CreateQueue(ch *amqp.Channel, name string) error {
+	_, err := ch.QueueDeclare(
 		name,  // name
 		true,  // durable
 		false, // delete when unused
@@ -54,17 +54,17 @@ func CreateQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
 	)
 	if err != nil {
 		err = fmt.Errorf("unable to create queue: %s", err.Error()) //errors.New("unable to create queue")
-		return nil, err
+		return err
 	}
-	return &q, err
+	return err
 }
 
-func PublishToQueue(ch *amqp.Channel, q *amqp.Queue, message string) error {
+func PublishToQueue(ch *amqp.Channel, qName string, message string) error {
 	err := ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
+		"",    // exchange
+		qName, // routing key
+		false, // mandatory
+		false, // immediate
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
 			ContentType:  "text/plain",
@@ -73,15 +73,15 @@ func PublishToQueue(ch *amqp.Channel, q *amqp.Queue, message string) error {
 	return err
 }
 
-func ConsumeFromQueue(ch *amqp.Channel, q *amqp.Queue) (<-chan amqp.Delivery, error) {
+func ConsumeFromQueue(ch *amqp.Channel, qName string) (<-chan amqp.Delivery, error) {
 	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		false,  // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
+		qName, // queue
+		"",    // consumer
+		false, // auto-ack
+		false, // exclusive
+		false, // no-local
+		false, // no-wait
+		nil,   // args
 	)
 	return msgs, err
 }
@@ -131,30 +131,30 @@ func PublishToTarget(ch *amqp.Channel, name string, routingKey string, message s
 	return err
 }
 
-func CreateTargetReceiveQueue(ch *amqp.Channel, targetName string, queueName string, routingKey string) (*amqp.Queue, error) {
-	q, err := ch.QueueDeclare(
-		queueName, // name
-		false,     // durable
-		false,     // delete when usused
-		true,      // exclusive
-		false,     // no-wait
-		nil,       // arguments
+func CreateTargetReceiveQueue(ch *amqp.Channel, targetName string, qName string, routingKey string) error {
+	_, err := ch.QueueDeclare(
+		qName, // name
+		false, // durable
+		false, // delete when usused
+		true,  // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	if err != nil {
 		err = fmt.Errorf("unable to create queue: %s", err.Error()) //errors.New("unable to create queue")
-		return nil, err
+		return err
 	}
 
 	err = ch.QueueBind(
-		q.Name,       // queue name
+		qName,        // queue name
 		routingKey,   // routing key
 		"logs_topic", // exchange
 		false,
 		nil)
 	if err != nil {
-		err = fmt.Errorf("unable to bind queue %s to target %s with routing key %s", queueName, targetName, routingKey)
-		return nil, err
+		err = fmt.Errorf("unable to bind queue %s to target %s with routing key %s", qName, targetName, routingKey)
+		return err
 	}
 
-	return &q, err
+	return err
 }
