@@ -32,7 +32,7 @@ func main() {
 	failOnError(err)
 	defer ch.Close()
 
-	err = lanternmq.CreateQueue(ch, "hello")
+	err = lanternmq.DeclareQueue(ch, "hello")
 	failOnError(err)
 
 	body := bodyFrom(os.Args)

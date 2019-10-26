@@ -40,7 +40,7 @@ func main() {
 	lanternmq.NumConcurrentMsgs(ch, 1)
 
 	// Queue
-	err = lanternmq.CreateQueue(ch, "hello")
+	err = lanternmq.DeclareQueue(ch, "hello")
 	failOnError(err)
 	msgs, err := lanternmq.ConsumeFromQueue(ch, "hello")
 	failOnError(err)
@@ -49,9 +49,9 @@ func main() {
 	tqName := os.Args[1]
 	err = lanternmq.DeclareTarget(ch, "logs_topic")
 	failOnError(err)
-	err = lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
+	err = lanternmq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
 	failOnError(err)
-	err = lanternmq.CreateTargetReceiveQueue(ch, "logs_topic", tqName, "error")
+	err = lanternmq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "error")
 	failOnError(err)
 	tmsgs, err := lanternmq.ConsumeFromQueue(ch, tqName)
 	failOnError(err)
