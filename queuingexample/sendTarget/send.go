@@ -39,13 +39,12 @@ func severityFrom(args []string) string {
 
 func main() {
 	mq = &rabbitmq.MessageQueue{}
+	defer mq.Close()
 
-	conn, err := mq.Connect("guest", "guest", "localhost", "5672")
+	err := mq.Connect("guest", "guest", "localhost", "5672")
 	failOnError(err)
-	defer conn.Close()
-	ch, err := mq.CreateChannel(conn)
+	ch, err := mq.CreateChannel()
 	failOnError(err)
-	defer ch.Close()
 
 	err = mq.DeclareTarget(ch, "logs_topic")
 	failOnError(err)
