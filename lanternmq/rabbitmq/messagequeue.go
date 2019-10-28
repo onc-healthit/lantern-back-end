@@ -11,10 +11,15 @@ import (
 
 // Ensure MessageQueue implements lanternmq.MessageQueue.
 var _ lanternmq.MessageQueue = &MessageQueue{}
+var _ lanternmq.Messages = &Messages{}
 
 type MessageQueue struct {
 	connection *amqp.Connection
 	channels   []*amqp.Channel
+}
+
+type Messages struct {
+	deliveryChannel <-chan amqp.Delivery
 }
 
 func (mq *MessageQueue) addChannel(ch *amqp.Channel) (lanternmq.ChannelID, error) {
@@ -126,13 +131,13 @@ func (mq *MessageQueue) PublishToQueue(chID lanternmq.ChannelID, qName string, m
 	return err
 }
 
-func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string) (<-chan amqp.Delivery, error) {
+func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string) (lanternmq.Messages, error) {
 	ch, err := mq.getChannel(chID)
 	if err != nil {
 		return nil, err
 	}
 
-	msgs, err := ch.Consume(
+	deliveryChannel, err := ch.Consume(
 		qName, // queue
 		"",    // consumer
 		false, // auto-ack
@@ -141,11 +146,18 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 		false, // no-wait
 		nil,   // args
 	)
-	return msgs, err
+	msgs := Messages{deliveryChannel: deliveryChannel}
+
+	return &msgs, err
 }
 
-func (mq *MessageQueue) ProcessMessages(msgs <-chan amqp.Delivery, handler lanternmq.MessageHandler, args *map[string]interface{}) error {
-	for d := range msgs {
+func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}) error {
+	msgsd, converted := msgs.(*Messages)
+	if !converted {
+		return errors.New("the messages are of the wrong type")
+	}
+
+	for d := range msgsd.deliveryChannel {
 		err := handler(d.Body, args)
 		if err != nil {
 			return err
