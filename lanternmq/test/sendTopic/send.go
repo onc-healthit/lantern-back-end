@@ -1,3 +1,7 @@
+// Sends a message as a queue topic. The first command line argument is the topic string.
+// The second command line argument is the message string. If the topic string is missing, "anonymous.info"
+// is used as the topic. If the message string is missing, "hello" is used as the message.
+// The topic messages are posted to the target "logs_topic".
 package main
 
 import (
@@ -46,12 +50,12 @@ func main() {
 	ch, err := mq.CreateChannel()
 	failOnError(err)
 
-	err = mq.DeclareTarget(ch, "logs_topic")
+	err = mq.DeclareTopic(ch, "logs_topic")
 	failOnError(err)
 
 	body := bodyFrom(os.Args)
 	severity := severityFrom(os.Args)
-	err = mq.PublishToTarget(ch, "logs_topic", severity, body)
+	err = mq.PublishToTopic(ch, "logs_topic", severity, body)
 	failOnError(err)
 	log.Printf(" [x] Sent %s", body)
 }

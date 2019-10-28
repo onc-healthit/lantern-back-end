@@ -1,3 +1,6 @@
+// Sends a message to a queue. The first command line argument is the message string. To work with
+// the accompanying `receive` executable, send strings composed of periods. Example: `go run send.go ...`
+// The queue that the message is sent on is named 'hello'.
 package main
 
 import (

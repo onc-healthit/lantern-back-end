@@ -1,3 +1,8 @@
+// Receives messages from the queue named 'hello' and from the topic with target name 'logs_topic'
+// and topics 'error' and 'warning'.
+// When receiving messages from the queue, it counts how many periods are in the message and waits that
+// main seconds. For example, it will wait 3 seconds after receiving the message '...'. This is
+// supposed to simulate work being performed.
 package main
 
 import (
@@ -27,8 +32,8 @@ func handleQueueMessage(msg []byte, _ *map[string]interface{}) error {
 	return nil
 }
 
-func handleTargetMessage(msg []byte, _ *map[string]interface{}) error {
-	log.Printf("TARGET: Received message: %s\n", string(msg))
+func handleTopicMessage(msg []byte, _ *map[string]interface{}) error {
+	log.Printf("TOPIC: Received message: %s\n", msg)
 	return nil
 }
 
@@ -41,7 +46,8 @@ func main() {
 	ch, err := mq.CreateChannel()
 	failOnError(err)
 
-	mq.NumConcurrentMsgs(ch, 1)
+	err = mq.NumConcurrentMsgs(ch, 1)
+	failOnError(err)
 
 	// Queue
 	err = mq.DeclareQueue(ch, "hello")
@@ -51,20 +57,27 @@ func main() {
 
 	// Topic
 	tqName := os.Args[1]
-	err = mq.DeclareTarget(ch, "logs_topic")
+	err = mq.DeclareTopic(ch, "logs_topic")
 	failOnError(err)
-	err = mq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "warning")
+	err = mq.DeclareTopicReceiveQueue(ch, "logs_topic", tqName, "warning")
 	failOnError(err)
-	err = mq.DeclareTargetReceiveQueue(ch, "logs_topic", tqName, "error")
+	err = mq.DeclareTopicReceiveQueue(ch, "logs_topic", tqName, "error")
 	failOnError(err)
 	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
 	failOnError(err)
 
 	forever := make(chan bool)
 
-	go mq.ProcessMessages(msgs, handleQueueMessage, nil)
-	go mq.ProcessMessages(tmsgs, handleTargetMessage, nil)
+	errs := make(chan error)
+	defer close(errs)
+
+	go mq.ProcessMessages(msgs, handleQueueMessage, nil, errs)
+	go mq.ProcessMessages(tmsgs, handleTopicMessage, nil, errs)
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+
+	for err = range errs {
+		panic(err.Error())
+	}
 	<-forever
 }
