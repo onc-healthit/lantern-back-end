@@ -11,6 +11,9 @@ Pull requests into this repository require the following checks to be completed 
 - [ ] Code review has been performed.
   - Code diff has been done and checked to ensure only expected code is being committed.
   - A linter for the language has been run.
+- [ ] vendor/ directories have been updated
+  - New dependencies have been added
+  - Local dependencies have been updated
 
 **Primary Reviewer:**
 
@@ -25,6 +28,9 @@ Pull requests into this repository require the following checks to be completed 
 - [ ] Tests are complete.
   - Tests are included and test edge cases.
   - Tests have been run locally and pass.
+- [ ] vendor/ directories have been updated
+  - New dependencies have been added
+  - Local dependencies have been updated
 
 **Secondary Reviewer:**
 
