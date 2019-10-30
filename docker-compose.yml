@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  endpoint_querier:
+    container_name: endpoint_querier_1
+    build: 
+      context: ./endpoints
+
+  pg_prometheus:
+    container_name: pg_prometheus
+    image: timescale/pg_prometheus:latest-pg11
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    command:
+      -csynchronous_commit=off
+
+  prometheus_postgresql_adapter:
+    container_name: prometheus_postgres_adapter
+    image: timescale/prometheus-postgresql-adapter
+    links:
+      - pg_prometheus
+    command:
+      -pg-host=pg_prometheus
+      -pg-password=${POSTGRES_PASSWORD}
+      -pg-prometheus-log-samples
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - prometheusData:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml 
+    links:
+      - prometheus_postgresql_adapter
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafanaData:/var/lib/grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  prometheusData:
+  grafanaData:
+
+
