@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
-	"github.com/onc-healthit/lantern-back-end/endpoints/querier"
-	"github.com/onc-healthit/lantern-back-end/fhir"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,6 +10,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpoints/querier"
+	"github.com/onc-healthit/lantern-back-end/fhir"
+	"github.com/spf13/viper"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -133,17 +135,33 @@ func initializeMetrics() {
 func setupServer() {
 	// Setup hosted metrics endpoint
 	http.Handle("/metrics", promhttp.Handler())
-	// TODO: Configure port in configuration file
-	var err = http.ListenAndServe(":8443", nil)
+	var err = http.ListenAndServe(":"+viper.GetString("port"), nil)
 	if err != nil {
 		log.Fatal("HTTP Server Creation Error: ", err.Error())
 	}
 }
 
+func setupConfig() {
+	var err error
+	viper.SetEnvPrefix("lantern_endptqry")
+	viper.AutomaticEnv()
+
+	err = viper.BindEnv("port")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("logfile")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	viper.SetDefault("port", 8443)
+	viper.SetDefault("logfile", "endpointQuerierLog.json")
+}
+
 func initializeLogger() {
 	log.SetFormatter(&log.JSONFormatter{})
-	// TODO: Configuration file for logfile name/location
-	f, err := os.OpenFile("endpointQuerierLog.json", os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
 	if err != nil {
 		log.Fatal("LogFile creation error: ", err.Error())
 	}
@@ -151,6 +169,7 @@ func initializeLogger() {
 }
 
 func main() {
+	setupConfig()
 	initializeLogger()
 	go setupServer()
 
