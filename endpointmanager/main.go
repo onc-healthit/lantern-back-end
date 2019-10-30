@@ -4,27 +4,66 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
-)
+	"github.com/spf13/viper"
 
-// TODO: configuration file or commandline arguments
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "" // NOTE: this needs to be replaced with the appropriate password
-	dbname   = "postgres"
-	sslmode  = "disable"
+	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
 
+func setupConfig() {
+	var err error
+
+	viper.SetEnvPrefix("lantern_endptmgr")
+	viper.AutomaticEnv()
+
+	err = viper.BindEnv("dbhost")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("dbport")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("dbuser")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("dbpass")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("dbname")
+	if err != nil {
+		panic(err.Error())
+	}
+	err = viper.BindEnv("dbsslmode")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	viper.SetDefault("dbhost", "localhost")
+	viper.SetDefault("dbport", 5432)
+	viper.SetDefault("dbuser", "postgres")
+	viper.SetDefault("dbpass", "")
+	viper.SetDefault("dbname", "postgres")
+	viper.SetDefault("dbsslmode", "disable")
+}
+
 func main() {
 	//var endpoint models.FHIREndpoint
 	var err error
+
+	setupConfig()
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbname, sslmode)
+		viper.GetString("dbhost"),
+		viper.GetInt("dbport"),
+		viper.GetString("dbuser"),
+		viper.GetString("dbpass"),
+		viper.GetString("dbname"),
+		viper.GetString("dbsslmode"))
 
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {

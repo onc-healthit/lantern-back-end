@@ -7,23 +7,31 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 )
 
 func connectToDB(t *testing.T) *sql.DB {
+	setupConfig()
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbname, sslmode)
+		viper.GetString("dbhost"),
+		viper.GetInt("dbport"),
+		viper.GetString("dbuser"),
+		viper.GetString("dbpass"),
+		viper.GetString("dbname"),
+		viper.GetString("dbsslmode"))
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		t.Errorf("Error opening database: %s", err.Error())
+		t.Fatalf("Error opening database: %s", err.Error())
 	}
 
 	// calling db.Ping to create a connection to the database.
 	// db.Open only validates the arguments, it does not create the connection.
 	err = db.Ping()
 	if err != nil {
-		t.Errorf("Error creating connection to database: %s", err.Error())
+		t.Fatalf("Error creating connection to database: %s", err.Error())
 	}
 
 	return db
