@@ -5,6 +5,9 @@ Pull requests into this repository require the following checks to be completed 
   - This pull request describes why these changes were made.
   - The JIRA ticket links to this PR.
   - The JIRA ticket for this PR is: 
+  - vendor/ directories have been updated
+    - New dependencies have been added
+    - Local dependencies have been updated
 - [ ] Tests are complete.
   - Tests are included and test edge cases.
   - Tests have been run locally and pass.
@@ -22,6 +25,9 @@ Pull requests into this repository require the following checks to be completed 
   - Code accomplishes the tasks purpose.
   - Code follows style guidance appropriate for the language, including passing linter checks.
   - Code is well commented (which does not mean verbosely commented).
+  - vendor/ directories have been updated
+    - New dependencies have been added
+    - Local dependencies have been updated
 - [ ] Tests are complete.
   - Tests are included and test edge cases.
   - Tests have been run locally and pass.

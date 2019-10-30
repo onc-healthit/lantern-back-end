@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "seznb4xDlNjE7K9X244AVovdsys=",
+			"path": "github.com/onc-healthit/lantern-back-end/fhir",
+			"revision": "1eb2eeb2d23d58567a5de034394513d022ac2c4a",
+			"revisionTime": "2019-10-23T19:26:46Z"
+		}
+	],
+	"rootPath": "github.com/onc-healthit/lantern-back-end/fhir"
+}
