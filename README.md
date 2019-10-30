@@ -6,8 +6,8 @@ A service to send http requests to get capability statements from FHIR endpoints
 The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `<project_root>/endpoints/resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
 
 ```bash
-go get ./...
-go mod download # You may have to set environment variable GO111MODULE=on
+go get ./... # You may have to set environment variable GO111MODULE=on
+go mod download
 go run endpoints/*.go ./endpoints/resources/EndpointSources.json
 ```
 
