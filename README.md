@@ -88,6 +88,12 @@ remote_read:
     - url: "http://localhost:9201/read"
 ```
 
+## Starting All Required Services
+All of the required services to run the lantern back end are contained in the docker-compose file.
+```bash
+docker-compose up
+```
+
 ## Starting Grafana
 Make sure that you have Docker installed and running on your machine
 ```bash
