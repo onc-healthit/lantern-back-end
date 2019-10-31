@@ -1,5 +1,22 @@
 # FHIR Target Querier
 A service to send http requests to get capability statements from FHIR endpoints
+- [FHIR Target Querier](#fhir-target-querier)
+  * [Building And Running](#building-and-running)
+  * [Building And Running via Docker Container](#building-and-running-via-docker-container)
+  * [Starting Prometheus via Docker Container](#starting-prometheus-via-docker-container)
+  * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
+  * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
+      - [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
+  * [Starting All Required Services](#starting-all-required-services)
+  * [Starting Grafana](#starting-grafana)
+  * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
+- [Testing](#testing)
+    + [Running All Unit Tests](#running-all-unit-tests)
+    + [Running Tests With Coverage](#running-tests-with-coverage)
+- [Contributing](#contributing)
+  * [Lintr](#lintr)
+  * [Govendor](#govendor)
+- [License](#license)
 
 ## Building And Running
 
