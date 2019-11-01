@@ -3,11 +3,12 @@ A service to send http requests to get capability statements from FHIR endpoints
 - [FHIR Target Querier](#fhir-target-querier)
   * [Building And Running](#building-and-running)
   * [Building And Running via Docker Container](#building-and-running-via-docker-container)
+- [Additional Services](#additional-services)
+  * [Starting All Services Using docker-compose](#starting-all-services-using-docker-compose)
   * [Starting Prometheus via Docker Container](#starting-prometheus-via-docker-container)
   * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
   * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
       - [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
-  * [Starting All Required Services](#starting-all-required-services)
   * [Starting Grafana](#starting-grafana)
   * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
 - [Testing](#testing)
@@ -17,7 +18,6 @@ A service to send http requests to get capability statements from FHIR endpoints
   * [Lintr](#lintr)
   * [Govendor](#govendor)
 - [License](#license)
-
 ## Building And Running
 
 The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `<project_root>/endpoints/resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
@@ -38,6 +38,15 @@ To start the Docker container that you just bult run:
 ```bash
 docker run -p 8443:8443 -it endpoint_querier
 ```
+# Additional Services
+The data collected by the endpoint querier can then be collected by Prometheus, which can be written to a Postgres database using the Prometheus Postgres storage adapter. This data can ultimately be viewed in Grafana. Below is information about how to start these additional services.
+
+## Starting All Services Using docker-compose
+All of the required services to run the Lantern back end are contained in the docker-compose file.
+```bash
+docker-compose up
+```
+This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana and will setup the networking between the related services. 
 
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
@@ -103,12 +112,6 @@ remote_write:
     - url: "http://localhost:9201/write"
 remote_read:
     - url: "http://localhost:9201/read"
-```
-
-## Starting All Required Services
-All of the required services to run the lantern back end are contained in the docker-compose file.
-```bash
-docker-compose up
 ```
 
 ## Starting Grafana
