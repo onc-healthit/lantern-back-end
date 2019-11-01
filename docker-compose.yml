@@ -19,7 +19,7 @@ services:
   prometheus_postgresql_adapter:
     container_name: prometheus_postgres_adapter
     image: timescale/prometheus-postgresql-adapter
-    links:
+    depends_on:
       - pg_prometheus
     command:
       -pg-host=pg_prometheus
@@ -32,8 +32,9 @@ services:
     volumes:
       - prometheusData:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml 
-    links:
+    depends_on:
       - prometheus_postgresql_adapter
+      - pg_prometheus
 
   grafana:
     image: grafana/grafana
