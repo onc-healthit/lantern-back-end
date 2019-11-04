@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 
 	_ "github.com/lib/pq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
 // TODO: configuration file or commandline arguments
@@ -17,27 +17,15 @@ const (
 	sslmode  = "disable"
 )
 
-var db *sql.DB
-
 func main() {
 	//var endpoint models.FHIREndpoint
 	var err error
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbname, sslmode)
 
-	db, err = sql.Open("postgres", psqlInfo)
+	store, err := postgresql.NewStore(host, port, user, password, dbname, sslmode)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
-	defer db.Close()
-
-	// calling db.Ping to create a connection to the database.
-	// db.Open only validates the arguments, it does not create the connection.
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	defer store.Close()
 
 	fmt.Println("Successfully connected!")
 }

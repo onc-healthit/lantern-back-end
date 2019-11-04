@@ -1,4 +1,4 @@
-package main
+package endpointmanager
 
 // CapabilityStatement represents a FHIR capability statement (or conformance statement if FHIR DSTU2 and below)
 type CapabilityStatement struct {

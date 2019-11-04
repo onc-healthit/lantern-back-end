@@ -1,4 +1,4 @@
-package main
+package endpointmanager
 
 import (
 	"time"
@@ -8,115 +8,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Test_PersistHealthITProduct(t *testing.T) {
-	var err error
-
-	var hitp1 = &HealthITProduct{
-		Name:      "Health IT System 1",
-		Version:   "1.0",
-		Developer: "Epic",
-		Location: &Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
-		AuthorizationStandard: "OAuth 2.0",
-		APISyntax:             "FHIR R4",
-		APIURL:                "example.com",
-		CertificationCriteria: []string{"criteria1", "criteria2"},
-		CertificationStatus:   "Active",
-		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CertificationEdition:  "2015",
-		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CHPLID:                "ID"}
-	var hitp2 = &HealthITProduct{
-		Name:                 "Health IT System 2",
-		Version:              "2.0",
-		Developer:            "Cerner",
-		APISyntax:            "FHIR DSTU2",
-		CertificationEdition: "2014"}
-
-	db = connectToDB(t)
-	defer db.Close()
-
-	// add products
-
-	err = hitp1.Add()
-	if err != nil {
-		t.Errorf("Error adding health it product: %s", err.Error())
-	}
-
-	err = hitp2.Add()
-	if err != nil {
-		t.Errorf("Error adding health it product: %s", err.Error())
-	}
-
-	// retrieve products
-
-	h1, err := GetHealthITProduct(hitp1.GetID())
-	if err != nil {
-		t.Errorf("Error getting health it product: %s", err.Error())
-	}
-	if !h1.Equal(hitp1) {
-		t.Errorf("retrieved product is not equal to saved product.")
-	}
-
-	h2, err := GetHealthITProductUsingNameAndVersion(hitp2.Name, hitp2.Version)
-	if err != nil {
-		t.Errorf("Error getting health it product: %s", err.Error())
-	}
-	if !h2.Equal(hitp2) {
-		t.Errorf("retrieved product is not equal to saved product.")
-	}
-
-	// update product
-
-	h1.APISyntax = "FHIR R5"
-
-	err = h1.Update()
-	if err != nil {
-		t.Errorf("Error updating health it product: %s", err.Error())
-	}
-
-	h1, err = GetHealthITProduct(hitp1.GetID())
-	if err != nil {
-		t.Errorf("Error getting health it product: %s", err.Error())
-	}
-	if h1.Equal(hitp1) {
-		t.Errorf("retrieved UPDATED product is equal to original product.")
-	}
-	if h1.UpdatedAt.Equal(h1.CreatedAt) {
-		t.Errorf("UpdatedAt is not being properly set on update.")
-	}
-
-	// delete products
-
-	err = hitp1.Delete()
-	if err != nil {
-		t.Errorf("Error deleting health it product: %s", err.Error())
-	}
-
-	_, err = GetHealthITProduct(hitp1.GetID()) // ensure we deleted the entry
-	if err == nil {
-		t.Errorf("hitp1 was not deleted: %s", err.Error())
-	}
-
-	_, err = GetHealthITProduct(hitp2.GetID()) // ensure we haven't deleted all entries
-	if err != nil {
-		t.Errorf("error retrieving hitp2 after deleting hitp1: %s", err.Error())
-	}
-
-	err = hitp2.Delete()
-	if err != nil {
-		t.Errorf("Error deleting health it product: %s", err.Error())
-	}
-}
-
 func Test_HealthITProductEqual(t *testing.T) {
 	now := time.Now()
 	var hitp1 = &HealthITProduct{
-		id:        1,
+		ID:        1,
 		Name:      "Health IT System 1",
 		Version:   "1.0",
 		Developer: "Epic",
@@ -136,7 +31,7 @@ func Test_HealthITProductEqual(t *testing.T) {
 		LastModifiedInCHPL:    now,
 		CHPLID:                "ID"}
 	var hitp2 = &HealthITProduct{
-		id:        1,
+		ID:        1,
 		Name:      "Health IT System 1",
 		Version:   "1.0",
 		Developer: "Epic",
@@ -160,11 +55,11 @@ func Test_HealthITProductEqual(t *testing.T) {
 		t.Errorf("Expected hitp1 to equal hitp2. They are not equal.")
 	}
 
-	hitp2.id = 2
+	hitp2.ID = 2
 	if !hitp1.Equal(hitp2) {
-		t.Errorf("Expect healthit product 1 to equal healthit product 2. ids should be ignored. %d vs %d", hitp1.id, hitp2.id)
+		t.Errorf("Expect healthit product 1 to equal healthit product 2. ids should be ignored. %d vs %d", hitp1.ID, hitp2.ID)
 	}
-	hitp2.id = hitp1.id
+	hitp2.ID = hitp1.ID
 
 	hitp2.Name = "other"
 	if hitp1.Equal(hitp2) {

@@ -1,4 +1,4 @@
-package main
+package endpointmanager
 
 // Location represents a US postal address.
 type Location struct {

@@ -1,38 +1,15 @@
-package main
+package postgresql
 
 import (
 	"encoding/json"
-	"time"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
-
-// HealthITProduct represents a health IT vendor product such as an
-// EHR. This information is gathered from the Certified Health IT Products List
-// (CHPL).
-type HealthITProduct struct {
-	id                    int
-	Name                  string
-	Version               string
-	Developer             string    // the name of the vendor that creates the product.
-	Location              *Location // the address listed in CHPL for the Developer.
-	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
-	APISyntax             string    // the format of the information provided by the API, for example, REST, FHIR STU3, etc.
-	APIURL                string    // the URL to the API documentation for the product.
-	CertificationCriteria []string  // the ONC criteria that the product was certified to, for example, ["170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"]
-	CertificationStatus   string    // the ONC certification status, for example, "Active", "Retired", "Suspended by ONC", etc.
-	CertificationDate     time.Time
-	CertificationEdition  string // the product's certification edition for the ONC Health IT certification program, for example, "2014", "2015".
-	LastModifiedInCHPL    time.Time
-	CHPLID                string // the product's unique ID within the CHPL system.
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-}
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
-func GetHealthITProduct(id int) (*HealthITProduct, error) {
-	var hitp HealthITProduct
+func (s *Store) GetHealthITProduct(id int) (*endpointmanager.HealthITProduct, error) {
+	var hitp endpointmanager.HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 
@@ -55,10 +32,10 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 		created_at,
 		updated_at
 	FROM healthit_products WHERE id=$1`
-	row := db.QueryRow(sqlStatement, id)
+	row := s.DB.QueryRow(sqlStatement, id)
 
 	err := row.Scan(
-		&hitp.id,
+		&hitp.ID,
 		&hitp.Name,
 		&hitp.Version,
 		&hitp.Developer,
@@ -90,8 +67,8 @@ func GetHealthITProduct(id int) (*HealthITProduct, error) {
 
 // GetHealthITProductUsingNameAndVersion gets a HealthITProduct from the database using the healthit product's name and version as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
-func GetHealthITProductUsingNameAndVersion(name string, version string) (*HealthITProduct, error) {
-	var hitp HealthITProduct
+func (s *Store) GetHealthITProductUsingNameAndVersion(name string, version string) (*endpointmanager.HealthITProduct, error) {
+	var hitp endpointmanager.HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 
@@ -114,10 +91,10 @@ func GetHealthITProductUsingNameAndVersion(name string, version string) (*Health
 		created_at,
 		updated_at
 	FROM healthit_products WHERE name=$1 AND version=$2`
-	row := db.QueryRow(sqlStatement, name, version)
+	row := s.DB.QueryRow(sqlStatement, name, version)
 
 	err := row.Scan(
-		&hitp.id,
+		&hitp.ID,
 		&hitp.Name,
 		&hitp.Version,
 		&hitp.Developer,
@@ -147,13 +124,8 @@ func GetHealthITProductUsingNameAndVersion(name string, version string) (*Health
 	return &hitp, err
 }
 
-// GetID returns the database ID for the HealthITProduct.
-func (hitp *HealthITProduct) GetID() int {
-	return hitp.id
-}
-
-// Add adds the HealthITProduct to the database.
-func (hitp *HealthITProduct) Add() error {
+// AddHealthITProduct adds the HealthITProduct to the database.
+func (s *Store) AddHealthITProduct(hitp *endpointmanager.HealthITProduct) error {
 	sqlStatement := `
 	INSERT INTO healthit_products (
 		name,
@@ -182,7 +154,7 @@ func (hitp *HealthITProduct) Add() error {
 		return err
 	}
 
-	row := db.QueryRow(sqlStatement,
+	row := s.DB.QueryRow(sqlStatement,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -197,13 +169,13 @@ func (hitp *HealthITProduct) Add() error {
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID)
 
-	err = row.Scan(&hitp.id)
+	err = row.Scan(&hitp.ID)
 
 	return err
 }
 
-// Update updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
-func (hitp *HealthITProduct) Update() error {
+// UpdateHealthITProduct updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
+func (s *Store) UpdateHealthITProduct(hitp *endpointmanager.HealthITProduct) error {
 	sqlStatement := `
 	UPDATE healthit_products
 	SET name = $1,
@@ -231,7 +203,7 @@ func (hitp *HealthITProduct) Update() error {
 		return err
 	}
 
-	_, err = db.Exec(sqlStatement,
+	_, err = s.DB.Exec(sqlStatement,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -245,71 +217,18 @@ func (hitp *HealthITProduct) Update() error {
 		hitp.CHPLID,
 		locationJSON,
 		certificationCriteriaJSON,
-		hitp.id)
+		hitp.ID)
 
 	return err
 }
 
-// Delete deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
-func (hitp *HealthITProduct) Delete() error {
+// DeleteHealthITProduct deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
+func (s *Store) DeleteHealthITProduct(hitp *endpointmanager.HealthITProduct) error {
 	sqlStatement := `
 	DELETE FROM healthit_products
 	WHERE id=$1`
 
-	_, err := db.Exec(sqlStatement, hitp.id)
+	_, err := s.DB.Exec(sqlStatement, hitp.ID)
 
 	return err
-}
-
-// Equal checks each field of the two HealthITProducts except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
-func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
-	if hitp == nil && hitp2 == nil {
-		return true
-	} else if hitp == nil {
-		return false
-	} else if hitp2 == nil {
-		return false
-	}
-
-	if hitp.Name != hitp2.Name {
-		return false
-	}
-	if hitp.Version != hitp2.Version {
-		return false
-	}
-	if hitp.Developer != hitp2.Developer {
-		return false
-	}
-	if !hitp.Location.Equal(hitp2.Location) {
-		return false
-	}
-	if hitp.AuthorizationStandard != hitp2.AuthorizationStandard {
-		return false
-	}
-	if hitp.APISyntax != hitp2.APISyntax {
-		return false
-	}
-	if hitp.APIURL != hitp2.APIURL {
-		return false
-	}
-	if !cmp.Equal(hitp.CertificationCriteria, hitp2.CertificationCriteria) {
-		return false
-	}
-	if hitp.CertificationStatus != hitp2.CertificationStatus {
-		return false
-	}
-	if !hitp.CertificationDate.Equal(hitp2.CertificationDate) {
-		return false
-	}
-	if hitp.CertificationEdition != hitp2.CertificationEdition {
-		return false
-	}
-	if !hitp.LastModifiedInCHPL.Equal(hitp2.LastModifiedInCHPL) {
-		return false
-	}
-	if hitp.CHPLID != hitp2.CHPLID {
-		return false
-	}
-
-	return true
 }
