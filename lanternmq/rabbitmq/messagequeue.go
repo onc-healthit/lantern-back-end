@@ -132,7 +132,7 @@ func (mq *MessageQueue) DeclareQueue(chID lanternmq.ChannelID, qName string) err
 		nil,   // arguments
 	)
 	if err != nil {
-		err = fmt.Errorf("unable to create queue: %s", err.Error()) //errors.New("unable to create queue")
+		err = fmt.Errorf("unable to create queue: %s", err.Error())
 		return err
 	}
 	return err
@@ -314,7 +314,7 @@ func (mq *MessageQueue) DeclareTopicReceiveQueue(chID lanternmq.ChannelID, topic
 		nil,   // arguments
 	)
 	if err != nil {
-		err = fmt.Errorf("unable to create queue: %s", err.Error()) //errors.New("unable to create queue")
+		err = fmt.Errorf("unable to create queue: %s", err.Error())
 		return err
 	}
 
