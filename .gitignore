@@ -17,3 +17,6 @@ endpointQuerierLog.json
 # Binaries
 endpoints/endpoints
 endpointmanager/endpointmanager
+
+# Environment File
+.env
