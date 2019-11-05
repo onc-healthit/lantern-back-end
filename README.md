@@ -47,7 +47,18 @@ All of the required services to run the Lantern back end are contained in the do
 docker-compose up
 ```
 This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana and will setup the networking between the related services. 
-
+To start all of the services in the background run:
+```bash
+docker-compose up -d
+```
+To stop everything and keep the containers/volumes run:
+```bash
+docker-compose stop
+```
+If you stopped the containers and wish to restart them you can run:
+```bash
+docker-compose start
+```
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
 ```bash
@@ -125,7 +136,10 @@ docker run -d -p 3000:3000 grafana/grafana
 2. Login using Username: admin, Password admin
 3. Add a datasource
   - If using Prometheus without remote storage, add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
-  - If using PostgreSQL remote storage, add a PostgreSQL data source, running on `localhost:5432` or `host.docker.internal:5432` (if on a MAC). Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
+  - If using PostgreSQL remote storage, add a PostgreSQL data source.
+    - If you are running the postgres database on a local docker container and are publishing port 5432, location is `localhost:5432` or `host.docker.internal:5432` (if on a MAC).
+    - If you started the postgres database using the docker-compose file in this repository (#starting-all-services-using-docker-compose) then the postgres database will be located at `pg_prometheus:5432`
+    - Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
 
 # Testing
