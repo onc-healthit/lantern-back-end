@@ -43,6 +43,7 @@ The data collected by the endpoint querier can then be collected by Prometheus, 
 
 ## Starting All Services Using docker-compose
 All of the required services to run the Lantern back end are contained in the docker-compose file.
+**Notice:** Before running `docker-compose up` make sure that you have created a `.env` file containing the environment variables specified in the `.env.sample` file located alongside `docker-compose.yml`
 ```bash
 docker-compose up
 ```
