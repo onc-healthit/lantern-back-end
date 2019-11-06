@@ -11,6 +11,10 @@ git:
 notifications:
   email: false
 
+# Set configuration environment variables
+env:
+  - LANTERN_ENDPTMGR_DBHOST=localhost LANTERN_ENDPTMGR_DBPORT=5432 LANTERN_ENDPTMGR_DBUSER=postgres LANTERN_ENDPTMGR_DBPASS= LANTERN_ENDPTMGR_DBNAME=postgres LANTERN_ENDPTMGR_DBSSLMODE=disable
+
 services:
   - postgresql
 
