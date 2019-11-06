@@ -8,6 +8,23 @@ import (
 	"github.com/streadway/amqp"
 )
 
+const autoAckFalse bool = false
+const autoDeleteFalse bool = false
+const contentTypePlainText string = "text/plain"
+const deleteWhenUnusedFalse bool = false
+const deliveryMode = amqp.Persistent
+const durableFalse bool = false
+const durableTrue bool = true
+const exclusiveFalse bool = false
+const exclusiveTrue bool = true
+const globalFalse bool = false
+const immediateFalse bool = false
+const internalFalse bool = false
+const mandatoryFalse bool = false
+const noWaitFalse bool = false
+const noLocalFalse bool = false
+const prefetchSize0 int = 0
+
 // Ensure MessageQueue implements lanternmq.MessageQueue.
 var _ lanternmq.MessageQueue = &MessageQueue{}
 
@@ -98,9 +115,9 @@ func (mq *MessageQueue) NumConcurrentMsgs(chID lanternmq.ChannelID, num int) err
 	}
 
 	err = ch.Qos(
-		num,   // prefetch count
-		0,     // prefetch size
-		false, // global
+		num,
+		prefetchSize0,
+		globalFalse,
 	)
 	if err != nil {
 		err = errors.New("unable to set the number of concurrent messages that can be handled")
@@ -124,12 +141,12 @@ func (mq *MessageQueue) DeclareQueue(chID lanternmq.ChannelID, qName string) err
 	}
 
 	_, err = ch.QueueDeclare(
-		qName, // name
-		true,  // durable
-		false, // delete when unused
-		false, // exclusive
-		false, // no-wait
-		nil,   // arguments
+		qName,
+		durableTrue,
+		deleteWhenUnusedFalse,
+		exclusiveFalse,
+		noWaitFalse,
+		nil, // args
 	)
 	if err != nil {
 		err = fmt.Errorf("unable to create queue: %s", err.Error())
@@ -155,13 +172,13 @@ func (mq *MessageQueue) PublishToQueue(chID lanternmq.ChannelID, qName string, m
 	}
 
 	err = ch.Publish(
-		"",    // exchange
-		qName, // routing key
-		false, // mandatory
-		false, // immediate
+		"", // exchange
+		qName,
+		mandatoryFalse,
+		immediateFalse,
 		amqp.Publishing{
-			DeliveryMode: amqp.Persistent,
-			ContentType:  "text/plain",
+			DeliveryMode: deliveryMode,
+			ContentType:  contentTypePlainText,
 			Body:         []byte(message),
 		})
 	return err
@@ -184,13 +201,13 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 	}
 
 	deliveryChannel, err := ch.Consume(
-		qName, // queue
-		"",    // consumer
-		false, // auto-ack
-		false, // exclusive
-		false, // no-local
-		false, // no-wait
-		nil,   // args
+		qName,
+		"", // consumer
+		autoAckFalse,
+		exclusiveFalse,
+		noLocalFalse,
+		noWaitFalse,
+		nil, // args
 	)
 	msgs := Messages{deliveryChannel: deliveryChannel}
 
@@ -237,13 +254,13 @@ func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) erro
 	}
 
 	err = ch.ExchangeDeclare(
-		name,    // name
-		"topic", // type
-		true,    // durable
-		false,   // auto-deleted
-		false,   // internal
-		false,   // no-wait
-		nil,     // arguments
+		name,
+		"topic",
+		durableTrue,
+		autoDeleteFalse,
+		internalFalse,
+		noWaitFalse,
+		nil, // args
 	)
 	if err != nil {
 		err = errors.New("unable to declare target")
@@ -268,12 +285,12 @@ func (mq *MessageQueue) PublishToTopic(chID lanternmq.ChannelID, name string, ro
 	}
 
 	err = ch.Publish(
-		name,       // exchange
-		routingKey, // routing key
-		false,      // mandatory
-		false,      // immediate
+		name,
+		routingKey,
+		mandatoryFalse,
+		immediateFalse,
 		amqp.Publishing{
-			ContentType: "text/plain",
+			ContentType: contentTypePlainText,
 			Body:        []byte(message),
 		})
 	if err != nil {
@@ -306,12 +323,12 @@ func (mq *MessageQueue) DeclareTopicReceiveQueue(chID lanternmq.ChannelID, topic
 	}
 
 	_, err = ch.QueueDeclare(
-		qName, // name
-		false, // durable
-		false, // delete when usused
-		true,  // exclusive
-		false, // no-wait
-		nil,   // arguments
+		qName,
+		durableFalse,
+		deleteWhenUnusedFalse,
+		exclusiveTrue,
+		noWaitFalse,
+		nil, // args
 	)
 	if err != nil {
 		err = fmt.Errorf("unable to create queue: %s", err.Error())
@@ -319,11 +336,12 @@ func (mq *MessageQueue) DeclareTopicReceiveQueue(chID lanternmq.ChannelID, topic
 	}
 
 	err = ch.QueueBind(
-		qName,      // queue name
-		routingKey, // routing key
-		topicName,  // exchange
-		false,
-		nil)
+		qName,
+		routingKey,
+		topicName,
+		noWaitFalse,
+		nil, // args
+	)
 	if err != nil {
 		err = fmt.Errorf("unable to bind queue %s to target %s with routing key %s", qName, topicName, routingKey)
 		return err
