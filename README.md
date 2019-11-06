@@ -1,6 +1,23 @@
 # FHIR Target Querier
 A service to send http requests to get capability statements from FHIR endpoints
-
+- [FHIR Target Querier](#fhir-target-querier)
+  * [Building And Running](#building-and-running)
+  * [Building And Running via Docker Container](#building-and-running-via-docker-container)
+- [Additional Services](#additional-services)
+  * [Starting All Services Using docker-compose](#starting-all-services-using-docker-compose)
+  * [Starting Prometheus via Docker Container](#starting-prometheus-via-docker-container)
+  * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
+  * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
+      - [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
+  * [Starting Grafana](#starting-grafana)
+  * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
+- [Testing](#testing)
+    + [Running All Unit Tests](#running-all-unit-tests)
+    + [Running Tests With Coverage](#running-tests-with-coverage)
+- [Contributing](#contributing)
+  * [Lintr](#lintr)
+  * [Govendor](#govendor)
+- [License](#license)
 ## Building And Running
 
 The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `<project_root>/endpoints/resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
@@ -21,7 +38,28 @@ To start the Docker container that you just bult run:
 ```bash
 docker run -p 8443:8443 -it endpoint_querier
 ```
+# Additional Services
+The data collected by the endpoint querier can then be collected by Prometheus, which can be written to a Postgres database using the Prometheus Postgres storage adapter. This data can ultimately be viewed in Grafana. Below is information about how to start these additional services.
 
+## Starting All Services Using docker-compose
+All of the required services to run the Lantern back end are contained in the docker-compose file.
+**Notice:** Before running `docker-compose up` make sure that you have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
+```bash
+docker-compose up
+```
+This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana and will setup the networking between the related services. 
+To start all of the services in the background run:
+```bash
+docker-compose up -d
+```
+To stop everything and keep the containers/volumes run:
+```bash
+docker-compose stop
+```
+If you stopped the containers and wish to restart them you can run:
+```bash
+docker-compose start
+```
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
 ```bash
@@ -99,7 +137,10 @@ docker run -d -p 3000:3000 grafana/grafana
 2. Login using Username: admin, Password admin
 3. Add a datasource
   - If using Prometheus without remote storage, add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
-  - If using PostgreSQL remote storage, add a PostgreSQL data source, running on `localhost:5432` or `host.docker.internal:5432` (if on a MAC). Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
+  - If using PostgreSQL remote storage, add a PostgreSQL data source.
+    - If you are running the postgres database on a local docker container and are publishing port 5432, location is `localhost:5432` or `host.docker.internal:5432` (if on a MAC).
+    - If you started the postgres database using the docker-compose file in this repository (#starting-all-services-using-docker-compose) then the postgres database will be located at `pg_prometheus:5432`
+    - Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
 
 # Testing
