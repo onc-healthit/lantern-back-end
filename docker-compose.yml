@@ -47,7 +47,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_SECURITY_ALLOW_EMBEDDING=true
     ports:
-      - "80:3000"
+      - "3000:3000"
   
   lantern-mq:
     container_name: lantern-mq
