@@ -14,5 +14,9 @@ endpointQuerierLog.json
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Binaries
+endpoints/endpoints
+endpointmanager/endpointmanager
+
+# Environment File
+.env
