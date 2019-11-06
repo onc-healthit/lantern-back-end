@@ -13,6 +13,7 @@
   * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
   * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
       - [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
+  * [Starting RabbitMQ](#starting-rabbitmq)
   * [Starting Grafana](#starting-grafana)
   * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
 - [Testing](#testing)
