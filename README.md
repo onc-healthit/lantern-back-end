@@ -73,7 +73,7 @@ The FHIR Endpoint Querier reads the following environment variables:
 
 * **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
 
-  Default value: 8443
+  Default value: 3333
 
 * **LANTERN_ENDPTQRY_LOGFILE**: The location of the logfile for log messages
 
@@ -97,7 +97,7 @@ docker build -t endpoint_querier .
 ```
 To start the Docker container that you just bult run:
 ```bash
-docker run -p 8443:8443 -it endpoint_querier
+docker run -p 3333:3333 -it endpoint_querier
 ```
 # Additional Services
 The data collected by the endpoint querier can then be collected by Prometheus, which can be written to a Postgres database using the Prometheus Postgres storage adapter. This data can ultimately be viewed in Grafana. Below is information about how to start these additional services.

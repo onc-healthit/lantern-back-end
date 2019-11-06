@@ -11,7 +11,7 @@ scrape_configs:
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
-    - targets: ['endpoint_querier_1:8443']
+    - targets: ['endpoint_querier_1:3333']
 
 remote_write:
     - url: "http://prometheus_postgres_adapter:9201/write"

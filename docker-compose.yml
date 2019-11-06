@@ -15,8 +15,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     command:
       -csynchronous_commit=off
-    ports:
-      - "5432:5432"
 
   prometheus_postgresql_adapter:
     container_name: prometheus_postgres_adapter
@@ -47,7 +45,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_SECURITY_ALLOW_EMBEDDING=true
     ports:
-      - "3000:3000"
+      - "80:3000"
   
   lantern-mq:
     container_name: lantern-mq
