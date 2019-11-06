@@ -47,7 +47,14 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_SECURITY_ALLOW_EMBEDDING=true
     ports:
-      - "3000:3000"
+      - "80:3000"
+  
+  lantern-mq:
+    container_name: lantern-mq
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 volumes:
   pgdata:

@@ -107,7 +107,7 @@ All of the required services to run the Lantern back end are contained in the do
 ```bash
 docker-compose up
 ```
-This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana and will setup the networking between the related services. 
+This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, Rabbitmq and will setup the networking between the related services. 
 To start all of the services in the background run:
 ```bash
 docker-compose up -d
