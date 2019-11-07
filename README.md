@@ -113,7 +113,7 @@ To run all of the dockerized services for a development environment, run
 docker-compose up
 ```
 
-This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will expose ports.
+This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will publish ports.
 
 To run all of the dockerized services for a production environment, run
 
@@ -121,7 +121,7 @@ To run all of the dockerized services for a production environment, run
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
-This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will only expose Grafana using port 80.
+This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will only publish port 3000 to port 80 for Grafana.
 
 To start all of the services in the background, add `-d` to your `docker-compose up` command.
 

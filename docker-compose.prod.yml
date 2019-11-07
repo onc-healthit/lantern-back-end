@@ -1,6 +1,0 @@
-version: '3'
-
-services:
-  grafana:
-    ports:
-      - "80:3000"
