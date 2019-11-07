@@ -73,7 +73,7 @@ The FHIR Endpoint Querier reads the following environment variables:
 
 * **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
 
-  Default value: 8443
+  Default value: 3333
 
 * **LANTERN_ENDPTQRY_LOGFILE**: The location of the logfile for log messages
 
@@ -97,30 +97,49 @@ docker build -t endpoint_querier .
 ```
 To start the Docker container that you just bult run:
 ```bash
-docker run -p 8443:8443 -it endpoint_querier
+docker run -p 3333:3333 -it endpoint_querier
 ```
 # Additional Services
 The data collected by the endpoint querier can then be collected by Prometheus, which can be written to a Postgres database using the Prometheus Postgres storage adapter. This data can ultimately be viewed in Grafana. Below is information about how to start these additional services.
 
 ## Starting All Services Using docker-compose
 All of the required services to run the Lantern back end are contained in the docker-compose file.
+
 **Notice:** Before running `docker-compose up` make sure that you have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
+
+To run all of the dockerized services for a development environment, run
+
 ```bash
 docker-compose up
 ```
-This will start an endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, Rabbitmq and will setup the networking between the related services. 
-To start all of the services in the background run:
+
+This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will publish ports.
+
+To run all of the dockerized services for a production environment, run
+
 ```bash
-docker-compose up -d
+docker-compose -f docker-compose.yml up
 ```
+
+This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will only publish port 3000 to port 80 for Grafana.
+
+To start all of the services in the background, add `-d` to your `docker-compose up` command.
+
+To stop everything and remove the containers and network, run:
+```bash
+docker-compose down
+```
+
 To stop everything and keep the containers/volumes run:
 ```bash
 docker-compose stop
 ```
+
 If you stopped the containers and wish to restart them you can run:
 ```bash
 docker-compose start
 ```
+
 ## Starting Prometheus via Docker Container
 You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
 ```bash
