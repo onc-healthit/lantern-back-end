@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  pg_prometheus:
+    ports:
+      - "5432:5432"
+
+  lantern-mq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  grafana:
+    ports:
+      - "3000:3000"
