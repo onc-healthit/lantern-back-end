@@ -151,7 +151,7 @@ func setupConfig() {
 	err = viper.BindEnv("logfile")
 	failOnError(err)
 
-	viper.SetDefault("port", 8443)
+	viper.SetDefault("port", 3333)
 	viper.SetDefault("logfile", "endpointQuerierLog.json")
 }
 
