@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -12,8 +11,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-var db *sql.DB
 
 func failOnError(err error) {
 	if err != nil {
