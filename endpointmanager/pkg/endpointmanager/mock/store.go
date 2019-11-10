@@ -1,64 +1,74 @@
 package mock
 
 import (
-	"database/sql"
-	"fmt"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-// Store is the structure for working with the postgres database. It implements the following interfaces:
-// FHIREndpointStore
-// HealthITProductStore
-// ProviderOrganizationStore
-//
-// Usage:
-//
-// store := postgresql.NewStore(host, port, user, password, dbname, sslmode)
-// defer store.Close()
-// po := store.GetProviderOrganization(poID)
-// <etc.>
-type Store struct {
-	DB *sql.DB
-}
-
-// Ensure Store implements endpointmanager.FHIREndpointStore.
 var _ endpointmanager.FHIREndpointStore = &Store{}
-
-// Ensure Store implements endpointmanager.HealthITProductStore.
 var _ endpointmanager.HealthITProductStore = &Store{}
-
-// Ensure Store implements endpointmanager.ProviderOrganizationStore.
 var _ endpointmanager.ProviderOrganizationStore = &Store{}
+
+// Store implements the endpointmanager FHIREndpointStore, HealthITProductStore, and ProviderOrganizationStore
+// interfaces and allows mock implementations of the associated methods.
+// Each Store method calls the corresponding method <methodName>Fn as assigned in the mock Store structure.
+// It also assigns <methodName>Invoked to true when <methodName> is called.
+type Store struct {
+	GetFHIREndpointFn      func(int) (*endpointmanager.FHIREndpoint, error)
+	GetFHIREndpointInvoked bool
+
+	GetFHIREndpointUsingURLFn      func(string) (*endpointmanager.FHIREndpoint, error)
+	GetFHIREndpointUsingURLInvoked bool
+
+	AddFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	AddFHIREndpointInvoked bool
+
+	UpdateFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	UpdateFHIREndpointInvoked bool
+
+	DeleteFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	DeleteFHIREndpointInvoked bool
+
+	GetHealthITProductFn      func(int) (*endpointmanager.HealthITProduct, error)
+	GetHealthITProductInvoked bool
+
+	GetHealthITProductUsingNameAndVersionFn      func(string, string) (*endpointmanager.HealthITProduct, error)
+	GetHealthITProductUsingNameAndVersionInvoked bool
+
+	AddHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	AddHealthITProductInvoked bool
+
+	UpdateHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	UpdateHealthITProductInvoked bool
+
+	DeleteHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	DeleteHealthITProductInvoked bool
+
+	GetProviderOrganizationFn      func(int) (*endpointmanager.ProviderOrganization, error)
+	GetProviderOrganizationInvoked bool
+
+	AddProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	AddProviderOrganizationInvoked bool
+
+	UpdateProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	UpdateProviderOrganizationInvoked bool
+
+	DeleteProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	DeleteProviderOrganizationInvoked bool
+
+	CloseFn      func()
+	CloseInvoked bool
+}
 
 // NewStore creates a connection to the postgresql database and adds a reference to the database
 // in store.DB.
-func NewStore(host string, port int, user string, password string, dbname string, sslmode string) (*Store, error) {
+func NewStore() (*Store, error) {
 	var store Store
-	var err error
-
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbname, sslmode)
-
-	store.DB, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
-		err = fmt.Errorf("Error opening database: %s", err.Error())
-		panic(err.Error())
-	}
-
-	// calling db.Ping to create a connection to the database.
-	// db.Open only validates the arguments, it does not create the connection.
-	err = store.DB.Ping()
-	if err != nil {
-		err = fmt.Errorf("Error creating connection to database: %s", err.Error())
-		panic(err.Error())
-	}
 
 	return &store, nil
 }
 
 // Close closes the postgresql database connection.
 func (s *Store) Close() {
-	s.DB.Close()
+	s.CloseInvoked = true
+	s.CloseFn()
 }

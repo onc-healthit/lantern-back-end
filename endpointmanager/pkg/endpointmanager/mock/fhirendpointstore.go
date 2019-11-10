@@ -1,166 +1,35 @@
 package mock
 
 import (
-	"encoding/json"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-// GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
-// If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
+// GetFHIREndpoint mocks endpointmanager.FHIREndpointStore.GetFHIREndpoint and sets s.GetFHIREndpointInvoked to true and calls s.GetFHIREndpointFn with the given arguments.
 func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
-	var endpoint endpointmanager.FHIREndpoint
-	var locationJSON []byte
-	var capabilityStatementJSON []byte
-
-	sqlStatement := `
-	SELECT
-		id,
-		url,
-		fhir_version,
-		authorization_standard,
-		location,
-		capability_statement,
-		created_at,
-		updated_at
-	FROM fhir_endpoints WHERE id=$1`
-	row := s.DB.QueryRow(sqlStatement, id)
-
-	err := row.Scan(
-		&endpoint.ID,
-		&endpoint.URL,
-		&endpoint.FHIRVersion,
-		&endpoint.AuthorizationStandard,
-		&locationJSON,
-		&capabilityStatementJSON,
-		&endpoint.CreatedAt,
-		&endpoint.UpdatedAt)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(locationJSON, &endpoint.Location)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
-
-	return &endpoint, err
+	s.GetFHIREndpointInvoked = true
+	return s.GetFHIREndpointFn(id)
 }
 
-// GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
-// If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
+// GetFHIREndpointUsingURL mocks endpointmanager.FHIREndpointStore.GetFHIREndpointUsingURL and sets s.GetFHIREndpointUsingURLInvoked to true and calls s.GetFHIREndpointUsingURLFn with the given arguments.
 func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoint, error) {
-	var endpoint endpointmanager.FHIREndpoint
-	var locationJSON []byte
-	var capabilityStatementJSON []byte
-
-	sqlStatement := `
-	SELECT
-		id,
-		url,
-		fhir_version,
-		authorization_standard,
-		location,
-		capability_statement,
-		created_at,
-		updated_at
-	FROM fhir_endpoints WHERE url=$1`
-
-	row := s.DB.QueryRow(sqlStatement, url)
-
-	err := row.Scan(
-		&endpoint.ID,
-		&endpoint.URL,
-		&endpoint.FHIRVersion,
-		&endpoint.AuthorizationStandard,
-		&locationJSON,
-		&capabilityStatementJSON,
-		&endpoint.CreatedAt,
-		&endpoint.UpdatedAt)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(locationJSON, &endpoint.Location)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
-
-	return &endpoint, err
+	s.GetFHIREndpointUsingURLInvoked = true
+	return s.GetFHIREndpointUsingURLFn(url)
 }
 
-// AddFHIREndpoint adds the FHIREndpoint to the database.
+// AddFHIREndpoint mocks endpointmanager.FHIREndpointStore.AddFHIREndpoint and sets s.AddFHIREndpointInvoked to true and calls s.AddFHIREndpointFn with the given arguments.
 func (s *Store) AddFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	INSERT INTO fhir_endpoints (url,
-		fhir_version,
-		authorization_standard,
-		location,
-		capability_statement)
-	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id`
-
-	locationJSON, err := json.Marshal(e.Location)
-	if err != nil {
-		return err
-	}
-	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
-	if err != nil {
-		return err
-	}
-
-	row := s.DB.QueryRow(sqlStatement,
-		e.URL,
-		e.FHIRVersion,
-		e.AuthorizationStandard,
-		locationJSON,
-		capabilityStatementJSON)
-
-	err = row.Scan(&e.ID)
-
-	return err
+	s.AddFHIREndpointInvoked = true
+	return s.AddFHIREndpointFn(e)
 }
 
-// UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
+// UpdateFHIREndpoint mocks endpointmanager.FHIREndpointStore.UpdateFHIREndpoint and sets s.UpdateFHIREndpointInvoked to true and calls s.UpdateFHIREndpointFn with the given arguments.
 func (s *Store) UpdateFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	UPDATE fhir_endpoints
-	SET url = $1,
-		fhir_version = $2,
-		authorization_standard = $3,
-		location = $4,
-		capability_statement = $5
-	WHERE id = $6`
-
-	locationJSON, err := json.Marshal(e.Location)
-	if err != nil {
-		return err
-	}
-	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.DB.Exec(sqlStatement,
-		e.URL,
-		e.FHIRVersion,
-		e.AuthorizationStandard,
-		locationJSON,
-		capabilityStatementJSON,
-		e.ID)
-
-	return err
+	s.UpdateFHIREndpointInvoked = true
+	return s.UpdateFHIREndpointFn(e)
 }
 
-// DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
+// DeleteFHIREndpoint mocks endpointmanager.FHIREndpointStore.DeleteFHIREndpoint and sets s.DeleteFHIREndpointInvoked to true and calls s.DeleteFHIREndpointFn with the given arguments.
 func (s *Store) DeleteFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	DELETE FROM fhir_endpoints
-	WHERE id = $1`
-
-	_, err := s.DB.Exec(sqlStatement, e.ID)
-
-	return err
+	s.DeleteFHIREndpointInvoked = true
+	return s.DeleteFHIREndpointFn(e)
 }
