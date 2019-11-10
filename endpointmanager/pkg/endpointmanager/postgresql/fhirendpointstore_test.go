@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/spf13/viper"
 )
 
 func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
 
-	store, err := NewStore(host, port, user, password, dbname, sslmode)
+	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		t.Errorf("Error creating Store type: %s", err.Error())
 	}

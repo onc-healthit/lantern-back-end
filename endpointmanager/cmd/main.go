@@ -8,8 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/viper"
-
-	_ "github.com/lib/pq"
 )
 
 func failOnError(err error) {
