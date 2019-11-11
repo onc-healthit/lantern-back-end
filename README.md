@@ -1,187 +1,149 @@
 # Lantern
-
-- [FHIR Endpoint Manager](#fhir-endpoint-manager)
-  * [Configuration](#configuration)
-  * [Building And Running](#building-and-running)
-- [FHIR Endpoint Querier](#fhir-endpoint-querier)
-  * [Configuration](#configuration-1)
-  * [Building And Running](#building-and-running-1)
-  * [Building And Running via Docker Container](#building-and-running-via-docker-container)
-- [Additional Services](#additional-services)
+* Lantern Services
+  * [Endpoint Manager](endpointmanager/README.md)
+  * [Endpoint Querier](endpoints/README.md)
+  * [Lantern Message Queue](lanternmq/README.md)
+* [Additional Services](#additional-services)
   * [Starting All Services Using docker-compose](#starting-all-services-using-docker-compose)
   * [Starting Prometheus via Docker Container](#starting-prometheus-via-docker-container)
   * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
   * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
-      - [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
+    * [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
   * [Starting RabbitMQ](#starting-rabbitmq)
   * [Starting Grafana](#starting-grafana)
   * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
-- [Testing](#testing)
-    + [Running All Unit Tests](#running-all-unit-tests)
-    + [Running Tests With Coverage](#running-tests-with-coverage)
-- [Contributing](#contributing)
+* [Testing](#testing)
+  * [Running All Unit Tests](#running-all-unit-tests)
+  * [Running Tests With Coverage](#running-tests-with-coverage)
+* [Contributing](#contributing)
   * [Lintr](#lintr)
   * [Govendor](#govendor)
-- [License](#license)
+* [License](#license)
 
-# FHIR Endpoint Manager
-
-## Configuration
-The FHIR Endpoint Manager reads the following environment variables:
-
-* **LANTERN_ENDPTMGR_DBHOST**: The hostname where the database is hosted.
-
-  Default value: localhost
-
-* **LANTERN_ENDPTMGR_DBPORT**: The port where the database is hosted.
-
-  Default value: 5432
-
-* **LANTERN_ENDPTMGR_DBUSER**: The database user that the application will use to read and write from the database.
-
-  Default value: postgres
-
-* **LANTERN_ENDPTMGR_DBPASS**: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
-
-  Default value: postgrespassword
-
-* **LANTERN_ENDPTMGR_DBNAME**: The name of the database being accessed.
-
-  Default value: postgres
-
-* **LANTERN_ENDPTMGR_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
-
-  Default value: disable
-
-* **LANTERN_ENDPTMGR_LOGFILE**: The location of the logfile for log messages
-
-  Default value: endpointmanagerLog.json
-
-## Building and Running
-
-```bash
-go get ./... # You may have to set environment variable GO111MODULE=on
-go mod download
-go run endpointmanager/main.go
-```
-
-# FHIR Endpoint Querier
-A service to send http requests to get capability statements from FHIR endpoints
-
-## Configuration
-The FHIR Endpoint Querier reads the following environment variables:
-
-* **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
-
-  Default value: 3333
-
-* **LANTERN_ENDPTQRY_LOGFILE**: The location of the logfile for log messages
-
-  Default value: endpointQuerierLog.json
-
-## Building And Running
-
-The Endpoint Querier takes one arguement, a JSON file containing the endpoints which the service should query. The list of endpoints provided in `<project_root>/endpoints/resources/EndpointSources.json` was taken from https://fhirendpoints.github.io/data.json.
-
-```bash
-go get ./... # You may have to set environment variable GO111MODULE=on
-go mod download
-go run endpoints/*.go ./endpoints/resources/EndpointSources.json
-```
-
-## Building And Running via Docker Container
-To build Docker container run the following command.
-```bash
-cd endpoints
-docker build -t endpoint_querier .
-```
-To start the Docker container that you just bult run:
-```bash
-docker run -p 3333:3333 -it endpoint_querier
-```
 # Additional Services
-The data collected by the endpoint querier can then be collected by Prometheus, which can be written to a Postgres database using the Prometheus Postgres storage adapter. This data can ultimately be viewed in Grafana. Below is information about how to start these additional services.
 
-## Starting All Services Using docker-compose
-All of the required services to run the Lantern back end are contained in the docker-compose file.
+The Lantern infrastructure relies on several additional services. These include:
+* Prometheus
+* Prometheus remote storage adapter for PostgreSQL
+* PostgreSQL database
+* Grafana
+
+Prometheus is used to capture time-series-based data from the FHIR API endpoints. It stores these in the PostgreSQL database using Timescale's PostgreSQL extension, [`pg_prometheus`](https://github.com/timescale/pg_prometheus) as well as the the [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter).
+
+The PostgreSQL database is used to store all information related to the FHIR API endpoints. This includes the timeseries data captured by Prometheus as well as information from the capability statement, information gathered from Inferno, information about the EHR vendors from [CHPL](https://chpl.healthit.gov/#/search), and information about the provider organization using the endpoint.
+
+Grafana creates many of the visualizations used by Lantern through querying the PostgreSQL database.
+
+## Using docker-compose
+
+All of the required services to run the Lantern back-end are contained in the docker-compose file.
+
+### Starting the Services
 
 **Notice:** Before running `docker-compose up` make sure that you have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
 
-To run all of the dockerized services for a development environment, run
+**If you have no containers** in your environment from a previous run of docker-compose, you will need to run `docker-compose up`.
+
+For a *development* environment, run:
 
 ```bash
 docker-compose up
 ```
 
-This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will publish ports.
+This will create the containers, start up all the services, as well as publish ports.
 
-To run all of the dockerized services for a production environment, run
+For a *production* environment, run:
 
 ```bash
 docker-compose -f docker-compose.yml up
 ```
 
-This will start endpoint querier, Prometheus, Postgres, Prometheus Postgres storage adapter, Grafana, and Rabbitmq; will setup the networking between the related services; and will only publish port 3000 to port 80 for Grafana.
+This will create the containers, start all of the services, and will only expose Grafana on port 80.
 
-To start all of the services in the background, add `-d` to your `docker-compose up` command.
+To start the services in the background, add `-d` to your `docker-compose up` command.
 
-To stop everything and remove the containers and network, run:
-```bash
-docker-compose down
-```
+**If you already have containers** in your environment from a previous run of docker-compose, you should run `docker-compose start`.
 
-To stop everything and keep the containers/volumes run:
-```bash
-docker-compose stop
-```
+For a *development* environment, run:
 
-If you stopped the containers and wish to restart them you can run:
 ```bash
 docker-compose start
 ```
 
-## Starting Prometheus via Docker Container
-You'll still need a prometheus.yml configuration file for this, see https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml make sure that the configuration has [the FHIR Querier as a Target](#adding-the-fhir-querier-service-as-a-target)
-```bash
-docker run -p 9090:9090 -v <absolute path to config>/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-```
-***IMPORTANT:*** If running docker on a Mac you'll have to configure the [FHIR Querier Target](#adding-the-fhir-querier-service-as-a-target) to be `host.docker.internal:<endpoint_port>` instead of localhost. For Linux systems, starting the Prometheus docker container with `--network=host` instead of `-p 9090:9090` will work and you can specify the target location to be `localhost:<endpoint_port>`.
+This will start up all the services as well as publish ports.
 
-## Starting Prometheus via Local Clone
-Alternatively you can checkout Prometheus source code and run it locally
+For a *production* environment, run:
+
 ```bash
-git clone https://github.com/prometheus/prometheus.git
-cd prometheus
-make build
-```
-Configure prometheus.yml to scrape from the fhir_target.
-For our current purposes the example prometheus configuration at `prometheus/documentation/examples/prometheus.yml` will suffice
-Finally, you can start an instance of prometheus by running:
-```bash
-./prometheus --config.file=prometheus.yml
+docker-compose -f docker-compose.yml start
 ```
 
-## Prometheus With Remote Storage (PostgreSQL)
-In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter)
+This will start all of the services and will only expose Grafana on port 80.
+
+
+### Stopping the Services
+
+To stop the services and retain the containers and network, run:
+
+```bash
+docker-compose stop
+```
+
+To stop the services and remove the containers and networks, run:
+
+```bash
+docker-compose down
+```
+
+To stop the services, remove the containers and networks, images, and volumes, run:
+
+```bash
+docker-compose down --rmi all -v
+```
+
+## Running The Services Individually
+
+### Prometheus With Remote Storage (PostgreSQL)
+
+In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter).
+
 If you haven't created docker volumes for Prometheus pr PostgreSQL, you'll have to run the following commands.
+
 ```bash
 docker volume ls # To list already created volumes
 docker volume create prometheusData # Volume to persist Prometheus data
 docker volume create pgdata # Volume to persist data written to PostgreSQL database
 ```
-1. [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
-```bash
-docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
-```
-2. [PostgreSQL remote storage adapter to facilitate communication between Prometheus and the Database](https://github.com/timescale/prometheus-postgresql-adapter)
-It is important that the pg_prometheus container started in step 1 is up and running before starting the prometheus-postgresql-adapter, as the prometheus-postgresql-adapter will need to run database setup tasks the first time that it is run.
-```bash
-docker run --name prometheus_postgresql_adapter --link pg_prometheus -d -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-prometheus-log-samples
-```
-3. [Prometheus instance with remote storage adapter configuration](https://github.com/timescale/prometheus-postgresql-adapter)
-```bash
-docker run -p 8080:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
-```
+
+The three components are:
+
+* [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
+* [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter)
+* [Prometheus](https://github.com/prometheus/prometheus)
+
+These need to be started in the following order with the given commands:
+
+1. PostgreSQL Database
+
+    ```bash
+    docker run --name pg_prometheus -e POSTGRES_PASSWORD=<postgrespassword> -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
+    ```
+
+2. Prometheus remote storage adapter for PostgreSQL
+
+    It is important that the `pg_prometheus` container started in step 1 is up and running before starting the `prometheus_postgresql_adapter` container, as the `prometheus_postgresql_adapter` container will need to run database setup tasks the first time that it is run.
+
+    ```bash
+    docker run --name prometheus_postgresql_adapter --link pg_prometheus -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-prometheus-log-samples
+    ```
+
+3. Prometheus
+
+    Both the `pg_prometheus` and `prometheus_postgresql_adapter` containers need to be running before running this container.
+
+    ```bash
+    docker run -p 9090:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
+    ```
 
 #### Adding the FHIR Querier service as a target
 Make sure the config file contains the following:
