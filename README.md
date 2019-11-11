@@ -39,7 +39,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBUSER**: The database user that the application will use to read and write from the database.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBPASS**: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
 
@@ -47,7 +47,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBNAME**: The name of the database being accessed.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
 
@@ -172,7 +172,7 @@ docker volume create pgdata # Volume to persist data written to PostgreSQL datab
 1. [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
 
     ```bash
-    docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -e POSTGRES_USER=lantern POSTGRES_DB=lantern -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
+    docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -e POSTGRES_USER=lantern -e POSTGRES_DB=lantern -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest-pg11 postgres -csynchronous_commit=off
     ```
    
     Note that this will create a database called `lantern` with the admin user name `lantern`.
