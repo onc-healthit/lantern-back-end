@@ -4,14 +4,17 @@
   * [Endpoint Querier](endpoints/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
 * [Additional Services](#additional-services)
-  * [Starting All Services Using docker-compose](#starting-all-services-using-docker-compose)
-  * [Starting Prometheus via Docker Container](#starting-prometheus-via-docker-container)
-  * [Starting Prometheus via Local Clone](#starting-prometheus-via-local-clone)
-  * [Prometheus With Remote Storage (PostgreSQL)](#prometheus-with-remote-storage--postgresql-)
-    * [Adding the FHIR Querier service as a target](#adding-the-fhir-querier-service-as-a-target)
-  * [Starting RabbitMQ](#starting-rabbitmq)
-  * [Starting Grafana](#starting-grafana)
-  * [Viewing Colllected Data In Grafana](#viewing-colllected-data-in-grafana)
+  * [Using docker-compose](#using-docker-compose)
+    * [Starting the Services](#starting-the-services)
+    * [Stopping the Services](#stopping-the-services)
+  * [Running the Services Individually](#running-the-services-individually)
+    * [Endpoint Manager](#endpoint-manager)
+    * [Endpoint Querier](#endpoint-querier)
+    * [Prometheus with Remote Storage (PostgreSQL)](#prometheus-with-remote-storage-postgresql)
+      * [Prometheus Configuration File](#prometheus-configuration-file)
+    * [RabbitMQ](#rabbitmq)
+    * [Grafana](#grafana)
+      * [Viewing Collected Data in Grafana](#viewing-collected-data-in-grafana)
 * [Testing](#testing)
   * [Running All Unit Tests](#running-all-unit-tests)
   * [Running Tests With Coverage](#running-tests-with-coverage)
@@ -103,7 +106,15 @@ docker-compose down --rmi all -v
 
 ## Running The Services Individually
 
-### Prometheus With Remote Storage (PostgreSQL)
+### Endpoint Manager
+
+See the [Endpoint Manager documentation](endpointmanager/README.md).
+
+### Endpoint Querier
+
+See the [Endpoint Querier documentation](endpoints/README.md)
+
+### Prometheus with Remote Storage (PostgreSQL)
 
 In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter).
 
@@ -145,8 +156,19 @@ These need to be started in the following order with the given commands:
     docker run -p 9090:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
     ```
 
-#### Adding the FHIR Querier service as a target
-Make sure the config file contains the following:
+#### [Prometheus Configuration File](prometheus.yml)
+
+**In order to instruct Prometheus to write the collected data to a Postgres database**, you'll have to configure the location of the Postgres remote storage adapter. For example:
+
+```yml
+remote_write:
+    - url: "http://prometheus_postgres_adapter:9201/write"
+remote_read:
+    - url: "http://prometheus_postgres_adapter:9201/read"
+```
+
+**To add the Endpoint Querier as a Prometheus target**, the information below should be contained in the configuration file.
+
 ```yaml
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
@@ -157,20 +179,30 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-    - targets: ['localhost:<endpoint_port>']
-```
-In order to instruct Prometheus to write the collected data to a Postgres database, you'll have to configure the location of the Postgres remote storage adapter.
-**Important:** If you are on a MAC you may have to use host.docker.internal instead of localhost here.
-```yml
-remote_write:
-    - url: "http://localhost:9201/write"
-remote_read:
-    - url: "http://localhost:9201/read"
+    - targets: ['<endpoint_querier_container_name>:<endpoint_port>']
 ```
 
-## Starting RabbitMQ
+For example:
 
-Modified from https://hub.docker.com/_/rabbitmq:
+```yaml
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+
+  - job_name: 'FHIRQUERY'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['endpoint_querier_1:3333']
+```
+
+
+### RabbitMQ
+
+The instructions below are modified from https://hub.docker.com/_/rabbitmq.
+
+To start the RabbitMQ docker container, run
 
 ```bash
 docker run -d --hostname lantern-mq --name lantern-mq -p 15672:15672 -p 5672:5672 rabbitmq:3-management
@@ -189,41 +221,52 @@ This will start a RabbitMQ container listening on the default port of 5672. If y
 
 You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `guest:guest`.
 
-## Starting Grafana
-Make sure that you have Docker installed and running on your machine
+### Grafana
+To start Grafana, run the following:
+
 ```bash
 docker run -d -p 3000:3000 grafana/grafana
 ```
 
-## Viewing Colllected Data In Grafana
+You can check that Grafana is up by nagivating to `http://localhost:3000` and using username and password `admin:admin`.
+
+#### Viewing Collected Data in Grafana
+
 1. Navigate to `http://localhost:3000/` in a web browser
 2. Login using Username: admin, Password admin
-3. Add a datasource
-  - If using Prometheus without remote storage, add a Prometheus datasource, running on `http://localhost:9090` by default. Select access Browser and then Save
-  - If using PostgreSQL remote storage, add a PostgreSQL data source.
+3. Add PostgreSQL as data source
     - If you are running the postgres database on a local docker container and are publishing port 5432, location is `localhost:5432` or `host.docker.internal:5432` (if on a MAC).
     - If you started the postgres database using the docker-compose file in this repository (#starting-all-services-using-docker-compose) then the postgres database will be located at `pg_prometheus:5432`
-    - Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
-4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
+    - Enter `lantern` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Toggle "TimescaleDB" to on. Finally select `disable` for SSL Mode.
+4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore.
 
 # Testing
-### Running All Unit Tests
+## Running All Unit Tests
+
 To run all tests in a project run:
+
 ```bash
-go test ./...
+go test -count=1 ./...
 ```
-This will search the current directory and all sub directories for files matching the pattern `*_test.go`. You also have the option to specify a package location or file if you do not want to run all tests at once.
-### Running Tests With Coverage
+
+This will search the current directory and all sub directories for files matching the pattern `*_test.go`. Adding `-count=1` ensures that your test results will not be cached. You also have the option to specify a package location or file if you do not want to run all tests at once.
+
+## Running Tests With Coverage
+
 If you are interested in having coverage information displayed along with the pass/fail status' of the tests you can run the tests with the `--covermode=count` option.
+
 ```bash
 go test -covermode=count ./...
-ok      command-line-arguments  0.009s  coverage: 31.8% of statements
 ```
+
 If you are interested in more in-depth coverage analysis you'll have to generate a coverage report, in the following command the coverage report is named coverage.out
+
 ```bash
 go test -coverprofile=coverage.out ./...
 ```
+
 Using the generated coverage file you can use `go tool cover` to view the coverage report in your browser and see which lines are or are not being covered.
+
 ```bash
 go tool cover -html=coverage.out
 ```
@@ -242,7 +285,9 @@ More information about golangci-lint can be found [here](https://github.com/gola
 
 ## Govendor
 Dependencies required for each package are cached in a `vendor/` directory within each package. Go will search for dependencies within the `vendor/` directory at build-time.
+
 To cache dependencies for a package using the govendor tool:
+
 ```bash
 go get -u github.com/kardianos/govendor # Download govendor
 cd <your package>
@@ -250,7 +295,9 @@ govendor init # You may need to add your go/bin directory to your PATH if govend
 govendor add +external # Copy external package dependencies into vendor directory, dependencies will appear the same as they do in src/
 govendor add +local # Copy package dependencies that share the same project root into the vendor directory
 ```
+
 If you add dependencies to your package, or there are updates to dependencies (either local or external) you will have to run the following commands in order to make sure that the vendor directory reflects the updates.
+
 ```bash
 govendor update +external # Update external dependencies
 govendor update +local # Update dependencies that share the same project root
