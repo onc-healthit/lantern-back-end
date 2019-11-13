@@ -33,6 +33,10 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 ## Building and Running
 
+The Endpoint Manager currently just connects to the PostgreSQL database. All log messages are written to the conifgured logfile. If the endpoint manager connects to the database successfully, you should expect to see "Successfully connected!" as the output.
+
+The instructions below assume that you are in `endpointmanager/`.
+
 The Endpoint Manager has not yet been dockerized. To run, perform the following commands:
 
 ```bash
