@@ -1,6 +1,6 @@
 
 # FHIR Endpoint Querier
-A service to send http requests to get capability statements from FHIR endpoints
+The FHIR Endpoint Querier is a service that retrieves the response code and response time for a FHIR API endpoint.
 
 ## Configuration
 The FHIR Endpoint Querier reads the following environment variables:

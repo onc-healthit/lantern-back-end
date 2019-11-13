@@ -1,5 +1,7 @@
 # FHIR Endpoint Manager
 
+The FHIR Endpoint Manager is a service that coordinates the data capture and retrieval for FHIR endpoints.
+
 ## Configuration
 The FHIR Endpoint Manager reads the following environment variables:
 
