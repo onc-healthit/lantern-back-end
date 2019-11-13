@@ -147,13 +147,9 @@ func setupConfig() {
 	viper.AutomaticEnv()
 
 	err = viper.BindEnv("port")
-	if err != nil {
-		panic(err.Error())
-	}
+	failOnError(err)
 	err = viper.BindEnv("logfile")
-	if err != nil {
-		panic(err.Error())
-	}
+	failOnError(err)
 
 	viper.SetDefault("port", 3333)
 	viper.SetDefault("logfile", "endpointQuerierLog.json")
@@ -166,6 +162,12 @@ func initializeLogger() {
 		log.Fatal("LogFile creation error: ", err.Error())
 	}
 	log.SetOutput(f)
+}
+
+func failOnError(err error) {
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
 }
 
 func main() {
