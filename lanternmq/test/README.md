@@ -2,7 +2,7 @@
 
 Each step assumes that you start in directory `lanternmq/test`. Each go executable file includes hard coded values for subscribing to the queue. These are the default location values for the queue, but may need to be changed if you've implemented the queue differently.
 
-The tests also assume that you have RabbitMQ running. See the [instructions for starting RabbitMQ](../README.md#rabbitmq).
+The tests also assume that you have RabbitMQ running. See the [instructions for starting RabbitMQ](../../README.md#rabbitmq).
 
 1. In two separate terminals, start two receivers using different argument strings.
    The argument strings represent the identifier for the queue that will receive topics it subscribes to as these must be unique.
