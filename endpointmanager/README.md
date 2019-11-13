@@ -33,6 +33,8 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 ## Building and Running
 
+The Endpoint Manager has not yet been dockerized. To run, perform the following commands:
+
 ```bash
 go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download

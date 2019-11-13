@@ -44,5 +44,5 @@ The Endpoint Querier takes one arguement, a JSON file containing the endpoints w
 ```bash
 go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download
-go run endpoints/*.go ./endpoints/resources/EndpointSources.json
+go run *.go resources/EndpointSources.json
 ```
