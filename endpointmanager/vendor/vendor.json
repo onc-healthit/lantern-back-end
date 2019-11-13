@@ -197,16 +197,22 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "vGvxz9RCcuFlzCIyrPiQRgBdkoQ=",
+			"checksumSHA1": "rJ7WvO96RxlRzV9wuGObnl0YPzk=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager",
-			"revision": "482626474ed08ee2e11144be0f68aafd3db18f87",
-			"revisionTime": "2019-10-30T18:18:58Z"
+			"revision": "e344490cef6772e09a418f98216f3270287f8bd7",
+			"revisionTime": "2019-11-07T15:00:59Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
 			"path": "github.com/pelletier/go-toml",
 			"revision": "903d9455db9ff1d7ac1ab199062eca7266dd11a3",
 			"revisionTime": "2019-10-25T18:53:56Z"
+		},
+		{
+			"checksumSHA1": "O5bFO+v6bhXVAqFd/Fq5FZEoVGE=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "fb62dbe2f2a2c88b150fa1668a773505a7920a3d",
+			"revisionTime": "2019-10-14T20:23:44Z"
 		},
 		{
 			"checksumSHA1": "2d0rR/VhqllUdrcH6kwHHrhqJ2E=",
