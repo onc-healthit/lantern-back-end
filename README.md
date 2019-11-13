@@ -197,6 +197,31 @@ scrape_configs:
     - targets: ['endpoint_querier_1:3333']
 ```
 
+#### Initializing the Database
+
+The database initialization script is planned to be included as part of the docker-compose file. Until then, initialize the database using the following commands:
+
+* If you have postgres installed locally (which you can do with `brew install postgresql`), you can do:
+
+  ```
+  psql -h <container name> -p <port> -U <username> -d <database> -a -f <setup script>
+  ```
+
+  For example:
+
+  ```
+  psql -h pg_prometheus -p 5432 -U postgres -d postgres -a -f endpointmanager/dbsetup.sql
+  ```
+
+* If you don't have postgres installed locally, you can open the database in docker and then copy past the commands from the dbsetup.sql file in. Open the database in docker:
+
+  ```
+  docker exec -it <container name> psql -U <username>
+  ```
+
+  Connect to your database using `\c <database name>`
+
+  Copy/paste the contents of dbsetup.sql into the command prompt.
 
 ### RabbitMQ
 
