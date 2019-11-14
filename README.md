@@ -39,7 +39,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBUSER**: The database user that the application will use to read and write from the database.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBPASS**: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
 
@@ -47,7 +47,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBNAME**: The name of the database being accessed.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
 
@@ -170,18 +170,25 @@ docker volume create prometheusData # Volume to persist Prometheus data
 docker volume create pgdata # Volume to persist data written to PostgreSQL database
 ```
 1. [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
-```bash
-docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
-```
+
+    ```bash
+    docker run --name pg_prometheus -d -e POSTGRES_PASSWORD=<postgrespassword> -e POSTGRES_USER=lantern -e POSTGRES_DB=lantern -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest-pg11 postgres -csynchronous_commit=off
+    ```
+   
+    Note that this will create a database called `lantern` with the admin user name `lantern`.
+
 2. [PostgreSQL remote storage adapter to facilitate communication between Prometheus and the Database](https://github.com/timescale/prometheus-postgresql-adapter)
-It is important that the pg_prometheus container started in step 1 is up and running before starting the prometheus-postgresql-adapter, as the prometheus-postgresql-adapter will need to run database setup tasks the first time that it is run.
-```bash
-docker run --name prometheus_postgresql_adapter --link pg_prometheus -d -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-prometheus-log-samples
-```
+
+    It is important that the pg_prometheus container started in step 1 is up and running before starting the prometheus-postgresql-adapter, as the prometheus-postgresql-adapter will need to run database setup tasks the first time that it is run.
+
+    ```bash
+    docker run --name prometheus_postgresql_adapter --link pg_prometheus -d -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-database=lantern -pg-user=lantern -pg-prometheus-log-samples
+    ```
 3. [Prometheus instance with remote storage adapter configuration](https://github.com/timescale/prometheus-postgresql-adapter)
-```bash
-docker run -p 8080:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
-```
+
+    ```bash
+    docker run -p 8080:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
+    ```
 
 #### Adding the FHIR Querier service as a target
 Make sure the config file contains the following:
@@ -241,7 +248,7 @@ docker run -d -p 3000:3000 grafana/grafana
   - If using PostgreSQL remote storage, add a PostgreSQL data source.
     - If you are running the postgres database on a local docker container and are publishing port 5432, location is `localhost:5432` or `host.docker.internal:5432` (if on a MAC).
     - If you started the postgres database using the docker-compose file in this repository (#starting-all-services-using-docker-compose) then the postgres database will be located at `pg_prometheus:5432`
-    - Enter `postgres` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
+    - Enter `lantern` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore
 
 # Testing
