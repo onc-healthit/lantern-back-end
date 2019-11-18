@@ -15,7 +15,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBUSER**: The database user that the application will use to read and write from the database.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBPASS**: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
 
@@ -23,7 +23,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_ENDPTMGR_DBNAME**: The name of the database being accessed.
 
-  Default value: postgres
+  Default value: lantern
 
 * **LANTERN_ENDPTMGR_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
 
