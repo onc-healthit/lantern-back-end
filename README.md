@@ -137,15 +137,17 @@ These need to be started in the following order with the given commands:
 1. PostgreSQL Database
 
     ```bash
-    docker run --name pg_prometheus -e POSTGRES_PASSWORD=<postgrespassword> -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest postgres -csynchronous_commit=off
+    docker run --name pg_prometheus -e POSTGRES_PASSWORD=<postgrespassword> -e POSTGRES_USER=lantern -e POSTGRES_DB=lantern -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest-pg11 postgres -csynchronous_commit=off
     ```
+
+    Note that this will create a database called `lantern` with the admin user name `lantern`.
 
 2. Prometheus remote storage adapter for PostgreSQL
 
     It is important that the `pg_prometheus` container started in step 1 is up and running before starting the `prometheus_postgresql_adapter` container, as the `prometheus_postgresql_adapter` container will need to run database setup tasks the first time that it is run.
 
     ```bash
-    docker run --name prometheus_postgresql_adapter --link pg_prometheus -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-prometheus-log-samples
+    docker run --name prometheus_postgresql_adapter --link pg_prometheus -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-database=lantern -pg-user=lantern -pg-prometheus-log-samples
     ```
 
 3. Prometheus
