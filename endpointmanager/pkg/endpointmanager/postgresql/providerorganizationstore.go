@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -8,7 +9,7 @@ import (
 
 // GetProviderOrganization gets a ProviderOrganization from the database using the database id as a key.
 // If the ProviderOrganization does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetProviderOrganization(id int) (*endpointmanager.ProviderOrganization, error) {
+func (s *Store) GetProviderOrganization(ctx context.Context, id int) (*endpointmanager.ProviderOrganization, error) {
 	var po endpointmanager.ProviderOrganization
 	var locationJSON []byte
 
@@ -25,7 +26,7 @@ func (s *Store) GetProviderOrganization(id int) (*endpointmanager.ProviderOrgani
 		created_at,
 		updated_at
 	FROM provider_organizations WHERE id=$1`
-	row := s.DB.QueryRow(sqlStatement, id)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
 	err := row.Scan(
 		&po.ID,
@@ -48,7 +49,7 @@ func (s *Store) GetProviderOrganization(id int) (*endpointmanager.ProviderOrgani
 }
 
 // AddProviderOrganization adds the ProviderOrganization to the database.
-func (s *Store) AddProviderOrganization(po *endpointmanager.ProviderOrganization) error {
+func (s *Store) AddProviderOrganization(ctx context.Context, po *endpointmanager.ProviderOrganization) error {
 	sqlStatement := `
 	INSERT INTO provider_organizations (
 		name,
@@ -66,7 +67,8 @@ func (s *Store) AddProviderOrganization(po *endpointmanager.ProviderOrganization
 		return err
 	}
 
-	row := s.DB.QueryRow(sqlStatement,
+	row := s.DB.QueryRowContext(ctx,
+		sqlStatement,
 		po.Name,
 		po.URL,
 		locationJSON,
@@ -81,7 +83,7 @@ func (s *Store) AddProviderOrganization(po *endpointmanager.ProviderOrganization
 }
 
 // UpdateProviderOrganization updates the ProviderOrganization in the database using the ProviderOrganization's database ID as the key.
-func (s *Store) UpdateProviderOrganization(po *endpointmanager.ProviderOrganization) error {
+func (s *Store) UpdateProviderOrganization(ctx context.Context, po *endpointmanager.ProviderOrganization) error {
 	sqlStatement := `
 	UPDATE provider_organizations
 	SET name = $2,
@@ -98,7 +100,8 @@ func (s *Store) UpdateProviderOrganization(po *endpointmanager.ProviderOrganizat
 		return err
 	}
 
-	_, err = s.DB.Exec(sqlStatement,
+	_, err = s.DB.ExecContext(ctx,
+		sqlStatement,
 		po.ID,
 		po.Name,
 		po.URL,
@@ -112,12 +115,12 @@ func (s *Store) UpdateProviderOrganization(po *endpointmanager.ProviderOrganizat
 }
 
 // DeleteProviderOrganization deletes the ProviderOrganization from the database using the ProviderOrganization's database ID as the key.
-func (s *Store) DeleteProviderOrganization(po *endpointmanager.ProviderOrganization) error {
+func (s *Store) DeleteProviderOrganization(ctx context.Context, po *endpointmanager.ProviderOrganization) error {
 	sqlStatement := `
 	DELETE FROM provider_organizations
 	WHERE id=$1`
 
-	_, err := s.DB.Exec(sqlStatement, po.ID)
+	_, err := s.DB.ExecContext(ctx, sqlStatement, po.ID)
 
 	return err
 }

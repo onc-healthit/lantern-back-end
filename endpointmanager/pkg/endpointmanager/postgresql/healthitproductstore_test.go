@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 func Test_PersistHealthITProduct(t *testing.T) {
 	var err error
+	ctx := context.Background()
 
 	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -45,19 +47,19 @@ func Test_PersistHealthITProduct(t *testing.T) {
 
 	// add products
 
-	err = store.AddHealthITProduct(hitp1)
+	err = store.AddHealthITProduct(ctx, hitp1)
 	if err != nil {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
 
-	err = store.AddHealthITProduct(hitp2)
+	err = store.AddHealthITProduct(ctx, hitp2)
 	if err != nil {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
 
 	// retrieve products
 
-	h1, err := store.GetHealthITProduct(hitp1.ID)
+	h1, err := store.GetHealthITProduct(ctx, hitp1.ID)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -65,7 +67,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
-	h2, err := store.GetHealthITProductUsingNameAndVersion(hitp2.Name, hitp2.Version)
+	h2, err := store.GetHealthITProductUsingNameAndVersion(ctx, hitp2.Name, hitp2.Version)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -77,12 +79,12 @@ func Test_PersistHealthITProduct(t *testing.T) {
 
 	h1.APISyntax = "FHIR R5"
 
-	err = store.UpdateHealthITProduct(h1)
+	err = store.UpdateHealthITProduct(ctx, h1)
 	if err != nil {
 		t.Errorf("Error updating health it product: %s", err.Error())
 	}
 
-	h1, err = store.GetHealthITProduct(hitp1.ID)
+	h1, err = store.GetHealthITProduct(ctx, hitp1.ID)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -95,22 +97,22 @@ func Test_PersistHealthITProduct(t *testing.T) {
 
 	// delete products
 
-	err = store.DeleteHealthITProduct(hitp1)
+	err = store.DeleteHealthITProduct(ctx, hitp1)
 	if err != nil {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}
 
-	_, err = store.GetHealthITProduct(hitp1.ID) // ensure we deleted the entry
+	_, err = store.GetHealthITProduct(ctx, hitp1.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("hitp1 was not deleted: %s", err.Error())
 	}
 
-	_, err = store.GetHealthITProduct(hitp2.ID) // ensure we haven't deleted all entries
+	_, err = store.GetHealthITProduct(ctx, hitp2.ID) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("error retrieving hitp2 after deleting hitp1: %s", err.Error())
 	}
 
-	err = store.DeleteHealthITProduct(hitp2)
+	err = store.DeleteHealthITProduct(ctx, hitp2)
 	if err != nil {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}

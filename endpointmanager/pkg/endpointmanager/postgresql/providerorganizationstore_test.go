@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -9,6 +10,7 @@ import (
 
 func Test_PersistProviderOrganization(t *testing.T) {
 	var err error
+	ctx := context.Background()
 
 	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -39,19 +41,19 @@ func Test_PersistProviderOrganization(t *testing.T) {
 
 	// add organizations
 
-	err = store.AddProviderOrganization(po1)
+	err = store.AddProviderOrganization(ctx, po1)
 	if err != nil {
 		t.Errorf("Error adding provider organization: %s", err.Error())
 	}
 
-	err = store.AddProviderOrganization(po2)
+	err = store.AddProviderOrganization(ctx, po2)
 	if err != nil {
 		t.Errorf("Error adding provider organization: %s", err.Error())
 	}
 
 	// retrieve organizations
 
-	p1, err := store.GetProviderOrganization(po1.ID)
+	p1, err := store.GetProviderOrganization(ctx, po1.ID)
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -59,7 +61,7 @@ func Test_PersistProviderOrganization(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	p2, err := store.GetProviderOrganization(po2.ID)
+	p2, err := store.GetProviderOrganization(ctx, po2.ID)
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -71,12 +73,12 @@ func Test_PersistProviderOrganization(t *testing.T) {
 
 	p1.HospitalType = "Critical Access"
 
-	err = store.UpdateProviderOrganization(p1)
+	err = store.UpdateProviderOrganization(ctx, p1)
 	if err != nil {
 		t.Errorf("Error updating provider organization: %s", err.Error())
 	}
 
-	p1, err = store.GetProviderOrganization(po1.ID)
+	p1, err = store.GetProviderOrganization(ctx, po1.ID)
 	if err != nil {
 		t.Errorf("Error getting provider organization: %s", err.Error())
 	}
@@ -89,22 +91,22 @@ func Test_PersistProviderOrganization(t *testing.T) {
 
 	// delete organizations
 
-	err = store.DeleteProviderOrganization(po1)
+	err = store.DeleteProviderOrganization(ctx, po1)
 	if err != nil {
 		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
 
-	_, err = store.GetProviderOrganization(po1.ID) // ensure we deleted the entry
+	_, err = store.GetProviderOrganization(ctx, po1.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("po1 was not deleted: %s", err.Error())
 	}
 
-	_, err = store.GetProviderOrganization(po2.ID) // ensure we haven't deleted all entries
+	_, err = store.GetProviderOrganization(ctx, po2.ID) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("error retrieving po2 after deleting po1: %s", err.Error())
 	}
 
-	err = store.DeleteProviderOrganization(po2)
+	err = store.DeleteProviderOrganization(ctx, po2)
 	if err != nil {
 		t.Errorf("Error deleting provider organization: %s", err.Error())
 	}
