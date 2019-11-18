@@ -13,7 +13,9 @@ notifications:
 
 # Set configuration environment variables
 env:
-  - LANTERN_ENDPTMGR_DBHOST=localhost LANTERN_ENDPTMGR_DBPORT=5432 LANTERN_ENDPTMGR_DBUSER=postgres LANTERN_ENDPTMGR_DBPASS= LANTERN_ENDPTMGR_DBNAME=postgres LANTERN_ENDPTMGR_DBSSLMODE=disable
+  - LANTERN_ENDPTMGR_DBHOST=localhost LANTERN_ENDPTMGR_DBPORT=5432 LANTERN_ENDPTMGR_DBUSER=postgres LANTERN_ENDPTMGR_DBPASS= LANTERN_ENDPTMGR_DBNAME=postgres LANTERN_ENDPTMGR_DBSSLMODE=disable POSTGRES_PASSWORD=postgrespassword POSTGRES_USER=lantern POSTGRES_DB=lantern
+
+
 
 services:
   - postgresql
@@ -25,3 +27,4 @@ before_script:
 script:
   - golangci-lint run -E gofmt
   - go test -v -race ./...  # Run all the tests with the race detector enabled
+  - docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit

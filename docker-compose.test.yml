@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  endpoint_querier:
+    entrypoint:
+      - "./main"
+      - "./resources/TestEndpointSources.json"
+  lantern-e2e:
+      container_name: lantern-e2e
+      build: 
+        context: ./e2e
+      command: ./wait-for-it.sh grafana:3000 -- ./wait-for-it.sh pg_prometheus:5432 -- ./wait-for-it.sh lantern-mq:15672 -- ./wait-for-it.sh lantern-mq:5672 -- ./wait-for-it.sh prometheus:9090 -- ./wait-for-it.sh prometheus_postgresql_adapter:9201 -- ./wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=integration ./...
