@@ -23,6 +23,7 @@ services:
     image: timescale/prometheus-postgresql-adapter
     depends_on:
       - pg_prometheus
+    restart: on-failure
     command:
       -pg-host=pg_prometheus
       -pg-password=${POSTGRES_PASSWORD}

@@ -7,6 +7,7 @@
   * [Using docker-compose](#using-docker-compose)
     * [Starting the Services](#starting-the-services)
     * [Stopping the Services](#stopping-the-services)
+    * [Starting Services Behind SSL-Inspecting Proxy](#starting-services-behind-ssl-inspecting-proxy)
   * [Running the Services Individually](#running-the-services-individually)
     * [Endpoint Manager](#endpoint-manager)
     * [Endpoint Querier](#endpoint-querier)
@@ -18,6 +19,7 @@
 * [Testing](#testing)
   * [Running All Unit Tests](#running-all-unit-tests)
   * [Running Tests With Coverage](#running-tests-with-coverage)
+  * [Running End to End Tests](#running-end-to-end-tests)
 * [Contributing](#contributing)
   * [Lintr](#lintr)
   * [Govendor](#govendor)
@@ -103,6 +105,9 @@ To stop the services, remove the containers and networks, images, and volumes, r
 ```bash
 docker-compose down --rmi all -v
 ```
+
+### Starting Services Behind SSL-Inspecting Proxy
+If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into the docker containers that will be communicating through the proxy. Currently the endpoint_querier is the only contianer that has such a requirement, the volumes entry `- ./certs/:/etc/ssl/certs` in the endpoint_querier service section  of `docker-compose.override.yml` will mount a directory named `certs` located in the root of this project into the location of the docker container where the container's OS will look for certificates. If you are operating behind an SSL-Inspecting proxy **you will have to copy your certificates into this directory.** The changes in the `docker-compose.override.yml` file will be applied if you run `docker-compose up`.
 
 ## Running The Services Individually
 
@@ -296,6 +301,12 @@ Using the generated coverage file you can use `go tool cover` to view the covera
 
 ```bash
 go tool cover -html=coverage.out
+```
+
+### Running End to End Tests
+Running this command will build the project containers and then run e2e/integration_tests/*.go
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
 
 # Contributing
