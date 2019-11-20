@@ -1,18 +1,14 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/viper"
-
-	_ "github.com/lib/pq"
 )
-
-var db *sql.DB
 
 func failOnError(err error) {
 	if err != nil {
@@ -65,23 +61,10 @@ func main() {
 	setupConfig()
 	initializeLogger()
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		viper.GetString("dbhost"),
-		viper.GetInt("dbport"),
-		viper.GetString("dbuser"),
-		viper.GetString("dbpass"),
-		viper.GetString("dbname"),
-		viper.GetString("dbsslmode"))
-
-	db, err = sql.Open("postgres", psqlInfo)
-	failOnError(err)
-	defer db.Close()
-
-	// calling db.Ping to create a connection to the database.
-	// db.Open only validates the arguments, it does not create the connection.
-	err = db.Ping()
-	failOnError(err)
-
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	if err != nil {
+		panic(err.Error())
+	}
+	defer store.Close()
 	fmt.Println("Successfully connected!")
 }

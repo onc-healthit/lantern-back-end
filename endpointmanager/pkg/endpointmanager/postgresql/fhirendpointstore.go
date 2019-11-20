@@ -1,32 +1,15 @@
-package main
+package postgresql
 
 import (
 	"encoding/json"
-	"time"
 
-	_ "github.com/lib/pq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
-
-// FHIREndpoint represents a fielded FHIR API endpoint hosted by a
-// HealthITProduct and populated by a ProviderOrganization.
-// Information about the FHIR API endpoint is populated by the FHIR
-// capability statement found at that endpoint as well as information
-// discovered about the IP address of the endpoint.
-type FHIREndpoint struct {
-	id                    int
-	URL                   string
-	FHIRVersion           string
-	AuthorizationStandard string               // examples: OAuth 2.0, Basic, etc.
-	Location              *Location            // location of the FHIR API endpoint's IP address from ipstack.com.
-	CapabilityStatement   *CapabilityStatement // the JSON representation of the FHIR capability statement
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-}
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
-	var endpoint FHIREndpoint
+func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
+	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
 
@@ -41,10 +24,10 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
-	row := db.QueryRow(sqlStatement, id)
+	row := s.DB.QueryRow(sqlStatement, id)
 
 	err := row.Scan(
-		&endpoint.id,
+		&endpoint.ID,
 		&endpoint.URL,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
@@ -67,8 +50,8 @@ func GetFHIREndpoint(id int) (*FHIREndpoint, error) {
 
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
-	var endpoint FHIREndpoint
+func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoint, error) {
+	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
 
@@ -84,10 +67,10 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 		updated_at
 	FROM fhir_endpoints WHERE url=$1`
 
-	row := db.QueryRow(sqlStatement, url)
+	row := s.DB.QueryRow(sqlStatement, url)
 
 	err := row.Scan(
-		&endpoint.id,
+		&endpoint.ID,
 		&endpoint.URL,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
@@ -108,13 +91,8 @@ func GetFHIREndpointUsingURL(url string) (*FHIREndpoint, error) {
 	return &endpoint, err
 }
 
-// GetID returns the database ID for the FHIREndpoint.
-func (e *FHIREndpoint) GetID() int {
-	return e.id
-}
-
-// Add adds the FHIREndpoint to the database.
-func (e *FHIREndpoint) Add() error {
+// AddFHIREndpoint adds the FHIREndpoint to the database.
+func (s *Store) AddFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
 		fhir_version,
@@ -133,20 +111,20 @@ func (e *FHIREndpoint) Add() error {
 		return err
 	}
 
-	row := db.QueryRow(sqlStatement,
+	row := s.DB.QueryRow(sqlStatement,
 		e.URL,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		locationJSON,
 		capabilityStatementJSON)
 
-	err = row.Scan(&e.id)
+	err = row.Scan(&e.ID)
 
 	return err
 }
 
-// Update updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
-func (e *FHIREndpoint) Update() error {
+// UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
+func (s *Store) UpdateFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
@@ -165,53 +143,24 @@ func (e *FHIREndpoint) Update() error {
 		return err
 	}
 
-	_, err = db.Exec(sqlStatement,
+	_, err = s.DB.Exec(sqlStatement,
 		e.URL,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		locationJSON,
 		capabilityStatementJSON,
-		e.id)
+		e.ID)
 
 	return err
 }
 
-// Delete deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
-func (e *FHIREndpoint) Delete() error {
+// DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
+func (s *Store) DeleteFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	DELETE FROM fhir_endpoints
 	WHERE id = $1`
 
-	_, err := db.Exec(sqlStatement, e.id)
+	_, err := s.DB.Exec(sqlStatement, e.ID)
 
 	return err
-}
-
-// Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
-func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
-	if e == nil && e2 == nil {
-		return true
-	} else if e == nil {
-		return false
-	} else if e2 == nil {
-		return false
-	}
-
-	if e.URL != e2.URL {
-		return false
-	}
-	if e.FHIRVersion != e2.FHIRVersion {
-		return false
-	}
-	if e.AuthorizationStandard != e2.AuthorizationStandard {
-		return false
-	}
-	if !e.Location.Equal(e2.Location) {
-		return false
-	}
-	if !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
-		return false
-	}
-
-	return true
 }
