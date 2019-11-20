@@ -197,10 +197,10 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "5kZR47WmXIT6ISrB+yH9iXNdrrs=",
+			"checksumSHA1": "huexYKa3hGJoQ2WJcBPUNoTwTRU=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager",
-			"revision": "f3f8ac3ed4cec2fcbca5525b5f6c00f0aa889199",
-			"revisionTime": "2019-11-13T14:25:22Z"
+			"revision": "af58713447cbf83825c5eb665ec99c7d93528253",
+			"revisionTime": "2019-11-20T12:44:53Z"
 		},
 		{
 			"checksumSHA1": "j9ovMqazpbA50U3rdm+uTdDq2tc=",
