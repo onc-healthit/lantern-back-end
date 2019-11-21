@@ -3,10 +3,30 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "bytes",
+			"revision": ""
+		},
+		{
+			"path": "encoding/xml",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "seznb4xDlNjE7K9X244AVovdsys=",
 			"path": "github.com/onc-healthit/lantern-back-end/fhir",
-			"revision": "1eb2eeb2d23d58567a5de034394513d022ac2c4a",
-			"revisionTime": "2019-10-23T19:26:46Z"
+			"revision": "a240ebf8863a78d93b593aeb005168b04fa4cd70",
+			"revisionTime": "2019-11-21T13:23:59Z"
+		},
+		{
+			"path": "io/ioutil",
+			"revision": ""
+		},
+		{
+			"path": "net/http",
+			"revision": ""
+		},
+		{
+			"path": "testing",
+			"revision": ""
 		}
 	],
 	"rootPath": "github.com/onc-healthit/lantern-back-end/fhir"

@@ -20,3 +20,6 @@ endpointmanager/endpointmanager
 
 # Environment File
 .env
+
+# Certs Directory
+certs/

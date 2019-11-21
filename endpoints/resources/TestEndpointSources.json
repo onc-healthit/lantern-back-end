@@ -1,0 +1,15 @@
+{
+  "Entries": [
+    {
+      "OrganizationName": "LanternTestOrg",
+      "FHIRPatientFacingURI": "http://lantern-e2e",
+      "Type": "TestType",
+      "Keywords": [
+        {
+          "Kind": "TestKeyword",
+          "Value": "TestValue"
+        }
+      ]
+    }
+  ]
+}

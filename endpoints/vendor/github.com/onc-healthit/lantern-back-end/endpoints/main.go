@@ -70,7 +70,11 @@ func recordLongRunningStats(resp *http.Response, organizationName string, urlStr
 		var fhirVersionString string = capabilityStatement.FhirVersion.Value
 		var fhirVersionAsNumber, _ = strconv.Atoi(strings.Replace(fhirVersionString, ".", "", -1))
 		fhirVersionGaugeVec.WithLabelValues(organizationName).Set(float64(fhirVersionAsNumber))
-		tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
+		if resp != nil && resp.TLS != nil {
+			tlsVersionGaugeVec.WithLabelValues(organizationName).Set(float64(resp.TLS.Version))
+		} else {
+			tlsVersionGaugeVec.WithLabelValues(organizationName).Set(0)
+		}
 	}
 }
 

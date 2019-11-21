@@ -1,10 +1,20 @@
 version: '3'
 
 services:
+  endpoint_querier:
+    ports:
+      - "3333:3333"
+    volumes:
+      - ./certs/:/etc/ssl/certs
+  prometheus:
+    ports:
+      - "9090:9090"
   pg_prometheus:
     ports:
       - "5432:5432"
-
+  grafana:
+    ports:
+      - "3000:3000"
   lantern-mq:
     ports:
       - "15672:15672"
