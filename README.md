@@ -309,6 +309,12 @@ Running this command will build the project containers and then run e2e/integrat
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
 
+A successful test will show the following output before the docker containers are stopped.
+
+```
+lantern-e2e                      | ok  	github.com/onc-healthit/lantern-back-end/e2e/integration_tests	30.031s
+lantern-e2e exited with code 0
+```
 # Contributing
 ## Lintr
 Code going through PR should pass the lintr invoked by running:
