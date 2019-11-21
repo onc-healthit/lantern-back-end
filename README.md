@@ -308,7 +308,10 @@ Running this command will build the project containers and then run e2e/integrat
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
-
+To bring down all containers and remove all volumes used in the end-to-end tests you can run:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down -v
+```
 A successful test will show the following output before the docker containers are stopped.
 
 ```
