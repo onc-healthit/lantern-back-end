@@ -1,3 +1,5 @@
+// +build integration
+
 package integration_tests
 
 import (
@@ -37,7 +39,10 @@ func metadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/fhir+xml")
 	_, err = w.Write(contents)
-	failOnError(err)
+	// Don't fail on error in this case since test connection will drop out when test ends
+	if err != nil {
+		log.Printf("%s", err)
+	}
 }
 
 func setupConfig() {
