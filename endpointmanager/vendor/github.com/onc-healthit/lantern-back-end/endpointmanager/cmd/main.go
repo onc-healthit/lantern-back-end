@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"os"
+	"net/http"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 
@@ -47,12 +49,12 @@ func setupConfig() {
 }
 
 func initializeLogger() {
-	log.SetFormatter(&log.JSONFormatter{})
-	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
-	if err != nil {
-		log.Fatal("LogFile creation error: ", err.Error())
-	}
-	log.SetOutput(f)
+	// log.SetFormatter(&log.JSONFormatter{})
+	// f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
+	// if err != nil {
+	// 	log.Fatal("LogFile creation error: ", err.Error())
+	// }
+	// log.SetOutput(f)
 }
 
 func main() {
@@ -67,4 +69,11 @@ func main() {
 	}
 	defer store.Close()
 	fmt.Println("Successfully connected!")
+
+	ctx := context.Background()
+	client := &http.Client{}
+	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -9,6 +10,7 @@ import (
 
 func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
+	ctx := context.Background()
 
 	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -34,19 +36,19 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// add endpoints
 
-	err = store.AddFHIREndpoint(endpoint1)
+	err = store.AddFHIREndpoint(ctx, endpoint1)
 	if err != nil {
 		t.Errorf("Error adding fhir endpoint: %s", err.Error())
 	}
 
-	err = store.AddFHIREndpoint(endpoint2)
+	err = store.AddFHIREndpoint(ctx, endpoint2)
 	if err != nil {
 		t.Errorf("Error adding fhir endpoint: %s", err.Error())
 	}
 
 	// retrieve endpoints
 
-	e1, err := store.GetFHIREndpoint(endpoint1.ID)
+	e1, err := store.GetFHIREndpoint(ctx, endpoint1.ID)
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -54,7 +56,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
-	e2, err := store.GetFHIREndpointUsingURL(endpoint2.URL)
+	e2, err := store.GetFHIREndpointUsingURL(ctx, endpoint2.URL)
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -66,12 +68,12 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	e1.FHIRVersion = "Unknown"
 
-	err = store.UpdateFHIREndpoint(e1)
+	err = store.UpdateFHIREndpoint(ctx, e1)
 	if err != nil {
 		t.Errorf("Error updating fhir endpoint: %s", err.Error())
 	}
 
-	e1, err = store.GetFHIREndpoint(endpoint1.ID)
+	e1, err = store.GetFHIREndpoint(ctx, endpoint1.ID)
 	if err != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err.Error())
 	}
@@ -84,22 +86,22 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// delete endpoints
 
-	err = store.DeleteFHIREndpoint(endpoint1)
+	err = store.DeleteFHIREndpoint(ctx, endpoint1)
 	if err != nil {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
 
-	_, err = store.GetFHIREndpoint(endpoint1.ID) // ensure we deleted the entry
+	_, err = store.GetFHIREndpoint(ctx, endpoint1.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("endpoint1 was not deleted: %s", err.Error())
 	}
 
-	_, err = store.GetFHIREndpoint(endpoint2.ID) // ensure we haven't deleted all entries
+	_, err = store.GetFHIREndpoint(ctx, endpoint2.ID) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("error retrieving endpoint2 after deleting endpoint1: %s", err.Error())
 	}
 
-	err = store.DeleteFHIREndpoint(endpoint2)
+	err = store.DeleteFHIREndpoint(ctx, endpoint2)
 	if err != nil {
 		t.Errorf("Error deleting fhir endpoint: %s", err.Error())
 	}
