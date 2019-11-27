@@ -29,13 +29,13 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: disable
 
-* **LANTERN_ENDPTMGR_LOGFILE**: The location of the logfile for log messages
+* **LANTERN_ENDPTMGR_CHPLAPIKEY**: The key necessary for accessing CHPL
 
-  Default value: endpointmanagerLog.json
+  Default value: <none>
 
 ## Building and Running
 
-The Endpoint Manager currently just connects to the PostgreSQL database. All log messages are written to the conifgured logfile. If the endpoint manager connects to the database successfully, you should expect to see "Successfully connected!" as the output.
+The Endpoint Manager currently just connects to the PostgreSQL database. All log messages are written to stdout. If the endpoint manager connects to the database successfully, you should expect to see "Successfully connected!" as the output.
 
 The instructions below assume that you are in `endpointmanager/`.
 
