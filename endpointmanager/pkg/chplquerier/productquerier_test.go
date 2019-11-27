@@ -12,9 +12,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/internal/testhelper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 
 	logtest "github.com/sirupsen/logrus/hooks/test"
 
