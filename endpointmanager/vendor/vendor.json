@@ -203,40 +203,40 @@
 			"revisionTime": "2019-11-20T12:44:53Z"
 		},
 		{
-			"checksumSHA1": "OMw2Yi8vaTRQPK+U0fMrNuutBsg=",
+			"checksumSHA1": "lPR3qbFXPCLGqqJa5YV5Tatdg+8=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "ZD8i97ECVQ6z/RsZ2Oxk+oXoCUg=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/internal/testhelper",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "E/Z3pMZzi6KTOWPB52ZkSb4qGaY=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "4y91eRZSLbWs42kv0zHVLMkBCF8=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "zwXXEYtsodBPcvIo0X6MwWVid7U=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "AnnRUhGNmkubPOPfRgoDPOpt2Bk=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql",
-			"revision": "7968647188dd670397a997bb4228ccb456038bad",
-			"revisionTime": "2019-11-18T20:23:21Z"
+			"revision": "abd5d09322004de679de8432467adc66a65b5c2d",
+			"revisionTime": "2019-11-27T14:40:54Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",

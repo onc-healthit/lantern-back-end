@@ -36,7 +36,7 @@ func setupConfig() {
 	failOnError(err)
 	err = viper.BindEnv("dbsslmode")
 	failOnError(err)
-	err = viper.BindEnv("logfile")
+	err = viper.BindEnv("chplapikey")
 	failOnError(err)
 
 	viper.SetDefault("dbhost", "localhost")
@@ -45,23 +45,12 @@ func setupConfig() {
 	viper.SetDefault("dbpass", "postgrespassword")
 	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
-	viper.SetDefault("logfile", "endpointmanagerLog.json")
-}
-
-func initializeLogger() {
-	// log.SetFormatter(&log.JSONFormatter{})
-	// f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
-	// if err != nil {
-	// 	log.Fatal("LogFile creation error: ", err.Error())
-	// }
-	// log.SetOutput(f)
 }
 
 func main() {
 	var err error
 
 	setupConfig()
-	initializeLogger()
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
