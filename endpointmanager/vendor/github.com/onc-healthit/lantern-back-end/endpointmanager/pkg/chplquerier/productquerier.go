@@ -307,7 +307,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// certification criteria lists are the same lengths. unknown precedent for updates. return error.
 	if !cmp.Equal(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
-		return false, errors.New("HealthITProducts certification edition and date are equal, but has same number but unequal certification criteria - unknown precendence for updates")
+		return false, errors.New("HealthITProducts certification edition and date are equal and have the same number certification criteria; however, the criteria are not the same; unknown precendence for updates; not performing update")
 	}
-	return false, errors.New("HealthITProducts certification edition, date, and criteria lists are equal - unknown precendence for updates")
+	return false, errors.New("HealthITProducts certification edition, date, and criteria lists are equal; unknown precendence for updates; not performing update")
 }
