@@ -44,5 +44,5 @@ The Endpoint Manager has not yet been dockerized. To run, perform the following 
 ```bash
 go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download
-go run main.go
+go run cmd/main.go
 ```
