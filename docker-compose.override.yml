@@ -19,3 +19,6 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+  lantern_front_end:
+    ports:
+      - "8090:80"

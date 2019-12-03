@@ -56,13 +56,13 @@ services:
     container_name: lantern-mq
     image: rabbitmq:3-management
 
-  front-end:
+  lantern_front_end:
     container_name: lantern_front_end
-    image: bmathio/lantern
-    # @TODO: Update front-end so certs are added through the volume option in the docker-compose
-    # build:
-      # context: https://github.com/onc-healthit/lantern-front-end.git#docker-compose-frontend
-      # dockerfile: Dockerfile
+    build: 
+      context: https://github.com/onc-healthit/lantern-front-end.git#docker-compose-frontend
+      dockerfile: ./Dockerfile
+      args:
+        cert_dir: ./certs
     ports:
       - "8090:80"
 
