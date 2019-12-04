@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -60,7 +61,9 @@ func main() {
 	fmt.Println("Successfully connected!")
 
 	ctx := context.Background()
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
 	err = chplquerier.GetCHPLProducts(ctx, store, client)
 	if err != nil {
 		panic(err)
