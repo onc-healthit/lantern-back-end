@@ -1,6 +1,8 @@
 package mock
 
 import (
+	"context"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -13,61 +15,60 @@ var _ endpointmanager.ProviderOrganizationStore = &Store{}
 // Each Store method calls the corresponding method <methodName>Fn as assigned in the mock Store structure.
 // It also assigns <methodName>Invoked to true when <methodName> is called.
 type Store struct {
-	GetFHIREndpointFn      func(int) (*endpointmanager.FHIREndpoint, error)
+	GetFHIREndpointFn      func(context.Context, int) (*endpointmanager.FHIREndpoint, error)
 	GetFHIREndpointInvoked bool
 
-	GetFHIREndpointUsingURLFn      func(string) (*endpointmanager.FHIREndpoint, error)
+	GetFHIREndpointUsingURLFn      func(context.Context, string) (*endpointmanager.FHIREndpoint, error)
 	GetFHIREndpointUsingURLInvoked bool
 
-	AddFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	AddFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
 	AddFHIREndpointInvoked bool
 
-	UpdateFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	UpdateFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
 	UpdateFHIREndpointInvoked bool
 
-	DeleteFHIREndpointFn      func(*endpointmanager.FHIREndpoint) error
+	DeleteFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
 	DeleteFHIREndpointInvoked bool
 
-	GetHealthITProductFn      func(int) (*endpointmanager.HealthITProduct, error)
+	GetHealthITProductFn      func(context.Context, int) (*endpointmanager.HealthITProduct, error)
 	GetHealthITProductInvoked bool
 
-	GetHealthITProductUsingNameAndVersionFn      func(string, string) (*endpointmanager.HealthITProduct, error)
+	GetHealthITProductUsingNameAndVersionFn      func(context.Context, string, string) (*endpointmanager.HealthITProduct, error)
 	GetHealthITProductUsingNameAndVersionInvoked bool
 
-	AddHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	AddHealthITProductFn      func(context.Context, *endpointmanager.HealthITProduct) error
 	AddHealthITProductInvoked bool
 
-	UpdateHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	UpdateHealthITProductFn      func(context.Context, *endpointmanager.HealthITProduct) error
 	UpdateHealthITProductInvoked bool
 
-	DeleteHealthITProductFn      func(*endpointmanager.HealthITProduct) error
+	DeleteHealthITProductFn      func(context.Context, *endpointmanager.HealthITProduct) error
 	DeleteHealthITProductInvoked bool
 
-	GetProviderOrganizationFn      func(int) (*endpointmanager.ProviderOrganization, error)
+	GetProviderOrganizationFn      func(context.Context, int) (*endpointmanager.ProviderOrganization, error)
 	GetProviderOrganizationInvoked bool
 
-	AddProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	AddProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
 	AddProviderOrganizationInvoked bool
 
-	UpdateProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	UpdateProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
 	UpdateProviderOrganizationInvoked bool
 
-	DeleteProviderOrganizationFn      func(*endpointmanager.ProviderOrganization) error
+	DeleteProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
 	DeleteProviderOrganizationInvoked bool
 
 	CloseFn      func()
 	CloseInvoked bool
 }
 
-// NewStore creates a connection to the postgresql database and adds a reference to the database
-// in store.DB.
+// NewStore creates a mock store.
 func NewStore() (*Store, error) {
 	var store Store
 
 	return &store, nil
 }
 
-// Close closes the postgresql database connection.
+// Close calls the mocked close function.
 func (s *Store) Close() {
 	s.CloseInvoked = true
 	s.CloseFn()

@@ -134,8 +134,8 @@ func Test_HealthITProductEqual(t *testing.T) {
 	hitp2.LastModifiedInCHPL = hitp1.LastModifiedInCHPL
 
 	hitp2.CHPLID = "other"
-	if hitp1.Equal(hitp2) {
-		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. CHPLID should be different. %s vs %s", hitp1.CHPLID, hitp2.CHPLID)
+	if !hitp1.Equal(hitp2) {
+		t.Errorf("Expected healthit product 1 to equal healthit product 2. 'Equals' should ignore CHPLID.")
 	}
 	hitp2.CHPLID = hitp1.CHPLID
 

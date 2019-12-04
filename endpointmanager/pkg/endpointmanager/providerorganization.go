@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"context"
 	"time"
 )
 
@@ -23,11 +24,11 @@ type ProviderOrganization struct {
 // ProviderOrganizationStore is the interface for interacting with the storage layer that holds
 // provider organization objects.
 type ProviderOrganizationStore interface {
-	GetProviderOrganization(int) (*ProviderOrganization, error)
+	GetProviderOrganization(context.Context, int) (*ProviderOrganization, error)
 
-	AddProviderOrganization(*ProviderOrganization) error
-	UpdateProviderOrganization(*ProviderOrganization) error
-	DeleteProviderOrganization(*ProviderOrganization) error
+	AddProviderOrganization(context.Context, *ProviderOrganization) error
+	UpdateProviderOrganization(context.Context, *ProviderOrganization) error
+	DeleteProviderOrganization(context.Context, *ProviderOrganization) error
 
 	Close()
 }

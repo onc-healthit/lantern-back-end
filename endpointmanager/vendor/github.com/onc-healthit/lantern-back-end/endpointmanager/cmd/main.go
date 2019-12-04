@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"os"
+	"net/http"
+	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 
@@ -34,7 +37,7 @@ func setupConfig() {
 	failOnError(err)
 	err = viper.BindEnv("dbsslmode")
 	failOnError(err)
-	err = viper.BindEnv("logfile")
+	err = viper.BindEnv("chplapikey")
 	failOnError(err)
 
 	viper.SetDefault("dbhost", "localhost")
@@ -43,23 +46,12 @@ func setupConfig() {
 	viper.SetDefault("dbpass", "postgrespassword")
 	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
-	viper.SetDefault("logfile", "endpointmanagerLog.json")
-}
-
-func initializeLogger() {
-	log.SetFormatter(&log.JSONFormatter{})
-	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
-	if err != nil {
-		log.Fatal("LogFile creation error: ", err.Error())
-	}
-	log.SetOutput(f)
 }
 
 func main() {
 	var err error
 
 	setupConfig()
-	initializeLogger()
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -67,4 +59,13 @@ func main() {
 	}
 	defer store.Close()
 	fmt.Println("Successfully connected!")
+
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	if err != nil {
+		panic(err)
+	}
 }
