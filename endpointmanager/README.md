@@ -32,6 +32,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 * **LANTERN_ENDPTMGR_CHPLAPIKEY**: The key necessary for accessing CHPL
 
   Default value: <none>
+  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
 
 ## Building and Running
 
