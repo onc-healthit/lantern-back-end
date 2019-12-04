@@ -14,7 +14,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -166,7 +165,7 @@ func parseHITProd(prod *chplCertifiedProduct) (*endpointmanager.HealthITProduct,
 
 // parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
 // all listed URLs are the same.
-// assumes that criteria/url chunks are delimited by '☺' and that criteria and url are separated by '☹'.
+// assumes that criteria/url chunks are delimited by delimiter1 and that criteria and url are separated by delimiter2.
 func getAPIURL(apiDocStr string) (string, error) {
 	if len(apiDocStr) == 0 {
 		return "", nil
@@ -233,10 +232,7 @@ func persistProduct(ctx context.Context,
 		}
 	} else if err != nil {
 		return errors.Wrap(err, "getting health IT product from store failed")
-	} else if !existingDbProd.Equal(newDbProd) {
-		// changes exist. these may be due to products that have been certified multiple times w/in chpl.
-		// we only care about the latest certification information for a particular version of software.
-
+	} else {
 		needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
 		if err != nil {
 			return errors.Wrap(err, "determining if a health IT product needs updating within the store failed")
@@ -298,16 +294,6 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
-	// cert dates are the same. checking certification criteria lists. if new prod has more criteria, should update.
-	if len(existingDbProd.CertificationCriteria) < len(newDbProd.CertificationCriteria) {
-		return true, nil
-	} else if len(existingDbProd.CertificationCriteria) > len(newDbProd.CertificationCriteria) {
-		return false, nil
-	}
-
-	// certification criteria lists are the same lengths. unknown precedent for updates. return error.
-	if !cmp.Equal(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
-		return false, errors.New("HealthITProducts certification edition and date are equal and have the same number certification criteria; however, the criteria are not the same; unknown precendence for updates; not performing update")
-	}
-	return false, errors.New("HealthITProducts certification edition, date, and criteria lists are equal; unknown precendence for updates; not performing update")
+	// cert dates are the same. unknown update precedence. throw error and don't perform update.
+	return false, errors.New("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update")
 }
