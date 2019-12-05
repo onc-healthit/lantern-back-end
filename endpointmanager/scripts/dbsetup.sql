@@ -30,6 +30,18 @@ CREATE TABLE provider_organizations ( -- https://data.medicare.gov/Hospital-Comp
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE npi_organizations (
+	id               SERIAL PRIMARY KEY,
+	npi_id			 VARCHAR(500),
+	name             VARCHAR(500),
+	secondary_name    VARCHAR(500),
+	fhir_endpoint     JSONB,
+	location         JSONB,
+	taxonomy 		 VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+	created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
