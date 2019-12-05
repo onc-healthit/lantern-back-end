@@ -3,6 +3,8 @@ package main
 import (
     "encoding/csv"
 	"os"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 // Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
@@ -339,6 +341,7 @@ type CsvLine struct {
 }
 
 func main() {
+	store, err := postgresql.NewStore("localhost", 5432, "lantern", "lanternpassword", "lantern", "disable")
 
     lines, err := ReadCsv("npidata_pfile_20050523-20191110.csv")
     if err != nil {
@@ -372,7 +375,7 @@ func main() {
 					State:    data.Provider_Business_Mailing_Address_State_Name,
 					ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
 				Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
-			println(npi_org)
+			store.AddNPIOrganization(npi_org)
 		}
 	}
 }

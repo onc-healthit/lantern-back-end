@@ -66,10 +66,8 @@ func (s *Store) AddNPIOrganization(po *endpointmanager.NPIOrganization) error {
 		secondary_name,
 		fhir_endpoint,
 		location,
-		taxonomy,
-		created_at,
-		updated_at)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)
+		taxonomy)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(po.Location)
