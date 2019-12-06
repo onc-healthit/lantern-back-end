@@ -8,7 +8,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 // Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
-type CsvLine struct {
+type NPICsvLine struct {
 	NPI string
 	Entity_Type_Code string
 	Replacement_NPI string
@@ -340,6 +340,38 @@ type CsvLine struct {
 	Healthcare_Provider_Taxonomy_Group_15 string
 }
 
+func parseNPIdataLine(line []string) NPICsvLine {
+	data := NPICsvLine{
+		NPI: line[0],
+		Entity_Type_Code: line[1],
+		Provider_Organization_Name_Legal_Business_Name: line[4],
+		Provider_Other_Organization_Name: line[11],
+		Provider_First_Line_Business_Practice_Location_Address: line[28],
+		Provider_Second_Line_Business_Practice_Location_Address: line[29],
+		Provider_Business_Practice_Location_Address_City_Name: line[30],
+		Provider_Business_Practice_Location_Address_State_Name: line[31],
+		Provider_Business_Practice_Location_Address_Postal_Code: line[32],
+		Healthcare_Provider_Taxonomy_Code_1: line[47],
+	}
+	return data
+}
+
+func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
+	npi_org := &endpointmanager.NPIOrganization{
+		NPI_ID: data.NPI,
+		Name: data.Provider_Organization_Name_Legal_Business_Name,
+		SecondaryName: data.Provider_Other_Organization_Name,
+		FHIREndpoint: nil,
+		Location: &endpointmanager.Location{
+			Address1: data.Provider_First_Line_Business_Mailing_Address,
+			Address2: data.Provider_Second_Line_Business_Mailing_Address,
+			City:     data.Provider_Business_Mailing_Address_City_Name,
+			State:    data.Provider_Business_Mailing_Address_State_Name,
+			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
+		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
+	return npi_org
+}
+
 func main() {
 	store, err := postgresql.NewStore("localhost", 5432, "lantern", "lanternpassword", "lantern", "disable")
 
@@ -349,32 +381,10 @@ func main() {
     }
     // Loop through lines & turn into object
     for _, line := range lines {
-        data := CsvLine{
-			NPI: line[0],
-			Entity_Type_Code: line[1],
-			Provider_Organization_Name_Legal_Business_Name: line[4],
-			Provider_Other_Organization_Name: line[11],
-			Provider_First_Line_Business_Practice_Location_Address: line[28],
-			Provider_Second_Line_Business_Practice_Location_Address: line[29],
-			Provider_Business_Practice_Location_Address_City_Name: line[30],
-			Provider_Business_Practice_Location_Address_State_Name: line[31],
-			Provider_Business_Practice_Location_Address_Postal_Code: line[32],
-			Healthcare_Provider_Taxonomy_Code_1: line[47],
-		}
+        data := parseNPIdataLine(line)
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if(data.Entity_Type_Code == "2"){
-			var npi_org = &endpointmanager.NPIOrganization{
-				NPI_ID: data.NPI,
-				Name: data.Provider_Organization_Name_Legal_Business_Name,
-				SecondaryName: data.Provider_Other_Organization_Name,
-				FHIREndpoint: nil,
-				Location: &endpointmanager.Location{
-					Address1: data.Provider_First_Line_Business_Mailing_Address,
-					Address2: data.Provider_Second_Line_Business_Mailing_Address,
-					City:     data.Provider_Business_Mailing_Address_City_Name,
-					State:    data.Provider_Business_Mailing_Address_State_Name,
-					ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
-				Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
+			npi_org := buildNPIOrgFromNPICsvLine(data)
 			store.AddNPIOrganization(npi_org)
 		}
 	}
