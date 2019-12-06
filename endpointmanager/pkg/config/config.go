@@ -60,6 +60,8 @@ func SetupConfigForTests() error {
 
 	err = SetupConfig()
 
+	prevDbName := viper.GetString("dbname")
+
 	viper.SetEnvPrefix("lantern_test")
 	viper.AutomaticEnv()
 
@@ -77,8 +79,12 @@ func SetupConfigForTests() error {
 	}
 
 	viper.SetDefault("dbuser", "lantern")
-	viper.SetDefault("dbpassword", "postgrespasswordtest")
+	viper.SetDefault("dbpassword", "postgrespassword")
 	viper.SetDefault("dbname", "lantern_test")
+
+	if prevDbName == viper.GetString("dbname") {
+		panic("Test database and dev/prod database must be different. Test database: " + viper.GetString("dbname") + ". Prod/Dev dataabse: " + prevDbName)
+	}
 
 	return nil
 }

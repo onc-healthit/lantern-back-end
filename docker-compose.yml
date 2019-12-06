@@ -11,6 +11,7 @@ services:
     image: timescale/pg_prometheus:latest-pg11
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./scripts/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
     environment:
       - POSTGRES_PASSWORD=${LANTERN_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_DBUSER}

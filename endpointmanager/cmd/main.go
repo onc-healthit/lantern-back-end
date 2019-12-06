@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/internal/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 
