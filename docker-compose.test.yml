@@ -10,20 +10,17 @@ services:
     command: ./wait-for-it.sh grafana:3000 -- ./wait-for-it.sh pg_prometheus:5432 -- ./wait-for-it.sh lantern-mq:15672 -- ./wait-for-it.sh lantern-mq:5672 -- ./wait-for-it.sh prometheus:9090 -- ./wait-for-it.sh prometheus_postgres_adapter:9201 -- ./wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=integration ./...
 
   endpoint_querier:
-#    container_name: endpoint_querier_1_test
     entrypoint:
       - "./main"
       - "./resources/TestEndpointSources.json"
 
   pg_prometheus:
-#    container_name: pg_prometheus_test
     environment:
       - POSTGRES_PASSWORD=${LANTERN_TEST_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_TEST_DBUSER}
       - POSTGRES_DB=${LANTERN_TEST_DBNAME}
 
   prometheus_postgresql_adapter:
-#    container_name: prometheus_postgres_adapter_test
     command:
       -pg-host=pg_prometheus
       -pg-password=${LANTERN_TEST_DBPASSWORD}
