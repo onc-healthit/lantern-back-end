@@ -215,7 +215,7 @@ func main() {
 		runtime.GC()
 		// Polling interval, only necessary when running http calls asynchronously
 		// TODO: Config file
-		// time.Sleep(5 * time.Minute)
+		time.Sleep(10 * time.Minute)
 		queryCount += 1
 	}
 
