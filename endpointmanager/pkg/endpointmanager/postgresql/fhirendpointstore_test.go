@@ -1,3 +1,5 @@
+// +build integration
+
 package postgresql
 
 import (
@@ -5,18 +7,15 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	"github.com/spf13/viper"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_PersistFHIREndpoint(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
 	var err error
 	ctx := context.Background()
-
-	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	if err != nil {
-		t.Errorf("Error creating Store type: %s", err.Error())
-	}
-	defer store.Close()
 
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:                   "example.com/FHIR/DSTU2",

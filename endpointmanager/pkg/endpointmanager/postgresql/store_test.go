@@ -1,53 +1,71 @@
+// +build integration
+
 package postgresql
 
 import (
-	"flag"
+	"fmt"
+	"net"
 	"os"
 	"testing"
+	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/spf13/viper"
 )
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
-
-func setupConfig() {
-	var err error
-
-	viper.SetEnvPrefix("lantern_endptmgr")
-	viper.AutomaticEnv()
-
-	err = viper.BindEnv("dbhost")
-	failOnError(err)
-	err = viper.BindEnv("dbport")
-	failOnError(err)
-	err = viper.BindEnv("dbuser")
-	failOnError(err)
-	err = viper.BindEnv("dbpass")
-	failOnError(err)
-	err = viper.BindEnv("dbname")
-	failOnError(err)
-	err = viper.BindEnv("dbsslmode")
-	failOnError(err)
-	err = viper.BindEnv("logfile")
-	failOnError(err)
-
-	viper.SetDefault("dbhost", "localhost")
-	viper.SetDefault("dbport", 5432)
-	viper.SetDefault("dbuser", "postgres")
-	viper.SetDefault("dbpass", "postgrespassword")
-	viper.SetDefault("dbname", "postgres")
-	viper.SetDefault("dbsslmode", "disable")
-	viper.SetDefault("logfile", "endpointmanagerLog.json")
-}
+var store *Store
 
 func TestMain(m *testing.M) {
-	flag.Parse()
+	var err error
 
-	setupConfig()
-	os.Exit(m.Run())
+	err = setup()
+	if err != nil {
+		panic(err)
+	}
+
+	err = checkResources()
+	if err != nil {
+		panic(err)
+	}
+
+	code := m.Run()
+
+	teardown()
+	os.Exit(code)
+}
+
+func setup() error {
+	err := config.SetupConfigForTests()
+	if err != nil {
+		return err
+	}
+
+	store, err = NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// confirms that the network resources we need are available
+func checkResources() error {
+	host := viper.GetString("dbhost")
+	port := viper.GetString("dbport")
+
+	timeout := time.Second
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
+	if err != nil {
+		fmt.Println("Connecting error:", err)
+	}
+	if conn != nil {
+		defer conn.Close()
+		fmt.Println("Opened", net.JoinHostPort(host, port))
+	}
+
+	return nil
+}
+
+func teardown() {
+	store.Close()
 }
