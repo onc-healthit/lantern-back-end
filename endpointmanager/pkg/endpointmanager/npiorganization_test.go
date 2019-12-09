@@ -12,7 +12,6 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 		NPI_ID: "1",
 		Name: "Hospital #1 of America",
 		SecondaryName: "Hospital #1 of America Second Name",
-		FHIREndpointID: 3,
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -26,7 +25,6 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 		NPI_ID: "1",
 		Name: "Hospital #1 of America",
 		SecondaryName: "Hospital #1 of America Second Name",
-		FHIREndpointID: 3,
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -50,12 +48,6 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. Name should be different. %s vs %s", npio2.Name, npio2.Name)
 	}
 	npio2.Name = npio1.Name
-
-	npio2.FHIREndpointID = 0
-	if npio1.Equal(npio2) {
-		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. FHIREndpointID should be different. %d vs %d", npio2.FHIREndpointID, npio2.FHIREndpointID)
-	}
-	npio2.FHIREndpointID = npio1.FHIREndpointID
 
 	npio2.Location.Address1 = "other"
 	if npio1.Equal(npio2) {

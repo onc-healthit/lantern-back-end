@@ -11,7 +11,6 @@ type NPIOrganization struct {
 	NPI_ID			 string
 	Name             string
 	SecondaryName    string
-	FHIREndpointID   int
 	Location         *Location
 	Taxonomy 		 string // Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
 	CreatedAt        time.Time
@@ -22,7 +21,6 @@ type NPIOrganization struct {
 // NPIOrganization objects.
 type NPIOrganizationStore interface {
 	GetNPIOrganization(int) (*NPIOrganization, error)
-
 	AddNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganization(*NPIOrganization) error
 	DeleteNPIOrganization(*NPIOrganization) error
@@ -46,9 +44,6 @@ func (org *NPIOrganization) Equal(org2 *NPIOrganization) bool {
 		return false
 	}
 	if !org.Location.Equal(org2.Location) {
-		return false
-	}
-	if org.FHIREndpointID != org2.FHIREndpointID {
 		return false
 	}
 	if org.Taxonomy != org2.Taxonomy {

@@ -18,7 +18,6 @@ func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, er
 		npi_id,
 		name,
 		secondary_name,
-		fhir_endpoint_id,
 		location,
 		taxonomy,
 		created_at,
@@ -31,7 +30,6 @@ func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, er
 		&org.NPI_ID,
 		&org.Name,
 		&org.SecondaryName,
-		&org.FHIREndpointID,
 		&locationJSON,
 		&org.Taxonomy,
 		&org.CreatedAt,
@@ -57,10 +55,9 @@ func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
 		npi_id,
 		name,
 		secondary_name,
-		fhir_endpoint_id,
 		location,
 		taxonomy)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(org.Location)
@@ -72,7 +69,6 @@ func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
-		org.FHIREndpointID,
 		locationJSON,
 		org.Taxonomy)
 
@@ -88,10 +84,9 @@ func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) erro
 	SET npi_id = $2,
 		name = $3,
 		secondary_name = $4,
-		fhir_endpoint_id = $5,
-		location = $6,
-		taxonomy = $7,
-	WHERE id = $1`
+		location = $5,
+		taxonomy = $6
+	WHERE id=$1`
 
 	locationJSON, err := json.Marshal(org.Location)
 	if err != nil {
@@ -99,10 +94,10 @@ func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) erro
 	}
 
 	_, err = s.DB.Exec(sqlStatement,
+		org.ID,
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
-		org.FHIREndpointID,
 		locationJSON,
 		org.Taxonomy)
 

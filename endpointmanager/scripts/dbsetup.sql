@@ -35,7 +35,6 @@ CREATE TABLE npi_organizations (
 	npi_id			 VARCHAR(500),
 	name             VARCHAR(500),
 	secondary_name    VARCHAR(500),
-	fhir_endpoint     REFERENCES fhir_endpoints(id),
 	location         JSONB,
 	taxonomy 		 VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
 	created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),

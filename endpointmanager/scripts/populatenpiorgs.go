@@ -3,6 +3,7 @@ package main
 import (
     "encoding/csv"
 	"os"
+	"github.com/spf13/viper"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -361,7 +362,6 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 		NPI_ID: data.NPI,
 		Name: data.Provider_Organization_Name_Legal_Business_Name,
 		SecondaryName: data.Provider_Other_Organization_Name,
-		FHIREndpointID: nil,
 		Location: &endpointmanager.Location{
 			Address1: data.Provider_First_Line_Business_Mailing_Address,
 			Address2: data.Provider_Second_Line_Business_Mailing_Address,
@@ -373,7 +373,7 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 }
 
 func main() {
-	store, err := postgresql.NewStore("localhost", 5432, "lantern", "lanternpassword", "lantern", "disable")
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 
     lines, err := ReadCsv("npidata_pfile_20050523-20191110.csv")
     if err != nil {
