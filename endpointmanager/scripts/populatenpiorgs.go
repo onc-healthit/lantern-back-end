@@ -361,7 +361,7 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 		NPI_ID: data.NPI,
 		Name: data.Provider_Organization_Name_Legal_Business_Name,
 		SecondaryName: data.Provider_Other_Organization_Name,
-		FHIREndpoint: nil,
+		FHIREndpointID: nil,
 		Location: &endpointmanager.Location{
 			Address1: data.Provider_First_Line_Business_Mailing_Address,
 			Address2: data.Provider_Second_Line_Business_Mailing_Address,
