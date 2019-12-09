@@ -11,7 +11,7 @@ type NPIOrganization struct {
 	NPI_ID			 string
 	Name             string
 	SecondaryName    string
-	FHIREndpoint     *FHIREndpoint
+	FHIREndpointID   int
 	Location         *Location
 	Taxonomy 		 string // Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
 	CreatedAt        time.Time
@@ -31,27 +31,27 @@ type NPIOrganizationStore interface {
 }
 
 // Equal checks each field of the two NPIOrganizations except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
-func (po *NPIOrganization) Equal(po2 *NPIOrganization) bool {
-	if po == nil && po2 == nil {
+func (org *NPIOrganization) Equal(org2 *NPIOrganization) bool {
+	if org == nil && org2 == nil {
 		return true
-	} else if po == nil {
+	} else if org == nil {
 		return false
-	} else if po2 == nil {
-		return false
-	}
-	if po.Name != po2.Name {
+	} else if org2 == nil {
 		return false
 	}
-	if po.SecondaryName != po2.SecondaryName {
+	if org.Name != org2.Name {
 		return false
 	}
-	if !po.Location.Equal(po2.Location) {
+	if org.SecondaryName != org2.SecondaryName {
 		return false
 	}
-	if !po.FHIREndpoint.Equal(po2.FHIREndpoint) {
+	if !org.Location.Equal(org2.Location) {
 		return false
 	}
-	if po.Taxonomy != po2.Taxonomy {
+	if org.FHIREndpointID != org2.FHIREndpointID {
+		return false
+	}
+	if org.Taxonomy != org2.Taxonomy {
 		return false
 	}
 
