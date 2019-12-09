@@ -341,7 +341,7 @@ type NPICsvLine struct {
 	Healthcare_Provider_Taxonomy_Group_15 string
 }
 
-func parseNPIdataLine(line []string) NPICsvLine {
+func ParseNPIdataLine(line []string) NPICsvLine {
 	data := NPICsvLine{
 		NPI: line[0],
 		Entity_Type_Code: line[1],
@@ -357,16 +357,16 @@ func parseNPIdataLine(line []string) NPICsvLine {
 	return data
 }
 
-func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
+func BuildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
 	npi_org := &endpointmanager.NPIOrganization{
 		NPI_ID: data.NPI,
 		Name: data.Provider_Organization_Name_Legal_Business_Name,
 		SecondaryName: data.Provider_Other_Organization_Name,
 		Location: &endpointmanager.Location{
-			Address1: data.Provider_First_Line_Business_Mailing_Address,
-			Address2: data.Provider_Second_Line_Business_Mailing_Address,
-			City:     data.Provider_Business_Mailing_Address_City_Name,
-			State:    data.Provider_Business_Mailing_Address_State_Name,
+			Address1: data.Provider_First_Line_Business_Practice_Location_Address,
+			Address2: data.Provider_Second_Line_Business_Practice_Location_Address,
+			City:     data.Provider_Business_Practice_Location_Address_City_Name,
+			State:    data.Provider_Business_Practice_Location_Address_State_Name,
 			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
 		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
 	return npi_org
@@ -381,10 +381,10 @@ func main() {
     }
     // Loop through lines & turn into object
     for _, line := range lines {
-        data := parseNPIdataLine(line)
+        data := ParseNPIdataLine(line)
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if(data.Entity_Type_Code == "2"){
-			npi_org := buildNPIOrgFromNPICsvLine(data)
+			npi_org := BuildNPIOrgFromNPICsvLine(data)
 			store.AddNPIOrganization(npi_org)
 		}
 	}
@@ -406,6 +406,6 @@ func ReadCsv(filename string) ([][]string, error) {
     if err != nil {
         return [][]string{}, err
     }
-
-    return lines, nil
+	// return lines without header line
+    return lines[1:len(lines)], nil
 }
