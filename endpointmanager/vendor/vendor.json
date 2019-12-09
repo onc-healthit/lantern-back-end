@@ -205,32 +205,32 @@
 		{
 			"checksumSHA1": "cpdY+O3H+nEToD+CijQgkeH+tCI=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd",
-			"revision": "773bb2f224153d97367e9061e774bcf6828a1e07",
-			"revisionTime": "2019-12-06T00:48:36Z"
+			"revision": "4ffda9627cbb0782da2f64207e8b576c325b815a",
+			"revisionTime": "2019-12-09T13:50:21Z"
 		},
 		{
-			"checksumSHA1": "EepzeV5te2aX8qw73mjFobQl1W0=",
+			"checksumSHA1": "K4sQrFU8s4upF35iq3iDPWAHDfU=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager",
-			"revision": "773bb2f224153d97367e9061e774bcf6828a1e07",
-			"revisionTime": "2019-12-06T00:48:36Z"
+			"revision": "4ffda9627cbb0782da2f64207e8b576c325b815a",
+			"revisionTime": "2019-12-09T13:50:21Z"
 		},
 		{
 			"checksumSHA1": "20FjcXsyLl8/fWJgMq+6PMlhjmg=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock",
-			"revision": "773bb2f224153d97367e9061e774bcf6828a1e07",
-			"revisionTime": "2019-12-06T00:48:36Z"
+			"revision": "4ffda9627cbb0782da2f64207e8b576c325b815a",
+			"revisionTime": "2019-12-09T13:50:21Z"
 		},
 		{
-			"checksumSHA1": "CuqucrlCLFsuU5zNUwo//vDhizc=",
+			"checksumSHA1": "az/sWdSzEue2v39DaCa61VrsS8Q=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql",
-			"revision": "773bb2f224153d97367e9061e774bcf6828a1e07",
-			"revisionTime": "2019-12-06T00:48:36Z"
+			"revision": "4ffda9627cbb0782da2f64207e8b576c325b815a",
+			"revisionTime": "2019-12-09T13:50:21Z"
 		},
 		{
-			"checksumSHA1": "m/bxvLdyfve3SR9C+SuYLE6fFjM=",
+			"checksumSHA1": "pQKV+HGxw4Yi8xm/NnzRo479gsI=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/scripts",
-			"revision": "773bb2f224153d97367e9061e774bcf6828a1e07",
-			"revisionTime": "2019-12-06T00:48:36Z"
+			"revision": "4ffda9627cbb0782da2f64207e8b576c325b815a",
+			"revisionTime": "2019-12-09T13:50:21Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
