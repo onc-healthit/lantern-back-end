@@ -17,9 +17,9 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	defer store.Close()
 
 	var npio1 = &endpointmanager.NPIOrganization{
-		ID:   1,
-		NPI_ID: "1",
-		Name: "Hospital #1 of America",
+		ID:            1,
+		NPI_ID:        "1",
+		Name:          "Hospital #1 of America",
 		SecondaryName: "Hospital #1 of America Second Name",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
@@ -30,12 +30,12 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		Taxonomy: "208D00000X"}
 
 	var npio2 = &endpointmanager.NPIOrganization{
-		ID:   1,
-		NPI_ID: "",
-		Name: "",
+		ID:            1,
+		NPI_ID:        "",
+		Name:          "",
 		SecondaryName: "",
-		Location: &endpointmanager.Location{},
-		Taxonomy: "208D00000X"}
+		Location:      &endpointmanager.Location{},
+		Taxonomy:      "208D00000X"}
 
 	// add organizations
 

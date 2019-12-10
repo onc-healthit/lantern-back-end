@@ -374,13 +374,18 @@ func BuildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 	return npi_org
 }
 
-func main() {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-
-	lines, err := ReadCsv("npidata_pfile_20050523-20191110.csv")
+func panicOnErr(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	panicOnErr(err)
+	lines, err := ReadCsv("npidata_pfile_20050523-20191110.csv")
+	panicOnErr(err)
+
 	// Loop through lines & turn into object
 	for _, line := range lines {
 		data := ParseNPIdataLine(line)

@@ -12,7 +12,7 @@ func Test_ParseNPIdataLine(t *testing.T) {
 	}
 	// fixture file has 20 lines, we throw out the header line
 	if len(lines) != 19 {
-		t.Errorf("Expected %d lines to be read from CSV, got %d",19, len(lines))
+		t.Errorf("Expected %d lines to be read from CSV, got %d", 19, len(lines))
 	}
 
 	// "1497758544","2","","<UNAVAIL>","CUMBERLAND COUNTY HOSPITAL SYSTEM, INC","","","","","","","CAPE FEAR VALLEY HOME HEALTH AND HOSPICE","3","","","","","","","","3418 VILLAGE DR","","FAYETTEVILLE","NC","283044552","US","9106096740","","3418 VILLAGE DR","","FAYETTEVILLE","NC","283044552","US","9106096740","","05/23/2005","09/26/2011","","","","","NAGOWSKI","MICHAEL","","CEO","9106096700","251G00000X","HC0283","NC","Y","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","3401562","05","NC","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","N","","","MR.","","","","","","","","","","","","","","","","",""
@@ -82,7 +82,7 @@ func Test_BuildNPIOrgFromNPICsvLine(t *testing.T) {
 		t.Errorf("Expected Name to be %s, got %s", "CAPE FEAR VALLEY HOME HEALTH AND HOSPICE", npi_org.SecondaryName)
 	}
 	// 	Location.Address1
-	if 	npi_org.Location.Address1 != "3418 VILLAGE DR" {
+	if npi_org.Location.Address1 != "3418 VILLAGE DR" {
 		t.Errorf("Expected Name to be %s, got %s", "3418 VILLAGE DR", npi_org.Location.Address1)
 	}
 	// Location.Address2
