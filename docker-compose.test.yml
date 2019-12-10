@@ -2,6 +2,8 @@ version: '3'
 
 services:
   endpoint_querier:
+    environment:
+      - LANTERN_ENDPTQRY_QUERY_INTERVAL=0
     entrypoint:
       - "./main"
       - "./resources/TestEndpointSources.json"
