@@ -8,9 +8,9 @@ import (
 
 func Test_NPIOrganizationEqual(t *testing.T) {
 	var npio1 = &NPIOrganization{
-		ID:   1,
-		NPI_ID: "1",
-		Name: "Hospital #1 of America",
+		ID:            1,
+		NPI_ID:        "1",
+		Name:          "Hospital #1 of America",
 		SecondaryName: "Hospital #1 of America Second Name",
 		Location: &Location{
 			Address1: "123 Gov Way",
@@ -21,9 +21,9 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 		Taxonomy: "208D00000X"}
 
 	var npio2 = &NPIOrganization{
-		ID:   1,
-		NPI_ID: "1",
-		Name: "Hospital #1 of America",
+		ID:            1,
+		NPI_ID:        "1",
+		Name:          "Hospital #1 of America",
 		SecondaryName: "Hospital #1 of America Second Name",
 		Location: &Location{
 			Address1: "123 Gov Way",

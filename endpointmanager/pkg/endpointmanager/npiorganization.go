@@ -7,14 +7,14 @@ import (
 // NPIOrganization represents a hospital Group, Corporation or Partnership
 // From https://data.medicare.gov/Hospital-Compare/Hospital-General-Information/xubh-q36u
 type NPIOrganization struct {
-	ID               int
-	NPI_ID			 string
-	Name             string
-	SecondaryName    string
-	Location         *Location
-	Taxonomy 		 string // Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	ID            int
+	NPI_ID        string
+	Name          string
+	SecondaryName string
+	Location      *Location
+	Taxonomy      string // Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 // NPIOrganizationStore is the interface for interacting with the storage layer that holds
