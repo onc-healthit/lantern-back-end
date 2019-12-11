@@ -134,14 +134,8 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 }
 
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
-	println(viper.GetString("dbhost"))
-	println(viper.GetString("dbuser"))
-	println(viper.GetString("dbpassword"))
-	println(viper.GetString("dbname"))
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
-
-	println("SUCCEEDED CONNECTING TO DB")
 
 	defer store.Close()
 	fhir_version_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_fhir_version';")
