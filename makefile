@@ -15,9 +15,6 @@ clean:
 	docker-compose -f docker-compose.yml down --rmi all -v
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
-install:
-	go get ./...
-
 test:
 	go test -covermode=count -count=1 ./...
 
