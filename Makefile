@@ -22,4 +22,5 @@ test_int:
 	go test -covermode=count -count=1 -tags=integration ./...
 
 test_e2e:
+	docker-compose down
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
