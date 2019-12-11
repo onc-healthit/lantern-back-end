@@ -1,24 +1,11 @@
 version: '3'
 
 services:
-  lantern-e2e:
-    environment:
-      - LANTERN_DBHOST=pg_prometheus
-    container_name: lantern-e2e
-    build: 
-      context: ./e2e
-    command: ./wait-for-it.sh grafana:3000 -- ./wait-for-it.sh pg_prometheus:5432 -- ./wait-for-it.sh lantern-mq:15672 -- ./wait-for-it.sh lantern-mq:5672 -- ./wait-for-it.sh prometheus:9090 -- ./wait-for-it.sh prometheus_postgres_adapter:9201 -- ./wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=integration ./...
 
   endpoint_querier:
     entrypoint:
       - "./main"
       - "./resources/TestEndpointSources.json"
-
-  pg_prometheus:
-    environment:
-      - POSTGRES_PASSWORD=${LANTERN_TEST_DBPASSWORD}
-      - POSTGRES_USER=${LANTERN_TEST_DBUSER}
-      - POSTGRES_DB=${LANTERN_TEST_DBNAME}
 
   prometheus_postgresql_adapter:
     command:
