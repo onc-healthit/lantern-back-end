@@ -221,10 +221,10 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "lfNc+Tlq6q+Wjc7ECGLxj0ayFVE=",
+			"checksumSHA1": "Tj2iylSzoBr4kbhzqz5dNSV3enw=",
 			"path": "github.com/onc-healthit/lantern-back-end/e2e/integration_tests",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "r3wddNKrLGrQPNsf8sDTXuGyPUg=",

@@ -5,38 +5,38 @@
 		{
 			"checksumSHA1": "mIXbqew2K9KrsOlRgEGw+MF+Llc=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "EiwUrrNmN6j0Ht8pNyJlX0dDsv0=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/mock",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "hLp3OMJA615p8+mjXVNQqs2L2Dk=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "KXSPhDHEGfdKHnt4QlkXftk3qjM=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/receive",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "1UiXtG9GgF/BvedDJ65Dg+BRL9E=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/sendQueue",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "ECzU4QwpIUg1MXPz12DJfrQG3MA=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/sendTopic",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "ffe11dd6f7a95e864c45bf4d743b99caca3955e2",
+			"revisionTime": "2019-12-11T13:47:27Z"
 		},
 		{
 			"checksumSHA1": "GH70ONgz5JvA9NimFl12u16dpEg=",

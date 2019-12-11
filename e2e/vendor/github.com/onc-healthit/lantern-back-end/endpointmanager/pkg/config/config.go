@@ -79,7 +79,7 @@ func SetupConfigForTests() error {
 	}
 
 	viper.SetDefault("dbuser", "lantern")
-	viper.SetDefault("dbpassword", "postgrespasswordtest")
+	viper.SetDefault("dbpassword", "postgrespassword")
 	viper.SetDefault("dbname", "lantern_test")
 
 	if prevDbName == viper.GetString("dbname") {
