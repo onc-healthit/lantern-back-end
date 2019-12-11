@@ -5,6 +5,7 @@
   * [Lantern Message Queue](lanternmq/README.md)
 * [Additional Services](#additional-services)
   * [Using docker-compose](#using-docker-compose)
+    * [Using Make](#using-make)
     * [Starting the Services](#starting-the-services)
     * [Stopping the Services](#stopping-the-services)
     * [Starting Services Behind SSL-Inspecting Proxy](#starting-services-behind-ssl-inspecting-proxy)
@@ -17,6 +18,7 @@
     * [Grafana](#grafana)
       * [Viewing Collected Data in Grafana](#viewing-collected-data-in-grafana)
 * [Testing](#testing)
+  * [Using Make](#using-make-1)
   * [Running All Unit Tests](#running-all-unit-tests)
   * [Running Tests With Coverage](#running-tests-with-coverage)
   * [Running End to End Tests](#running-end-to-end-tests)
@@ -42,6 +44,16 @@ Grafana creates many of the visualizations used by Lantern through querying the 
 ## Using docker-compose
 
 All of the required services to run the Lantern back-end are contained in the docker-compose file.
+
+### Using Make
+
+A makefile has been created for the project to simplify running containers.
+
+* `make run`: runs docker-compose for a development environment
+* `make run_prod`: runs docker-compose for a production environment
+* `make stop`: runs docker-compose `down` for a development environment
+* `make stop_prod`: runs docker-compose `down` for a development environment
+* `make clean`: runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups.
 
 ### Starting the Services
 
@@ -273,6 +285,15 @@ You can check that Grafana is up by nagivating to `http://localhost:3000` and us
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore.
 
 # Testing
+
+## Using Make
+
+A makefile has been added to make testing easier. It includes the following commands:
+
+* `make test`: runs the go unit tests
+* `make test_int`: runs the go integration tests and unit tests
+* `make test_e2e`: runs docker-compose specifically for the e2e test and then runs the e2e test.
+
 ## Running All Unit Tests
 
 To run all tests in a project run:
@@ -303,7 +324,15 @@ Using the generated coverage file you can use `go tool cover` to view the covera
 go tool cover -html=coverage.out
 ```
 
-### Running End to End Tests
+## Running Integration Tests
+
+To run integration tests (which take a long time to run), add the `integration` tag:
+
+```bash
+go test -tags=integration ./...
+```
+
+## Running End to End Tests
 Running this command will build the project containers and then run e2e/integration_tests/*.go
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
@@ -318,6 +347,7 @@ A successful test will show the following output before the docker containers ar
 lantern-e2e                      | ok  	github.com/onc-healthit/lantern-back-end/e2e/integration_tests	30.031s
 lantern-e2e exited with code 0
 ```
+
 # Contributing
 ## Lintr
 Code going through PR should pass the lintr invoked by running:
