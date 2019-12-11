@@ -16,6 +16,11 @@ var store *Store
 func TestMain(m *testing.M) {
 	var err error
 
+	err := config.SetupConfigForTests()
+	if err != nil {
+		return err
+	}
+
 	err = setup()
 	if err != nil {
 		panic(err)
@@ -34,11 +39,6 @@ func TestMain(m *testing.M) {
 }
 
 func setup() error {
-	err := config.SetupConfigForTests()
-	if err != nil {
-		return err
-	}
-
 	store, err = NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		return err
