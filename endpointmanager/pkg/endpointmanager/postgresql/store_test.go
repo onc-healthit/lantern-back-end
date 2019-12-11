@@ -3,13 +3,11 @@
 package postgresql
 
 import (
-	"fmt"
-	"net"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/spf13/viper"
 )
 
