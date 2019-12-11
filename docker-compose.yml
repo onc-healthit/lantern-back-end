@@ -4,7 +4,7 @@ services:
   endpoint_querier:
     container_name: endpoint_querier_1
     build: 
-      context: ./endpoints
+      context: ./endpointnetworkquerier
 
   pg_prometheus:
     container_name: pg_prometheus
