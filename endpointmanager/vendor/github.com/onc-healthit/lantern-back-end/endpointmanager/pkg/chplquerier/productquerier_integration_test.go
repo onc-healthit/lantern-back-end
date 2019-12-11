@@ -23,9 +23,9 @@ var store *postgresql.Store
 func TestMain(m *testing.M) {
 	var err error
 
-	err := config.SetupConfigForTests()
+	err = config.SetupConfigForTests()
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	err = setup()
@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 	}
 
 	hap := th.HostAndPort{Host: viper.GetString("dbhost"), Port: viper.GetString("dbport")}
-	th.CheckResources(hap)
+	err = th.CheckResources(hap)
 	if err != nil {
 		panic(err)
 	}
@@ -92,6 +92,7 @@ func Test_Integration_GetCHPLProducts(t *testing.T) {
 }
 
 func setup() error {
+	var err error
 	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		return err
