@@ -23,6 +23,11 @@ var store *postgresql.Store
 func TestMain(m *testing.M) {
 	var err error
 
+	err := config.SetupConfigForTests()
+	if err != nil {
+		return err
+	}
+
 	err = setup()
 	if err != nil {
 		panic(err)
@@ -87,11 +92,6 @@ func Test_Integration_GetCHPLProducts(t *testing.T) {
 }
 
 func setup() error {
-	err := config.SetupConfigForTests()
-	if err != nil {
-		return err
-	}
-
 	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		return err
