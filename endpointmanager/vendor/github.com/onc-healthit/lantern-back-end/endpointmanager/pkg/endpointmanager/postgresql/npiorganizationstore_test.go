@@ -39,12 +39,12 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	// add organizations
 
-	err = store.AddNPIOrganization(npio1)
+	err = store.AddOrUpdateNPIOrganization(npio1)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
-	err = store.AddNPIOrganization(npio2)
+	err = store.AddOrUpdateNPIOrganization(npio2)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
@@ -64,6 +64,24 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
 	if !npio2_get.Equal(npio2) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	// retrieve organizations by NPI_ID
+
+	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	if err != nil {
+		t.Errorf("Error getting npi organization: %s", err.Error())
+	}
+	if !npio1_get_npi.Equal(npio1) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	if err != nil {
+		t.Errorf("Error getting npi organization: %s", err.Error())
+	}
+	if !npio2_get_npi.Equal(npio2) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 

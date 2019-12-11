@@ -21,8 +21,10 @@ type NPIOrganization struct {
 // NPIOrganization objects.
 type NPIOrganizationStore interface {
 	GetNPIOrganization(int) (*NPIOrganization, error)
-	AddNPIOrganization(*NPIOrganization) error
+	GetNPIOrganizationByNPIID(string) (*NPIOrganization, error)
+	AddOrUpdateNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganization(*NPIOrganization) error
+	UpdateNPIOrganizationByNPIID(*NPIOrganization) error
 	DeleteNPIOrganization(*NPIOrganization) error
 
 	Close()
@@ -35,6 +37,9 @@ func (org *NPIOrganization) Equal(org2 *NPIOrganization) bool {
 	} else if org == nil {
 		return false
 	} else if org2 == nil {
+		return false
+	}
+	if org.NPI_ID != org2.NPI_ID {
 		return false
 	}
 	if org.Name != org2.Name {

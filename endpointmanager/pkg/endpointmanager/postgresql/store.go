@@ -12,6 +12,7 @@ import (
 // FHIREndpointStore
 // HealthITProductStore
 // ProviderOrganizationStore
+// NPIOrganizationStore
 //
 // Usage:
 //
@@ -31,6 +32,9 @@ var _ endpointmanager.HealthITProductStore = &Store{}
 
 // Ensure Store implements endpointmanager.ProviderOrganizationStore.
 var _ endpointmanager.ProviderOrganizationStore = &Store{}
+
+// Ensure Store implements endpointmanager.NPIOrganizationStore.
+var _ endpointmanager.NPIOrganizationStore = &Store{}
 
 // NewStore creates a connection to the postgresql database and adds a reference to the database
 // in store.DB.

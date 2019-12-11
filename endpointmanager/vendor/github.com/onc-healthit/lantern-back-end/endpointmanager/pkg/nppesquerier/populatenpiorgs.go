@@ -1,10 +1,9 @@
-package main
+package nppesquerier
 
 import (
 	"encoding/csv"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"os"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -380,28 +379,6 @@ func panicOnErr(err error) {
 	}
 }
 
-func main() {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	panicOnErr(err)
-	lines, err := ReadCsv("npidata_pfile_20050523-20191110.csv")
-	panicOnErr(err)
-
-	// Loop through lines & turn into object
-	for _, line := range lines {
-		data := ParseNPIdataLine(line)
-		// We will only parse out organizations (entiy_type_code == 2), not individual providers
-		if data.Entity_Type_Code == "2" {
-			npi_org := BuildNPIOrgFromNPICsvLine(data)
-			err = store.AddOrUpdateNPIOrganization(npi_org)
-			if err != nil {
-				if err != nil {
-					log.Printf("%s", err)
-				}
-			}
-		}
-	}
-}
-
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
 func ReadCsv(filename string) ([][]string, error) {
@@ -420,4 +397,24 @@ func ReadCsv(filename string) ([][]string, error) {
 	}
 	// return lines without header line
 	return lines[1:], nil
+}
+
+func ParseAndStoreNPIFile(fname string, store *postgresql.Store) {
+	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
+	lines, err := ReadCsv(fname)
+	panicOnErr(err)
+	// Loop through lines & turn into object
+	for _, line := range lines {
+		data := ParseNPIdataLine(line)
+		// We will only parse out organizations (entiy_type_code == 2), not individual providers
+		if data.Entity_Type_Code == "2" {
+			npi_org := BuildNPIOrgFromNPICsvLine(data)
+			err = store.AddOrUpdateNPIOrganization(npi_org)
+			if err != nil {
+				if err != nil {
+					log.Printf("%s", err)
+				}
+			}
+		}
+	}
 }

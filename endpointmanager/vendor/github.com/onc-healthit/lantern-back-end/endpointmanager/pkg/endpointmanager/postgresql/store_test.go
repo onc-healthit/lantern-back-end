@@ -38,9 +38,6 @@ func setupConfig() {
 
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
-	viper.SetDefault("dbuser", "lantern")
-	viper.SetDefault("dbpass", "lanternpassword")
-	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
 	viper.SetDefault("logfile", "endpointmanagerLog.json")
 }
