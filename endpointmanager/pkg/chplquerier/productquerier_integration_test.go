@@ -5,7 +5,6 @@ package chplquerier_test
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"reflect"
@@ -29,7 +28,8 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	err = checkResources()
+	hap := th.HostAndPort{Host: viper.GetString("dbhost"), Port: viper.GetString("dbport")}
+	th.CheckResources(hap)
 	if err != nil {
 		panic(err)
 	}
@@ -95,24 +95,6 @@ func setup() error {
 	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// confirms that the network resources we need are available
-func checkResources() error {
-	host := viper.GetString("dbhost")
-	port := viper.GetString("dbport")
-
-	timeout := time.Second
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
-	if err != nil {
-		fmt.Println("Connecting error:", err)
-	}
-	if conn != nil {
-		defer conn.Close()
-		fmt.Println("Opened", net.JoinHostPort(host, port))
 	}
 
 	return nil

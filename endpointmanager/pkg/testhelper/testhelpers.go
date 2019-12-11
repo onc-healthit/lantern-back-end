@@ -3,9 +3,19 @@ package testhelper
 import (
 	"database/sql"
 	"fmt"
+	"net"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/pkg/errors"
 )
+
+// HostAndPort holds the host and port information for a resource.
+type HostAndPort struct {
+	Host string
+	Port string
+}
 
 // Assert checks that the boolean statement is true. If not, it fails the test with the given
 // error value.
@@ -14,6 +24,26 @@ func Assert(t *testing.T, boolStatement bool, errorValue interface{}) {
 	if !boolStatement {
 		t.Fatalf("%s: %v", t.Name(), errorValue)
 	}
+}
+
+// CheckResources ensures that any resources needed for an integration test are available.
+// If a resource is not available, it returns an error.
+func CheckResources(haps ...HostAndPort) error {
+	for _, hap := range haps {
+		host := hap.Host
+		port := hap.Port
+
+		timeout := time.Second
+		conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
+		if err != nil {
+			err := errors.Wrapf(err, "unable to connect to resource %s:%s", host, port)
+			return err
+		}
+		if conn != nil {
+			conn.Close()
+		}
+	}
+	return nil
 }
 
 // IntegrationDBTestSetup ensures that the database is empty before running any tests and returns
