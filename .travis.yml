@@ -13,7 +13,7 @@ notifications:
 
 # Set configuration environment variables
 env:
-  - LANTERN_ENDPTMGR_DBHOST=localhost LANTERN_ENDPTMGR_DBPORT=5432 LANTERN_ENDPTMGR_DBUSER=postgres LANTERN_ENDPTMGR_DBPASS= LANTERN_ENDPTMGR_DBNAME=postgres LANTERN_ENDPTMGR_DBSSLMODE=disable POSTGRES_PASSWORD=postgrespassword POSTGRES_USER=lantern POSTGRES_DB=lantern
+  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD= LANTERN_DBNAME=lantern LANTERN_DBSSLMODE=disable POSTGRES_PASSWORD=postgrespassword POSTGRES_USER=lantern POSTGRES_DB=lantern
 
 before_script:
   - go get github.com/golangci/golangci-lint/cmd/golangci-lint
