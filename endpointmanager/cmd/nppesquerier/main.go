@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/spf13/viper"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 )
 
 func panicOnErr(err error) {
@@ -19,4 +19,3 @@ func main() {
 	fname := "npidata_pfile_20050523-20191110.csv"
 	nppesquerier.ParseAndStoreNPIFile(fname, store)
 }
-

@@ -2,8 +2,8 @@ package nppesquerier
 
 import (
 	"encoding/csv"
-	"os"
 	log "github.com/sirupsen/logrus"
+	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
