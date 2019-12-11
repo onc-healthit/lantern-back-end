@@ -15,7 +15,7 @@ The FHIR Endpoint Querier reads the following environment variables:
 
 * **LANTERN_ENDPTQRY_QUERY_INTERVAL**: Number of minutes to wait between queries (Note: actual time between queries will be greater since the time it takes to run the queries is non-zero)
 
-  Default value: 10m
+  Default value: 10
 
 ## Building And Running
 
