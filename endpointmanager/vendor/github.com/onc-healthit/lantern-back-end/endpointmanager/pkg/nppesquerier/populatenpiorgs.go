@@ -399,10 +399,12 @@ func ReadCsv(filename string) ([][]string, error) {
 	return lines[1:], nil
 }
 
-func ParseAndStoreNPIFile(fname string, store *postgresql.Store) {
+// Parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
+func ParseAndStoreNPIFile(fname string, store *postgresql.Store) int {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 	lines, err := ReadCsv(fname)
 	panicOnErr(err)
+	added_or_updated := 0
 	// Loop through lines & turn into object
 	for _, line := range lines {
 		data := ParseNPIdataLine(line)
@@ -414,7 +416,10 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) {
 				if err != nil {
 					log.Printf("%s", err)
 				}
+			}else{
+				added_or_updated += 1
 			}
 		}
 	}
+	return added_or_updated
 }
