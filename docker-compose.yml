@@ -55,6 +55,9 @@ services:
   lantern-mq:
     container_name: lantern-mq
     image: rabbitmq:3-management
+    volumes:
+      - ./lanternmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
 
 volumes:
   pgdata:
