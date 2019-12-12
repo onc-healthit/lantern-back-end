@@ -1,11 +1,11 @@
 package nppesquerier
 
 import (
-	"testing"
 	log "github.com/sirupsen/logrus"
+	"testing"
 
-	"github.com/spf13/viper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/spf13/viper"
 )
 
 // The following 2 functions can be removed once https://github.com/onc-healthit/lantern-back-end/pull/29/ is merged in

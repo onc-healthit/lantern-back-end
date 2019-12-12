@@ -416,7 +416,7 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) int {
 				if err != nil {
 					log.Printf("%s", err)
 				}
-			}else{
+			} else {
 				added_or_updated += 1
 			}
 		}
