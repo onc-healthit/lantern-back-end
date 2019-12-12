@@ -58,11 +58,7 @@ services:
 
   lantern_front_end:
     container_name: lantern_front_end
-    build: 
-      context: https://github.com/onc-healthit/lantern-front-end.git#docker-compose-frontend
-      dockerfile: ./Dockerfile
-      args:
-        cert_dir: ./certs
+    image: lantern_front_end
     ports:
       - "8090:80"
 
