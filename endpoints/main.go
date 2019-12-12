@@ -154,9 +154,12 @@ func setupConfig() {
 	failOnError(err)
 	err = viper.BindEnv("logfile")
 	failOnError(err)
+	err = viper.BindEnv("query_interval")
+	failOnError(err)
 
 	viper.SetDefault("port", 3333)
 	viper.SetDefault("logfile", "endpointQuerierLog.json")
+	viper.SetDefault("query_interval", 10)
 }
 
 func initializeLogger() {
@@ -213,9 +216,8 @@ func main() {
 			}
 		}
 		runtime.GC()
-		// Polling interval, only necessary when running http calls asynchronously
-		// TODO: Config file
-		// time.Sleep(5 * time.Minute)
+
+		time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
 		queryCount += 1
 	}
 
