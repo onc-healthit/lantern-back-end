@@ -40,12 +40,15 @@ func setupConfig() {
 	failOnError(err)
 	err = viper.BindEnv("qcapstatq")
 	failOnError(err)
+	err = viper.BindEnv("capquery_numworkers")
+	failOnError(err)
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qhost", "localhost")
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("qcapstatq", "capability-statements")
+	viper.SetDefault("capquery_numworkers", 10)
 }
 
 func connectToQueue(qName string) (lanternmq.MessageQueue, lanternmq.ChannelID, error) {
@@ -101,9 +104,16 @@ func main() {
 		Timeout: time.Second * 35,
 	}
 
+	jobs := make(chan capabilityquerier.Job)
+	kill := make(chan bool)
+	numWorkers := viper.GetInt("capquery_numworkers")
+
 	// Infinite query loop
 	for {
 		print("*")
+
+		wg := capabilityquerier.CreateWorkerPool(numWorkers, jobs, kill)
+
 		for _, endpointEntry := range listOfEndpoints.Entries {
 			print(".")
 			var urlString = endpointEntry.FHIRPatientFacingURI
@@ -113,21 +123,25 @@ func main() {
 				log.Warn("Endpoint URL Parsing Error: ", err.Error())
 			} else {
 				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-				ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(30*time.Second))
-				defer cancel()
-
-				err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, mq, ch, qName)
-				if err != nil {
-					log.Warn("Error getting and sending capability statement: ", err.Error())
+				job := capabilityquerier.Job{
+					Context:      context.TODO(),
+					FHIRURL:      metadataURL,
+					Client:       client,
+					MessageQueue: &mq,
+					Channel:      &ch,
+					QueueName:    qName,
 				}
-				cancel()
+				jobs <- job
 			}
-
+		}
+		for i := 0; i < numWorkers; i++ {
+			kill <- true
 		}
 		println()
+		println("## Waiting")
+		wg.Wait()
+		println("## Done with round")
 		runtime.GC()
-		// Polling interval, only necessary when running http calls asynchronously
-		// TODO: Config file
 		time.Sleep(5 * time.Minute)
 	}
 }

@@ -15,10 +15,12 @@ func GetAndSendCapabilityStatement(
 	ctx context.Context,
 	fhirURL *url.URL,
 	client *http.Client,
-	mq lanternmq.MessageQueue,
-	ch lanternmq.ChannelID,
+	mq *lanternmq.MessageQueue,
+	ch *lanternmq.ChannelID,
 	queueName string) error {
 	var err error
+
+	print(".")
 
 	capResp, err := requestCapabilityStatement(ctx, fhirURL, client)
 	if err != nil {
@@ -63,8 +65,8 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 func sendToQueue(
 	ctx context.Context,
 	message string,
-	mq lanternmq.MessageQueue,
-	ch lanternmq.ChannelID,
+	mq *lanternmq.MessageQueue,
+	ch *lanternmq.ChannelID,
 	queueName string) error {
 
 	// don't send the message if the context is done
@@ -75,7 +77,7 @@ func sendToQueue(
 		// ok
 	}
 
-	err := mq.PublishToQueue(ch, queueName, message)
+	err := (*mq).PublishToQueue(*ch, queueName, message)
 	if err != nil {
 		return err
 	}
