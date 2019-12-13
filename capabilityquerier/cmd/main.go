@@ -104,15 +104,18 @@ func main() {
 		Timeout: time.Second * 35,
 	}
 
-	jobs := make(chan capabilityquerier.Job)
-	kill := make(chan bool)
 	numWorkers := viper.GetInt("capquery_numworkers")
+	qw := capabilityquerier.NewQueueWorkers()
+	jobDuration, err := time.ParseDuration("30s")
+	failOnError(err)
 
 	// Infinite query loop
 	for {
 		print("*")
+		ctx := context.TODO()
 
-		wg := capabilityquerier.CreateWorkerPool(numWorkers, jobs, kill)
+		err = qw.Start(ctx, numWorkers)
+		failOnError(err)
 
 		for _, endpointEntry := range listOfEndpoints.Entries {
 			print(".")
@@ -120,26 +123,31 @@ func main() {
 			// Specifically query the FHIR endpoint metadata
 			metadataURL, err := url.Parse(urlString)
 			if err != nil {
-				log.Warn("Endpoint URL Parsing Error: ", err.Error())
+				log.Warn("endpoint URL parsing error: ", err.Error())
 			} else {
 				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+
 				job := capabilityquerier.Job{
-					Context:      context.TODO(),
+					Context:      ctx,
+					Duration:     jobDuration,
 					FHIRURL:      metadataURL,
 					Client:       client,
 					MessageQueue: &mq,
 					Channel:      &ch,
 					QueueName:    qName,
 				}
-				jobs <- job
+
+				err = qw.Add(&job)
+				if err != nil {
+					log.Warn("error adding job to queue workers: ", err.Error())
+					break
+				}
 			}
 		}
-		for i := 0; i < numWorkers; i++ {
-			kill <- true
-		}
-		println()
-		println("## Waiting")
-		wg.Wait()
+
+		println("## Stopping")
+		err = qw.Stop()
+		failOnError(err)
 		println("## Done with round")
 		runtime.GC()
 		time.Sleep(5 * time.Minute)
