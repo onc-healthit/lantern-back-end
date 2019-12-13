@@ -58,7 +58,7 @@ services:
 
   lantern_front_end:
     container_name: lantern_front_end
-    image: lantern_front_end
+    image: onchealthit/lantern-front-end
     ports:
       - "8090:80"
 
