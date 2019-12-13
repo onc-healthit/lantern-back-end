@@ -13,8 +13,8 @@ import (
 
 func GetAndSendCapabilityStatement(
 	ctx context.Context,
-	fhirURL url.URL,
-	client http.Client,
+	fhirURL *url.URL,
+	client *http.Client,
 	mq lanternmq.MessageQueue,
 	ch lanternmq.ChannelID,
 	queueName string) error {
@@ -33,30 +33,7 @@ func GetAndSendCapabilityStatement(
 	return err
 }
 
-func sendToQueue(
-	ctx context.Context,
-	message string,
-	mq lanternmq.MessageQueue,
-	ch lanternmq.ChannelID,
-	queueName string) error {
-
-	// don't send the message if the context is done
-	select {
-	case <-ctx.Done():
-		return errors.Wrap(ctx.Err(), "unable to message to queue - context ended")
-	default:
-		// ok
-	}
-
-	err := mq.PublishToQueue(ch, queueName, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func requestCapabilityStatement(ctx context.Context, fhirURL url.URL, client http.Client) (string, error) {
+func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client) (string, error) {
 	var err error
 
 	req, err := http.NewRequest("GET", fhirURL.String(), nil)
@@ -81,4 +58,27 @@ func requestCapabilityStatement(ctx context.Context, fhirURL url.URL, client htt
 	}
 
 	return string(body), nil
+}
+
+func sendToQueue(
+	ctx context.Context,
+	message string,
+	mq lanternmq.MessageQueue,
+	ch lanternmq.ChannelID,
+	queueName string) error {
+
+	// don't send the message if the context is done
+	select {
+	case <-ctx.Done():
+		return errors.Wrap(ctx.Err(), "unable to message to queue - context ended")
+	default:
+		// ok
+	}
+
+	err := mq.PublishToQueue(ch, queueName, message)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
