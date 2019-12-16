@@ -48,6 +48,14 @@ func (s *Store) GetNPIOrganizationByNPIID(npi_id string) (*endpointmanager.NPIOr
 	return &org, err
 }
 
+
+// DeleteAllNPIOrganixations will remove all rows from the npi_organizations table
+func (s *Store) DeleteAllNPIOrganizations() (error) {
+	sqlStatement := `DELETE FROM npi_organizations`
+	_, err := s.DB.Exec(sqlStatement)
+	return err
+}
+
 // GetNPIOrganization gets a NPIOrganization from the database using the database id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, error) {

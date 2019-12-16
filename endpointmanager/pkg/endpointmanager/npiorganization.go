@@ -22,6 +22,7 @@ type NPIOrganization struct {
 type NPIOrganizationStore interface {
 	GetNPIOrganization(int) (*NPIOrganization, error)
 	GetNPIOrganizationByNPIID(string) (*NPIOrganization, error)
+	DeleteAllNPIOrganizations() error
 	AddOrUpdateNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganizationByNPIID(*NPIOrganization) error
