@@ -73,7 +73,7 @@ func getTableNames(db *sql.DB) ([]string, error) {
 	var query string
 	var tableNames []string
 
-	schemanamesToIgnore := []string{
+	schemaNamesToIgnore := []string{
 		"pg_catalog",
 		"information_schema",
 		"_timescaledb_catalog",
@@ -82,32 +82,34 @@ func getTableNames(db *sql.DB) ([]string, error) {
 		"_timescaledb_cache",
 	}
 
-	query = "SELECT tablename FROM pg_catalog.pg_tables"
-
-	for i, schemaname := range schemanamesToIgnore {
-		if i == 0 {
-			query = query + " WHERE"
-		} else {
-			query = query + " AND"
-		}
-
-		query = fmt.Sprintf("%s schemaname != '%s'", query, schemaname)
-	}
+	query = "SELECT tablename, schemaname FROM pg_catalog.pg_tables"
 
 	rows, err := db.Query(query)
 	if err != nil {
-		print(err.Error())
 		return nil, err
 	}
 	for rows.Next() {
 		var tableName string
-		err = rows.Scan(&tableName)
+		var schemaName string
+
+		err = rows.Scan(&tableName, &schemaName)
 		if err != nil {
-			print(err.Error())
 			return nil, err
 		}
-		// also ignore table names that start with 'metrics'
-		if !strings.HasPrefix(tableName, "metrics") {
+
+		// ignore tablenames where the schema is in the ignore list or the name starts with 'metrics'
+		ignore := false
+		for _, schemaNameToIgnore := range schemaNamesToIgnore {
+			if schemaName == schemaNameToIgnore {
+				ignore = true
+				break
+			}
+		}
+		if strings.HasPrefix(tableName, "metrics") {
+			ignore = true
+		}
+
+		if !ignore {
 			tableNames = append(tableNames, tableName)
 		}
 	}
