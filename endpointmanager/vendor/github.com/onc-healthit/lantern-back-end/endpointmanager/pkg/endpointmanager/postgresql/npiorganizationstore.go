@@ -6,7 +6,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-// GetNPIOrganization gets a NPIOrganization from the database using the database id as a key.
+// GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetNPIOrganizationByNPIID(npi_id string) (*endpointmanager.NPIOrganization, error) {
 	var org endpointmanager.NPIOrganization
@@ -150,7 +150,7 @@ func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) erro
 	return err
 }
 
-// UpdateNPIOrganization updates the NPIOrganization in the database using the NPIOrganization's NPIID as the key.
+// UpdateNPIOrganizationByNPIID updates the NPIOrganization in the database using the NPIOrganization's NPIID as the key.
 func (s *Store) UpdateNPIOrganizationByNPIID(org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	UPDATE npi_organizations
