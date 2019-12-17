@@ -6,7 +6,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TABLE fhir_endpoints (x
+CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500) UNIQUE,
     fhir_version            VARCHAR(500),
