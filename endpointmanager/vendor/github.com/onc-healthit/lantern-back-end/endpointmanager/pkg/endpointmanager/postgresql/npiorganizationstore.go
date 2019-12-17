@@ -97,12 +97,8 @@ func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, er
 	return &org, err
 }
 
-// AddOrUpdateNPIOrganization adds the NPIOrganization to the database or updates if there is an existsing entry with same NPI_ID
-func (s *Store) AddOrUpdateNPIOrganization(org *endpointmanager.NPIOrganization) error {
-	existing, _ := s.GetNPIOrganizationByNPIID(org.NPI_ID)
-	if existing != nil {
-		return s.UpdateNPIOrganizationByNPIID(org)
-	}
+// AddNPIOrganization adds the NPIOrganization to the database or updates if there is an existsing entry with same NPI_ID
+func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	INSERT INTO npi_organizations (
 		npi_id,

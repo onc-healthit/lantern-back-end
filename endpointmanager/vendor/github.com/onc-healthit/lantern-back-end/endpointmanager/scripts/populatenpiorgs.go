@@ -392,7 +392,7 @@ func main() {
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if data.Entity_Type_Code == "2" {
 			npi_org := BuildNPIOrgFromNPICsvLine(data)
-			err = store.AddOrUpdateNPIOrganization(npi_org)
+			err = store.AddNPIOrganization(npi_org)
 			if err != nil {
 				if err != nil {
 					log.Printf("%s", err)

@@ -39,12 +39,12 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	// add organizations
 
-	err = store.AddOrUpdateNPIOrganization(npio1)
+	err = store.AddNPIOrganization(npio1)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
-	err = store.AddOrUpdateNPIOrganization(npio2)
+	err = store.AddNPIOrganization(npio2)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
@@ -114,7 +114,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	temp_taxonomy = npio1.Taxonomy
 	npio1.Taxonomy = "1234567"
 
-	err = store.AddOrUpdateNPIOrganization(npio1)
+	err = store.AddNPIOrganization(npio1)
 	if err != nil {
 		t.Errorf("Error updating npi organization: %s", err.Error())
 	}

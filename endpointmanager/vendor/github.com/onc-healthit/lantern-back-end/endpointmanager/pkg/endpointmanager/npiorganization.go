@@ -23,7 +23,7 @@ type NPIOrganizationStore interface {
 	GetNPIOrganization(int) (*NPIOrganization, error)
 	GetNPIOrganizationByNPIID(string) (*NPIOrganization, error)
 	DeleteAllNPIOrganizations() error
-	AddOrUpdateNPIOrganization(*NPIOrganization) error
+	AddNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganization(*NPIOrganization) error
 	UpdateNPIOrganizationByNPIID(*NPIOrganization) error
 	DeleteNPIOrganization(*NPIOrganization) error
