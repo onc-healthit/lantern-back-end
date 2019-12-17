@@ -397,7 +397,9 @@ func ReadCsv(filename string) ([][]string, error) {
 func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 	lines, err := ReadCsv(fname)
-	return -1, err
+	if err != nil {
+		return -1, err
+	}
 	added_or_updated := 0
 	// Loop through lines & turn into object
 	for _, line := range lines {
@@ -407,7 +409,7 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
 			npi_org := BuildNPIOrgFromNPICsvLine(data)
 			err = store.AddOrUpdateNPIOrganization(npi_org)
 			if err != nil {
-				log.Debug("%s", err)
+				log.Debug(err)
 			} else {
 				added_or_updated += 1
 			}

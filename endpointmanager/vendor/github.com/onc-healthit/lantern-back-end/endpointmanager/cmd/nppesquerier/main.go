@@ -24,5 +24,6 @@ func main() {
 	fname := os.Args[1]
 	err = store.DeleteAllNPIOrganizations()
 	failOnError(err)
-	nppesquerier.ParseAndStoreNPIFile(fname, store)
+	_, err = nppesquerier.ParseAndStoreNPIFile(fname, store)
+	failOnError(err)
 }
