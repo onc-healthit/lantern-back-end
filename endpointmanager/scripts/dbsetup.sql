@@ -6,7 +6,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TABLE fhir_endpoints (
+CREATE TABLE fhir_endpoints (x
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500) UNIQUE,
     fhir_version            VARCHAR(500),
@@ -32,7 +32,7 @@ CREATE TABLE provider_organizations ( -- https://data.medicare.gov/Hospital-Comp
 
 CREATE TABLE npi_organizations (
 	id               SERIAL PRIMARY KEY,
-	npi_id			 VARCHAR(500),
+	npi_id			 VARCHAR(500) UNIQUE,
 	name             VARCHAR(500),
 	secondary_name    VARCHAR(500),
 	location         JSONB,

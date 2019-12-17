@@ -373,12 +373,6 @@ func BuildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 	return npi_org
 }
 
-func panicOnErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
 func ReadCsv(filename string) ([][]string, error) {
@@ -400,10 +394,10 @@ func ReadCsv(filename string) ([][]string, error) {
 }
 
 // Parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
-func ParseAndStoreNPIFile(fname string, store *postgresql.Store) int {
+func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 	lines, err := ReadCsv(fname)
-	panicOnErr(err)
+	return -1, err
 	added_or_updated := 0
 	// Loop through lines & turn into object
 	for _, line := range lines {
@@ -413,13 +407,11 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) int {
 			npi_org := BuildNPIOrgFromNPICsvLine(data)
 			err = store.AddOrUpdateNPIOrganization(npi_org)
 			if err != nil {
-				if err != nil {
-					log.Printf("%s", err)
-				}
+				log.Debug("%s", err)
 			} else {
 				added_or_updated += 1
 			}
 		}
 	}
-	return added_or_updated
+	return added_or_updated, nil
 }

@@ -103,10 +103,35 @@ func Test_ParseAndStoreNPIFile(t *testing.T) {
 		t.Errorf("Error creating Store type: %s", err.Error())
 	}
 	defer store.Close()
-	parsed_orgs := ParseAndStoreNPIFile("testdata/npidata_pfile_fixture.csv", store)
+	parsed_orgs, err := ParseAndStoreNPIFile("testdata/npidata_pfile_fixture.csv", store)
+	if err != nil {
+		t.Errorf("Error Parsing NPI File: %s", err.Error())
+	}
 	// Assert expected number of orgs are parsed out of fixture file
 	if parsed_orgs != 3 {
 		t.Errorf("Expected number or parsed orgs to be %d, got %d", 3, parsed_orgs)
+	}
+	// Assert NPI orgs were successfully parsed out of fixture file
+	org1, err := store.GetNPIOrganizationByNPIID("1497758544")
+	if org1 == nil {
+		t.Errorf("Error Retriving Parsed NPI Org")
+	}
+	if err != nil {
+		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
+	}
+	org2, err := store.GetNPIOrganizationByNPIID("1023011178")
+	if org2 == nil {
+		t.Errorf("Error Retriving Parsed NPI Org")
+	}
+	if err != nil {
+		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
+	}
+	org3, err := store.GetNPIOrganizationByNPIID("1023011079")
+	if org3 == nil {
+		t.Errorf("Error Retriving Parsed NPI Org")
+	}
+	if err != nil {
+		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
 	}
 }
 

@@ -1,25 +1,28 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 )
 
-func panicOnErr(err error) {
+func failOnError(err error) {
 	if err != nil {
-		panic(err)
+		log.Fatalf("%s", err)
 	}
 }
 
 func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	panicOnErr(err)
-	fname := "npidata_pfile_20050523-20191110.csv"
-	err = store.DeleteAllNPIOrganizations()
-	if err != nil {
-		panic(err)
+	failOnError(err)
+	if len(os.Args) != 2 {
+		log.Fatal("NPPES csv file not provided as argument.")
 	}
+	fname := os.Args[1]
+	err = store.DeleteAllNPIOrganizations()
+	failOnError(err)
 	nppesquerier.ParseAndStoreNPIFile(fname, store)
 }
