@@ -109,12 +109,12 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
-	// update organization using AddOrUpdate
+	// update organization using UpdateNPIOrganizationByNPIID
 
 	temp_taxonomy = npio1.Taxonomy
 	npio1.Taxonomy = "1234567"
 
-	err = store.AddNPIOrganization(npio1)
+	err = store.UpdateNPIOrganizationByNPIID(npio1)
 	if err != nil {
 		t.Errorf("Error updating npi organization: %s", err.Error())
 	}
