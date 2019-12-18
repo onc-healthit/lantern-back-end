@@ -1,10 +1,10 @@
 package nppesquerier
 
 import (
-	log "github.com/sirupsen/logrus"
 	"testing"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/viper"
 )
 
@@ -93,45 +93,6 @@ func Test_ParseNPIdataLine(t *testing.T) {
 	// Healthcare_Provider_Taxonomy_Code_1
 	if data.Healthcare_Provider_Taxonomy_Code_1 != "251G00000X" {
 		t.Errorf("Expected Name to be %s, got %s", "251G00000X", data.Healthcare_Provider_Taxonomy_Code_1)
-	}
-}
-
-func Test_ParseAndStoreNPIFile(t *testing.T) {
-	setupConfig()
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	if err != nil {
-		t.Errorf("Error creating Store type: %s", err.Error())
-	}
-	defer store.Close()
-	parsed_orgs, err := ParseAndStoreNPIFile("testdata/npidata_pfile_fixture.csv", store)
-	if err != nil {
-		t.Errorf("Error Parsing NPI File: %s", err.Error())
-	}
-	// Assert expected number of orgs are parsed out of fixture file
-	if parsed_orgs != 3 {
-		t.Errorf("Expected number or parsed orgs to be %d, got %d", 3, parsed_orgs)
-	}
-	// Assert NPI orgs were successfully parsed out of fixture file
-	org1, err := store.GetNPIOrganizationByNPIID("1497758544")
-	if org1 == nil {
-		t.Errorf("Error Retriving Parsed NPI Org")
-	}
-	if err != nil {
-		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
-	}
-	org2, err := store.GetNPIOrganizationByNPIID("1023011178")
-	if org2 == nil {
-		t.Errorf("Error Retriving Parsed NPI Org")
-	}
-	if err != nil {
-		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
-	}
-	org3, err := store.GetNPIOrganizationByNPIID("1023011079")
-	if org3 == nil {
-		t.Errorf("Error Retriving Parsed NPI Org")
-	}
-	if err != nil {
-		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
 	}
 }
 
