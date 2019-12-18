@@ -77,7 +77,8 @@ func getEndpoints() (*fetcher.ListOfEndpoints, error) {
 	if len(os.Args) != 1 {
 		endpointsFile = os.Args[1]
 	} else {
-		return nil, errors.New("Missing endpoints list command-line argument")
+		endpointsFile = "../../endpointnetworkquerier/resources/EndpointSources.json"
+		//return nil, errors.New("Missing endpoints list command-line argument")
 	}
 	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
 	if err != nil {
@@ -106,7 +107,7 @@ func main() {
 
 	numWorkers := viper.GetInt("capquery_numworkers")
 	qw := capabilityquerier.NewQueueWorkers()
-	jobDuration, err := time.ParseDuration("30s")
+	//jobDuration, err := time.ParseDuration("30s")
 	failOnError(err)
 
 	// Infinite query loop
@@ -127,21 +128,26 @@ func main() {
 			} else {
 				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 
-				job := capabilityquerier.Job{
-					Context:      ctx,
-					Duration:     jobDuration,
-					FHIRURL:      metadataURL,
-					Client:       client,
-					MessageQueue: &mq,
-					Channel:      &ch,
-					QueueName:    qName,
+				err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, &mq, &ch, qName)
+				if err != nil {
+					log.Warn(err.Error())
 				}
 
-				err = qw.Add(&job)
-				if err != nil {
-					log.Warn("error adding job to queue workers: ", err.Error())
-					break
-				}
+				// job := capabilityquerier.Job{
+				// 	Context:      ctx,
+				// 	Duration:     jobDuration,
+				// 	FHIRURL:      metadataURL,
+				// 	Client:       client,
+				// 	MessageQueue: &mq,
+				// 	Channel:      &ch,
+				// 	QueueName:    qName,
+				// }
+
+				// err = qw.Add(&job)
+				// if err != nil {
+				// 	log.Warn("error adding job to queue workers: ", err.Error())
+				// 	break
+				// }
 			}
 		}
 
