@@ -400,7 +400,7 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	added_or_updated := 0
+	added := 0
 	// Loop through lines & turn into object
 	for _, line := range lines {
 		data := ParseNPIdataLine(line)
@@ -411,9 +411,9 @@ func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
 			if err != nil {
 				log.Debug(err)
 			} else {
-				added_or_updated += 1
+				added += 1
 			}
 		}
 	}
-	return added_or_updated, nil
+	return added, nil
 }
