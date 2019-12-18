@@ -17,9 +17,22 @@ CREATE TABLE fhir_endpoints (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE provider_organizations ( -- https://data.medicare.gov/Hospital-Compare/Hospital-General-Information/xubh-q36u. Group practices:  https://data.medicare.gov/Physician-Compare/Physician-Compare-National-Downloadable-File/mj5m-pzi6 could get each group practice and address from this if can’t find a better data source
+    id                      SERIAL PRIMARY KEY,
+    name                    VARCHAR(500),
+    url                     VARCHAR(500),
+    location                JSONB,
+    organization_type       VARCHAR(500), -- hospital or group practice
+    hospital_type           VARCHAR(500), -- hospital type
+    ownership               VARCHAR(500), -- hospital ownership
+    beds                    INTEGER, -- hospital. can help show relative size. This is in https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals/
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE npi_organizations (
 	id               SERIAL PRIMARY KEY,
-	npi_id			 VARCHAR(500) UNIQUE,
+	npi_id			 VARCHAR(500),
 	name             VARCHAR(500),
 	secondary_name    VARCHAR(500),
 	location         JSONB,
@@ -53,8 +66,8 @@ BEFORE UPDATE ON fhir_endpoints
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
-CREATE TRIGGER set_timestamp_npi_organization
-BEFORE UPDATE ON npi_organizations
+CREATE TRIGGER set_timestamp_provider_organizations
+BEFORE UPDATE ON provider_organizations
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
