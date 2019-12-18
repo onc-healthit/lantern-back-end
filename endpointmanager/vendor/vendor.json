@@ -205,14 +205,8 @@
 		{
 			"checksumSHA1": "qFEvUrbUWkkXHVsSVriK3yr2d1U=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
-		},
-		{
-			"checksumSHA1": "AB/5nLu7q91+z9XmeZ9LSOyFhzg=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/viper",
-			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
-			"revisionTime": "2019-12-06T13:46:52Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "kyFmE25BMrtqEN9FZSm4+MbT1iU=",
@@ -221,46 +215,59 @@
 			"revisionTime": "2019-12-12T15:59:38Z"
 		},
 		{
+			"checksumSHA1": "eJHeOtwlYPW/8898lj3vzyquAYY=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/nppesquerier",
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
+		},
+		{
+			"checksumSHA1": "AB/5nLu7q91+z9XmeZ9LSOyFhzg=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/viper",
+			"revision": "eb745a3603f657fe56610ee8c94b0572caba7509",
+			"revisionTime": "2019-12-06T13:46:52Z"
+		},
+		{
 			"checksumSHA1": "FoaJQmo12vUiM6RO5CgmDVK2Dts=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "RxeB7CDcIvrG6qLiUFBDIrTiASw=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-            "revisionTime": "2019-12-16T21:23:30Z"
-        },
-        {
-			"checksumSHA1": "eJHeOtwlYPW/8898lj3vzyquAYY=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/nppesquerier",
-			"revision": "991180a15fbdbce6637ad877633e817ac7a4d4e0",
-			"revisionTime": "2019-12-18T18:17:53Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "BYQU53J3VfRrhYYM+vyHTyJG9No=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "kSqqi5bY2VeJnxS6tFbJ8WeRMvI=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
-			"checksumSHA1": "hmm1vzJoYWXgE8Qx+i4NDTGdgWc=",
+			"checksumSHA1": "Syq2ow2p9mFJVeBUDVhZQPeYgak=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
+		},
+		{
+			"checksumSHA1": "0xBNJ8b3QGVayJcswXJQRQpLf5Y=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier",
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "HUzzY4u1OZw79faB4zmR5F0wcHM=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper",
-			"revision": "f9699967cb7ec7098688e018eecf0476842285d2",
-			"revisionTime": "2019-12-16T21:23:30Z"
+			"revision": "0ec3e147579011fb6881098a2edda986328e50fb",
+			"revisionTime": "2019-12-18T20:38:27Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
