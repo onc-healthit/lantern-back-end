@@ -7,6 +7,95 @@ import (
 	"github.com/spf13/viper"
 )
 
+func Test_DeleteAllNPIOrganizations(t *testing.T) {
+	var err error
+
+	store, err := NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	if err != nil {
+		t.Errorf("Error creating Store type: %s", err.Error())
+	}
+	defer store.Close()
+
+	var npio1 = &endpointmanager.NPIOrganization{
+		ID:            1,
+		NPI_ID:        "1",
+		Name:          "Hospital #1 of America",
+		SecondaryName: "Hospital #1 of America Second Name",
+		Location: &endpointmanager.Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+
+	var npio2 = &endpointmanager.NPIOrganization{
+		ID:            2,
+		NPI_ID:        "2",
+		Name:          "Hospital #2 of America",
+		SecondaryName: "",
+		Location: &endpointmanager.Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+
+	// add organizations
+
+	err = store.AddNPIOrganization(npio1)
+	if err != nil {
+		t.Errorf("Error adding npi organization: %s", err.Error())
+	}
+
+	err = store.AddNPIOrganization(npio2)
+	if err != nil {
+		t.Errorf("Error adding npi organization: %s", err.Error())
+	}
+
+	// retrieve organizations by NPI_ID
+
+	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	if err != nil {
+		t.Errorf("Error getting npi organization: %s", err.Error())
+	}
+	if !npio1_get_npi.Equal(npio1) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	if err != nil {
+		t.Errorf("Error getting npi organization: %s", err.Error())
+	}
+	if !npio2_get_npi.Equal(npio2) {
+		t.Errorf("retrieved organization is not equal to saved organization.")
+	}
+
+	err = store.DeleteAllNPIOrganizations()
+	if err != nil {
+		t.Errorf("Error deleteing all npi organization: %s", err.Error())
+	}
+
+	// retrieve organizations by NPI_ID, they should not exist now
+
+	npio1_get_nil, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	if err == nil {
+		t.Errorf("Expected error getting non-existant organization.")
+	}
+	if npio1_get_nil != nil {
+		t.Errorf("Retrieved organization that should not exist")
+	}
+
+	npio2_get_nil, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	if err == nil {
+		t.Errorf("Expected error getting non-existant organization.")
+	}
+	if npio2_get_nil != nil {
+		t.Errorf("Retrieved organization that should not exist")
+	}
+}
+
 func Test_PersistNPIOrganization(t *testing.T) {
 	var err error
 
