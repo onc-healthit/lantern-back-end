@@ -25,6 +25,9 @@ services:
     depends_on:
       - pg_prometheus
     restart: on-failure
+    volumes:
+      - ./scripts/pause_start_prometheus_postgresql_adapter.sh:/pause_start_prometheus_postgresql_adapter.sh
+    entrypoint: "/pause_start_prometheus_postgresql_adapter.sh"
     command:
       -pg-host=pg_prometheus
       -pg-password=${LANTERN_DBPASSWORD}
