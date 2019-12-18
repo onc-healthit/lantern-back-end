@@ -8,7 +8,6 @@ import (
 
 var _ endpointmanager.FHIREndpointStore = &Store{}
 var _ endpointmanager.HealthITProductStore = &Store{}
-var _ endpointmanager.ProviderOrganizationStore = &Store{}
 
 // Store implements the endpointmanager FHIREndpointStore, HealthITProductStore, and ProviderOrganizationStore
 // interfaces and allows mock implementations of the associated methods.
@@ -44,18 +43,6 @@ type Store struct {
 
 	DeleteHealthITProductFn      func(context.Context, *endpointmanager.HealthITProduct) error
 	DeleteHealthITProductInvoked bool
-
-	GetProviderOrganizationFn      func(context.Context, int) (*endpointmanager.ProviderOrganization, error)
-	GetProviderOrganizationInvoked bool
-
-	AddProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
-	AddProviderOrganizationInvoked bool
-
-	UpdateProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
-	UpdateProviderOrganizationInvoked bool
-
-	DeleteProviderOrganizationFn      func(context.Context, *endpointmanager.ProviderOrganization) error
-	DeleteProviderOrganizationInvoked bool
 
 	CloseFn      func()
 	CloseInvoked bool
