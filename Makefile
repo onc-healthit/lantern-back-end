@@ -16,6 +16,16 @@ clean:
     done ; \
     [ $$CONTINUE = "y" ] || [ $$CONTINUE = "Y" ] || (echo "Exiting."; exit 1;)
 
+	docker-compose down --rmi local -v
+	docker-compose -f docker-compose.yml down --rmi local -v
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi local -v
+
+clean_remote:
+	@while [ -z "$$CONTINUE" ]; do \
+        read -r -p "Are you sure you want to clean all files? This REMOVES ALL VOLUMES. Type y/Y to continue to clean: " CONTINUE; \
+    done ; \
+    [ $$CONTINUE = "y" ] || [ $$CONTINUE = "Y" ] || (echo "Exiting."; exit 1;)
+
 	docker-compose down --rmi all -v
 	docker-compose -f docker-compose.yml down --rmi all -v
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
