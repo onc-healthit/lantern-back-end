@@ -38,9 +38,6 @@ func setupConfig() {
 
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
-	viper.SetDefault("dbuser", "postgres")
-	viper.SetDefault("dbpass", "postgrespassword")
-	viper.SetDefault("dbname", "postgres")
 	viper.SetDefault("dbsslmode", "disable")
 	viper.SetDefault("logfile", "endpointmanagerLog.json")
 }
