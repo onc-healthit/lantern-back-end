@@ -109,6 +109,30 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
+	// update organization using AddOrUpdate
+
+	temp_taxonomy = npio1.Taxonomy
+	npio1.Taxonomy = "1234567"
+
+	err = store.AddNPIOrganization(npio1)
+	if err != nil {
+		t.Errorf("Error updating npi organization: %s", err.Error())
+	}
+
+	// Restore taxonomy
+	npio1.Taxonomy = temp_taxonomy
+
+	npio1_get, err = store.GetNPIOrganization(npio1.ID)
+	if err != nil {
+		t.Errorf("Error getting npi organization: %s", err.Error())
+	}
+	if npio1_get.Equal(npio1) {
+		t.Errorf("retrieved UPDATED organization is equal to original organization.")
+	}
+	if npio1_get.UpdatedAt.Equal(npio1.CreatedAt) {
+		t.Errorf("UpdatedAt is not being properly set on update.")
+	}
+
 	// delete organizations
 
 	err = store.DeleteNPIOrganization(npio1)

@@ -66,6 +66,11 @@ BEFORE UPDATE ON fhir_endpoints
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_npi_organization
+BEFORE UPDATE ON npi_organizations
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 CREATE TRIGGER set_timestamp_provider_organizations
 BEFORE UPDATE ON provider_organizations
 FOR EACH ROW
