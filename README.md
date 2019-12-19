@@ -294,6 +294,7 @@ A makefile has been added to make testing easier. It includes the following comm
 * `make test`: runs the go unit tests
 * `make test_int`: runs the go integration tests and unit tests
 * `make test_e2e`: runs docker-compose specifically for the e2e test and then runs the e2e test.
+* `make test_all`: runs all tests. Stops relevant docker-instances if they are running. Starts them again in the background. Runs `test` and `test_int`, then stops the docker instances again and runs `test_e2e`. Exits if any of the tests fails.
 
 ## Running All Unit Tests
 

@@ -39,3 +39,12 @@ test_int:
 test_e2e:
 	docker-compose down
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
+
+test_all:
+	make stop
+	docker-compose up -d --build
+	make test || exit $?
+	make test_int || exit $?
+	make stop
+	make test_e2e || exit $?
