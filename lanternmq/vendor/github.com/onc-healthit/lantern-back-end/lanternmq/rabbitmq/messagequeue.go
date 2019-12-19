@@ -126,6 +126,33 @@ func (mq *MessageQueue) NumConcurrentMsgs(chID lanternmq.ChannelID, num int) err
 	return err
 }
 
+// QueueExists checks whether or not a queue already exists. If so, it returns (true, nil). If not,
+// it returns (false, nil). If an error is encountered, it returns (false, err).
+func (mq *MessageQueue) QueueExists(chID lanternmq.ChannelID, qName string) (bool, error) {
+	ch, err := mq.getChannel(chID)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = ch.QueueDeclarePassive(
+		qName,
+		durableTrue,
+		deleteWhenUnusedFalse,
+		exclusiveFalse,
+		noWaitFalse,
+		nil, // args
+	)
+	if err != nil {
+		amqperr, ok := err.(*amqp.Error)
+		if ok && amqperr.Code == 404 {
+			return false, nil
+		}
+		err = fmt.Errorf("error determining if queue exists: %s", err.Error())
+		return false, err
+	}
+	return true, err
+}
+
 // DeclareQueue creates a queue with the given name on the given channel using RabbitMQ's
 // QueueDeclare method with the following arguments:
 // * name: qName

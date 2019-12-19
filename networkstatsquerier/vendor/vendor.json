@@ -123,6 +123,24 @@
 			"revisionTime": "2019-10-23T19:26:46Z"
 		},
 		{
+			"checksumSHA1": "46WUlpjK/eB94nprwx7fu1DELyo=",
+			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier",
+			"revision": "09278c6ddd350a44cbd44d1649847fb3596421c5",
+			"revisionTime": "2019-12-19T15:27:35Z"
+		},
+		{
+			"checksumSHA1": "HhmirX3wTGvfkzLdMHB4FroLcPA=",
+			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
+			"revision": "09278c6ddd350a44cbd44d1649847fb3596421c5",
+			"revisionTime": "2019-12-19T15:27:35Z"
+		},
+		{
+			"checksumSHA1": "aNqXKSZ3FAhJh3XeOGML92f2+SE=",
+			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier",
+			"revision": "09278c6ddd350a44cbd44d1649847fb3596421c5",
+			"revisionTime": "2019-12-19T15:27:35Z"
+		},
+		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
 			"path": "github.com/pelletier/go-toml",
 			"revision": "903d9455db9ff1d7ac1ab199062eca7266dd11a3",
@@ -267,5 +285,5 @@
 			"revisionTime": "2019-10-02T18:33:36Z"
 		}
 	],
-	"rootPath": "github.com/onc-healthit/lantern-back-end/endpoints"
+	"rootPath": "github.com/onc-healthit/lantern-back-end/networkstatsquerier"
 }
