@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"context"
 	"time"
 )
 
@@ -20,13 +21,13 @@ type NPIOrganization struct {
 // NPIOrganizationStore is the interface for interacting with the storage layer that holds
 // NPIOrganization objects.
 type NPIOrganizationStore interface {
-	GetNPIOrganization(int) (*NPIOrganization, error)
-	GetNPIOrganizationByNPIID(string) (*NPIOrganization, error)
-	DeleteAllNPIOrganizations() error
-	AddNPIOrganization(*NPIOrganization) error
-	UpdateNPIOrganization(*NPIOrganization) error
-	UpdateNPIOrganizationByNPIID(*NPIOrganization) error
-	DeleteNPIOrganization(*NPIOrganization) error
+	GetNPIOrganization(context.Context, int) (*NPIOrganization, error)
+	GetNPIOrganizationByNPIID(context.Context, string) (*NPIOrganization, error)
+	DeleteAllNPIOrganizations(context.Context) error
+	AddNPIOrganization(context.Context, *NPIOrganization) error
+	UpdateNPIOrganization(context.Context, *NPIOrganization) error
+	UpdateNPIOrganizationByNPIID(context.Context, *NPIOrganization) error
+	DeleteNPIOrganization(context.Context, *NPIOrganization) error
 
 	Close()
 }
