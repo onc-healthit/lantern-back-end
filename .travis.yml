@@ -13,7 +13,7 @@ notifications:
 
 # Set configuration environment variables
 env:
-  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD= LANTERN_DBNAME=lantern LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD= LANTERN_TEST_DBNAME=lantern_test LANTERN_TEST_DBUSER=lantern
+  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD=postgrespassword LANTERN_DBNAME=lantern LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_TEST_DBNAME=lantern_test LANTERN_TEST_DBUSER=lantern
 
 before_script:
   - go get ./...
