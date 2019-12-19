@@ -3,13 +3,16 @@
 package nppesquerier_test
 
 import (
+	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -44,7 +47,9 @@ func Test_ParseAndStoreNPIFile(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
-	parsed_orgs, err := nppesquerier.ParseAndStoreNPIFile("testdata/npidata_pfile_fixture.csv", store)
+	ctx := context.Background()
+
+	parsed_orgs, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npidata_pfile_fixture.csv", store)
 	if err != nil {
 		t.Errorf("Error Parsing NPI File: %s", err.Error())
 	}
@@ -53,27 +58,41 @@ func Test_ParseAndStoreNPIFile(t *testing.T) {
 		t.Errorf("Expected number or parsed orgs to be %d, got %d", 3, parsed_orgs)
 	}
 	// Assert NPI orgs were successfully parsed out of fixture file
-	org1, err := store.GetNPIOrganizationByNPIID("1497758544")
+	org1, err := store.GetNPIOrganizationByNPIID(ctx, "1497758544")
 	if org1 == nil {
 		t.Errorf("Error Retriving Parsed NPI Org")
 	}
 	if err != nil {
 		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
 	}
-	org2, err := store.GetNPIOrganizationByNPIID("1023011178")
+	org2, err := store.GetNPIOrganizationByNPIID(ctx, "1023011178")
 	if org2 == nil {
 		t.Errorf("Error Retriving Parsed NPI Org")
 	}
 	if err != nil {
 		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
 	}
-	org3, err := store.GetNPIOrganizationByNPIID("1023011079")
+	org3, err := store.GetNPIOrganizationByNPIID(ctx, "1023011079")
 	if org3 == nil {
 		t.Errorf("Error Retriving Parsed NPI Org")
 	}
 	if err != nil {
 		t.Errorf("Error Retriving Parsed NPI Org: %s", err.Error())
 	}
+}
+
+func Test_ParseAndStoreNPIFileContext(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	// Note: it's possible that on a particularly slow or fast machine, this time deadline won't work.
+	// need to set a deadline rather than call cancel so we get through the read of the csv file.
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(4*time.Millisecond))
+	defer cancel()
+
+	added, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npidata_pfile_fixture.csv", store)
+	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, "Expected canceled context error")
+	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
 }
 
 func setup() error {

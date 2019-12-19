@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -8,7 +9,7 @@ import (
 
 // GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetNPIOrganizationByNPIID(npi_id string) (*endpointmanager.NPIOrganization, error) {
+func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*endpointmanager.NPIOrganization, error) {
 	var org endpointmanager.NPIOrganization
 	var locationJSON []byte
 
@@ -23,7 +24,7 @@ func (s *Store) GetNPIOrganizationByNPIID(npi_id string) (*endpointmanager.NPIOr
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE npi_id=$1`
-	row := s.DB.QueryRow(sqlStatement, npi_id)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, npi_id)
 
 	err := row.Scan(
 		&org.ID,
@@ -49,15 +50,15 @@ func (s *Store) GetNPIOrganizationByNPIID(npi_id string) (*endpointmanager.NPIOr
 }
 
 // DeleteAllNPIOrganixations will remove all rows from the npi_organizations table
-func (s *Store) DeleteAllNPIOrganizations() error {
+func (s *Store) DeleteAllNPIOrganizations(ctx context.Context) error {
 	sqlStatement := `DELETE FROM npi_organizations`
-	_, err := s.DB.Exec(sqlStatement)
+	_, err := s.DB.ExecContext(ctx, sqlStatement)
 	return err
 }
 
 // GetNPIOrganization gets a NPIOrganization from the database using the database id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, error) {
+func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanager.NPIOrganization, error) {
 	var org endpointmanager.NPIOrganization
 	var locationJSON []byte
 
@@ -72,7 +73,7 @@ func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, er
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE id=$1`
-	row := s.DB.QueryRow(sqlStatement, id)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
 	err := row.Scan(
 		&org.ID,
@@ -98,7 +99,7 @@ func (s *Store) GetNPIOrganization(id int) (*endpointmanager.NPIOrganization, er
 }
 
 // AddNPIOrganization adds the NPIOrganization to the database or updates if there is an existsing entry with same NPI_ID
-func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
+func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	INSERT INTO npi_organizations (
 		npi_id,
@@ -114,7 +115,8 @@ func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
 		return err
 	}
 
-	row := s.DB.QueryRow(sqlStatement,
+	row := s.DB.QueryRowContext(ctx,
+		sqlStatement,
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
@@ -127,7 +129,7 @@ func (s *Store) AddNPIOrganization(org *endpointmanager.NPIOrganization) error {
 }
 
 // UpdateNPIOrganization updates the NPIOrganization in the database using the NPIOrganization's database ID as the key.
-func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) error {
+func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	UPDATE npi_organizations
 	SET npi_id = $2,
@@ -142,7 +144,8 @@ func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) erro
 		return err
 	}
 
-	_, err = s.DB.Exec(sqlStatement,
+	_, err = s.DB.ExecContext(ctx,
+		sqlStatement,
 		org.ID,
 		org.NPI_ID,
 		org.Name,
@@ -154,7 +157,7 @@ func (s *Store) UpdateNPIOrganization(org *endpointmanager.NPIOrganization) erro
 }
 
 // UpdateNPIOrganizationByNPIID updates the NPIOrganization in the database using the NPIOrganization's NPIID as the key.
-func (s *Store) UpdateNPIOrganizationByNPIID(org *endpointmanager.NPIOrganization) error {
+func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	UPDATE npi_organizations
 	SET name = $2,
@@ -168,7 +171,8 @@ func (s *Store) UpdateNPIOrganizationByNPIID(org *endpointmanager.NPIOrganizatio
 		return err
 	}
 
-	_, err = s.DB.Exec(sqlStatement,
+	_, err = s.DB.ExecContext(ctx,
+		sqlStatement,
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
@@ -179,12 +183,12 @@ func (s *Store) UpdateNPIOrganizationByNPIID(org *endpointmanager.NPIOrganizatio
 }
 
 // DeleteNPIOrganization deletes the NPIOrganization from the database using the NPIOrganization's database ID as the key.
-func (s *Store) DeleteNPIOrganization(org *endpointmanager.NPIOrganization) error {
+func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
 	sqlStatement := `
 	DELETE FROM npi_organizations
 	WHERE id=$1`
 
-	_, err := s.DB.Exec(sqlStatement, org.ID)
+	_, err := s.DB.ExecContext(ctx, sqlStatement, org.ID)
 
 	return err
 }

@@ -3,6 +3,7 @@
 package postgresql
 
 import (
+	"context"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -14,6 +15,7 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	var err error
+	ctx := context.Background()
 
 	var npio1 = &endpointmanager.NPIOrganization{
 		ID:            1,
@@ -43,19 +45,19 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 
 	// add organizations
 
-	err = store.AddNPIOrganization(npio1)
+	err = store.AddNPIOrganization(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
-	err = store.AddNPIOrganization(npio2)
+	err = store.AddNPIOrganization(ctx, npio2)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
 	// retrieve organizations by NPI_ID
 
-	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(ctx, npio1.NPI_ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -63,7 +65,7 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(ctx, npio2.NPI_ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -71,14 +73,14 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	err = store.DeleteAllNPIOrganizations()
+	err = store.DeleteAllNPIOrganizations(ctx)
 	if err != nil {
 		t.Errorf("Error deleteing all npi organization: %s", err.Error())
 	}
 
 	// retrieve organizations by NPI_ID, they should not exist now
 
-	npio1_get_nil, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	npio1_get_nil, err := store.GetNPIOrganizationByNPIID(ctx, npio1.NPI_ID)
 	if err == nil {
 		t.Errorf("Expected error getting non-existant organization.")
 	}
@@ -86,7 +88,7 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 		t.Errorf("Retrieved organization that should not exist")
 	}
 
-	npio2_get_nil, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	npio2_get_nil, err := store.GetNPIOrganizationByNPIID(ctx, npio2.NPI_ID)
 	if err == nil {
 		t.Errorf("Expected error getting non-existant organization.")
 	}
@@ -100,6 +102,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	var err error
+	ctx := context.Background()
 
 	var npio1 = &endpointmanager.NPIOrganization{
 		ID:            1,
@@ -124,19 +127,19 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	// add organizations
 
-	err = store.AddNPIOrganization(npio1)
+	err = store.AddNPIOrganization(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
-	err = store.AddNPIOrganization(npio2)
+	err = store.AddNPIOrganization(ctx, npio2)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
 	}
 
 	// retrieve organizations
 
-	npio1_get, err := store.GetNPIOrganization(npio1.ID)
+	npio1_get, err := store.GetNPIOrganization(ctx, npio1.ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -144,7 +147,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	npio2_get, err := store.GetNPIOrganization(npio2.ID)
+	npio2_get, err := store.GetNPIOrganization(ctx, npio2.ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -154,7 +157,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	// retrieve organizations by NPI_ID
 
-	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(npio1.NPI_ID)
+	npio1_get_npi, err := store.GetNPIOrganizationByNPIID(ctx, npio1.NPI_ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -162,7 +165,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 		t.Errorf("retrieved organization is not equal to saved organization.")
 	}
 
-	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(npio2.NPI_ID)
+	npio2_get_npi, err := store.GetNPIOrganizationByNPIID(ctx, npio2.NPI_ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -175,7 +178,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	temp_taxonomy := npio1.Taxonomy
 	npio1.Taxonomy = "1234567"
 
-	err = store.UpdateNPIOrganization(npio1)
+	err = store.UpdateNPIOrganization(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error updating npi organization: %s", err.Error())
 	}
@@ -183,7 +186,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	// Restore taxonomy
 	npio1.Taxonomy = temp_taxonomy
 
-	npio1_get, err = store.GetNPIOrganization(npio1.ID)
+	npio1_get, err = store.GetNPIOrganization(ctx, npio1.ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -199,7 +202,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	temp_taxonomy = npio1.Taxonomy
 	npio1.Taxonomy = "1234567"
 
-	err = store.UpdateNPIOrganizationByNPIID(npio1)
+	err = store.UpdateNPIOrganizationByNPIID(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error updating npi organization: %s", err.Error())
 	}
@@ -207,7 +210,7 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	// Restore taxonomy
 	npio1.Taxonomy = temp_taxonomy
 
-	npio1_get, err = store.GetNPIOrganization(npio1.ID)
+	npio1_get, err = store.GetNPIOrganization(ctx, npio1.ID)
 	if err != nil {
 		t.Errorf("Error getting npi organization: %s", err.Error())
 	}
@@ -220,22 +223,22 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	// delete organizations
 
-	err = store.DeleteNPIOrganization(npio1)
+	err = store.DeleteNPIOrganization(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error deleting npi organization: %s", err.Error())
 	}
 
-	_, err = store.GetNPIOrganization(npio1.ID) // ensure we deleted the entry
+	_, err = store.GetNPIOrganization(ctx, npio1.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("npio1 was not deleted: %s", err.Error())
 	}
 
-	_, err = store.GetNPIOrganization(npio2.ID) // ensure we haven't deleted all entries
+	_, err = store.GetNPIOrganization(ctx, npio2.ID) // ensure we haven't deleted all entries
 	if err != nil {
 		t.Errorf("error retrieving npio2 after deleting npio1: %s", err.Error())
 	}
 
-	err = store.DeleteNPIOrganization(npio2)
+	err = store.DeleteNPIOrganization(ctx, npio2)
 	if err != nil {
 		t.Errorf("Error deleting npi organization: %s", err.Error())
 	}
