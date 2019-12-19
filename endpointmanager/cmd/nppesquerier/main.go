@@ -20,7 +20,8 @@ func failOnError(err error) {
 }
 
 func main() {
-	config.SetupConfig()
+	err := config.SetupConfig()
+	failOnError(err)
 
 	ctx := context.Background()
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
