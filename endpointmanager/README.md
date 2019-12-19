@@ -17,7 +17,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: lantern
 
-* **LANTERN_DBPASSWORD**: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
+* **LANTERN_DBPASSWORD**: The password for accessing the database as user LANTERN_DBUSER.
 
   Default value: postgrespassword
 
@@ -42,7 +42,7 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
   Default value: lantern
 
-* **LANTERN_TEST_DBPASSWORD** instead of LANTERN_DBPASSWORD: The password for accessing the database as user LANTERN_ENDPTMGR_DBUSER.
+* **LANTERN_TEST_DBPASSWORD** instead of LANTERN_DBPASSWORD: The password for accessing the database as user LANTERN_TEST_DBUSER.
 
   Default value: postgrespassword
 
