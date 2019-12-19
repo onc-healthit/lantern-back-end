@@ -2,6 +2,7 @@ package capabilityquerier
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,10 +17,18 @@ import (
 var fhir3PlusJSONMIMEType = "application/fhir+json"
 var fhir2LessJSONMIMEType = "application/json+fhir"
 
+var ssl30 = "SSL 3.0"
+var tls10 = "TLS 1.0"
+var tls11 = "TLS 1.1"
+var tls12 = "TLS 1.2"
+var tls13 = "TLS 1.3"
+var tlsUnknown = "TLS version unknown"
+
 type Message struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
 	MimeType            string      `json:"mimetype"`
+	TLSVersion          string      `json:"tlsVersion"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
@@ -36,9 +45,10 @@ func GetAndSendCapabilityStatement(
 		URL: fhirURL.String(),
 	}
 
-	capResp, mimeType, err := requestCapabilityStatement(ctx, fhirURL, client)
+	capResp, mimeType, tlsVersion, err := requestCapabilityStatement(ctx, fhirURL, client)
 	if err == nil {
 		message.MimeType = mimeType
+		message.TLSVersion = tlsVersion
 		err = json.Unmarshal(capResp, &(message.CapabilityStatement))
 		if err != nil {
 			message.Err = err.Error()
@@ -61,13 +71,13 @@ func GetAndSendCapabilityStatement(
 	return nil
 }
 
-func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client) ([]byte, string, error) {
+func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client) ([]byte, string, string, error) {
 	var err error
 	var resp *http.Response
 
 	req, err := http.NewRequest("GET", fhirURL.String(), nil)
 	if err != nil {
-		return nil, "", errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
+		return nil, "", "", errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
 	}
 	req = req.WithContext(ctx)
 
@@ -94,23 +104,40 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 		mimeType = fhir2LessJSONMIMEType
 		resp, err = requestWithMimeType(req, mimeType, client)
 		if err != nil {
-			return nil, "", err
+			return nil, "", "", err
 		}
 		defer resp.Body.Close()
 
 		respMimeType := resp.Header.Get("Content-Type")
 		if !mimeTypesMatch(mimeType, respMimeType) {
-			return nil, "", fmt.Errorf("response MIME type (%s) does not match JSON request MIME types for FHIR 3+ (%s) or FHIR 2- (%s)",
+			return nil, "", "", fmt.Errorf("response MIME type (%s) does not match JSON request MIME types for FHIR 3+ (%s) or FHIR 2- (%s)",
 				respMimeType, fhir3PlusJSONMIMEType, fhir2LessJSONMIMEType)
 		}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, "", errors.Wrapf(err, "reading the response from %s failed", fhirURL.String())
+		return nil, "", "", errors.Wrapf(err, "reading the response from %s failed", fhirURL.String())
 	}
 
-	return body, mimeType, nil
+	return body, mimeType, getTLSVersion(resp), nil
+}
+
+func getTLSVersion(resp *http.Response) string {
+	switch resp.TLS.Version {
+	case tls.VersionSSL30:
+		return ssl30
+	case tls.VersionTLS10:
+		return tls10
+	case tls.VersionTLS11:
+		return tls11
+	case tls.VersionTLS12:
+		return tls12
+	case tls.VersionTLS13:
+		return tls13
+	default:
+		return tlsUnknown
+	}
 }
 
 func mimeTypesMatch(reqMimeType string, respMimeType string) bool {

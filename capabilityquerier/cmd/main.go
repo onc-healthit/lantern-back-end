@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
-	"github.com/onc-healthit/lantern-back-end/endpointnetworkquerier/fetcher"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 
@@ -87,6 +87,59 @@ func getEndpoints() (*fetcher.ListOfEndpoints, error) {
 	return &listOfEndpoints, nil
 }
 
+func queryEndpoints(ctx context.Context,
+	listOfEndpoints *fetcher.ListOfEndpoints,
+	qw *capabilityquerier.QueueWorkers,
+	numWorkers int,
+	jobDuration time.Duration,
+	mq *lanternmq.MessageQueue,
+	ch *lanternmq.ChannelID,
+	qName string,
+	client *http.Client,
+) {
+	err := qw.Start(ctx, numWorkers)
+	failOnError(err)
+
+	for _, endpointEntry := range listOfEndpoints.Entries {
+		print(".")
+		var urlString = endpointEntry.FHIRPatientFacingURI
+		// Specifically query the FHIR endpoint metadata
+		metadataURL, err := url.Parse(urlString)
+		if err != nil {
+			log.Warn("endpoint URL parsing error: ", err.Error())
+		} else {
+			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+
+			// err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, mq, ch, qName)
+			// if err != nil {
+			// 	log.Warn(err.Error())
+			// }
+
+			job := capabilityquerier.Job{
+				Context:      ctx,
+				Duration:     jobDuration,
+				FHIRURL:      metadataURL,
+				Client:       client,
+				MessageQueue: mq,
+				Channel:      ch,
+				QueueName:    qName,
+			}
+
+			err = qw.Add(&job)
+			if err != nil {
+				log.Warn("error adding job to queue workers: ", err.Error())
+				break
+			}
+		}
+	}
+
+	println("## Stopping")
+	err = qw.Stop()
+	failOnError(err)
+	println("## Done with round")
+	runtime.GC()
+}
+
 func main() {
 	setupConfig()
 
@@ -113,49 +166,10 @@ func main() {
 	// Infinite query loop
 	for {
 		print("*")
-		ctx := context.TODO()
+		ctx := context.Background()
 
-		err = qw.Start(ctx, numWorkers)
-		failOnError(err)
+		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client)
 
-		for _, endpointEntry := range listOfEndpoints.Entries {
-			print(".")
-			var urlString = endpointEntry.FHIRPatientFacingURI
-			// Specifically query the FHIR endpoint metadata
-			metadataURL, err := url.Parse(urlString)
-			if err != nil {
-				log.Warn("endpoint URL parsing error: ", err.Error())
-			} else {
-				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-
-				err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, &mq, &ch, qName)
-				if err != nil {
-					log.Warn(err.Error())
-				}
-
-				// job := capabilityquerier.Job{
-				// 	Context:      ctx,
-				// 	Duration:     jobDuration,
-				// 	FHIRURL:      metadataURL,
-				// 	Client:       client,
-				// 	MessageQueue: &mq,
-				// 	Channel:      &ch,
-				// 	QueueName:    qName,
-				// }
-
-				// err = qw.Add(&job)
-				// if err != nil {
-				// 	log.Warn("error adding job to queue workers: ", err.Error())
-				// 	break
-				// }
-			}
-		}
-
-		println("## Stopping")
-		err = qw.Stop()
-		failOnError(err)
-		println("## Done with round")
-		runtime.GC()
 		time.Sleep(5 * time.Minute)
 	}
 }
