@@ -53,7 +53,8 @@ A makefile has been created for the project to simplify running containers.
 * `make run_prod`: runs docker-compose for a production environment
 * `make stop`: runs docker-compose `down` for a development environment
 * `make stop_prod`: runs docker-compose `down` for a development environment
-* `make clean`: runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups.
+* `make clean`: runs docker-compose `down` with the `--rmi local -v` tags to remove local images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
+* `make clean_remote`: runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
 
 ### Starting the Services
 
