@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -18,8 +20,10 @@ func failOnError(err error) {
 }
 
 func main() {
+	config.SetupConfig()
+
 	ctx := context.Background()
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 	if len(os.Args) != 2 {
 		log.Fatal("NPPES csv file not provided as argument.")
