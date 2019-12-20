@@ -1,9 +1,13 @@
 package nppesquerier
 
 import (
+	"context"
 	"encoding/csv"
-	log "github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/pkg/errors"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -342,7 +346,7 @@ type NPICsvLine struct {
 	Healthcare_Provider_Taxonomy_Group_15                                  string
 }
 
-func ParseNPIdataLine(line []string) NPICsvLine {
+func parseNPIdataLine(line []string) NPICsvLine {
 	data := NPICsvLine{
 		NPI:              line[0],
 		Entity_Type_Code: line[1],
@@ -358,8 +362,8 @@ func ParseNPIdataLine(line []string) NPICsvLine {
 	return data
 }
 
-func BuildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
-	npi_org := &endpointmanager.NPIOrganization{
+func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
+	npiOrg := &endpointmanager.NPIOrganization{
 		NPI_ID:        data.NPI,
 		Name:          data.Provider_Organization_Name_Legal_Business_Name,
 		SecondaryName: data.Provider_Other_Organization_Name,
@@ -370,12 +374,18 @@ func BuildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 			State:    data.Provider_Business_Practice_Location_Address_State_Name,
 			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
 		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
-	return npi_org
+	return npiOrg
 }
 
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
-func ReadCsv(filename string) ([][]string, error) {
+func readCsv(ctx context.Context, filename string) ([][]string, error) {
+	select {
+	case <-ctx.Done():
+		return nil, errors.Wrap(ctx.Err(), "did not read csv; context ended")
+	default:
+		// ok
+	}
 
 	// Open CSV file
 	f, err := os.Open(filename)
@@ -393,21 +403,29 @@ func ReadCsv(filename string) ([][]string, error) {
 	return lines[1:], nil
 }
 
-// Parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
-func ParseAndStoreNPIFile(fname string, store *postgresql.Store) (int, error) {
+// ParseAndStoreNPIFile parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
+func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
-	lines, err := ReadCsv(fname)
+	lines, err := readCsv(ctx, fname)
 	if err != nil {
 		return -1, err
 	}
 	added := 0
 	// Loop through lines & turn into object
-	for _, line := range lines {
-		data := ParseNPIdataLine(line)
+	for i, line := range lines {
+		// break out of loop and return error if context has ended
+		select {
+		case <-ctx.Done():
+			return added, errors.Wrapf(ctx.Err(), "read %d lines of the csv file before the context ended", i)
+		default:
+			// ok
+		}
+
+		data := parseNPIdataLine(line)
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if data.Entity_Type_Code == "2" {
-			npi_org := BuildNPIOrgFromNPICsvLine(data)
-			err = store.AddNPIOrganization(npi_org)
+			npiOrg := buildNPIOrgFromNPICsvLine(data)
+			err = store.AddNPIOrganization(ctx, npiOrg)
 			if err != nil {
 				log.Debug(err)
 			} else {

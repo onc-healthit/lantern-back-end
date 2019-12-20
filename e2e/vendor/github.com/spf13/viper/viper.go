@@ -1723,7 +1723,7 @@ func (v *Viper) AllKeys() []string {
 	m = v.flattenAndMergeMap(m, v.defaults, "")
 
 	// convert set of paths to list
-	a := make([]string, 0, len(m))
+	a := []string{}
 	for x := range m {
 		a = append(a, x)
 	}
@@ -1879,10 +1879,6 @@ func (v *Viper) searchInPath(in string) (filename string) {
 			jww.DEBUG.Println("Found: ", filepath.Join(in, v.configName+"."+ext))
 			return filepath.Join(in, v.configName+"."+ext)
 		}
-	}
-
-	if b, _ := exists(v.fs, filepath.Join(in, v.configName)); b {
-		return filepath.Join(in, v.configName)
 	}
 
 	return ""
