@@ -39,6 +39,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc, err = testClientWithContentType(fhir2LessJSONMIMEType)
 	th.Assert(t, err == nil, err)
+	defer tc.Close()
 
 	capStat, mimeType, tlsVersion, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
 	th.Assert(t, err == nil, err)
@@ -59,6 +60,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc, err = testClientWithContentType(fhir3PlusJSONMIMEType)
 	th.Assert(t, err == nil, err)
+	defer tc.Close()
 
 	capStat, mimeType, tlsVersion, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
 	th.Assert(t, err == nil, err)
@@ -66,6 +68,29 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, mimeType == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeType %s", expectedMimeType, mimeType))
 	th.Assert(t, tlsVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, tlsVersion))
 
+	// requestWithMimeType error due to test server closing
+
+	tc, err = basicTestClient()
+	th.Assert(t, err == nil, err)
+	tc.Close() // makes request fail
+
+	_, _, _, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
+	switch errors.Cause(err).(type) {
+	case *url.Error:
+		// expect url.Error because we closed the connection that we're querying.
+	default:
+		t.Fatal("expected connection error")
+	}
+
+	// mimeType mismatch
+	expectedErrStr := fmt.Sprintf("response MIME type (nonesense mimetype; charset=utf-8) does not match JSON request MIME types for FHIR 3+ (%s) or FHIR 2- (%s)",
+		fhir3PlusJSONMIMEType, fhir2LessJSONMIMEType)
+	tc, err = testClientWithContentType("nonesense mimetype")
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+
+	_, _, _, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
+	th.Assert(t, err.Error() == expectedErrStr, fmt.Sprintf("expected error '%s'; received error '%s'", expectedErrStr, err.Error()))
 }
 
 func Test_getTLSVersion(t *testing.T) {
