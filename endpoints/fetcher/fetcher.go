@@ -6,20 +6,23 @@ import (
 	"os"
 )
 
-// Schema for data pulled out of EndpointSources file
-type ListOfEndpoints struct {
-	Entries []struct {
-		OrganizationName     string `json:"OrganizationName"`
-		FHIRPatientFacingURI string `json:"FHIRPatientFacingURI"`
-		Type                 string `json:"Type"`
-		Keywords             []struct {
-			Kind  string `json:"Kind"`
-			Value string `json:"Value"`
-		} `json:"Keywords"`
-	} `json:"Entries"`
+// EndpointEntry is a struct for each entry of data pulled out of the EndpointSources file
+type EndpointEntry struct {
+	OrganizationName     string `json:"OrganizationName"`
+	FHIRPatientFacingURI string `json:"FHIRPatientFacingURI"`
+	Type                 string `json:"Type"`
+	Keywords             []struct {
+		Kind  string `json:"Kind"`
+		Value string `json:"Value"`
+	} `json:"Keywords"`
 }
 
-// GetListOfEndpoints parsers a list of endpoints out of the file at the provided path
+// ListOfEndpoints is a structure for the whole EndpointSources file
+type ListOfEndpoints struct {
+	Entries []EndpointEntry `json:"Entries"`
+}
+
+// GetListOfEndpoints parses a list of endpoints out of the file at the provided path
 func GetListOfEndpoints(filePath string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 

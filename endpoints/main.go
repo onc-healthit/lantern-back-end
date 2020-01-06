@@ -186,9 +186,10 @@ func main() {
 	if len(os.Args) != 1 {
 		endpointsFile = os.Args[1]
 	} else {
-		println("ERROR: Missing endpoints list command-line arguement")
+		println("ERROR: Missing endpoints list command-line argument")
 		return
 	}
+	// @TODO: Migrate this file reading (and then adding it to the db) over to the main file in endpointmanager
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
 	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
 	if err != nil {
@@ -199,6 +200,7 @@ func main() {
 	var queryCount = 0
 	// Infinite query loop
 	for {
+		// @TODO Figure out what's going on here and how to use the information (if necessary)
 		for _, endpointEntry := range listOfEndpoints.Entries {
 			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
 			var urlString = endpointEntry.FHIRPatientFacingURI
@@ -218,7 +220,7 @@ func main() {
 		runtime.GC()
 
 		time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
-		queryCount += 1
+		queryCount++
 	}
 
 }
