@@ -175,7 +175,7 @@ func sendToQueue(
 	// don't send the message if the context is done
 	select {
 	case <-ctx.Done():
-		return errors.Wrap(ctx.Err(), "unable to message to queue - context ended")
+		return errors.Wrap(ctx.Err(), "unable to send message to queue - context ended")
 	default:
 		// ok
 	}
