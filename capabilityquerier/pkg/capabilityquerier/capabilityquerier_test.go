@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -20,6 +21,73 @@ import (
 )
 
 var sampleURL = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/metadata"
+
+func Test_GetAndSendCapabilityStatement(t *testing.T) {
+	var ctx context.Context
+	var fhirURL *url.URL
+	var tc *th.TestClient
+	var message []byte
+	var ch lanternmq.ChannelID
+	var err error
+
+	mq := mock.NewBasicMockMessageQueue()
+	ch = 1
+	queueName := "queue name"
+
+	// basic test
+
+	fhirURL = &url.URL{}
+	fhirURL, err = fhirURL.Parse(sampleURL)
+	th.Assert(t, err == nil, err)
+	ctx = context.Background()
+	tc, err = testClientWithContentType(fhir2LessJSONMIMEType)
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+
+	// create the expected result
+	path := filepath.Join("testdata", "metadata.json")
+	expectedCapStat, err := ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	expectedMimeType := fhir2LessJSONMIMEType
+	expectedTLSVersion := "TLS 1.0"
+	expectedMsgStruct := Message{
+		URL:        fhirURL.String(),
+		MimeType:   expectedMimeType,
+		TLSVersion: expectedTLSVersion,
+	}
+	json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
+	expectedMsg, err := json.Marshal(expectedMsgStruct)
+	th.Assert(t, err == nil, err)
+
+	// execute tested function
+	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
+	message = <-mq.(*mock.BasicMockMessageQueue).Queue
+	th.Assert(t, bytes.Compare(message, expectedMsg) == 0, "expected the capability statement on the queue to be the same as the one sent")
+
+	// context canceled error
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
+	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 0, "expect no messages on the queue")
+
+	// server error response
+	ctx = context.Background()
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
+
+	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
+	message = <-mq.(*mock.BasicMockMessageQueue).Queue
+	var messageStruct Message
+	err = json.Unmarshal(message, &messageStruct)
+	th.Assert(t, messageStruct.Err == fmt.Sprintf("GET request to %s responded with status 404 Not Found", sampleURL), "expected 404 error to be documented in sent error message")
+}
 
 func Test_requestCapabilityStatement(t *testing.T) {
 	var ctx context.Context
@@ -216,7 +284,6 @@ func Test_requestWithMimeType(t *testing.T) {
 	defer tc.Close()
 
 	_, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
-	println(err.Error())
 	th.Assert(t, err.Error() == fmt.Sprintf("GET request to %s responded with status 404 Not Found", sampleURL), "expected to see an error for 404 response code status")
 }
 
