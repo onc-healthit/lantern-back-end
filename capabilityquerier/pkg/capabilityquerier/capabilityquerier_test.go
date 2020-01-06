@@ -71,7 +71,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	cancel()
 
 	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
-	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
+	th.Assert(t, errors.Cause(err) == context.Canceled, "expected GetAndSendCapabilityStatement to error out due to context ending")
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 0, "expect no messages on the queue")
 
 	// server error response
