@@ -13,6 +13,7 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
+	OrganizationName      string
 	FHIRVersion           string
 	AuthorizationStandard string               // examples: OAuth 2.0, Basic, etc.
 	Location              *Location            // location of the FHIR API endpoint's IP address from ipstack.com.
