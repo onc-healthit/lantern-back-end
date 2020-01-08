@@ -6,15 +6,18 @@ import (
 	"os"
 )
 
+// Keyword is a struct for each keyword
+type OrgKeyword struct {
+	Kind  string `json:"Kind"`
+	Value string `json:"Value"`
+}
+
 // EndpointEntry is a struct for each entry of data pulled out of the EndpointSources file
 type EndpointEntry struct {
-	OrganizationName     string `json:"OrganizationName"`
-	FHIRPatientFacingURI string `json:"FHIRPatientFacingURI"`
-	Type                 string `json:"Type"`
-	Keywords             []struct {
-		Kind  string `json:"Kind"`
-		Value string `json:"Value"`
-	} `json:"Keywords"`
+	OrganizationName     string       `json:"OrganizationName"`
+	FHIRPatientFacingURI string       `json:"FHIRPatientFacingURI"`
+	Type                 string       `json:"Type"`
+	Keywords             []OrgKeyword `json:"Keywords"`
 }
 
 // ListOfEndpoints is a structure for the whole EndpointSources file
