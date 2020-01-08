@@ -79,6 +79,8 @@ func testingHTTPClient(handler http.Handler) (*http.Client, func()) {
 			},
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
+				MaxVersion:         tls.VersionTLS10,
+				MinVersion:         tls.VersionTLS10,
 			},
 		},
 	}
