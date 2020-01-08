@@ -42,6 +42,8 @@ func setupConfig() {
 	failOnError(err)
 	err = viper.BindEnv("capquery_numworkers")
 	failOnError(err)
+	err = viper.BindEnv("capquery_qryintvl") // in minutes
+	failOnError(err)
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
@@ -49,6 +51,7 @@ func setupConfig() {
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("qcapstatq", "capability-statements")
 	viper.SetDefault("capquery_numworkers", 10)
+	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
 }
 
 func connectToQueue(qName string) (lanternmq.MessageQueue, lanternmq.ChannelID, error) {
@@ -110,11 +113,6 @@ func queryEndpoints(ctx context.Context,
 		} else {
 			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 
-			// err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, mq, ch, qName)
-			// if err != nil {
-			// 	log.Warn(err.Error())
-			// }
-
 			job := capabilityquerier.Job{
 				Context:      ctx,
 				Duration:     jobDuration,
@@ -143,6 +141,8 @@ func queryEndpoints(ctx context.Context,
 func main() {
 	setupConfig()
 
+	queryInterval := viper.GetInt("capquery_qryintvl")
+
 	// TODO: continuing to use the list of endpoints and 'fetcher'. however, eventually we'll
 	// be taking messages off of a queue and this code will be removed.
 	listOfEndpoints, err := getEndpoints()
@@ -160,8 +160,6 @@ func main() {
 
 	numWorkers := viper.GetInt("capquery_numworkers")
 	qw := capabilityquerier.NewQueueWorkers()
-	//jobDuration, err := time.ParseDuration("30s")
-	failOnError(err)
 
 	// Infinite query loop
 	for {
@@ -170,6 +168,6 @@ func main() {
 
 		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client)
 
-		time.Sleep(5 * time.Minute)
+		time.Sleep(time.Duration(queryInterval) * time.Minute)
 	}
 }
