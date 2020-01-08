@@ -28,6 +28,7 @@ func Test_StartAddAndStop(t *testing.T) {
 
 	fhirURL := &url.URL{}
 	fhirURL, err = fhirURL.Parse(sampleURL)
+	th.Assert(t, err == nil, err)
 
 	tc, err := testClientWithContentType(fhir2LessJSONMIMEType)
 	th.Assert(t, err == nil, err)

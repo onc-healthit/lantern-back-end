@@ -34,6 +34,7 @@ type QueueWorkers struct {
 	numWorkers int
 	waitGroup  *sync.WaitGroup
 	ctx        context.Context
+	errs       chan error
 }
 
 // NewQueueWorkers initializes a QueueWorkers structure.
@@ -42,6 +43,7 @@ func NewQueueWorkers() *QueueWorkers {
 		jobs:       make(chan *Job),
 		kill:       make(chan bool),
 		numWorkers: 0,
+		errs:       make(chan error),
 	}
 	return &qw
 }
@@ -59,7 +61,7 @@ func (qw *QueueWorkers) Start(ctx context.Context, numWorkers int) error {
 	qw.ctx = ctx
 	for i := 0; i < qw.numWorkers; i++ {
 		wg.Add(1)
-		go worker(ctx, qw.jobs, qw.kill, qw.waitGroup)
+		go worker(ctx, qw.jobs, qw.kill, qw.waitGroup, qw.errs)
 	}
 	return nil
 }
@@ -81,12 +83,14 @@ func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has 
 // Stop sends a stop signal to all of the workers to stop accepting jobs and to close.
 // Stop throws an error if QueueWorkers has already been stopped and has not been restarted.
 func (qw *QueueWorkers) Stop() error {
+	var err error
 	select {
 	case <-qw.ctx.Done():
 		// wait for all the canceled workers to stop
 		qw.waitGroup.Wait()
 		qw.numWorkers = 0
-		return nil
+		err = qw.getError()
+		return err
 	default:
 		// ok
 	}
@@ -102,16 +106,33 @@ func (qw *QueueWorkers) Stop() error {
 
 	qw.numWorkers = 0
 
+	err = qw.getError()
+	return err
+}
+
+func (qw *QueueWorkers) getError() error {
+	for err := range qw.errs {
+		return err
+	}
 	return nil
 }
 
-func worker(ctx context.Context, jobs chan *Job, kill chan bool, wg *sync.WaitGroup) {
+func jobHandler(job *Job) error {
+	jobCtx, cancel := context.WithDeadline(job.Context, time.Now().Add(job.Duration))
+	defer cancel()
+
+	err := GetAndSendCapabilityStatement(jobCtx, job.FHIRURL, job.Client, job.MessageQueue, job.Channel, job.QueueName)
+	return err
+}
+
+func worker(ctx context.Context, jobs chan *Job, kill chan bool, wg *sync.WaitGroup, errs chan<- error) {
 	for {
 		select {
 		case job := <-jobs:
-			jobCtx, cancel := context.WithDeadline(job.Context, time.Now().Add(job.Duration))
-			GetAndSendCapabilityStatement(jobCtx, job.FHIRURL, job.Client, job.MessageQueue, job.Channel, job.QueueName)
-			cancel()
+			err := jobHandler(job)
+			if err != nil {
+				errs <- err
+			}
 		case <-ctx.Done():
 			wg.Done()
 			return
