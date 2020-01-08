@@ -84,6 +84,7 @@ func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has 
 // Stop throws an error if QueueWorkers has already been stopped and has not been restarted.
 func (qw *QueueWorkers) Stop() error {
 	var err error
+
 	select {
 	case <-qw.ctx.Done():
 		// wait for all the canceled workers to stop
@@ -111,10 +112,12 @@ func (qw *QueueWorkers) Stop() error {
 }
 
 func (qw *QueueWorkers) getError() error {
-	for err := range qw.errs {
+	select {
+	case err := <-qw.errs:
 		return err
+	default:
+		return nil
 	}
-	return nil
 }
 
 func jobHandler(job *Job) error {
