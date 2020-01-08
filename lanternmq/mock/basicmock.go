@@ -51,7 +51,10 @@ func NewBasicMockMessageQueue() lanternmq.MessageQueue {
 
 	mq.ProcessMessagesFn = func(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 		for msg := range mq.Queue {
-			handler(msg, args)
+			err := handler(msg, args)
+			if err != nil {
+				errs <- err
+			}
 		}
 	}
 
