@@ -1,4 +1,4 @@
-// +build integration
+// +build e2e
 
 package integration_tests
 
@@ -12,12 +12,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/spf13/viper"
 )
 
 func TestMain(m *testing.M) {
-	setupConfig()
+	config.SetupConfigForTests()
 	go setupTestServer()
 	// Give time for the querier to query the test server we just setup
 	time.Sleep(30 * time.Second)
@@ -43,36 +44,6 @@ func metadataHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("%s", err)
 	}
-}
-
-func setupConfig() {
-	var err error
-
-	viper.SetEnvPrefix("lantern_endptmgr")
-	viper.AutomaticEnv()
-
-	err = viper.BindEnv("dbhost")
-	failOnError(err)
-	err = viper.BindEnv("dbport")
-	failOnError(err)
-	err = viper.BindEnv("dbuser")
-	failOnError(err)
-	err = viper.BindEnv("dbpass")
-	failOnError(err)
-	err = viper.BindEnv("dbname")
-	failOnError(err)
-	err = viper.BindEnv("dbsslmode")
-	failOnError(err)
-	err = viper.BindEnv("logfile")
-	failOnError(err)
-
-	viper.SetDefault("dbhost", "pg_prometheus")
-	viper.SetDefault("dbport", 5432)
-	viper.SetDefault("dbuser", "lantern")
-	viper.SetDefault("dbpass", "postgrespassword")
-	viper.SetDefault("dbname", "lantern")
-	viper.SetDefault("dbsslmode", "disable")
-	viper.SetDefault("logfile", "endpointmanagerLog.json")
 }
 
 func setupTestServer() {
@@ -163,7 +134,7 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 }
 
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 
 	defer store.Close()

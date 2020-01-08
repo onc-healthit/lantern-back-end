@@ -12,6 +12,8 @@ services:
   pg_prometheus:
     ports:
       - "5432:5432"
+    volumes:
+      - ./scripts/testdbsetup.sql:/docker-entrypoint-initdb.d/testdbsetup.sql
   grafana:
     ports:
       - "3000:3000"
