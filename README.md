@@ -1,7 +1,8 @@
 # Lantern
 * Lantern Services
   * [Endpoint Manager](endpointmanager/README.md)
-  * [Endpoint Querier](endpoints/README.md)
+  * [Network Statistics Querier](networkstatsquerier/README.md)
+  * [Capability Querier](capabilityquerier/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
 * [Additional Services](#additional-services)
   * [Using docker-compose](#using-docker-compose)
@@ -11,7 +12,8 @@
     * [Starting Services Behind SSL-Inspecting Proxy](#starting-services-behind-ssl-inspecting-proxy)
   * [Running the Services Individually](#running-the-services-individually)
     * [Endpoint Manager](#endpoint-manager)
-    * [Endpoint Querier](#endpoint-querier)
+    * [Network Statistics Querier](networkstatsquerier/README.md)
+    * [Capability Querier](capabilityquerier/README.md)
     * [Prometheus with Remote Storage (PostgreSQL)](#prometheus-with-remote-storage-postgresql)
       * [Prometheus Configuration File](#prometheus-configuration-file)
     * [RabbitMQ](#rabbitmq)
