@@ -58,21 +58,18 @@ func Test_formatToFHIREndpt(t *testing.T) {
 
 	fhirEndpt, err := formatToFHIREndpt(&endpt)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not parse into FHIREndpoint as expected")
+	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not get parsed into a FHIREndpoint as expected")
 }
 
 func Test_saveEndpointData(t *testing.T) {
 	var err error
 	store := mock.NewBasicMockFhirEndpointStore()
 
-	var ctx context.Context
-	var cancel context.CancelFunc
-
 	endpt := testEndpointEntry
 	fhirEndpt := testFHIREndpoint
 
 	// check that nothing is stored and that saveEndpointData throws an error if the context is canceled
-	ctx, cancel = context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 0, "should not have stored data")
@@ -93,9 +90,9 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 1, "did not store data as expected")
 	th.Assert(t, fhirEndpt.Equal(store.(*mock.FhirMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
-	endpt = testEndpointEntry
 
 	// check that error adding to store throws error
+	endpt = testEndpointEntry
 	endpt.FHIRPatientFacingURI = "http://a-new-url.com/metadata"
 	addFn := store.(*mock.FhirMockStore).AddFHIREndpointFn
 	store.(*mock.FhirMockStore).AddFHIREndpointFn = func(_ context.Context, _ *endpointmanager.FHIREndpoint) error {
@@ -109,7 +106,6 @@ func Test_saveEndpointData(t *testing.T) {
 func Test_AddEndpointData(t *testing.T) {
 	var err error
 	store := mock.NewBasicMockFhirEndpointStore()
-	ctx := context.Background()
 
 	endpt1 := testEndpointEntry
 	endpt2 := testEndpointEntry
@@ -117,7 +113,7 @@ func Test_AddEndpointData(t *testing.T) {
 	listEndpoints := fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
 	expectedEndptsStored := 2
 
-	// check that nothing is stored and that saveEndpointData throws an error if the context is canceled
+	// check that nothing is stored and that AddEndpointData throws an error if the context is canceled
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	err = AddEndpointData(ctx, store, &listEndpoints)

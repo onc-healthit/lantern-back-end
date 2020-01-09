@@ -12,7 +12,6 @@ import (
 )
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
-// @TODO This should probably be moved to endpointmanager?
 func AddEndpointData(ctx context.Context, store endpointmanager.FHIREndpointStore, endpoints *fetcher.ListOfEndpoints) error {
 	for i, endpoint := range endpoints.Entries {
 		select {
