@@ -1,8 +1,6 @@
 package mock
 
 import (
-	"sync"
-
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 )
 
@@ -13,8 +11,6 @@ var _ lanternmq.MessageQueue = &MessageQueue{}
 // Each MessageQueue method calls the corresponding method <methodName>Fn as assigned in the mock MessageQueue
 // structure. It also assigns <methodName>Invoked to true when <methodName> is called.
 type MessageQueue struct {
-	lock sync.RWMutex
-
 	ConnectFn func(username string, password string, host string, port string) error
 
 	CreateChannelFn func() (lanternmq.ChannelID, error)
@@ -80,8 +76,6 @@ func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) erro
 
 // PublishToTopic mocks lanternmq.PublishToTopic and sets mq.PublishToTopicInvoked to true and calls mq.PublishToTopicFn with the given arguments.
 func (mq *MessageQueue) PublishToTopic(chID lanternmq.ChannelID, name string, routingKey string, message string) error {
-	mq.lock.Lock()
-	defer mq.lock.Unlock()
 	return mq.PublishToTopicFn(chID, name, routingKey, message)
 }
 
