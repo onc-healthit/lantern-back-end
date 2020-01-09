@@ -1,0 +1,16 @@
+# Make linguist aware of custom vendor directory locations
+capabilityquerier/vendor/* linguist-generated=true
+# -diff instructs git to ignore these files in diff, -merge instructs git to always accept latest
+capabilityquerier/vendor/* -diff -merge
+e2e/vendor/* linguist-generated=true
+e2e/vendor/* -diff -merge
+endpointmanager/vendor/* linguist-generated=true
+endpointmanager/vendor/* -diff -merge
+endpoints/vendor/* linguist-generated=true
+endpoints/vendor/* -diff -merge
+fhir/vendor/* linguist-generated=true
+fhir/vendor/* -diff -merge
+lanternmq/vendor/* linguist-generated=true
+lanternmq/vendor/* -diff -merge
+networkstatsquerier/vendor/* linguist-generated=true
+networkstatsquerier/vendor/* -diff -merge
