@@ -162,7 +162,7 @@ func main() {
 	if len(os.Args) != 1 {
 		endpointsFile = os.Args[1]
 	} else {
-		println("ERROR: Missing endpoints list command-line arguement")
+		log.Error("missing endpoints list command-line argument")
 		return
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json

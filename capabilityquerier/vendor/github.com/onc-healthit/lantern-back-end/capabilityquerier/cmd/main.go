@@ -38,8 +38,10 @@ func queryEndpoints(ctx context.Context,
 	err := qw.Start(ctx, numWorkers)
 	failOnError(err)
 
-	for _, endpointEntry := range listOfEndpoints.Entries {
-		print(".")
+	for i, endpointEntry := range listOfEndpoints.Entries {
+		if i%10 == 0 {
+			log.Infof("Processed %d/%d messages", i, len(listOfEndpoints.Entries))
+		}
 		var urlString = endpointEntry.FHIRPatientFacingURI
 		// Specifically query the FHIR endpoint metadata
 		metadataURL, err := url.Parse(urlString)
@@ -66,10 +68,10 @@ func queryEndpoints(ctx context.Context,
 		}
 	}
 
-	println("## Stopping")
+	log.Info("Stopping queue workers")
 	err = qw.Stop()
 	failOnError(err)
-	println("## Done with round")
+	log.Info("Done retrieving and sending capability statement information")
 	runtime.GC()
 }
 
@@ -81,7 +83,7 @@ func main() {
 
 	// TODO: continuing to use the list of endpoints and 'fetcher'. however, eventually we'll
 	// be taking messages off of a queue and this code will be removed.
-	listOfEndpoints, err := endpoints.GetEndpoints("../../networkstatsquerier/resources/EndpointSources.json")
+	listOfEndpoints, err := endpoints.GetEndpoints("../networkstatsquerier/resources/EndpointSources.json")
 	failOnError(err)
 
 	// Set up the queue for sending messages
@@ -103,11 +105,11 @@ func main() {
 
 	// Infinite query loop
 	for {
-		print("*")
 		ctx := context.Background()
 
 		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client)
 
+		log.Infof("Waiting %d minutes", queryInterval)
 		time.Sleep(time.Duration(queryInterval) * time.Minute)
 	}
 }

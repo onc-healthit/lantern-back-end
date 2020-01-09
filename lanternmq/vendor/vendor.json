@@ -5,38 +5,38 @@
 		{
 			"checksumSHA1": "ZoNHT841bNyUG7FlG3YeV+lcsQo=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
-			"checksumSHA1": "tahg3cOV1BLQ7o8dI3QbeJp2Q+I=",
+			"checksumSHA1": "V3baNhNa/Fn9WRAGnM+Aelsg2u4=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/mock",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
 			"checksumSHA1": "n515O5M7yNDoI/N3DbJzPFLJIQ0=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
 			"checksumSHA1": "KXSPhDHEGfdKHnt4QlkXftk3qjM=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/receive",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
 			"checksumSHA1": "1UiXtG9GgF/BvedDJ65Dg+BRL9E=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/sendQueue",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
 			"checksumSHA1": "ECzU4QwpIUg1MXPz12DJfrQG3MA=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/test/sendTopic",
-			"revision": "eb66a89d7118185e46f34769144281147de7537c",
-			"revisionTime": "2020-01-08T14:59:55Z"
+			"revision": "402988efab9ab1bfadf0d55eb756ebeae7dc04ef",
+			"revisionTime": "2020-01-09T15:17:28Z"
 		},
 		{
 			"checksumSHA1": "GH70ONgz5JvA9NimFl12u16dpEg=",

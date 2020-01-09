@@ -1,9 +1,9 @@
 
-# FHIR Endpoint Querier
-The FHIR Endpoint Querier is a service that retrieves the response code and response time for a FHIR API endpoint.
+# Network Statistics Querier
+The Netowrk Statistics Querier is a service that retrieves the response code and response time for a FHIR API endpoint.
 
 ## Configuration
-The FHIR Endpoint Querier reads the following environment variables:
+The Network Statistics Querier reads the following environment variables:
 
 * **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
 
