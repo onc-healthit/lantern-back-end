@@ -83,62 +83,62 @@
 		{
 			"checksumSHA1": "xGUwnfHlbwudw4L/HAMGMI3KRJY=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/cmd",
-			"revision": "abb779f51f187181fb0b472ad0f07fa800520e0a",
-			"revisionTime": "2020-01-09T15:23:13Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "hTAwPz9teeimLjqT2P/ml2GfY8Y=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier",
-			"revision": "abb779f51f187181fb0b472ad0f07fa800520e0a",
-			"revisionTime": "2020-01-09T15:23:13Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "utp5JhBkoMBOOskTT3Jml3VtTAQ=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config",
-			"revision": "abb779f51f187181fb0b472ad0f07fa800520e0a",
-			"revisionTime": "2020-01-09T15:23:13Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "Ddil97AZa2dgPWNDr23myT6rkg4=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints",
-			"revision": "abb779f51f187181fb0b472ad0f07fa800520e0a",
-			"revisionTime": "2020-01-09T15:23:13Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "35x9fY9qfw5MmAt6ANAknAuLqts=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue",
-			"revision": "abb779f51f187181fb0b472ad0f07fa800520e0a",
-			"revisionTime": "2020-01-09T15:23:13Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "hyPJ7HMWyvj1zte+PD57j1dBH1E=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "ZoNHT841bNyUG7FlG3YeV+lcsQo=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
-			"checksumSHA1": "tahg3cOV1BLQ7o8dI3QbeJp2Q+I=",
+			"checksumSHA1": "iVV+jtax2KJDQvAgFy7VUawRrY4=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/mock",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "n515O5M7yNDoI/N3DbJzPFLJIQ0=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "lA+dwQAW40KOUv5E/i7ftRHy2wI=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
@@ -150,8 +150,8 @@
 			"checksumSHA1": "I7hloldMJZTqUx6hbVDp5nk9fZQ=",
 			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/pkg/errors",
 			"path": "github.com/pkg/errors",
-			"revision": "de2cf04dbd11c43129820f3918b03b6c72e42c1d",
-			"revisionTime": "2020-01-08T15:46:40Z"
+			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
+			"revisionTime": "2020-01-09T15:25:16Z"
 		},
 		{
 			"checksumSHA1": "MGnqHnmEqc1fjnYiWReSiW8C27A=",
