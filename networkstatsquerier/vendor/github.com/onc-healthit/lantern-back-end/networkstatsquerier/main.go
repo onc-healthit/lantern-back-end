@@ -69,7 +69,6 @@ func initializeMetrics() {
 		},
 		[]string{"orgName"})
 
-
 	totalUptimeChecksCounterVec = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: "AllEndpoints",
