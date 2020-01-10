@@ -23,8 +23,6 @@ import (
 // Each METRIC has its own registrations
 var httpCodesGaugeVec *prometheus.GaugeVec
 var responseTimeGaugeVec *prometheus.GaugeVec
-var tlsVersionGaugeVec *prometheus.GaugeVec
-var fhirVersionGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
@@ -71,21 +69,6 @@ func initializeMetrics() {
 		},
 		[]string{"orgName"})
 
-	tlsVersionGaugeVec = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Namespace: "AllEndpoints",
-			Name:      "tls_version",
-			Help:      "TLS version reported in the response header partitioned by orgName",
-		},
-		[]string{"orgName"})
-
-	fhirVersionGaugeVec = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Namespace: "AllEndpoints",
-			Name:      "fhir_version",
-			Help:      "FHIR version reported in the Capability statement partitioned by orgName",
-		},
-		[]string{"orgName"})
 
 	totalUptimeChecksCounterVec = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -105,8 +88,6 @@ func initializeMetrics() {
 
 	prometheus.MustRegister(httpCodesGaugeVec)
 	prometheus.MustRegister(responseTimeGaugeVec)
-	prometheus.MustRegister(tlsVersionGaugeVec)
-	prometheus.MustRegister(fhirVersionGaugeVec)
 	prometheus.MustRegister(totalUptimeChecksCounterVec)
 	prometheus.MustRegister(totalFailedUptimeChecksCounterVec)
 
@@ -190,7 +171,13 @@ func main() {
 		}
 		runtime.GC()
 
-		time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
+		// If the query interval is zero we will be continuously blasting out requests which causes broken connection issues
+		// This is an issue in tests where we reduce the number of endpoint entries this introduces a minimum required pause time
+		if viper.GetInt("query_interval") == 0 {
+			time.Sleep(time.Duration(10 * time.Second))
+		} else {
+			time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
+		}
 		queryCount += 1
 	}
 
