@@ -72,7 +72,7 @@ func Test_saveEndpointData(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	err = saveEndpointData(ctx, store, &endpt)
-	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 0, "should not have stored data")
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 0, "should not have stored data")
 	th.Assert(t, errors.Cause(err) == context.Canceled, "should have errored out with root cause that the context was canceled")
 
 	// reset context
@@ -81,26 +81,26 @@ func Test_saveEndpointData(t *testing.T) {
 	// check that new item is stored
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 1, "did not store data as expected")
-	th.Assert(t, fhirEndpt.Equal(store.(*mock.FhirMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not store data as expected")
+	th.Assert(t, fhirEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
 
 	// check that an item with the same URL does not replace item
 	endpt.OrganizationName = "A Woman's Place 2"
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 1, "did not store data as expected")
-	th.Assert(t, fhirEndpt.Equal(store.(*mock.FhirMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not store data as expected")
+	th.Assert(t, fhirEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
 	endpt.FHIRPatientFacingURI = "http://a-new-url.com/metadata"
-	addFn := store.(*mock.FhirMockStore).AddFHIREndpointFn
-	store.(*mock.FhirMockStore).AddFHIREndpointFn = func(_ context.Context, _ *endpointmanager.FHIREndpoint) error {
+	addFn := store.(*mock.BasicMockStore).AddFHIREndpointFn
+	store.(*mock.BasicMockStore).AddFHIREndpointFn = func(_ context.Context, _ *endpointmanager.FHIREndpoint) error {
 		return errors.New("add fhir endpoint test error")
 	}
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, errors.Cause(err).Error() == "add fhir endpoint test error", "expected error adding product")
-	store.(*mock.FhirMockStore).AddFHIREndpointFn = addFn
+	store.(*mock.BasicMockStore).AddFHIREndpointFn = addFn
 }
 
 func Test_AddEndpointData(t *testing.T) {
@@ -117,7 +117,7 @@ func Test_AddEndpointData(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	err = AddEndpointData(ctx, store, &listEndpoints)
-	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 0, "should not have stored data")
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 0, "should not have stored data")
 	th.Assert(t, errors.Cause(err) == context.Canceled, "should have errored out with root cause that the context was canceled")
 
 	// reset context
@@ -126,10 +126,10 @@ func Test_AddEndpointData(t *testing.T) {
 	// check basic functionality
 	err = AddEndpointData(ctx, store, &listEndpoints)
 	th.Assert(t, err == nil, err)
-	actualEndptsStored := len(store.(*mock.FhirMockStore).FhirEndpointData)
+	actualEndptsStored := len(store.(*mock.BasicMockStore).FhirEndpointData)
 	th.Assert(t, actualEndptsStored == expectedEndptsStored, fmt.Sprintf("Expected %d products stored. Actually had %d products stored.", expectedEndptsStored, actualEndptsStored))
-	th.Assert(t, store.(*mock.FhirMockStore).FhirEndpointData[0].URL == endpt1.FHIRPatientFacingURI, "Did not store first product as expected")
-	th.Assert(t, store.(*mock.FhirMockStore).FhirEndpointData[1].URL == endpt2.FHIRPatientFacingURI, "Did not store second product as expected")
+	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].URL == endpt1.FHIRPatientFacingURI, "Did not store first product as expected")
+	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[1].URL == endpt2.FHIRPatientFacingURI, "Did not store second product as expected")
 
 	// reset values
 	store = mock.NewBasicMockFhirEndpointStore()
@@ -138,6 +138,6 @@ func Test_AddEndpointData(t *testing.T) {
 	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
 	err = AddEndpointData(ctx, store, &listEndpoints)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(store.(*mock.FhirMockStore).FhirEndpointData) == 1, "did not persist one product as expected")
-	th.Assert(t, store.(*mock.FhirMockStore).FhirEndpointData[0].OrganizationName == endpt1.OrganizationName, "stored data does not equal expected store data")
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not persist one product as expected")
+	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].OrganizationName == endpt1.OrganizationName, "stored data does not equal expected store data")
 }
