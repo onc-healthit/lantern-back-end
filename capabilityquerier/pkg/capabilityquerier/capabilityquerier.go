@@ -24,6 +24,9 @@ var tls12 = "TLS 1.2"
 var tls13 = "TLS 1.3"
 var tlsUnknown = "TLS version unknown"
 
+// Message is the structure that gets sent on the queue with capability statement inforation. It includes the URL of
+// the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
+// statement itself.
 type Message struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
@@ -32,6 +35,8 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
+// GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
+// statement and accompanying data on a receiving queue.
 func GetAndSendCapabilityStatement(
 	ctx context.Context,
 	fhirURL *url.URL,
@@ -65,7 +70,7 @@ func GetAndSendCapabilityStatement(
 
 	err = sendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
-		return errors.Wrapf(err, "error sending capability statement to queue '%s' over channel '%v'", queueName, *ch)
+		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
 	}
 
 	return nil

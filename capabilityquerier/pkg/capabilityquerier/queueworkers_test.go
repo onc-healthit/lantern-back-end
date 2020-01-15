@@ -22,6 +22,7 @@ func Test_StartAddAndStop(t *testing.T) {
 	mq := mock.NewBasicMockMessageQueue()
 	ch = 1
 	queueName := "queue name"
+	errs := make(chan error)
 
 	jctx := context.Background()
 	duration := 30 * time.Second
@@ -51,7 +52,7 @@ func Test_StartAddAndStop(t *testing.T) {
 	numWorkers := 3
 
 	qw := NewQueueWorkers()
-	err = qw.Start(ctx, numWorkers)
+	err = qw.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, qw.waitGroup != nil, "expected a wait group to be initiated")
 	th.Assert(t, qw.numWorkers == numWorkers, fmt.Sprintf("should have %d workers; have %d", numWorkers, qw.numWorkers))
@@ -81,9 +82,9 @@ func Test_StartAddAndStop(t *testing.T) {
 
 	// start after already started
 
-	err = qw.Start(ctx, numWorkers)
+	err = qw.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
-	err = qw.Start(ctx, numWorkers)
+	err = qw.Start(ctx, numWorkers, errs)
 	th.Assert(t, err.Error() == "workers have already started", "expected error saying workers were already running.")
 	err = qw.Stop()
 	th.Assert(t, err == nil, err)
@@ -94,7 +95,7 @@ func Test_StartAddAndStop(t *testing.T) {
 	cancel()
 
 	// expect it to start fine
-	err = qw.Start(ctx, numWorkers)
+	err = qw.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
 
 	// expect error when adding a new job

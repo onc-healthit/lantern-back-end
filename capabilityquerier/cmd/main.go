@@ -34,8 +34,9 @@ func queryEndpoints(ctx context.Context,
 	ch *lanternmq.ChannelID,
 	qName string,
 	client *http.Client,
+	errs chan error,
 ) {
-	err := qw.Start(ctx, numWorkers)
+	err := qw.Start(ctx, numWorkers, errs)
 	failOnError(err)
 
 	for i, endpointEntry := range listOfEndpoints.Entries {
@@ -100,6 +101,14 @@ func main() {
 		Timeout: time.Second * 35,
 	}
 
+	errs := make(chan error)
+	// output errors as they are received
+	go func() {
+		for err := range errs {
+			log.Warn(err.Error())
+		}
+	}()
+
 	numWorkers := viper.GetInt("capquery_numworkers")
 	qw := capabilityquerier.NewQueueWorkers()
 
@@ -107,7 +116,7 @@ func main() {
 	for {
 		ctx := context.Background()
 
-		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client)
+		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client, errs)
 
 		log.Infof("Waiting %d minutes", queryInterval)
 		time.Sleep(time.Duration(queryInterval) * time.Minute)
