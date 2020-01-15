@@ -19,6 +19,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:                   "example.com/FHIR/DSTU2",
+		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
 		Location: &endpointmanager.Location{
@@ -30,6 +31,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		CapabilityStatement: &endpointmanager.CapabilityStatement{}}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:                   "other.example.com/FHIR/DSTU2",
+		OrganizationName:      "Other Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "R4 2.0"}
 

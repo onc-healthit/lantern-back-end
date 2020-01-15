@@ -186,7 +186,7 @@ func main() {
 	if len(os.Args) != 1 {
 		endpointsFile = os.Args[1]
 	} else {
-		println("ERROR: Missing endpoints list command-line arguement")
+		println("ERROR: Missing endpoints list command-line argument")
 		return
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
@@ -218,7 +218,7 @@ func main() {
 		runtime.GC()
 
 		time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
-		queryCount += 1
+		queryCount++
 	}
 
 }

@@ -21,6 +21,41 @@
 			"revisionTime": "2019-08-05T18:00:45Z"
 		},
 		{
+			"checksumSHA1": "T202gGG48fSwWZ2YrnYr/j2Y6RQ=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/google/go-cmp/cmp",
+			"path": "github.com/google/go-cmp/cmp",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "FUnTgtE5i3f8asIvicGkJSFlrts=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/google/go-cmp/cmp/internal/diff",
+			"path": "github.com/google/go-cmp/cmp/internal/diff",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "nR8EJ8i8lqxxmtLPnXI7WlYANiE=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/google/go-cmp/cmp/internal/flags",
+			"path": "github.com/google/go-cmp/cmp/internal/flags",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "0pcLJsUQUaBdPXM5LuL9uFeuETs=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/google/go-cmp/cmp/internal/function",
+			"path": "github.com/google/go-cmp/cmp/internal/function",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "zQxhgAvWmYtrTZjxRenQQYiDX50=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/google/go-cmp/cmp/internal/value",
+			"path": "github.com/google/go-cmp/cmp/internal/value",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
 			"checksumSHA1": "JR0TXUn1a8EadTmG8MQU/jCqNsc=",
 			"path": "github.com/hashicorp/hcl",
 			"revision": "914dc3f8dd7c463188c73fc47e9ced82a6e421ca",
@@ -81,6 +116,27 @@
 			"revisionTime": "2019-10-16T23:15:34Z"
 		},
 		{
+			"checksumSHA1": "GKTFbGomCP1fhH7mFecvwKvh7bc=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/lib/pq",
+			"path": "github.com/lib/pq",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/lib/pq/oid",
+			"path": "github.com/lib/pq/oid",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "n0MMCrKKsQuuhv7vLsrtRUGJVA8=",
+			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/lib/pq/scram",
+			"path": "github.com/lib/pq/scram",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
 			"checksumSHA1": "rmPrVPSxkWI5TXpzYWb2LZW03UU=",
 			"path": "github.com/magiconair/properties",
 			"revision": "a586bb8b7deaae2a0eb4c6c8b63a539425628137",
@@ -99,22 +155,40 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "qojCcKHhat/innBPY6QNyFoV+04=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpoints",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
+			"checksumSHA1": "RxeB7CDcIvrG6qLiUFBDIrTiASw=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
 		},
 		{
-			"checksumSHA1": "1PqlX69cw/0pTTUUOghmExJduBk=",
+			"checksumSHA1": "H6dLOPCm0eT09AY+WqwraBLQSzo=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "3/kjVrYXWOgV6Ntu+ISzJh1scAw=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql",
+			"revision": "94cb5c0cf3c203a5b79abc1dea33d3543fa548fe",
+			"revisionTime": "2019-12-20T21:20:40Z"
+		},
+		{
+			"checksumSHA1": "Bo7RVuAVV5VQD2XOoKTk9jZ5X6g=",
+			"path": "github.com/onc-healthit/lantern-back-end/endpoints",
+			"revision": "0c56ab654f0240ee005c1e7ca6100a7a2ed17504",
+			"revisionTime": "2020-01-15T18:05:27Z"
+		},
+		{
+			"checksumSHA1": "3fX6OwN2+bs5AAYwVw2R5SC0MAw=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpoints/fetcher",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
+			"revision": "0c56ab654f0240ee005c1e7ca6100a7a2ed17504",
+			"revisionTime": "2020-01-15T18:05:27Z"
 		},
 		{
 			"checksumSHA1": "qAXWQB+zQ03EfgkC5XjZIfo6WsY=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpoints/querier",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
+			"revision": "0c56ab654f0240ee005c1e7ca6100a7a2ed17504",
+			"revisionTime": "2020-01-15T18:05:27Z"
 		},
 		{
 			"checksumSHA1": "J4RcqsrVsZyaHE0Xm46fe3Yzokw=",
@@ -127,6 +201,12 @@
 			"path": "github.com/pelletier/go-toml",
 			"revision": "903d9455db9ff1d7ac1ab199062eca7266dd11a3",
 			"revisionTime": "2019-10-25T18:53:56Z"
+		},
+		{
+			"checksumSHA1": "SVinfxcBSupb3+HEKpSBYFZ4Bh4=",
+			"path": "github.com/pkg/errors",
+			"revision": "7f95ac13edff643b8ce5398b6ccab125f8a20c1a",
+			"revisionTime": "2019-11-09T10:23:16Z"
 		},
 		{
 			"checksumSHA1": "x5CuZuHwidIOrzy/g2NQMDJMIxQ=",
@@ -237,10 +317,10 @@
 			"revisionTime": "2019-09-17T10:36:37Z"
 		},
 		{
-			"checksumSHA1": "/6DonErRq/Pmq0WmVKQRtbqBc+M=",
+			"checksumSHA1": "l5odpUnGxutBJZ48Qm+AlFtI4Qs=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "f43be2a4598cf3a47be9f94f0c28197ed9eae611",
-			"revisionTime": "2019-10-29T08:55:52Z"
+			"revision": "b09406accb4736d857a32bf9444cd7edae2ffa79",
+			"revisionTime": "2019-10-10T09:17:53Z"
 		},
 		{
 			"checksumSHA1": "3cAdqNoRgaMQU+qEXVgsqNC9QOQ=",
