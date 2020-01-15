@@ -101,20 +101,20 @@
 		{
 			"checksumSHA1": "a+IpTVSQ/8fbqzEUN8gnBzsD8yU=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier",
-			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
-			"revisionTime": "2020-01-15T15:57:40Z"
+			"revision": "3a0590f3e770df6cbf040d4ba493f5f51fdc7a04",
+			"revisionTime": "2020-01-15T20:26:20Z"
 		},
 		{
 			"checksumSHA1": "LQMHcMyqG5Za4IjZOigl4fZd0B4=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
-			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
-			"revisionTime": "2020-01-15T15:57:40Z"
+			"revision": "3a0590f3e770df6cbf040d4ba493f5f51fdc7a04",
+			"revisionTime": "2020-01-15T20:26:20Z"
 		},
 		{
 			"checksumSHA1": "aNqXKSZ3FAhJh3XeOGML92f2+SE=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier",
-			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
-			"revisionTime": "2020-01-15T15:57:40Z"
+			"revision": "3a0590f3e770df6cbf040d4ba493f5f51fdc7a04",
+			"revisionTime": "2020-01-15T20:26:20Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",

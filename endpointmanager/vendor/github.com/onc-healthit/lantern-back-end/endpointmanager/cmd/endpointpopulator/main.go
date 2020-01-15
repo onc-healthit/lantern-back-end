@@ -6,7 +6,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
-	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
