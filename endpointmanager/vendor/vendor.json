@@ -205,8 +205,8 @@
 		{
 			"checksumSHA1": "qFEvUrbUWkkXHVsSVriK3yr2d1U=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "kyFmE25BMrtqEN9FZSm4+MbT1iU=",
@@ -217,8 +217,8 @@
 		{
 			"checksumSHA1": "CGQisRT3BbdRuZXMHc2C4ZcV0r8=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/nppesquerier",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "AB/5nLu7q91+z9XmeZ9LSOyFhzg=",
@@ -229,50 +229,50 @@
 		{
 			"checksumSHA1": "NnFpOxLoT7I8gBUdpgVLB0vH4xQ=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "FoaJQmo12vUiM6RO5CgmDVK2Dts=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "RxeB7CDcIvrG6qLiUFBDIrTiASw=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "5HSNiQJXwfSMEQElTurYUGG+vRU=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "kSqqi5bY2VeJnxS6tFbJ8WeRMvI=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "wiqTU/1Yn6Rw9GxOJqzaCVfm4iM=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "2su1XxP8+b5JBBf0JkI/qnQCWmY=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
-			"checksumSHA1": "hyPJ7HMWyvj1zte+PD57j1dBH1E=",
+			"checksumSHA1": "SsscF48vx4kMKiHqKbwzodUFtys=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper",
-			"revision": "3ec106e1bcdfd65806a8c3c481884b981fef4565",
-			"revisionTime": "2020-01-09T15:25:16Z"
+			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
+			"revisionTime": "2020-01-15T15:46:10Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",

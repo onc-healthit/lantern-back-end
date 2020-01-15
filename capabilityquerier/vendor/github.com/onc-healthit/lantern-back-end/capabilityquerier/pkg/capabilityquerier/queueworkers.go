@@ -34,7 +34,6 @@ type QueueWorkers struct {
 	numWorkers int
 	waitGroup  *sync.WaitGroup
 	ctx        context.Context
-	errs       chan error
 }
 
 // NewQueueWorkers initializes a QueueWorkers structure.
@@ -43,7 +42,6 @@ func NewQueueWorkers() *QueueWorkers {
 		jobs:       make(chan *Job),
 		kill:       make(chan bool),
 		numWorkers: 0,
-		errs:       make(chan error),
 	}
 	return &qw
 }
@@ -51,7 +49,7 @@ func NewQueueWorkers() *QueueWorkers {
 // Start creates the number of workers provided. It also runs using a context. If the context ends,
 // a signal is sent to each worker to stop working after they have completed their latest job.
 // Start throws an error if QueueWorkers has already been started and has not been stopped.
-func (qw *QueueWorkers) Start(ctx context.Context, numWorkers int) error {
+func (qw *QueueWorkers) Start(ctx context.Context, numWorkers int, errs chan error) error {
 	if qw.numWorkers > 0 {
 		return errors.New("workers have already started")
 	}
@@ -61,7 +59,7 @@ func (qw *QueueWorkers) Start(ctx context.Context, numWorkers int) error {
 	qw.ctx = ctx
 	for i := 0; i < qw.numWorkers; i++ {
 		wg.Add(1)
-		go worker(ctx, qw.jobs, qw.kill, qw.waitGroup, qw.errs)
+		go worker(ctx, qw.jobs, qw.kill, qw.waitGroup, errs)
 	}
 	return nil
 }
@@ -83,15 +81,13 @@ func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has 
 // Stop sends a stop signal to all of the workers to stop accepting jobs and to close.
 // Stop throws an error if QueueWorkers has already been stopped and has not been restarted.
 func (qw *QueueWorkers) Stop() error {
-	var err error
 
 	select {
 	case <-qw.ctx.Done():
 		// wait for all the canceled workers to stop
 		qw.waitGroup.Wait()
 		qw.numWorkers = 0
-		err = qw.getError()
-		return err
+		return nil
 	default:
 		// ok
 	}
@@ -106,18 +102,7 @@ func (qw *QueueWorkers) Stop() error {
 	qw.waitGroup.Wait()
 
 	qw.numWorkers = 0
-
-	err = qw.getError()
-	return err
-}
-
-func (qw *QueueWorkers) getError() error {
-	select {
-	case err := <-qw.errs:
-		return err
-	default:
-		return nil
-	}
+	return nil
 }
 
 func jobHandler(job *Job) error {
