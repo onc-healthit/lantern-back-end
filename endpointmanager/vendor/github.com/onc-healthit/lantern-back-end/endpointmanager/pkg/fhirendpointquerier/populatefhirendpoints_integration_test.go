@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
-	fhirquerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	fhirquerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
 
@@ -54,7 +54,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 341
 
-	var listOfEndpoints, listErr = fetcher.GetListOfEndpoints("../../../../endpoints/resources/EndpointSources.json")
+	var listOfEndpoints, listErr = fetcher.GetListOfEndpoints("../../../endpoints/resources/EndpointSources.json")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = fhirquerier.AddEndpointData(ctx, store, &listOfEndpoints)
