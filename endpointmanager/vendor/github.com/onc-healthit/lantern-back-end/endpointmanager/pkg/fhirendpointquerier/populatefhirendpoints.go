@@ -49,7 +49,7 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
 		// Currently just logging if there is a repeat
-		log.Info(existingEndpt)
+		log.Infof("An endpoint for %s has already been added to the database", existingEndpt.OrganizationName)
 	}
 	return nil
 }
