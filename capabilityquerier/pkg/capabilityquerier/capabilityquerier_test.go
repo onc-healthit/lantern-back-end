@@ -263,10 +263,11 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	resp, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	resp, is406, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err == nil, err)
 	defer resp.Body.Close()
 
+	th.Assert(t, !is406, "did not expect a 406 response")
 	th.Assert(t, req.Header.Get("Accept") == fhir2LessJSONMIMEType, "request accept header not set to mime type as expected")
 
 	// test http request error
@@ -275,20 +276,30 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc.Close() // makes request fail
 
-	_, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because we closed the connection that we're querying.
 	default:
 		t.Fatal("expected connection error")
 	}
+	th.Assert(t, !is406, "did not expect a 406 response")
 
 	// test http response code error
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
-	_, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err.Error() == fmt.Sprintf("GET request to %s responded with status 404 Not Found", sampleURL), "expected to see an error for 404 response code status")
+	th.Assert(t, !is406, "did not expect a 406 response")
+
+	// test 406 response
+	tc = th.NewTestClientWith406()
+	defer tc.Close()
+
+	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	th.Assert(t, err == nil, err)
+	th.Assert(t, is406, "expected a 406 response")
 }
 
 func Test_sendToQueue(t *testing.T) {

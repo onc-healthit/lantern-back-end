@@ -74,6 +74,7 @@ func GetAndSendCapabilityStatement(
 func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client) ([]byte, string, string, error) {
 	var err error
 	var resp *http.Response
+	var is406 bool
 
 	req, err := http.NewRequest("GET", fhirURL.String(), nil)
 	if err != nil {
@@ -85,10 +86,10 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	// track the mime type to provide to the queue as data re the request.
 	tryOtherMimeType := false
 	mimeType := fhir3PlusJSONMIMEType
-	resp, err = requestWithMimeType(req, mimeType, client)
+	resp, is406, err = requestWithMimeType(req, mimeType, client)
 	if err != nil {
-		// it's possible that the error is due to a 406 Not Acceptable error for the wrong meme type, so we
-		// don't want to return here
+		return nil, "", "", err
+	} else if is406 {
 		tryOtherMimeType = true
 	} else {
 		defer resp.Body.Close()
@@ -102,9 +103,11 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 
 	if tryOtherMimeType {
 		mimeType = fhir2LessJSONMIMEType
-		resp, err = requestWithMimeType(req, mimeType, client)
+		resp, is406, err = requestWithMimeType(req, mimeType, client)
 		if err != nil {
 			return nil, "", "", err
+		} else if is406 {
+			return nil, "", "", fmt.Errorf("GET request to %s responded with status 406 Not Acceptable", fhirURL.String())
 		}
 		defer resp.Body.Close()
 
@@ -150,19 +153,25 @@ func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	return false
 }
 
-func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (*http.Response, error) {
+// responds with the http.Response, whether or not the status code was a 406 (indicating we should try with a different
+// mimetype), and any errors.
+func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (*http.Response, bool, error) {
 	req.Header.Set("Accept", mimeType)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
+		return nil, false, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
+	}
+
+	if resp.StatusCode == http.StatusNotAcceptable {
+		return nil, true, nil
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GET request to %s responded with status %s", req.URL.String(), resp.Status)
+		return nil, false, fmt.Errorf("GET request to %s responded with status %s", req.URL.String(), resp.Status)
 	}
 
-	return resp, nil
+	return resp, false, nil
 }
 
 func sendToQueue(
