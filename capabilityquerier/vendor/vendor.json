@@ -83,75 +83,68 @@
 		{
 			"checksumSHA1": "TKVb+NR0oWxd8/OsvmHFTuV06xU=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/cmd",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "k6uox/Pmpgqi2qHdkoPheOCQgp4=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "utp5JhBkoMBOOskTT3Jml3VtTAQ=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "Ddil97AZa2dgPWNDr23myT6rkg4=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "35x9fY9qfw5MmAt6ANAknAuLqts=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "SsscF48vx4kMKiHqKbwzodUFtys=",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "ZoNHT841bNyUG7FlG3YeV+lcsQo=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "iVV+jtax2KJDQvAgFy7VUawRrY4=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/mock",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "n515O5M7yNDoI/N3DbJzPFLJIQ0=",
 			"path": "github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
-			"checksumSHA1": "lA+dwQAW40KOUv5E/i7ftRHy2wI=",
+			"checksumSHA1": "fPcB8PjmwGlQJ52tAlLykHijafU=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
 			"path": "github.com/pelletier/go-toml",
 			"revision": "903d9455db9ff1d7ac1ab199062eca7266dd11a3",
 			"revisionTime": "2019-10-25T18:53:56Z"
-		},
-		{
-			"checksumSHA1": "I7hloldMJZTqUx6hbVDp5nk9fZQ=",
-			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/pkg/errors",
-			"path": "github.com/pkg/errors",
-			"revision": "abfa3f2e4abea3ec6bd82a49de744067ccabea09",
-			"revisionTime": "2020-01-15T15:49:43Z"
 		},
 		{
 			"checksumSHA1": "MGnqHnmEqc1fjnYiWReSiW8C27A=",

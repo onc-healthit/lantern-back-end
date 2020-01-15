@@ -17,8 +17,8 @@
 		{
 			"checksumSHA1": "C8nYObwbo2oyODQbIT83lY37ajM=",
 			"path": "github.com/golang/protobuf/proto",
-			"revision": "4c88cc3f1a34ffade77b79abc53335d1e511f25b",
-			"revisionTime": "2019-08-05T18:00:45Z"
+			"revision": "1680a479a2cfb3fa22b972af7e36d0a0fde47bf8",
+			"revisionTime": "2019-09-20T23:43:18Z"
 		},
 		{
 			"checksumSHA1": "JR0TXUn1a8EadTmG8MQU/jCqNsc=",
@@ -99,46 +99,22 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "qojCcKHhat/innBPY6QNyFoV+04=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpoints",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
-		},
-		{
-			"checksumSHA1": "1PqlX69cw/0pTTUUOghmExJduBk=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpoints/fetcher",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
-		},
-		{
-			"checksumSHA1": "qAXWQB+zQ03EfgkC5XjZIfo6WsY=",
-			"path": "github.com/onc-healthit/lantern-back-end/endpoints/querier",
-			"revision": "26e85148e4535c35bf947dd176eb9f88c9c0f135",
-			"revisionTime": "2019-12-19T12:48:08Z"
-		},
-		{
-			"checksumSHA1": "J4RcqsrVsZyaHE0Xm46fe3Yzokw=",
-			"path": "github.com/onc-healthit/lantern-back-end/fhir",
-			"revision": "1eb2eeb2d23d58567a5de034394513d022ac2c4a",
-			"revisionTime": "2019-10-23T19:26:46Z"
-		},
-		{
 			"checksumSHA1": "a+IpTVSQ/8fbqzEUN8gnBzsD8yU=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier",
-			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
-			"revisionTime": "2020-01-15T15:46:10Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
-			"checksumSHA1": "HhmirX3wTGvfkzLdMHB4FroLcPA=",
+			"checksumSHA1": "LQMHcMyqG5Za4IjZOigl4fZd0B4=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
-			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
-			"revisionTime": "2020-01-15T15:46:10Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "aNqXKSZ3FAhJh3XeOGML92f2+SE=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier",
-			"revision": "f346d850de4898c5823e0839fb63cd4b6ce5b4c0",
-			"revisionTime": "2020-01-15T15:46:10Z"
+			"revision": "fc063ee3d5b265bb1b739c150290903ad909f222",
+			"revisionTime": "2020-01-15T15:57:40Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",
@@ -147,70 +123,70 @@
 			"revisionTime": "2019-10-25T18:53:56Z"
 		},
 		{
-			"checksumSHA1": "x5CuZuHwidIOrzy/g2NQMDJMIxQ=",
+			"checksumSHA1": "vsx+XkLQ3h1JYC65YjukpeubcQQ=",
 			"path": "github.com/prometheus/client_golang/prometheus",
-			"revision": "170205fb58decfd011f1550d4cfb737230d7ae4f",
-			"revisionTime": "2019-08-01T13:37:03Z"
+			"revision": "9a37535b1ba53f6216e9c8557559a714e0dbb84a",
+			"revisionTime": "2019-10-02T10:23:08Z"
 		},
 		{
 			"checksumSHA1": "UBqhkyjCz47+S19MVTigxJ2VjVQ=",
 			"path": "github.com/prometheus/client_golang/prometheus/internal",
-			"revision": "170205fb58decfd011f1550d4cfb737230d7ae4f",
-			"revisionTime": "2019-08-01T13:37:03Z"
+			"revision": "9a37535b1ba53f6216e9c8557559a714e0dbb84a",
+			"revisionTime": "2019-10-02T10:23:08Z"
 		},
 		{
-			"checksumSHA1": "V51yx4gq61QCD9clxnps792Eq2Y=",
+			"checksumSHA1": "UcahVbxaRZ35Wh58lM9AWEbUEts=",
 			"path": "github.com/prometheus/client_golang/prometheus/promhttp",
-			"revision": "170205fb58decfd011f1550d4cfb737230d7ae4f",
-			"revisionTime": "2019-08-01T13:37:03Z"
+			"revision": "9a37535b1ba53f6216e9c8557559a714e0dbb84a",
+			"revisionTime": "2019-10-02T10:23:08Z"
 		},
 		{
 			"checksumSHA1": "V8xkqgmP66sq2ZW4QO5wi9a4oZE=",
 			"path": "github.com/prometheus/client_model/go",
-			"revision": "fd36f4220a901265f90734c3183c5f0c91daa0b8",
-			"revisionTime": "2019-01-29T23:31:27Z"
+			"revision": "14fe0d1b01d4d5fc031dd4bec1823bd3ebbe8016",
+			"revisionTime": "2019-08-12T15:41:04Z"
 		},
 		{
-			"checksumSHA1": "ljxJzXiQ7dNsmuRIUhqqP+qjRWc=",
+			"checksumSHA1": "vA545Z9FkjGvIHBTAKQOE0nap/k=",
 			"path": "github.com/prometheus/common/expfmt",
-			"revision": "637d7c34db122e2d1a25d061423098663758d2d3",
-			"revisionTime": "2019-07-30T17:58:46Z"
+			"revision": "287d3e634a1e550c9e463dd7e5a75a422c614505",
+			"revisionTime": "2019-09-13T08:39:41Z"
 		},
 		{
 			"checksumSHA1": "1Mhfofk+wGZ94M0+Bd98K8imPD4=",
 			"path": "github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg",
-			"revision": "637d7c34db122e2d1a25d061423098663758d2d3",
-			"revisionTime": "2019-07-30T17:58:46Z"
+			"revision": "287d3e634a1e550c9e463dd7e5a75a422c614505",
+			"revisionTime": "2019-09-13T08:39:41Z"
 		},
 		{
 			"checksumSHA1": "ccmMs+h9Jo8kE7izqsUkWShD4d0=",
 			"path": "github.com/prometheus/common/model",
-			"revision": "637d7c34db122e2d1a25d061423098663758d2d3",
-			"revisionTime": "2019-07-30T17:58:46Z"
+			"revision": "287d3e634a1e550c9e463dd7e5a75a422c614505",
+			"revisionTime": "2019-09-13T08:39:41Z"
 		},
 		{
-			"checksumSHA1": "QmbJJ1uC2QRE2P4IXBMdYXU/kuc=",
+			"checksumSHA1": "+cfhIchXl5XGGtjDbhNLiY7iB14=",
 			"path": "github.com/prometheus/procfs",
-			"revision": "5da962fa40f1c9b54ed78f10ba32429b396e712b",
-			"revisionTime": "2019-07-13T16:17:59Z"
+			"revision": "aee14273b394209f45977b2d7a6b730071adf5e2",
+			"revisionTime": "2019-10-07T01:37:24Z"
 		},
 		{
-			"checksumSHA1": "KW5XhSxhVaEfvr5uKJQGrSz2z4I=",
+			"checksumSHA1": "ax1TLBC8m/zLs8u//UHHdFf80q4=",
 			"path": "github.com/prometheus/procfs/internal/fs",
-			"revision": "5da962fa40f1c9b54ed78f10ba32429b396e712b",
-			"revisionTime": "2019-07-13T16:17:59Z"
+			"revision": "aee14273b394209f45977b2d7a6b730071adf5e2",
+			"revisionTime": "2019-10-07T01:37:24Z"
 		},
 		{
-			"checksumSHA1": "qAI4PxOOcHBpZ5i03ntVaLudXo8=",
+			"checksumSHA1": "sxRjp2SwHqonjR+sHIEXCkfBglI=",
 			"path": "github.com/prometheus/procfs/internal/util",
-			"revision": "5da962fa40f1c9b54ed78f10ba32429b396e712b",
-			"revisionTime": "2019-07-13T16:17:59Z"
+			"revision": "aee14273b394209f45977b2d7a6b730071adf5e2",
+			"revisionTime": "2019-10-07T01:37:24Z"
 		},
 		{
-			"checksumSHA1": "4GI/G+nYyCQ3ltASSBIunUr2LYk=",
+			"checksumSHA1": "O5bFO+v6bhXVAqFd/Fq5FZEoVGE=",
 			"path": "github.com/sirupsen/logrus",
-			"revision": "de736cf91b921d56253b4010270681d33fdf7cb5",
-			"revisionTime": "2019-08-07T10:34:36Z"
+			"revision": "fb62dbe2f2a2c88b150fa1668a773505a7920a3d",
+			"revisionTime": "2019-10-14T20:23:44Z"
 		},
 		{
 			"checksumSHA1": "2d0rR/VhqllUdrcH6kwHHrhqJ2E=",
@@ -261,10 +237,10 @@
 			"revisionTime": "2019-10-29T08:55:52Z"
 		},
 		{
-			"checksumSHA1": "3cAdqNoRgaMQU+qEXVgsqNC9QOQ=",
+			"checksumSHA1": "Tj4TmaFDJ92qaQo6MlOmkzNe9Y8=",
 			"path": "golang.org/x/sys/windows",
-			"revision": "fde4db37ae7ad8191b03d30d27f258b5291ae4e3",
-			"revisionTime": "2019-08-12T08:24:04Z"
+			"revision": "f43be2a4598cf3a47be9f94f0c28197ed9eae611",
+			"revisionTime": "2019-10-29T08:55:52Z"
 		},
 		{
 			"checksumSHA1": "R9iBDY+aPnT+8pyRcqGjXq5QixA=",

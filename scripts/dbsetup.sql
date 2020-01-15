@@ -9,6 +9,7 @@ $$ LANGUAGE plpgsql;
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500) UNIQUE,
+    organization_name       VARCHAR(500),
     fhir_version            VARCHAR(500),
     authorization_standard  VARCHAR(500),
     location                JSONB, -- location of IP address from ipstack.com.
@@ -18,14 +19,14 @@ CREATE TABLE fhir_endpoints (
 );
 
 CREATE TABLE npi_organizations (
-	id               SERIAL PRIMARY KEY,
-	npi_id			 VARCHAR(500) UNIQUE,
-	name             VARCHAR(500),
-	secondary_name    VARCHAR(500),
-	location         JSONB,
-	taxonomy 		 VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
-	created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id               SERIAL PRIMARY KEY,
+    npi_id			     VARCHAR(500) UNIQUE,
+    name             VARCHAR(500),
+    secondary_name   VARCHAR(500),
+    location         JSONB,
+    taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE healthit_products (
