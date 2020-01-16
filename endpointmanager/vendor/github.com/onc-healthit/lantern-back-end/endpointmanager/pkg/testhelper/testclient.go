@@ -51,6 +51,18 @@ func NewTestClientWith404() *TestClient {
 	return tc
 }
 
+// NewTestClientWith406 creates a new TestClient using an httptest TLS Server, and requests
+// are responded to with a 406 response code.
+func NewTestClientWith406() *TestClient {
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "sample 406 error", http.StatusNotAcceptable)
+	})
+
+	tc := NewTestClient(h)
+
+	return tc
+}
+
 // NewTestClientWith502 creates a new TestClient using an httptest TLS Server, and requests
 // are responded to with a 502 response code.
 func NewTestClientWith502() *TestClient {
@@ -79,6 +91,8 @@ func testingHTTPClient(handler http.Handler) (*http.Client, func()) {
 			},
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
+				MaxVersion:         tls.VersionTLS10,
+				MinVersion:         tls.VersionTLS10,
 			},
 		},
 	}

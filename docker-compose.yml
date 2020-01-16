@@ -4,7 +4,7 @@ services:
   endpoint_querier:
     container_name: endpoint_querier_1
     build: 
-      context: ./endpoints
+      context: ./networkstatsquerier
 
   pg_prometheus:
     container_name: pg_prometheus
@@ -59,6 +59,9 @@ services:
   lantern-mq:
     container_name: lantern-mq
     image: rabbitmq:3-management
+    volumes:
+      - ./lanternmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
 
   lantern_front_end:
     container_name: lantern_front_end

@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -8,7 +9,7 @@ import (
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
+func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
@@ -17,6 +18,7 @@ func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
 	SELECT
 		id,
 		url,
+		organization_name,
 		fhir_version,
 		authorization_standard,
 		location,
@@ -24,11 +26,12 @@ func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
-	row := s.DB.QueryRow(sqlStatement, id)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&locationJSON,
@@ -50,7 +53,7 @@ func (s *Store) GetFHIREndpoint(id int) (*endpointmanager.FHIREndpoint, error) {
 
 // GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoint, error) {
+func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
@@ -59,6 +62,7 @@ func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoi
 	SELECT
 		id,
 		url,
+		organization_name,
 		fhir_version,
 		authorization_standard,
 		location,
@@ -67,11 +71,12 @@ func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoi
 		updated_at
 	FROM fhir_endpoints WHERE url=$1`
 
-	row := s.DB.QueryRow(sqlStatement, url)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&locationJSON,
@@ -92,14 +97,15 @@ func (s *Store) GetFHIREndpointUsingURL(url string) (*endpointmanager.FHIREndpoi
 }
 
 // AddFHIREndpoint adds the FHIREndpoint to the database.
-func (s *Store) AddFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
+func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
+		organization_name,
 		fhir_version,
 		authorization_standard,
 		location,
 		capability_statement)
-	VALUES ($1, $2, $3, $4, $5)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -111,8 +117,10 @@ func (s *Store) AddFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 		return err
 	}
 
-	row := s.DB.QueryRow(sqlStatement,
+	row := s.DB.QueryRowContext(ctx,
+		sqlStatement,
 		e.URL,
+		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		locationJSON,
@@ -124,15 +132,16 @@ func (s *Store) AddFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 }
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
-func (s *Store) UpdateFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
+func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
-		fhir_version = $2,
-		authorization_standard = $3,
-		location = $4,
-		capability_statement = $5
-	WHERE id = $6`
+		organization_name = $2,
+		fhir_version = $3,
+		authorization_standard = $4,
+		location = $5,
+		capability_statement = $6
+	WHERE id = $7`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -143,8 +152,10 @@ func (s *Store) UpdateFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 		return err
 	}
 
-	_, err = s.DB.Exec(sqlStatement,
+	_, err = s.DB.ExecContext(ctx,
+		sqlStatement,
 		e.URL,
+		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		locationJSON,
@@ -155,12 +166,12 @@ func (s *Store) UpdateFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
 }
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
-func (s *Store) DeleteFHIREndpoint(e *endpointmanager.FHIREndpoint) error {
+func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	DELETE FROM fhir_endpoints
 	WHERE id = $1`
 
-	_, err := s.DB.Exec(sqlStatement, e.ID)
+	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
 	return err
 }

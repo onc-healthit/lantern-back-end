@@ -70,20 +70,12 @@ func TestMetricsAvailableInQuerier(t *testing.T) {
 
 	bodyString := string(bodyBytes)
 
-	if !strings.Contains(bodyString, "AllEndpoints_fhir_version{orgName=\"LanternTestOrg\"} 102") {
-		t.Fatalf("Endpoint querier missing or incorrect fhir_version metric for LanternTestOrg")
-	}
-
 	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{orgName=\"LanternTestOrg\"} 200") {
 		t.Fatalf("Endpoint querier missing or incorrect response code metric for LanternTestOrg")
 	}
 
 	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{orgName=\"LanternTestOrg\"}") {
 		t.Fatalf("Endpoint querier missing response time metric for LanternTestOrg")
-	}
-
-	if !strings.Contains(bodyString, "AllEndpoints_tls_version{orgName=\"LanternTestOrg\"} 0") {
-		t.Fatalf("Endpoint querier missing or incorrect tls version metric for LanternTestOrg")
 	}
 
 	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{orgName=\"LanternTestOrg\"}") {
@@ -138,13 +130,13 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	failOnError(err)
 
 	defer store.Close()
-	fhir_version_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_fhir_version';")
+	response_time_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
 	var id, metric_name, result_label string
-	err = fhir_version_row.Scan(&id, &metric_name, &result_label)
+	err = response_time_row.Scan(&id, &metric_name, &result_label)
 	failOnError(err)
 
 	if result_label != "{\"job\": \"FHIRQUERY\", \"orgName\": \"LanternTestOrg\", \"instance\": \"endpoint_querier_1:3333\"}" {
-		t.Fatalf("LanternTestOrg not found in AllEndpoints_fhir_version metric")
+		t.Fatalf("LanternTestOrg not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }

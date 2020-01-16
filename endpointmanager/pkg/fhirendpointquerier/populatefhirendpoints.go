@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	"github.com/onc-healthit/lantern-back-end/endpoints/fetcher"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

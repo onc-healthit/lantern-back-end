@@ -59,6 +59,9 @@ func SetupConfigForTests() error {
 	var err error
 
 	err = SetupConfig()
+	if err != nil {
+		return err
+	}
 
 	prevDbName := viper.GetString("dbname")
 

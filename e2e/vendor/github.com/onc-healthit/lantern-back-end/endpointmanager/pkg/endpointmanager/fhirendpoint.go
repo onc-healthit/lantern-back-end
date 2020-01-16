@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"context"
 	"time"
 )
 
@@ -12,6 +13,7 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
+	OrganizationName      string
 	FHIRVersion           string
 	AuthorizationStandard string               // examples: OAuth 2.0, Basic, etc.
 	Location              *Location            // location of the FHIR API endpoint's IP address from ipstack.com.
@@ -23,12 +25,12 @@ type FHIREndpoint struct {
 // FHIREndpointStore is the interface for interacting with the storage layer that holds
 // FHIR endpoint objects.
 type FHIREndpointStore interface {
-	GetFHIREndpoint(int) (*FHIREndpoint, error)
-	GetFHIREndpointUsingURL(string) (*FHIREndpoint, error)
+	GetFHIREndpoint(context.Context, int) (*FHIREndpoint, error)
+	GetFHIREndpointUsingURL(context.Context, string) (*FHIREndpoint, error)
 
-	AddFHIREndpoint(*FHIREndpoint) error
-	UpdateFHIREndpoint(*FHIREndpoint) error
-	DeleteFHIREndpoint(*FHIREndpoint) error
+	AddFHIREndpoint(context.Context, *FHIREndpoint) error
+	UpdateFHIREndpoint(context.Context, *FHIREndpoint) error
+	DeleteFHIREndpoint(context.Context, *FHIREndpoint) error
 
 	Close()
 }

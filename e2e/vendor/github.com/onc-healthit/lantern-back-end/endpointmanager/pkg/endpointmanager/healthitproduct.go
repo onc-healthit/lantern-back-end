@@ -1,7 +1,11 @@
 package endpointmanager
 
 import (
+	"context"
+
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -31,17 +35,17 @@ type HealthITProduct struct {
 // HealthITProductStore is the interface for interacting with the storage layer that holds
 // health IT product objects.
 type HealthITProductStore interface {
-	GetHealthITProduct(int) (*HealthITProduct, error)
-	GetHealthITProductUsingNameAndVersion(string, string) (*HealthITProduct, error)
+	GetHealthITProduct(context.Context, int) (*HealthITProduct, error)
+	GetHealthITProductUsingNameAndVersion(context.Context, string, string) (*HealthITProduct, error)
 
-	AddHealthITProduct(*HealthITProduct) error
-	UpdateHealthITProduct(*HealthITProduct) error
-	DeleteHealthITProduct(*HealthITProduct) error
+	AddHealthITProduct(context.Context, *HealthITProduct) error
+	UpdateHealthITProduct(context.Context, *HealthITProduct) error
+	DeleteHealthITProduct(context.Context, *HealthITProduct) error
 
 	Close()
 }
 
-// Equal checks each field of the two HealthITProducts except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp == nil && hitp2 == nil {
 		return true
@@ -87,9 +91,28 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if !hitp.LastModifiedInCHPL.Equal(hitp2.LastModifiedInCHPL) {
 		return false
 	}
-	if hitp.CHPLID != hitp2.CHPLID {
-		return false
-	}
 
 	return true
+}
+
+func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
+	if hitp == nil || hitp2 == nil {
+		return errors.New("HealthITPrdouct.Update: a given health IT product is nil")
+	}
+
+	hitp.Name = hitp2.Name
+	hitp.Version = hitp2.Version
+	hitp.Developer = hitp2.Developer
+	hitp.Location = hitp2.Location
+	hitp.AuthorizationStandard = hitp2.AuthorizationStandard
+	hitp.APISyntax = hitp2.APISyntax
+	hitp.APIURL = hitp2.APIURL
+	hitp.CertificationCriteria = hitp2.CertificationCriteria
+	hitp.CertificationStatus = hitp2.CertificationStatus
+	hitp.CertificationDate = hitp2.CertificationDate
+	hitp.CertificationEdition = hitp2.CertificationEdition
+	hitp.LastModifiedInCHPL = hitp2.LastModifiedInCHPL
+	hitp.CHPLID = hitp2.CHPLID
+
+	return nil
 }
