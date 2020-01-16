@@ -168,6 +168,13 @@
 			"revisionTime": "2019-10-25T18:53:56Z"
 		},
 		{
+			"checksumSHA1": "Qo2E/26skb9mZQ3b2Mh6QDkpBLs=",
+			"path": "github.com/pkg/errors",
+			"revision": "614d223910a179a466c1767a985424175c39b465",
+			"revisionTime": "2020-01-14T19:47:44Z",
+			"tree": true
+		},
+		{
 			"checksumSHA1": "2d0rR/VhqllUdrcH6kwHHrhqJ2E=",
 			"path": "github.com/spf13/afero",
 			"revision": "588a75ec4f32903aa5e39a2619ba6a4631e28424",
