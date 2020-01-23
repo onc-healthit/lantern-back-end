@@ -25,7 +25,7 @@ func main() {
 	err = config.SetupConfig()
 	failOnError(err)
 
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpass"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 	defer store.Close()
 	log.Info("Successfully connected!")
