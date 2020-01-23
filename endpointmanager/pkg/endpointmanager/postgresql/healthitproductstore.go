@@ -125,6 +125,23 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	return &hitp, err
 }
 
+func (s *Store) GetDevelopers(ctx context.Context) ([]string, error) {
+	var developers []string
+	var developer string
+	sqlStatement := "SELECT DISTINCT developer FROM healthit_products"
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&developer)
+		developers = append(developers, developer)
+	}
+
+	return developers, nil
+}
+
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	sqlStatement := `

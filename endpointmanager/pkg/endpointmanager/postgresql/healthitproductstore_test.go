@@ -74,6 +74,21 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
+	// get developer list
+	devs, err := store.GetDevelopers(ctx)
+	if err != nil {
+		t.Errorf("Error getting developer list: %s", err.Error())
+	}
+	if len(devs) != 2 {
+		t.Error("Expected developer list to have two entries")
+	}
+	if !contains(devs, "Epic") {
+		t.Error("Expected developer list to contain 'Epic'")
+	}
+	if !contains(devs, "Cerner") {
+		t.Error("Expected developer list to contain 'Epic'")
+	}
+
 	// update product
 
 	h1.APISyntax = "FHIR R5"
@@ -115,4 +130,13 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error deleting health it product: %s", err.Error())
 	}
+}
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }

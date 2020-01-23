@@ -38,6 +38,8 @@ type HealthITProductStore interface {
 	GetHealthITProduct(context.Context, int) (*HealthITProduct, error)
 	GetHealthITProductUsingNameAndVersion(context.Context, string, string) (*HealthITProduct, error)
 
+	GetDevelopers(context.Context) ([]string, error)
+
 	AddHealthITProduct(context.Context, *HealthITProduct) error
 	UpdateHealthITProduct(context.Context, *HealthITProduct) error
 	DeleteHealthITProduct(context.Context, *HealthITProduct) error

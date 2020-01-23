@@ -35,3 +35,8 @@ func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager
 	s.DeleteHealthITProductInvoked = true
 	return s.DeleteHealthITProductFn(ctx, hitp)
 }
+
+func (s *Store) GetDevelopers(ctx context.Context) ([]string, error) {
+	s.GetDevelopersInvoked = true
+	return s.GetDevelopersFn(ctx)
+}

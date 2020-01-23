@@ -35,6 +35,9 @@ type Store struct {
 	GetHealthITProductUsingNameAndVersionFn      func(context.Context, string, string) (*endpointmanager.HealthITProduct, error)
 	GetHealthITProductUsingNameAndVersionInvoked bool
 
+	GetDevelopersFn      func(context.Context) ([]string, error)
+	GetDevelopersInvoked bool
+
 	AddHealthITProductFn      func(context.Context, *endpointmanager.HealthITProduct) error
 	AddHealthITProductInvoked bool
 
