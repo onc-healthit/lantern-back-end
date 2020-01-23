@@ -74,8 +74,32 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
+	// retrieve products using vendor
+
+	h1s, err := store.GetHealthITProductsUsingVendor(ctx, "Epic")
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if len(h1s) != 1 {
+		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h1s))
+	}
+	if !h1s[0].Equal(hitp1) {
+		t.Errorf("retrieved product is not equal to saved product.")
+	}
+
+	h2s, err := store.GetHealthITProductsUsingVendor(ctx, "Cerner")
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if len(h2s) != 1 {
+		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h2s))
+	}
+	if !h2s[0].Equal(hitp2) {
+		t.Errorf("retrieved product is not equal to saved product.")
+	}
+
 	// get developer list
-	devs, err := store.GetDevelopers(ctx)
+	devs, err := store.GetHealthITProductDevelopers(ctx)
 	if err != nil {
 		t.Errorf("Error getting developer list: %s", err.Error())
 	}

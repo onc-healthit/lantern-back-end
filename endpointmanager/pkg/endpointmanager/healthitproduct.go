@@ -37,8 +37,9 @@ type HealthITProduct struct {
 type HealthITProductStore interface {
 	GetHealthITProduct(context.Context, int) (*HealthITProduct, error)
 	GetHealthITProductUsingNameAndVersion(context.Context, string, string) (*HealthITProduct, error)
+	GetHealthITProductsUsingVendor(context.Context, string) ([]*HealthITProduct, error)
 
-	GetDevelopers(context.Context) ([]string, error)
+	GetHealthITProductDevelopers(context.Context) ([]string, error)
 
 	AddHealthITProduct(context.Context, *HealthITProduct) error
 	UpdateHealthITProduct(context.Context, *HealthITProduct) error
