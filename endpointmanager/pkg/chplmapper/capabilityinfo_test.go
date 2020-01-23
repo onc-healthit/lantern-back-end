@@ -89,7 +89,7 @@ func getMockStore() (endpointmanager.HealthITProductStore, error) {
 		return nil, err
 	}
 
-	hitp.GetDevelopersFn = func(ctx context.Context) ([]string, error) {
+	hitp.GetHealthITProductDevelopersFn = func(ctx context.Context) ([]string, error) {
 		devList := []string{
 			"Epic Systems Corporation",
 			"Cerner Corporation",

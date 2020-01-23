@@ -32,7 +32,7 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 	}
 	publisherNorm := normalizeName(publisher)
 
-	vendorsRaw, err := store.GetDevelopers(ctx)
+	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	if err != nil {
 		return "", errors.Wrap(err, "error retrieving vendor list from database")
 	}
