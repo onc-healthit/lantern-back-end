@@ -13,6 +13,7 @@ type CapabilityStatement interface {
 	GetFHIRVersion() (string, error)
 	GetSoftwareName() (string, error)
 	GetSoftwareVersion() (string, error)
+	GetCopyright() (string, error)
 }
 
 func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
