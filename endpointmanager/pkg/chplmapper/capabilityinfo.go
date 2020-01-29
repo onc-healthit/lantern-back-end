@@ -46,6 +46,13 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 		return "", errors.Wrap(err, "error matching capability statement publisher to health it developers in database")
 	}
 
+	if match == "" {
+		match, err = hackMatch(capStat, vendorsNorm, vendorsRaw)
+	}
+	if err != nil {
+		return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
+	}
+
 	return match, nil
 }
 
