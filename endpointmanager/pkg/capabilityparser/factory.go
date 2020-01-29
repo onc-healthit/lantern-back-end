@@ -11,6 +11,8 @@ import (
 type CapabilityStatement interface {
 	GetPublisher() (string, error)
 	GetFHIRVersion() (string, error)
+	GetSoftwareName() (string, error)
+	GetSoftwareVersion() (string, error)
 }
 
 func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
