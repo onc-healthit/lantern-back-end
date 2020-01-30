@@ -22,15 +22,30 @@ var fluffWords = []string{
 	"corporation",
 }
 
+// MatchEndpointToVendorAndProduct creates the database association between the endpoint and the vendor,
+// and the endpoint and the healht IT product.
+// It returns a boolean specifying if the match was possible or not.
+//
+// NOTE: at this time, only vendor matching is supported.
+// An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
+// In this future, this may be changed to using a vendor table and linking the endpoint entry to
+// the vendor entry.
+func MatchEndpointToVendorAndProduct(ctx context.Context, ep endpointmanager.FHIREndpoint, store endpointmanager.HealthITProductStore) (bool, error) {
+	if ep.CapabilityStatement == nil {
+		return false, nil
+	}
+
+	_, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
+	if err != nil {
+		return false, errors.Wrapf(err, "error matching the capability statement to a vendor for endpoint %s", ep.URL)
+	}
+
+	return false, nil
+}
+
 // TODO: should this throw an error if there's no publisher in the capability statement?
 func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store endpointmanager.HealthITProductStore) (string, error) {
 	var vendorsNorm []string
-
-	publisher, err := capStat.GetPublisher()
-	if err != nil {
-		return "", errors.Wrap(err, "unable to get vendor information from capability statement")
-	}
-	publisherNorm := normalizeName(publisher)
 
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	if err != nil {
@@ -41,16 +56,31 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 		vendorsNorm = append(vendorsNorm, vendorNorm)
 	}
 
-	match, err := matchName(publisherNorm, vendorsNorm, vendorsRaw)
+	match, err := publisherMatch(capStat, vendorsNorm, vendorsRaw)
 	if err != nil {
-		return "", errors.Wrap(err, "error matching capability statement publisher to health it developers in database")
+		return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
 	}
 
 	if match == "" {
 		match, err = hackMatch(capStat, vendorsNorm, vendorsRaw)
+		if err != nil {
+			return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
+		}
 	}
+
+	return match, nil
+}
+
+func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
+	publisher, err := capStat.GetPublisher()
 	if err != nil {
-		return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
+		return "", errors.Wrap(err, "unable to get vendor information from capability statement")
+	}
+	publisherNorm := normalizeName(publisher)
+
+	match, err := matchName(publisherNorm, vendorsNorm, vendorsRaw)
+	if err != nil {
+		return "", errors.Wrap(err, "error matching capability statement publisher to health it developers in database")
 	}
 
 	return match, nil
