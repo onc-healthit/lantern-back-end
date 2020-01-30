@@ -37,6 +37,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
+		Vendor:                "Cerner",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",

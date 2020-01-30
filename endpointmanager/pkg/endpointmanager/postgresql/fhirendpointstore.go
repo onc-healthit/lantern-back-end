@@ -23,6 +23,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement,
 		created_at,
@@ -36,6 +37,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
@@ -69,6 +71,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement,
 		created_at,
@@ -83,6 +86,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
@@ -109,9 +113,10 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -134,6 +139,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
+		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON)
 
@@ -150,9 +156,10 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		organization_name = $2,
 		fhir_version = $3,
 		authorization_standard = $4,
-		location = $5,
-		capability_statement = $6
-	WHERE id = $7`
+		vendor = $5,
+		location = $6,
+		capability_statement = $7
+	WHERE id = $8`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -174,6 +181,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
+		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON,
 		e.ID)

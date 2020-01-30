@@ -17,7 +17,8 @@ type FHIREndpoint struct {
 	URL                   string
 	OrganizationName      string
 	FHIRVersion           string
-	AuthorizationStandard string                               // examples: OAuth 2.0, Basic, etc.
+	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
+	Vendor                string
 	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
 	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	CreatedAt             time.Time
@@ -54,6 +55,9 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 		return false
 	}
 	if e.AuthorizationStandard != e2.AuthorizationStandard {
+		return false
+	}
+	if e.Vendor != e2.Vendor {
 		return false
 	}
 	if !e.Location.Equal(e2.Location) {
