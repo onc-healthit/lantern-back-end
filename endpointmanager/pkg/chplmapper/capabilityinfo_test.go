@@ -25,13 +25,9 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	// capability statement
 	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 
 	// endpoint
 	ep := &endpointmanager.FHIREndpoint{
@@ -57,13 +53,9 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	// capability statement
 	path = filepath.Join("../testdata", "novendor_capability_dstu2.json")
 	csJSON, err = ioutil.ReadFile(path)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 
 	// endpoint
 	ep = &endpointmanager.FHIREndpoint{
@@ -116,9 +108,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	csJSON, err = json.Marshal(csInt)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 
 	// endpoint
 	ep = &endpointmanager.FHIREndpoint{
@@ -236,9 +226,7 @@ func Test_getVendorMatch(t *testing.T) {
 	dstu2JSON, err = json.Marshal(dstu2Int)
 	th.Assert(t, err == nil, err)
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
@@ -337,9 +325,7 @@ func Test_publisherMatch(t *testing.T) {
 	dstu2JSON, err = json.Marshal(dstu2Int)
 	th.Assert(t, err == nil, err)
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
-	if err != nil {
-		t.Error(err)
-	}
+	th.Assert(t, err == nil, err)
 
 	vendor, err = publisherMatch(dstu2, vendorsNorm, vendorsRaw)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")

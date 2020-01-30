@@ -1,6 +1,7 @@
 package capabilityparser
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -10,13 +11,6 @@ import (
 type baseParser struct {
 	capStat map[string]interface{}
 	version string
-}
-
-func newBase(capStat map[string]interface{}, version string) *baseParser {
-	return &baseParser{
-		capStat: capStat,
-		version: version,
-	}
 }
 
 func (cp *baseParser) GetPublisher() (string, error) {
@@ -97,11 +91,19 @@ func (cp *baseParser) GetCopyright() (string, error) {
 
 // Equal checks if the CapabilityStatement is equal to the given CapabilityStatement
 func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
-	if cp == nil && cs2 == nil {
-		return true
-	} else if cp == nil {
+	if cs2 == nil {
 		return false
-	} else if cs2 == nil {
+	}
+
+	j1, err := cp.GetJSON()
+	if err != nil {
+		return false
+	}
+	j2, err := cs2.GetJSON()
+	if err != nil {
+		return false
+	}
+	if !bytes.Equal(j1, j2) {
 		return false
 	}
 

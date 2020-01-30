@@ -23,6 +23,10 @@ func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
 	var err error
 	var capStat map[string]interface{}
 
+	if len(capJSON) == 0 {
+		return nil, nil
+	}
+
 	err = json.Unmarshal(capJSON, &capStat)
 	if err != nil {
 		return nil, errors.Wrap(err, "error unmarshalling JSON capability statement")
