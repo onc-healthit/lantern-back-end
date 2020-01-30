@@ -4,8 +4,11 @@ package postgresql
 
 import (
 	"context"
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
@@ -17,18 +20,31 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
 	ctx := context.Background()
 
+	// capability statement
+	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
+	csJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		t.Error(err)
+	}
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:                   "example.com/FHIR/DSTU2",
 		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
+		Vendor:                "Cerner",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		CapabilityStatement: &endpointmanager.CapabilityStatement{}}
+		CapabilityStatement: cs}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:                   "other.example.com/FHIR/DSTU2",
 		OrganizationName:      "Other Example Inc.",
@@ -44,7 +60,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	err = store.AddFHIREndpoint(ctx, endpoint2)
 	if err != nil {
-		t.Errorf("Error adding fhir endpoint: %s", err.Error())
+		t.Errorf("Error adding fhir endpoint: %+v", err)
 	}
 
 	// retrieve endpoints

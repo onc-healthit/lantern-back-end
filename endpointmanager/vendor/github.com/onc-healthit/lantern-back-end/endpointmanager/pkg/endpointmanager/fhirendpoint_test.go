@@ -1,12 +1,28 @@
 package endpointmanager
 
 import (
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	_ "github.com/lib/pq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 )
 
 func Test_FHIREndpointEqual(t *testing.T) {
+
+	// capability statement
+	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	csJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		t.Error(err)
+	}
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// endpoints
 	var endpoint1 = &FHIREndpoint{
 		ID:                    1,
 		URL:                   "example.com/FHIR/DSTU2",
@@ -18,7 +34,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		CapabilityStatement: &CapabilityStatement{}}
+		CapabilityStatement: cs}
 	var endpoint2 = &FHIREndpoint{
 		ID:                    1,
 		URL:                   "example.com/FHIR/DSTU2",
@@ -30,7 +46,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		CapabilityStatement: &CapabilityStatement{}}
+		CapabilityStatement: cs}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
