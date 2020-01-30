@@ -1,6 +1,7 @@
 package capabilityparser
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -18,7 +19,7 @@ func newBase(capStat map[string]interface{}, version string) *baseParser {
 	}
 }
 
-func (cp baseParser) GetPublisher() (string, error) {
+func (cp *baseParser) GetPublisher() (string, error) {
 	publisher := cp.capStat["publisher"]
 	if publisher == nil {
 		return "", nil
@@ -30,7 +31,7 @@ func (cp baseParser) GetPublisher() (string, error) {
 	return publisherStr, nil
 }
 
-func (cp baseParser) GetFHIRVersion() (string, error) {
+func (cp *baseParser) GetFHIRVersion() (string, error) {
 	fhirVersion := cp.capStat["fhirVersion"]
 	if fhirVersion == nil {
 		return "", nil
@@ -42,7 +43,7 @@ func (cp baseParser) GetFHIRVersion() (string, error) {
 	return fhirVersionStr, nil
 }
 
-func (cp baseParser) GetSoftwareName() (string, error) {
+func (cp *baseParser) GetSoftwareName() (string, error) {
 	software := cp.capStat["software"]
 	if software == nil {
 		return "", nil
@@ -62,7 +63,7 @@ func (cp baseParser) GetSoftwareName() (string, error) {
 	return nameStr, nil
 }
 
-func (cp baseParser) GetSoftwareVersion() (string, error) {
+func (cp *baseParser) GetSoftwareVersion() (string, error) {
 	software := cp.capStat["software"]
 	if software == nil {
 		return "", nil
@@ -82,7 +83,7 @@ func (cp baseParser) GetSoftwareVersion() (string, error) {
 	return versionStr, nil
 }
 
-func (cp baseParser) GetCopyright() (string, error) {
+func (cp *baseParser) GetCopyright() (string, error) {
 	copyright := cp.capStat["copyright"]
 	if copyright == nil {
 		return "", nil
@@ -92,4 +93,22 @@ func (cp baseParser) GetCopyright() (string, error) {
 		return "", fmt.Errorf("unable to cast %s capability statement copyright value to a string", cp.version)
 	}
 	return copyrightStr, nil
+}
+
+// Equal checks if the CapabilityStatement is equal to the given CapabilityStatement
+func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
+	if cp == nil && cs2 == nil {
+		return true
+	} else if cp == nil {
+		return false
+	} else if cs2 == nil {
+		return false
+	}
+
+	return true
+}
+
+// GetJSON returns the JSON representation of the capability statement.
+func (cp *baseParser) GetJSON() ([]byte, error) {
+	return json.Marshal(cp.capStat)
 }

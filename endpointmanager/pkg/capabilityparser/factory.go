@@ -14,6 +14,9 @@ type CapabilityStatement interface {
 	GetSoftwareName() (string, error)
 	GetSoftwareVersion() (string, error)
 	GetCopyright() (string, error)
+
+	Equal(CapabilityStatement) bool
+	GetJSON() ([]byte, error)
 }
 
 func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
@@ -23,6 +26,11 @@ func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
 	err = json.Unmarshal(capJSON, &capStat)
 	if err != nil {
 		return nil, errors.Wrap(err, "error unmarshalling JSON capability statement")
+	}
+
+	// return nil if an empty capability statement was passed in
+	if capStat == nil {
+		return nil, nil
 	}
 
 	// DSTU2, STU3, R4 all have fhirVersion in same location
