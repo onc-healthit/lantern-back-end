@@ -8,6 +8,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+// CapabilityStatement provides access to key fields of the capability statement. It wraps the capability statements
+// so users don't need to worry about the capability statement version.
 type CapabilityStatement interface {
 	GetPublisher() (string, error)
 	GetFHIRVersion() (string, error)
@@ -19,6 +21,8 @@ type CapabilityStatement interface {
 	GetJSON() ([]byte, error)
 }
 
+// NewCapabilityStatement is a factory method for creating a CapabilityStatement. It determines what version
+// the capability statement JSON is and creates the relevant implementation of the CapabilityStatement interface.
 func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
 	var err error
 	var capStat map[string]interface{}

@@ -98,6 +98,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	return true
 }
 
+// Update updates the receiver HealthITIProduct with entries from the provided HealthITProduct.
 func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	if hitp == nil || hitp2 == nil {
 		return errors.New("HealthITPrdouct.Update: a given health IT product is nil")

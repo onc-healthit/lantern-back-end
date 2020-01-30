@@ -158,7 +158,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 	defer rows.Close()
 
 	for rows.Next() {
-		rows.Scan(
+		err = rows.Scan(
 			&hitp.ID,
 			&hitp.Name,
 			&hitp.Version,
@@ -175,6 +175,9 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 			&hitp.CHPLID,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
 		if err != nil {
@@ -203,7 +206,10 @@ func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		rows.Scan(&developer)
+		err = rows.Scan(&developer)
+		if err != nil {
+			return nil, err
+		}
 		developers = append(developers, developer)
 	}
 

@@ -19,6 +19,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	epStore, err := getMockStoreEP()
 	th.Assert(t, err == nil, err)
 	hitpStore, err := getMockStore()
+	th.Assert(t, err == nil, err)
 
 	// basic test
 
@@ -452,7 +453,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
 	th.Assert(t, err == nil, err)
 
-	vendor, err = hackMatchEpic(dstu2, vendorsNorm, vendorsRaw)
+	_, err = hackMatchEpic(dstu2, vendorsNorm, vendorsRaw)
 	th.Assert(t, err != nil, "expected error to be thrown from accessing the copyright statement")
 }
 
