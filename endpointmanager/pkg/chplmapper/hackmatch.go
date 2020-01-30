@@ -1,5 +1,9 @@
 package chplmapper
 
+// this file is for any methods of matching an endpoint to a vendor that is not through the
+// publisher field on the capability statement. These methods should only be used if an endpoint
+// cannot be matched using publisher field on the capability statement.
+
 import (
 	"strings"
 
