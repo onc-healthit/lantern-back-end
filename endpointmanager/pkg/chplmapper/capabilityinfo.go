@@ -30,14 +30,23 @@ var fluffWords = []string{
 // An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
 // In this future, this may be changed to using a vendor table and linking the endpoint entry to
 // the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep endpointmanager.FHIREndpoint, store endpointmanager.HealthITProductStore) (bool, error) {
+func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, epStore endpointmanager.FHIREndpointStore, store endpointmanager.HealthITProductStore) (bool, error) {
 	if ep.CapabilityStatement == nil {
 		return false, nil
 	}
 
-	_, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
+	vendor, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
 	if err != nil {
 		return false, errors.Wrapf(err, "error matching the capability statement to a vendor for endpoint %s", ep.URL)
+	}
+
+	if len(vendor) > 0 {
+		ep.Vendor = vendor
+		err = epStore.UpdateFHIREndpoint(ctx, ep)
+		if err != nil {
+			return false, errors.Wrapf(err, "error updating vendor for endpoint %s", ep.URL)
+		}
+		return true, nil
 	}
 
 	return false, nil
@@ -58,7 +67,7 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 
 	match, err := publisherMatch(capStat, vendorsNorm, vendorsRaw)
 	if err != nil {
-		return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
+		return "", errors.Wrap(err, "error matching health it developers in database using capability statement publisher")
 	}
 
 	if match == "" {
@@ -78,19 +87,16 @@ func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []
 	}
 	publisherNorm := normalizeName(publisher)
 
-	match, err := matchName(publisherNorm, vendorsNorm, vendorsRaw)
-	if err != nil {
-		return "", errors.Wrap(err, "error matching capability statement publisher to health it developers in database")
-	}
+	match := matchName(publisherNorm, vendorsNorm, vendorsRaw)
 
 	return match, nil
 }
 
-func matchName(name string, vendorsNorm []string, vendorsRaw []string) (string, error) {
+func matchName(name string, vendorsNorm []string, vendorsRaw []string) string {
 	// exact match
 	for i, vendor := range vendorsNorm {
 		if name == vendor {
-			return vendorsRaw[i], nil
+			return vendorsRaw[i]
 		}
 	}
 
@@ -107,13 +113,13 @@ func matchName(name string, vendorsNorm []string, vendorsRaw []string) (string, 
 		}
 	}
 	if len(matches) == 1 {
-		return vendorsRaw[matches[0]], nil
+		return vendorsRaw[matches[0]]
 	}
 
 	// fuzzy match
 	// TODO
 
-	return "", nil
+	return ""
 }
 
 func normalizeName(name string) string {

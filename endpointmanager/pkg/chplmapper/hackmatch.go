@@ -29,7 +29,7 @@ func hackMatchEpic(capStat capabilityparser.CapabilityStatement, vendorsNorm []s
 	hasEpic := strings.Contains(copyright, "epic")
 
 	if hasEpic {
-		return matchName("epic", vendorsNorm, vendorsRaw)
+		return matchName("epic", vendorsNorm, vendorsRaw), nil
 	}
 	return "", nil
 }
