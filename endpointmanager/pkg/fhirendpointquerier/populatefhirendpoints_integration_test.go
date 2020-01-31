@@ -52,7 +52,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	var actualNumEndptsStored int
 
 	ctx := context.Background()
-	expectedNumEndptsStored := 341
+	expectedNumEndptsStored := 340
 
 	var listOfEndpoints, listErr = fetcher.GetListOfEndpoints("../../../networkstatsquerier/resources/EndpointSources.json")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
