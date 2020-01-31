@@ -13,11 +13,13 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
+	TLSVersion            string
+	MimeType              string
 	OrganizationName      string
 	FHIRVersion           string
-	AuthorizationStandard string               // examples: OAuth 2.0, Basic, etc.
-	Location              *Location            // location of the FHIR API endpoint's IP address from ipstack.com.
-	CapabilityStatement   *CapabilityStatement // the JSON representation of the FHIR capability statement
+	AuthorizationStandard string      // examples: OAuth 2.0, Basic, etc.
+	Location              *Location   // location of the FHIR API endpoint's IP address from ipstack.com.
+	CapabilityStatement   interface{} // the JSON representation of the FHIR capability statement
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -48,6 +50,15 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.URL != e2.URL {
 		return false
 	}
+	if e.TLSVersion != e2.TLSVersion {
+		return false
+	}
+	if e.MimeType != e2.MimeType {
+		return false
+	}
+	if e.OrganizationName != e2.OrganizationName {
+		return false
+	}
 	if e.FHIRVersion != e2.FHIRVersion {
 		return false
 	}
@@ -57,9 +68,10 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if !e.Location.Equal(e2.Location) {
 		return false
 	}
-	if !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
-		return false
-	}
+	// @TODO Currently commented out while figuring out Capability Parsing
+	// if e.CapabilityStatement != e2.CapabilityStatement {
+	// 	return false
+	// }
 
 	return true
 }

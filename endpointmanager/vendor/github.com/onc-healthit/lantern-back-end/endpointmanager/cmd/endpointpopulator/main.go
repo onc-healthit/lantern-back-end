@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
@@ -42,4 +43,6 @@ func main() {
 
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
 	failOnError("Saving in fhir_endpoints database error: ", dbErr)
+
+	capabilityhandler.CapabilityReceiver(store)
 }
