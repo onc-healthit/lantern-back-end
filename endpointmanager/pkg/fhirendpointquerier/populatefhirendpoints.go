@@ -56,9 +56,15 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 
 // formatToFHIREndpt takes an entry in the list of endpoints and formats it for the fhir_endpoints table in the database
 func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREndpoint, error) {
+	// Add trailing "/" to URIs that do not have it for consistency
+	uri := endpoint.FHIRPatientFacingURI
+	if uri[len(uri)-1:] != "/" {
+		uri = uri + "/"
+	}
+
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
-		URL:              endpoint.FHIRPatientFacingURI,
+		URL:              uri,
 		OrganizationName: endpoint.OrganizationName,
 	}
 
