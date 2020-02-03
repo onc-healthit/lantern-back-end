@@ -83,6 +83,10 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSources.json
+    volumes:
+      - ./networkstatsquerier/resources/EndpointSources.json:/etc/lantern/EndpointSources.json
+    restart: on-failure
 
 volumes:
   pgdata:

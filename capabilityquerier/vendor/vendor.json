@@ -147,6 +147,13 @@
 			"revisionTime": "2019-10-25T18:53:56Z"
 		},
 		{
+			"checksumSHA1": "Qo2E/26skb9mZQ3b2Mh6QDkpBLs=",
+			"path": "github.com/pkg/errors",
+			"revision": "614d223910a179a466c1767a985424175c39b465",
+			"revisionTime": "2020-01-14T19:47:44Z",
+			"tree": true
+		},
+		{
 			"checksumSHA1": "MGnqHnmEqc1fjnYiWReSiW8C27A=",
 			"path": "github.com/prometheus/common/log",
 			"revision": "287d3e634a1e550c9e463dd7e5a75a422c614505",
