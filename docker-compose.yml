@@ -88,6 +88,23 @@ services:
       - ./networkstatsquerier/resources/EndpointSources.json:/etc/lantern/EndpointSources.json
     restart: on-failure
 
+  endpoint_manager:
+    container_name: endpoint_manager
+    build:
+      context: ./endpointmanager
+    environment:
+      - LANTERN_DBHOST=${LANTERN_DBHOST}
+      - LANTERN_DBPORT=${LANTERN_DBPORT}
+      - LANTERN_DBUSER=${LANTERN_DBUSER}
+      - LANTERN_DBPASSWORD=${LANTERN_DBPASSWORD}
+      - LANTERN_DBNAME=${LANTERN_DBNAME}
+      - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
+      - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
+    depends_on:
+      - lantern-mq
+      - prometheus
+    restart: on-failure
+
 volumes:
   pgdata:
   prometheusData:
