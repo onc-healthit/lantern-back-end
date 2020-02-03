@@ -127,10 +127,6 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		return err
 	}
 
-	println(e.URL)
-	println(e.TLSVersion)
-	println(e.MimeType)
-
 	row := s.DB.QueryRowContext(ctx,
 		sqlStatement,
 		e.URL,

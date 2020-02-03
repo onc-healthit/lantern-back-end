@@ -13,8 +13,8 @@
 		{
 			"checksumSHA1": "seznb4xDlNjE7K9X244AVovdsys=",
 			"path": "github.com/onc-healthit/lantern-back-end/fhir",
-			"revision": "a240ebf8863a78d93b593aeb005168b04fa4cd70",
-			"revisionTime": "2019-11-21T13:23:59Z"
+			"revision": "6f3ef8cdf8b484f0c155cb00890d6d08264dd513",
+			"revisionTime": "2020-01-31T19:44:28Z"
 		},
 		{
 			"path": "io/ioutil",

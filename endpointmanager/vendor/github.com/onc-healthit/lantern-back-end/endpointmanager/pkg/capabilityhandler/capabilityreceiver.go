@@ -53,6 +53,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var existingEndpt *endpointmanager.FHIREndpoint
 
 	fhirEndpoint, err = formatMessage(message)
+	if err != nil {
+		return err
+	}
 
 	store := (*args)["store"].(endpointmanager.FHIREndpointStore)
 
