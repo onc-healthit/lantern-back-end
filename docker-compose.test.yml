@@ -27,3 +27,9 @@ services:
     build:
       context: ./e2e
     command: ./wait-for-it.sh grafana:3000 -- ./wait-for-it.sh pg_prometheus:5432 -- ./wait-for-it.sh lantern-mq:15672 -- ./wait-for-it.sh lantern-mq:5672 -- ./wait-for-it.sh prometheus:9090 -- ./wait-for-it.sh prometheus_postgresql_adapter:9201 -- ./wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=e2e ./...
+
+  capability_querier:
+    environment:
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+      - LANTERN_TEST_CAPQUERY_QNAME=${LANTERN_TEST_CAPQUERY_QNAME}
