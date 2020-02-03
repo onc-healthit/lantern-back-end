@@ -32,7 +32,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		return nil, err
 	}
 
-	// @TODO? Change how this is done by using the capabilityquerier main.go (line 46)
 	originalURL := strings.Replace(msgJSON.URL, "metadata", "", 1)
 
 	fhirEndpoint := endpointmanager.FHIREndpoint{
@@ -120,7 +119,6 @@ func CapabilityReceiver(store endpointmanager.FHIREndpointStore) {
 			log.Fatalf("There were %d errors while processing queue messages.", numErrors)
 		}
 
-		// @TODO Should look up the right way to handle this
 		time.Sleep(time.Duration(5) * time.Second)
 	}
 }
