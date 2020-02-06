@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -30,8 +29,9 @@ var tlsUnknown = "TLS version unknown"
 type Message struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
-	MimeType            string      `json:"mimetype"`
+	MatchedMIMETypes    []string    `json:"matched_mime_types"`
 	TLSVersion          string      `json:"tlsVersion"`
+	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
@@ -50,15 +50,8 @@ func GetAndSendCapabilityStatement(
 		URL: fhirURL.String(),
 	}
 
-	capResp, mimeType, tlsVersion, err := requestCapabilityStatement(ctx, fhirURL, client)
-	if err == nil {
-		message.MimeType = mimeType
-		message.TLSVersion = tlsVersion
-		err = json.Unmarshal(capResp, &(message.CapabilityStatement))
-		if err != nil {
-			message.Err = err.Error()
-		}
-	} else {
+	err = requestCapabilityStatement(ctx, fhirURL, client, &message)
+	if err != nil {
 		message.Err = err.Error()
 	}
 
@@ -76,59 +69,56 @@ func GetAndSendCapabilityStatement(
 	return nil
 }
 
-func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client) ([]byte, string, string, error) {
+// fills out message with http response code, tls version, capability statement, and supported mime types
+func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client, message *Message) error {
 	var err error
-	var resp *http.Response
-	var is406 bool
+	var httpResponseCode int
+	var supportsFHIR3MIMEType bool
+	var supportsFHIR2MIMEType bool
+	var tlsVersion string
+	var capResp []byte
 
 	req, err := http.NewRequest("GET", fhirURL.String(), nil)
 	if err != nil {
-		return nil, "", "", errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
+		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
 	}
 	req = req.WithContext(ctx)
 
-	// make the request using a JSON mime type to get a JSON response.
-	// track the mime type to provide to the queue as data re the request.
-	tryOtherMimeType := false
-	mimeType := fhir3PlusJSONMIMEType
-	resp, is406, err = requestWithMimeType(req, mimeType, client)
+	httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 	if err != nil {
-		return nil, "", "", err
-	} else if is406 {
-		tryOtherMimeType = true
-	} else {
-		defer resp.Body.Close()
-
-		// if the response type isn't right for FHIR 3+, it's possible it's just an older version.
-		respMimeType := resp.Header.Get("Content-Type")
-		if !mimeTypesMatch(mimeType, respMimeType) {
-			tryOtherMimeType = true
-		}
+		return err
 	}
 
-	if tryOtherMimeType {
-		mimeType = fhir2LessJSONMIMEType
-		resp, is406, err = requestWithMimeType(req, mimeType, client)
+	if httpResponseCode != http.StatusOK || !supportsFHIR3MIMEType {
+		// replace all values based on fhir 2 mime type if there were any issues with fhir 3 mime type request
+		httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 		if err != nil {
-			return nil, "", "", err
-		} else if is406 {
-			return nil, "", "", fmt.Errorf("GET request to %s responded with status 406 Not Acceptable", fhirURL.String())
+			return err
 		}
-		defer resp.Body.Close()
-
-		respMimeType := resp.Header.Get("Content-Type")
-		if !mimeTypesMatch(mimeType, respMimeType) {
-			return nil, "", "", fmt.Errorf("response MIME type (%s) does not match JSON request MIME types for FHIR 3+ (%s) or FHIR 2- (%s)",
-				respMimeType, fhir3PlusJSONMIMEType, fhir2LessJSONMIMEType)
+	} else {
+		// only chech fhir 2 mime type support
+		_, _, supportsFHIR2MIMEType, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+		if err != nil {
+			return err
 		}
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, "", "", errors.Wrapf(err, "reading the response from %s failed", fhirURL.String())
+	message.HTTPResponse = httpResponseCode
+	message.TLSVersion = tlsVersion
+	if supportsFHIR2MIMEType {
+		message.MatchedMIMETypes = append(message.MatchedMIMETypes, fhir2LessJSONMIMEType)
+	}
+	if supportsFHIR3MIMEType {
+		message.MatchedMIMETypes = append(message.MatchedMIMETypes, fhir3PlusJSONMIMEType)
+	}
+	if capResp != nil {
+		err = json.Unmarshal(capResp, &(message.CapabilityStatement))
+		if err != nil {
+			return err
+		}
 	}
 
-	return body, mimeType, getTLSVersion(resp), nil
+	return nil
 }
 
 func getTLSVersion(resp *http.Response) string {
@@ -148,6 +138,10 @@ func getTLSVersion(resp *http.Response) string {
 	}
 }
 
+func isJSONMIMEType(mimeType string) bool {
+	return strings.Contains(mimeType, "json")
+}
+
 func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	respMimeTypes := strings.Split(respMimeType, "; ")
 	for _, rmt := range respMimeTypes {
@@ -158,25 +152,44 @@ func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	return false
 }
 
-// responds with the http.Response, whether or not the status code was a 406 (indicating we should try with a different
-// mimetype), and any errors.
-func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (*http.Response, bool, error) {
+// responds with
+//   http status code
+//   tls version
+//   mime type match
+//   capability statement
+//   error
+func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (int, string, bool, []byte, error) {
+	var httpResponseCode int
+	var tlsVersion string
+	var capStat []byte
+
+	mimeMatches := false
+
 	req.Header.Set("Accept", mimeType)
+	req.Header.Set("no-cache", "") // ensures that we don't cache the previously retrieved mime type in the response header
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, false, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
+		return -1, "", false, nil, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
 	}
 
-	if resp.StatusCode == http.StatusNotAcceptable {
-		return nil, true, nil
+	httpResponseCode = resp.StatusCode
+	if httpResponseCode == http.StatusOK {
+		defer resp.Body.Close()
+		respMimeType := resp.Header.Get("Content-Type")
+		if isJSONMIMEType(respMimeType) {
+			mimeMatches = true
+
+			capStat, err = ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return -1, "", false, nil, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
+			}
+		}
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, false, fmt.Errorf("GET request to %s responded with status %s", req.URL.String(), resp.Status)
-	}
+	tlsVersion = getTLSVersion(resp)
 
-	return resp, false, nil
+	return httpResponseCode, tlsVersion, mimeMatches, capStat, nil
 }
 
 func sendToQueue(

@@ -45,15 +45,15 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	defer tc.Close()
 
 	// create the expected result
-	path := filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err := ioutil.ReadFile(path)
+	expectedCapStat, err := capabilityStatement()
 	th.Assert(t, err == nil, err)
-	expectedMimeType := fhir2LessJSONMIMEType
+	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:        fhirURL.String(),
-		MimeType:   expectedMimeType,
-		TLSVersion: expectedTLSVersion,
+		URL:              fhirURL.String(),
+		MatchedMIMETypes: expectedMimeType,
+		TLSVersion:       expectedTLSVersion,
+		HTTPResponse:     200,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
@@ -88,7 +88,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	var messageStruct Message
 	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, messageStruct.Err == fmt.Sprintf("GET request to %s responded with status 404 Not Found", sampleURL), "expected 404 error to be documented in sent error message")
+	th.Assert(t, messageStruct.HTTPResponse == 404, "expected to capture 404 response in message")
 }
 
 func Test_requestCapabilityStatement(t *testing.T) {
@@ -96,13 +96,15 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	var fhirURL *url.URL
 	var tc *th.TestClient
 	var capStat, expectedCapStat []byte
-	var path, mimeType, tlsVersion, expectedMimeType, expectedTLSVersion string
+	var expectedMimeType, expectedTLSVersion string
 	var err error
+	var message Message
 
 	// basic test: fhir2LessJSONMIMEType
 
-	path = filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err = ioutil.ReadFile(path)
+	message = Message{}
+
+	expectedCapStat, err = capabilityStatement()
 	th.Assert(t, err == nil, err)
 	expectedMimeType = fhir2LessJSONMIMEType
 	expectedTLSVersion = "TLS 1.0"
@@ -115,16 +117,20 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	capStat, mimeType, tlsVersion, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
+	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	th.Assert(t, err == nil, err)
+	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
-	th.Assert(t, mimeType == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeType %s", expectedMimeType, mimeType))
-	th.Assert(t, tlsVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, tlsVersion))
+	th.Assert(t, len(message.MatchedMIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MatchedMIMETypes)))
+	th.Assert(t, message.MatchedMIMETypes[0] == expectedMimeType || message.MatchedMIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MatchedMIMETypes[0], message.MatchedMIMETypes[1]))
+	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
 	// basic test: fhir3PlusJSONMIMEType
 
-	path = filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err = ioutil.ReadFile(path)
+	message = Message{}
+
+	expectedCapStat, err = capabilityStatement()
 	th.Assert(t, err == nil, err)
 	expectedMimeType = fhir3PlusJSONMIMEType
 	expectedTLSVersion = "TLS 1.0"
@@ -137,19 +143,24 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	capStat, mimeType, tlsVersion, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
+	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	th.Assert(t, err == nil, err)
+	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
-	th.Assert(t, mimeType == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeType %s", expectedMimeType, mimeType))
-	th.Assert(t, tlsVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, tlsVersion))
+	th.Assert(t, len(message.MatchedMIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MatchedMIMETypes)))
+	th.Assert(t, message.MatchedMIMETypes[0] == expectedMimeType || message.MatchedMIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MatchedMIMETypes[0], message.MatchedMIMETypes[1]))
+	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
 	// requestWithMimeType error due to test server closing
+
+	message = Message{}
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	tc.Close() // makes request fail
 
-	_, _, _, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
+	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because we closed the connection that we're querying.
@@ -158,14 +169,16 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	}
 
 	// mimeType mismatch
-	expectedErrStr := fmt.Sprintf("response MIME type (nonesense mimetype; charset=utf-8) does not match JSON request MIME types for FHIR 3+ (%s) or FHIR 2- (%s)",
-		fhir3PlusJSONMIMEType, fhir2LessJSONMIMEType)
+
+	message = Message{}
+
 	tc, err = testClientWithContentType("nonesense mimetype")
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	_, _, _, err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client))
-	th.Assert(t, err.Error() == expectedErrStr, fmt.Sprintf("expected error '%s'; received error '%s'", expectedErrStr, err.Error()))
+	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(message.MatchedMIMETypes) == 0, "expected no matched mime types")
 }
 
 func Test_getTLSVersion(t *testing.T) {
@@ -263,12 +276,12 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	resp, is406, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	httpCode, tlsVersion, mimeMatch, capStat, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err == nil, err)
-	defer resp.Body.Close()
-
-	th.Assert(t, !is406, "did not expect a 406 response")
-	th.Assert(t, req.Header.Get("Accept") == fhir2LessJSONMIMEType, "request accept header not set to mime type as expected")
+	th.Assert(t, httpCode == 200, "expected 200 response")
+	th.Assert(t, tlsVersion == "TLS 1.0", fmt.Sprintf("expected TLS 1.0. got %s", tlsVersion))
+	th.Assert(t, mimeMatch, "expected the mime types to match")
+	th.Assert(t, capStat != nil, "expected to receive a capability statement")
 
 	// test http request error
 
@@ -276,30 +289,21 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc.Close() // makes request fail
 
-	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	_, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because we closed the connection that we're querying.
 	default:
 		t.Fatal("expected connection error")
 	}
-	th.Assert(t, !is406, "did not expect a 406 response")
 
 	// test http response code error
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
-	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
-	th.Assert(t, err.Error() == fmt.Sprintf("GET request to %s responded with status 404 Not Found", sampleURL), "expected to see an error for 404 response code status")
-	th.Assert(t, !is406, "did not expect a 406 response")
-
-	// test 406 response
-	tc = th.NewTestClientWith406()
-	defer tc.Close()
-
-	_, is406, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	httpCode, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err == nil, err)
-	th.Assert(t, is406, "expected a 406 response")
+	th.Assert(t, httpCode == 404, fmt.Sprintf("expected 404 response code. Got %d", httpCode))
 }
 
 func Test_sendToQueue(t *testing.T) {
@@ -365,4 +369,26 @@ func testClientWithTLSVersion(tlsVersion uint16) (*th.TestClient, error) {
 	transport.TLSClientConfig.MinVersion = tlsVersion
 
 	return tc, nil
+}
+
+func capabilityStatement() ([]byte, error) {
+	path := filepath.Join("testdata", "metadata.json")
+	expectedCapStat, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var capStatInt interface{}
+
+	err = json.Unmarshal(expectedCapStat, &capStatInt)
+	if err != nil {
+		return nil, err
+	}
+
+	expectedCapStat, err = json.Marshal(capStatInt)
+	if err != nil {
+		return nil, err
+	}
+
+	return expectedCapStat, nil
 }
