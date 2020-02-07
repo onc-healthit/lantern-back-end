@@ -8,7 +8,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -19,12 +18,12 @@ type testCapStatement struct {
 	Test2 string
 }
 
-var testQueueMsg = capabilityquerier.Message{
-	URL:        "http://example.com/DTSU2/metadata",
-	Err:        "",
-	MimeType:   "application/json+fhir",
-	TLSVersion: "TLS 1.2",
-	CapabilityStatement: testCapStatement{
+var testQueueMsg = map[string]interface{}{
+	"url":        "http://example.com/DTSU2/metadata",
+	"err":        "",
+	"mimetype":   "application/json+fhir",
+	"tlsVersion": "TLS 1.2",
+	"capabilityStatement": testCapStatement{
 		Test1: "TestValue1",
 		Test2: "TestValue2",
 	},
@@ -41,7 +40,7 @@ var testFhirEndpoint = endpointmanager.FHIREndpoint{
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
-func convertInterfaceToBytes(message capabilityquerier.Message) ([]byte, error) {
+func convertInterfaceToBytes(message map[string]interface{}) ([]byte, error) {
 	returnMsg, err := json.Marshal(message)
 	if err != nil {
 		return nil, err
@@ -62,12 +61,36 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
 
 	// should not throw error if metadata is not in the URL
-	tmpMessage.URL = "http://example.com/DTSU2/"
+	tmpMessage["url"] = "http://example.com/DTSU2/"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 	endpt, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
 	th.Assert(t, expectedEndpt.URL == endpt.URL, fmt.Sprintf("%s and %s are not equal", expectedEndpt.URL, endpt.URL))
+
+	// test incorrect URL
+	tmpMessage["url"] = nil
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect URL")
+	tmpMessage["url"] = "http://example.com/DTSU2/metadata"
+
+	// test incorrect URL
+	tmpMessage["tlsVersion"] = 1
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect TLS Version")
+	tmpMessage["tlsVersion"] = "TLS 1.2"
+
+	// test incorrect URL
+	tmpMessage["mimetype"] = 1
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect MIME Type")
+	tmpMessage["mimetype"] = "application/json+fhir"
 }
 
 func Test_saveMsgInDB(t *testing.T) {
@@ -82,6 +105,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 
+	// check that nothing is stored and that saveMsgInDB throws an error if the context is canceled
+	testCtx, cancel := context.WithCancel(context.Background())
+	args["ctx"] = testCtx
+	cancel()
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 0, "should not have stored data")
+	th.Assert(t, errors.Cause(err) == context.Canceled, "should have errored out with root cause that the context was canceled")
+
+	// reset context
+	args["ctx"] = context.Background()
+
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, err == nil, err)
@@ -89,7 +123,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, expectedEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
 
 	// check that a second new item is stored
-	queueTmp.URL = "https://test-two.com"
+	queueTmp["url"] = "https://test-two.com"
 	expectedEndpt.URL = "https://test-two.com"
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
@@ -98,10 +132,10 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 2, "there should be two endpoints in the database")
 	th.Assert(t, expectedEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[1]), "the second endpoint data does not equal expected store data")
 	expectedEndpt = testFhirEndpoint
-	queueTmp = testQueueMsg
+	queueTmp["url"] = "http://example.com/DTSU2/metadata"
 
 	// check that an item with the same URL updates the endpoint in the database
-	queueTmp.TLSVersion = "TLS 1.3"
+	queueTmp["tlsVersion"] = "TLS 1.3"
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -110,7 +144,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].TLSVersion == "TLS 1.3", "The TLS Version was not updated")
 
 	// check that error adding to store throws error
-	queueTmp.URL = "https://a-new-url.com"
+	queueTmp["url"] = "https://a-new-url.com"
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	addFn := store.(*mock.BasicMockStore).AddFHIREndpointFn

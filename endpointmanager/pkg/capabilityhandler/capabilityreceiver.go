@@ -4,9 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strings"
-
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
+	"fmt"
+	"path"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 
@@ -15,20 +14,40 @@ import (
 )
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
-	var msgJSON capabilityquerier.Message
+	var msgJSON map[string]interface{}
 
-	err := json.Unmarshal(message, &(msgJSON))
+	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
 		return nil, err
 	}
 
-	originalURL := strings.Replace(msgJSON.URL, "metadata", "", 1)
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast message URL to string")
+	}
+
+	tlsVersion, ok := msgJSON["tlsVersion"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast TLS Version to string")
+	}
+
+	mimeType, ok := msgJSON["mimetype"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast MIME Type to string")
+	}
+
+	// remove "metadata" from the url
+	originalURL, file := path.Split(url)
+	if file != "metadata" {
+		originalURL = url
+	}
 
 	fhirEndpoint := endpointmanager.FHIREndpoint{
 		URL:                 originalURL,
-		TLSVersion:          msgJSON.TLSVersion,
-		MimeType:            msgJSON.MimeType,
-		CapabilityStatement: msgJSON.CapabilityStatement,
+		TLSVersion:          tlsVersion,
+		MimeType:            mimeType,
+		CapabilityStatement: msgJSON["capabilityStatement"],
 	}
 
 	return &fhirEndpoint, nil
@@ -47,8 +66,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	}
 
 	store := (*args)["store"].(endpointmanager.FHIREndpointStore)
+	ctx := (*args)["ctx"].(context.Context)
 
-	ctx := context.Background()
+	// ctx := context.Background()
 	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 
 	// If the URL doesn't exist, add it to the DB
@@ -60,10 +80,16 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	} else if err != nil {
 		return err
 	} else {
-		// Add the new information and update the endpoint in the database
-		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
-		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
-		existingEndpt.MimeType = fhirEndpoint.MimeType
+		// Add the new information if it's valid and update the endpoint in the database
+		if fhirEndpoint.CapabilityStatement != nil {
+			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+		}
+		if fhirEndpoint.TLSVersion != "" {
+			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
+		}
+		if fhirEndpoint.MimeType != "" {
+			existingEndpt.MimeType = fhirEndpoint.MimeType
+		}
 		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -81,6 +107,7 @@ func CapabilityReceiver(store endpointmanager.FHIREndpointStore,
 
 	args := make(map[string]interface{})
 	args["store"] = store
+	args["ctx"] = context.Background()
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {
