@@ -8,10 +8,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 
-	"github.com/spf13/viper"
-
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler/config"
+	"github.com/onc-healthit/lantern-back-end/lanternmq"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	log "github.com/sirupsen/logrus"
@@ -77,25 +74,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 }
 
 // CapabilityReceiver receives the capability statement from the queue and adds it to the database
-func CapabilityReceiver(store endpointmanager.FHIREndpointStore) error {
-	// Get the config information that can then be used below
-	err := config.SetupConfig()
-	if err != nil {
-		return err
-	}
-
-	// Set up the queue for sending messages
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
-	messageQueue, channelID, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
-	if err != nil {
-		return err
-	}
-	log.Info("Successfully connected to Queue!")
-	defer messageQueue.Close()
+func CapabilityReceiver(store endpointmanager.FHIREndpointStore,
+	messageQueue lanternmq.MessageQueue,
+	channelID lanternmq.ChannelID,
+	qName string) error {
 
 	args := make(map[string]interface{})
 	args["store"] = store

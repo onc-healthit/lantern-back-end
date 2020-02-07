@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
+	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -24,6 +25,13 @@ func main() {
 	failOnError(err)
 	log.Info("Successfully connected to DB!")
 
-	err = capabilityhandler.CapabilityReceiver(store)
+	// Set up the queue for sending messages
+	qName := viper.GetString("capquery_qname")
+	messageQueue, channelID, err := queue.ConnectToQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
+	failOnError(err)
+	log.Info("Successfully connected to Queue!")
+	defer messageQueue.Close()
+
+	err = capabilityhandler.CapabilityReceiver(store, messageQueue, channelID, qName)
 	failOnError(err)
 }
