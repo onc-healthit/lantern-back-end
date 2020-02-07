@@ -4,41 +4,55 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strings"
-	"time"
+	"fmt"
+	"path"
 
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
-
-	"github.com/spf13/viper"
-
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler/config"
+	"github.com/onc-healthit/lantern-back-end/lanternmq"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	log "github.com/sirupsen/logrus"
 )
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
-
 func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
-	var msgJSON capabilityquerier.Message
+	var msgJSON map[string]interface{}
 
-	err := json.Unmarshal(message, &(msgJSON))
+	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
 		return nil, err
 	}
 
-	originalURL := strings.Replace(msgJSON.URL, "metadata", "", 1)
+	// @TODO Figure out what to do with the errors
+	errs, ok := msgJSON["err"].(string)
+	if ok && len(errs) > 0 {
+		log.Warn(errs)
+	}
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast message URL to string")
+	}
+
+	tlsVersion, ok := msgJSON["tlsVersion"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast TLS Version to string")
+	}
+
+	mimeType, ok := msgJSON["mimetype"].(string)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast MIME Type to string")
+	}
+
+	// remove "metadata" from the url
+	originalURL, file := path.Split(url)
+	if file != "metadata" {
+		originalURL = url
+	}
 
 	fhirEndpoint := endpointmanager.FHIREndpoint{
 		URL:                 originalURL,
-		TLSVersion:          msgJSON.TLSVersion,
-		MimeType:            msgJSON.MimeType,
-		CapabilityStatement: msgJSON.CapabilityStatement,
+		TLSVersion:          tlsVersion,
+		MimeType:            mimeType,
+		CapabilityStatement: msgJSON["capabilityStatement"],
 	}
 
 	return &fhirEndpoint, nil
@@ -57,8 +71,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	}
 
 	store := (*args)["store"].(endpointmanager.FHIREndpointStore)
+	ctx := (*args)["ctx"].(context.Context)
 
-	ctx := context.Background()
+	// ctx := context.Background()
 	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 
 	// If the URL doesn't exist, add it to the DB
@@ -70,10 +85,16 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	} else if err != nil {
 		return err
 	} else {
-		// Add the new information and update the endpoint in the database
-		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
-		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
-		existingEndpt.MimeType = fhirEndpoint.MimeType
+		// Add the new information if it's valid and update the endpoint in the database
+		if fhirEndpoint.CapabilityStatement != nil {
+			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+		}
+		if fhirEndpoint.TLSVersion != "" {
+			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
+		}
+		if fhirEndpoint.MimeType != "" {
+			existingEndpt.MimeType = fhirEndpoint.MimeType
+		}
 		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -84,41 +105,26 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 }
 
 // CapabilityReceiver receives the capability statement from the queue and adds it to the database
-func CapabilityReceiver(store endpointmanager.FHIREndpointStore) {
-	// Get the config information that can then be used below
-	err := config.SetupConfig()
-	failOnError(err)
-
-	// Set up the queue for sending messages
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
-	messageQueue, channelID, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
-	failOnError(err)
-	log.Info("Successfully connected to Queue!")
-	defer messageQueue.Close()
+func CapabilityReceiver(store endpointmanager.FHIREndpointStore,
+	messageQueue lanternmq.MessageQueue,
+	channelID lanternmq.ChannelID,
+	qName string) error {
 
 	args := make(map[string]interface{})
 	args["store"] = store
+	args["ctx"] = context.Background()
 
-	for {
-		messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
-		failOnError(err)
-
-		errs := make(chan error)
-		go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
-
-		numErrors := 0
-		for elem := range errs {
-			log.Warn(elem)
-			numErrors++
-		}
-		if numErrors > 0 {
-			log.Fatalf("There were %d errors while processing queue messages.", numErrors)
-		}
-
-		time.Sleep(time.Duration(5) * time.Second)
+	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
+	if err != nil {
+		return err
 	}
+
+	errs := make(chan error)
+	go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
+	return nil
 }
