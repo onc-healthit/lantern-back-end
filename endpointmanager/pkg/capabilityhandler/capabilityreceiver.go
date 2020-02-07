@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"strings"
-	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 
@@ -101,24 +100,17 @@ func CapabilityReceiver(store endpointmanager.FHIREndpointStore) error {
 	args := make(map[string]interface{})
 	args["store"] = store
 
-	for {
-		messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
-		if err != nil {
-			return err
-		}
-
-		errs := make(chan error)
-		go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
-
-		numErrors := 0
-		for elem := range errs {
-			log.Warn(elem)
-			numErrors++
-		}
-		if numErrors > 0 {
-			log.Fatalf("There were %d errors while processing queue messages.", numErrors)
-		}
-
-		time.Sleep(time.Duration(5) * time.Second)
+	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
+	if err != nil {
+		return err
 	}
+
+	errs := make(chan error)
+	go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
+	return nil
 }
