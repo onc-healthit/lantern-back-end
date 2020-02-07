@@ -18,12 +18,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
-
 func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	var msgJSON capabilityquerier.Message
 
@@ -84,10 +78,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 }
 
 // CapabilityReceiver receives the capability statement from the queue and adds it to the database
-func CapabilityReceiver(store endpointmanager.FHIREndpointStore) {
+func CapabilityReceiver(store endpointmanager.FHIREndpointStore) error {
 	// Get the config information that can then be used below
 	err := config.SetupConfig()
-	failOnError(err)
+	if err != nil {
+		return err
+	}
 
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
@@ -96,7 +92,9 @@ func CapabilityReceiver(store endpointmanager.FHIREndpointStore) {
 	qPort := viper.GetString("qport")
 	qName := viper.GetString("capquery_qname")
 	messageQueue, channelID, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
-	failOnError(err)
+	if err != nil {
+		return err
+	}
 	log.Info("Successfully connected to Queue!")
 	defer messageQueue.Close()
 
@@ -105,7 +103,9 @@ func CapabilityReceiver(store endpointmanager.FHIREndpointStore) {
 
 	for {
 		messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
-		failOnError(err)
+		if err != nil {
+			return err
+		}
 
 		errs := make(chan error)
 		go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
