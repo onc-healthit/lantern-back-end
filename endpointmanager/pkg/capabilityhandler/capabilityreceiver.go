@@ -21,6 +21,10 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		return nil, err
 	}
 
+	errs, ok := msgJSON["err"].(string)
+	if ok && len(errs) > 0 {
+		log.Warn(errs)
+	}
 
 	url, ok := msgJSON["url"].(string)
 	if !ok {
@@ -47,6 +51,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		URL:                 originalURL,
 		TLSVersion:          tlsVersion,
 		MimeType:            mimeType,
+		Errors:              errs,
 		CapabilityStatement: msgJSON["capabilityStatement"],
 	}
 
@@ -89,6 +94,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if fhirEndpoint.MimeType != "" {
 			existingEndpt.MimeType = fhirEndpoint.MimeType
 		}
+		existingEndpt.Errors = fhirEndpoint.Errors
 		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err

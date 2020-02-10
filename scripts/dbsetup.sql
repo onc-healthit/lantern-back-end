@@ -11,6 +11,7 @@ CREATE TABLE fhir_endpoints (
     url                     VARCHAR(500) UNIQUE,
     tls_version             VARCHAR(500),
     mime_type               VARCHAR(500),
+    errors                  VARCHAR(500),
     organization_name       VARCHAR(500),
     fhir_version            VARCHAR(500),
     authorization_standard  VARCHAR(500),
