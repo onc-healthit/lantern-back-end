@@ -31,6 +31,8 @@ CREATE TABLE npi_organizations (
     secondary_name   VARCHAR(500),
     location         JSONB,
     taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+    normalized_name      VARCHAR(500),
+    normalized_secondary_name   VARCHAR(500),
     created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
