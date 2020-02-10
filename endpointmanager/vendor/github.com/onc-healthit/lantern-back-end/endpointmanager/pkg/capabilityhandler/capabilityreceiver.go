@@ -21,7 +21,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		return nil, err
 	}
 
-	// @TODO Figure out what to do with the errors
 	errs, ok := msgJSON["err"].(string)
 	if ok && len(errs) > 0 {
 		log.Warn(errs)
@@ -52,6 +51,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		URL:                 originalURL,
 		TLSVersion:          tlsVersion,
 		MimeType:            mimeType,
+		Errors:              errs,
 		CapabilityStatement: msgJSON["capabilityStatement"],
 	}
 
@@ -73,7 +73,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	store := (*args)["store"].(endpointmanager.FHIREndpointStore)
 	ctx := (*args)["ctx"].(context.Context)
 
-	// ctx := context.Background()
 	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 
 	// If the URL doesn't exist, add it to the DB
@@ -95,6 +94,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if fhirEndpoint.MimeType != "" {
 			existingEndpt.MimeType = fhirEndpoint.MimeType
 		}
+		existingEndpt.Errors = fhirEndpoint.Errors
 		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -104,15 +104,17 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return err
 }
 
-// CapabilityReceiver receives the capability statement from the queue and adds it to the database
-func CapabilityReceiver(store endpointmanager.FHIREndpointStore,
+// ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
+// statements from it. It then adds the capability statements to the given store.
+func ReceiveCapabilityStatements(ctx context.Context,
+	store endpointmanager.FHIREndpointStore,
 	messageQueue lanternmq.MessageQueue,
 	channelID lanternmq.ChannelID,
 	qName string) error {
 
 	args := make(map[string]interface{})
 	args["store"] = store
-	args["ctx"] = context.Background()
+	args["ctx"] = ctx
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {

@@ -12,6 +12,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		URL:                   "example.com/FHIR/DSTU2",
 		TLSVersion:            "TLS 1.1",
 		MimeType:              "application/json+fhir",
+		Errors:                "Example Error",
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
@@ -27,6 +28,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		URL:                   "example.com/FHIR/DSTU2",
 		TLSVersion:            "TLS 1.1",
 		MimeType:              "application/json+fhir",
+		Errors:                "Example Error",
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
@@ -71,6 +73,12 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. MimeType should be different. %s vs %s", endpoint1.MimeType, endpoint2.MimeType)
 	}
 	endpoint2.MimeType = endpoint1.MimeType
+
+	endpoint2.Errors = "other"
+	if endpoint1.Equal(endpoint2) {
+		t.Errorf("Did not expect endpoint1 to equal endpoint 2. Errors should be different. %s vs %s", endpoint1.Errors, endpoint2.Errors)
+	}
+	endpoint2.Errors = endpoint1.Errors
 
 	endpoint2.OrganizationName = "other"
 	if endpoint1.Equal(endpoint2) {

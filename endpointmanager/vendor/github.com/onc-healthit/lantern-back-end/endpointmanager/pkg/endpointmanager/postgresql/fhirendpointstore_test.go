@@ -21,6 +21,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		URL:                   "example.com/FHIR/DSTU2/",
 		TLSVersion:            "TLS 1.1",
 		MimeType:              "application/json+fhir",
+		Errors:                "Example Error",
 		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
@@ -35,6 +36,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		URL:                   "other.example.com/FHIR/DSTU2/",
 		TLSVersion:            "TLS 1.2",
 		MimeType:              "application/fhir+json",
+		Errors:                "Example Error 2",
 		OrganizationName:      "Other Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "R4 2.0"}

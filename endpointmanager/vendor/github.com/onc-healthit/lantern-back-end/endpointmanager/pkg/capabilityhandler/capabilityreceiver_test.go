@@ -76,7 +76,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect URL")
 	tmpMessage["url"] = "http://example.com/DTSU2/metadata"
 
-	// test incorrect URL
+	// test incorrect TLS Version
 	tmpMessage["tlsVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
@@ -84,7 +84,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect TLS Version")
 	tmpMessage["tlsVersion"] = "TLS 1.2"
 
-	// test incorrect URL
+	// test incorrect MIME Type
 	tmpMessage["mimetype"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
