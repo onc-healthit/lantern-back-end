@@ -6,8 +6,9 @@ import (
 	"regexp"
 )
 
-func normalizeOrgName(orgName string) string{
+func NormalizeOrgName(orgName string) string{
 	// Regex for only letters
+	orgName = strings.ReplaceAll(orgName, "-", " ")
 	reg, err := regexp.Compile(`[^a-zA-Z0-9\s]+`)
 	if err != nil {
 		log.Fatal(err)
@@ -35,7 +36,7 @@ func intersectionCount(set1 []string, set2 []string) int{
 	return intersectionCount
 }
 
-func calculateJaccardIndex(string1 string, string2 string) float64 {
+func CalculateJaccardIndex(string1 string, string2 string) float64 {
 	// Find the number of common tokens and divide it by the total number of unique tokens
 	string1Tokens := strings.Fields(string1)
 	string2Tokens := strings.Fields(string2)
