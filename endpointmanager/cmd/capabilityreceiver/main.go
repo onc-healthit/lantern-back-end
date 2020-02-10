@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
@@ -32,6 +34,8 @@ func main() {
 	log.Info("Successfully connected to Queue!")
 	defer messageQueue.Close()
 
-	err = capabilityhandler.CapabilityReceiver(store, messageQueue, channelID, qName)
+	ctx := context.Background()
+
+	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, messageQueue, channelID, qName)
 	failOnError(err)
 }
