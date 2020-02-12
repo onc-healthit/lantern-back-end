@@ -33,6 +33,7 @@ var testFhirEndpoint = endpointmanager.FHIREndpoint{
 	URL:        "http://example.com/DTSU2/",
 	MimeType:   "application/json+fhir",
 	TLSVersion: "TLS 1.2",
+	Errors:     "",
 	CapabilityStatement: testCapStatement{
 		Test1: "TestValue1",
 		Test2: "TestValue2",
@@ -67,6 +68,14 @@ func Test_formatMessage(t *testing.T) {
 	endpt, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
 	th.Assert(t, expectedEndpt.URL == endpt.URL, fmt.Sprintf("%s and %s are not equal", expectedEndpt.URL, endpt.URL))
+
+	// test incorrect error message
+	tmpMessage["err"] = nil
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect error message")
+	tmpMessage["err"] = ""
 
 	// test incorrect URL
 	tmpMessage["url"] = nil

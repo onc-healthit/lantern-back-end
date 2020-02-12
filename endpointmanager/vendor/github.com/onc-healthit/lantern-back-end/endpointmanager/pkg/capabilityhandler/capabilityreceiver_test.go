@@ -33,6 +33,7 @@ var testFhirEndpoint = endpointmanager.FHIREndpoint{
 	URL:        "http://example.com/DTSU2/",
 	MimeType:   "application/json+fhir",
 	TLSVersion: "TLS 1.2",
+	Errors:     "",
 	CapabilityStatement: testCapStatement{
 		Test1: "TestValue1",
 		Test2: "TestValue2",

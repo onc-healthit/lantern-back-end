@@ -22,8 +22,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	}
 
 	errs, ok := msgJSON["err"].(string)
-	if ok && len(errs) > 0 {
-		log.Warn(errs)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast message Error to string")
 	}
 
 	url, ok := msgJSON["url"].(string)
