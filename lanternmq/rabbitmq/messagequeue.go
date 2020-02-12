@@ -28,7 +28,7 @@ const prefetchSize0 int = 0
 // Ensure MessageQueue implements lanternmq.MessageQueue.
 var _ lanternmq.MessageQueue = &MessageQueue{}
 
-// Ensure MessageMessages implements lanternmq.Messages.
+// Ensure Messages implements lanternmq.Messages.
 var _ lanternmq.Messages = &Messages{}
 
 // MessageQueue is a wrapper around RabbitMQ's implementation of queues and implements the lanternmq.MessageQueue
@@ -245,7 +245,7 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 // object by retrieving the message from the Delivery object and providing that along with 'args' to the
 // lanternmq.MessageHandler 'handler'. An acknowledgement is sent to the sender after each message is processed.
 // If there's an error processing a message, the error is sent to the 'errs' channel.
-// ProcessMessages should be called as a gorouting. Example:
+// ProcessMessages should be called as a goroutine. Example:
 //     go mq.ProcessMessages(msgs, handler, nil, errs)
 func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 	msgsd, ok := msgs.(*Messages)

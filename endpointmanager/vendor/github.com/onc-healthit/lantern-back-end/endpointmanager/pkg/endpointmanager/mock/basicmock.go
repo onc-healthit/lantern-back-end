@@ -136,5 +136,33 @@ func newBasicMockStore() *BasicMockStore {
 		return nil, sql.ErrNoRows
 	}
 
+	store.UpdateFHIREndpointFn = func(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			// ok
+		}
+
+		var existingFhirEndpt *endpointmanager.FHIREndpoint
+		var i int
+		replace := false
+		for i, existingFhirEndpt = range store.FhirEndpointData {
+			if existingFhirEndpt.ID == e.ID {
+				replace = true
+				break
+			}
+		}
+		if replace {
+			// replacing with copy
+			updatedFhirEndpt := *e
+			store.FhirEndpointData[i] = &updatedFhirEndpt
+		} else {
+			return errors.New("No existing entry exists")
+		}
+
+		return nil
+	}
+
 	return &store
 }

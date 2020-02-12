@@ -10,6 +10,8 @@ func SetupConfig() error {
 	viper.SetEnvPrefix("lantern")
 	viper.AutomaticEnv()
 
+	// Database setup
+
 	err = viper.BindEnv("dbhost")
 	if err != nil {
 		return err
@@ -39,12 +41,41 @@ func SetupConfig() error {
 		return err
 	}
 
+	// Capability Queue Setup
+
+	err = viper.BindEnv("quser")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("qpassword")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("qhost")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("qport")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("capquery_qname")
+	if err != nil {
+		return err
+	}
+
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
 	viper.SetDefault("dbuser", "lantern")
 	viper.SetDefault("dbpassword", "postgrespassword")
 	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
+
+	viper.SetDefault("quser", "capabilityquerier")
+	viper.SetDefault("qpassword", "capabilityquerier")
+	viper.SetDefault("qhost", "localhost")
+	viper.SetDefault("qport", "5672")
+	viper.SetDefault("capquery_qname", "capability-statements")
 
 	return nil
 }
