@@ -327,6 +327,39 @@ func Test_publisherMatch(t *testing.T) {
 	th.Assert(t, len(vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", vendor))
 }
 
+func Test_matchName(t *testing.T) {
+	var expected string
+	var actual string
+	var dev string
+
+	devList := []string{
+		"Epic Systems Corporation",
+		"Cerner Group", // changed for sake of test
+		"Cerner Health Services, Inc.",
+		"Medical Information Technology, Inc. (MEDITECH)",
+		"Allscripts",
+	}
+	devListNorm := normalizeList(devList)
+
+	// allscripts
+	expected = "Allscripts"
+	dev = normalizeName("Allscripts")
+	actual = matchName(dev, devListNorm, devList)
+	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s. Got %s.", expected, actual))
+
+	// meditech
+	expected = "Medical Information Technology, Inc. (MEDITECH)"
+	dev = normalizeName("Medical Information Technology, Inc")
+	actual = matchName(dev, devListNorm, devList)
+	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s. Got %s.", expected, actual))
+
+	// cerner
+	expected = "Cerner Group\tCerner Health Services, Inc."
+	dev = normalizeName("Cerner")
+	actual = matchName(dev, devListNorm, devList)
+	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s. Got %s.", expected, actual))
+}
+
 func Test_hackMatch(t *testing.T) {
 	var path string
 	var err error
