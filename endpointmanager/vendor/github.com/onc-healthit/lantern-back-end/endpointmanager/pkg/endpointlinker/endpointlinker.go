@@ -1,13 +1,16 @@
 package endpointlinker
 
 import (
+	"context"
 	"strings"
 	"log"
 	"regexp"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
 func NormalizeOrgName(orgName string) string{
 	// Regex for only letters
+	orgName = strings.ReplaceAll(orgName, "-", " ")
 	reg, err := regexp.Compile(`[^a-zA-Z0-9\s]+`)
 	if err != nil {
 		log.Fatal(err)
@@ -47,4 +50,43 @@ func CalculateJaccardIndex(string1 string, string2 string) float64 {
 		denom = 1
 	}
 	return float64(intersectionCount)/denom
+}
+
+func verbosePrint(message string, verbose bool) {
+	if verbose == true {
+		println(message)
+	}
+}
+
+func GetIdsOfMatchingNPIOrgs(store *postgresql.Store, ctx context.Context, normalizedEndpointName string, verbose bool ) ([]int, error){
+	JACARD_THRESHOLD := .75
+
+	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
+	if err != nil {
+		return nil, err
+	}
+	matches := []int{}
+	verbosePrint(normalizedEndpointName + " Matched To:", verbose)
+	for _, npiOrg := range npiOrgNames {
+		consideredMatch := false
+		jacard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
+		jacard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		if (jacard1 == 1){
+			consideredMatch = true
+			matches = append(matches, npiOrg.ID)
+		}else if (jacard1 >= JACARD_THRESHOLD) {
+			consideredMatch = true
+			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedName, verbose)
+		}
+		if (jacard2 == 1){
+			consideredMatch = true
+		}else if (jacard2 >= JACARD_THRESHOLD) {
+			consideredMatch = true
+			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedSecondaryName, verbose)
+		}
+		if consideredMatch == true {
+			matches = append(matches, npiOrg.ID)
+		}
+	}
+	return matches, nil
 }

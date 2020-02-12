@@ -1,7 +1,9 @@
 package main
 
 import (
+	"strconv"
 	"context"
+	"os"
 	"log"
 	"github.com/spf13/viper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -15,8 +17,17 @@ func failOnError(errString string, err error) {
 	}
 }
 
+func verbosePrint(message string, verbose bool) {
+	if verbose == true {
+		println(message)
+	}
+}
+
 func main() {
-	JACARD_THRESHOLD := .9
+	var verbose = false
+	if len(os.Args) > 1 && os.Args[1] == "--verbose" {
+		verbose = true
+	}
 
 	err := config.SetupConfig()
 	failOnError("Error setting up confit", err)
@@ -31,17 +42,28 @@ func main() {
 	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
 	failOnError("Error getting npi org names", err)
 
+	matchCount := 0
+	unmatchable := []string{}
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := endpointlinker.NormalizeOrgName(endpoint.OrganizationName)
-		for _, npiOrg := range npiOrgNames {
-			jacard1 := endpointlinker.CalculateJacardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-			jacard2 := endpointlinker.CalculateJacardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-			if (jacard1 >= JACARD_THRESHOLD) {
-				println("asdf")
-			}
+		
+		matches := []int{}
+		matches, err = endpointlinker.GetIdsOfMatchingNPIOrgs(store, ctx, normalizedEndpointName, verbose)
+		if (len(matches) > 0){
+			matchCount += 1
+			// Iterate over matches and add to linking table
+		}else{
+			unmatchable = append(unmatchable, endpoint.OrganizationName )
 		}
+
 	}
 
+	verbosePrint("Match Total: " + strconv.Itoa(matchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
+
+	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
+	for _, name := range unmatchable {
+		verbosePrint(name, verbose)
+	}
 
 }

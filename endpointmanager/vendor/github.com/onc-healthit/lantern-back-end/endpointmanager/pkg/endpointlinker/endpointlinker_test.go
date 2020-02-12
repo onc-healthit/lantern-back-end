@@ -6,22 +6,22 @@ import (
 )
 
 func Test_NormalizeOrgName(t *testing.T) {
-	orgName := "AMBULANCE & chair. SERVICE!"
-	expected := "AMBULANCE  CHAIR SERVICE"
-	normalized := normalizeOrgName(orgName)
+	orgName := "AMBULANCE & and-chair. SERVICE!"
+	expected := "AMBULANCE  AND CHAIR SERVICE"
+	normalized := NormalizeOrgName(orgName)
 	if normalized != expected {
 		t.Errorf("Organization name normalization failed. Expected: "+ expected + " Got: " + normalized)
 	}
 }
 
 func Test_CalculateJaccardIndex(t *testing.T) {
-	jacardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
+	jacardIndex := CalculateJaccardIndex("FOO BAR", "FOO BAR")
 	if jacardIndex != 1 {
 		ind := strconv.FormatFloat(jacardIndex, 'f', -1, 64)
 		t.Errorf("Jacard index expected to be 1, was " + ind)
 	}
 
-	jacardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	jacardIndex = CalculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
 	if jacardIndex != .6666666666666666 {
 		ind := strconv.FormatFloat(jacardIndex, 'f', -1, 64)
 		t.Errorf("Jacard index expected to be 1, was " + ind)

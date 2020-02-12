@@ -57,6 +57,12 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE endpoint_organization (
+    endpoint_id INT REFERENCES fhir_enpoints,
+    organization_id INT REFERENCES npi_organizations,
+    PRIMARY KEY (endpoint_id, organization_id)
+)
+
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
 FOR EACH ROW

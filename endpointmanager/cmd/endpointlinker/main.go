@@ -3,6 +3,7 @@ package main
 import (
 	"strconv"
 	"context"
+	"os"
 	"log"
 	"github.com/spf13/viper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -16,8 +17,17 @@ func failOnError(errString string, err error) {
 	}
 }
 
+func verbosePrint(message string, verbose bool) {
+	if verbose == true {
+		println(message)
+	}
+}
+
 func main() {
-	JACARD_THRESHOLD := .75
+	var verbose = false
+	if len(os.Args) > 1 && os.Args[1] == "--verbose" {
+		verbose = true
+	}
 
 	err := config.SetupConfig()
 	failOnError("Error setting up confit", err)
@@ -32,55 +42,28 @@ func main() {
 	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
 	failOnError("Error getting npi org names", err)
 
-	exactMatchCount := 0
-	nonExactMatchCount := 0
+	matchCount := 0
 	unmatchable := []string{}
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := endpointlinker.NormalizeOrgName(endpoint.OrganizationName)
-		exactPrimaryNameMatches := 0
-		exactSecondaryNameMatches := 0
-		nonExactPrimaryNameMatches := 0
-		nonExactSecondaryNameMatches := 0
-		println(normalizedEndpointName + " Matched To:")
-		for _, npiOrg := range npiOrgNames {
-			jacard1 := endpointlinker.CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-			jacard2 := endpointlinker.CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-			if (jacard1 == 1){
-				exactPrimaryNameMatches += 1
-			}else if (jacard1 >= JACARD_THRESHOLD) {
-				nonExactPrimaryNameMatches += 1
-				println(normalizedEndpointName + "=>" + npiOrg.NormalizedName )
-			}
-			if (jacard2 == 1){
-				exactSecondaryNameMatches += 1
-			}else if (jacard2 >= JACARD_THRESHOLD) {
-				nonExactSecondaryNameMatches += 1
-				println(normalizedEndpointName + "=>" + npiOrg.NormalizedSecondaryName)
-			}
-		}
-		if (exactPrimaryNameMatches > 0 || exactSecondaryNameMatches > 0 ){
-			exactMatchCount += 1
-		} else if (nonExactPrimaryNameMatches > 0 || nonExactSecondaryNameMatches > 0 ){
-			nonExactMatchCount += 1
+		
+		matches := []int{}
+		matches, err = endpointlinker.GetIdsOfMatchingNPIOrgs(store, ctx, normalizedEndpointName, verbose)
+		if (len(matches) > 0){
+			matchCount += 1
+			// Iterate over matches and add to linking table
 		}else{
 			unmatchable = append(unmatchable, endpoint.OrganizationName )
 		}
-		println("NPI Orgs With Exact Primary Name: " + strconv.Itoa(exactPrimaryNameMatches))
-		println("NPI Orgs With Non-Exact Primary Name: " + strconv.Itoa(nonExactPrimaryNameMatches))
-		println("NPI Orgs With Exact Secondary Name: " + strconv.Itoa(exactSecondaryNameMatches))
-		println("NPI Orgs With Non-Exact Secondary Name: " + strconv.Itoa(nonExactSecondaryNameMatches))
-		println("===============================================")
 
 	}
 
-	println("Able To Find Exact Matches For: " + strconv.Itoa(exactMatchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)))
-	println("Only Non-Exact Matches For: " + strconv.Itoa(nonExactMatchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)))
-	println("Match Total: " + strconv.Itoa(nonExactMatchCount + exactMatchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)))
+	verbosePrint("Match Total: " + strconv.Itoa(matchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
 
-	println("UNMATCHABLE ENDPOINT ORG NAMES")
+	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
 	for _, name := range unmatchable {
-		println(name)
+		verbosePrint(name, verbose)
 	}
 
 }
