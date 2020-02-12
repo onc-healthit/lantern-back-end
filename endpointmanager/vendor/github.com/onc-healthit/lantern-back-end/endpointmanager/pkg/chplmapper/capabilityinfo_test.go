@@ -249,15 +249,9 @@ func Test_publisherMatch(t *testing.T) {
 	store, err := getMockStore()
 	th.Assert(t, err == nil, err)
 
-	var vendorsNorm []string
-
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	th.Assert(t, err == nil, err)
-
-	for _, vendorRaw := range vendorsRaw {
-		vendorNorm := normalizeName(vendorRaw)
-		vendorsNorm = append(vendorsNorm, vendorNorm)
-	}
+	vendorsNorm := normalizeList(vendorsRaw)
 
 	// cerner
 	expected = "Cerner Corporation"
@@ -345,16 +339,10 @@ func Test_hackMatch(t *testing.T) {
 	store, err := getMockStore()
 	th.Assert(t, err == nil, err)
 
-	var vendorsNorm []string
-
 	ctx := context.Background()
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	th.Assert(t, err == nil, err)
-
-	for _, vendorRaw := range vendorsRaw {
-		vendorNorm := normalizeName(vendorRaw)
-		vendorsNorm = append(vendorsNorm, vendorNorm)
-	}
+	vendorsNorm := normalizeList(vendorsRaw)
 
 	// basic test
 
@@ -385,16 +373,10 @@ func Test_hackMatchEpic(t *testing.T) {
 	store, err := getMockStore()
 	th.Assert(t, err == nil, err)
 
-	var vendorsNorm []string
-
 	ctx := context.Background()
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	th.Assert(t, err == nil, err)
-
-	for _, vendorRaw := range vendorsRaw {
-		vendorNorm := normalizeName(vendorRaw)
-		vendorsNorm = append(vendorsNorm, vendorNorm)
-	}
+	vendorsNorm := normalizeList(vendorsRaw)
 
 	// epic
 	expected = "Epic Systems Corporation"

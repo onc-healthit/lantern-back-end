@@ -326,7 +326,7 @@ func getBadFormatCapStat(cs CapabilityStatement, field string) (CapabilityStatem
 		return nil, err
 	}
 
-	csInt[field] = []int{1, 2, 3} // bad format for publisher
+	csInt[field] = []int{1, 2, 3} // bad format for given field
 	csJSON, err = json.Marshal(csInt)
 	if err != nil {
 		return nil, err
@@ -354,7 +354,7 @@ func getNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field2 str
 		return nil, errors.New("unable to cast to a map[string]interface{}")
 	}
 
-	innerFieldMap[field2] = []int{1, 2, 3} // bad format for publisher
+	innerFieldMap[field2] = []int{1, 2, 3} // bad format for given field
 	csJSON, err = json.Marshal(csInt)
 	if err != nil {
 		return nil, err

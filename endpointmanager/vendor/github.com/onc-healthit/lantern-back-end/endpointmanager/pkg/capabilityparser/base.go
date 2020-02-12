@@ -13,6 +13,7 @@ type baseParser struct {
 	version string
 }
 
+// GetPublisher returns the publisher field from the conformance/capability statement.
 func (cp *baseParser) GetPublisher() (string, error) {
 	publisher := cp.capStat["publisher"]
 	if publisher == nil {
@@ -25,6 +26,7 @@ func (cp *baseParser) GetPublisher() (string, error) {
 	return publisherStr, nil
 }
 
+// GetFHIRVersion returns the FHIR version specifiedin the conformance/capability statement.
 func (cp *baseParser) GetFHIRVersion() (string, error) {
 	fhirVersion := cp.capStat["fhirVersion"]
 	if fhirVersion == nil {
@@ -37,6 +39,7 @@ func (cp *baseParser) GetFHIRVersion() (string, error) {
 	return fhirVersionStr, nil
 }
 
+// GetSoftwareName returns the software name specified in the conformance/capability statement.
 func (cp *baseParser) GetSoftwareName() (string, error) {
 	software := cp.capStat["software"]
 	if software == nil {
@@ -57,6 +60,7 @@ func (cp *baseParser) GetSoftwareName() (string, error) {
 	return nameStr, nil
 }
 
+// GetSoftwareVersion returns the software version specified in the conformance/capability statement.
 func (cp *baseParser) GetSoftwareVersion() (string, error) {
 	software := cp.capStat["software"]
 	if software == nil {
@@ -77,6 +81,7 @@ func (cp *baseParser) GetSoftwareVersion() (string, error) {
 	return versionStr, nil
 }
 
+// GetCopyright returns the copyright specified in the capability/conformance statement.
 func (cp *baseParser) GetCopyright() (string, error) {
 	copyright := cp.capStat["copyright"]
 	if copyright == nil {
@@ -89,7 +94,7 @@ func (cp *baseParser) GetCopyright() (string, error) {
 	return copyrightStr, nil
 }
 
-// Equal checks if the CapabilityStatement is equal to the given CapabilityStatement
+// Equal checks if the conformance/capability statement is equal to the given conformance/capability statement.
 func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
 	if cs2 == nil {
 		return false

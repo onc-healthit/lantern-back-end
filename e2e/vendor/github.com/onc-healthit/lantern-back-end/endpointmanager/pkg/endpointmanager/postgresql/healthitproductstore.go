@@ -125,6 +125,97 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	return &hitp, err
 }
 
+// GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given developer
+func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer string) ([]*endpointmanager.HealthITProduct, error) {
+	var hitps []*endpointmanager.HealthITProduct
+	var hitp endpointmanager.HealthITProduct
+	var locationJSON []byte
+	var certificationCriteriaJSON []byte
+
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		version,
+		developer,
+		location,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_criteria,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id,
+		created_at,
+		updated_at
+	FROM healthit_products WHERE developer=$1`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement, developer)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&hitp.ID,
+			&hitp.Name,
+			&hitp.Version,
+			&hitp.Developer,
+			&locationJSON,
+			&hitp.AuthorizationStandard,
+			&hitp.APISyntax,
+			&hitp.APIURL,
+			&certificationCriteriaJSON,
+			&hitp.CertificationStatus,
+			&hitp.CertificationDate,
+			&hitp.CertificationEdition,
+			&hitp.LastModifiedInCHPL,
+			&hitp.CHPLID,
+			&hitp.CreatedAt,
+			&hitp.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(locationJSON, &hitp.Location)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
+		if err != nil {
+			return nil, err
+		}
+
+		hitps = append(hitps, &hitp)
+	}
+
+	return hitps, nil
+}
+
+// GetHealthITProductDevelopers returns a list of all of the developers associated with the health IT products.
+func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, error) {
+	var developers []string
+	var developer string
+	sqlStatement := "SELECT DISTINCT developer FROM healthit_products"
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&developer)
+		if err != nil {
+			return nil, err
+		}
+		developers = append(developers, developer)
+	}
+
+	return developers, nil
+}
+
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	sqlStatement := `

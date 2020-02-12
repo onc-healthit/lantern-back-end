@@ -19,7 +19,7 @@ var fluffWords = []string{
 	"lmt",
 	"lmt.",
 	"limited",
-	"corporation",
+	"corporation.",
 }
 
 // MatchEndpointToVendorAndProduct creates the database association between the endpoint and the vendor,
@@ -52,18 +52,12 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 	return false, nil
 }
 
-// TODO: should this throw an error if there's no publisher in the capability statement?
 func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store endpointmanager.HealthITProductStore) (string, error) {
-	var vendorsNorm []string
-
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	if err != nil {
 		return "", errors.Wrap(err, "error retrieving vendor list from database")
 	}
-	for _, vendorRaw := range vendorsRaw {
-		vendorNorm := normalizeName(vendorRaw)
-		vendorsNorm = append(vendorsNorm, vendorNorm)
-	}
+	vendorsNorm := normalizeList(vendorsRaw)
 
 	match, err := publisherMatch(capStat, vendorsNorm, vendorsRaw)
 	if err != nil {
@@ -93,21 +87,18 @@ func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []
 }
 
 func matchName(name string, vendorsNorm []string, vendorsRaw []string) string {
-	// exact match
-	for i, vendor := range vendorsNorm {
-		if name == vendor {
-			return vendorsRaw[i]
-		}
-	}
-
 	// substring match
 	var matches []int
 	for i, vendor := range vendorsNorm {
+		// prioritize exact match, so return if we have an exact match
+		if name == vendor {
+			return vendorsRaw[i]
+		}
+
+		// collect substring matches
 		if strings.Contains(vendor, name) {
 			matches = append(matches, i)
 		}
-	}
-	for i, vendor := range vendorsNorm {
 		if strings.Contains(name, vendor) {
 			matches = append(matches, i)
 		}
@@ -120,6 +111,17 @@ func matchName(name string, vendorsNorm []string, vendorsRaw []string) string {
 	// TODO
 
 	return ""
+}
+
+func normalizeList(names []string) []string {
+	var namesNorm []string
+
+	for _, name := range names {
+		nameNorm := normalizeName(name)
+		namesNorm = append(namesNorm, nameNorm)
+	}
+
+	return namesNorm
 }
 
 func normalizeName(name string) string {
