@@ -3,10 +3,15 @@ package capabilityparser
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 
 	"github.com/pkg/errors"
 )
+
+// from https://www.hl7.org/fhir/codesystem-FHIR-version.html
+// looking at official and release versions only
+var dstu2 = []string{"1.0.1", "1.0.2"}
+var stu3 = []string{"3.0.0", "3.0.1"}
+var r4 = []string{"4.0.0", "4.0.1"}
 
 // CapabilityStatement provides access to key fields of the capability statement. It wraps the capability statements
 // so users don't need to worry about the capability statement version.
@@ -42,21 +47,27 @@ func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
 	}
 
 	// DSTU2, STU3, R4 all have fhirVersion in same location
-	fhirVersion := capStat["fhirVersion"].(string)
+	fhirVersion, ok := capStat["fhirVersion"].(string)
+	if !ok {
+		return nil, errors.New("unable to parse fhir version from capability/conformance statement")
+	}
 
-	// DSTU2 always 1.0.2
-	// STU3 can be 3.x.x
-	// R4 can be 4.x.x
-	stu3Regex := regexp.MustCompile(`^3\.[0-9]+\.[0-9]+$`)
-	r4Regex := regexp.MustCompile(`^4\.[0-9]+\.[0-9]+$`)
-
-	if fhirVersion == "1.0.2" {
+	if contains(dstu2, fhirVersion) {
 		return newDSTU2(capStat), nil
-	} else if stu3Regex.MatchString(fhirVersion) {
+	} else if contains(stu3, fhirVersion) {
 		return newSTU3(capStat), nil
-	} else if r4Regex.MatchString(fhirVersion) {
+	} else if contains(r4, fhirVersion) {
 		return newR4(capStat), nil
 	}
 
 	return nil, fmt.Errorf("unknown FHIR version %s", fhirVersion)
+}
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }
