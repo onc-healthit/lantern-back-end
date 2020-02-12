@@ -143,11 +143,11 @@
 			"revisionTime": "2020-02-12T15:38:51Z"
 		},
 		{
-			"checksumSHA1": "WjKdiAqmmLBw2FYHH030WhXVmIA=",
+			"checksumSHA1": "9dAPJCb38gRXKyhMiqM+K3X2V4Y=",
 			"origin": "github.com/onc-healthit/lantern-back-end/endpointmanager/vendor/github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser",
 			"path": "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser",
-			"revision": "fa28e2fc93ecbd487176c9fac8ab4609717c2444",
-			"revisionTime": "2020-02-12T15:38:51Z"
+			"revision": "fa9d8671817b9204c493ff0a624efba28872267b",
+			"revisionTime": "2020-02-12T16:33:02Z"
 		},
 		{
 			"checksumSHA1": "RxeB7CDcIvrG6qLiUFBDIrTiASw=",
