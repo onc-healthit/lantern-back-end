@@ -133,7 +133,7 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 
 func getTLSVersion(resp *http.Response) string {
 	switch resp.TLS.Version {
-	case tls.VersionSSL30:
+	case tls.VersionSSL30: //nolint
 		return ssl30
 	case tls.VersionTLS10:
 		return tls10

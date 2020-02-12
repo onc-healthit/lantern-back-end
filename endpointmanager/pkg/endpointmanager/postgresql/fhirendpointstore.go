@@ -18,6 +18,9 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	SELECT
 		id,
 		url,
+		tls_version,
+		mime_type,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
@@ -31,6 +34,9 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.TLSVersion,
+		&endpoint.MimeType,
+		&endpoint.Errors,
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
@@ -62,6 +68,9 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	SELECT
 		id,
 		url,
+		tls_version,
+		mime_type,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
@@ -76,6 +85,9 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.TLSVersion,
+		&endpoint.MimeType,
+		&endpoint.Errors,
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
@@ -100,12 +112,15 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
+		tls_version,
+		mime_type,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
 		location,
 		capability_statement)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -120,6 +135,9 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 	row := s.DB.QueryRowContext(ctx,
 		sqlStatement,
 		e.URL,
+		e.TLSVersion,
+		e.MimeType,
+		e.Errors,
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
@@ -136,12 +154,15 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
-		organization_name = $2,
-		fhir_version = $3,
-		authorization_standard = $4,
-		location = $5,
-		capability_statement = $6
-	WHERE id = $7`
+		tls_version = $2,
+		mime_type = $3,
+		errors = $4,
+		organization_name = $5,
+		fhir_version = $6,
+		authorization_standard = $7,
+		location = $8,
+		capability_statement = $9
+	WHERE id = $10`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -155,6 +176,9 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		e.URL,
+		e.TLSVersion,
+		e.MimeType,
+		e.Errors,
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
