@@ -59,6 +59,12 @@ func Test_formatToFHIREndpt(t *testing.T) {
 	fhirEndpt, err := formatToFHIREndpt(&endpt)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not get parsed into a FHIREndpoint as expected")
+
+	// test that a trailing '/' is added to the URL
+	endpt.FHIRPatientFacingURI = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2"
+	fhirEndpt, err = formatToFHIREndpt(&endpt)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not get parsed into a FHIREndpoint as expected")
 }
 
 func Test_saveEndpointData(t *testing.T) {
@@ -93,7 +99,7 @@ func Test_saveEndpointData(t *testing.T) {
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
-	endpt.FHIRPatientFacingURI = "http://a-new-url.com/metadata"
+	endpt.FHIRPatientFacingURI = "http://a-new-url.com/metadata/"
 	addFn := store.(*mock.BasicMockStore).AddFHIREndpointFn
 	store.(*mock.BasicMockStore).AddFHIREndpointFn = func(_ context.Context, _ *endpointmanager.FHIREndpoint) error {
 		return errors.New("add fhir endpoint test error")
@@ -109,7 +115,7 @@ func Test_AddEndpointData(t *testing.T) {
 
 	endpt1 := testEndpointEntry
 	endpt2 := testEndpointEntry
-	endpt2.FHIRPatientFacingURI = "http://a-new-url.com/metadata"
+	endpt2.FHIRPatientFacingURI = "http://a-new-url.com/metadata/"
 	listEndpoints := fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
 	expectedEndptsStored := 2
 

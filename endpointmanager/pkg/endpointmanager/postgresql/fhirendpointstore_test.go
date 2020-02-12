@@ -33,7 +33,10 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2",
+		URL:                   "example.com/FHIR/DSTU2/",
+		TLSVersion:            "TLS 1.1",
+		MimeType:              "application/json+fhir",
+		Errors:                "Example Error",
 		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
@@ -46,7 +49,10 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 			ZipCode:  "00000"},
 		CapabilityStatement: cs}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:                   "other.example.com/FHIR/DSTU2",
+		URL:                   "other.example.com/FHIR/DSTU2/",
+		TLSVersion:            "TLS 1.2",
+		MimeType:              "application/fhir+json",
+		Errors:                "Example Error 2",
 		OrganizationName:      "Other Example Inc.",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "R4 2.0"}
@@ -65,19 +71,19 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// retrieve endpoints
 
-	e1, err := store.GetFHIREndpoint(ctx, endpoint1.ID)
-	if err != nil {
-		t.Errorf("Error getting fhir endpoint: %s", err.Error())
+	e1, err1 := store.GetFHIREndpointUsingURL(ctx, endpoint1.URL)
+	if err1 != nil {
+		t.Errorf("Error getting fhir endpoint: %s", err1.Error())
 	}
 	if !e1.Equal(endpoint1) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
-	e2, err := store.GetFHIREndpointUsingURL(ctx, endpoint2.URL)
-	if err != nil {
-		t.Errorf("Error getting fhir endpoint: %s", err.Error())
+	eID1, err2 := store.GetFHIREndpoint(ctx, e1.ID)
+	if err2 != nil {
+		t.Errorf("Error getting fhir endpoint: %s", err2.Error())
 	}
-	if !e2.Equal(endpoint2) {
+	if !eID1.Equal(endpoint1) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 

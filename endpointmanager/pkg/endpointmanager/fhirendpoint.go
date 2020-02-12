@@ -15,6 +15,9 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
+	TLSVersion            string
+	MimeType              string
+	Errors                string
 	OrganizationName      string
 	FHIRVersion           string
 	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
@@ -49,6 +52,18 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	}
 
 	if e.URL != e2.URL {
+		return false
+	}
+	if e.TLSVersion != e2.TLSVersion {
+		return false
+	}
+	if e.MimeType != e2.MimeType {
+		return false
+	}
+	if e.Errors != e2.Errors {
+		return false
+	}
+	if e.OrganizationName != e2.OrganizationName {
 		return false
 	}
 	if e.FHIRVersion != e2.FHIRVersion {
