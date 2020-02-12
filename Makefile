@@ -30,6 +30,10 @@ clean_remote:
 	docker-compose -f docker-compose.yml down --rmi all -v
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
+populatedb:
+	exec ./scripts/populatedb.sh
+
+
 test:
 	go test -covermode=atomic -race -count=1 -p 1 ./...
 
