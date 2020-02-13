@@ -87,6 +87,10 @@ func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []
 }
 
 func matchName(name string, vendorsNorm []string, vendorsRaw []string) string {
+	if name == "" {
+		return ""
+	}
+
 	// substring match
 	var matches []int
 	for i, vendor := range vendorsNorm {

@@ -50,6 +50,7 @@ func GetAndSendCapabilityStatement(
 		URL: fhirURL.String(),
 	}
 
+	//TODO should requestCapabilityStatement just return CapabilityStatement using NewCapabilityStatement so we don't have to do the unmarshalling online 58 to see if it is a valid CapabilityStatemnt?
 	capResp, mimeType, tlsVersion, err := requestCapabilityStatement(ctx, fhirURL, client)
 	if err == nil {
 		message.MimeType = mimeType

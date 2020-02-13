@@ -10,6 +10,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,12 +48,22 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		originalURL = url
 	}
 
+	capJson, err := json.Marshal(msgJSON["capabilityStatement"].(string))
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal CapabilityStatement JSON")
+	}
+
+	capStat, err := capabilityparser.NewCapabilityStatement(capJson)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse CapabailtyStatement out of message"+err.Error())
+	}
+
 	fhirEndpoint := endpointmanager.FHIREndpoint{
 		URL:                 originalURL,
 		TLSVersion:          tlsVersion,
 		MimeType:            mimeType,
 		Errors:              errs,
-		CapabilityStatement: msgJSON["capabilityStatement"],
+		CapabilityStatement: capStat,
 	}
 
 	return &fhirEndpoint, nil
