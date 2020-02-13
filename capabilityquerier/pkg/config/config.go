@@ -38,6 +38,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("endptlist")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
@@ -46,6 +50,7 @@ func SetupConfig() error {
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("capquery_numworkers", 10)
 	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
+	viper.SetDefault("endptlist", "/etc/lantern/EndpointSources.json")
 
 	return nil
 }

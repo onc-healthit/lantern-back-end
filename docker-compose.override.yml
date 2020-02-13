@@ -21,3 +21,10 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+  capability_querier:
+    volumes:
+      - ./certs/:/etc/ssl/certs
+    environment:
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+      - LANTERN_TEST_CAPQUERY_QNAME=${LANTERN_TEST_CAPQUERY_QNAME}
