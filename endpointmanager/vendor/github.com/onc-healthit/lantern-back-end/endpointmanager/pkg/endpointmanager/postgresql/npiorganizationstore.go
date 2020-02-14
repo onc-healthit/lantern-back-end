@@ -216,7 +216,7 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 // GetAllNormalizedOrgNames gets list of all primary and secondary names
 func (s *Store) GetAllNormalizedOrgNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error)  {
 	sqlStatement := `
-	SELECT npi_id, normalized_name, normalized_secondary_name FROM npi_organizations`
+	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
@@ -225,7 +225,7 @@ func (s *Store) GetAllNormalizedOrgNames(ctx context.Context) ([]endpointmanager
 	defer rows.Close()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
-		err = rows.Scan(&org.NPI_ID, &org.NormalizedName, &org.NormalizedSecondaryName)
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
 		if err != nil {
 		  // handle this error
 		  panic(err)
@@ -233,4 +233,18 @@ func (s *Store) GetAllNormalizedOrgNames(ctx context.Context) ([]endpointmanager
 		orgs = append(orgs,org)
 	}
 	return orgs, nil
+}
+
+// GetAllNormalizedOrgNames gets list of all primary and secondary names
+func (s *Store) LinkOrganizationToEndpoint(ctx context.Context, orgId int, endpointId int){
+	sqlStatement := `
+	INSERT INTO endpoint_organization (
+		organization_id,
+		endpoint_id)
+	VALUES ($1, $2)`
+
+	s.DB.QueryRowContext(ctx,
+		sqlStatement,
+		orgId,
+		endpointId,)
 }

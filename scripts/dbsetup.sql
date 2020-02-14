@@ -58,10 +58,10 @@ CREATE TABLE healthit_products (
 );
 
 CREATE TABLE endpoint_organization (
-    endpoint_id INT REFERENCES fhir_enpoints,
-    organization_id INT REFERENCES npi_organizations,
-    PRIMARY KEY (endpoint_id, organization_id)
-)
+    endpoint_id INT REFERENCES fhir_endpoints (id),
+    organization_id INT REFERENCES npi_organizations (id),
+    CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
+);
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints

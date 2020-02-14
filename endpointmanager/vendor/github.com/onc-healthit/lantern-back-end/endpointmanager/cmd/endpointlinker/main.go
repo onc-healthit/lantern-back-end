@@ -39,9 +39,6 @@ func main() {
 	fhirEndpointOrgNames, err := store.GetAllOrgNames(ctx)
 	failOnError("Error getting endpoint org names", err)
 
-	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
-	failOnError("Error getting npi org names", err)
-
 	matchCount := 0
 	unmatchable := []string{}
 	// Iterate through fhir endpoints
@@ -53,6 +50,10 @@ func main() {
 		if (len(matches) > 0){
 			matchCount += 1
 			// Iterate over matches and add to linking table
+			for _, match := range matches {
+				println("Attempting to match " + strconv.Itoa(match) + " to "+ strconv.Itoa(endpoint.ID))
+				store.LinkOrganizationToEndpoint(ctx, match, endpoint.ID)
+			}
 		}else{
 			unmatchable = append(unmatchable, endpoint.OrganizationName )
 		}

@@ -26,6 +26,7 @@ type NPIOrganizationStore interface {
 	GetNPIOrganization(context.Context, int) (*NPIOrganization, error)
 	GetNPIOrganizationByNPIID(context.Context, string) (*NPIOrganization, error)
 	GetAllNormalizedOrgNames(ctx context.Context) ([]NPIOrganization, error)
+	LinkOrganizationToEndpoint(context.Context, int, int)
 	DeleteAllNPIOrganizations(context.Context) error
 	AddNPIOrganization(context.Context, *NPIOrganization) error
 	UpdateNPIOrganization(context.Context, *NPIOrganization) error
