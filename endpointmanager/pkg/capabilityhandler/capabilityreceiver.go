@@ -101,7 +101,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
-		chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, hitpStore)
+		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, hitpStore)
+		if err != nil {
+			return err
+		}
 		err = epStore.AddFHIREndpoint(ctx, fhirEndpoint)
 		if err != nil {
 			return err
@@ -120,7 +123,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.MimeType = fhirEndpoint.MimeType
 		}
 		existingEndpt.Errors = fhirEndpoint.Errors
-		chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
+		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
+		if err != nil {
+			return err
+		}
 		err = epStore.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err

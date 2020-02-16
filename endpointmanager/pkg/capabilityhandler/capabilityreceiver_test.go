@@ -49,6 +49,7 @@ func setup(t *testing.T) {
 	testFhirEndpoint.CapabilityStatement = cs
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
+	th.Assert(t, err == nil, err)
 	testQueueMsg["capabilityStatement"] = capStat
 }
 
