@@ -8,9 +8,10 @@ import (
 	"path"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	"github.com/pkg/errors"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -48,14 +49,14 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		originalURL = url
 	}
 
-	capJson, err := json.Marshal(msgJSON["capabilityStatement"].(string))
+	capByte, err := json.Marshal(msgJSON["capabilityStatement"])
 	if err != nil {
-		return nil, fmt.Errorf("unable to marshal CapabilityStatement JSON")
+		return nil, errors.Wrap(err, "unable to marshal CapabilityStatement to byte array")
 	}
 
-	capStat, err := capabilityparser.NewCapabilityStatement(capJson)
+	capStat, err := capabilityparser.NewCapabilityStatement(capByte)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse CapabailtyStatement out of message"+err.Error())
+		return nil, errors.Wrap(err, "unable to parse CapabilityStatement out of message")
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpoint{
