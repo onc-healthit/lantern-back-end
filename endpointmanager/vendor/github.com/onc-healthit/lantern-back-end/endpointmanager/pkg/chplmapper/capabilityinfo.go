@@ -30,26 +30,19 @@ var fluffWords = []string{
 // An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
 // In this future, this may be changed to using a vendor table and linking the endpoint entry to
 // the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, epStore endpointmanager.FHIREndpointStore, store endpointmanager.HealthITProductStore) (bool, error) {
+func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, store endpointmanager.HealthITProductStore) error {
 	if ep.CapabilityStatement == nil {
-		return false, nil
+		return nil
 	}
 
 	vendor, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
 	if err != nil {
-		return false, errors.Wrapf(err, "error matching the capability statement to a vendor for endpoint %s", ep.URL)
+		return errors.Wrapf(err, "error matching the capability statement to a vendor for endpoint %s", ep.URL)
 	}
 
-	if len(vendor) > 0 {
-		ep.Vendor = vendor
-		err = epStore.UpdateFHIREndpoint(ctx, ep)
-		if err != nil {
-			return false, errors.Wrapf(err, "error updating vendor for endpoint %s", ep.URL)
-		}
-		return true, nil
-	}
+	ep.Vendor = vendor
 
-	return false, nil
+	return nil
 }
 
 func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store endpointmanager.HealthITProductStore) (string, error) {

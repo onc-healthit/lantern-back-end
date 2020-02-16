@@ -16,10 +16,7 @@ import (
 
 func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	ctx := context.Background()
-	epStore, err := getMockStoreEP()
-	th.Assert(t, err == nil, err)
-	hitpStore, err := getMockStore()
-	th.Assert(t, err == nil, err)
+	hitpStore := mock.NewBasicMockHealthITProductStore()
 
 	// basic test
 
@@ -44,9 +41,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 			ZipCode:  "00000"},
 		CapabilityStatement: cs}
 
-	matched, err := MatchEndpointToVendorAndProduct(ctx, ep, epStore, hitpStore)
+	err = MatchEndpointToVendorAndProduct(ctx, ep, hitpStore)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, matched, "expected endpoint to be successfully matched")
 	th.Assert(t, ep.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", ep.Vendor))
 
 	// test no match
@@ -72,9 +68,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 			ZipCode:  "00000"},
 		CapabilityStatement: cs}
 
-	matched, err = MatchEndpointToVendorAndProduct(ctx, ep, epStore, hitpStore)
+	err = MatchEndpointToVendorAndProduct(ctx, ep, hitpStore)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, !matched, "expected no match")
 	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 
 	// test no capability statement
@@ -92,9 +87,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 	}
-	matched, err = MatchEndpointToVendorAndProduct(ctx, ep, epStore, hitpStore)
+	err = MatchEndpointToVendorAndProduct(ctx, ep, hitpStore)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, !matched, "expected no match")
 	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 
 	// test error getting match
@@ -125,9 +119,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 			ZipCode:  "00000"},
 		CapabilityStatement: cs}
 
-	matched, err = MatchEndpointToVendorAndProduct(ctx, ep, epStore, hitpStore)
+	err = MatchEndpointToVendorAndProduct(ctx, ep, hitpStore)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
-	th.Assert(t, !matched, "expected no match")
 	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 }
 
@@ -141,8 +134,7 @@ func Test_getVendorMatch(t *testing.T) {
 	var vendor string
 
 	ctx := context.Background()
-	store, err := getMockStore()
-	th.Assert(t, err == nil, err)
+	store := mock.NewBasicMockHealthITProductStore()
 
 	var dstu2Int map[string]interface{}
 
@@ -246,8 +238,7 @@ func Test_publisherMatch(t *testing.T) {
 	var dstu2Int map[string]interface{}
 
 	ctx := context.Background()
-	store, err := getMockStore()
-	th.Assert(t, err == nil, err)
+	store := mock.NewBasicMockHealthITProductStore()
 
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	th.Assert(t, err == nil, err)
@@ -369,8 +360,7 @@ func Test_hackMatch(t *testing.T) {
 	var dstu2JSON []byte
 	var dstu2 capabilityparser.CapabilityStatement
 
-	store, err := getMockStore()
-	th.Assert(t, err == nil, err)
+	store := mock.NewBasicMockHealthITProductStore()
 
 	ctx := context.Background()
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
@@ -403,8 +393,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	var dstu2JSON []byte
 	var dstu2 capabilityparser.CapabilityStatement
 
-	store, err := getMockStore()
-	th.Assert(t, err == nil, err)
+	store := mock.NewBasicMockHealthITProductStore()
 
 	ctx := context.Background()
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
@@ -470,38 +459,4 @@ func Test_hackMatchEpic(t *testing.T) {
 
 	_, err = hackMatchEpic(dstu2, vendorsNorm, vendorsRaw)
 	th.Assert(t, err != nil, "expected error to be thrown from accessing the copyright statement")
-}
-
-func getMockStore() (endpointmanager.HealthITProductStore, error) {
-	hitp, err := mock.NewStore()
-	if err != nil {
-		return nil, err
-	}
-
-	hitp.GetHealthITProductDevelopersFn = func(ctx context.Context) ([]string, error) {
-		devList := []string{
-			"Epic Systems Corporation",
-			"Cerner Corporation",
-			"Cerner Health Services, Inc.",
-			"Medical Information Technology, Inc. (MEDITECH)",
-			"Allscripts",
-		}
-
-		return devList, nil
-	}
-
-	return hitp, nil
-}
-
-func getMockStoreEP() (endpointmanager.FHIREndpointStore, error) {
-	ep, err := mock.NewStore()
-	if err != nil {
-		return nil, err
-	}
-
-	ep.UpdateFHIREndpointFn = func(ctx context.Context, ep *endpointmanager.FHIREndpoint) error {
-		return nil
-	}
-
-	return ep, nil
 }

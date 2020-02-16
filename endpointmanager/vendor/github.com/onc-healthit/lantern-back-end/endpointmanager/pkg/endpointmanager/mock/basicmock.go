@@ -96,6 +96,25 @@ func newBasicMockStore() *BasicMockStore {
 		return nil
 	}
 
+	store.GetHealthITProductDevelopersFn = func(ctx context.Context) ([]string, error) {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+			// ok
+		}
+
+		devList := []string{
+			"Epic Systems Corporation",
+			"Cerner Corporation",
+			"Cerner Health Services, Inc.",
+			"Medical Information Technology, Inc. (MEDITECH)",
+			"Allscripts",
+		}
+
+		return devList, nil
+	}
+
 	// FHIREndpointStore Functions
 
 	store.AddFHIREndpointFn = func(ctx context.Context, fhirEndpt *endpointmanager.FHIREndpoint) error {

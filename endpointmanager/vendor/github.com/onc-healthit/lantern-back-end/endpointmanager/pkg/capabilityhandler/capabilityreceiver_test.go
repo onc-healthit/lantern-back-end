@@ -3,23 +3,18 @@ package capabilityhandler
 import (
 	"context"
 	"encoding/json"
-	"path/filepath"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	"github.com/pkg/errors"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
-
-type testCapStatement struct {
-	Test1 string
-	Test2 string
-}
 
 var testQueueMsg = map[string]interface{}{
 	"url":        "http://example.com/DTSU2/metadata",
@@ -52,7 +47,10 @@ func setup(t *testing.T) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	testFhirEndpoint.CapabilityStatement = cs
-	testQueueMsg["capabilityStatement"] = csJSON
+	var capStat map[string]interface{}
+	err = json.Unmarshal(csJSON, &capStat)
+	th.Assert(t, err == nil, err)
+	testQueueMsg["capabilityStatement"] = capStat
 }
 
 func Test_formatMessage(t *testing.T) {
@@ -112,11 +110,14 @@ func Test_formatMessage(t *testing.T) {
 func Test_saveMsgInDB(t *testing.T) {
 	setup(t)
 	store := mock.NewBasicMockFhirEndpointStore()
+	hitpStore := mock.NewBasicMockHealthITProductStore()
 
 	args := make(map[string]interface{})
-	args["store"] = store
+	args["epStore"] = store
+	args["hitpStore"] = hitpStore
 
 	expectedEndpt := testFhirEndpoint
+	expectedEndpt.Vendor = "Cerner Corporation"
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
