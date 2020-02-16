@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
+
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/pkg/errors"
 
@@ -82,14 +84,25 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	}
 
-	store := (*args)["store"].(endpointmanager.FHIREndpointStore)
-	ctx := (*args)["ctx"].(context.Context)
+	hitpStore, ok := (*args)["hitpStore"].(endpointmanager.HealthITProductStore)
+	if !ok {
+		return fmt.Errorf("unable to cast health it store from arguments")
+	}
+	epStore, ok := (*args)["epStore"].(endpointmanager.FHIREndpointStore)
+	if !ok {
+		return fmt.Errorf("unable to cast fhir endpoint store from argument")
+	}
+	ctx, ok := (*args)["ctx"].(context.Context)
+	if !ok {
+		return fmt.Errorf("unable to cast context from arguments")
+	}
 
-	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
+	existingEndpt, err = epStore.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
-		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
+		chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, hitpStore)
+		err = epStore.AddFHIREndpoint(ctx, fhirEndpoint)
 		if err != nil {
 			return err
 		}
@@ -107,7 +120,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.MimeType = fhirEndpoint.MimeType
 		}
 		existingEndpt.Errors = fhirEndpoint.Errors
-		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
+		chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
+		err = epStore.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
@@ -119,13 +133,15 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
 // statements from it. It then adds the capability statements to the given store.
 func ReceiveCapabilityStatements(ctx context.Context,
-	store endpointmanager.FHIREndpointStore,
+	epStore endpointmanager.FHIREndpointStore,
+	hitpStore endpointmanager.HealthITProductStore,
 	messageQueue lanternmq.MessageQueue,
 	channelID lanternmq.ChannelID,
 	qName string) error {
 
 	args := make(map[string]interface{})
-	args["store"] = store
+	args["hitpStore"] = hitpStore
+	args["epStore"] = epStore
 	args["ctx"] = ctx
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)

@@ -109,11 +109,14 @@ func Test_formatMessage(t *testing.T) {
 func Test_saveMsgInDB(t *testing.T) {
 	setup(t)
 	store := mock.NewBasicMockFhirEndpointStore()
+	hitpStore := mock.NewBasicMockHealthITProductStore()
 
 	args := make(map[string]interface{})
-	args["store"] = store
+	args["epStore"] = store
+	args["hitpStore"] = hitpStore
 
 	expectedEndpt := testFhirEndpoint
+	expectedEndpt.Vendor = "Cerner Corporation"
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
