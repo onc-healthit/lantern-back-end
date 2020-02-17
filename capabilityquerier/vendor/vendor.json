@@ -81,34 +81,34 @@
 			"revisionTime": "2018-10-05T04:51:35Z"
 		},
 		{
-			"checksumSHA1": "TKVb+NR0oWxd8/OsvmHFTuV06xU=",
+			"checksumSHA1": "PeUZrHZ8IU6Dstidw8ezhce/jAs=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/cmd",
-			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
-			"revisionTime": "2020-02-10T21:21:10Z"
+			"revision": "52e57782cdf9cac9ef52fbc6182ae054618f98b2",
+			"revisionTime": "2020-02-17T17:55:40Z"
 		},
 		{
-			"checksumSHA1": "eZ58fGZVRi2Yn2QOAyszhxxTjWY=",
+			"checksumSHA1": "1ki9pPE5bpzuyx7NN6iAbfgUGsg=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier",
-			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
-			"revisionTime": "2020-02-10T21:21:10Z"
+			"revision": "52e57782cdf9cac9ef52fbc6182ae054618f98b2",
+			"revisionTime": "2020-02-17T17:55:40Z"
 		},
 		{
-			"checksumSHA1": "utp5JhBkoMBOOskTT3Jml3VtTAQ=",
+			"checksumSHA1": "5gOWm21Su6hNftjn7OnEHBqrTVc=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config",
-			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
-			"revisionTime": "2020-02-10T21:21:10Z"
+			"revision": "52e57782cdf9cac9ef52fbc6182ae054618f98b2",
+			"revisionTime": "2020-02-17T17:55:40Z"
 		},
 		{
 			"checksumSHA1": "Ddil97AZa2dgPWNDr23myT6rkg4=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints",
-			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
-			"revisionTime": "2020-02-10T21:21:10Z"
+			"revision": "52e57782cdf9cac9ef52fbc6182ae054618f98b2",
+			"revisionTime": "2020-02-17T17:55:40Z"
 		},
 		{
 			"checksumSHA1": "35x9fY9qfw5MmAt6ANAknAuLqts=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue",
-			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
-			"revisionTime": "2020-02-10T21:21:10Z"
+			"revision": "52e57782cdf9cac9ef52fbc6182ae054618f98b2",
+			"revisionTime": "2020-02-17T17:55:40Z"
 		},
 		{
 			"checksumSHA1": "SsscF48vx4kMKiHqKbwzodUFtys=",

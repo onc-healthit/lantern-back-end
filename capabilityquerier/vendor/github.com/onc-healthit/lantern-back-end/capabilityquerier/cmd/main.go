@@ -84,7 +84,7 @@ func main() {
 
 	// TODO: continuing to use the list of endpoints and 'fetcher'. however, eventually we'll
 	// be taking messages off of a queue and this code will be removed.
-	listOfEndpoints, err := endpoints.GetEndpoints("../networkstatsquerier/resources/EndpointSources.json")
+	listOfEndpoints, err := endpoints.GetEndpoints(viper.GetString("endptlist"))
 	failOnError(err)
 
 	// Set up the queue for sending messages
