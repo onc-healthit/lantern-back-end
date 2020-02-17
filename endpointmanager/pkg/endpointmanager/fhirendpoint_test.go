@@ -27,7 +27,8 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		ID:                    1,
 		URL:                   "example.com/FHIR/DSTU2",
 		TLSVersion:            "TLS 1.1",
-		MimeType:              "application/json+fhir",
+		MIMETypes:             []string{"application/json+fhir"},
+		HTTPResponse:          200,
 		Errors:                "Example Error",
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
@@ -43,7 +44,8 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		ID:                    1,
 		URL:                   "example.com/FHIR/DSTU2",
 		TLSVersion:            "TLS 1.1",
-		MimeType:              "application/json+fhir",
+		MIMETypes:             []string{"application/json+fhir"},
+		HTTPResponse:          200,
 		Errors:                "Example Error",
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
@@ -84,11 +86,17 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.TLSVersion = endpoint1.TLSVersion
 
-	endpoint2.MimeType = "other"
+	endpoint2.MIMETypes = []string{"other"}
 	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. MimeType should be different. %s vs %s", endpoint1.MimeType, endpoint2.MimeType)
+		t.Errorf("Did not expect endpoint1 to equal endpoint 2. MIMETypes should be different. %s vs %s", endpoint1.MIMETypes, endpoint2.MIMETypes)
 	}
-	endpoint2.MimeType = endpoint1.MimeType
+	endpoint2.MIMETypes = endpoint1.MIMETypes
+
+	endpoint2.HTTPResponse = 404
+	if endpoint2.Equal(endpoint1) {
+		t.Errorf("Did not expect endpoint1 to equal endpoint 2. HTTPResponse should be different. %d vs %d", endpoint1.HTTPResponse, endpoint2.HTTPResponse)
+	}
+	endpoint2.HTTPResponse = endpoint1.HTTPResponse
 
 	endpoint2.Errors = "other"
 	if endpoint1.Equal(endpoint2) {

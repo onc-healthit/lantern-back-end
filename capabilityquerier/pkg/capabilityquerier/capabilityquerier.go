@@ -29,7 +29,7 @@ var tlsUnknown = "TLS version unknown"
 type Message struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
-	MIMETypes           []string    `json:"mime_types"`
+	MIMETypes           []string    `json:"mimeTypes"`
 	TLSVersion          string      `json:"tlsVersion"`
 	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`

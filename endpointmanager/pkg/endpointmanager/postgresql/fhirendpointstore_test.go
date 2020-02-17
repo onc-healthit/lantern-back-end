@@ -35,7 +35,8 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:                   "example.com/FHIR/DSTU2/",
 		TLSVersion:            "TLS 1.1",
-		MimeType:              "application/json+fhir",
+		MIMETypes:             []string{"application/json+fhir"},
+		HTTPResponse:          200,
 		Errors:                "Example Error",
 		OrganizationName:      "Example Inc.",
 		FHIRVersion:           "DSTU2",
@@ -51,7 +52,8 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:                   "other.example.com/FHIR/DSTU2/",
 		TLSVersion:            "TLS 1.2",
-		MimeType:              "application/fhir+json",
+		MIMETypes:             []string{"application/fhir+json"},
+		HTTPResponse:          404,
 		Errors:                "Example Error 2",
 		OrganizationName:      "Other Example Inc.",
 		FHIRVersion:           "DSTU2",
