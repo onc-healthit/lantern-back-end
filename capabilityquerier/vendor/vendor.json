@@ -83,32 +83,32 @@
 		{
 			"checksumSHA1": "TKVb+NR0oWxd8/OsvmHFTuV06xU=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/cmd",
-			"revision": "beea30a52adf2562b0388fad04592369489b1fa1",
-			"revisionTime": "2020-02-17T12:18:38Z"
+			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
+			"revisionTime": "2020-02-10T21:21:10Z"
 		},
 		{
-			"checksumSHA1": "1ki9pPE5bpzuyx7NN6iAbfgUGsg=",
+			"checksumSHA1": "eZ58fGZVRi2Yn2QOAyszhxxTjWY=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier",
-			"revision": "beea30a52adf2562b0388fad04592369489b1fa1",
-			"revisionTime": "2020-02-17T12:18:38Z"
+			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
+			"revisionTime": "2020-02-10T21:21:10Z"
 		},
 		{
 			"checksumSHA1": "utp5JhBkoMBOOskTT3Jml3VtTAQ=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config",
-			"revision": "beea30a52adf2562b0388fad04592369489b1fa1",
-			"revisionTime": "2020-02-17T12:18:38Z"
+			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
+			"revisionTime": "2020-02-10T21:21:10Z"
 		},
 		{
 			"checksumSHA1": "Ddil97AZa2dgPWNDr23myT6rkg4=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints",
-			"revision": "beea30a52adf2562b0388fad04592369489b1fa1",
-			"revisionTime": "2020-02-17T12:18:38Z"
+			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
+			"revisionTime": "2020-02-10T21:21:10Z"
 		},
 		{
 			"checksumSHA1": "35x9fY9qfw5MmAt6ANAknAuLqts=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue",
-			"revision": "beea30a52adf2562b0388fad04592369489b1fa1",
-			"revisionTime": "2020-02-17T12:18:38Z"
+			"revision": "6cb353a83d4bd2aa28e81bb7cec68153580b8a92",
+			"revisionTime": "2020-02-10T21:21:10Z"
 		},
 		{
 			"checksumSHA1": "SsscF48vx4kMKiHqKbwzodUFtys=",
@@ -145,6 +145,13 @@
 			"path": "github.com/pelletier/go-toml",
 			"revision": "903d9455db9ff1d7ac1ab199062eca7266dd11a3",
 			"revisionTime": "2019-10-25T18:53:56Z"
+		},
+		{
+			"checksumSHA1": "Qo2E/26skb9mZQ3b2Mh6QDkpBLs=",
+			"path": "github.com/pkg/errors",
+			"revision": "614d223910a179a466c1767a985424175c39b465",
+			"revisionTime": "2020-01-14T19:47:44Z",
+			"tree": true
 		},
 		{
 			"checksumSHA1": "MGnqHnmEqc1fjnYiWReSiW8C27A=",
