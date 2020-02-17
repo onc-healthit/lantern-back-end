@@ -43,16 +43,18 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
 	// Could be investigated further
 	var mimeTypes []string
-	mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
-	}
-	for _, mimeTypeInt := range mimeTypesInt {
-		mimeType, ok := mimeTypeInt.(string)
+	if msgJSON["mimeTypes"] != nil {
+		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
 		if !ok {
-			return nil, fmt.Errorf("unable to cast mime type to string")
+			return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
 		}
-		mimeTypes = append(mimeTypes, mimeType)
+		for _, mimeTypeInt := range mimeTypesInt {
+			mimeType, ok := mimeTypeInt.(string)
+			if !ok {
+				return nil, fmt.Errorf("unable to cast mime type to string")
+			}
+			mimeTypes = append(mimeTypes, mimeType)
+		}
 	}
 
 	// JSON numbers are golang float64s
@@ -141,6 +143,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		}
 		if fhirEndpoint.MIMETypes != nil {
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+		}
+		if fhirEndpoint.HTTPResponse != 0 {
+			existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		}
 		existingEndpt.Errors = fhirEndpoint.Errors
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
