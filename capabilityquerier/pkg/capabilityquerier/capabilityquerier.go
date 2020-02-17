@@ -29,7 +29,7 @@ var tlsUnknown = "TLS version unknown"
 type Message struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
-	MatchedMIMETypes    []string    `json:"matched_mime_types"`
+	MIMETypes           []string    `json:"mime_types"`
 	TLSVersion          string      `json:"tlsVersion"`
 	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
@@ -106,10 +106,10 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	message.HTTPResponse = httpResponseCode
 	message.TLSVersion = tlsVersion
 	if supportsFHIR2MIMEType {
-		message.MatchedMIMETypes = append(message.MatchedMIMETypes, fhir2LessJSONMIMEType)
+		message.MIMETypes = append(message.MIMETypes, fhir2LessJSONMIMEType)
 	}
 	if supportsFHIR3MIMEType {
-		message.MatchedMIMETypes = append(message.MatchedMIMETypes, fhir3PlusJSONMIMEType)
+		message.MIMETypes = append(message.MIMETypes, fhir3PlusJSONMIMEType)
 	}
 	if capResp != nil {
 		err = json.Unmarshal(capResp, &(message.CapabilityStatement))

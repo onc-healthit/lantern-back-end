@@ -50,10 +50,10 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:              fhirURL.String(),
-		MatchedMIMETypes: expectedMimeType,
-		TLSVersion:       expectedTLSVersion,
-		HTTPResponse:     200,
+		URL:          fhirURL.String(),
+		MIMETypes:    expectedMimeType,
+		TLSVersion:   expectedTLSVersion,
+		HTTPResponse: 200,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
@@ -122,8 +122,8 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
-	th.Assert(t, len(message.MatchedMIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MatchedMIMETypes)))
-	th.Assert(t, message.MatchedMIMETypes[0] == expectedMimeType || message.MatchedMIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MatchedMIMETypes[0], message.MatchedMIMETypes[1]))
+	th.Assert(t, len(message.MIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType || message.MIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MIMETypes[0], message.MIMETypes[1]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
 	// basic test: fhir3PlusJSONMIMEType
@@ -148,8 +148,8 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
-	th.Assert(t, len(message.MatchedMIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MatchedMIMETypes)))
-	th.Assert(t, message.MatchedMIMETypes[0] == expectedMimeType || message.MatchedMIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MatchedMIMETypes[0], message.MatchedMIMETypes[1]))
+	th.Assert(t, len(message.MIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType || message.MIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MIMETypes[0], message.MIMETypes[1]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
 	// requestWithMimeType error due to test server closing
@@ -178,7 +178,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 
 	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(message.MatchedMIMETypes) == 0, "expected no matched mime types")
+	th.Assert(t, len(message.MIMETypes) == 0, "expected no matched mime types")
 }
 
 func Test_getTLSVersion(t *testing.T) {
