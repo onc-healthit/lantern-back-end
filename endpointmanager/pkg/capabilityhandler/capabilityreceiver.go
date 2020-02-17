@@ -51,14 +51,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		originalURL = url
 	}
 
-	// TOOD: should eventually have a 'NewCapabilityStatement" that takes an interface. This should
-	// be rewritten when that happens
-	capByte, err := json.Marshal(msgJSON["capabilityStatement"])
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to marshal CapabilityStatement to byte array")
+	capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unable to cast capability statement to map[string]interface{}")
 	}
-
-	capStat, err := capabilityparser.NewCapabilityStatement(capByte)
+	capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse CapabilityStatement out of message")
 	}

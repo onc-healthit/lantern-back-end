@@ -26,9 +26,6 @@ type CapabilityStatement interface {
 	GetJSON() ([]byte, error)
 }
 
-// TODO: create a "NewCapabilityStatement" that takes an interface as an argument so if we already have the
-// capability statement in interface form, we can just use that directly
-
 // NewCapabilityStatement is a factory method for creating a CapabilityStatement. It determines what version
 // the capability statement JSON is and creates the relevant implementation of the CapabilityStatement interface.
 func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
@@ -44,6 +41,13 @@ func NewCapabilityStatement(capJSON []byte) (CapabilityStatement, error) {
 		return nil, errors.Wrap(err, "error unmarshalling JSON capability statement")
 	}
 
+	return NewCapabilityStatementFromInterface(capStat)
+}
+
+// NewCapabilityStatementFromInterface is a factory method for creating a CapabilityStatement. It determines what version
+// the capability statement JSON map[string]interface{} object is and creates the relevant implementation of the
+// CapabilityStatement interface.
+func NewCapabilityStatementFromInterface(capStat map[string]interface{}) (CapabilityStatement, error) {
 	// return nil if an empty capability statement was passed in
 	if capStat == nil {
 		return nil, nil
