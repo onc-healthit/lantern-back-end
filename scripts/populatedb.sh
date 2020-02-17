@@ -8,9 +8,9 @@ go run main.go ../../../networkstatsquerier/resources/EndpointSources.json
 cd ../../..
 
 # get CHPL info into db
-cd endpointmanager/cmd
+cd endpointmanager/cmd/chplquerier
 go run main.go
-cd ../..
+cd ../../..
 
 # get NPPES data into db
 echo "Do you have NPPES data downloaded (http://download.cms.gov/nppes/NPI_Files.html) and do you want to load it into the database? (y/Y to continue. anything else to stop)"
