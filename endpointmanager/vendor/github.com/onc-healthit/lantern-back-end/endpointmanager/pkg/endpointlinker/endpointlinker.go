@@ -1,11 +1,10 @@
 package endpointlinker
 
 import (
-	"context"
 	"strings"
 	"log"
 	"regexp"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 func NormalizeOrgName(orgName string) string{
@@ -58,13 +57,9 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func GetIdsOfMatchingNPIOrgs(store *postgresql.Store, ctx context.Context, normalizedEndpointName string, verbose bool ) ([]int, error){
+func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool ) ([]int, error){
 	JACARD_THRESHOLD := .75
 
-	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
-	if err != nil {
-		return nil, err
-	}
 	matches := []int{}
 	verbosePrint(normalizedEndpointName + " Matched To:", verbose)
 	for _, npiOrg := range npiOrgNames {
