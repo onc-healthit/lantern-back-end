@@ -100,15 +100,12 @@ func matchName(name string, vendorsNorm []string, vendorsRaw []string) string {
 			matches = append(matches, i)
 		}
 	}
-	if len(matches) == 1 {
-		return vendorsRaw[matches[0]]
-	}
 
 	// if we have more than 1 match, do a tab delimited return of the matched
 	// vendors. This does not provide a direct "in" to the product table like the
 	// single matches do, but does alert users that there is an ambiguous match.
 	// TODO: update this once we matched into a vendor table.
-	if len(matches) > 1 {
+	if len(matches) >= 1 {
 		vendors := ""
 		for _, i := range matches {
 			vendors += vendorsRaw[i]
