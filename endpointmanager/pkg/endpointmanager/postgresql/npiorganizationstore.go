@@ -117,7 +117,7 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 		taxonomy,
 		normalized_name,
 		normalized_secondary_name)
-	VALUES ($1, $2, $3, $4, $5)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(org.Location)

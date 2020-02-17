@@ -44,7 +44,6 @@ func main() {
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := endpointlinker.NormalizeOrgName(endpoint.OrganizationName)
-		
 		matches := []int{}
 		matches, err = endpointlinker.GetIdsOfMatchingNPIOrgs(store, ctx, normalizedEndpointName, verbose)
 		if (len(matches) > 0){

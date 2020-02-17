@@ -9,6 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
@@ -363,6 +364,8 @@ func parseNPIdataLine(line []string) NPICsvLine {
 }
 
 func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
+	normalizedName := endpointlinker.NormalizeOrgName(data.Provider_Organization_Name_Legal_Business_Name)
+	normalizedSecondary := endpointlinker.NormalizeOrgName(data.Provider_Other_Organization_Name)
 	npiOrg := &endpointmanager.NPIOrganization{
 		NPI_ID:        data.NPI,
 		Name:          data.Provider_Organization_Name_Legal_Business_Name,
@@ -373,7 +376,9 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 			City:     data.Provider_Business_Practice_Location_Address_City_Name,
 			State:    data.Provider_Business_Practice_Location_Address_State_Name,
 			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
-		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1}
+		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1,
+		NormalizedName: normalizedName,
+		NormalizedSecondaryName: normalizedSecondary}
 	return npiOrg
 }
 
