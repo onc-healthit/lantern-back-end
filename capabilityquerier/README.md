@@ -54,6 +54,16 @@ When testing, the capability querier uses the following environment variables:
 
 The capability querier currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
 
+### Using Docker-Compose
+
+The Endpoint Querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+
+### Using the Individual Docker Container
+
+At this time, it's not recommended to start this as an individual container because of the dependence on the endpointlist file which is in another go project. This is challenging to manage for starting a single instance and not worth pursuing given that starting this container with all the other containers or running alone should be sufficient.
+
+### Running alone
+
 The instructions below assume that you are in `capabilityquerier/`.
 
 The capability querier has not yet been dockerized. To run, perform the following commands:

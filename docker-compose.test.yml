@@ -26,4 +26,6 @@ services:
       - LANTERN_DBHOST=pg_prometheus
     build:
       context: ./e2e
-    command: ./wait-for-it.sh grafana:3000 -- ./wait-for-it.sh pg_prometheus:5432 -- ./wait-for-it.sh lantern-mq:15672 -- ./wait-for-it.sh lantern-mq:5672 -- ./wait-for-it.sh prometheus:9090 -- ./wait-for-it.sh prometheus_postgresql_adapter:9201 -- ./wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=e2e ./...
+    volumes:
+      - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+    command: /etc/lantern/wait-for-it.sh grafana:3000 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- /etc/lantern/wait-for-it.sh lantern-mq:15672 -- /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh prometheus:9090 -- /etc/lantern/wait-for-it.sh prometheus_postgresql_adapter:9201 -- /etc/lantern/wait-for-it.sh endpoint_querier_1:3333 -- go test -tags=e2e ./...

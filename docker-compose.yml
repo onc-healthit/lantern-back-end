@@ -68,6 +68,26 @@ services:
     image: onchealthit/lantern-front-end
     ports:
       - "8090:80"
+  
+  capability_querier:
+    container_name: capability_querier
+    build: 
+      context: ./capabilityquerier
+    depends_on:
+      - lantern-mq
+    environment:
+      - LANTERN_QUSER=${LANTERN_QUSER}
+      - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
+      - LANTERN_QHOST=${LANTERN_QHOST}
+      - LANTERN_QPORT=${LANTERN_QPORT}
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
+      - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
+      - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSources.json
+    volumes:
+      - ./networkstatsquerier/resources/EndpointSources.json:/etc/lantern/EndpointSources.json
+      - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
 volumes:
   pgdata:

@@ -52,7 +52,31 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
 ## Building and Running
 
-The Endpoint Manager currently just connects to the PostgreSQL database. All log messages are written to stdout. If the endpoint manager connects to the database successfully, you should expect to see "Successfully connected!" as the output.
+The Endpoint Manager main function is currently a stub function. You will see that the endpointmanager is running if you see "Started the endpoint manager." in as the output. 
+
+Endpoint Manager functionality long term will rely on the lantern message queue (RabbitMQ) and the PostgreSQL database being available.
+
+### Using Docker-Compose
+
+The Endpoint Querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+
+### Using the Individual Docker Container
+
+The instructions below assume that you are in `endpointmanager/`.
+
+To build Docker container run the following command.
+
+```bash
+docker build -t endpointmanager .
+```
+
+To start the Docker container that you just built run:
+
+```bash
+docker run -it endpointmanager
+```
+
+### Running alone
 
 The instructions below assume that you are in `endpointmanager/`.
 
@@ -63,3 +87,4 @@ go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download
 go run cmd/main.go
 ```
+
