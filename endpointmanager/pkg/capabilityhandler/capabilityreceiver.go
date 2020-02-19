@@ -51,13 +51,16 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		originalURL = url
 	}
 
-	capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("unable to cast capability statement to map[string]interface{}")
-	}
-	capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse CapabilityStatement out of message")
+	var capStat capabilityparser.CapabilityStatement
+	if msgJSON["capabilityStatement"] != nil {
+		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("unable to cast capability statement to map[string]interface{}")
+		}
+		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to parse CapabilityStatement out of message")
+		}
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpoint{
