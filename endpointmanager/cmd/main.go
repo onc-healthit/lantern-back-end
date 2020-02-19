@@ -5,7 +5,5 @@ import (
 )
 
 func main() {
-
 	log.Info("Started the endpoint manager.")
-
 }
