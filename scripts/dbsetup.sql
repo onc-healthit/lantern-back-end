@@ -80,8 +80,7 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 
 CREATE or REPLACE VIEW org_mapping AS
-SELECT endpts.url, orgs.name, orgs.location
-FROM
-endpoint_organization AS links
+SELECT endpts.url, orgs.name, orgs.Location->>'state'
+FROM endpoint_organization AS links
 LEFT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id;
