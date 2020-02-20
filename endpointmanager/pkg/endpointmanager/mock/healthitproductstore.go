@@ -24,6 +24,18 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 	return s.AddHealthITProductFn(ctx, hitp)
 }
 
+// GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given developer
+func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer string) ([]*endpointmanager.HealthITProduct, error) {
+	s.GetHealthITProductsUsingVendorInvoked = true
+	return s.GetHealthITProductsUsingVendorFn(ctx, developer)
+}
+
+// GetHealthITProductDevelopers returns a list of all of the developer organizations associated with each health IT product.
+func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, error) {
+	s.GetHealthITProductDevelopersInvoked = true
+	return s.GetHealthITProductDevelopersFn(ctx)
+}
+
 // UpdateHealthITProduct mocks endpointmanager.HealthITProductStore.UpdateHealthITProduct and sets s.UpdateHealthITProductInvoked to true and calls s.UpdateHealthITProductFn with the given arguments.
 func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	s.UpdateHealthITProductInvoked = true

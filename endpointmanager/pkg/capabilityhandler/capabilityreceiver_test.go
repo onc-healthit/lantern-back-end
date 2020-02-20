@@ -4,29 +4,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	"github.com/pkg/errors"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/mock"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
-
-type testCapStatement struct {
-	Test1 string
-	Test2 string
-}
 
 var testQueueMsg = map[string]interface{}{
 	"url":        "http://example.com/DTSU2/metadata",
 	"err":        "",
 	"mimetype":   "application/json+fhir",
 	"tlsVersion": "TLS 1.2",
-	"capabilityStatement": testCapStatement{
-		Test1: "TestValue1",
-		Test2: "TestValue2",
-	},
 }
 
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
@@ -34,10 +28,6 @@ var testFhirEndpoint = endpointmanager.FHIREndpoint{
 	MimeType:   "application/json+fhir",
 	TLSVersion: "TLS 1.2",
 	Errors:     "",
-	CapabilityStatement: testCapStatement{
-		Test1: "TestValue1",
-		Test2: "TestValue2",
-	},
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -49,7 +39,22 @@ func convertInterfaceToBytes(message map[string]interface{}) ([]byte, error) {
 	return returnMsg, nil
 }
 
+func setup(t *testing.T) {
+	// capability statement
+	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	csJSON, err := ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	th.Assert(t, err == nil, err)
+	testFhirEndpoint.CapabilityStatement = cs
+	var capStat map[string]interface{}
+	err = json.Unmarshal(csJSON, &capStat)
+	th.Assert(t, err == nil, err)
+	testQueueMsg["capabilityStatement"] = capStat
+}
+
 func Test_formatMessage(t *testing.T) {
+	setup(t)
 	expectedEndpt := testFhirEndpoint
 	tmpMessage := testQueueMsg
 
@@ -103,12 +108,16 @@ func Test_formatMessage(t *testing.T) {
 }
 
 func Test_saveMsgInDB(t *testing.T) {
+	setup(t)
 	store := mock.NewBasicMockFhirEndpointStore()
+	hitpStore := mock.NewBasicMockHealthITProductStore()
 
 	args := make(map[string]interface{})
-	args["store"] = store
+	args["epStore"] = store
+	args["hitpStore"] = hitpStore
 
 	expectedEndpt := testFhirEndpoint
+	expectedEndpt.Vendor = "Cerner Corporation"
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)

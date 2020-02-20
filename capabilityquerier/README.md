@@ -33,6 +33,11 @@ The capability querier reads the following environment variables:
 
   Default value: 1440 (24 hours)
 
+* **LANTERN_ENDPTLIST**: The location of the endpoint list. This is temporary until we have communication from the endpoint manager for endpoints to be queried.
+
+  **NOTE**: The default value is the correct value for the docker container. You need to set this to use it locally.
+
+  Default value: /etc/lantern/EndpointSources.json
 
 ### Test Configuration
 

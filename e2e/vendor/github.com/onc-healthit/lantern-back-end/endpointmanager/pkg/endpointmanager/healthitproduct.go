@@ -37,6 +37,9 @@ type HealthITProduct struct {
 type HealthITProductStore interface {
 	GetHealthITProduct(context.Context, int) (*HealthITProduct, error)
 	GetHealthITProductUsingNameAndVersion(context.Context, string, string) (*HealthITProduct, error)
+	GetHealthITProductsUsingVendor(context.Context, string) ([]*HealthITProduct, error)
+
+	GetHealthITProductDevelopers(context.Context) ([]string, error)
 
 	AddHealthITProduct(context.Context, *HealthITProduct) error
 	UpdateHealthITProduct(context.Context, *HealthITProduct) error
@@ -95,6 +98,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	return true
 }
 
+// Update updates the receiver HealthITIProduct with entries from the provided HealthITProduct.
 func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	if hitp == nil || hitp2 == nil {
 		return errors.New("HealthITPrdouct.Update: a given health IT product is nil")

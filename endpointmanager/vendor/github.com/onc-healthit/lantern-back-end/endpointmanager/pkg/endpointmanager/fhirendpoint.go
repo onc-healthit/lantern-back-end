@@ -3,6 +3,8 @@ package endpointmanager
 import (
 	"context"
 	"time"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -18,9 +20,10 @@ type FHIREndpoint struct {
 	Errors                string
 	OrganizationName      string
 	FHIRVersion           string
-	AuthorizationStandard string      // examples: OAuth 2.0, Basic, etc.
-	Location              *Location   // location of the FHIR API endpoint's IP address from ipstack.com.
-	CapabilityStatement   interface{} // the JSON representation of the FHIR capability statement
+	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
+	Vendor                string
+	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
+	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -69,13 +72,20 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.AuthorizationStandard != e2.AuthorizationStandard {
 		return false
 	}
+	if e.Vendor != e2.Vendor {
+		return false
+	}
 	if !e.Location.Equal(e2.Location) {
 		return false
 	}
-	// @TODO Currently commented out while figuring out Capability Parsing
-	// if e.CapabilityStatement != e2.CapabilityStatement {
-	// 	return false
-	// }
+	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal
+	// method.
+	if e.CapabilityStatement != nil && !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
+		return false
+	}
+	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
 
 	return true
 }

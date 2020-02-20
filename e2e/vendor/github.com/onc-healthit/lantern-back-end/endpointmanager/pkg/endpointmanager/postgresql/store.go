@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // specified to do this for accessing postgres db
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 

@@ -49,7 +49,7 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*
 	return &org, err
 }
 
-// DeleteAllNPIOrganixations will remove all rows from the npi_organizations table
+// DeleteAllNPIOrganizations will remove all rows from the npi_organizations table
 func (s *Store) DeleteAllNPIOrganizations(ctx context.Context) error {
 	sqlStatement := `DELETE FROM npi_organizations`
 	_, err := s.DB.ExecContext(ctx, sqlStatement)

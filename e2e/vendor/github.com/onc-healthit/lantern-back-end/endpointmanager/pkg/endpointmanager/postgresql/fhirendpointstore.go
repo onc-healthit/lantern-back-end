@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -21,6 +23,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement,
 		created_at,
@@ -34,6 +37,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
@@ -46,7 +50,9 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
+	if capabilityStatementJSON != nil {
+		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+	}
 
 	return &endpoint, err
 }
@@ -65,6 +71,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement,
 		created_at,
@@ -79,6 +86,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
+		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&endpoint.CreatedAt,
@@ -91,7 +99,9 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(capabilityStatementJSON, &endpoint.CapabilityStatement)
+	if capabilityStatementJSON != nil {
+		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+	}
 
 	return &endpoint, err
 }
@@ -103,18 +113,24 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		organization_name,
 		fhir_version,
 		authorization_standard,
+		vendor,
 		location,
 		capability_statement)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
 		return err
 	}
-	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
-	if err != nil {
-		return err
+	var capabilityStatementJSON []byte
+	if e.CapabilityStatement != nil {
+		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
+		if err != nil {
+			return err
+		}
+	} else {
+		capabilityStatementJSON = []byte("null")
 	}
 
 	row := s.DB.QueryRowContext(ctx,
@@ -123,6 +139,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
+		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON)
 
@@ -139,17 +156,23 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		organization_name = $2,
 		fhir_version = $3,
 		authorization_standard = $4,
-		location = $5,
-		capability_statement = $6
-	WHERE id = $7`
+		vendor = $5,
+		location = $6,
+		capability_statement = $7
+	WHERE id = $8`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
 		return err
 	}
-	capabilityStatementJSON, err := json.Marshal(e.CapabilityStatement)
-	if err != nil {
-		return err
+	var capabilityStatementJSON []byte
+	if e.CapabilityStatement != nil {
+		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
+		if err != nil {
+			return err
+		}
+	} else {
+		capabilityStatementJSON = []byte("null")
 	}
 
 	_, err = s.DB.ExecContext(ctx,
@@ -158,6 +181,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
+		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON,
 		e.ID)
