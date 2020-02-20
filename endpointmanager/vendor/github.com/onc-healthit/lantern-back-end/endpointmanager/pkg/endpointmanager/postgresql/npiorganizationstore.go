@@ -243,7 +243,7 @@ func (s *Store) LinkOrganizationToEndpoint(ctx context.Context, orgId int, endpo
 		endpoint_id)
 	VALUES ($1, $2)`
 
-	s.DB.QueryRowContext(ctx,
+	s.DB.ExecContext(ctx,
 		sqlStatement,
 		orgId,
 		endpointId,)
