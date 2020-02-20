@@ -25,24 +25,24 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		return nil, err
 	}
 
-	errs, ok := msgJSON["err"].(string)
-	if !ok {
-		return nil, fmt.Errorf("unable to cast message Error to string")
-	}
-
 	url, ok := msgJSON["url"].(string)
 	if !ok {
 		return nil, fmt.Errorf("unable to cast message URL to string")
 	}
 
+	errs, ok := msgJSON["err"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: unable to cast message Error to string", url)
+	}
+
 	tlsVersion, ok := msgJSON["tlsVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast TLS Version to string")
+		return nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
 	mimeType, ok := msgJSON["mimetype"].(string)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast MIME Type to string")
+		return nil, fmt.Errorf("%s: unable to cast MIME Type to string", url)
 	}
 
 	// remove "metadata" from the url
@@ -55,11 +55,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	if msgJSON["capabilityStatement"] != nil {
 		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("unable to cast capability statement to map[string]interface{}")
+			return nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
 		}
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to parse CapabilityStatement out of message")
+			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
 
