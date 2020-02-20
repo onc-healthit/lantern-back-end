@@ -16,7 +16,8 @@ type FHIREndpoint struct {
 	ID                    int
 	URL                   string
 	TLSVersion            string
-	MimeType              string
+	MIMETypes             []string
+	HTTPResponse          int
 	Errors                string
 	OrganizationName      string
 	FHIRVersion           string
@@ -57,7 +58,18 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.TLSVersion != e2.TLSVersion {
 		return false
 	}
-	if e.MimeType != e2.MimeType {
+
+	// check MIMETypes equal
+	if len(e.MIMETypes) != len(e2.MIMETypes) {
+		return false
+	}
+	for i, v := range e.MIMETypes {
+		if v != e2.MIMETypes[i] {
+			return false
+		}
+	}
+
+	if e.HTTPResponse != e2.HTTPResponse {
 		return false
 	}
 	if e.Errors != e2.Errors {
