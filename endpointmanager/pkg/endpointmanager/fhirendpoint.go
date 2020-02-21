@@ -26,6 +26,7 @@ type FHIREndpoint struct {
 	Vendor                string
 	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
 	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	Validation            map[string]interface{}
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -104,6 +105,8 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
 		return false
 	}
+
+	// @TODO Probably not worthwhile to add a check here for Validation just because it'll get moved soon
 
 	return true
 }
