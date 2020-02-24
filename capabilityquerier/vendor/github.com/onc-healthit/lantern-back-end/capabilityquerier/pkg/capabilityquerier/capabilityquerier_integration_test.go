@@ -92,7 +92,7 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 	count, err := queueCount(queueName)
 	th.Assert(t, err == nil, err)
 	// need to pause to ensure all messages are on the queue before we count them
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	th.Assert(t, count == 10, fmt.Sprintf("expected there to be 10 messages in the queue; saw %d", count))
 }
 
