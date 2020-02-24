@@ -166,7 +166,6 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 	mimeMatches := false
 
 	req.Header.Set("Accept", mimeType)
-	req.Header.Set("no-cache", "") // ensures that we don't cache the previously retrieved mime type in the response header
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -177,6 +176,10 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 	if httpResponseCode == http.StatusOK {
 		defer resp.Body.Close()
 		respMimeType := resp.Header.Get("Content-Type")
+		// endpoints generally return an xml mime type by default.
+		// checking that it's a json mime type confirms that it processes the JSON type request.
+		// however, it doesn't necessarily match the request type exactly and seems to cache the
+		// first JSON request type it receives and continues to respond with that.
 		if isJSONMIMEType(respMimeType) {
 			mimeMatches = true
 
