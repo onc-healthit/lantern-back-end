@@ -35,3 +35,9 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	s.DeleteFHIREndpointInvoked = true
 	return s.DeleteFHIREndpointFn(ctx, e)
 }
+
+// GetAllOrgNames mocks endpointmanager.FHIREndpointStore.GetAllOrgNames and sets s.GetAllOrgNamesFnInvoked to true and calls s.GetAllOrgNamesFn with the given arguments.
+func (s *Store) GetAllOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
+	s.DeleteFHIREndpointInvoked = true
+	return s.GetAllOrgNamesFn(ctx)
+}
