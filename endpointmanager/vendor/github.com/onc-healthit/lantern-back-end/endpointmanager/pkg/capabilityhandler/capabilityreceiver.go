@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
+	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 
@@ -16,6 +17,34 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	log "github.com/sirupsen/logrus"
 )
+
+var version3plus = []string{"3.0.0", "3.0.1", "4.0.0", "4.0.1"}
+var version2minus = []string{"1.0.1", "1.0.2"}
+var fhir3PlusJSONMIMEType = "application/fhir+json"
+var fhir2LessJSONMIMEType = "application/json+fhir"
+
+// ValidationError is the structure for validation errors that are saved in the Validation JSON
+// blob in fhir_endpoints for now.
+// @TODO This will be moved
+type validationError struct {
+	Correct  bool   `json:"correct"`
+	Expected string `json:"expected"`
+	Comment  string `json:"comment"`
+}
+
+// type validationErrors struct {
+// 	mimeType validationError
+// 	httpCode validationError
+// }
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
+}
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	var msgJSON map[string]interface{}
@@ -64,6 +93,13 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	}
 	httpResponse := int(httpResponseFloat)
 
+	/** @TODO Not yet a thing, waiting on Lantern-142
+	httpResponse, ok := msgJSON["httpResponse"].(int)
+	if !ok {
+		return nil, fmt.Errorf("%s: unable to cast HTTP Response to int", url)
+	}
+	*/
+
 	// remove "metadata" from the url
 	originalURL, file := path.Split(url)
 	if file != "metadata" {
@@ -82,16 +118,103 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		}
 	}
 
+	/**
+	Quick Validation
+	*/
+
+	// @TODO Check if MimeType is valid
+	var mimeTypeValidObj validationError
+	if msgJSON["capabilityStatement"] != nil {
+		fhirVersion, err := capStat.GetFHIRVersion()
+		if err != nil {
+			return nil, err
+		}
+		mimeTypeValidObj = mimeTypeValid(mimeTypes, fhirVersion)
+	} else {
+		mimeTypeValidObj = validationError{
+			Correct:  false,
+			Expected: "",
+			Comment:  "No Fhir Version to validate if the Mime Type is accurate",
+		}
+	}
+
+	// @TODO Update once we have actual information
+	httpCodeObj := httpResponseValid(200)
+	// httpCodeObj := httpResponseValid(httpResponse)
+	validationObj := map[string]interface{}{
+		"mimeType": mimeTypeValidObj,
+		"httpCode": httpCodeObj,
+	}
+
+	// @TODO Check if TLSVersion is valid
+
 	fhirEndpoint := endpointmanager.FHIREndpoint{
-		URL:                 originalURL,
-		TLSVersion:          tlsVersion,
-		MIMETypes:           mimeTypes,
-		HTTPResponse:        httpResponse,
-		Errors:              errs,
+		URL:          originalURL,
+		TLSVersion:   tlsVersion,
+		MIMETypes:    mimeTypes,
+		HTTPResponse: httpResponse,
+		Errors:       errs,
+		Validation: map[string]interface{}{
+			"errors": validationObj,
+		},
 		CapabilityStatement: capStat,
 	}
 
 	return &fhirEndpoint, nil
+}
+
+// This function takes in the array of accepted Mime Types by a specific endpoint and that endpoint's FHIR
+// version. It returns whether this is an error or warning, whether it's correct, the expected value,
+// and a comment on the result if necessary.
+func mimeTypeValid(mimeTypes []string, fhirVersion string) validationError {
+	var mimeError string
+	for _, mimeType := range mimeTypes {
+		if contains(version3plus, fhirVersion) {
+			if mimeType == fhir3PlusJSONMIMEType {
+				return validationError{
+					Correct:  true,
+					Expected: fhir3PlusJSONMIMEType,
+					Comment:  "",
+				}
+			}
+			mimeError = fhir3PlusJSONMIMEType
+		} else {
+			// The fhirVersion has to be valid in order to create a valid capability statement
+			// so if it's gotten this far, the fhirVersion has to be less than 3
+			if mimeType == fhir2LessJSONMIMEType {
+				return validationError{
+					Correct:  true,
+					Expected: fhir2LessJSONMIMEType,
+					Comment:  "",
+				}
+			}
+			mimeError = fhir2LessJSONMIMEType
+		}
+	}
+
+	errorMsg := "FHIR Version " + fhirVersion + "requires the Mime Type to be " + mimeError
+
+	return validationError{
+		Correct:  false,
+		Expected: mimeError,
+		Comment:  errorMsg,
+	}
+}
+
+func httpResponseValid(httpResponse int) validationError {
+	if httpResponse == 200 {
+		return validationError{
+			Correct:  true,
+			Expected: "200",
+			Comment:  "",
+		}
+	}
+	s := strconv.Itoa(httpResponse)
+	return validationError{
+		Correct:  false,
+		Expected: "200",
+		Comment:  "The HTTP response code was " + s + " instead of 200",
+	}
 }
 
 // saveMsgInDB formats the message data for the database and either adds a new entry to the database or
