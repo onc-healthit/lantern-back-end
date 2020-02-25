@@ -2,6 +2,7 @@ package endpointmanager
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -16,7 +17,8 @@ type FHIREndpoint struct {
 	ID                    int
 	URL                   string
 	TLSVersion            string
-	MimeType              string
+	MIMETypes             []string
+	HTTPResponse          int
 	Errors                string
 	OrganizationName      string
 	FHIRVersion           string
@@ -57,7 +59,23 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.TLSVersion != e2.TLSVersion {
 		return false
 	}
-	if e.MimeType != e2.MimeType {
+
+	// check MIMETypes equal
+	if len(e.MIMETypes) != len(e2.MIMETypes) {
+		return false
+	}
+	// don't care about order
+	a := make([]string, len(e.MIMETypes))
+	b := make([]string, len(e2.MIMETypes))
+	sort.Strings(a)
+	sort.Strings(b)
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+
+	if e.HTTPResponse != e2.HTTPResponse {
 		return false
 	}
 	if e.Errors != e2.Errors {

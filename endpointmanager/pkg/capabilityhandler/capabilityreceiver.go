@@ -40,10 +40,29 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		return nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
-	mimeType, ok := msgJSON["mimetype"].(string)
-	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast MIME Type to string", url)
+	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
+	// Could be investigated further
+	var mimeTypes []string
+	if msgJSON["mimeTypes"] != nil {
+		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
+		if !ok {
+			return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
+		}
+		for _, mimeTypeInt := range mimeTypesInt {
+			mimeType, ok := mimeTypeInt.(string)
+			if !ok {
+				return nil, fmt.Errorf("unable to cast mime type to string")
+			}
+			mimeTypes = append(mimeTypes, mimeType)
+		}
 	}
+
+	// JSON numbers are golang float64s
+	httpResponseFloat, ok := msgJSON["httpResponse"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast http response to int")
+	}
+	httpResponse := int(httpResponseFloat)
 
 	// remove "metadata" from the url
 	originalURL, file := path.Split(url)
@@ -66,7 +85,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	fhirEndpoint := endpointmanager.FHIREndpoint{
 		URL:                 originalURL,
 		TLSVersion:          tlsVersion,
-		MimeType:            mimeType,
+		MIMETypes:           mimeTypes,
+		HTTPResponse:        httpResponse,
 		Errors:              errs,
 		CapabilityStatement: capStat,
 	}
@@ -121,8 +141,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if fhirEndpoint.TLSVersion != "" {
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 		}
-		if fhirEndpoint.MimeType != "" {
-			existingEndpt.MimeType = fhirEndpoint.MimeType
+		if fhirEndpoint.MIMETypes != nil {
+			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+		}
+		if fhirEndpoint.HTTPResponse != 0 {
+			existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		}
 		existingEndpt.Errors = fhirEndpoint.Errors
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
