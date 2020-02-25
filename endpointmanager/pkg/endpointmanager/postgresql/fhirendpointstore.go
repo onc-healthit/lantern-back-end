@@ -204,7 +204,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		vendor = $9,
 		location = $10,
 		capability_statement = $11,
-		validation = $11
+		validation = $12
 	WHERE id = $13`
 
 	locationJSON, err := json.Marshal(e.Location)

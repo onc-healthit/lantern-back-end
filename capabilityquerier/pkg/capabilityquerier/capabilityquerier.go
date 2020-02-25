@@ -35,15 +35,6 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
-// ValidationError is the structure for validation errors that are saved in the Validation JSON
-// blob in fhir_endpoints for now.
-// @TODO This will be moved
-type ValidationError struct {
-	Correct  bool   `json:"correct"`
-	Expected string `json:"expected"`
-	Comment  string `json:"comment"`
-}
-
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
 // statement and accompanying data on a receiving queue.
 func GetAndSendCapabilityStatement(
