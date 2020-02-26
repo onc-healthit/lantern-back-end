@@ -17,17 +17,19 @@ import (
 )
 
 var testQueueMsg = map[string]interface{}{
-	"url":        "http://example.com/DTSU2/metadata",
-	"err":        "",
-	"mimetype":   "application/json+fhir",
-	"tlsVersion": "TLS 1.2",
+	"url":          "http://example.com/DTSU2/metadata",
+	"err":          "",
+	"mimeTypes":    []string{"application/json+fhir"},
+	"httpResponse": 200,
+	"tlsVersion":   "TLS 1.2",
 }
 
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
-	URL:        "http://example.com/DTSU2/",
-	MimeType:   "application/json+fhir",
-	TLSVersion: "TLS 1.2",
-	Errors:     "",
+	URL:          "http://example.com/DTSU2/",
+	MIMETypes:    []string{"application/json+fhir"},
+	TLSVersion:   "TLS 1.2",
+	HTTPResponse: 200,
+	Errors:       "",
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -99,12 +101,20 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["tlsVersion"] = "TLS 1.2"
 
 	// test incorrect MIME Type
-	tmpMessage["mimetype"] = 1
+	tmpMessage["mimeTypes"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 	_, returnErr = formatMessage(message)
-	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect MIME Type")
-	tmpMessage["mimetype"] = "application/json+fhir"
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to incorrect MIME Types")
+	tmpMessage["mimeTypes"] = []string{"application/json+fhir"}
+
+	// test incorrect http response
+	tmpMessage["httpResponse"] = "200"
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect HTTP response")
+	tmpMessage["httpResponse"] = 200
 }
 
 func Test_saveMsgInDB(t *testing.T) {
