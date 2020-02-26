@@ -106,7 +106,5 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 		return false
 	}
 
-	// @TODO Probably not worthwhile to add a check here for Validation just because it'll get moved soon
-
 	return true
 }
