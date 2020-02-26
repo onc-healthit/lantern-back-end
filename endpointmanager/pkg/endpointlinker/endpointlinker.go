@@ -1,9 +1,13 @@
 package endpointlinker
 
 import (
+	"context"
 	"strings"
 	"log"
 	"regexp"
+	"strconv"
+	"github.com/pkg/errors"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -51,6 +55,7 @@ func CalculateJaccardIndex(string1 string, string2 string) float64 {
 	return float64(intersectionCount)/denom
 }
 
+// This function is available for making the matching algorithm easier to tune
 func verbosePrint(message string, verbose bool) {
 	if verbose == true {
 		println(message)
@@ -84,4 +89,45 @@ func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 		}
 	}
 	return matches, nil
+}
+
+
+func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error{
+	fhirEndpointOrgNames, err := store.GetAllOrgNames(ctx)
+	if err != nil {
+		return errors.Wrap(err,"Error getting endpoint org names")
+	}
+
+	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
+	if err != nil {
+		return errors.Wrap(err,"Error getting normalized org names")
+	}
+
+	matchCount := 0
+	unmatchable := []string{}
+	// Iterate through fhir endpoints
+	for _, endpoint := range fhirEndpointOrgNames {
+		normalizedEndpointName := NormalizeOrgName(endpoint.OrganizationName)
+		matches := []int{}
+		matches, err = GetIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		if (len(matches) > 0){
+			matchCount += 1
+			// Iterate over matches and add to linking table
+			for _, match := range matches {
+				store.LinkOrganizationToEndpoint(ctx, match, endpoint.ID)
+			}
+		}else{
+			unmatchable = append(unmatchable, endpoint.OrganizationName )
+		}
+
+	}
+
+	verbosePrint("Match Total: " + strconv.Itoa(matchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
+
+	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
+	for _, name := range unmatchable {
+		verbosePrint(name, verbose)
+	}
+
+	return nil;
 }
