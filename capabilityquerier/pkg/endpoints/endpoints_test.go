@@ -9,7 +9,7 @@ import (
 
 func Test_GetEndpoints(t *testing.T) {
 	endpointsLocation := "../../../networkstatsquerier/resources/EndpointSources.json"
-	expectedCount := 354
+	expectedCount := 397
 
 	// basic test
 	eps, err := GetEndpoints(endpointsLocation)

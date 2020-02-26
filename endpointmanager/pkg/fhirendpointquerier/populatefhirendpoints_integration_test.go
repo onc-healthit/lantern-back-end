@@ -76,7 +76,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	fhirEndpt, err := store.GetFHIREndpointUsingURL(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "URL is not what was expected")
-	th.Assert(t, fhirEndpt.OrganizationName == "A Woman's Place", "Organization Name is not what was expected")
+	th.Assert(t, fhirEndpt.OrganizationName == "A Woman's Place, LLC", "Organization Name is not what was expected.")
 	th.Assert(t, fhirEndpt.FHIRVersion == "", "Fhir Version is not what was expected")
 	th.Assert(t, fhirEndpt.AuthorizationStandard == "", "Authorization Standard is not what was expected")
 	th.Assert(t, fhirEndpt.Location == nil, "Location is not what was expected")
