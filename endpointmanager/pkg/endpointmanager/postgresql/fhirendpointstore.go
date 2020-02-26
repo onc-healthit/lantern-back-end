@@ -64,6 +64,9 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = json.Unmarshal(validationJSON, &endpoint.Validation)
@@ -126,6 +129,9 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = json.Unmarshal(validationJSON, &endpoint.Validation)

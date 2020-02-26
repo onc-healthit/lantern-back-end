@@ -18,8 +18,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// var version2minus = []string{"1.0.1", "1.0.2"}
 var version3plus = []string{"3.0.0", "3.0.1", "4.0.0", "4.0.1"}
-var version2minus = []string{"1.0.1", "1.0.2"}
 var fhir3PlusJSONMIMEType = "application/fhir+json"
 var fhir2LessJSONMIMEType = "application/json+fhir"
 
@@ -88,13 +88,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	}
 	httpResponse := int(httpResponseFloat)
 
-	/** @TODO Not yet a thing, waiting on Lantern-142
-	httpResponse, ok := msgJSON["httpResponse"].(int)
-	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast HTTP Response to int", url)
-	}
-	*/
-
 	// remove "metadata" from the url
 	originalURL, file := path.Split(url)
 	if file != "metadata" {
@@ -134,7 +127,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	}
 
 	// @TODO Update once we have actual information
-	httpCodeObj := httpResponseValid(200)
+	httpCodeObj := httpResponseValid(httpResponse)
 	// httpCodeObj := httpResponseValid(httpResponse)
 	validationObj := map[string]interface{}{
 		"mimeType": mimeTypeValidObj,
@@ -202,6 +195,12 @@ func httpResponseValid(httpResponse int) validationError {
 			Correct:  true,
 			Expected: "200",
 			Comment:  "",
+		}
+	} else if httpResponse == 0 {
+		return validationError{
+			Correct:  false,
+			Expected: "200",
+			Comment:  "The GET request failed",
 		}
 	}
 	s := strconv.Itoa(httpResponse)
