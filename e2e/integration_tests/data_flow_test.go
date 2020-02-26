@@ -3,6 +3,8 @@
 package integration_tests
 
 import (
+	"context"
+	"strconv"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -13,12 +15,18 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
+	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 )
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
+	populateTestNPIData()
+	populateTestEndpointData()
 	go setupTestServer()
 	// Give time for the querier to query the test server we just setup
 	time.Sleep(30 * time.Second)
@@ -30,6 +38,29 @@ func failOnError(err error) {
 		log.Fatalf("%s", err)
 	}
 }
+
+func populateTestNPIData() {
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+	fname := "./testdata/npidata_min.csv"
+	ctx := context.Background()
+	err = store.DeleteAllNPIOrganizations(ctx)
+	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
+	failOnError(err)
+}
+
+func populateTestEndpointData() {
+	var listOfEndpoints, err = fetcher.GetListOfEndpoints("./testdata/TestEndpointSources.json")
+	failOnError(err)
+
+	ctx := context.Background()
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+
+	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
+	failOnError(dbErr)
+}
+
 
 func metadataHandler(w http.ResponseWriter, r *http.Request) {
 	contents, err := ioutil.ReadFile("testdata/DSTU2CapabilityStatement.xml")
@@ -54,7 +85,48 @@ func setupTestServer() {
 	}
 }
 
-func TestMetricsAvailableInQuerier(t *testing.T) {
+func Test_EndpointDataIsAvailable(t *testing.T) {
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+
+	defer store.Close()
+	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
+	var link_count int
+	err = response_time_row.Scan(&link_count)
+	failOnError(err)
+
+	if link_count != 1 {
+		// t.Fatalf("Only one endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+	}
+}
+
+func Test_EndpointLinksAreAvailable(t *testing.T) {
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+
+	defer store.Close()
+	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	var link_count int
+	err = response_time_row.Scan(&link_count)
+	failOnError(err)
+
+	if link_count != 0 {
+		// t.Fatalf("Empty database should not have had any links made yet. Has: " + strconv.Itoa(link_count))
+	}
+
+	ctx := context.Background()
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+
+	response_time_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	err = response_time_row.Scan(&link_count)
+	failOnError(err)
+
+	if link_count == 0 {
+		// t.Fatalf("Empty database should not have links")
+	}
+}
+
+func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier_1:3333/metrics")
 	failOnError(err)
