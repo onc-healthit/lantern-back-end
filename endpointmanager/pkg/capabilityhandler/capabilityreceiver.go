@@ -160,18 +160,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 		// Add the new information if it's valid and update the endpoint in the database
-		if fhirEndpoint.CapabilityStatement != nil {
-			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
-		}
-		if fhirEndpoint.TLSVersion != "" {
-			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
-		}
-		if fhirEndpoint.MIMETypes != nil {
-			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
-		}
-		if fhirEndpoint.HTTPResponse != 0 {
-			existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
-		}
+		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
+		existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
 		existingEndpt.Validation = fhirEndpoint.Validation
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
