@@ -1,0 +1,518 @@
+{
+    "url": "https://croh-mapilive.primehealthcare.com/v1/argonaut/v1/metadata",
+    "version": "1.0.0",
+    "status": "active",
+    "experimental": false,
+    "publisher": "Medical Information Technology, Inc",
+    "contact": [
+        {
+            "name": "Medical Information Technology, Inc",
+            "telecom": [
+                {
+                    "system": "phone",
+                    "value": "781-821-3000",
+                    "use": "work"
+                }
+            ]
+        }
+    ],
+    "rest": [
+        {
+            "mode": "server",
+            "security": {
+                "service": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://hl7.org/fhir/restful-security-service",
+                                "code": "SMART-on-FHIR"
+                            }
+                        ],
+                        "text": "OAuth2 using SMART-on-FHIR profile (see http://docs.smarthealthit.org)"
+                    }
+                ],
+                "extension": [
+                    {
+                        "extension": [
+                            {
+                                "url": "token",
+                                "valueUri": "https://croh-mapilive.primehealthcare.com/oauth/token"
+                            },
+                            {
+                                "url": "authorize",
+                                "valueUri": "https://croh-mapilive.primehealthcare.com/oauth/authorize"
+                            }
+                        ],
+                        "url": "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris"
+                    }
+                ]
+            },
+            "resource": [
+                {
+                    "type": "AllergyIntolerance",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-allergyintolerance.html",
+                            "type": "reference",
+                            "documentation": "Search for all AllergyIntolerance resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "CarePlan",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-careplan.html",
+                            "type": "reference",
+                            "documentation": "Search for all CarePlan resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "category",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-careplan.html",
+                            "type": "token",
+                            "documentation": "Search by CarePlan.category"
+                        },
+                        {
+                            "name": "status",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-careplan.html",
+                            "type": "token",
+                            "documentation": "Search by CarePlan.status"
+                        }
+                    ]
+                },
+                {
+                    "type": "Condition",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-condition.html",
+                            "type": "reference",
+                            "documentation": "Search for all Condition resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "category",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-condition.html",
+                            "type": "token",
+                            "documentation": "Search by Condition.category"
+                        },
+                        {
+                            "name": "clinicalstatus",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-condition.html",
+                            "type": "token",
+                            "documentation": "Search by Condition.clinicalStatus"
+                        }
+                    ]
+                },
+                {
+                    "type": "Device",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-device.html",
+                            "type": "reference",
+                            "documentation": "Search for all Device resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "DiagnosticReport",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-diagnosticreport.html",
+                            "type": "reference",
+                            "documentation": "Search for all DianosticReports resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "category",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-diagnosticreport.html",
+                            "type": "token",
+                            "documentation": "Search for all DianosticReports resources for a patient"
+                        },
+                        {
+                            "name": "code",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-diagnosticreport.html",
+                            "type": "token",
+                            "documentation": "Search by DiagnosticReport.code"
+                        },
+                        {
+                            "name": "date",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-diagnosticreport.html",
+                            "type": "date",
+                            "documentation": "Search by DiagnosticReport.date"
+                        }
+                    ]
+                },
+                {
+                    "type": "DocumentReference",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-device.html",
+                            "type": "reference",
+                            "documentation": "Search for all DocumentReference resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "type",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-documentreference.html",
+                            "type": "token",
+                            "documentation": "Search by DocumentReference.type"
+                        },
+                        {
+                            "name": "period",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-documentreference.html",
+                            "type": "date",
+                            "documentation": "Search by DocumentReference.context.period"
+                        },
+                        {
+                            "name": "start",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-documentreference.html",
+                            "type": "date",
+                            "documentation": "Search by DocumentReference.context.period.start"
+                        },
+                        {
+                            "name": "end",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-documentreference.html",
+                            "type": "date",
+                            "documentation": "Search by DocumentReference.context.period.end"
+                        }
+                    ]
+                },
+                {
+                    "type": "Goal",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-goal.html",
+                            "type": "reference",
+                            "documentation": "Search for all Goal resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "date",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-goal.html",
+                            "type": "date",
+                            "documentation": "Search for all Goal resources by visit date"
+                        }
+                    ]
+                },
+                {
+                    "type": "Immunization",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-immunization.html",
+                            "type": "reference",
+                            "documentation": "Search for all Immunization resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "MedicationOrder",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-medicationorder.html",
+                            "type": "reference",
+                            "documentation": "Search for all MedicationOrder resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "MedicationStatement",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-medicationstatement.html",
+                            "type": "reference",
+                            "documentation": "Search for all MedicationStatement resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Observation",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/",
+                            "type": "reference",
+                            "documentation": "Search for all Observation resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "category",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/",
+                            "type": "token",
+                            "documentation": "Search by Observation.category"
+                        },
+                        {
+                            "name": "code",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/",
+                            "type": "token",
+                            "documentation": "Search by Observation.code"
+                        },
+                        {
+                            "name": "date",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/",
+                            "type": "date",
+                            "documentation": "Search for all Observation for a specified date of visit"
+                        }
+                    ]
+                },
+                {
+                    "type": "Patient",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "_id",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "token",
+                            "documentation": "Retrieve single patient by logical id"
+                        },
+                        {
+                            "name": "identifier",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "token",
+                            "documentation": "Retrieve single patient by identifier"
+                        },
+                        {
+                            "name": "name",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "string",
+                            "documentation": "Retrieve single patient by \"Last,First\" name"
+                        },
+                        {
+                            "name": "birthdate",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "date",
+                            "documentation": "Retrieve single patient by birthDate"
+                        },
+                        {
+                            "name": "gender",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "token",
+                            "documentation": "Retrieve single patient by gender"
+                        },
+                        {
+                            "name": "family",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-patient.html",
+                            "type": "string",
+                            "documentation": "Retrieve single patient by Last name"
+                        }
+                    ]
+                },
+                {
+                    "type": "Procedure",
+                    "interaction": [
+                        {
+                            "code": "read"
+                        },
+                        {
+                            "code": "search-type"
+                        }
+                    ],
+                    "searchParam": [
+                        {
+                            "name": "patient",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-procedure.html",
+                            "type": "reference",
+                            "documentation": "Search for all Procedure resources for a patient",
+                            "target": [
+                                "Patient"
+                            ],
+                            "chain": [
+                                "identifier"
+                            ]
+                        },
+                        {
+                            "name": "date",
+                            "definition": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-procedure.html",
+                            "type": "date",
+                            "documentation": "Search for all Procedures for a specified date of visit"
+                        }
+                    ]
+                }
+            ],
+            "operation": [
+                {
+                    "name": "$docref",
+                    "definition": {
+                        "reference": "http://www.fhir.org/guides/argonaut/r2/StructureDefinition-argo-documentreference.html"
+                    }
+                }
+            ]
+        }
+    ],
+    "date": "2018-08-01",
+    "copyright": "Copyright © 2018 Medical Information Technology, Inc.",
+    "kind": "capability",
+    "fhirVersion": "1.0.2",
+    "acceptUnknown": "no",
+    "name": "argonaut",
+    "format": [
+        "json"
+    ],
+    "description": "This profile defines the capabilities expressed by the Argonaut specification.",
+    "resourceType": "Conformance"
+}

@@ -192,3 +192,42 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 
 	return err
 }
+<<<<<<< HEAD
+=======
+
+// GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
+func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error)  {
+	sqlStatement := `
+	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	var orgs []endpointmanager.NPIOrganization
+	defer rows.Close()
+	for rows.Next() {
+		var org endpointmanager.NPIOrganization
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
+		if err != nil {
+		  // handle this error
+		  panic(err)
+		}
+		orgs = append(orgs,org)
+	}
+	return orgs, nil
+}
+
+// LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int){
+	sqlStatement := `
+	INSERT INTO endpoint_organization (
+		organization_id,
+		endpoint_id)
+	VALUES ($1, $2)`
+
+	s.DB.ExecContext(ctx,
+		sqlStatement,
+		orgId,
+		endpointId,)
+}
+>>>>>>> Address more PR comments

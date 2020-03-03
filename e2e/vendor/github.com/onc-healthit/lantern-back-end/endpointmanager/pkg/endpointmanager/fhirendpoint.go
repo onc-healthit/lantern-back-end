@@ -30,6 +30,10 @@ type FHIREndpoint struct {
 type FHIREndpointStore interface {
 	GetFHIREndpoint(context.Context, int) (*FHIREndpoint, error)
 	GetFHIREndpointUsingURL(context.Context, string) (*FHIREndpoint, error)
+<<<<<<< HEAD
+=======
+	GetAllFHIREndpointOrgNames(ctx context.Context) ([]FHIREndpoint, error)
+>>>>>>> Address more PR comments
 
 	AddFHIREndpoint(context.Context, *FHIREndpoint) error
 	UpdateFHIREndpoint(context.Context, *FHIREndpoint) error

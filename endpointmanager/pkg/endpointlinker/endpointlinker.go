@@ -47,9 +47,11 @@ func CalculateJaccardIndex(string1 string, string2 string) float64 {
 	string1Tokens := strings.Fields(string1)
 	string2Tokens := strings.Fields(string2)
 	intersectionCount := intersectionCount(string1Tokens, string2Tokens)
-	string1UniqueTokens := len(string1Tokens)
-	string2UniqueTokens := len(string2Tokens)
-	denom := float64(string1UniqueTokens + string2UniqueTokens - intersectionCount)
+	// By taking the total tokens count and subtracting by the intersection we allow for there to be
+	// repeated tokens. ie: foo foo bar and foo bar would not be considered identical
+	string1TokensCount := len(string1Tokens)
+	string2TokensCount := len(string2Tokens)
+	denom := float64(string1TokensCount + string2TokensCount - intersectionCount)
 	if denom == 0 {
 		denom = 1
 	}
@@ -95,12 +97,12 @@ func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error{
-	fhirEndpointOrgNames, err := store.GetAllOrgNames(ctx)
+	fhirEndpointOrgNames, err := store.GetAllFHIREndpointOrgNames(ctx)
 	if err != nil {
 		return errors.Wrap(err,"Error getting endpoint org names")
 	}
 
-	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
+	npiOrgNames, err := store.GetAllNPIOrganizationNormalizedNames(ctx)
 	if err != nil {
 		return errors.Wrap(err,"Error getting normalized org names")
 	}
@@ -116,7 +118,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			matchCount += 1
 			// Iterate over matches and add to linking table
 			for _, match := range matches {
-				store.LinkOrganizationToEndpoint(ctx, match, endpoint.ID)
+				store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
 			}
 		}else{
 			unmatchable = append(unmatchable, endpoint.OrganizationName )

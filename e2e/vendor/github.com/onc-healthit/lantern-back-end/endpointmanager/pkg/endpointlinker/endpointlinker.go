@@ -93,12 +93,12 @@ func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error{
-	fhirEndpointOrgNames, err := store.GetAllFHIREndpointOrgNames(ctx)
+	fhirEndpointOrgNames, err := store.GetAllOrgNames(ctx)
 	if err != nil {
 		return errors.Wrap(err,"Error getting endpoint org names")
 	}
 
-	npiOrgNames, err := store.GetAllNPIOrganizationNormalizedNames(ctx)
+	npiOrgNames, err := store.GetAllNormalizedOrgNames(ctx)
 	if err != nil {
 		return errors.Wrap(err,"Error getting normalized org names")
 	}
@@ -114,7 +114,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			matchCount += 1
 			// Iterate over matches and add to linking table
 			for _, match := range matches {
-				store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
+				store.LinkOrganizationToEndpoint(ctx, match, endpoint.ID)
 			}
 		}else{
 			unmatchable = append(unmatchable, endpoint.OrganizationName )

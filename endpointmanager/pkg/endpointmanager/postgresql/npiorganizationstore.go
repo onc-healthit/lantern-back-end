@@ -213,8 +213,8 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 	return err
 }
 
-// GetAllNormalizedOrgNames gets list of all primary and secondary names
-func (s *Store) GetAllNormalizedOrgNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error)  {
+// GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
+func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error)  {
 	sqlStatement := `
 	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
@@ -235,8 +235,8 @@ func (s *Store) GetAllNormalizedOrgNames(ctx context.Context) ([]endpointmanager
 	return orgs, nil
 }
 
-// GetAllNormalizedOrgNames gets list of all primary and secondary names
-func (s *Store) LinkOrganizationToEndpoint(ctx context.Context, orgId int, endpointId int){
+// LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int){
 	sqlStatement := `
 	INSERT INTO endpoint_organization (
 		organization_id,

@@ -262,7 +262,7 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 }
 
 // GetAlOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error){
+func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error){
 	sqlStatement := `
 	SELECT id, organization_name FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
