@@ -42,6 +42,7 @@ func intersectionCount(set1 []string, set2 []string) int{
 }
 
 func CalculateJaccardIndex(string1 string, string2 string) float64 {
+	// https://www.statisticshowto.datasciencecentral.com/jaccard-index/
 	// Find the number of common tokens and divide it by the total number of unique tokens
 	string1Tokens := strings.Fields(string1)
 	string2Tokens := strings.Fields(string2)
@@ -69,18 +70,19 @@ func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 	verbosePrint(normalizedEndpointName + " Matched To:", verbose)
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
-		jacard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jacard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-		if (jacard1 == 1){
+		jacccard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
+		jacccard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		if (jacccard1 == 1){
 			consideredMatch = true
-			matches = append(matches, npiOrg.ID)
-		}else if (jacard1 >= JACARD_THRESHOLD) {
+			verbosePrint("Exact Match Primary Name: " + normalizedEndpointName, verbose)
+		}else if (jacccard1 >= JACARD_THRESHOLD) {
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedName, verbose)
 		}
-		if (jacard2 == 1){
+		if (jacccard2 == 1){
 			consideredMatch = true
-		}else if (jacard2 >= JACARD_THRESHOLD) {
+			verbosePrint("Exact Match Secondary Name: " + normalizedEndpointName, verbose)
+		}else if (jacccard2 >= JACARD_THRESHOLD) {
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedSecondaryName, verbose)
 		}

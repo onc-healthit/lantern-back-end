@@ -69,18 +69,18 @@ func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 	verbosePrint(normalizedEndpointName + " Matched To:", verbose)
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
-		jacard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jacard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-		if (jacard1 == 1){
+		jacccard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
+		jacccard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		if (jacccard1 == 1){
 			consideredMatch = true
 			matches = append(matches, npiOrg.ID)
-		}else if (jacard1 >= JACARD_THRESHOLD) {
+		}else if (jacccard1 >= JACARD_THRESHOLD) {
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedName, verbose)
 		}
-		if (jacard2 == 1){
+		if (jacccard2 == 1){
 			consideredMatch = true
-		}else if (jacard2 >= JACARD_THRESHOLD) {
+		}else if (jacccard2 >= JACARD_THRESHOLD) {
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedSecondaryName, verbose)
 		}
