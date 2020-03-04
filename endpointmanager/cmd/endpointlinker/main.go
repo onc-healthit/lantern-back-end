@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"os"
-	"log"
 	"github.com/spf13/viper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	log "github.com/sirupsen/logrus"
+
 )
 
 func failOnError(errString string, err error) {
@@ -21,6 +22,7 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "--verbose" {
 		verbose = true
 	}
+	log.Info("Starting to link FHIR endpoints to npi organizations")
 
 	err := config.SetupConfig()
 	failOnError("Error setting up config", err)
