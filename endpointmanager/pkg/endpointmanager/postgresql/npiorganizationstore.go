@@ -227,8 +227,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]end
 		var org endpointmanager.NPIOrganization
 		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
 		if err != nil {
-		  // handle this error
-		  panic(err)
+			return nil, err
 		}
 		orgs = append(orgs,org)
 	}

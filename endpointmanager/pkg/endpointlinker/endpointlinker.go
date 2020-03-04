@@ -121,7 +121,9 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 				store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
 			}
 		}else{
-			unmatchable = append(unmatchable, endpoint.OrganizationName )
+			if verbose == true {
+				unmatchable = append(unmatchable, endpoint.OrganizationName )
+			}
 		}
 
 	}
@@ -129,8 +131,10 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	verbosePrint("Match Total: " + strconv.Itoa(matchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
 
 	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
-	for _, name := range unmatchable {
-		verbosePrint(name, verbose)
+	if verbose == true {
+		for _, name := range unmatchable {
+			verbosePrint(name, verbose)
+		}
 	}
 
 	return nil;

@@ -235,7 +235,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]end
 	return orgs, nil
 }
 
-// GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
+// LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
 func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int){
 	sqlStatement := `
 	INSERT INTO endpoint_organization (
