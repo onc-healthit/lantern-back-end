@@ -5,6 +5,16 @@ The FHIR Endpoint Manager is a service that coordinates the data capture and ret
 ## Configuration
 The FHIR Endpoint Manager reads the following environment variables:
 
+**These variables must be set on your system**
+
+* **LANTERN_CHPLAPIKEY**: The key necessary for accessing CHPL
+
+  Default value: \<none>
+
+  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
+
+**These variables can use the default values *in development*. These should be set on the production system.**
+
 * **LANTERN_DBHOST**: The hostname where the database is hosted.
 
   Default value: localhost
@@ -28,11 +38,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 * **LANTERN_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
 
   Default value: disable
-
-* **LANTERN_CHPLAPIKEY**: The key necessary for accessing CHPL
-
-  Default value: <none>
-  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
 
 ### Test Configuration
 

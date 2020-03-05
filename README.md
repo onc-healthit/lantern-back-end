@@ -29,6 +29,130 @@
   * [Govendor](#govendor)
 * [License](#license)
 
+# Running Lantern - Basic Flow
+
+For more detailed information on running Lantern, see the _!! TODO: need to enter something here!!_.
+
+## Setup your environment
+
+To run Lantern, several environment variables need to be set. These are defined within each project's README. Each README defines the variables that *must* be set on the system vs those whose default values are sufficient.
+
+  * [Endpoint Manager](endpointmanager/README.md)
+  * [Network Statistics Querier](networkstatsquerier/README.md)
+  * [Capability Querier](capabilityquerier/README.md)
+  * [Lantern Message Queue](lanternmq/README.md)
+
+## Clean your environment
+
+**This is optional!**
+
+If you'd like to start with a clean slate, run:
+
+```bash
+make clean
+```
+
+This removes all docker images, networks, and local volumes.
+
+## Start Lantern
+
+1. In your terminal, run:
+
+    ```bash
+    make run
+    ```
+
+    This starts all of the services except for the endpointmanager:
+    * **Lantern Front End** - The front end for the Lantern application (localhost:8090)
+    * **Grafana** - the data visualization service (localhost:80)
+    * **PostgreSQL** - application database
+    * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
+    * **Prometheus / Prometheus remote storage adapter for PostgreSQL** - continuously queries the endpoints to determine response status and response time
+    * **Capability Querier** - queries the endpoints for their capability statements once a day. Kicks off the initial query immediately.
+
+2. **If you have a clean database** run the following command to begin populating the database:
+
+    ```bash
+    make populatedb
+    ```
+
+    This runs:
+    * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+    * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+    * the **NPPES populator**, which adds provider data from the monthly NPPES export to the database. 
+      * this is an optional item to add to the database, and can take around and hour to load.
+
+
+1. **If you have a clean database** open a new tab and run the following:
+
+    ```bash
+    cd endpointmanager/cmd/capabilityreceiver
+    go run main.go
+    cd ../../..
+    ```
+
+    This receives messages off of the queue. This action runs forever.
+
+1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
+
+    In the first tab (this runs forever), run:
+
+    ```bash
+    cd capabilityquerier/cmd
+    go run main.go
+    cd ../..
+    ```
+
+    If you do not already have the capability receiver running, in the second tab (this runs forever), run:
+
+    ```bash
+    cd endpointmanager/cmd/capabilityreceiver
+    go run main.go
+    cd ../../..
+    ```
+
+## Stop Lantern
+
+Run
+
+```bash
+make stop
+```
+
+## Starting Services Behind SSL-Inspecting Proxy
+
+If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into a `certs` directory at the root directory of the project. Docker-Compose will copy these certs into the containers that need to use the certificates.
+
+# Testing Lantern - Basic Flow
+
+There are three types of tests for Lantern and three corresponding commands:
+
+| test type | command |
+| --- | --- |
+| unit | `make test` |
+| integration | `make test_int` |
+| end-to-end |  `make test_e2e` |
+| all tests | `make test_all` |
+
+# Running Lantern - Details
+
+## Internal Services
+
+See each internal service's README to see how to run that service as a standalone service.
+
+  * [Endpoint Manager](endpointmanager/README.md)
+  * [Network Statistics Querier](networkstatsquerier/README.md)
+  * [Capability Querier](capabilityquerier/README.md)
+  * [Lantern Message Queue](lanternmq/README.md)
+
+## External Services
+
+### Prometheus and the Prometheus Remote Storage Adapter for PostgreSQL
+
+Prometheus is used to capture time-series-based data from the FHIR API endpoints. It stores these in the PostgreSQL database using Timescale's PostgreSQL extension, [`pg_prometheus`](https://github.com/timescale/pg_prometheus) as well as the the [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter).
+
+
+
 # Additional Services
 
 The Lantern infrastructure relies on several additional services. These include:
@@ -37,7 +161,7 @@ The Lantern infrastructure relies on several additional services. These include:
 * PostgreSQL database
 * Grafana
 
-Prometheus is used to capture time-series-based data from the FHIR API endpoints. It stores these in the PostgreSQL database using Timescale's PostgreSQL extension, [`pg_prometheus`](https://github.com/timescale/pg_prometheus) as well as the the [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter).
+
 
 The PostgreSQL database is used to store all information related to the FHIR API endpoints. This includes the timeseries data captured by Prometheus as well as information from the capability statement, information gathered from Inferno, information about the EHR vendors from [CHPL](https://chpl.healthit.gov/#/search), and information about the provider organization using the endpoint.
 
@@ -60,7 +184,9 @@ A makefile has been created for the project to simplify running containers.
 
 ### Starting the Services
 
-**Notice:** Before running `docker-compose up` make sure that you have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
+**Notice:** Before running `docker-compose up` make sure that you either:
+* have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
+* have the variables specified in the `env.sample` file defined as system environment variables.
 
 **If you have no containers** in your environment from a previous run of docker-compose, you will need to run `docker-compose up`.
 
@@ -395,3 +521,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 ```
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+# Appendix
+
+## Running Lantern
+
