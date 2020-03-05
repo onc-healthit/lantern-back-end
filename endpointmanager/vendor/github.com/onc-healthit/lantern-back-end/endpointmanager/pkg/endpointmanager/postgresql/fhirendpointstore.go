@@ -16,6 +16,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
+	var validationJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -31,6 +32,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		vendor,
 		location,
 		capability_statement,
+		validation,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
@@ -49,6 +51,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
+		&validationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -61,7 +64,12 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	err = json.Unmarshal(validationJSON, &endpoint.Validation)
 
 	return &endpoint, err
 }
@@ -72,6 +80,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
+	var validationJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -87,6 +96,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		vendor,
 		location,
 		capability_statement,
+		validation,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE url=$1`
@@ -106,6 +116,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
+		&validationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -118,7 +129,12 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	err = json.Unmarshal(validationJSON, &endpoint.Validation)
 
 	return &endpoint, err
 }
@@ -136,8 +152,9 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		authorization_standard,
 		vendor,
 		location,
-		capability_statement)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		capability_statement,
+		validation)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -153,6 +170,10 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
+	validationJSON, err := json.Marshal(e.Validation)
+	if err != nil {
+		return err
+	}
 
 	row := s.DB.QueryRowContext(ctx,
 		sqlStatement,
@@ -166,7 +187,8 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.AuthorizationStandard,
 		e.Vendor,
 		locationJSON,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		validationJSON)
 
 	err = row.Scan(&e.ID)
 
@@ -187,8 +209,9 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		authorization_standard = $8,
 		vendor = $9,
 		location = $10,
-		capability_statement = $11
-	WHERE id = $12`
+		capability_statement = $11,
+		validation = $12
+	WHERE id = $13`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -202,6 +225,10 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		}
 	} else {
 		capabilityStatementJSON = []byte("null")
+	}
+	validationJSON, err := json.Marshal(e.Validation)
+	if err != nil {
+		return err
 	}
 
 	_, err = s.DB.ExecContext(ctx,
@@ -217,6 +244,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON,
+		validationJSON,
 		e.ID)
 
 	return err

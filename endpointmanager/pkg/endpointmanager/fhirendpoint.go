@@ -26,6 +26,7 @@ type FHIREndpoint struct {
 	Vendor                string
 	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
 	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	Validation            map[string]interface{}
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
