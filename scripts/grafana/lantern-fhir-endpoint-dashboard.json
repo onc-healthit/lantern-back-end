@@ -1,0 +1,1261 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "iteration": 1583422655864,
+  "links": [],
+  "panels": [
+    {
+      "columns": [],
+      "datasource": null,
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 12,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 24,
+      "options": {},
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "count",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*),json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type from fhir_endpoints group by json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' ORDER BY type;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Endpoint Resource Counts",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": null,
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 12,
+        "w": 17,
+        "x": 7,
+        "y": 0
+      },
+      "id": 19,
+      "options": {},
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT url,vendor FROM fhir_endpoints WHERE capability_statement#>'{rest,0,resource}' @> '[{\"type\":${Resources:json}}]'\nAND fhir_endpoints.vendor IN (${Vendor});",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Endpoints by Resource",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 4,
+        "w": 19,
+        "x": 0,
+        "y": 12
+      },
+      "id": 14,
+      "options": {
+        "displayMode": "basic",
+        "fieldOptions": {
+          "calcs": [
+            "count"
+          ],
+          "defaults": {
+            "mappings": [
+              {
+                "from": "",
+                "id": 1,
+                "operator": "",
+                "text": "",
+                "to": "",
+                "type": 1,
+                "value": ""
+              }
+            ],
+            "max": 100,
+            "min": 0,
+            "thresholds": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "override": {},
+          "values": false
+        },
+        "orientation": "horizontal"
+      },
+      "pluginVersion": "6.5.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select\n  capability_statement #>> '{fhirVersion}' as fv,updated_at as \"time\", count(*)\nFROM fhir_endpoints\nWHERE capability_statement #>> '{fhirVersion}' IN ($fhir_version)\nGROUP BY fv,time\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Endpoints by FHIR Version",
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 19,
+        "y": 12
+      },
+      "id": 2,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM fhir_endpoints\nWHERE\n  $__timeFilter(fhir_endpoints.updated_at)\n  AND fhir_endpoints.http_response <> 0\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "http_response"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "fhir_endpoints",
+          "timeColumn": "created_at",
+          "timeColumnType": "timestamptz",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Current Successful Endpoints",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 9,
+      "options": {
+        "displayMode": "basic",
+        "fieldOptions": {
+          "calcs": [
+            "count"
+          ],
+          "defaults": {
+            "links": [
+              {
+                "title": "",
+                "url": ""
+              }
+            ],
+            "mappings": [
+              {
+                "from": "",
+                "id": 1,
+                "operator": "",
+                "text": "",
+                "to": "",
+                "type": 1,
+                "value": ""
+              }
+            ],
+            "max": 100,
+            "min": 0,
+            "thresholds": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ],
+            "title": ""
+          },
+          "override": {},
+          "values": false
+        },
+        "orientation": "horizontal"
+      },
+      "pluginVersion": "6.5.2",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select\n  vendor,updated_at as \"time\", count(*)\nFROM fhir_endpoints\nGROUP BY vendor,time\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "All Endpoints by Vendor",
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "description": "",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 22
+      },
+      "id": 4,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": "Vendor",
+      "repeatDirection": "h",
+      "scopedVars": {
+        "Vendor": {
+          "selected": false,
+          "text": "Cerner Corporation",
+          "value": "Cerner Corporation"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM fhir_endpoints\nWHERE\n  $__timeFilter(fhir_endpoints.updated_at)\n  AND fhir_endpoints.vendor IN (${Vendor})\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Responsive Endpoints by $Vendor ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "description": "",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 22
+      },
+      "id": 25,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1583422655864,
+      "repeatPanelId": 4,
+      "scopedVars": {
+        "Vendor": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM fhir_endpoints\nWHERE\n  $__timeFilter(fhir_endpoints.updated_at)\n  AND fhir_endpoints.vendor IN (${Vendor})\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Responsive Endpoints by $Vendor ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "description": "",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 22
+      },
+      "id": 26,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1583422655864,
+      "repeatPanelId": 4,
+      "scopedVars": {
+        "Vendor": {
+          "selected": false,
+          "text": "CareEvolution, Inc.",
+          "value": "CareEvolution, Inc."
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM fhir_endpoints\nWHERE\n  $__timeFilter(fhir_endpoints.updated_at)\n  AND fhir_endpoints.vendor IN (${Vendor})\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Responsive Endpoints by $Vendor ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "description": "",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 22
+      },
+      "id": 27,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1583422655864,
+      "repeatPanelId": 4,
+      "scopedVars": {
+        "Vendor": {
+          "selected": false,
+          "text": "Epic Systems Corporation",
+          "value": "Epic Systems Corporation"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM fhir_endpoints\nWHERE\n  $__timeFilter(fhir_endpoints.updated_at)\n  AND fhir_endpoints.vendor IN (${Vendor})\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "metrics",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Responsive Endpoints by $Vendor ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    }
+  ],
+  "schemaVersion": 21,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "PostgreSQL",
+        "definition": "select distinct vendor from fhir_endpoints;",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "Vendor",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "Cerner Corporation",
+            "value": "Cerner Corporation"
+          },
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          },
+          {
+            "selected": false,
+            "text": "CareEvolution, Inc.",
+            "value": "CareEvolution, Inc."
+          },
+          {
+            "selected": false,
+            "text": "Epic Systems Corporation",
+            "value": "Epic Systems Corporation"
+          }
+        ],
+        "query": "select distinct vendor from fhir_endpoints;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "tags": [],
+          "text": "1.0.2",
+          "value": "1.0.2"
+        },
+        "datasource": "PostgreSQL",
+        "definition": "select distinct capability_statement->>'fhirVersion' from fhir_endpoints where capability_statement->>'fhirVersion' IS NOT NULL",
+        "hide": 0,
+        "includeAll": true,
+        "label": "FHIR Version",
+        "multi": false,
+        "name": "fhir_version",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": true,
+            "text": "1.0.2",
+            "value": "1.0.2"
+          }
+        ],
+        "query": "select distinct capability_statement->>'fhirVersion' from fhir_endpoints where capability_statement->>'fhirVersion' IS NOT NULL",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "Patient",
+          "value": "Patient"
+        },
+        "datasource": "PostgreSQL",
+        "definition": "SELECT DISTINCT json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type FROM fhir_endpoints order by type",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Resources",
+        "options": [
+          {
+            "selected": false,
+            "text": "AllergyIntolerance",
+            "value": "AllergyIntolerance"
+          },
+          {
+            "selected": false,
+            "text": "Appointment",
+            "value": "Appointment"
+          },
+          {
+            "selected": false,
+            "text": "AuditEvent",
+            "value": "AuditEvent"
+          },
+          {
+            "selected": false,
+            "text": "Binary",
+            "value": "Binary"
+          },
+          {
+            "selected": false,
+            "text": "CarePlan",
+            "value": "CarePlan"
+          },
+          {
+            "selected": false,
+            "text": "Claim",
+            "value": "Claim"
+          },
+          {
+            "selected": false,
+            "text": "Condition",
+            "value": "Condition"
+          },
+          {
+            "selected": false,
+            "text": "Conformance",
+            "value": "Conformance"
+          },
+          {
+            "selected": false,
+            "text": "Contract",
+            "value": "Contract"
+          },
+          {
+            "selected": false,
+            "text": "Coverage",
+            "value": "Coverage"
+          },
+          {
+            "selected": false,
+            "text": "Device",
+            "value": "Device"
+          },
+          {
+            "selected": false,
+            "text": "DiagnosticOrder",
+            "value": "DiagnosticOrder"
+          },
+          {
+            "selected": false,
+            "text": "DiagnosticReport",
+            "value": "DiagnosticReport"
+          },
+          {
+            "selected": false,
+            "text": "DocumentReference",
+            "value": "DocumentReference"
+          },
+          {
+            "selected": false,
+            "text": "Encounter",
+            "value": "Encounter"
+          },
+          {
+            "selected": false,
+            "text": "FamilyMemberHistory",
+            "value": "FamilyMemberHistory"
+          },
+          {
+            "selected": false,
+            "text": "Goal",
+            "value": "Goal"
+          },
+          {
+            "selected": false,
+            "text": "Group",
+            "value": "Group"
+          },
+          {
+            "selected": false,
+            "text": "Immunization",
+            "value": "Immunization"
+          },
+          {
+            "selected": false,
+            "text": "Location",
+            "value": "Location"
+          },
+          {
+            "selected": false,
+            "text": "Medication",
+            "value": "Medication"
+          },
+          {
+            "selected": false,
+            "text": "MedicationAdministration",
+            "value": "MedicationAdministration"
+          },
+          {
+            "selected": false,
+            "text": "MedicationDispense",
+            "value": "MedicationDispense"
+          },
+          {
+            "selected": false,
+            "text": "MedicationOrder",
+            "value": "MedicationOrder"
+          },
+          {
+            "selected": false,
+            "text": "MedicationStatement",
+            "value": "MedicationStatement"
+          },
+          {
+            "selected": false,
+            "text": "Observation",
+            "value": "Observation"
+          },
+          {
+            "selected": false,
+            "text": "OperationDefinition",
+            "value": "OperationDefinition"
+          },
+          {
+            "selected": true,
+            "text": "Patient",
+            "value": "Patient"
+          },
+          {
+            "selected": false,
+            "text": "Person",
+            "value": "Person"
+          },
+          {
+            "selected": false,
+            "text": "Practitioner",
+            "value": "Practitioner"
+          },
+          {
+            "selected": false,
+            "text": "Procedure",
+            "value": "Procedure"
+          },
+          {
+            "selected": false,
+            "text": "ProcedureRequest",
+            "value": "ProcedureRequest"
+          },
+          {
+            "selected": false,
+            "text": "Provenance",
+            "value": "Provenance"
+          },
+          {
+            "selected": false,
+            "text": "ReferralRequest",
+            "value": "ReferralRequest"
+          },
+          {
+            "selected": false,
+            "text": "RelatedPerson",
+            "value": "RelatedPerson"
+          },
+          {
+            "selected": false,
+            "text": "Schedule",
+            "value": "Schedule"
+          },
+          {
+            "selected": false,
+            "text": "Slot",
+            "value": "Slot"
+          },
+          {
+            "selected": false,
+            "text": "Specimen",
+            "value": "Specimen"
+          },
+          {
+            "selected": false,
+            "text": "StructureDefinition",
+            "value": "StructureDefinition"
+          },
+          {
+            "selected": false,
+            "text": "ValueSet",
+            "value": "ValueSet"
+          }
+        ],
+        "query": "SELECT DISTINCT json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type FROM fhir_endpoints order by type",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "FHIR Endpoints",
+  "uid": "4XFoRy_Zz",
+  "version": 19
+}
