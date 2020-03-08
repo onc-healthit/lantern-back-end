@@ -22,6 +22,8 @@ if [ "$cont" = "y" ] || [ "$cont" = "Y" ]; then
     read nppesdata
     echo "Loading data from $nppesdata..."
     go run main.go $nppesdata
+    cd ../endpointlinker
+    go run main.go
 else
     echo "No NPPES data will be loaded."
 fi
