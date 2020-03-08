@@ -58,8 +58,8 @@ CREATE TABLE healthit_products (
 );
 
 CREATE TABLE endpoint_organization (
-    endpoint_id INT REFERENCES fhir_endpoints (id),
-    organization_id INT REFERENCES npi_organizations (id),
+    endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
+    organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
     CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
 );
 
@@ -80,7 +80,7 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 
 CREATE or REPLACE VIEW org_mapping AS
-SELECT endpts.url, orgs.name, orgs.Location->>'state'
+SELECT endpts.url, endpts.fhir_version, orgs.name, orgs.secondary_name, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE
 FROM endpoint_organization AS links
 LEFT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id;
