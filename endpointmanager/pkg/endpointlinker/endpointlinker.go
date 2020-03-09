@@ -41,7 +41,7 @@ func intersectionCount(set1 []string, set2 []string) int{
 	return intersectionCount
 }
 
-func CalculateJaccardIndex(string1 string, string2 string) float64 {
+func calculateJaccardIndex(string1 string, string2 string) float64 {
 	// https://www.statisticshowto.datasciencecentral.com/jaccard-index/
 	// Find the number of common tokens and divide it by the total number of unique tokens
 	string1Tokens := strings.Fields(string1)
@@ -65,15 +65,15 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func GetIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool ) ([]int, error){
+func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool ) ([]int, error){
 	JACARD_THRESHOLD := .75
 
 	matches := []int{}
 	verbosePrint(normalizedEndpointName + " Matched To:", verbose)
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
-		jacccard1 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jacccard2 := CalculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		jacccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
+		jacccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
 		if (jacccard1 == 1){
 			consideredMatch = true
 			verbosePrint("Exact Match Primary Name: " + normalizedEndpointName, verbose)
@@ -113,7 +113,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := NormalizeOrgName(endpoint.OrganizationName)
 		matches := []int{}
-		matches, err = GetIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		matches, err = getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
 		if (len(matches) > 0){
 			matchCount += 1
 			// Iterate over matches and add to linking table

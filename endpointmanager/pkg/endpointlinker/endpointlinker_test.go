@@ -14,16 +14,16 @@ func Test_NormalizeOrgName(t *testing.T) {
 	th.Assert(t, (normalized == expected), "Organization name normalization failed. Expected: "+ expected + " Got: " + normalized)
 }
 
-func Test_CalculateJaccardIndex(t *testing.T) {
-	jacccardIndex := CalculateJaccardIndex("FOO BAR", "FOO BAR")
+func Test_calculateJaccardIndex(t *testing.T) {
+	jacccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
 	ind := strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
 	th.Assert(t, (jacccardIndex == 1), "Jacard index expected to be 1, was " + ind)
 
-	jacccardIndex = CalculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	jacccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
 	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
 	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was " + ind)
 
-	jacccardIndex = CalculateJaccardIndex("FOO FOO BAR", "FOO BAR")
+	jacccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
 	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
 	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was " + ind)
 }
