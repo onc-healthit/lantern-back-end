@@ -33,6 +33,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
+		ListSource:            "Epic",
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -50,6 +51,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
+		ListSource:            "Epic",
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -119,6 +121,12 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. AuthorizationStandard should be different. %s vs %s", endpoint1.AuthorizationStandard, endpoint2.AuthorizationStandard)
 	}
 	endpoint2.AuthorizationStandard = endpoint1.AuthorizationStandard
+
+	endpoint2.ListSource = "other"
+	if endpoint1.Equal(endpoint2) {
+		t.Errorf("Did not expect endpoint1 to equal endpoint 2. ListSource should be different. %s vs %s", endpoint1.ListSource, endpoint2.ListSource)
+	}
+	endpoint2.ListSource = endpoint1.ListSource
 
 	endpoint2.Location.Address1 = "other"
 	if endpoint1.Equal(endpoint2) {

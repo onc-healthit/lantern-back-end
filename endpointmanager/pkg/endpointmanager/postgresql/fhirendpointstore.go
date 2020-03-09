@@ -213,8 +213,6 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		fhir_version = $7,
 		authorization_standard = $8,
 		vendor = $9,
-		location = $10,
-		capability_statement = $11,
 		list_source = $10,
 		location = $11,
 		capability_statement = $12
