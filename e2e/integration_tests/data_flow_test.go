@@ -96,7 +96,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != 1 {
-		// t.Fatalf("Only one endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+		t.Fatalf("Only one endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 
@@ -111,7 +111,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != 0 {
-		// t.Fatalf("Empty database should not have had any links made yet. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Empty database should not have had any links made yet. Has: " + strconv.Itoa(link_count))
 	}
 
 	ctx := context.Background()
@@ -121,8 +121,8 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count == 0 {
-		// t.Fatalf("Empty database should not have links")
+	if link_count != 1 {
+		t.Fatalf("Database should only have made one link given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 }
 
