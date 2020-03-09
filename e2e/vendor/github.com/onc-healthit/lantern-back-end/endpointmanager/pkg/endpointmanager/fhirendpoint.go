@@ -2,6 +2,7 @@ package endpointmanager
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -15,6 +16,13 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
+<<<<<<< HEAD
+=======
+	TLSVersion            string
+	MIMETypes             []string
+	HTTPResponse          int
+	Errors                string
+>>>>>>> Update e2e vendor manually
 	OrganizationName      string
 	FHIRVersion           string
 	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
@@ -55,6 +63,37 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.URL != e2.URL {
 		return false
 	}
+<<<<<<< HEAD
+=======
+	if e.TLSVersion != e2.TLSVersion {
+		return false
+	}
+
+	// check MIMETypes equal
+	if len(e.MIMETypes) != len(e2.MIMETypes) {
+		return false
+	}
+	// don't care about order
+	a := make([]string, len(e.MIMETypes))
+	b := make([]string, len(e2.MIMETypes))
+	sort.Strings(a)
+	sort.Strings(b)
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+
+	if e.HTTPResponse != e2.HTTPResponse {
+		return false
+	}
+	if e.Errors != e2.Errors {
+		return false
+	}
+	if e.OrganizationName != e2.OrganizationName {
+		return false
+	}
+>>>>>>> Update e2e vendor manually
 	if e.FHIRVersion != e2.FHIRVersion {
 		return false
 	}
