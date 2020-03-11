@@ -2,12 +2,10 @@ version: '3'
 
 services:
   endpoint_querier:
-    container_name: endpoint_querier_1
     build: 
       context: ./networkstatsquerier
 
   pg_prometheus:
-    container_name: pg_prometheus
     image: timescale/pg_prometheus:latest-pg11
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -20,7 +18,6 @@ services:
       -csynchronous_commit=off
 
   prometheus_postgresql_adapter:
-    container_name: prometheus_postgres_adapter
     image: timescale/prometheus-postgresql-adapter
     depends_on:
       - pg_prometheus
@@ -36,7 +33,6 @@ services:
       -pg-prometheus-log-samples
 
   prometheus:
-    container_name: prometheus
     image: prom/prometheus
     volumes:
       - prometheusData:/prometheus
@@ -47,7 +43,6 @@ services:
 
   grafana:
     image: grafana/grafana
-    container_name: grafana
     volumes:
       - grafanaData:/var/lib/grafana
     environment:
@@ -57,20 +52,17 @@ services:
       - "80:3000"
   
   lantern-mq:
-    container_name: lantern-mq
     image: rabbitmq:3-management
     volumes:
       - ./lanternmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
 
   lantern_front_end:
-    container_name: lantern_front_end
     image: onchealthit/lantern-front-end
     ports:
       - "8090:80"
   
   capability_querier:
-    container_name: capability_querier
     build: 
       context: ./capabilityquerier
     depends_on:
