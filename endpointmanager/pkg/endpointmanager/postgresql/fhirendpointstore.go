@@ -1,12 +1,12 @@
 package postgresql
 
 import (
-        "context"
-        "encoding/json"
+	"context"
+	"encoding/json"
 
-        "github.com/lib/pq"
-        "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-        "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/lib/pq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
@@ -251,33 +251,33 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-        sqlStatement := `
+	sqlStatement := `
         DELETE FROM fhir_endpoints
         WHERE id = $1`
 
-        _, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
+	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
-        return err
+	return err
 }
 
 // GetAlOrgNames returns a sql.Rows of all of the orgNames
 func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
-        sqlStatement := `
+	sqlStatement := `
         SELECT id, organization_name FROM fhir_endpoints`
-        rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 
-        if err != nil {
-                return nil, err
-        }
-        var endpoints []endpointmanager.FHIREndpoint
-        defer rows.Close()
-        for rows.Next() {
-                var endpoint endpointmanager.FHIREndpoint
-                err = rows.Scan(&endpoint.ID, &endpoint.OrganizationName)
-                if err != nil {
-                        return nil, err
-                }
-                endpoints = append(endpoints, endpoint)
-        }
-        return endpoints, nil
+	if err != nil {
+		return nil, err
+	}
+	var endpoints []endpointmanager.FHIREndpoint
+	defer rows.Close()
+	for rows.Next() {
+		var endpoint endpointmanager.FHIREndpoint
+		err = rows.Scan(&endpoint.ID, &endpoint.OrganizationName)
+		if err != nil {
+			return nil, err
+		}
+		endpoints = append(endpoints, endpoint)
+	}
+	return endpoints, nil
 }
