@@ -20,12 +20,9 @@ type Store struct {
 	GetFHIREndpointUsingURLFn      func(context.Context, string) (*endpointmanager.FHIREndpoint, error)
 	GetFHIREndpointUsingURLInvoked bool
 
-<<<<<<< HEAD
-=======
-	GetAllFHIREndpointOrgNamesFn	   func(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) 
-	GetAllFHIREndpointOrgNamesInvoked	bool
+	GetAllFHIREndpointOrgNamesFn      func(ctx context.Context) ([]endpointmanager.FHIREndpoint, error)
+	GetAllFHIREndpointOrgNamesInvoked bool
 
->>>>>>> Address more PR comments
 	AddFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
 	AddFHIREndpointInvoked bool
 
