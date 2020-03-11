@@ -60,7 +60,7 @@ func calculateJaccardIndex(string1 string, string2 string) float64 {
 
 // This function is available for making the matching algorithm easier to tune
 func verbosePrint(message string, verbose bool) {
-	if verbose == true {
+	if verbose {
 		println(message)
 	}
 }
@@ -88,7 +88,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName + "=>" + npiOrg.NormalizedSecondaryName, verbose)
 		}
-		if consideredMatch == true {
+		if consideredMatch  {
 			matches = append(matches, npiOrg.ID)
 		}
 	}
@@ -112,16 +112,21 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := NormalizeOrgName(endpoint.OrganizationName)
-		matches := []int{}
-		matches, err = getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		matches, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		if err != nil {
+			return errors.Wrap(err,"Error getting matching NPI org IDs")
+		}
 		if (len(matches) > 0){
 			matchCount += 1
 			// Iterate over matches and add to linking table
 			for _, match := range matches {
-				store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
+				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
+				if err != nil {
+					return errors.Wrap(err,"Error linking org to FHIR endpoint")
+				}
 			}
 		}else{
-			if verbose == true {
+			if verbose {
 				unmatchable = append(unmatchable, endpoint.OrganizationName )
 			}
 		}
@@ -131,7 +136,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	verbosePrint("Match Total: " + strconv.Itoa(matchCount) + "/" + strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
 
 	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
-	if verbose == true {
+	if verbose {
 		for _, name := range unmatchable {
 			verbosePrint(name, verbose)
 		}

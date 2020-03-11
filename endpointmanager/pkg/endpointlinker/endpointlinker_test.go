@@ -35,10 +35,10 @@ func Test_IntersectionCount(t *testing.T) {
 	emptyListIntersections = intersectionCount([]string{"foo"},[]string{})
 	th.Assert(t, (emptyListIntersections == 0), "Intersection count of empty lists should be zero, got " + strconv.Itoa(emptyListIntersections))
 
-	nonEmptyListIntersections := intersectionCount([]string{"foo"},[]string{"bar"})
+	emptyListIntersections = intersectionCount([]string{"foo"},[]string{"bar"})
 	th.Assert(t, (emptyListIntersections == 0), "Intersection count of empty lists should be zero, got " + strconv.Itoa(emptyListIntersections))
 
-	nonEmptyListIntersections = intersectionCount([]string{"foo"},[]string{"foo"})
+	nonEmptyListIntersections := intersectionCount([]string{"foo"},[]string{"foo"})
 	th.Assert(t, (nonEmptyListIntersections == 1), "Intersection count of empty lists should be one, got " + strconv.Itoa(nonEmptyListIntersections))
 
 	nonEmptyListIntersections = intersectionCount([]string{"foo","bar"},[]string{"bar"})

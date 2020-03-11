@@ -217,16 +217,21 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]end
 }
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
-func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int){
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int) error{
 	sqlStatement := `
 	INSERT INTO endpoint_organization (
 		organization_id,
 		endpoint_id)
 	VALUES ($1, $2)`
 
-	s.DB.ExecContext(ctx,
+	_, err := s.DB.ExecContext(ctx,
 		sqlStatement,
 		orgId,
 		endpointId,)
+<<<<<<< HEAD
 }
 >>>>>>> Address more PR comments
+=======
+	return err
+}
+>>>>>>> Address lintr issues

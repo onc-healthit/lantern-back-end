@@ -26,8 +26,12 @@ type NPIOrganizationStore interface {
 <<<<<<< HEAD
 =======
 	GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]NPIOrganization, error)
+<<<<<<< HEAD
 	LinkNPIOrganizationToFHIREndpoint(context.Context, int, int)
 >>>>>>> Address more PR comments
+=======
+	LinkNPIOrganizationToFHIREndpoint(context.Context, int, int) error
+>>>>>>> Address lintr issues
 	DeleteAllNPIOrganizations(context.Context) error
 	AddNPIOrganization(context.Context, *NPIOrganization) error
 	UpdateNPIOrganization(context.Context, *NPIOrganization) error
