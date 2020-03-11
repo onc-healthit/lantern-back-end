@@ -376,8 +376,8 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 			City:     data.Provider_Business_Practice_Location_Address_City_Name,
 			State:    data.Provider_Business_Practice_Location_Address_State_Name,
 			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
-		Taxonomy: data.Healthcare_Provider_Taxonomy_Code_1,
-		NormalizedName: normalizedName,
+		Taxonomy:                data.Healthcare_Provider_Taxonomy_Code_1,
+		NormalizedName:          normalizedName,
 		NormalizedSecondaryName: normalizedSecondary}
 	return npiOrg
 }
