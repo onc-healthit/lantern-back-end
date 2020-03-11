@@ -105,9 +105,9 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	defer store.Close()
-	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
-	err = response_time_row.Scan(&link_count)
+	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 
 	if link_count != 0 {
@@ -117,12 +117,24 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	ctx := context.Background()
 	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
 
-	response_time_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
-	err = response_time_row.Scan(&link_count)
+	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 
 	if link_count != 1 {
 		t.Fatalf("Database should only have made one link given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+	}
+
+	// Assert that deletion from fhir_endpoint list removes the link
+	store.DB.Exec("DELETE FROM fhir_endpoints WHERE id=1;")
+
+
+	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	err = endpoint_orgs_row.Scan(&link_count)
+	failOnError(err)
+
+	if link_count != 0 {
+		t.Fatalf("Database should not contain any links. Has: " + strconv.Itoa(link_count))
 	}
 }
 

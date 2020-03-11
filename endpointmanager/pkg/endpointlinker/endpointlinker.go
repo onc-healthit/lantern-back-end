@@ -65,34 +65,42 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool) ([]int, error) {
-	JACARD_THRESHOLD := .75
+func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool) ([]int, map[int]float64, error) {
+	JACCARD_THRESHOLD := .75
 
 	matches := []int{}
+	confidenceMap := make(map[int]float64)
+
 	verbosePrint(normalizedEndpointName+" Matched To:", verbose)
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
-		jacccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jacccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-		if jacccard1 == 1 {
+		confidence := 0.0
+		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
+		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		if jaccard1 == 1 {
+			confidence = 1
 			consideredMatch = true
 			verbosePrint("Exact Match Primary Name: "+normalizedEndpointName, verbose)
-		} else if jacccard1 >= JACARD_THRESHOLD {
+		} else if jaccard1 >= JACCARD_THRESHOLD {
+			confidence = jaccard1
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedName, verbose)
 		}
-		if jacccard2 == 1 {
+		if jaccard2 == 1 {
+			confidence = 1
 			consideredMatch = true
 			verbosePrint("Exact Match Secondary Name: "+normalizedEndpointName, verbose)
-		} else if jacccard2 >= JACARD_THRESHOLD {
+		} else if jaccard2 >= JACCARD_THRESHOLD {
 			consideredMatch = true
+			confidence = jaccard2
 			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedSecondaryName, verbose)
 		}
 		if consideredMatch {
+			confidenceMap[npiOrg.ID] = confidence
 			matches = append(matches, npiOrg.ID)
 		}
 	}
-	return matches, nil
+	return matches, confidenceMap, nil
 }
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
@@ -111,7 +119,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
 		normalizedEndpointName := NormalizeOrgName(endpoint.OrganizationName)
-		matches, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
 		if err != nil {
 			return errors.Wrap(err, "Error getting matching NPI org IDs")
 		}
@@ -119,7 +127,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			matchCount += 1
 			// Iterate over matches and add to linking table
 			for _, match := range matches {
-				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID)
+				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID, confidences[match])
 				if err != nil {
 					return errors.Wrap(err, "Error linking org to FHIR endpoint")
 				}

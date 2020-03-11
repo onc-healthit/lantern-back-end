@@ -15,16 +15,16 @@ func Test_NormalizeOrgName(t *testing.T) {
 }
 
 func Test_CalculateJaccardIndex(t *testing.T) {
-	jacccardIndex := CalculateJaccardIndex("FOO BAR", "FOO BAR")
-	if jacccardIndex != 1 {
-		ind := strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-		t.Errorf("Jacard index expected to be 1, was " + ind)
+	jaccardIndex := CalculateJaccardIndex("FOO BAR", "FOO BAR")
+	if jaccardIndex != 1 {
+		ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+		t.Errorf("Jaccard index expected to be 1, was " + ind)
 	}
 
-	jacccardIndex = CalculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
-	if jacccardIndex != .6666666666666666 {
-		ind := strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-		t.Errorf("Jacard index expected to be 1, was " + ind)
+	jaccardIndex = CalculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	if jaccardIndex != .6666666666666666 {
+		ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+		t.Errorf("Jaccard index expected to be 1, was " + ind)
 	}
 }
 

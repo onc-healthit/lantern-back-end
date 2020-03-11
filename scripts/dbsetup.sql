@@ -60,6 +60,7 @@ CREATE TABLE healthit_products (
 CREATE TABLE endpoint_organization (
     endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
     organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
+    confidence NUMERIC (5, 3),
     CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
 );
 

@@ -14,17 +14,17 @@ func Test_NormalizeOrgName(t *testing.T) {
 }
 
 func Test_calculateJaccardIndex(t *testing.T) {
-	jacccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
-	ind := strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == 1), "Jacard index expected to be 1, was "+ind)
+	jaccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
+	ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == 1), "Jaccard index expected to be 1, was "+ind)
 
-	jacccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
-	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was "+ind)
+	jaccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 
-	jacccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
-	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was "+ind)
+	jaccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
+	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 }
 
 func Test_IntersectionCount(t *testing.T) {

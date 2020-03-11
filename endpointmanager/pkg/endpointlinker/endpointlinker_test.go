@@ -2,6 +2,7 @@ package endpointlinker
 
 import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"strconv"
 	"testing"
 )
@@ -14,17 +15,17 @@ func Test_NormalizeOrgName(t *testing.T) {
 }
 
 func Test_calculateJaccardIndex(t *testing.T) {
-	jacccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
-	ind := strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == 1), "Jacard index expected to be 1, was "+ind)
+	jaccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
+	ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == 1), "Jaccard index expected to be 1, was "+ind)
 
-	jacccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
-	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was "+ind)
+	jaccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 
-	jacccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
-	ind = strconv.FormatFloat(jacccardIndex, 'f', -1, 64)
-	th.Assert(t, (jacccardIndex == .6666666666666666), "Jacard index expected to be .6666666666666666, was "+ind)
+	jaccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
+	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
+	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 }
 
 func Test_IntersectionCount(t *testing.T) {
@@ -48,5 +49,70 @@ func Test_IntersectionCount(t *testing.T) {
 
 	nonEmptyListIntersections = intersectionCount([]string{"foo", "bar", "foo", "foo"}, []string{"bar", "foo", "foo"})
 	th.Assert(t, (nonEmptyListIntersections == 3), "Intersection count of empty lists should be three, got "+strconv.Itoa(nonEmptyListIntersections))
+}
+
+func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
+	var npio1 = endpointmanager.NPIOrganization{
+		ID:            1,
+		NPI_ID:        "1",
+		Name:          "Foo Bar",
+		SecondaryName: "",
+		NormalizedName: "FOO FOO BAR",
+		NormalizedSecondaryName: "",
+		Location: &endpointmanager.Location{
+			Address1: "123 Gov Way",
+			Address2: "Suite 123",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+	var npio2 = endpointmanager.NPIOrganization{
+		ID:            2,
+		NPI_ID:        "2",
+		Name:          "nothing should match this",
+		SecondaryName: "foo bar baz",
+		NormalizedName: "NOTHING SHOULD MATCH THIS",
+		NormalizedSecondaryName: "FOO FOO BAR BAZ",
+		Location: &endpointmanager.Location{
+			Address1: "somerandomstring",
+			Address2: "Foo Bar",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+	var npio3 = endpointmanager.NPIOrganization{
+		ID:            3,
+		NPI_ID:        "3",
+		Name:          "nothingshouldmatchthis",
+		SecondaryName: "nothingshouldmatchthis",
+		NormalizedName: "NOTHINGSHOULDMATCHTHIS",
+		NormalizedSecondaryName: "NOTHINGSHOULDMATCHTHIS",
+		Location: &endpointmanager.Location{
+			Address1: "somerandomstring",
+			Address2: "FooBar",
+			City:     "A",
+			State:    "NH",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+
+	var  orgs []endpointmanager.NPIOrganization;
+
+	matches, confidences, err :=  getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
+	th.Assert(t, (err == nil), "Error getting matches from empty list")
+	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: " + strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned" + strconv.Itoa(len(matches)))
+
+	orgs = append(orgs, npio1)
+	matches, confidences, err =  getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", false)
+	th.Assert(t, (err == nil), "Error getting matches from list")
+	th.Assert(t, (len(matches) == 1), "There should have been 1 match returned got: " + strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidence returned" + strconv.Itoa(len(confidences)))
+
+	orgs = append(orgs, npio2)
+	orgs = append(orgs, npio3)
+	matches, confidences, err =  getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", true)
+	th.Assert(t, (err == nil), "Error getting matches from list")
+	th.Assert(t, (len(matches) == 2), "There should have been 2 matchs returned got: " + strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 2), "There should have been 2 confidences returned" + strconv.Itoa(len(confidences)))
 
 }
