@@ -16,19 +16,17 @@ import (
 type FHIREndpoint struct {
 	ID                    int
 	URL                   string
-<<<<<<< HEAD
-=======
 	TLSVersion            string
 	MIMETypes             []string
 	HTTPResponse          int
 	Errors                string
->>>>>>> Update e2e vendor manually
 	OrganizationName      string
 	FHIRVersion           string
 	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
 	Vendor                string
 	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
 	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	Validation            map[string]interface{}
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
@@ -38,10 +36,7 @@ type FHIREndpoint struct {
 type FHIREndpointStore interface {
 	GetFHIREndpoint(context.Context, int) (*FHIREndpoint, error)
 	GetFHIREndpointUsingURL(context.Context, string) (*FHIREndpoint, error)
-<<<<<<< HEAD
-=======
 	GetAllFHIREndpointOrgNames(ctx context.Context) ([]FHIREndpoint, error)
->>>>>>> Address more PR comments
 
 	AddFHIREndpoint(context.Context, *FHIREndpoint) error
 	UpdateFHIREndpoint(context.Context, *FHIREndpoint) error
@@ -63,8 +58,6 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.URL != e2.URL {
 		return false
 	}
-<<<<<<< HEAD
-=======
 	if e.TLSVersion != e2.TLSVersion {
 		return false
 	}
@@ -93,7 +86,6 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.OrganizationName != e2.OrganizationName {
 		return false
 	}
->>>>>>> Update e2e vendor manually
 	if e.FHIRVersion != e2.FHIRVersion {
 		return false
 	}

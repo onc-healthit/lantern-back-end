@@ -82,12 +82,37 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		}
 	}
 
+	/**
+	Quick Validation
+	*/
+
+	var mimeTypeValidObj validationError
+	if msgJSON["capabilityStatement"] != nil {
+		fhirVersion, err := capStat.GetFHIRVersion()
+		if err != nil {
+			return nil, err
+		}
+		mimeTypeValidObj = mimeTypeValid(mimeTypes, fhirVersion)
+	} else {
+		mimeTypeValidObj = mimeTypeValid(mimeTypes, "")
+	}
+
+	httpCodeObj := httpResponseValid(httpResponse)
+
+	validationObj := map[string]interface{}{
+		"mimeType": mimeTypeValidObj,
+		"httpCode": httpCodeObj,
+	}
+
 	fhirEndpoint := endpointmanager.FHIREndpoint{
-		URL:                 originalURL,
-		TLSVersion:          tlsVersion,
-		MIMETypes:           mimeTypes,
-		HTTPResponse:        httpResponse,
-		Errors:              errs,
+		URL:          originalURL,
+		TLSVersion:   tlsVersion,
+		MIMETypes:    mimeTypes,
+		HTTPResponse: httpResponse,
+		Errors:       errs,
+		Validation: map[string]interface{}{
+			"errors": validationObj,
+		},
 		CapabilityStatement: capStat,
 	}
 
@@ -135,19 +160,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 		// Add the new information if it's valid and update the endpoint in the database
-		if fhirEndpoint.CapabilityStatement != nil {
-			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
-		}
-		if fhirEndpoint.TLSVersion != "" {
-			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
-		}
-		if fhirEndpoint.MIMETypes != nil {
-			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
-		}
-		if fhirEndpoint.HTTPResponse != 0 {
-			existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
-		}
+		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
+		existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
+		existingEndpt.Validation = fhirEndpoint.Validation
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
 		if err != nil {
 			return err
