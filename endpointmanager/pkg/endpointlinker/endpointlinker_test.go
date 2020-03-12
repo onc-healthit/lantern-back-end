@@ -1,8 +1,8 @@
 package endpointlinker
 
 import (
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"strconv"
 	"testing"
 )
@@ -53,11 +53,11 @@ func Test_IntersectionCount(t *testing.T) {
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	var npio1 = endpointmanager.NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Foo Bar",
-		SecondaryName: "",
-		NormalizedName: "FOO FOO BAR",
+		ID:                      1,
+		NPI_ID:                  "1",
+		Name:                    "Foo Bar",
+		SecondaryName:           "",
+		NormalizedName:          "FOO FOO BAR",
 		NormalizedSecondaryName: "",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
@@ -67,11 +67,11 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
 	var npio2 = endpointmanager.NPIOrganization{
-		ID:            2,
-		NPI_ID:        "2",
-		Name:          "nothing should match this",
-		SecondaryName: "foo bar baz",
-		NormalizedName: "NOTHING SHOULD MATCH THIS",
+		ID:                      2,
+		NPI_ID:                  "2",
+		Name:                    "nothing should match this",
+		SecondaryName:           "foo bar baz",
+		NormalizedName:          "NOTHING SHOULD MATCH THIS",
 		NormalizedSecondaryName: "FOO FOO BAR BAZ",
 		Location: &endpointmanager.Location{
 			Address1: "somerandomstring",
@@ -81,11 +81,11 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
 	var npio3 = endpointmanager.NPIOrganization{
-		ID:            3,
-		NPI_ID:        "3",
-		Name:          "nothingshouldmatchthis",
-		SecondaryName: "nothingshouldmatchthis",
-		NormalizedName: "NOTHINGSHOULDMATCHTHIS",
+		ID:                      3,
+		NPI_ID:                  "3",
+		Name:                    "nothingshouldmatchthis",
+		SecondaryName:           "nothingshouldmatchthis",
+		NormalizedName:          "NOTHINGSHOULDMATCHTHIS",
 		NormalizedSecondaryName: "NOTHINGSHOULDMATCHTHIS",
 		Location: &endpointmanager.Location{
 			Address1: "somerandomstring",
@@ -95,24 +95,24 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
 
-	var  orgs []endpointmanager.NPIOrganization;
+	var orgs []endpointmanager.NPIOrganization
 
-	matches, confidences, err :=  getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
+	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
 	th.Assert(t, (err == nil), "Error getting matches from empty list")
-	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: " + strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned" + strconv.Itoa(len(matches)))
+	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
 
 	orgs = append(orgs, npio1)
-	matches, confidences, err =  getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", false)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", false)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 1), "There should have been 1 match returned got: " + strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidence returned" + strconv.Itoa(len(confidences)))
+	th.Assert(t, (len(matches) == 1), "There should have been 1 match returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidence returned"+strconv.Itoa(len(confidences)))
 
 	orgs = append(orgs, npio2)
 	orgs = append(orgs, npio3)
-	matches, confidences, err =  getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", true)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", true)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 2), "There should have been 2 matchs returned got: " + strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 2), "There should have been 2 confidences returned" + strconv.Itoa(len(confidences)))
+	th.Assert(t, (len(matches) == 2), "There should have been 2 matchs returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 2), "There should have been 2 confidences returned"+strconv.Itoa(len(confidences)))
 
 }
