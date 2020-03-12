@@ -1,32 +1,11 @@
 # Lantern
-* Lantern Services
-  * [Endpoint Manager](endpointmanager/README.md)
-  * [Network Statistics Querier](networkstatsquerier/README.md)
-  * [Capability Querier](capabilityquerier/README.md)
-  * [Lantern Message Queue](lanternmq/README.md)
-* [Additional Services](#additional-services)
-  * [Using docker-compose](#using-docker-compose)
-    * [Using Make](#using-make)
-    * [Starting the Services](#starting-the-services)
-    * [Stopping the Services](#stopping-the-services)
-    * [Starting Services Behind SSL-Inspecting Proxy](#starting-services-behind-ssl-inspecting-proxy)
-  * [Running the Services Individually](#running-the-services-individually)
-    * [Endpoint Manager](#endpoint-manager)
-    * [Network Statistics Querier](networkstatsquerier/README.md)
-    * [Capability Querier](capabilityquerier/README.md)
-    * [Prometheus with Remote Storage (PostgreSQL)](#prometheus-with-remote-storage-postgresql)
-      * [Prometheus Configuration File](#prometheus-configuration-file)
-    * [RabbitMQ](#rabbitmq)
-    * [Grafana](#grafana)
-      * [Viewing Collected Data in Grafana](#viewing-collected-data-in-grafana)
-* [Testing](#testing)
-  * [Using Make](#using-make-1)
-  * [Running All Unit Tests](#running-all-unit-tests)
-  * [Running Tests With Coverage](#running-tests-with-coverage)
-  * [Running End to End Tests](#running-end-to-end-tests)
+* [Running Lantern - Basic Flow](#running-lantern---basic-flow)
+* [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
+* [Make Commands](#make-commands)
+* [Running Lantern Services Individually](#running-lantern-services-individually)
+* [Using Docker Compose](#using-docker-compose)
+* [Testing - Details](#testing---details)
 * [Contributing](#contributing)
-  * [Lintr](#lintr)
-  * [Govendor](#govendor)
 * [License](#license)
 
 # Running Lantern - Basic Flow
@@ -93,7 +72,7 @@ This removes all docker images, networks, and local volumes.
         cd ../../..
         ```
 
-        This receives messages off of the queue. This action runs forever.
+        This receives messages off of the queue. This also does some endpoint linking and processing. This action runs forever.
 
 1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
 
