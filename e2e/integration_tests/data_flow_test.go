@@ -121,18 +121,54 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 1 {
+	if link_count != 2 {
 		t.Fatalf("Database should only have made one link given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
-	// Assert that deletion from fhir_endpoint list removes the link
-	store.DB.Exec("DELETE FROM fhir_endpoints WHERE id=1;")
-
-
-	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
-	err = endpoint_orgs_row.Scan(&link_count)
+	var lantern_org_endpoint_id string
+	err = store.DB.QueryRow("SELECT id FROM fhir_endpoints WHERE organization_name='Lantern Test Org';").Scan(&lantern_org_endpoint_id)
 	failOnError(err)
 
+	// Based on the fixture file npidata_min.csv there should be 2 matches to "Lantern Test Org" NPI ID =: 111111111 and NPI ID: 2222222222
+	// The database ids for these npi orgs should exist in the link table mapped to lantern test org
+	var id_npi_1 string
+	err = store.DB.QueryRow("SELECT id FROM npi_organizations WHERE npi_id='1111111111';").Scan(&id_npi_1)
+	failOnError(err)
+	var id_npi_2 string
+	err = store.DB.QueryRow("SELECT id FROM npi_organizations WHERE npi_id='2222222222';").Scan(&id_npi_2)
+	failOnError(err)
+
+	var linked_endpoint_id string
+	query_str := "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_1 + ";"
+	err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
+	failOnError(err)
+	if linked_endpoint_id != lantern_org_endpoint_id {
+		t.Fatalf("Org mapped to wrong dndpoint id")
+	}
+	query_str = "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_2+ ";"
+	err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
+	failOnError(err)
+	if linked_endpoint_id != lantern_org_endpoint_id {
+		t.Fatalf("Org mapped to wrong dndpoint id")
+	}
+
+
+	// Assert that deletion from npi_organizations list removes the link
+	query_str = "DELETE FROM npi_organizations WHERE id="  + id_npi_1 + ";"
+	_, err = store.DB.Exec(query_str)
+	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
+	failOnError(err)
+	if link_count != 1 {
+		t.Fatalf("Database should only contain 1 link after npi_organization was deleted. Has: " + strconv.Itoa(link_count))
+	}
+
+	// Assert that deletion from fhir_endpoint list removes the link
+	query_str = "DELETE FROM fhir_endpoints WHERE id="  + lantern_org_endpoint_id + ";"
+	_, err = store.DB.Exec(query_str)
+
+
+	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
+	failOnError(err)
 	if link_count != 0 {
 		t.Fatalf("Database should not contain any links. Has: " + strconv.Itoa(link_count))
 	}
