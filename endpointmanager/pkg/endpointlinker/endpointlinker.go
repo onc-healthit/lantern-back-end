@@ -2,6 +2,7 @@ package endpointlinker
 
 import (
 	"context"
+	"fmt"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/pkg/errors"
@@ -84,7 +85,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 		} else if jaccard1 >= JACCARD_THRESHOLD {
 			confidence = jaccard1
 			consideredMatch = true
-			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedName, verbose)
+			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedName + " Match Score: " + fmt.Sprintf("%f", jaccard1), verbose)
 		}
 		if jaccard2 == 1 {
 			confidence = 1
@@ -93,7 +94,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 		} else if jaccard2 >= JACCARD_THRESHOLD {
 			consideredMatch = true
 			confidence = jaccard2
-			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedSecondaryName, verbose)
+			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedSecondaryName + " Match Score: " + fmt.Sprintf("%f", jaccard2), verbose)
 		}
 		if consideredMatch {
 			confidenceMap[npiOrg.ID] = confidence
