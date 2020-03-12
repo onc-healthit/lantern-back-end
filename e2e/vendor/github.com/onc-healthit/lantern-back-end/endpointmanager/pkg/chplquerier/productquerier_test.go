@@ -211,7 +211,7 @@ func Test_getAPIURL(t *testing.T) {
 
 	actualURL, err = getAPIURL(apiDocString)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, expectedURL == actualURL, fmt.Sprintf("Expected an empty string"))
+	th.Assert(t, expectedURL == actualURL, "Expected an empty string")
 }
 
 func Test_prodNeedsUpdate(t *testing.T) {
