@@ -1,6 +1,7 @@
 package endpointlinker
 
 import (
+	"fmt"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"strconv"
@@ -52,13 +53,13 @@ func Test_IntersectionCount(t *testing.T) {
 }
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
-	var npio1 = endpointmanager.NPIOrganization{
+	var exactPrimaryNameOrg = endpointmanager.NPIOrganization{
 		ID:                      1,
 		NPI_ID:                  "1",
 		Name:                    "Foo Bar",
 		SecondaryName:           "",
 		NormalizedName:          "FOO FOO BAR",
-		NormalizedSecondaryName: "",
+		NormalizedSecondaryName: "FOO FOO BAR BAZ",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -66,10 +67,10 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var npio2 = endpointmanager.NPIOrganization{
+	var nonExactSecondaryNameOrg = endpointmanager.NPIOrganization{
 		ID:                      2,
 		NPI_ID:                  "2",
-		Name:                    "nothing should match this",
+		Name:                    "Foo Bar",
 		SecondaryName:           "foo bar baz",
 		NormalizedName:          "NOTHING SHOULD MATCH THIS",
 		NormalizedSecondaryName: "FOO FOO BAR BAZ",
@@ -80,9 +81,37 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var npio3 = endpointmanager.NPIOrganization{
-		ID:                      3,
-		NPI_ID:                  "3",
+	var exactSecondaryNameOrg = endpointmanager.NPIOrganization{
+		ID:                      4,
+		NPI_ID:                  "4",
+		Name:                    "Foo Bar",
+		SecondaryName:           "foo bar baz",
+		NormalizedName:          "FOO FOO BAR BAZ",
+		NormalizedSecondaryName: "FOO FOO BAR",
+		Location: &endpointmanager.Location{
+			Address1: "somerandomstring",
+			Address2: "Foo Bar",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+	var exactSecondaryNameOrgNoPrimaryName = endpointmanager.NPIOrganization{
+		ID:                      5,
+		NPI_ID:                  "5",
+		Name:                    "Foo Bar",
+		SecondaryName:           "foo bar baz",
+		NormalizedName:          "",
+		NormalizedSecondaryName: "FOO FOO BAR",
+		Location: &endpointmanager.Location{
+			Address1: "somerandomstring",
+			Address2: "Foo Bar",
+			City:     "A City",
+			State:    "AK",
+			ZipCode:  "00000"},
+		Taxonomy: "208D00000X"}
+	var nonMatchingOrg = endpointmanager.NPIOrganization{
+		ID:                      6,
+		NPI_ID:                  "6",
 		Name:                    "nothingshouldmatchthis",
 		SecondaryName:           "nothingshouldmatchthis",
 		NormalizedName:          "NOTHINGSHOULDMATCHTHIS",
@@ -102,17 +131,31 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
 
-	orgs = append(orgs, npio1)
+	orgs = append(orgs, nonMatchingOrg)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
+	th.Assert(t, (err == nil), "Error getting matches from list")
+	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
+
+	orgs = append(orgs, exactPrimaryNameOrg)
+	orgs = append(orgs, nonExactSecondaryNameOrg)
+	orgs = append(orgs, exactSecondaryNameOrg)
+	orgs = append(orgs, exactSecondaryNameOrgNoPrimaryName)
+
 	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", false)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 1), "There should have been 1 match returned got: "+strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidence returned"+strconv.Itoa(len(confidences)))
-
-	orgs = append(orgs, npio2)
-	orgs = append(orgs, npio3)
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", true)
-	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 2), "There should have been 2 matchs returned got: "+strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 2), "There should have been 2 confidences returned"+strconv.Itoa(len(confidences)))
-
+	th.Assert(t, (len(matches) == 4), "There should have been 3 matchs returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 4), "There should have been 3 confidences returned "+strconv.Itoa(len(confidences)))
+	confidence := fmt.Sprintf("%f", confidences[matches[0]])
+	// FOO FOO BAR and primary name FOO FOO BAR have confidene of 1
+	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
+	confidence = fmt.Sprintf("%f", confidences[matches[1]])
+	// FOO FOO BAR and secondary name FOO FOO BAR BAZ have confidene of .75
+	th.Assert(t, (confidence == "0.750000"), "Exact match confidence should have been 0.750000 confidence got "+confidence)
+	confidence = fmt.Sprintf("%f", confidences[matches[2]])
+	// FOO FOO BAR and secondary name FOO FOO BAR have confidene of 1.000000
+	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
+	confidence = fmt.Sprintf("%f", confidences[matches[3]])
+	// FOO FOO BAR and secondary name FOO FOO BAR have confidene of 1.000000
+	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
 }
