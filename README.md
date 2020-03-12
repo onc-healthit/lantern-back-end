@@ -1,140 +1,159 @@
 # Lantern
-* Lantern Services
+* [Running Lantern - Basic Flow](#running-lantern---basic-flow)
+* [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
+* [Make Commands](#make-commands)
+* [Running Lantern Services Individually](#running-lantern-services-individually)
+* [Using Docker Compose](#using-docker-compose)
+* [Testing - Details](#testing---details)
+* [Contributing](#contributing)
+* [License](#license)
+
+# Running Lantern - Basic Flow
+
+**Note:** Before running the commands below, make sure that you either:
+* have created a hidden file named `.env` in the root directory of the project containing the environment variables specified in the `env.sample` file.
+* have the variables specified in the `env.sample` file defined as system environment variables.
+
+## Setup your environment
+
+To run Lantern, several environment variables need to be set. These are defined within each project's README. Each README defines the variables that *must* be set on the system vs those whose default values are sufficient.
+
   * [Endpoint Manager](endpointmanager/README.md)
   * [Network Statistics Querier](networkstatsquerier/README.md)
   * [Capability Querier](capabilityquerier/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
-* [Additional Services](#additional-services)
-  * [Using docker-compose](#using-docker-compose)
-    * [Using Make](#using-make)
-    * [Starting the Services](#starting-the-services)
-    * [Stopping the Services](#stopping-the-services)
-    * [Starting Services Behind SSL-Inspecting Proxy](#starting-services-behind-ssl-inspecting-proxy)
-  * [Running the Services Individually](#running-the-services-individually)
-    * [Endpoint Manager](#endpoint-manager)
-    * [Network Statistics Querier](networkstatsquerier/README.md)
-    * [Capability Querier](capabilityquerier/README.md)
-    * [Prometheus with Remote Storage (PostgreSQL)](#prometheus-with-remote-storage-postgresql)
-      * [Prometheus Configuration File](#prometheus-configuration-file)
-    * [RabbitMQ](#rabbitmq)
-    * [Grafana](#grafana)
-      * [Viewing Collected Data in Grafana](#viewing-collected-data-in-grafana)
-* [Testing](#testing)
-  * [Using Make](#using-make-1)
-  * [Running All Unit Tests](#running-all-unit-tests)
-  * [Running Tests With Coverage](#running-tests-with-coverage)
-  * [Running End to End Tests](#running-end-to-end-tests)
-* [Contributing](#contributing)
-  * [Lintr](#lintr)
-  * [Govendor](#govendor)
-* [License](#license)
 
-# Additional Services
+## Clean your environment
 
-The Lantern infrastructure relies on several additional services. These include:
-* Prometheus
-* Prometheus remote storage adapter for PostgreSQL
-* PostgreSQL database
+**This is optional!**
+
+If you'd like to start with a clean slate, run:
+
+```bash
+make clean
+```
+
+This removes all docker images, networks, and local volumes.
+
+## Start Lantern
+
+1. In your terminal, run:
+
+    ```bash
+    make run
+    ```
+
+    This starts all of the services except for the endpointmanager:
+    * **Lantern Front End** - The front end for the Lantern application (localhost:8090)
+    * **Grafana** - the data visualization service (localhost:80)
+    * **PostgreSQL** - application database
+    * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
+    * **Prometheus / Prometheus remote storage adapter for PostgreSQL** - continuously queries the endpoints to determine response status and response time
+    * **Capability Querier** - queries the endpoints for their capability statements once a day. Kicks off the initial query immediately.
+
+2. **If you have a clean database** 
+    1. Run the following command to begin populating the database:
+
+        ```bash
+        make populatedb
+        ```
+
+        This runs:
+        * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+        * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+        * the **NPPES populator**, which adds provider data from the monthly NPPES export to the database. 
+          * this is an optional item to add to the database, and can take around and hour to load.
+
+    1. Open a new tab and run the following:
+
+        ```bash
+        cd endpointmanager/cmd/capabilityreceiver
+        go run main.go
+        cd ../../..
+        ```
+
+        This receives messages off of the queue. This also does some endpoint linking and processing. This action runs forever.
+
+1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
+
+    In the first tab (this runs forever), run:
+
+    ```bash
+    cd capabilityquerier/cmd
+    go run main.go
+    cd ../..
+    ```
+
+    If you do not already have the capability receiver running, in the second tab (this runs forever), run:
+
+    ```bash
+    cd endpointmanager/cmd/capabilityreceiver
+    go run main.go
+    cd ../../..
+    ```
+
+## Stop Lantern
+
+Run
+
+```bash
+make stop
+```
+
+## Starting Services Behind SSL-Inspecting Proxy
+
+If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into a `certs` directory at the root directory of the project. Docker-Compose will copy these certs into the containers that need to use the certificates.
+
+# Testing Lantern - Basic Flow
+
+There are three types of tests for Lantern and three corresponding commands:
+
+| test type | command |
+| --- | --- |
+| unit | `make test` |
+| integration | `make test_int` |
+| end-to-end |  `make test_e2e` |
+| all tests | `make test_all` |
+
+# Make Commands
+
+| make command | action |
+| --- | --- |
+|`make run` | runs docker-compose for a development environment |
+|`make run_prod` | runs docker-compose for a production environment |
+| `make stop` | runs docker-compose `down` for a development environment |
+| `make stop_prod` | runs docker-compose `down` for a development environment |
+| `make clean` | runs docker-compose `down` with the `--rmi local -v` tags to remove local images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
+| `make clean_remote` | runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean. |
+| `make test` | runs unit tests | 
+| `make test_int` | runs integration tests |
+|  `make test_e2e` | runs end-to-end tests |
+|`make test_all` | runs all tests and ends if any of the tests fail| 
+
+
+# Running Lantern Services Individually
+
+## Internal Services
+
+See each internal service's README to see how to run that service as a standalone service.
+
+  * [Endpoint Manager](endpointmanager/README.md)
+  * [Network Statistics Querier](networkstatsquerier/README.md)
+  * [Capability Querier](capabilityquerier/README.md)
+  * [Lantern Message Queue](lanternmq/README.md)
+
+## External Services
+
+* Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
+* RabbitMQ
 * Grafana
+
+
+### Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
 
 Prometheus is used to capture time-series-based data from the FHIR API endpoints. It stores these in the PostgreSQL database using Timescale's PostgreSQL extension, [`pg_prometheus`](https://github.com/timescale/pg_prometheus) as well as the the [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter).
 
 The PostgreSQL database is used to store all information related to the FHIR API endpoints. This includes the timeseries data captured by Prometheus as well as information from the capability statement, information gathered from Inferno, information about the EHR vendors from [CHPL](https://chpl.healthit.gov/#/search), and information about the provider organization using the endpoint.
-
-Grafana creates many of the visualizations used by Lantern through querying the PostgreSQL database.
-
-## Using docker-compose
-
-All of the required services to run the Lantern back-end are contained in the docker-compose file.
-
-### Using Make
-
-A makefile has been created for the project to simplify running containers.
-
-* `make run`: runs docker-compose for a development environment
-* `make run_prod`: runs docker-compose for a production environment
-* `make stop`: runs docker-compose `down` for a development environment
-* `make stop_prod`: runs docker-compose `down` for a development environment
-* `make clean`: runs docker-compose `down` with the `--rmi local -v` tags to remove local images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
-* `make clean_remote`: runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
-
-### Starting the Services
-
-**Notice:** Before running `docker-compose up` make sure that you have created a hidden file named `.env` containing the environment variables specified in the `env.sample` file located alongside `docker-compose.yml`
-
-**If you have no containers** in your environment from a previous run of docker-compose, you will need to run `docker-compose up`.
-
-For a *development* environment, run:
-
-```bash
-docker-compose up
-```
-
-This will create the containers, start up all the services, as well as publish ports.
-
-For a *production* environment, run:
-
-```bash
-docker-compose -f docker-compose.yml up
-```
-
-This will create the containers, start all of the services, and will only expose Grafana on port 80.
-
-To start the services in the background, add `-d` to your `docker-compose up` command.
-
-**If you already have containers** in your environment from a previous run of docker-compose, you should run `docker-compose start`.
-
-For a *development* environment, run:
-
-```bash
-docker-compose start
-```
-
-This will start up all the services as well as publish ports.
-
-For a *production* environment, run:
-
-```bash
-docker-compose -f docker-compose.yml start
-```
-
-This will start all of the services and will only expose Grafana on port 80.
-
-
-### Stopping the Services
-
-To stop the services and retain the containers and network, run:
-
-```bash
-docker-compose stop
-```
-
-To stop the services and remove the containers and networks, run:
-
-```bash
-docker-compose down
-```
-
-To stop the services, remove the containers and networks, images, and volumes, run:
-
-```bash
-docker-compose down --rmi all -v
-```
-
-### Starting Services Behind SSL-Inspecting Proxy
-If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into the docker containers that will be communicating through the proxy. Currently the endpoint_querier is the only contianer that has such a requirement, the volumes entry `- ./certs/:/etc/ssl/certs` in the endpoint_querier service section  of `docker-compose.override.yml` will mount a directory named `certs` located in the root of this project into the location of the docker container where the container's OS will look for certificates. If you are operating behind an SSL-Inspecting proxy **you will have to copy your certificates into this directory.** The changes in the `docker-compose.override.yml` file will be applied if you run `docker-compose up`.
-
-## Running The Services Individually
-
-### Endpoint Manager
-
-See the [Endpoint Manager documentation](endpointmanager/README.md).
-
-### Endpoint Querier
-
-See the [Endpoint Querier documentation](endpoints/README.md)
-
-### Prometheus with Remote Storage (PostgreSQL)
 
 In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter).
 
@@ -219,9 +238,7 @@ scrape_configs:
     - targets: ['endpoint_querier_1:3333']
 ```
 
-#### Initializing the Database
-
-The database initialization script is planned to be included as part of the docker-compose file. Until then, initialize the database using the following commands:
+#### Initializing the Database by hand
 
 * If you have postgres installed locally (which you can do with `brew install postgresql`), you can do:
 
@@ -243,7 +260,7 @@ The database initialization script is planned to be included as part of the dock
 
   Connect to your database using `\c <database name>`
 
-  Copy/paste the contents of dbsetup.sql into the command prompt.
+  Copy/paste the contents of dbsetup.sql or other sql commands into the command prompt.
 
 ### RabbitMQ
 
@@ -269,6 +286,9 @@ This will start a RabbitMQ container listening on the default port of 5672. If y
 You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `guest:guest`.
 
 ### Grafana
+
+Grafana creates many of the visualizations used by Lantern through querying the PostgreSQL database.
+
 To start Grafana, run the following:
 
 ```bash
@@ -287,26 +307,84 @@ You can check that Grafana is up by nagivating to `http://localhost:3000` and us
     - Enter `lantern` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Toggle "TimescaleDB" to on. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore.
 
-# Testing
+# Using Docker Compose
 
-## Using Make
+All relevant docker-compose instructions are included in the Makefile under the appropriate `make` commands.
 
-A makefile has been added to make testing easier. It includes the following commands:
+## No Containers
 
-* `make test`: runs the go unit tests
-* `make test_int`: runs the go integration tests and unit tests
-* `make test_e2e`: runs docker-compose specifically for the e2e test and then runs the e2e test.
-* `make test_all`: runs all tests. Stops relevant docker-instances if they are running. Starts them again in the background. Runs `test` and `test_int`, then stops the docker instances again and runs `test_e2e`. Exits if any of the tests fails.
+**If you have no containers** in your environment from a previous run of docker-compose, you will need to run `docker-compose up`.
 
-## Running All Unit Tests
+### Development Environment
 
-To run all tests in a project run:
+For a *development* environment, run:
 
 ```bash
-go test -count=1 ./...
+docker-compose up
 ```
 
-This will search the current directory and all sub directories for files matching the pattern `*_test.go`. Adding `-count=1` ensures that your test results will not be cached. You also have the option to specify a package location or file if you do not want to run all tests at once.
+This will create the containers, start up all the services, as well as publish ports.
+
+### Production Environment
+
+For a *production* environment, run:
+
+```bash
+docker-compose -f docker-compose.yml up
+```
+
+This will create the containers, start all of the services, and will only expose Grafana on port 80.
+
+To start the services in the background, add `-d` to your `docker-compose up` command.
+
+## Existing Containers
+
+**If you already have containers** in your environment from a previous run of docker-compose, you should run `docker-compose start`.
+
+### Development Environment
+
+For a *development* environment, run:
+
+```bash
+docker-compose start
+```
+
+This will start up all the services as well as publish ports.
+
+### Production Environment 
+
+For a *production* environment, run:
+
+```bash
+docker-compose -f docker-compose.yml start
+```
+
+This will start all of the services and will only expose Grafana on port 80.
+
+
+## Stopping the Services
+
+To stop the services and retain the containers and network, run:
+
+```bash
+docker-compose stop
+```
+
+To stop the services and remove the containers and networks, run:
+
+```bash
+docker-compose down
+```
+
+To stop the services, remove the containers and networks, images, and volumes, run:
+
+```bash
+docker-compose down --rmi all -v
+```
+
+# Testing - Details
+
+The test instructions in the Makefile include several additional flags to ensure that tests are run atomically and to check any resource usage conflicts due to parallelization. These are not listed below to reduce duplication. See the Makefile for the details.
 
 ## Running Tests With Coverage
 
@@ -395,3 +473,5 @@ http://www.apache.org/licenses/LICENSE-2.0
 ```
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+

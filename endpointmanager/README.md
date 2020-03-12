@@ -5,6 +5,16 @@ The FHIR Endpoint Manager is a service that coordinates the data capture and ret
 ## Configuration
 The FHIR Endpoint Manager reads the following environment variables:
 
+**These variables must be set on your system**
+
+* **LANTERN_CHPLAPIKEY**: The key necessary for accessing CHPL
+
+  Default value: \<none>
+
+  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
+
+**These variables can use the default values *in development*. These should be set on the production system.**
+
 * **LANTERN_DBHOST**: The hostname where the database is hosted.
 
   Default value: localhost
@@ -29,11 +39,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: disable
 
-* **LANTERN_CHPLAPIKEY**: The key necessary for accessing CHPL
-
-  Default value: <none>
-  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
-
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:
@@ -50,41 +55,113 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
   Default value: lantern_test
 
+## Packages
+
+The Endpoint Manager includes many packages with distinct purposes.
+
+### Capability Handler
+
+Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
+
+### Capability Parser
+
+Creates a model for capability statements and makes specific attributes of a capability statement queryable within the code. Can parse DSTU2, STU3, and R4 capability statements.
+
+### CHPL Mapper
+
+Maps endpoints to CHPL vendors and stores the mapping in the database. Eventually will map endpoints to CHPL products as well as additional information becomes available.
+
+### CHPL Querier
+
+Queries the CHPL service for CHPL product information and stores in the database.
+
+### Config
+
+Manages the configuration variables for all of the Endpoint Manager services.
+
+### Endpoint Manager
+
+Handles the object models and database storage for the endpoint information that Lantern is gathering.
+
+### FHIR Endpoint Querier
+
+Adds a list of endpoints to the database.
+
+### NPPES Querier
+
+Reads in a CSV file of NPPES data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
+
 ## Building and Running
+
+The first time you run something, you may need to do the following in the directory where the main.go file is located:
+
+```bash
+go get ./... # You may have to set environment variable GO111MODULE=on
+go mod download
+```
+
+### Base main.go
 
 The Endpoint Manager main function is currently a stub function. You will see that the endpointmanager is running if you see "Started the endpoint manager." in as the output. 
 
 Endpoint Manager functionality long term will rely on the lantern message queue (RabbitMQ) and the PostgreSQL database being available.
 
-### Using Docker-Compose
-
-The Endpoint Querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
-
-### Using the Individual Docker Container
-
-The instructions below assume that you are in `endpointmanager/`.
-
-To build Docker container run the following command.
+To run, perform the following commands:
 
 ```bash
-docker build -t endpointmanager .
+cd endpointmanager/cmd
+go run main.go
 ```
 
-To start the Docker container that you just built run:
+### Capability Receiver
+
+Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
+
+To run, perform the following commands:
 
 ```bash
-docker run -it endpointmanager
+cd endpointmanager/cmd/capabilityreceiver
+go run main.go
 ```
 
-### Running alone
+The commands below assume that you are starting in the root directory of the Lantern backend project.
 
-The instructions below assume that you are in `endpointmanager/`.
+### CHPL Querier
 
-The Endpoint Manager has not yet been dockerized. To run, perform the following commands:
+Queries the CHPL service for CHPL product information and stores in the database.
+
+Primarily uses the `chplquerier` package.
+
+To run, perform the following commands:
 
 ```bash
-go get ./... # You may have to set environment variable GO111MODULE=on
-go mod download
-go run cmd/main.go
+cd endpointmanager/cmd/chplquerier
+go run main.go
 ```
 
+### Endpoint Populator
+
+Parses a JSON file of endpoints and adds them to the database.
+
+Primarily uses the `fhirendpointquerier` package.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointpopulator
+go run main.go <path to endpoint json file>
+```
+
+### NPPES Populator
+
+Reads in a CSV file of NPPES data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
+
+Primarily uses the `nppesquerier` package.
+
+To run, perform the following commands:
+
+
+```bash
+cd endpointmanager/cmd/nppespopulator
+go run main.go <path to nppes csv file>
+```

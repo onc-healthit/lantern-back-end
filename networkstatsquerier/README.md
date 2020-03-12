@@ -5,6 +5,12 @@ The Netowrk Statistics Querier is a service that retrieves the response code and
 ## Configuration
 The Network Statistics Querier reads the following environment variables:
 
+**These variables must be set on your system**
+
+\<none>
+
+**These variables can use the default values *in development*. These should be set on the production system.**
+
 * **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
 
   Default value: 3333
