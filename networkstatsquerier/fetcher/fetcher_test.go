@@ -45,7 +45,7 @@ func Test_formatList(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if cernerResult.Entries[0].ListSource != "Cerner" {
+	if cernerResult.Entries[0].ListSource != "https://github.com/cerner/ignite-endpoints" {
 		t.Errorf("The list source should have been cerner, it instead returned %s", cernerResult.Entries[0].ListSource)
 	}
 

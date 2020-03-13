@@ -48,8 +48,8 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 	} else if err != nil {
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
-		// @TODO Update database with this information
-		// @TODO Always overwrite the endpoint list source
+		// @TODO (Will be addressed in LANTERN-149)
+		// Update database with this information & always overwrite the endpoint list source
 		log.Infof("An endpoint for %s has already been added to the database (%s)", existingEndpt.URL, existingEndpt.OrganizationName)
 	}
 	return nil

@@ -27,7 +27,7 @@ func (dl DefaultList) GetEndpoints(defaultList interface{}) (ListOfEndpoints, er
 
 	for entry := range formatList {
 		fhirEntry := EndpointEntry{
-			ListSource: "Epic",
+			ListSource: "https://open.epic.com/MyApps/EndpointsJson",
 		}
 		orgName, orgOk := formatList[entry]["OrganizationName"].(string)
 		if orgOk {

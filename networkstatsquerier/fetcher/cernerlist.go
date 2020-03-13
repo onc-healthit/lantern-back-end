@@ -36,7 +36,7 @@ func (cl CernerList) GetEndpoints(cernerList interface{}) (ListOfEndpoints, erro
 		fhirEntry := EndpointEntry{
 			OrganizationName:     orgName,
 			FHIRPatientFacingURI: uri,
-			ListSource:           "Cerner",
+			ListSource:           "https://github.com/cerner/ignite-endpoints",
 		}
 		innerList = append(innerList, fhirEntry)
 	}

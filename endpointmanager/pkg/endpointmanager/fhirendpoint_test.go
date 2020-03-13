@@ -33,7 +33,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
-		ListSource:            "Epic",
+		ListSource:            "https://open.epic.com/MyApps/EndpointsJson",
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -51,7 +51,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		OrganizationName:      "Example Org",
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
-		ListSource:            "Epic",
+		ListSource:            "https://open.epic.com/MyApps/EndpointsJson",
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
