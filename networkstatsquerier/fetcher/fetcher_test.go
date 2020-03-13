@@ -31,7 +31,7 @@ func Test_formatList(t *testing.T) {
 
 	// test cerner list
 
-	var cernerList map[string]interface{}
+	var cernerList map[string][]map[string]interface{}
 	err := json.Unmarshal(testCerner, &cernerList)
 
 	if cernerList == nil {
@@ -51,7 +51,7 @@ func Test_formatList(t *testing.T) {
 
 	// test epic list
 
-	var epicList map[string]interface{}
+	var epicList map[string][]map[string]interface{}
 	err = json.Unmarshal(testEpic, &epicList)
 
 	if epicList == nil {
@@ -65,12 +65,12 @@ func Test_formatList(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if epicResult.Entries[0].ListSource != "Epic" {
+	if epicResult.Entries[0].ListSource != "https://open.epic.com/MyApps/EndpointsJson" {
 		t.Errorf("The endpoint list source should have been epic, it instead returned %s", epicResult.Entries[0].ListSource)
 	}
 
 	// test unknown format list
-	var emptyList map[string]interface{}
+	var emptyList map[string][]map[string]interface{}
 	emptyResult, _ := formatList(emptyList)
 	if len(emptyResult.Entries) > 0 {
 		t.Errorf("The endpoint list should have been empty, it instead is of length %d", len(epicResult.Entries))

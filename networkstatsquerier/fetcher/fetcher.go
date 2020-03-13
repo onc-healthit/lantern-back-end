@@ -29,13 +29,13 @@ type ListOfEndpoints struct {
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
 type Endpoints interface {
-	GetEndpoints(interface{}) (ListOfEndpoints, error)
+	GetEndpoints(map[string]interface{}) (ListOfEndpoints, error)
 }
 
 // GetListOfEndpoints parses a list of endpoints out of the file at the provided path
 func GetListOfEndpoints(filePath string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
-	var initialList map[string]interface{}
+	var initialList map[string][]map[string]interface{}
 
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
@@ -63,7 +63,7 @@ func GetListOfEndpoints(filePath string) (ListOfEndpoints, error) {
 	return finalResult, err
 }
 
-func formatList(initialList map[string]interface{}) (ListOfEndpoints, error) {
+func formatList(initialList map[string][]map[string]interface{}) (ListOfEndpoints, error) {
 	var endptList ListOfEndpoints
 	var errs error
 
