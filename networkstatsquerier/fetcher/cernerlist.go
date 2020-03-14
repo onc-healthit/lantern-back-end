@@ -4,7 +4,7 @@ package fetcher
 type CernerList struct{}
 
 // GetEndpoints takes the list of cerner endpoints and formats it into a ListOfEndpoints
-func (cl CernerList) GetEndpoints(cernerList []map[string]interface{}) (ListOfEndpoints, error) {
+func (cl CernerList) GetEndpoints(cernerList []map[string]interface{}) ListOfEndpoints {
 	var finalList ListOfEndpoints
 	var innerList []EndpointEntry
 
@@ -24,5 +24,5 @@ func (cl CernerList) GetEndpoints(cernerList []map[string]interface{}) (ListOfEn
 	}
 
 	finalList.Entries = innerList
-	return finalList, nil
+	return finalList
 }

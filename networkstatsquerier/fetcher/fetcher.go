@@ -49,7 +49,7 @@ func checkSource(source string) Source {
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
 type Endpoints interface {
-	GetEndpoints(map[string]interface{}) (ListOfEndpoints, error)
+	GetEndpoints(map[string]interface{}) ListOfEndpoints
 }
 
 // GetListOfEndpoints parses a list of endpoints out of the file at the provided path
