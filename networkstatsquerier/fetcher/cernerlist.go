@@ -9,18 +9,16 @@ func (cl CernerList) GetEndpoints(cernerList []map[string]interface{}) (ListOfEn
 	var innerList []EndpointEntry
 
 	for entry := range cernerList {
+		fhirEntry := EndpointEntry{
+			ListSource: string(Cerner),
+		}
 		orgName, orgOk := cernerList[entry]["name"].(string)
-		if !orgOk {
-			orgName = ""
+		if orgOk {
+			fhirEntry.OrganizationName = orgName
 		}
 		uri, uriOk := cernerList[entry]["baseUrl"].(string)
-		if !uriOk {
-			uri = ""
-		}
-		fhirEntry := EndpointEntry{
-			OrganizationName:     orgName,
-			FHIRPatientFacingURI: uri,
-			ListSource:           "https://github.com/cerner/ignite-endpoints",
+		if uriOk {
+			fhirEntry.FHIRPatientFacingURI = uri
 		}
 		innerList = append(innerList, fhirEntry)
 	}

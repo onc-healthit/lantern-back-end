@@ -24,6 +24,28 @@ type ListOfEndpoints struct {
 	Entries []EndpointEntry
 }
 
+// Source is an enum of the known endpoint source list urls
+type Source string
+
+// Cerner is a field in the Source enum for the cerner endpoint url
+const (
+	Cerner Source = "https://github.com/cerner/ignite-endpoints"
+	Epic          = "https://open.epic.com/MyApps/EndpointsJson"
+)
+
+// Converts the string version of the endpoint source to the fetcher.Source enum
+// This will eventually become unnecessary once we're pulling the data directly from the
+// endpoint lists.
+func checkSource(source string) Source {
+	switch source {
+	case "Cerner":
+		return Cerner
+	case "Epic":
+		return Epic
+	}
+	return ""
+}
+
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
 type Endpoints interface {
