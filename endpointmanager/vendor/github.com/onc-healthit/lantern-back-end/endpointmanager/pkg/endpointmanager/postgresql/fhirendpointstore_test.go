@@ -42,7 +42,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		FHIRVersion:           "DSTU2",
 		AuthorizationStandard: "OAuth 2.0",
 		Vendor:                "Cerner",
-		ListSource:            "Cerner",
+		ListSource:            "https://github.com/cerner/ignite-endpoints",
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",

@@ -139,14 +139,19 @@ func main() {
 	go setupServer()
 
 	var endpointsFile string
-	if len(os.Args) != 1 {
+	var source string
+	if len(os.Args) != 2 {
 		endpointsFile = os.Args[1]
+		source = os.Args[2]
+	} else if len(os.Args) == 1 {
+		log.Error("missing endpoints list source command-line argument")
+		return
 	} else {
 		log.Error("missing endpoints list command-line argument")
 		return
 	}
 	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
-	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
+	var listOfEndpoints, err = fetcher.GetEndpointsFromFilepath(endpointsFile, source)
 	if err != nil {
 		log.Fatal("Endpoint List Parsing Error: ", err.Error())
 	}

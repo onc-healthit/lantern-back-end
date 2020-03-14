@@ -216,7 +216,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		vendor = $9,
 		list_source = $10,
 		location = $11,
-		capability_statement = $12
+		capability_statement = $12,
 		validation = $13
 	WHERE id = $14`
 

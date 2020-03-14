@@ -22,14 +22,18 @@ func failOnError(errString string, err error) {
 
 func main() {
 	var endpointsFile string
-	if len(os.Args) != 1 {
+	var source string
+
+	if len(os.Args) != 2 {
 		endpointsFile = os.Args[1]
+		source = os.Args[2]
+	} else if len(os.Args) == 1 {
+		log.Fatalf("ERROR: Missing endpoints list source command-line argument")
 	} else {
 		log.Fatalf("ERROR: Missing endpoints list command-line argument")
 	}
 
-	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
-	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
+	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source)
 	failOnError("Endpoint List Parsing Error: ", err)
 
 	err = config.SetupConfig()
