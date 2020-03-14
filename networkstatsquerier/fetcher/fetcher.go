@@ -2,6 +2,7 @@ package fetcher
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -52,52 +53,79 @@ type Endpoints interface {
 	GetEndpoints(map[string]interface{}) ListOfEndpoints
 }
 
-// GetListOfEndpoints parses a list of endpoints out of the file at the provided path
-func GetListOfEndpoints(filePath string) (ListOfEndpoints, error) {
-	var result ListOfEndpoints
-	var initialList map[string][]map[string]interface{}
-
+// GetEndpointsFromFilepath parses a list of endpoints out of the file at the provided path
+func GetEndpointsFromFilepath(filePath string, source string) (ListOfEndpoints, error) {
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
-		return result, err
+		return ListOfEndpoints{}, err
 	}
 	// Defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	err = json.Unmarshal([]byte(byteValue), &initialList)
+	validSource := checkSource(source)
+	if validSource != "" {
+		return GetListOfEndpointsKnownSource([]byte(byteValue), validSource)
+	}
+	return GetListOfEndpoints([]byte(byteValue), source)
+}
+
+// GetListOfEndpointsKnownSource parses a list of endpoints out of a given byte array
+func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpoints, error) {
+	var result ListOfEndpoints
+	var initialList map[string][]map[string]interface{}
+
+	err := json.Unmarshal(rawendpts, &initialList)
 
 	// return nil if an empty endpoint list was passed in
 	if initialList == nil {
 		return result, nil
 	}
-
 	if err != nil {
 		return result, err
 	}
 
-	finalResult, err := formatList(initialList)
+	if source == Cerner {
+		cernerList := initialList["endpoints"]
+		if cernerList == nil {
+			return result, fmt.Errorf("cerner list not given in Cerner format")
+		}
+		result = CernerList{}.GetEndpoints(cernerList)
+	} else if source == Epic {
+		epicList := initialList["Entries"]
+		if epicList == nil {
+			return result, fmt.Errorf("epic list not given in Epic format")
+		}
+		result = EpicList{}.GetEndpoints(epicList)
+	} else {
+		return result, fmt.Errorf("no endpoint list parser implemented for the given source")
+	}
 
-	return finalResult, err
+	return result, err
 }
 
-func formatList(initialList map[string][]map[string]interface{}) (ListOfEndpoints, error) {
-	var endptList ListOfEndpoints
-	var errs error
+// GetListOfEndpoints parses a list of endpoints out of a given byte array
+func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error) {
+	var result ListOfEndpoints
+	var initialList map[string][]map[string]interface{}
 
-	// Cerner's top-level JSON field is "endpoints"
-	cernerList, ok := initialList["endpoints"]
-	if ok {
-		endptList, errs = CernerList{}.GetEndpoints(cernerList)
+	err := json.Unmarshal(rawendpts, &initialList)
+
+	// return nil if an empty endpoint list was passed in
+	if initialList == nil {
+		return result, nil
+	}
+	if err != nil {
+		return result, err
 	}
 
-	// Everything else should have a top level JSON field of "Entries"
 	defaultList, ok := initialList["Entries"]
-	if ok {
-		endptList, errs = DefaultList{}.GetEndpoints(defaultList)
+	if !ok {
+		return result, fmt.Errorf("the given endpoint list is not formatted in the default format")
 	}
+	result = getDefaultEndpoints(defaultList, source)
 
-	return endptList, errs
+	return result, err
 }
