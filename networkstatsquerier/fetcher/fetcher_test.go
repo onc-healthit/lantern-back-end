@@ -1,8 +1,10 @@
 package fetcher
 
 import (
-	"encoding/json"
+	"fmt"
 	"testing"
+
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 var testCerner = []byte(`{"endpoints": [
@@ -18,61 +20,70 @@ var testEpic = []byte(`{"Entries":[
 		"FHIRPatientFacingURI":"https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
 	}]}`)
 
-func Test_GetListOfEndpoints(t *testing.T) {
+var testDefault = []byte(`{"Entries":[
+	{
+		"OrganizationName":"Test Default",
+		"FHIRPatientFacingURI":"https://example.com"
+	}]}`)
+
+func Test_GetEndpointsFromFilepath(t *testing.T) {
+
+	// test default list
+
 	var expectedEndpoints = 397
-	var endpoints, _ = GetListOfEndpoints("../resources/EndpointSources.json")
+	var endpoints, _ = GetEndpointsFromFilepath("../resources/EndpointSources.json", "CareEvolution")
 	var endpointsCount = len(endpoints.Entries)
-	if endpointsCount != expectedEndpoints {
-		t.Errorf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints)
-	}
-}
-
-func Test_formatList(t *testing.T) {
-
-	// test cerner list
-
-	var cernerList map[string][]map[string]interface{}
-	err := json.Unmarshal(testCerner, &cernerList)
-
-	if cernerList == nil {
-		t.Errorf("The cerner list was not unmarshalled properly")
-	}
-	if err != nil {
-		t.Errorf("%s", err)
-	}
-
-	cernerResult, err := formatList(cernerList)
-	if err != nil {
-		t.Errorf("%s", err)
-	}
-	if cernerResult.Entries[0].ListSource != "https://github.com/cerner/ignite-endpoints" {
-		t.Errorf("The list source should have been cerner, it instead returned %s", cernerResult.Entries[0].ListSource)
-	}
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test epic list
 
-	var epicList map[string][]map[string]interface{}
-	err = json.Unmarshal(testEpic, &epicList)
+	expectedEndpoints = 364
+	endpoints, _ = GetEndpointsFromFilepath("../resources/EpicEndpointSources.json", "Epic")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
-	if epicList == nil {
-		t.Errorf("The epic list was not unmarshalled properly")
-	}
-	if err != nil {
-		t.Errorf("%s", err)
-	}
+}
 
-	epicResult, err := formatList(epicList)
-	if err != nil {
-		t.Errorf("%s", err)
-	}
-	if epicResult.Entries[0].ListSource != "https://open.epic.com/MyApps/EndpointsJson" {
-		t.Errorf("The endpoint list source should have been epic, it instead returned %s", epicResult.Entries[0].ListSource)
-	}
+func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 
-	// test unknown format list
-	var emptyList map[string][]map[string]interface{}
-	emptyResult, _ := formatList(emptyList)
-	if len(emptyResult.Entries) > 0 {
-		t.Errorf("The endpoint list should have been empty, it instead is of length %d", len(epicResult.Entries))
-	}
+	// test cerner list
+
+	cernerResult, err := GetListOfEndpointsKnownSource(testCerner, Cerner)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, cernerResult.Entries[0].ListSource == string(Cerner), fmt.Sprintf("The list source should have been %s, it instead returned %s", Cerner, cernerResult.Entries[0].ListSource))
+
+	// test epic list
+
+	epicResult, err := GetListOfEndpointsKnownSource(testEpic, Epic)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, epicResult.Entries[0].ListSource == string(Epic), fmt.Sprintf("The list source should have been %s, it instead returned %s", Epic, epicResult.Entries[0].ListSource))
+
+	// test empty list
+
+	_, err = GetListOfEndpointsKnownSource([]byte(""), Epic)
+	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
+
+	// test invalid source
+
+	_, err = GetListOfEndpointsKnownSource(testEpic, "string")
+	th.Assert(t, err != nil, "An invalid source should have thrown an error")
+}
+
+func Test_GetListOfEndpoints(t *testing.T) {
+
+	// test default list
+
+	defaultResult, err := GetListOfEndpoints(testDefault, "Test")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, defaultResult.Entries[0].ListSource == "Test", fmt.Sprintf("The list source should have been CareEvolution, it instead returned %s", defaultResult.Entries[0].ListSource))
+
+	// test empty list
+
+	_, err = GetListOfEndpoints([]byte(""), "Test")
+	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
+
+	// test invalid formatting
+
+	_, err = GetListOfEndpoints(testCerner, "Test")
+	th.Assert(t, err != nil, "An invalid source format should have thrown an error")
 }

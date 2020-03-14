@@ -17,33 +17,6 @@ var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationName:     "A Woman's Place",
 	FHIRPatientFacingURI: "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
 	ListSource:           "CareEvolution",
-	Type:                 "Cerner",
-	Keywords: []fetcher.OrgKeyword{
-		{
-			Kind:  "Keyword",
-			Value: "A Woman's Place",
-		},
-		{
-			Kind:  "Keyword",
-			Value: "Lakewood",
-		},
-		{
-			Kind:  "Keyword",
-			Value: "Place",
-		},
-		{
-			Kind:  "Keyword",
-			Value: "Woman",
-		},
-		{
-			Kind:  "State",
-			Value: "New Jersey",
-		},
-		{
-			Kind:  "State",
-			Value: "NJ",
-		},
-	},
 }
 
 var testFHIREndpoint endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
