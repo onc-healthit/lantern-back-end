@@ -31,7 +31,7 @@ type Source string
 // Cerner is a field in the Source enum for the cerner endpoint url
 const (
 	Cerner Source = "https://github.com/cerner/ignite-endpoints"
-	Epic          = "https://open.epic.com/MyApps/EndpointsJson"
+	Epic   Source = "https://open.epic.com/MyApps/EndpointsJson"
 )
 
 // Converts the string version of the endpoint source to the fetcher.Source enum
