@@ -21,16 +21,6 @@ func (dl DefaultList) GetEndpoints(defaultList []map[string]interface{}) (ListOf
 		if uriOk {
 			fhirEntry.FHIRPatientFacingURI = uri
 		}
-		entryType, typeOk := defaultList[entry]["Type"].(string)
-		if typeOk {
-			fhirEntry.Type = entryType
-			// If the entry has a type field then it's a CareEvolution list
-			fhirEntry.ListSource = "CareEvolution"
-		}
-		keywords, keyOk := defaultList[entry]["Keywords"].([]OrgKeyword)
-		if keyOk {
-			fhirEntry.Keywords = keywords
-		}
 		innerList = append(innerList, fhirEntry)
 	}
 

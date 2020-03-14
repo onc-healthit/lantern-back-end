@@ -17,8 +17,6 @@ type EndpointEntry struct {
 	OrganizationName     string
 	FHIRPatientFacingURI string
 	ListSource           string
-	Type                 string
-	Keywords             []OrgKeyword
 }
 
 // ListOfEndpoints is a structure for the whole EndpointSources file
