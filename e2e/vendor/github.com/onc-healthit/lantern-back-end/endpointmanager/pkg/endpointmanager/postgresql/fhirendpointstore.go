@@ -1,12 +1,12 @@
 package postgresql
 
 import (
-	"context"
-	"encoding/json"
+        "context"
+        "encoding/json"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+        "github.com/lib/pq"
+        "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+        "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
@@ -15,17 +15,23 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
+	var validationJSON []byte
 
 	sqlStatement := `
 	SELECT
 		id,
 		url,
+		tls_version,
+		mime_types,
+		http_response,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
 		vendor,
 		location,
 		capability_statement,
+		validation,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
@@ -34,12 +40,17 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.TLSVersion,
+		pq.Array(&endpoint.MIMETypes),
+		&endpoint.HTTPResponse,
+		&endpoint.Errors,
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
+		&validationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -52,7 +63,12 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	err = json.Unmarshal(validationJSON, &endpoint.Validation)
 
 	return &endpoint, err
 }
@@ -63,17 +79,23 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	var endpoint endpointmanager.FHIREndpoint
 	var locationJSON []byte
 	var capabilityStatementJSON []byte
+	var validationJSON []byte
 
 	sqlStatement := `
 	SELECT
 		id,
 		url,
+		tls_version,
+		mime_types,
+		http_response,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
 		vendor,
 		location,
 		capability_statement,
+		validation,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE url=$1`
@@ -83,12 +105,17 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
+		&endpoint.TLSVersion,
+		pq.Array(&endpoint.MIMETypes),
+		&endpoint.HTTPResponse,
+		&endpoint.Errors,
 		&endpoint.OrganizationName,
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
 		&locationJSON,
 		&capabilityStatementJSON,
+		&validationJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -101,7 +128,12 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	err = json.Unmarshal(validationJSON, &endpoint.Validation)
 
 	return &endpoint, err
 }
@@ -110,13 +142,18 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
 	INSERT INTO fhir_endpoints (url,
+		tls_version,
+		mime_types,
+		http_response,
+		errors,
 		organization_name,
 		fhir_version,
 		authorization_standard,
 		vendor,
 		location,
-		capability_statement)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)
+		capability_statement,
+		validation)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -132,16 +169,25 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
+	validationJSON, err := json.Marshal(e.Validation)
+	if err != nil {
+		return err
+	}
 
 	row := s.DB.QueryRowContext(ctx,
 		sqlStatement,
 		e.URL,
+		e.TLSVersion,
+		pq.Array(e.MIMETypes),
+		e.HTTPResponse,
+		e.Errors,
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
 		locationJSON,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		validationJSON)
 
 	err = row.Scan(&e.ID)
 
@@ -153,13 +199,18 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	sqlStatement := `
 	UPDATE fhir_endpoints
 	SET url = $1,
-		organization_name = $2,
-		fhir_version = $3,
-		authorization_standard = $4,
-		vendor = $5,
-		location = $6,
-		capability_statement = $7
-	WHERE id = $8`
+		tls_version = $2,
+		mime_types = $3,
+		http_response = $4,
+		errors = $5,
+		organization_name = $6,
+		fhir_version = $7,
+		authorization_standard = $8,
+		vendor = $9,
+		location = $10,
+		capability_statement = $11,
+		validation = $12
+	WHERE id = $13`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -174,16 +225,25 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
+	validationJSON, err := json.Marshal(e.Validation)
+	if err != nil {
+		return err
+	}
 
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		e.URL,
+		e.TLSVersion,
+		pq.Array(e.MIMETypes),
+		e.HTTPResponse,
+		e.Errors,
 		e.OrganizationName,
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
 		locationJSON,
 		capabilityStatementJSON,
+		validationJSON,
 		e.ID)
 
 	return err
@@ -191,11 +251,33 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	DELETE FROM fhir_endpoints
-	WHERE id = $1`
+        sqlStatement := `
+        DELETE FROM fhir_endpoints
+        WHERE id = $1`
 
-	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
+        _, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
-	return err
+        return err
+}
+
+// GetAlOrgNames returns a sql.Rows of all of the orgNames
+func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
+        sqlStatement := `
+        SELECT id, organization_name FROM fhir_endpoints`
+        rows, err := s.DB.QueryContext(ctx, sqlStatement)
+
+        if err != nil {
+                return nil, err
+        }
+        var endpoints []endpointmanager.FHIREndpoint
+        defer rows.Close()
+        for rows.Next() {
+                var endpoint endpointmanager.FHIREndpoint
+                err = rows.Scan(&endpoint.ID, &endpoint.OrganizationName)
+                if err != nil {
+                        return nil, err
+                }
+                endpoints = append(endpoints, endpoint)
+        }
+        return endpoints, nil
 }

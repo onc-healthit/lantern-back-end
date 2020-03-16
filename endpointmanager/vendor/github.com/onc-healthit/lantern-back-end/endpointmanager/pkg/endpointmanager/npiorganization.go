@@ -14,6 +14,8 @@ type NPIOrganization struct {
 	SecondaryName string
 	Location      *Location
 	Taxonomy      string // Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+	NormalizedName string
+	NormalizedSecondaryName string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
@@ -23,6 +25,8 @@ type NPIOrganization struct {
 type NPIOrganizationStore interface {
 	GetNPIOrganization(context.Context, int) (*NPIOrganization, error)
 	GetNPIOrganizationByNPIID(context.Context, string) (*NPIOrganization, error)
+	GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]NPIOrganization, error)
+	LinkNPIOrganizationToFHIREndpoint(context.Context, int, int, float64) error
 	DeleteAllNPIOrganizations(context.Context) error
 	AddNPIOrganization(context.Context, *NPIOrganization) error
 	UpdateNPIOrganization(context.Context, *NPIOrganization) error

@@ -31,6 +31,8 @@ CREATE TABLE npi_organizations (
     secondary_name   VARCHAR(500),
     location         JSONB,
     taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+    normalized_name      VARCHAR(500),
+    normalized_secondary_name   VARCHAR(500),
     created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -55,6 +57,13 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE endpoint_organization (
+    endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
+    organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
+    confidence NUMERIC (5, 3),
+    CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
+);
+
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
 FOR EACH ROW
@@ -69,3 +78,10 @@ CREATE TRIGGER set_timestamp_healthit_products
 BEFORE UPDATE ON healthit_products
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
+
+
+CREATE or REPLACE VIEW org_mapping AS
+SELECT endpts.url, endpts.vendor, endpts.organization_name AS endpoint_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
+FROM endpoint_organization AS links
+LEFT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
+LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id;

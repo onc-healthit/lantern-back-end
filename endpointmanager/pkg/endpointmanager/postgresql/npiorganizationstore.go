@@ -21,6 +21,8 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*
 		secondary_name,
 		location,
 		taxonomy,
+		normalized_name,
+		normalized_secondary_name,
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE npi_id=$1`
@@ -33,6 +35,8 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*
 		&org.SecondaryName,
 		&locationJSON,
 		&org.Taxonomy,
+		&org.NormalizedName,
+		&org.NormalizedSecondaryName,
 		&org.CreatedAt,
 		&org.UpdatedAt)
 
@@ -70,6 +74,8 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 		secondary_name,
 		location,
 		taxonomy,
+		normalized_name,
+		normalized_secondary_name,
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE id=$1`
@@ -82,6 +88,8 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 		&org.SecondaryName,
 		&locationJSON,
 		&org.Taxonomy,
+		&org.NormalizedName,
+		&org.NormalizedSecondaryName,
 		&org.CreatedAt,
 		&org.UpdatedAt)
 
@@ -106,8 +114,10 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 		name,
 		secondary_name,
 		location,
-		taxonomy)
-	VALUES ($1, $2, $3, $4, $5)
+		taxonomy,
+		normalized_name,
+		normalized_secondary_name)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(org.Location)
@@ -121,7 +131,9 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 		org.Name,
 		org.SecondaryName,
 		locationJSON,
-		org.Taxonomy)
+		org.Taxonomy,
+		org.NormalizedName,
+		org.NormalizedSecondaryName)
 
 	err = row.Scan(&org.ID)
 
@@ -136,7 +148,9 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 		name = $3,
 		secondary_name = $4,
 		location = $5,
-		taxonomy = $6
+		taxonomy = $6,
+		normalized_name = $7,
+		normalized_secondary_name = $8
 	WHERE id=$1`
 
 	locationJSON, err := json.Marshal(org.Location)
@@ -151,7 +165,9 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 		org.Name,
 		org.SecondaryName,
 		locationJSON,
-		org.Taxonomy)
+		org.Taxonomy,
+		org.NormalizedName,
+		org.NormalizedSecondaryName)
 
 	return err
 }
@@ -163,7 +179,9 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 	SET name = $2,
 		secondary_name = $3,
 		location = $4,
-		taxonomy = $5
+		taxonomy = $5,
+		normalized_name = $6,
+		normalized_secondary_name = $7
 	WHERE npi_id=$1`
 
 	locationJSON, err := json.Marshal(org.Location)
@@ -177,7 +195,9 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 		org.Name,
 		org.SecondaryName,
 		locationJSON,
-		org.Taxonomy)
+		org.Taxonomy,
+		org.NormalizedName,
+		org.NormalizedSecondaryName)
 
 	return err
 }
@@ -190,5 +210,43 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 
 	_, err := s.DB.ExecContext(ctx, sqlStatement, org.ID)
 
+	return err
+}
+
+// GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
+func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error) {
+	sqlStatement := `
+	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	var orgs []endpointmanager.NPIOrganization
+	defer rows.Close()
+	for rows.Next() {
+		var org endpointmanager.NPIOrganization
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
+		if err != nil {
+			return nil, err
+		}
+		orgs = append(orgs, org)
+	}
+	return orgs, nil
+}
+
+// LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int, confidence float64) error {
+	sqlStatement := `
+	INSERT INTO endpoint_organization (
+		organization_id,
+		endpoint_id,
+		confidence)
+	VALUES ($1, $2, $3)`
+
+	_, err := s.DB.ExecContext(ctx,
+		sqlStatement,
+		orgId,
+		endpointId,
+		confidence)
 	return err
 }

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"reflect"
 	"testing"
 	"time"
 
@@ -87,8 +86,8 @@ func Test_Integration_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, hitp.Developer == "Carefluence", "Developer is not what was expected")
 	th.Assert(t, hitp.CertificationDate.Equal(time.Unix(1467331200, 0).UTC()), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == "Active", "Certification status is not what was expected")
-	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"}), "Certification criteria is not what was expected")
-	th.Assert(t, hitp.APIURL == "http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "API documentation is not what was expected")
+    // TODO: Can continue to assert this format after changes described in https://oncprojectracking.healthit.gov/support/browse/LANTERN-156 are addressed
+	//th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"}), "Certification criteria is not what was expected")
 }
 
 func setup() error {
