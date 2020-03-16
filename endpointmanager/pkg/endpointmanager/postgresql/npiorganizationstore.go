@@ -56,6 +56,7 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*
 // DeleteAllNPIOrganizations will remove all rows from the npi_organizations table
 func (s *Store) DeleteAllNPIOrganizations(ctx context.Context) error {
 	sqlStatement := `DELETE FROM npi_organizations`
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err := s.DB.ExecContext(ctx, sqlStatement)
 	return err
 }
@@ -158,6 +159,7 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 		return err
 	}
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		org.ID,
@@ -189,6 +191,7 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 		return err
 	}
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		org.NPI_ID,
@@ -208,6 +211,7 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 	DELETE FROM npi_organizations
 	WHERE id=$1`
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err := s.DB.ExecContext(ctx, sqlStatement, org.ID)
 
 	return err
@@ -243,6 +247,7 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int
 		confidence)
 	VALUES ($1, $2, $3)`
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err := s.DB.ExecContext(ctx,
 		sqlStatement,
 		orgId,

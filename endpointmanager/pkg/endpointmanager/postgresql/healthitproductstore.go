@@ -296,6 +296,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		return err
 	}
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		hitp.Name,
@@ -322,6 +323,7 @@ func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager
 	DELETE FROM healthit_products
 	WHERE id=$1`
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err := s.DB.ExecContext(ctx, sqlStatement, hitp.ID)
 
 	return err

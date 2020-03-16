@@ -137,6 +137,7 @@ func tablesAreEmpty(tableNames []string, db *sql.DB) (bool, error) {
 func deleteTableEntries(tableNames []string, db *sql.DB) error {
 	for _, tableName := range tableNames {
 		query := fmt.Sprintf("DELETE FROM %s", tableName)
+		// TODO: to ensure safety, should do "Prepare" statement.
 		_, err := db.Exec(query)
 		if err != nil {
 			return err

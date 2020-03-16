@@ -230,6 +230,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
+	// TODO: To ensure safety, should use 'prepare' statement.
 	_, err = s.DB.ExecContext(ctx,
 		sqlStatement,
 		e.URL,
@@ -255,6 +256,7 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
         DELETE FROM fhir_endpoints
         WHERE id = $1`
 
+	// TODO: to ensure safety, should do "Prepare" statement.
 	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
 	return err

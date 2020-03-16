@@ -4,21 +4,21 @@ package integration_tests
 
 import (
 	"context"
-	"strconv"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
-	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 )
@@ -60,7 +60,6 @@ func populateTestEndpointData() {
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
 	failOnError(dbErr)
 }
-
 
 func metadataHandler(w http.ResponseWriter, r *http.Request) {
 	contents, err := ioutil.ReadFile("testdata/DSTU2CapabilityStatement.xml")
@@ -145,16 +144,16 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	if linked_endpoint_id != lantern_org_endpoint_id {
 		t.Fatalf("Org mapped to wrong dndpoint id")
 	}
-	query_str = "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_2+ ";"
+	query_str = "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_2 + ";"
 	err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
 	failOnError(err)
 	if linked_endpoint_id != lantern_org_endpoint_id {
 		t.Fatalf("Org mapped to wrong dndpoint id")
 	}
 
-
 	// Assert that deletion from npi_organizations list removes the link
-	query_str = "DELETE FROM npi_organizations WHERE id="  + id_npi_1 + ";"
+	// TODO: Unsafe query
+	query_str = "DELETE FROM npi_organizations WHERE id=" + id_npi_1 + ";"
 	_, err = store.DB.Exec(query_str)
 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 	failOnError(err)
@@ -163,9 +162,9 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 
 	// Assert that deletion from fhir_endpoint list removes the link
-	query_str = "DELETE FROM fhir_endpoints WHERE id="  + lantern_org_endpoint_id + ";"
+	// TODO: Unsafe query
+	query_str = "DELETE FROM fhir_endpoints WHERE id=" + lantern_org_endpoint_id + ";"
 	_, err = store.DB.Exec(query_str)
-
 
 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 	failOnError(err)
