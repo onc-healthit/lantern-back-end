@@ -63,6 +63,11 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	_, err = GetListOfEndpointsKnownSource([]byte(""), Epic)
 	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
 
+	// test improperly formatted list
+
+	_, err = GetListOfEndpointsKnownSource([]byte(`{ "endpoints": "string" }`), Epic)
+	th.Assert(t, err != nil, "An improperly formatted list should have returned an error, it instead returned nil")
+
 	// test invalid source
 
 	_, err = GetListOfEndpointsKnownSource(testEpic, "string")
@@ -81,6 +86,11 @@ func Test_GetListOfEndpoints(t *testing.T) {
 
 	_, err = GetListOfEndpoints([]byte(""), "Test")
 	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
+
+	// test improperly formatted list
+
+	_, err = GetListOfEndpointsKnownSource([]byte(`{ "endpoints": "string" }`), "Test")
+	th.Assert(t, err != nil, "An improperly formatted list should have returned an error, it instead returned nil")
 
 	// test invalid formatting
 

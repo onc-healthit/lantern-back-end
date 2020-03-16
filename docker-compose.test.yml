@@ -7,6 +7,7 @@ services:
     entrypoint:
       - "./main"
       - "./resources/TestEndpointSources.json"
+      - "CareEvolution"
 
   prometheus_postgresql_adapter:
     command:
