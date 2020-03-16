@@ -193,7 +193,6 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	// FOO FOO BAR and primary name FOO FOO BAR BAZ have confidence of .75
 	th.Assert(t, (confidence == "0.750000"), "Exact match confidence should have been 0.750000 confidence got "+confidence)
 
-
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
 	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false)
 	th.Assert(t, (err == nil), "Error getting matches from list")
