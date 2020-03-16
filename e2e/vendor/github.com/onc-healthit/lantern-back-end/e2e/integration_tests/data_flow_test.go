@@ -56,7 +56,7 @@ func setupTestServer() {
 
 func TestMetricsAvailableInQuerier(t *testing.T) {
 	var client http.Client
-	resp, err := client.Get("http://endpoint_querier_1:3333/metrics")
+	resp, err := client.Get("http://endpoint_querier:3333/metrics")
 	failOnError(err)
 
 	defer resp.Body.Close()
@@ -135,7 +135,7 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	err = response_time_row.Scan(&id, &metric_name, &result_label)
 	failOnError(err)
 
-	if result_label != "{\"job\": \"FHIRQUERY\", \"orgName\": \"LanternTestOrg\", \"instance\": \"endpoint_querier_1:3333\"}" {
+	if result_label != "{\"job\": \"FHIRQUERY\", \"orgName\": \"LanternTestOrg\", \"instance\": \"endpoint_querier:3333\"}" {
 		t.Fatalf("LanternTestOrg not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics

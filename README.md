@@ -203,9 +203,9 @@ These need to be started in the following order with the given commands:
 
 ```yml
 remote_write:
-    - url: "http://prometheus_postgres_adapter:9201/write"
+    - url: "http://prometheus_postgresql_adapter:9201/write"
 remote_read:
-    - url: "http://prometheus_postgres_adapter:9201/read"
+    - url: "http://prometheus_postgresql_adapter:9201/read"
 ```
 
 **To add the Endpoint Querier as a Prometheus target**, the information below should be contained in the configuration file.
@@ -235,7 +235,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-    - targets: ['endpoint_querier_1:3333']
+    - targets: ['endpoint_querier:3333']
 ```
 
 #### Initializing the Database by hand
