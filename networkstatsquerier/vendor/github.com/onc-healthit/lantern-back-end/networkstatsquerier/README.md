@@ -5,6 +5,12 @@ The Network Statistics Querier is a service that retrieves the response code and
 ## Configuration
 The Network Statistics Querier reads the following environment variables:
 
+**These variables must be set on your system**
+
+\<none>
+
+**These variables can use the default values *in development*. These should be set on the production system.**
+
 * **LANTERN_ENDPTQRY_PORT**: The port where the metrics gathered from the FHIR endpoints will be hosted.
 
   Default value: 3333
@@ -56,7 +62,7 @@ go run *.go resources/<endpoint_list>.json <source>
 
 ### Expected Endpoint Source Formatting
 
-The Network Statistics Querier expects the format of an endpoint source list to be in the below format, unless stated otherwise.
+The Network Statistics Querier expects the format of an endpoint source list to be in the below format, unless one of the exceptions noted below.
 
 ```
 {
@@ -69,3 +75,6 @@ The Network Statistics Querier expects the format of an endpoint source list to 
   ]
 }
 ```
+
+Exceptions:
+* Cerner

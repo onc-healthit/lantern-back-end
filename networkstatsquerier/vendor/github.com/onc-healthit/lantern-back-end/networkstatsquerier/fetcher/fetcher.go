@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/pkg/errors"
 )
 
 // OrgKeyword is a struct for each keyword
@@ -79,11 +81,11 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpo
 
 	err := json.Unmarshal(rawendpts, &initialList)
 
-	// return nil if an empty endpoint list was passed in
-	if initialList == nil {
-		return result, nil
-	}
 	if err != nil {
+		// return nil if an empty endpoint list was passed in
+		if initialList == nil {
+			return result, nil
+		}
 		return result, err
 	}
 
@@ -112,18 +114,20 @@ func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error
 	var initialList map[string][]map[string]interface{}
 
 	err := json.Unmarshal(rawendpts, &initialList)
-
-	// return nil if an empty endpoint list was passed in
-	if initialList == nil {
-		return result, nil
-	}
 	if err != nil {
-		return result, err
+		// return nil if an empty endpoint list was passed in
+		if initialList == nil {
+			return result, nil
+		}
+		return result, errors.Wrap(err,
+			`provided endpoint list was not formatted as expected.
+			See 'Expected Endpoint Source Formatting' in the Network Statistics Querier README.`)
 	}
 
 	defaultList, ok := initialList["Entries"]
 	if !ok {
-		return result, fmt.Errorf("the given endpoint list is not formatted in the default format")
+		return result, fmt.Errorf(`the given endpoint list is not formatted in the default format,
+			see 'Expected Endpoint Source Formatting' in the Network Statistics Querier README`)
 	}
 	result = getDefaultEndpoints(defaultList, source)
 

@@ -140,10 +140,10 @@ func main() {
 
 	var endpointsFile string
 	var source string
-	if len(os.Args) != 2 {
+	if len(os.Args) == 3 {
 		endpointsFile = os.Args[1]
 		source = os.Args[2]
-	} else if len(os.Args) == 1 {
+	} else if len(os.Args) == 2 {
 		log.Error("missing endpoints list source command-line argument")
 		return
 	} else {
