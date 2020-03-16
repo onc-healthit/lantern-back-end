@@ -62,7 +62,7 @@ go run *.go resources/<endpoint_list>.json <source>
 
 ### Expected Endpoint Source Formatting
 
-The Network Statistics Querier expects the format of an endpoint source list to be in the below format, unless stated otherwise.
+The Network Statistics Querier expects the format of an endpoint source list to be in the below format, unless one of the exceptions noted below.
 
 ```
 {
@@ -75,3 +75,6 @@ The Network Statistics Querier expects the format of an endpoint source list to 
   ]
 }
 ```
+
+Exceptions:
+* Cerner
