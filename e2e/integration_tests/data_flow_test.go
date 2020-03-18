@@ -152,9 +152,12 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 
 	// Assert that deletion from npi_organizations list removes the link
-	// TODO: Unsafe query
-	query_str = "DELETE FROM npi_organizations WHERE id=" + id_npi_1 + ";"
-	_, err = store.DB.Exec(query_str)
+	stmt, err := store.DB.Prepare("DELETE FROM npi_organizations WHERE id=$1;")
+	failOnError(err)
+	defer stmt.Close()
+	_, err = stmt.Exec(id_npi_1)
+	failOnError(err)
+
 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 	failOnError(err)
 	if link_count != 1 {
@@ -162,9 +165,11 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 
 	// Assert that deletion from fhir_endpoint list removes the link
-	// TODO: Unsafe query
-	query_str = "DELETE FROM fhir_endpoints WHERE id=" + lantern_org_endpoint_id + ";"
-	_, err = store.DB.Exec(query_str)
+	stmt, err = store.DB.Prepare("DELETE FROM fhir_endpoints WHERE id=$1;")
+	failOnError(err)
+	defer stmt.Close()
+	_, err = stmt.Exec(lantern_org_endpoint_id)
+	failOnError(err)
 
 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 	failOnError(err)

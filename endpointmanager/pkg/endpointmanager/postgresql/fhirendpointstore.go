@@ -196,7 +196,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	UPDATE fhir_endpoints
 	SET url = $1,
 		tls_version = $2,
@@ -210,7 +210,11 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		location = $10,
 		capability_statement = $11,
 		validation = $12
-	WHERE id = $13`
+	WHERE id = $13`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -230,9 +234,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
-	// TODO: To ensure safety, should use 'prepare' statement.
-	_, err = s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		e.URL,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
@@ -252,17 +254,20 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
         DELETE FROM fhir_endpoints
-        WHERE id = $1`
+        WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
-	// TODO: to ensure safety, should do "Prepare" statement.
-	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
+	_, err = sqlStatement.ExecContext(ctx, e.ID)
 
 	return err
 }
 
-// GetAlOrgNames returns a sql.Rows of all of the orgNames
+// GetAllFHIREndpointOrgNames returns a sql.Rows of all of the orgNames
 func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
         SELECT id, organization_name FROM fhir_endpoints`
