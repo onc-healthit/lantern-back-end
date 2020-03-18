@@ -58,10 +58,16 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epicResult.Entries[0].ListSource == string(Epic), fmt.Sprintf("The list source should have been %s, it instead returned %s", Epic, epicResult.Entries[0].ListSource))
 
-	// test empty list
+	// test empty values
 
-	_, err = GetListOfEndpointsKnownSource([]byte(""), Epic)
-	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
+	_, err = GetListOfEndpointsKnownSource([]byte("null"), Epic)
+	th.Assert(t, err == nil, fmt.Sprintf("A null value should have returned nil, it instead returned %s", err))
+
+	_, err = GetListOfEndpointsKnownSource([]byte("{}"), Epic)
+	th.Assert(t, err == nil, fmt.Sprintf("An empty map {} should have returned nil, it instead returned %s", err))
+
+	_, err = GetListOfEndpointsKnownSource([]byte("[]"), Epic)
+	th.Assert(t, err != nil, "An empty list [] should have returned an error, it instead returned nil")
 
 	// test improperly formatted list
 
@@ -84,12 +90,18 @@ func Test_GetListOfEndpoints(t *testing.T) {
 
 	// test empty list
 
-	_, err = GetListOfEndpoints([]byte(""), "Test")
-	th.Assert(t, err == nil, fmt.Sprintf("An empty list should have returned nil, it instead returned %s", err))
+	_, err = GetListOfEndpoints([]byte("null"), "Test")
+	th.Assert(t, err == nil, fmt.Sprintf("A null value should have returned nil, it instead returned %s", err))
+
+	_, err = GetListOfEndpoints([]byte("{}"), "Test")
+	th.Assert(t, err == nil, fmt.Sprintf("An empty map {} should have returned nil, it instead returned %s", err))
+
+	_, err = GetListOfEndpoints([]byte("[]"), "Test")
+	th.Assert(t, err != nil, "An empty list [] should have returned an error, it instead returned nil")
 
 	// test improperly formatted list
 
-	_, err = GetListOfEndpointsKnownSource([]byte(`{ "endpoints": "string" }`), "Test")
+	_, err = GetListOfEndpoints([]byte(`{ "endpoints": "string" }`), "Test")
 	th.Assert(t, err != nil, "An improperly formatted list should have returned an error, it instead returned nil")
 
 	// test invalid formatting
