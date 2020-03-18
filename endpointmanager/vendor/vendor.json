@@ -275,10 +275,10 @@
 			"revisionTime": "2020-01-16T15:55:33Z"
 		},
 		{
-			"checksumSHA1": "tV4vRFKPSMOSJ8XvEI5rG0uLgcU=",
+			"checksumSHA1": "00x8OIW3AqJecrBUC0baQ9dJrLY=",
 			"path": "github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher",
-			"revision": "29eb045792098a71ea99a53779603a4b0666012f",
-			"revisionTime": "2020-03-14T23:32:43Z"
+			"revision": "026ce1cf03bdd95fbbcfd53ccb1b0600e816f36b",
+			"revisionTime": "2020-03-18T17:29:11Z"
 		},
 		{
 			"checksumSHA1": "NLfoOe6uZzHI6V0ZuncXSSmeCXk=",

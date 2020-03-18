@@ -86,7 +86,7 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpo
 	}
 
 	// return nil if null or {} was passed in as the rawendpts byte array
-	if initialList == nil || len(initialList) == 0 {
+	if len(initialList) == 0 {
 		return result, nil
 	}
 
@@ -122,7 +122,7 @@ func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error
 	}
 
 	// return nil if null or {} was passed in as the rawendpts byte array
-	if initialList == nil || len(initialList) == 0 {
+	if len(initialList) == 0 {
 		return result, nil
 	}
 
