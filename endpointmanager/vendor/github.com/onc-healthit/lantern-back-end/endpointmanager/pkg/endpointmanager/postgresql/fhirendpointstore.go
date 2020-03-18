@@ -6,7 +6,6 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -261,8 +260,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
-	DELETE FROM fhir_endpoints
-	WHERE id = $1`
+        DELETE FROM fhir_endpoints
+        WHERE id = $1`
 
 	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
@@ -270,9 +269,9 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 }
 
 // GetAlOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error){
+func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
-	SELECT id, organization_name FROM fhir_endpoints`
+        SELECT id, organization_name FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 
 	if err != nil {
