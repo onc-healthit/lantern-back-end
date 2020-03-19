@@ -55,8 +55,13 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npi_id string) (*
 
 // DeleteAllNPIOrganizations will remove all rows from the npi_organizations table
 func (s *Store) DeleteAllNPIOrganizations(ctx context.Context) error {
-	sqlStatement := `DELETE FROM npi_organizations`
-	_, err := s.DB.ExecContext(ctx, sqlStatement)
+	sqlStatement, err := s.DB.Prepare(`DELETE FROM npi_organizations`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
+
+	_, err = sqlStatement.ExecContext(ctx)
 	return err
 }
 
@@ -142,7 +147,7 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 
 // UpdateNPIOrganization updates the NPIOrganization in the database using the NPIOrganization's database ID as the key.
 func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	UPDATE npi_organizations
 	SET npi_id = $2,
 		name = $3,
@@ -151,15 +156,18 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 		taxonomy = $6,
 		normalized_name = $7,
 		normalized_secondary_name = $8
-	WHERE id=$1`
+	WHERE id=$1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(org.Location)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		org.ID,
 		org.NPI_ID,
 		org.Name,
@@ -174,7 +182,7 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 
 // UpdateNPIOrganizationByNPIID updates the NPIOrganization in the database using the NPIOrganization's NPIID as the key.
 func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	UPDATE npi_organizations
 	SET name = $2,
 		secondary_name = $3,
@@ -182,15 +190,18 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 		taxonomy = $5,
 		normalized_name = $6,
 		normalized_secondary_name = $7
-	WHERE npi_id=$1`
+	WHERE npi_id=$1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(org.Location)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
@@ -204,11 +215,15 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 
 // DeleteNPIOrganization deletes the NPIOrganization from the database using the NPIOrganization's database ID as the key.
 func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	DELETE FROM npi_organizations
-	WHERE id=$1`
+	WHERE id=$1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
-	_, err := s.DB.ExecContext(ctx, sqlStatement, org.ID)
+	_, err = sqlStatement.ExecContext(ctx, org.ID)
 
 	return err
 }
@@ -236,15 +251,18 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]end
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
 func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int, endpointId int, confidence float64) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	INSERT INTO endpoint_organization (
 		organization_id,
 		endpoint_id,
 		confidence)
-	VALUES ($1, $2, $3)`
+	VALUES ($1, $2, $3)`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
-	_, err := s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		orgId,
 		endpointId,
 		confidence)

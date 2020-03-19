@@ -6,7 +6,6 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -197,7 +196,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	UPDATE fhir_endpoints
 	SET url = $1,
 		tls_version = $2,
@@ -211,7 +210,11 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		location = $10,
 		capability_statement = $11,
 		validation = $12
-	WHERE id = $13`
+	WHERE id = $13`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -231,8 +234,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		e.URL,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
@@ -252,19 +254,23 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	DELETE FROM fhir_endpoints
-	WHERE id = $1`
+	sqlStatement, err := s.DB.Prepare(`
+        DELETE FROM fhir_endpoints
+        WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
-	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
+	_, err = sqlStatement.ExecContext(ctx, e.ID)
 
 	return err
 }
 
-// GetAlOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error){
+// GetAllFHIREndpointOrgNames returns a sql.Rows of all of the orgNames
+func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
-	SELECT id, organization_name FROM fhir_endpoints`
+        SELECT id, organization_name FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 
 	if err != nil {

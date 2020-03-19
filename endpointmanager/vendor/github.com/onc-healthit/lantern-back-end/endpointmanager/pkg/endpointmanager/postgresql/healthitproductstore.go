@@ -269,7 +269,7 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 
 // UpdateHealthITProduct updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
 func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	UPDATE healthit_products
 	SET name = $1,
 		version = $2,
@@ -284,7 +284,11 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		chpl_id = $11,
 		location = $12,
 		certification_criteria = $13
-	WHERE id=$14`
+	WHERE id=$14`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(hitp.Location)
 	if err != nil {
@@ -296,8 +300,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx,
-		sqlStatement,
+	_, err = sqlStatement.ExecContext(ctx,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -318,11 +321,15 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 
 // DeleteHealthITProduct deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
 func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
-	sqlStatement := `
+	sqlStatement, err := s.DB.Prepare(`
 	DELETE FROM healthit_products
-	WHERE id=$1`
+	WHERE id=$1`)
+	if err != nil {
+		return err
+	}
+	defer sqlStatement.Close()
 
-	_, err := s.DB.ExecContext(ctx, sqlStatement, hitp.ID)
+	_, err = sqlStatement.ExecContext(ctx, hitp.ID)
 
 	return err
 }

@@ -83,32 +83,32 @@
 		{
 			"checksumSHA1": "PeUZrHZ8IU6Dstidw8ezhce/jAs=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/cmd",
-			"revision": "15b020ad53107d9f068da98f53af698eeb18bdf4",
-			"revisionTime": "2020-02-26T16:02:16Z"
+			"revision": "3c58725a9636f87242265c4f0ce8811f30fda1f0",
+			"revisionTime": "2020-03-19T13:50:25Z"
 		},
 		{
-			"checksumSHA1": "5TXL0nmGtDMKJblZJKDGrLA9nvc=",
+			"checksumSHA1": "y49iiXt2I7Vh7sFlCKMC/cJOArg=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier",
-			"revision": "15b020ad53107d9f068da98f53af698eeb18bdf4",
-			"revisionTime": "2020-02-26T16:02:16Z"
+			"revision": "3c58725a9636f87242265c4f0ce8811f30fda1f0",
+			"revisionTime": "2020-03-19T13:50:25Z"
 		},
 		{
 			"checksumSHA1": "5gOWm21Su6hNftjn7OnEHBqrTVc=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config",
-			"revision": "15b020ad53107d9f068da98f53af698eeb18bdf4",
-			"revisionTime": "2020-02-26T16:02:16Z"
+			"revision": "3c58725a9636f87242265c4f0ce8811f30fda1f0",
+			"revisionTime": "2020-03-19T13:50:25Z"
 		},
 		{
 			"checksumSHA1": "99GkATsuVyicLg0igMF0xZoN2rM=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints",
-			"revision": "15b020ad53107d9f068da98f53af698eeb18bdf4",
-			"revisionTime": "2020-02-26T16:02:16Z"
+			"revision": "3c58725a9636f87242265c4f0ce8811f30fda1f0",
+			"revisionTime": "2020-03-19T13:50:25Z"
 		},
 		{
 			"checksumSHA1": "35x9fY9qfw5MmAt6ANAknAuLqts=",
 			"path": "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue",
-			"revision": "15b020ad53107d9f068da98f53af698eeb18bdf4",
-			"revisionTime": "2020-02-26T16:02:16Z"
+			"revision": "3c58725a9636f87242265c4f0ce8811f30fda1f0",
+			"revisionTime": "2020-03-19T13:50:25Z"
 		},
 		{
 			"checksumSHA1": "SsscF48vx4kMKiHqKbwzodUFtys=",

@@ -22,7 +22,7 @@ type HostAndPort struct {
 // Assert streamlines test checks.
 func Assert(t *testing.T, boolStatement bool, errorValue interface{}) {
 	if !boolStatement {
-		t.Fatalf("%s: %v", t.Name(), errorValue)
+		t.Fatalf("%s: %+v", t.Name(), errorValue)
 	}
 }
 
@@ -136,8 +136,15 @@ func tablesAreEmpty(tableNames []string, db *sql.DB) (bool, error) {
 
 func deleteTableEntries(tableNames []string, db *sql.DB) error {
 	for _, tableName := range tableNames {
-		query := fmt.Sprintf("DELETE FROM %s", tableName)
-		_, err := db.Exec(query)
+		// sql doesn't like paramterized table names. because this is an internal helper function for tests,
+		// we are leaving this be.
+		query, err := db.Prepare(fmt.Sprintf("DELETE FROM %s", tableName))
+		if err != nil {
+			return err
+		}
+		defer query.Close()
+
+		_, err = query.Exec()
 		if err != nil {
 			return err
 		}
