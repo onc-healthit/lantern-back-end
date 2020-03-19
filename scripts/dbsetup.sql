@@ -17,6 +17,7 @@ CREATE TABLE fhir_endpoints (
     fhir_version            VARCHAR(500),
     authorization_standard  VARCHAR(500),
     vendor                  VARCHAR(500),
+    list_source             VARCHAR(500),
     location                JSONB, -- location of IP address from ipstack.com.
     capability_statement    JSONB,
     validation              JSONB,

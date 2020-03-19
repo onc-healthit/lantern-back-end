@@ -29,6 +29,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation,
@@ -48,6 +49,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
+		&endpoint.ListSource,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -93,6 +95,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation,
@@ -113,6 +116,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
+		&endpoint.ListSource,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -150,10 +154,11 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -185,6 +190,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
+		e.ListSource,
 		locationJSON,
 		capabilityStatementJSON,
 		validationJSON)
@@ -207,10 +213,11 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		fhir_version = $7,
 		authorization_standard = $8,
 		vendor = $9,
-		location = $10,
-		capability_statement = $11,
-		validation = $12
-	WHERE id = $13`
+		list_source = $10,
+		location = $11,
+		capability_statement = $12,
+		validation = $13
+	WHERE id = $14`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -241,6 +248,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
+		e.ListSource,
 		locationJSON,
 		capabilityStatementJSON,
 		validationJSON,

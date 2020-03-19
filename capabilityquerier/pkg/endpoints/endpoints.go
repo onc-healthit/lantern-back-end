@@ -17,7 +17,7 @@ func GetEndpoints(endpointsFile string) (*fetcher.ListOfEndpoints, error) {
 			return nil, errors.New("no endpoints file given")
 		}
 	}
-	var listOfEndpoints, err = fetcher.GetListOfEndpoints(endpointsFile)
+	var listOfEndpoints, err = fetcher.GetEndpointsFromFilepath(endpointsFile, "CareEvolution")
 	if err != nil {
 		return nil, err
 	}

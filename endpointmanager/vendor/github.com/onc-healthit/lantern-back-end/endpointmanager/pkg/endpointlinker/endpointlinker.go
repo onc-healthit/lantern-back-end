@@ -86,7 +86,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 			confidence = 1
 			consideredMatch = true
 			verbosePrint("Exact Match Secondary Name: "+normalizedEndpointName, verbose)
-		} else if jaccard1 >= JACCARD_THRESHOLD && jaccard1 > jaccard2  {
+		} else if jaccard1 >= JACCARD_THRESHOLD && jaccard1 > jaccard2 {
 			confidence = jaccard1
 			consideredMatch = true
 			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedName+" Match Score: "+fmt.Sprintf("%f", jaccard1), verbose)

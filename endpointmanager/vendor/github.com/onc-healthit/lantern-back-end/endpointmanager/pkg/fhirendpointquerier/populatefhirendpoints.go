@@ -48,7 +48,8 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 	} else if err != nil {
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
-		// Currently just logging if there is a repeat
+		// @TODO (Will be addressed in LANTERN-149)
+		// Update database with this information & always overwrite the endpoint list source
 		log.Infof("An endpoint for %s has already been added to the database (%s)", existingEndpt.URL, existingEndpt.OrganizationName)
 	}
 	return nil
@@ -58,7 +59,7 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREndpoint, error) {
 	// Add trailing "/" to URIs that do not have it for consistency
 	uri := endpoint.FHIRPatientFacingURI
-	if uri[len(uri)-1:] != "/" {
+	if len(uri) > 0 && uri[len(uri)-1:] != "/" {
 		uri = uri + "/"
 	}
 
@@ -66,6 +67,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	dbEntry := endpointmanager.FHIREndpoint{
 		URL:              uri,
 		OrganizationName: endpoint.OrganizationName,
+		ListSource:       endpoint.ListSource,
 	}
 
 	// @TODO Get Location

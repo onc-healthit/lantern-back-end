@@ -6,7 +6,6 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -30,6 +29,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation,
@@ -49,6 +49,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
+		&endpoint.ListSource,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -94,6 +95,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation,
@@ -114,6 +116,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.FHIRVersion,
 		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
+		&endpoint.ListSource,
 		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -151,10 +154,11 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		fhir_version,
 		authorization_standard,
 		vendor,
+		list_source,
 		location,
 		capability_statement,
 		validation)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 	RETURNING id`
 
 	locationJSON, err := json.Marshal(e.Location)
@@ -186,6 +190,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
+		e.ListSource,
 		locationJSON,
 		capabilityStatementJSON,
 		validationJSON)
@@ -208,10 +213,11 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		fhir_version = $7,
 		authorization_standard = $8,
 		vendor = $9,
-		location = $10,
-		capability_statement = $11,
-		validation = $12
-	WHERE id = $13`
+		list_source = $10,
+		location = $11,
+		capability_statement = $12,
+		validation = $13
+	WHERE id = $14`
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -242,6 +248,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.FHIRVersion,
 		e.AuthorizationStandard,
 		e.Vendor,
+		e.ListSource,
 		locationJSON,
 		capabilityStatementJSON,
 		validationJSON,
@@ -253,8 +260,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	sqlStatement := `
-	DELETE FROM fhir_endpoints
-	WHERE id = $1`
+        DELETE FROM fhir_endpoints
+        WHERE id = $1`
 
 	_, err := s.DB.ExecContext(ctx, sqlStatement, e.ID)
 
@@ -262,9 +269,9 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 }
 
 // GetAlOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error){
+func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
-	SELECT id, organization_name FROM fhir_endpoints`
+        SELECT id, organization_name FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 
 	if err != nil {

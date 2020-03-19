@@ -54,7 +54,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetListOfEndpoints("../../../networkstatsquerier/resources/EndpointSources.json")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../../networkstatsquerier/resources/EndpointSources.json", "CareEvolution")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = fhirquerier.AddEndpointData(ctx, store, &listOfEndpoints)
