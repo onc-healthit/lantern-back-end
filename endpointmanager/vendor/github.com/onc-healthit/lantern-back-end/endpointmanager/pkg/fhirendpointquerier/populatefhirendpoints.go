@@ -55,7 +55,7 @@ func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointSto
 		if err != nil {
 			return err
 		}
-		log.Infof("An endpoint for %s has already been added to the database (%s)", existingEndpt.URL, existingEndpt.OrganizationName)
+		log.Infof("Endpoint already exists (%s, %s). List source %s is overwriting it.", existingEndpt.URL, existingEndpt.OrganizationName, existingEndpt.ListSource)
 	}
 	return nil
 }
