@@ -65,12 +65,13 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not store data as expected")
 	th.Assert(t, fhirEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
 
-	// check that an item with the same URL does not replace item
+	// check that an item with the same URL replaces item
 	endpt.OrganizationName = "A Woman's Place 2"
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not store data as expected")
-	th.Assert(t, fhirEndpt.Equal(store.(*mock.BasicMockStore).FhirEndpointData[0]), "stored data does not equal expected store data")
+	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].OrganizationName == "A Woman's Place 2",
+		fmt.Sprintf("stored data %s does not equal expected store data 'A Woman's Place 2", store.(*mock.BasicMockStore).FhirEndpointData[0].OrganizationName))
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
@@ -120,5 +121,5 @@ func Test_AddEndpointData(t *testing.T) {
 	err = AddEndpointData(ctx, store, &listEndpoints)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(store.(*mock.BasicMockStore).FhirEndpointData) == 1, "did not persist one product as expected")
-	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].OrganizationName == endpt1.OrganizationName, "stored data does not equal expected store data")
+	th.Assert(t, store.(*mock.BasicMockStore).FhirEndpointData[0].OrganizationName == endpt2.OrganizationName, "stored data does not equal expected store data")
 }
