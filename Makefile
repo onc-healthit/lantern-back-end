@@ -61,3 +61,9 @@ test_all:
 	make test_int || exit $?
 	make stop
 	make test_e2e || exit $?
+
+update_mods:
+	[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
+	cd ./e2e; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
+	cd ./networkstatsquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
+	cd ./capabilityquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch);go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
