@@ -442,25 +442,9 @@ brew install golangci/tap/golangci-lint
 ```
 More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
 
-## Govendor
-Dependencies required for each package are cached in a `vendor/` directory within each package. Go will search for dependencies within the `vendor/` directory at build-time.
+## GoMod
+If you make changes in one package and would like to use those changes in another package that depends on the first package that you change, commit your code and run `make update_mods branch=<your_working_branch>` This is especially relevant when running your new code in docker images built for the e2e, capabilityquerier and networkstatsquerier branches as the go.mod files are what will be used to determine which versions of the packages should be checked out when the docker images are built. Your final commit in a PR should be the go.mod and go.sum updates that occur as a result of running `make update_mods branch=<your_working_branch>`
 
-To cache dependencies for a package using the govendor tool:
-
-```bash
-go get -u github.com/kardianos/govendor # Download govendor
-cd <your package>
-govendor init # You may need to add your go/bin directory to your PATH if govendor is not found. This will create a vendor directory
-govendor add +external # Copy external package dependencies into vendor directory, dependencies will appear the same as they do in src/
-govendor add +local # Copy package dependencies that share the same project root into the vendor directory
-```
-
-If you add dependencies to your package, or there are updates to dependencies (either local or external) you will have to run the following commands in order to make sure that the vendor directory reflects the updates.
-
-```bash
-govendor update +external # Update external dependencies
-govendor update +local # Update dependencies that share the same project root
-```
 
 # License
 
