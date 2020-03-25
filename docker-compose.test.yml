@@ -26,6 +26,8 @@ services:
     environment:
       - LANTERN_DBHOST=pg_prometheus
     build:
+      args:
+        cert_dir: ./certs
       context: ./e2e
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
