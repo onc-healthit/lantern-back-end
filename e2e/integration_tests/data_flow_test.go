@@ -50,7 +50,7 @@ func populateTestNPIData() {
 }
 
 func populateTestEndpointData() {
-	var listOfEndpoints, err = fetcher.GetListOfEndpoints("./testdata/TestEndpointSources.json")
+	var listOfEndpoints, err = fetcher.GetListOfEndpoints("./testdata/TestEndpointSources.json", "Test")
 	failOnError(err)
 
 	ctx := context.Background()
