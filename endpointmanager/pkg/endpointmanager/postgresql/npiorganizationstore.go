@@ -4,8 +4,16 @@ import (
 	"context"
 	"encoding/json"
 
+	"database/sql"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
+
+// prepared statements are left open to be used throughout the execution of the application
+// TODO: figure out if there's a better way to manage this for bulk calls
+var areStatementsPrepared = false
+var addNPIOrganizationStatement *sql.Stmt
+var updateNPIOrganizationStatement *sql.Stmt
 
 // GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
@@ -113,25 +121,18 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 
 // AddNPIOrganization adds the NPIOrganization to the database or updates if there is an existsing entry with same NPI_ID
 func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	sqlStatement := `
-	INSERT INTO npi_organizations (
-		npi_id,
-		name,
-		secondary_name,
-		location,
-		taxonomy,
-		normalized_name,
-		normalized_secondary_name)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)
-	RETURNING id`
+	err := prepareStatements(s)
+	if err != nil {
+		return err
+	}
 
 	locationJSON, err := json.Marshal(org.Location)
 	if err != nil {
 		return err
 	}
 
-	row := s.DB.QueryRowContext(ctx,
-		sqlStatement,
+	row := addNPIOrganizationStatement.QueryRowContext(ctx,
+		//sqlStatement,
 		org.NPI_ID,
 		org.Name,
 		org.SecondaryName,
@@ -147,27 +148,17 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 
 // UpdateNPIOrganization updates the NPIOrganization in the database using the NPIOrganization's database ID as the key.
 func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	sqlStatement, err := s.DB.Prepare(`
-	UPDATE npi_organizations
-	SET npi_id = $2,
-		name = $3,
-		secondary_name = $4,
-		location = $5,
-		taxonomy = $6,
-		normalized_name = $7,
-		normalized_secondary_name = $8
-	WHERE id=$1`)
+	err := prepareStatements(s)
 	if err != nil {
 		return err
 	}
-	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(org.Location)
 	if err != nil {
 		return err
 	}
 
-	_, err = sqlStatement.ExecContext(ctx,
+	_, err = updateNPIOrganizationStatement.ExecContext(ctx,
 		org.ID,
 		org.NPI_ID,
 		org.Name,
@@ -267,4 +258,26 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgId int
 		endpointId,
 		confidence)
 	return err
+}
+
+func prepareStatements(s *Store) error {
+	var err error
+	if !areStatementsPrepared {
+		areStatementsPrepared = true
+		addNPIOrganizationStatement, err = s.DB.Prepare(`
+		INSERT INTO npi_organizations (
+			npi_id,
+			name,
+			secondary_name,
+			location,
+			taxonomy,
+			normalized_name,
+			normalized_secondary_name)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id`)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
