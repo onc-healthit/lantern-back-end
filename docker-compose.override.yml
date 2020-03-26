@@ -2,10 +2,11 @@ version: '3'
 
 services:
   endpoint_querier:
+    build:
+      args:
+        cert_dir: ./certs
     ports:
       - "3333:3333"
-    volumes:
-      - ./certs/:/etc/ssl/certs
   prometheus:
     ports:
       - "9090:9090"
@@ -22,8 +23,9 @@ services:
       - "15672:15672"
       - "5672:5672"
   capability_querier:
-    volumes:
-      - ./certs/:/etc/ssl/certs
+    build:
+      args:
+        cert_dir: ./certs
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
