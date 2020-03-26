@@ -119,7 +119,7 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 
 // AddNPIOrganization adds the NPIOrganization to the database or updates if there is an existsing entry with same NPI_ID
 func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	err := prepareStatements(s)
+	err := prepareNPIOrganizationStatements(s)
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 
 // UpdateNPIOrganization updates the NPIOrganization in the database using the NPIOrganization's database ID as the key.
 func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	err := prepareStatements(s)
+	err := prepareNPIOrganizationStatements(s)
 	if err != nil {
 		return err
 	}
@@ -171,7 +171,7 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 
 // UpdateNPIOrganizationByNPIID updates the NPIOrganization in the database using the NPIOrganization's NPIID as the key.
 func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	err := prepareStatements(s)
+	err := prepareNPIOrganizationStatements(s)
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 
 // DeleteNPIOrganization deletes the NPIOrganization from the database using the NPIOrganization's database ID as the key.
 func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.NPIOrganization) error {
-	err := prepareStatements(s)
+	err := prepareNPIOrganizationStatements(s)
 	if err != nil {
 		return err
 	}
@@ -227,7 +227,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]end
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
 func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointID int, confidence float64) error {
-	err := prepareStatements(s)
+	err := prepareNPIOrganizationStatements(s)
 	if err != nil {
 		return err
 	}
@@ -239,7 +239,7 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int
 	return err
 }
 
-func prepareStatements(s *Store) error {
+func prepareNPIOrganizationStatements(s *Store) error {
 	var err error
 	if !areStatementsPrepared {
 		areStatementsPrepared = true
