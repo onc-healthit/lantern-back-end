@@ -11,7 +11,7 @@ import (
 
 // prepared statements are left open to be used throughout the execution of the application
 // TODO: figure out if there's a better way to manage this for bulk calls
-var areStatementsPrepared = false
+var areNPIOrganizationStatementsPrepared = false
 var addNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationByNPIIDStatement *sql.Stmt
@@ -241,8 +241,8 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int
 
 func prepareNPIOrganizationStatements(s *Store) error {
 	var err error
-	if !areStatementsPrepared {
-		areStatementsPrepared = true
+	if !areNPIOrganizationStatementsPrepared {
+		areNPIOrganizationStatementsPrepared = true
 		addNPIOrganizationStatement, err = s.DB.Prepare(`
 		INSERT INTO npi_organizations (
 			npi_id,

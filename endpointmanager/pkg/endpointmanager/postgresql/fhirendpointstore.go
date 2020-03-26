@@ -2,12 +2,20 @@ package postgresql
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
+
+// prepared statements are left open to be used throughout the execution of the application
+// TODO: figure out if there's a better way to manage this for bulk calls
+var areFHIREndpointStatementsPrepared = false
+var addFHIREndpointStatement *sql.Stmt
+var updateFHIREndpointStatement *sql.Stmt
+var deleteFHIREndpointStatement *sql.Stmt
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
@@ -144,22 +152,10 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 
 // AddFHIREndpoint adds the FHIREndpoint to the database.
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement := `
-	INSERT INTO fhir_endpoints (url,
-		tls_version,
-		mime_types,
-		http_response,
-		errors,
-		organization_name,
-		fhir_version,
-		authorization_standard,
-		vendor,
-		list_source,
-		location,
-		capability_statement,
-		validation)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-	RETURNING id`
+	err := prepareFHIREndpointStatements(s)
+	if err != nil {
+		return err
+	}
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -179,8 +175,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		return err
 	}
 
-	row := s.DB.QueryRowContext(ctx,
-		sqlStatement,
+	row := addFHIREndpointStatement.QueryRowContext(ctx,
 		e.URL,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
@@ -202,26 +197,10 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement, err := s.DB.Prepare(`
-	UPDATE fhir_endpoints
-	SET url = $1,
-		tls_version = $2,
-		mime_types = $3,
-		http_response = $4,
-		errors = $5,
-		organization_name = $6,
-		fhir_version = $7,
-		authorization_standard = $8,
-		vendor = $9,
-		list_source = $10,
-		location = $11,
-		capability_statement = $12,
-		validation = $13
-	WHERE id = $14`)
+	err := prepareFHIREndpointStatements(s)
 	if err != nil {
 		return err
 	}
-	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(e.Location)
 	if err != nil {
@@ -241,7 +220,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
-	_, err = sqlStatement.ExecContext(ctx,
+	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
@@ -262,15 +241,12 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	sqlStatement, err := s.DB.Prepare(`
-        DELETE FROM fhir_endpoints
-        WHERE id = $1`)
+	err := prepareFHIREndpointStatements(s)
 	if err != nil {
 		return err
 	}
-	defer sqlStatement.Close()
 
-	_, err = sqlStatement.ExecContext(ctx, e.ID)
+	_, err = deleteFHIREndpointStatement.ExecContext(ctx, e.ID)
 
 	return err
 }
@@ -295,4 +271,56 @@ func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanag
 		endpoints = append(endpoints, endpoint)
 	}
 	return endpoints, nil
+}
+
+func prepareFHIREndpointStatements(s *Store) error {
+	var err error
+	if !areFHIREndpointStatementsPrepared {
+		areFHIREndpointStatementsPrepared = true
+		addFHIREndpointStatement, err = s.DB.Prepare(`
+		INSERT INTO fhir_endpoints (url,
+			tls_version,
+			mime_types,
+			http_response,
+			errors,
+			organization_name,
+			fhir_version,
+			authorization_standard,
+			vendor,
+			list_source,
+			location,
+			capability_statement,
+			validation)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		RETURNING id`)
+		if err != nil {
+			return err
+		}
+		updateFHIREndpointStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints
+		SET url = $1,
+			tls_version = $2,
+			mime_types = $3,
+			http_response = $4,
+			errors = $5,
+			organization_name = $6,
+			fhir_version = $7,
+			authorization_standard = $8,
+			vendor = $9,
+			list_source = $10,
+			location = $11,
+			capability_statement = $12,
+			validation = $13
+		WHERE id = $14`)
+		if err != nil {
+			return err
+		}
+		deleteFHIREndpointStatement, err = s.DB.Prepare(`
+        DELETE FROM fhir_endpoints
+        WHERE id = $1`)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
