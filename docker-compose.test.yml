@@ -7,6 +7,7 @@ services:
     entrypoint:
       - "./main"
       - "./resources/TestEndpointSources.json"
+      - "CareEvolution"
 
   prometheus_postgresql_adapter:
     command:
@@ -25,6 +26,8 @@ services:
     environment:
       - LANTERN_DBHOST=pg_prometheus
     build:
+      args:
+        cert_dir: ./certs
       context: ./e2e
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
