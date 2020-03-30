@@ -267,6 +267,9 @@ func prepareNPIOrganizationStatements(s *Store) error {
 		        normalized_name = $7,
 		        normalized_secondary_name = $8
 		WHERE id=$1`)
+		if err != nil {
+			return err
+		}
 		updateNPIOrganizationByNPIIDStatement, err = s.DB.Prepare(`
 		UPDATE npi_organizations
 		SET name = $2,

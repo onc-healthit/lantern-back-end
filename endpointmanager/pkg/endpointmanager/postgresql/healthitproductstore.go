@@ -13,9 +13,7 @@ import (
 var areHealthITProductStatementsPrepared = false
 var addHealthITProductStatement *sql.Stmt
 var updateHealthITProductStatement *sql.Stmt
-var updateHealthITProductByNPIIDStatement *sql.Stmt
 var deleteHealthITProductStatement *sql.Stmt
-var linkHealthITProductToFHIREndpointStatement *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
