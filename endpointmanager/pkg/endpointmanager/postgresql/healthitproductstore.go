@@ -2,10 +2,20 @@ package postgresql
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
+
+// prepared statements are left open to be used throughout the execution of the application
+// TODO: figure out if there's a better way to manage this for bulk calls
+var areHealthITProductStatementsPrepared = false
+var addHealthITProductStatement *sql.Stmt
+var updateHealthITProductStatement *sql.Stmt
+var updateHealthITProductByNPIIDStatement *sql.Stmt
+var deleteHealthITProductStatement *sql.Stmt
+var linkHealthITProductToFHIREndpointStatement *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -218,23 +228,10 @@ func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, err
 
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
-	sqlStatement := `
-	INSERT INTO healthit_products (
-		name,
-		version,
-		developer,
-		location,
-		authorization_standard,
-		api_syntax,
-		api_url,
-		certification_criteria,
-		certification_status,
-		certification_date,
-		certification_edition,
-		last_modified_in_chpl,
-		chpl_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-	RETURNING id`
+	err := prepareHealthITProductStatements(s)
+	if err != nil {
+		return err
+	}
 
 	locationJSON, err := json.Marshal(hitp.Location)
 	if err != nil {
@@ -246,8 +243,7 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		return err
 	}
 
-	row := s.DB.QueryRowContext(ctx,
-		sqlStatement,
+	row := addHealthITProductStatement.QueryRowContext(ctx,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -269,26 +265,10 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 
 // UpdateHealthITProduct updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
 func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
-	sqlStatement, err := s.DB.Prepare(`
-	UPDATE healthit_products
-	SET name = $1,
-		version = $2,
-		developer = $3,
-		authorization_standard = $4,
-		api_syntax = $5,
-		api_url = $6,
-		certification_status = $7,
-		certification_date = $8,
-		certification_edition = $9,
-		last_modified_in_chpl = $10,
-		chpl_id = $11,
-		location = $12,
-		certification_criteria = $13
-	WHERE id=$14`)
+	err := prepareHealthITProductStatements(s)
 	if err != nil {
 		return err
 	}
-	defer sqlStatement.Close()
 
 	locationJSON, err := json.Marshal(hitp.Location)
 	if err != nil {
@@ -300,7 +280,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		return err
 	}
 
-	_, err = sqlStatement.ExecContext(ctx,
+	_, err = updateHealthITProductStatement.ExecContext(ctx,
 		hitp.Name,
 		hitp.Version,
 		hitp.Developer,
@@ -321,15 +301,65 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 
 // DeleteHealthITProduct deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
 func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
-	sqlStatement, err := s.DB.Prepare(`
-	DELETE FROM healthit_products
-	WHERE id=$1`)
+	err := prepareHealthITProductStatements(s)
 	if err != nil {
 		return err
 	}
-	defer sqlStatement.Close()
 
-	_, err = sqlStatement.ExecContext(ctx, hitp.ID)
+	_, err = deleteHealthITProductStatement.ExecContext(ctx, hitp.ID)
 
 	return err
+}
+
+func prepareHealthITProductStatements(s *Store) error {
+	var err error
+	if !areHealthITProductStatementsPrepared {
+		areHealthITProductStatementsPrepared = true
+		addHealthITProductStatement, err = s.DB.Prepare(`
+		INSERT INTO healthit_products (
+			name,
+			version,
+			developer,
+			location,
+			authorization_standard,
+			api_syntax,
+			api_url,
+			certification_criteria,
+			certification_status,
+			certification_date,
+			certification_edition,
+			last_modified_in_chpl,
+			chpl_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		RETURNING id`)
+		if err != nil {
+			return err
+		}
+		updateHealthITProductStatement, err = s.DB.Prepare(`
+		UPDATE healthit_products
+		SET name = $1,
+			version = $2,
+			developer = $3,
+			authorization_standard = $4,
+			api_syntax = $5,
+			api_url = $6,
+			certification_status = $7,
+			certification_date = $8,
+			certification_edition = $9,
+			last_modified_in_chpl = $10,
+			chpl_id = $11,
+			location = $12,
+			certification_criteria = $13
+		WHERE id=$14`)
+		if err != nil {
+			return err
+		}
+		deleteHealthITProductStatement, err = s.DB.Prepare(`
+		DELETE FROM healthit_products
+		WHERE id=$1`)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
