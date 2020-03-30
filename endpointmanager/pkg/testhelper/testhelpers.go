@@ -136,15 +136,8 @@ func tablesAreEmpty(tableNames []string, db *sql.DB) (bool, error) {
 
 func deleteTableEntries(tableNames []string, db *sql.DB) error {
 	for _, tableName := range tableNames {
-		// sql doesn't like paramterized table names. because this is an internal helper function for tests,
-		// we are leaving this be.
-		query, err := db.Prepare(fmt.Sprintf("DELETE FROM %s", tableName))
-		if err != nil {
-			return err
-		}
-		defer query.Close()
-
-		_, err = query.Exec()
+		query := fmt.Sprintf("DELETE FROM %s", tableName)
+		_, err := db.Exec(query)
 		if err != nil {
 			return err
 		}
