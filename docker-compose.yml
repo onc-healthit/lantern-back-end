@@ -10,10 +10,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./scripts/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
+      - ./scripts/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - POSTGRES_PASSWORD=${LANTERN_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_DBUSER}
       - POSTGRES_DB=${LANTERN_DBNAME}
+      - LANTERN_DBUSER_READONLY=${LANTERN_DBUSER_READONLY}
+      - LANTERN_DBPASSWORD_READONLY=${LANTERN_DBPASSWORD_READONLY}
     command:
       -csynchronous_commit=off
 
@@ -26,7 +29,7 @@ services:
       - ./scripts/pause_start_prometheus_postgresql_adapter.sh:/pause_start_prometheus_postgresql_adapter.sh
     entrypoint: "/pause_start_prometheus_postgresql_adapter.sh"
     command:
-      -pg-host=pg_prometheus
+      -pg-host=lantern-back-end_pg_prometheus_1
       -pg-password=${LANTERN_DBPASSWORD}
       -pg-database=${LANTERN_DBNAME}
       -pg-user=${LANTERN_DBUSER}
