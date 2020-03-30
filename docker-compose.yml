@@ -29,7 +29,7 @@ services:
       - ./scripts/pause_start_prometheus_postgresql_adapter.sh:/pause_start_prometheus_postgresql_adapter.sh
     entrypoint: "/pause_start_prometheus_postgresql_adapter.sh"
     command:
-      -pg-host=lantern-back-end_pg_prometheus_1
+      -pg-host=pg_prometheus
       -pg-password=${LANTERN_DBPASSWORD}
       -pg-database=${LANTERN_DBNAME}
       -pg-user=${LANTERN_DBUSER}
