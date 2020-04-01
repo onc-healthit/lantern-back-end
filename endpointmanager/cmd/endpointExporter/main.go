@@ -25,7 +25,7 @@ func main() {
 	failOnError("Error creating store", err)
 
 	sql_query := "COPY (SELECT * FROM endpoint_export) TO '/tmp/export.csv' DELIMITER ',' CSV HEADER;"
-	_, err = store.DB.ExecContext(ctx,sql_query)
+	_, err = store.DB.ExecContext(ctx, sql_query)
 	failOnError("Error exporting csv", err)
 
 }
