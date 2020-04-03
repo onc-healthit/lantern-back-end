@@ -110,6 +110,32 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
+	// get all org names
+
+	endpointNames, err := store.GetAllFHIREndpointOrgNames(ctx)
+	if err != nil {
+		t.Errorf("Error getting endpoint organization normalized names: %s", err.Error())
+	}
+	eLength := 2
+	if len(endpointNames) != eLength {
+		t.Errorf("Expected endpoint org list to have length %d. Got %d.", eLength, len(endpointNames))
+	}
+
+	for _, ep := range endpointNames {
+		if ep.ID == endpoint1.ID {
+			eName := "Example Inc."
+			if ep.OrganizationName != eName {
+				t.Errorf("Expected org name to be %s. Got %s.", eName, ep.OrganizationName)
+			}
+		}
+		if ep.ID == endpoint2.ID {
+			eName := "Other Example Inc."
+			if ep.OrganizationName != eName {
+				t.Errorf("Expected org name to be %s. Got %s.", eName, ep.OrganizationName)
+			}
+		}
+	}
+
 	// delete endpoints
 
 	err = store.DeleteFHIREndpoint(ctx, endpoint1)

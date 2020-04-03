@@ -22,7 +22,7 @@ type HostAndPort struct {
 // Assert streamlines test checks.
 func Assert(t *testing.T, boolStatement bool, errorValue interface{}) {
 	if !boolStatement {
-		t.Fatalf("%s: %v", t.Name(), errorValue)
+		t.Fatalf("%s: %+v", t.Name(), errorValue)
 	}
 }
 
