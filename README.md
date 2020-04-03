@@ -307,6 +307,8 @@ You can check that Grafana is up by nagivating to `http://localhost:3000` and us
     - Enter `lantern` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Toggle "TimescaleDB" to on. Finally select `disable` for SSL Mode.
 4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore.
 
+There are sample Grafana dashboards in the `scripts/grafana` folder. These dashboards show examples of viewing Lantern's collected data for FHIR endpoints. 
+
 # Using Docker Compose
 
 All relevant docker-compose instructions are included in the Makefile under the appropriate `make` commands.
