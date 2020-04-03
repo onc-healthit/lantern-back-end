@@ -9,14 +9,12 @@ services:
     image: timescale/pg_prometheus:latest-pg11
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./scripts/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
-      - ./scripts/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
+      - ./scripts/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
+      - ./scripts/sql/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - POSTGRES_PASSWORD=${LANTERN_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_DBUSER}
       - POSTGRES_DB=${LANTERN_DBNAME}
-      - LANTERN_DBUSER_READONLY=${LANTERN_DBUSER_READONLY}
-      - LANTERN_DBPASSWORD_READONLY=${LANTERN_DBPASSWORD_READONLY}
     command:
       -csynchronous_commit=off
 
@@ -78,7 +76,7 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
-      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSources.json
+      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSource
     volumes:
       - ./networkstatsquerier/resources/EndpointSources.json:/etc/lantern/EndpointSources.json
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh

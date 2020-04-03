@@ -1,6 +1,4 @@
 \set lantern `echo $POSTGRES_DB`
-\set readonly_user `echo $LANTERN_DBUSER_READONLY`
-\set readonly_pw `echo $LANTERN_DBPASSWORD_READONLY`
 
 -- remove any public access
 REVOKE CONNECT ON DATABASE :lantern FROM PUBLIC;
@@ -21,7 +19,3 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO readwrite
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite; -- grants permissions on new tables
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO readwrite;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE ON SEQUENCES TO readwrite; -- grants permissions on new sequences
-
--- add a readonly user and grant readonly permissions
-CREATE ROLE :readonly_user LOGIN PASSWORD :'readonly_pw';
-GRANT readonly to :readonly_user
