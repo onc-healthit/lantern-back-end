@@ -21,6 +21,13 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: none. This value is not used within the code. Suggested value: 'postgrespassword_ro'
 
+* **LANTERN_DBUSER_READWRITE**: The database user that the application will use to read or write to the database.
+
+  Default value: none. This value is not used within the code. Suggested value: 'lantern_rw'
+
+* **LANTERN_DBPASSWORD_READWRITE**: The password for accessing the database as user LANTERN_DBUSER_READWRITE.
+
+  Default value: none. This value is not used within the code. Suggested value: 'postgrespassword_rw'
 
 **These variables can use the default values *in development*. These should be set on the production system.**
 

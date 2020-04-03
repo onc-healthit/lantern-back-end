@@ -76,7 +76,7 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
-      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSource
+      - LANTERN_ENDPTLIST=/etc/lantern/EndpointSources.json
     volumes:
       - ./networkstatsquerier/resources/EndpointSources.json:/etc/lantern/EndpointSources.json
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
