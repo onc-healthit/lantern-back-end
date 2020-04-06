@@ -21,7 +21,10 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
+<<<<<<< HEAD
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+=======
+>>>>>>> Lintr changes
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 )
