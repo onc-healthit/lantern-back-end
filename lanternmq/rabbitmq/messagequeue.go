@@ -265,16 +265,16 @@ func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lantern
 	}
 }
 
-// DeclareTopic creates a target named 'name' over the channel with ID 'chID'. It uses RabbitMQ's
-// ExchangeDeclare method with the following arguments:
+// DeclareExchange creates a target named 'name' and exchangeType 'exchangeType' over the channel with ID 'chID'.
+// It uses RabbitMQ's ExchangeDeclare method with the following arguments:
 // name: name
 // kind: "topic"
 // durable: true
 // autoDelete: false
-// intenral: false
+// internal: false
 // noWait: false
 // args: nil
-func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) error {
+func (mq *MessageQueue) DeclareExchange(chID lanternmq.ChannelID, name string, exchangeType string) error {
 	ch, err := mq.getChannel(chID)
 	if err != nil {
 		return err
@@ -282,7 +282,7 @@ func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) erro
 
 	err = ch.ExchangeDeclare(
 		name,
-		"topic",
+		exchangeType,
 		durableTrue,
 		autoDeleteFalse,
 		internalFalse,
@@ -296,7 +296,7 @@ func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) erro
 	return err
 }
 
-// PublishToTopic sends 'message' to the topic 'name' over the channel with ID 'chID' with routing key 'routingKey'. It
+// PublishToExchange sends 'message' to the exchange 'name' over the channel with ID 'chID' with routing key 'routingKey'. It
 // uses RabbitMQ's Publish method with the following arguments:
 // exchange: name
 // key: routingKey
@@ -305,7 +305,7 @@ func (mq *MessageQueue) DeclareTopic(chID lanternmq.ChannelID, name string) erro
 // publishing:
 //   ContentType: "text/plain"
 //   Body: []byte(message)
-func (mq *MessageQueue) PublishToTopic(chID lanternmq.ChannelID, name string, routingKey string, message string) error {
+func (mq *MessageQueue) PublishToExchange(chID lanternmq.ChannelID, name string, routingKey string, message string) error {
 	ch, err := mq.getChannel(chID)
 	if err != nil {
 		return err
@@ -327,7 +327,7 @@ func (mq *MessageQueue) PublishToTopic(chID lanternmq.ChannelID, name string, ro
 	return err
 }
 
-// DeclareTopicReceiveQueue creates a queue named 'qName' to receive messages from the topic named 'topicName'
+// DeclareExchangeReceiveQueue creates a queue named 'qName' to receive messages from exchange named 'exchangeName'
 // with routing key 'routingKey' over the channel with ID 'chID'. It uses the RabbitMQ method QueueDeclare with
 // the following arguments:
 // name: qName
@@ -340,10 +340,10 @@ func (mq *MessageQueue) PublishToTopic(chID lanternmq.ChannelID, name string, ro
 // It then calls the RabbitMQ method QueueBind with the following arguments:
 // name: qName
 // key: routingKey
-// exchange: topicName
+// exchange: exchangeName
 // noWait: false
 // args: nil
-func (mq *MessageQueue) DeclareTopicReceiveQueue(chID lanternmq.ChannelID, topicName string, qName string, routingKey string) error {
+func (mq *MessageQueue) DeclareExchangeReceiveQueue(chID lanternmq.ChannelID, exchangeName string, qName string, routingKey string) error {
 	ch, err := mq.getChannel(chID)
 	if err != nil {
 		return err
@@ -365,12 +365,12 @@ func (mq *MessageQueue) DeclareTopicReceiveQueue(chID lanternmq.ChannelID, topic
 	err = ch.QueueBind(
 		qName,
 		routingKey,
-		topicName,
+		exchangeName,
 		noWaitFalse,
 		nil, // args
 	)
 	if err != nil {
-		err = fmt.Errorf("unable to bind queue %s to target %s with routing key %s", qName, topicName, routingKey)
+		err = fmt.Errorf("unable to bind queue %s to target %s with routing key %s", qName, exchangeName, routingKey)
 		return err
 	}
 

@@ -57,11 +57,11 @@ func main() {
 
 	// Topic
 	tqName := os.Args[1]
-	err = mq.DeclareTopic(ch, "logs_topic")
+	err = mq.DeclareExchange(ch, "logs_topic", "topic")
 	failOnError(err)
-	err = mq.DeclareTopicReceiveQueue(ch, "logs_topic", tqName, "warning")
+	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "warning")
 	failOnError(err)
-	err = mq.DeclareTopicReceiveQueue(ch, "logs_topic", tqName, "error")
+	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "error")
 	failOnError(err)
 	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
 	failOnError(err)

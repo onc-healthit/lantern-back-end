@@ -36,8 +36,8 @@ package lanternmq
 // mq := <implementation of MessageQueue
 // err := mq.Connect("guest", "guest", "localhost", "5672")
 // chID, err := mq.CreateChannel()
-// err = mq.DeclareTopic(chID, "topicName")
-// err = mq.PublishToTopic(chID, "topicName", "topicRoutingKey", "message")
+// err = mq.DeclareExchange(chID, "topicName", "topic")
+// err = mq.PublishToExchange(chID, "topicName", "topicRoutingKey", "message")
 //
 //
 // Example: Read a message from a topic
@@ -45,8 +45,8 @@ package lanternmq
 // mq := <implementation of MessageQueue
 // err := mq.Connect("guest", "guest", "localhost", "5672")
 // chID, err := mq.CreateChannel()
-// err = mq.DeclareTopic(chID, "topicName")
-// err = mq.DeclareTopicReceiveQueue(chID, "topicName", "queueName", "topicRoutingKey")
+// err = mq.DeclareExchange(chID, "topicName", "topic")
+// err = mq.DeclareExchangeReceiveQueue(chID, "topicName", "queueName", "topicRoutingKey")
 // msgs, err := mq.ConsumeFromQueue(chID, "queueName")
 // forever := make(chan bool)
 // errs := make(chan error)
@@ -77,15 +77,15 @@ type MessageQueue interface {
 	// ProcessMessages applies the 'handler' MessageHandler with arguments 'args' to each
 	// message that is received through 'msgs'. Sends any errors to the 'errs' channel.
 	ProcessMessages(msgs Messages, handler MessageHandler, args *map[string]interface{}, errs chan<- error)
-	// DeclareTopic creates a topic with the name 'name' on the channel with ID 'chID' if one
+	// DeclareExchange creates a topic with the name 'name' on the channel with ID 'chID' if one
 	// does not exist.
-	DeclareTopic(chID ChannelID, name string) error
-	// PublishToTopics sends 'message' to the topic 'name' on channel with ID 'chID', which will be
+	DeclareExchange(chID ChannelID, name string, exchangeType string) error
+	// PublishToExchange sends 'message' to the exchange 'name' on channel with ID 'chID', which will be
 	// routed to receivers using 'routingKey'.
-	PublishToTopic(chID ChannelID, name string, routingKey string, message string) error
-	// DeclareTopicReceiveQueue creates queue with name 'qName' associated to the topic with name
-	// 'topicName' on the channel with ID 'chID' to receive messages routed with the routing key 'routingKey'.
-	DeclareTopicReceiveQueue(chID ChannelID, topicName string, qName string, routingKey string) error
+	PublishToExchange(chID ChannelID, name string, routingKey string, message string) error
+	// DeclareExchangeReceiveQueue creates queue with name 'qName' associated to the exchange with name
+	// 'typeName' on the channel with ID 'chID' to receive messages routed with the routing key 'routingKey'.
+	DeclareExchangeReceiveQueue(chID ChannelID, typeName string, qName string, routingKey string) error
 	// Close closes the MessageQueue and any associated resources including associated channels and the
 	// connection to the underlying queuing service.
 	Close()
