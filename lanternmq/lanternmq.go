@@ -65,6 +65,8 @@ type MessageQueue interface {
 	CreateChannel() (ChannelID, error)
 	// NumConcurrentMsgs defines how many messages can be processed in parallel.
 	NumConcurrentMsgs(chID ChannelID, num int) error
+	// QueueExists checks whether or not a queue already exists
+	QueueExists(chID ChannelID, qName string) (bool, error)
 	// DeclareQueue creates a queue with the name 'qName' on the channel with ID 'chID' if one
 	// does not exist.
 	DeclareQueue(chID ChannelID, qName string) error
