@@ -108,7 +108,7 @@
             "arguments": {}
         },
         {
-            "name": "endpt-info",
+            "name": "endpoint-info",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,
