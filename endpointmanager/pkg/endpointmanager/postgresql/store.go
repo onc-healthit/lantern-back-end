@@ -56,6 +56,19 @@ func NewStore(host string, port int, user string, password string, dbname string
 		panic(err.Error())
 	}
 
+	err = prepareFHIREndpointStatements(&store)
+	if err != nil {
+		return nil, err
+	}
+	err = prepareHealthITProductStatements(&store)
+	if err != nil {
+		return nil, err
+	}
+	err = prepareNPIOrganizationStatements(&store)
+	if err != nil {
+		return nil, err
+	}
+
 	return &store, nil
 }
 

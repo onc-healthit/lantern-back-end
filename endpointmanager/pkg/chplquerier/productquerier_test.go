@@ -252,7 +252,7 @@ func Test_prodNeedsUpdate(t *testing.T) {
 
 	critListShorter := testHITP
 	critListShorter.CertificationCriteria = []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)"}
-	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: errors.New("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update")})
+	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
 	chplID := testHITP
 	chplID.CHPLID = "15.04.04.2657.Care.01.00.0.160733"
@@ -260,7 +260,7 @@ func Test_prodNeedsUpdate(t *testing.T) {
 
 	certStatus := testHITP
 	certStatus.CertificationStatus = "Retired"
-	expectedResults = append(expectedResults, expectedResult{name: "certStatus", hitProd: certStatus, needsUpdate: false, err: errors.New("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update")})
+	expectedResults = append(expectedResults, expectedResult{name: "certStatus", hitProd: certStatus, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
 	for _, expRes := range expectedResults {
 		needsUpdate, err := prodNeedsUpdate(&base, &(expRes.hitProd))
