@@ -21,10 +21,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
-<<<<<<< HEAD
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-=======
->>>>>>> Lintr changes
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 )
@@ -34,8 +31,6 @@ type Endpoint struct {
 	organization_name string
 	mapped_npi_ids    []string
 }
-
-var store *postgresql.Store
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
@@ -130,10 +125,11 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
-	var err error
-  
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+
+	defer store.Close()
 	expected_link_count := 40
-  
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
