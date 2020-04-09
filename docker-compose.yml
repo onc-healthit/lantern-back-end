@@ -9,7 +9,8 @@ services:
     image: timescale/pg_prometheus:latest-pg11
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./scripts/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
+      - ./scripts/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
+      - ./scripts/sql/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - POSTGRES_PASSWORD=${LANTERN_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_DBUSER}
