@@ -1,7 +1,6 @@
 package endpointmanager
 
 import (
-	"context"
 	"time"
 )
 
@@ -18,22 +17,6 @@ type NPIOrganization struct {
 	NormalizedSecondaryName string
 	CreatedAt               time.Time
 	UpdatedAt               time.Time
-}
-
-// NPIOrganizationStore is the interface for interacting with the storage layer that holds
-// NPIOrganization objects.
-type NPIOrganizationStore interface {
-	GetNPIOrganization(context.Context, int) (*NPIOrganization, error)
-	GetNPIOrganizationByNPIID(context.Context, string) (*NPIOrganization, error)
-	GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]NPIOrganization, error)
-	LinkNPIOrganizationToFHIREndpoint(context.Context, int, int, float64) error
-	DeleteAllNPIOrganizations(context.Context) error
-	AddNPIOrganization(context.Context, *NPIOrganization) error
-	UpdateNPIOrganization(context.Context, *NPIOrganization) error
-	UpdateNPIOrganizationByNPIID(context.Context, *NPIOrganization) error
-	DeleteNPIOrganization(context.Context, *NPIOrganization) error
-
-	Close()
 }
 
 // Equal checks each field of the two NPIOrganizations except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.

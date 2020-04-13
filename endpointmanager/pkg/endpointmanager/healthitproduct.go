@@ -1,8 +1,6 @@
 package endpointmanager
 
 import (
-	"context"
-
 	"time"
 
 	"github.com/pkg/errors"
@@ -30,22 +28,6 @@ type HealthITProduct struct {
 	CHPLID                string // the product's unique ID within the CHPL system.
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
-}
-
-// HealthITProductStore is the interface for interacting with the storage layer that holds
-// health IT product objects.
-type HealthITProductStore interface {
-	GetHealthITProduct(context.Context, int) (*HealthITProduct, error)
-	GetHealthITProductUsingNameAndVersion(context.Context, string, string) (*HealthITProduct, error)
-	GetHealthITProductsUsingVendor(context.Context, string) ([]*HealthITProduct, error)
-
-	GetHealthITProductDevelopers(context.Context) ([]string, error)
-
-	AddHealthITProduct(context.Context, *HealthITProduct) error
-	UpdateHealthITProduct(context.Context, *HealthITProduct) error
-	DeleteHealthITProduct(context.Context, *HealthITProduct) error
-
-	Close()
 }
 
 // Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.

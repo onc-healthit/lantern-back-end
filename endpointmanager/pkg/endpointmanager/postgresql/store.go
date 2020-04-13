@@ -5,14 +5,9 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq" // specified to do this for accessing postgres db
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-// Store is the structure for working with the postgres database. It implements the following interfaces:
-// FHIREndpointStore
-// HealthITProductStore
-// NPIOrganizationStore
-//
+// Store is the structure for working with the postgres database.
 // Usage:
 //
 // store := postgresql.NewStore(host, port, user, password, dbname, sslmode)
@@ -22,15 +17,6 @@ import (
 type Store struct {
 	DB *sql.DB
 }
-
-// Ensure Store implements endpointmanager.FHIREndpointStore.
-var _ endpointmanager.FHIREndpointStore = &Store{}
-
-// Ensure Store implements endpointmanager.HealthITProductStore.
-var _ endpointmanager.HealthITProductStore = &Store{}
-
-// Ensure Store implements endpointmanager.NPIOrganizationStore.
-var _ endpointmanager.NPIOrganizationStore = &Store{}
 
 // NewStore creates a connection to the postgresql database and adds a reference to the database
 // in store.DB.
