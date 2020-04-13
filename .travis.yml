@@ -1,26 +1,27 @@
 language: go
-
 go:
-  - 1.12.x
-
-# Only clone the most recent commit.
+- 1.12.x
 git:
   depth: 1
-
-# Don't email me the results of the test runs.
 notifications:
   email: false
-
-# Set configuration environment variables
 env:
-  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD=postgrespassword LANTERN_DBUSER_READONLY=lantern_ro LANTERN_DBPASSWORD_READONLY=postgrespassword_ro LANTERN_DBUSER_READWRITE=lantern_rw LANTERN_DBPASSWORD_READWRITE=lantern_rw LANTERN_DBNAME=lantern LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_TEST_DBNAME=lantern_test LANTERN_TEST_DBUSER=lantern LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json" LANTERN_QUSER=capabilityquerier LANTERN_QPASSWORD=capabilityquerier LANTERN_QHOST=lantern-mq LANTERN_QPORT=5672 LANTERN_CAPQUERY_QNAME=capability-statements LANTERN_CAPQUERY_NUMWORKERS=10 LANTERN_CAPQUERY_QRYINTVL=1440 LANTERN_TEST_QUSER=capabilityquerier LANTERN_TEST_QPASSWORD=capabilityquerier LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
-  secure: BRjxr7ImPYVy15YE9mp5cMenhj31bo4Wb4lqJJ8j6NZtQGJbPj9qty0LERuWF1mqJkSLDwAPSoiVwlsCOtC+5pxIQxicIeAOXruRbANux65iQrAzctYcD5OuuBgHITTfOC5xH2EcWEPP/yxCp0+RDmCg66yKta+3XzVPC61jXzzRPr1ZO+qzhOnxsm+iHgSr+/IDxzYDuHmLhf5vX8LQM7I3AH8V1398eeBbIYXfM2c/PQhB6a7tcFzhOj+CWapegb3Z11a/i6RxxR1wKhCOWuBehE0NCzbN0HvFl/niBhLV9a7nTZJI8K+4nyCJxCx1p9zfJiC+2ZnEKZzIY2dd2K8oiXHawPdbqf+alM4mMY5o5wpuz86H8R8S4d+WTg6zeADgKe8LbE1+86qmrEgUJUnmZDW/1eyair96pv7O4w9IQ1egtMlog+lpE7rX4ZoFLiHNE8jwyRa3KKDLtFtBS2sgkaO6OHdvs9MLFrhEZ/l4rQ0ZWep7ofootGnaz7GrqNwpw9AzlS60/rOLSrtZNOR6PlMneWPpeNBAg0NA7kkef7P0rWvHyiFCPtG7ZR9OzdV7jPoVDW7ecCganJe47xotBWsgYeAdl/DwZvk4/RpCKuMf89gsQuPZxDwbtAszlxshJnlNy2T69alKiORnkreiHC6gxDqYcpCFwy8EFV0=
-  
+  matrix:
+  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD=postgrespassword
+    LANTERN_DBUSER_READONLY=lantern_ro LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
+    LANTERN_DBUSER_READWRITE=lantern_rw LANTERN_DBPASSWORD_READWRITE=lantern_rw LANTERN_DBNAME=lantern
+    LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_TEST_DBNAME=lantern_test
+    LANTERN_TEST_DBUSER=lantern LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
+    LANTERN_QUSER=capabilityquerier LANTERN_QPASSWORD=capabilityquerier LANTERN_QHOST=lantern-mq
+    LANTERN_QPORT=5672 LANTERN_CAPQUERY_QNAME=capability-statements LANTERN_CAPQUERY_NUMWORKERS=10
+    LANTERN_CAPQUERY_QRYINTVL=1440 LANTERN_TEST_QUSER=capabilityquerier LANTERN_TEST_QPASSWORD=capabilityquerier
+    LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
+  global:
+    secure: tjJsvcP87skCX6sEXtkZMSDFlDGct0wjJ9laGMykOmRIFiz23I21LLuz1P+4kYyEyo5RvVGrJn+PqlTrkrlwlemI6sOXvqVsI1VgyPCnsdQ8tMK2ZvlqbAUtrHD7yB79S3Aml4eXCIvclcXpLUhN9OBidyESyznnwO4e9YCUC3ey2/dtRJ4e1CW8QWvyFo87CNIu4c0Mm67rTtFHoqNhXjGHydAuCPBscr/tbvoVcefjD2JzB3mhIJoxnNw9//y2XlibmPk7ui2eLUW9AObU//a5YVHsyZGhN5RTFjS6Ft6fOoBqMyFusnTetUKQzVtQm7cEmoryF6V6fjiK4wZpeCuTuT5kGCPNuQv91NPXBWP27r7eP7o7TIHk0qMNln9A8+Ed5RE0huXALrrF0Z3+mdtmzjBUzsAxfCt7Bd4D+PignVAFQgfL5N8PyLy+d6lU0XVFhPyLnHpskCmrSmucm7sAR3Yf2DOjz/GKW6nCwhpXRb7GT8+wchA0/KAMIDfCWR8sHZuSC3zrI5ttDdZmZUSx5ujzYIyFl2gKoc1Y7qQZHAiCyo4+Nulgyq3pCYsb2supbvYXZuTKhJ6rQFjjhq28//48wThUXeJcvJZ/QCA44Ungu7aDAksqmDWGDY7ikvSesIheWu5F+J6+b/um3DOf2gBYHebJmXSaevf8DQs=
 before_script:
-  - go get ./...
-  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-
+- go get ./...
+- go get github.com/golangci/golangci-lint/cmd/golangci-lint
 script:
-  - golangci-lint run -E gofmt
-  - make test
-  - make test_e2e
+- golangci-lint run -E gofmt
+- make test
+- make test_e2e
