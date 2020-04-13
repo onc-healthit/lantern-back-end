@@ -6,7 +6,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-var _ endpointmanager.FHIREndpointStore = &Store{}
 var _ endpointmanager.HealthITProductStore = &Store{}
 
 // Store implements the endpointmanager FHIREndpointStore, HealthITProductStore, and ProviderOrganizationStore
@@ -14,24 +13,6 @@ var _ endpointmanager.HealthITProductStore = &Store{}
 // Each Store method calls the corresponding method <methodName>Fn as assigned in the mock Store structure.
 // It also assigns <methodName>Invoked to true when <methodName> is called.
 type Store struct {
-	GetFHIREndpointFn      func(context.Context, int) (*endpointmanager.FHIREndpoint, error)
-	GetFHIREndpointInvoked bool
-
-	GetFHIREndpointUsingURLFn      func(context.Context, string) (*endpointmanager.FHIREndpoint, error)
-	GetFHIREndpointUsingURLInvoked bool
-
-	GetAllFHIREndpointOrgNamesFn      func(ctx context.Context) ([]endpointmanager.FHIREndpoint, error)
-	GetAllFHIREndpointOrgNamesInvoked bool
-
-	AddFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
-	AddFHIREndpointInvoked bool
-
-	UpdateFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
-	UpdateFHIREndpointInvoked bool
-
-	DeleteFHIREndpointFn      func(context.Context, *endpointmanager.FHIREndpoint) error
-	DeleteFHIREndpointInvoked bool
-
 	GetHealthITProductFn      func(context.Context, int) (*endpointmanager.HealthITProduct, error)
 	GetHealthITProductInvoked bool
 
