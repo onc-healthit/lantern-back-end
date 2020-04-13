@@ -7,32 +7,32 @@ notifications:
   email: false
 env:
   global:
-    - LANTERN_DBHOST=localhost
-    - LANTERN_DBPORT=5432
-    - LANTERN_DBUSER=lantern
-    - LANTERN_DBPASSWORD=postgrespassword
-    - LANTERN_DBUSER_READONLY=lantern_ro 
-    - LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
-    - LANTERN_DBUSER_READWRITE=lantern_rw
-    - LANTERN_DBPASSWORD_READWRITE=lantern_rw
-    - LANTERN_DBNAME=lantern
-    - LANTERN_DBSSLMODE=disable
-    - LANTERN_TEST_DBPASSWORD=postgrespassword
-    - LANTERN_TEST_DBNAME=lantern_test
-    - LANTERN_TEST_DBUSER=lantern
-    - LANTERN_TEST_DBPASSWORD=postgrespassword
-    - LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
-    - LANTERN_QUSER=capabilityquerier
-    - LANTERN_QPASSWORD=capabilityquerier
-    - LANTERN_QHOST=lantern-mq
-    - LANTERN_QPORT=5672
-    - LANTERN_CAPQUERY_QNAME=capability-statements
-    - LANTERN_CAPQUERY_NUMWORKERS=10
-    - LANTERN_CAPQUERY_QRYINTVL=1440
-    - LANTERN_TEST_QUSER=capabilityquerier
-    - LANTERN_TEST_QPASSWORD=capabilityquerier
-    - LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
-    - secure: CMxUMFvLPcYwZnpl3ks/8R/nmRHXI+SHcwTreMLhho0EYv7dw9aOYINaZYC+d4trdZyeuWT5JOpibTinaormlFesubfyPABsN7NYGImk4tvwOhC9p1GthcQX4mu5oQUi45FO/PxwfV878CpbeUNPPaGazj+wwnv8w9FlLzMqAjK1ZXtTYKl9lQa1+aYeOE7Sxc5qzjatYW+whzM6Jf4gIwwPe5nIu2rJU7+JtPR5Tvk7Qju/A74lwEc1NWWJiZr4zPlWCKMM8Wooj/upRZ5SZcAqpfqrA2A3tEAIdTGo82qjkThsXM8+a0Ms4fSSeoCXtiLQk+W6/UzTCa8d9qk7AipzyWleB3cISivHRW40RLURqgBgcrHiYgNxN3UPMtORWEzxMGuVxd19GL+xT/xNsX3XBvOa9xxA1sHTlE9iilBNr1kvMkmrA32ZShezEgZPcfp9iCsGekVgnhMWmmJP/A8EkVyvkHrFwfHxHUpf94sF4Qa85vIG8VjSjkAzMOjLd7bh5QNVHInDsbefW9hKufdv47LwI5y6WUTLKtWl7pWfFT9SJgYA+IELSTvxDe3dx86XWFIyetZFmXcZq67iTZsG8mABM/4zyCtTfMD/DKmo44hD0g0P4GNwl439mjKkwtzpe07ObuL2lKxnKLxCe4q3/j+gORrDUmspi664rtY=
+  - LANTERN_DBPORT=5432
+  - LANTERN_DBUSER=lantern
+  - LANTERN_DBPASSWORD=postgrespassword
+  - LANTERN_DBUSER_READONLY=lantern_ro
+  - LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
+  - LANTERN_DBUSER_READWRITE=lantern_rw
+  - LANTERN_DBPASSWORD_READWRITE=lantern_rw
+  - LANTERN_DBNAME=lantern
+  - LANTERN_DBSSLMODE=disable
+  - LANTERN_TEST_DBPASSWORD=postgrespassword
+  - LANTERN_TEST_DBNAME=lantern_test
+  - LANTERN_TEST_DBUSER=lantern
+  - LANTERN_TEST_DBPASSWORD=postgrespassword
+  - LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
+  - LANTERN_QUSER=capabilityquerier
+  - LANTERN_QPASSWORD=capabilityquerier
+  - LANTERN_QHOST=lantern-mq
+  - LANTERN_QPORT=5672
+  - LANTERN_CAPQUERY_QNAME=capability-statements
+  - LANTERN_CAPQUERY_NUMWORKERS=10
+  - LANTERN_CAPQUERY_QRYINTVL=1440
+  - LANTERN_TEST_QUSER=capabilityquerier
+  - LANTERN_TEST_QPASSWORD=capabilityquerier
+  - LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
+  - secure: CMxUMFvLPcYwZnpl3ks/8R/nmRHXI+SHcwTreMLhho0EYv7dw9aOYINaZYC+d4trdZyeuWT5JOpibTinaormlFesubfyPABsN7NYGImk4tvwOhC9p1GthcQX4mu5oQUi45FO/PxwfV878CpbeUNPPaGazj+wwnv8w9FlLzMqAjK1ZXtTYKl9lQa1+aYeOE7Sxc5qzjatYW+whzM6Jf4gIwwPe5nIu2rJU7+JtPR5Tvk7Qju/A74lwEc1NWWJiZr4zPlWCKMM8Wooj/upRZ5SZcAqpfqrA2A3tEAIdTGo82qjkThsXM8+a0Ms4fSSeoCXtiLQk+W6/UzTCa8d9qk7AipzyWleB3cISivHRW40RLURqgBgcrHiYgNxN3UPMtORWEzxMGuVxd19GL+xT/xNsX3XBvOa9xxA1sHTlE9iilBNr1kvMkmrA32ZShezEgZPcfp9iCsGekVgnhMWmmJP/A8EkVyvkHrFwfHxHUpf94sF4Qa85vIG8VjSjkAzMOjLd7bh5QNVHInDsbefW9hKufdv47LwI5y6WUTLKtWl7pWfFT9SJgYA+IELSTvxDe3dx86XWFIyetZFmXcZq67iTZsG8mABM/4zyCtTfMD/DKmo44hD0g0P4GNwl439mjKkwtzpe07ObuL2lKxnKLxCe4q3/j+gORrDUmspi664rtY=
+  - secure: IU4KUoKkI8RVqCuDChmOS1hJwyoKI9in9tfSDHXup6logfQWatIeGGWiJ4aYPr9SRlAI8OW9xTL96HzbaXxGV1GOS53UbTT1KD3Zr94Qg0nZqU4cA7Q8jGAt4e7WAfa7ZxCnFKEzHGyYq+4otf/A8WMOWBfNhE6kgALJfwervElfBYt61jTDx7ba76dbnUhCxFK6GzIp9jHLyrph8u5wfUvldiAkWD921OQXWeW+TYDw99km1W2n+YzfSJfO1k59mQ5aWit60jZ+P0qR2xIu9He3dcPDTW9AwtZ4nKv8WE1RWJzUbqnDpA3S8cK79NROQX1EUM9RIKyIyYPLM6sdX5vDWXIesgcsRLek9UDU0/E0tlHpxnZFHC3HziP9oLs29twO/41t9M+cY3bZ1i856JepfDI/OUWanx3A09ITailt5AzxSkaeW41bTDnznp/C7CKVXkgMNa2gnoxQ6FgXsBNa/VnHpGlDj0qlqAnsysjaRUKlyek1BYOTFH8KhDOXtOiKdpoWRP083KjBo9L8FL5L9J0YOytIjM4RKyljpnQA8Q5/wTG+H3BcxStFRodGv5HljUgcYgpM3QLCB7rCy9nQhobjSFiOVW1VPL2NKvVsQoeC/aDutnboF3yWsyVcLFaFiBLzQacAaGrrJTi6AIvhh1kUJHObv5fC3rnfnEc=
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
