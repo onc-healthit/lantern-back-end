@@ -108,7 +108,14 @@
             "arguments": {}
         },
         {
-            "name": "endpoint-info",
+            "name": "endpoints-to-capability",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "endpoints-to-netstats",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,

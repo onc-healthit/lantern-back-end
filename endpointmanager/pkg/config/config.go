@@ -63,6 +63,22 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("enptinfo_capquery_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("capquery_qryintvl") // in minutes
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("enptinfo_netstats_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("endptqry_query_interval")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
@@ -76,6 +92,10 @@ func SetupConfig() error {
 	viper.SetDefault("qhost", "localhost")
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
+	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
+	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
+	viper.SetDefault("enptinfo_netstats_qname", "endpoints-to-netstats")
+	viper.SetDefault("endptqry_query_interval", 10)
 
 	return nil
 }
