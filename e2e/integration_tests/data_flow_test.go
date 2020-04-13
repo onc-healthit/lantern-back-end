@@ -273,6 +273,10 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var actualProdsStored int
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 
+	fmt.Printf("DBHOST: %s\n", viper.GetString("dbhost"))
+	fmt.Printf("DBPORT: %s\n", viper.GetString("dbport"))
+	fmt.Printf("CHPLAPIKEY: %s\n", viper.GetString("chplapikey"))
+
 	ctx := context.Background()
 	client := &http.Client{
 		Timeout: time.Second * 35,

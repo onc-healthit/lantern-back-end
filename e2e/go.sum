@@ -210,6 +210,7 @@ github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200409115954-5
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200409115954-5cb06dc56a06/go.mod h1:T69VgfMPvmUJ6YhQxbqCAcdzZ25V5i3QMCp7BHrldUw=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200413134637-6be3533dcedd h1:h5q3jzxkr68D61vYNmP/XnqyBqFJDtNiI32+srISdPo=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200413134637-6be3533dcedd/go.mod h1:T69VgfMPvmUJ6YhQxbqCAcdzZ25V5i3QMCp7BHrldUw=
+github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200413141755-5ea55ad84e86 h1:Jv7n0tPUH7oGGFNvyToZJudyizEZHag1aNelWdUqck8=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200413141755-5ea55ad84e86/go.mod h1:T69VgfMPvmUJ6YhQxbqCAcdzZ25V5i3QMCp7BHrldUw=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200318142043-2e3efa6899ea/go.mod h1:RW06wTVLYNRw9cNhK2cGtSJYYbsBq7Hom1ffIGV7RZU=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:RW06wTVLYNRw9cNhK2cGtSJYYbsBq7Hom1ffIGV7RZU=
@@ -219,6 +220,7 @@ github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-202003251126
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:jPu3HTPUBd+0vKKBa4yKFouFWo+HvwXoY4hKCrfiAOw=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200413134637-6be3533dcedd h1:T3OPw56msINaandYI7wquSilmN3CLXcZJ0cwEv62rWE=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200413134637-6be3533dcedd/go.mod h1:IcuC2wLVPxDO6k+PVua1+QnJULSPwwgot04KiXBZf3o=
+github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200413141755-5ea55ad84e86 h1:rA+VYhBKNYzs2zoPRkR/T9EN8alsJQGCuP92YSARKnE=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200413141755-5ea55ad84e86/go.mod h1:IcuC2wLVPxDO6k+PVua1+QnJULSPwwgot04KiXBZf3o=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.11.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
