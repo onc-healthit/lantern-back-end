@@ -6,18 +6,18 @@ git:
 notifications:
   email: false
 env:
-  matrix:
-  - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD=postgrespassword
-    LANTERN_DBUSER_READONLY=lantern_ro LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
-    LANTERN_DBUSER_READWRITE=lantern_rw LANTERN_DBPASSWORD_READWRITE=lantern_rw LANTERN_DBNAME=lantern
-    LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_TEST_DBNAME=lantern_test
-    LANTERN_TEST_DBUSER=lantern LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
-    LANTERN_QUSER=capabilityquerier LANTERN_QPASSWORD=capabilityquerier LANTERN_QHOST=lantern-mq
-    LANTERN_QPORT=5672 LANTERN_CAPQUERY_QNAME=capability-statements LANTERN_CAPQUERY_NUMWORKERS=10
-    LANTERN_CAPQUERY_QRYINTVL=1440 LANTERN_TEST_QUSER=capabilityquerier LANTERN_TEST_QPASSWORD=capabilityquerier
-    LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
+  jobs:
+    - LANTERN_DBHOST=localhost LANTERN_DBPORT=5432 LANTERN_DBUSER=lantern LANTERN_DBPASSWORD=postgrespassword
+      LANTERN_DBUSER_READONLY=lantern_ro LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
+      LANTERN_DBUSER_READWRITE=lantern_rw LANTERN_DBPASSWORD_READWRITE=lantern_rw LANTERN_DBNAME=lantern
+      LANTERN_DBSSLMODE=disable LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_TEST_DBNAME=lantern_test
+      LANTERN_TEST_DBUSER=lantern LANTERN_TEST_DBPASSWORD=postgrespassword LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
+      LANTERN_QUSER=capabilityquerier LANTERN_QPASSWORD=capabilityquerier LANTERN_QHOST=lantern-mq
+      LANTERN_QPORT=5672 LANTERN_CAPQUERY_QNAME=capability-statements LANTERN_CAPQUERY_NUMWORKERS=10
+      LANTERN_CAPQUERY_QRYINTVL=1440 LANTERN_TEST_QUSER=capabilityquerier LANTERN_TEST_QPASSWORD=capabilityquerier
+      LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
   global:
-    secure: tjJsvcP87skCX6sEXtkZMSDFlDGct0wjJ9laGMykOmRIFiz23I21LLuz1P+4kYyEyo5RvVGrJn+PqlTrkrlwlemI6sOXvqVsI1VgyPCnsdQ8tMK2ZvlqbAUtrHD7yB79S3Aml4eXCIvclcXpLUhN9OBidyESyznnwO4e9YCUC3ey2/dtRJ4e1CW8QWvyFo87CNIu4c0Mm67rTtFHoqNhXjGHydAuCPBscr/tbvoVcefjD2JzB3mhIJoxnNw9//y2XlibmPk7ui2eLUW9AObU//a5YVHsyZGhN5RTFjS6Ft6fOoBqMyFusnTetUKQzVtQm7cEmoryF6V6fjiK4wZpeCuTuT5kGCPNuQv91NPXBWP27r7eP7o7TIHk0qMNln9A8+Ed5RE0huXALrrF0Z3+mdtmzjBUzsAxfCt7Bd4D+PignVAFQgfL5N8PyLy+d6lU0XVFhPyLnHpskCmrSmucm7sAR3Yf2DOjz/GKW6nCwhpXRb7GT8+wchA0/KAMIDfCWR8sHZuSC3zrI5ttDdZmZUSx5ujzYIyFl2gKoc1Y7qQZHAiCyo4+Nulgyq3pCYsb2supbvYXZuTKhJ6rQFjjhq28//48wThUXeJcvJZ/QCA44Ungu7aDAksqmDWGDY7ikvSesIheWu5F+J6+b/um3DOf2gBYHebJmXSaevf8DQs=
+    - secure: CMxUMFvLPcYwZnpl3ks/8R/nmRHXI+SHcwTreMLhho0EYv7dw9aOYINaZYC+d4trdZyeuWT5JOpibTinaormlFesubfyPABsN7NYGImk4tvwOhC9p1GthcQX4mu5oQUi45FO/PxwfV878CpbeUNPPaGazj+wwnv8w9FlLzMqAjK1ZXtTYKl9lQa1+aYeOE7Sxc5qzjatYW+whzM6Jf4gIwwPe5nIu2rJU7+JtPR5Tvk7Qju/A74lwEc1NWWJiZr4zPlWCKMM8Wooj/upRZ5SZcAqpfqrA2A3tEAIdTGo82qjkThsXM8+a0Ms4fSSeoCXtiLQk+W6/UzTCa8d9qk7AipzyWleB3cISivHRW40RLURqgBgcrHiYgNxN3UPMtORWEzxMGuVxd19GL+xT/xNsX3XBvOa9xxA1sHTlE9iilBNr1kvMkmrA32ZShezEgZPcfp9iCsGekVgnhMWmmJP/A8EkVyvkHrFwfHxHUpf94sF4Qa85vIG8VjSjkAzMOjLd7bh5QNVHInDsbefW9hKufdv47LwI5y6WUTLKtWl7pWfFT9SJgYA+IELSTvxDe3dx86XWFIyetZFmXcZq67iTZsG8mABM/4zyCtTfMD/DKmo44hD0g0P4GNwl439mjKkwtzpe07ObuL2lKxnKLxCe4q3/j+gORrDUmspi664rtY=
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
