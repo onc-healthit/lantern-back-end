@@ -135,6 +135,9 @@ func convertProductJSONToObj(ctx context.Context, prodJSON []byte) (*chplCertifi
 		// ok
 	}
 
+	fmt.Println("### PRINTING JSON ###\n")
+	fmt.Println("%v\n", prodJSON)
+	fmt.Println("### DONE PRINTING JSON ###\n")
 	err := json.Unmarshal(prodJSON, &prodList)
 	if err != nil {
 		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertifiedProductList object failed.")
