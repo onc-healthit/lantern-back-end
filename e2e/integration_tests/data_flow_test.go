@@ -160,8 +160,8 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 		// Get endpoint id
 		var endpoint_id string
-		query_str := "SELECT id FROM fhir_endpoints WHERE organization_name='" + ep.organization_name + "';"
-		err = store.DB.QueryRow(query_str).Scan(&endpoint_id)
+		query_str := "SELECT id FROM fhir_endpoints WHERE organization_name=$1;"
+		err = store.DB.QueryRow(query_str, ep.organization_name).Scan(&endpoint_id)
 		if err != nil {
 			t.Fatalf("failed org name is " + ep.organization_name)
 		}
@@ -169,16 +169,16 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 		// Assert that endpoint id has correct url
 		var endpoint_url string
-		query_str = "SELECT url FROM fhir_endpoints WHERE id=" + endpoint_id + ";"
-		err = store.DB.QueryRow(query_str).Scan(&endpoint_url)
+		query_str = "SELECT url FROM fhir_endpoints WHERE id=$1;"
+		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&endpoint_url)
 		failOnError(err)
 		if endpoint_url != ep.url {
 			t.Fatalf("Endpoint id mapped to wrong endpoint url")
 		}
 		// Assert that the correct endpoint has correct number of npi organizations mapped
 		var num_npi_ids int
-		query_str = "SELECT count(*) FROM endpoint_organization WHERE endpoint_id =" + endpoint_id + ";"
-		err = store.DB.QueryRow(query_str).Scan(&num_npi_ids)
+		query_str = "SELECT count(*) FROM endpoint_organization WHERE endpoint_id =$1;"
+		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&num_npi_ids)
 		failOnError(err)
 		if num_npi_ids != len(ep.mapped_npi_ids) {
 			t.Fatalf("Expected number of npi organizations mapped to endpoint is " + strconv.Itoa(len(ep.mapped_npi_ids)) + " Got: " + strconv.Itoa(num_npi_ids))
@@ -187,13 +187,13 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		for _, npi_id := range ep.mapped_npi_ids {
 			// Get organization id for each npi id
 			var org_id string
-			query_str = "SELECT id FROM npi_organizations WHERE npi_id='" + npi_id + "';"
-			err = store.DB.QueryRow(query_str).Scan(&org_id)
+			query_str = "SELECT id FROM npi_organizations WHERE npi_id=$1;"
+			err = store.DB.QueryRow(query_str, npi_id).Scan(&org_id)
 			failOnError(err)
 			// Assert that each npi organization is mapped to correct endpoint
 			var linked_endpoint_id string
-			query_str = "SELECT endpoint_id FROM endpoint_organization WHERE organization_id =" + org_id + ";"
-			err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
+			query_str = "SELECT endpoint_id FROM endpoint_organization WHERE organization_id =$1;"
+			err = store.DB.QueryRow(query_str, org_id).Scan(&linked_endpoint_id)
 			failOnError(err)
 			if linked_endpoint_id != endpoint_id {
 				t.Fatalf("Endpoint id mapped to wrong npi organization")
@@ -203,8 +203,8 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		// Assert that deletion from npi_organizations list removes the link
 		// Assert that deletion from fhir_endpoints list removes the link
 		if len(ep.mapped_npi_ids) == 1 {
-			query_str = "DELETE FROM npi_organizations WHERE npi_id='" + ep.mapped_npi_ids[0] + "';"
-			_, err = store.DB.Exec(query_str)
+			query_str = "DELETE FROM npi_organizations WHERE npi_id=$1;"
+			_, err = store.DB.Exec(query_str, ep.mapped_npi_ids[0])
 			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 			failOnError(err)
 			if link_count != expected_link_count-1 {
@@ -212,8 +212,8 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 			}
 			expected_link_count = link_count
 		} else {
-			query_str = "DELETE FROM fhir_endpoints WHERE id=" + endpoint_id + ";"
-			_, err = store.DB.Exec(query_str)
+			query_str = "DELETE FROM fhir_endpoints WHERE id=$1;"
+			_, err = store.DB.Exec(query_str, endpoint_id)
 			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
 			failOnError(err)
 			if link_count != expected_link_count-len(ep.mapped_npi_ids) {
