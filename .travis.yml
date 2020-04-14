@@ -24,7 +24,7 @@ env:
   - LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
   - LANTERN_QUSER=capabilityquerier
   - LANTERN_QPASSWORD=capabilityquerier
-  - LANTERN_QHOST=lantern-mq
+  - LANTERN_QHOST=localhost
   - LANTERN_QPORT=5672
   - LANTERN_CAPQUERY_QNAME=capability-statements
   - LANTERN_CAPQUERY_NUMWORKERS=10
