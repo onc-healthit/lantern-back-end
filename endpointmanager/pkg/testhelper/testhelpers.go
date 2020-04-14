@@ -60,12 +60,44 @@ func IntegrationDBTestSetup(t *testing.T, db *sql.DB) (func(t *testing.T, db *sq
 	return integrationDBTestTeardown, nil
 }
 
+// IntegrationDBTestSetupMain ensures that the database is empty before running any tests and returns
+// a teardown function that will delete all entries in the database.
+func IntegrationDBTestSetupMain(db *sql.DB) (func(db *sql.DB), error) {
+
+	tableNames, err := getTableNames(db)
+	if err != nil {
+		panic(err)
+	}
+
+	areEmpty, err := tablesAreEmpty(tableNames, db)
+	if err != nil {
+		panic(err)
+	}
+	if !areEmpty {
+		panic("at least one database table has entries in it. database tables must be empty before running integration tests.")
+	}
+
+	return integrationDBTestTeardownMain, nil
+}
+
 func integrationDBTestTeardown(t *testing.T, db *sql.DB) {
 	tableNames, err := getTableNames(db)
 	Assert(t, err == nil, err)
 
 	err = deleteTableEntries(tableNames, db)
 	Assert(t, err == nil, err)
+}
+
+func integrationDBTestTeardownMain(db *sql.DB) {
+	tableNames, err := getTableNames(db)
+	if err != nil {
+		panic(err)
+	}
+
+	err = deleteTableEntries(tableNames, db)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getTableNames(db *sql.DB) ([]string, error) {
