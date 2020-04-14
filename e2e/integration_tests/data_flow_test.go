@@ -271,11 +271,12 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 func Test_GetCHPLProducts(t *testing.T) {
 	var err error
 	var actualProdsStored int
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 
-	fmt.Printf("DBHOST: %s\n", viper.GetString("dbhost"))
-	fmt.Printf("DBPORT: %s\n", viper.GetString("dbport"))
-	fmt.Printf("CHPLAPIKEY: %s\n", viper.GetString("chplapikey"))
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+	}
+
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 
 	ctx := context.Background()
 	client := &http.Client{
