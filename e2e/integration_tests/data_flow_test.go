@@ -21,18 +21,35 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 )
 
+var store *postgresql.Store
+
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
+
+	var err error
+	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	if err != nil {
+		panic(err)
+	}
+
+	teardown, err := th.IntegrationDBTestSetupMain(store.DB)
+
 	populateTestNPIData()
 	populateTestEndpointData()
 	go setupTestServer()
 	// Give time for the querier to query the test server we just setup
 	time.Sleep(30 * time.Second)
-	os.Exit(m.Run())
+
+	code := m.Run()
+
+	teardown(store.DB)
+
+	os.Exit(code)
 }
 
 func failOnError(err error) {
