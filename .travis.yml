@@ -5,6 +5,7 @@ git:
   depth: 1
 notifications:
   email: false
+
 env:
   global:
   - LANTERN_DBHOST=localhost
@@ -24,7 +25,6 @@ env:
   - LANTERN_ENDPTLIST="/etc/lantern/EndpointSources.json"
   - LANTERN_QUSER=capabilityquerier
   - LANTERN_QPASSWORD=capabilityquerier
-  - LANTERN_QHOST=lantern-back-end_lantern-mq_1
   - LANTERN_QPORT=5672
   - LANTERN_CAPQUERY_QNAME=capability-statements
   - LANTERN_CAPQUERY_NUMWORKERS=10
@@ -36,6 +36,14 @@ env:
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-script:
-- golangci-lint run -E gofmt
-- make test_all
+
+jobs:
+  include:
+    - stage: test
+      script:
+      - golangci-lint run -E gofmt
+      - make test
+      env: LANTERN_QHOST=localhost
+    - stage: test e2e
+      script: make test_e2e
+      env: LANTERN_QHOST=lantern-mq
