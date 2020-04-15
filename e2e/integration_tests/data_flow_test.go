@@ -65,8 +65,7 @@ func assert(t *testing.T, boolStatement bool, errorValue interface{}) {
 }
 
 func populateTestNPIData() {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
+	var err error
 	fname := "./testdata/npidata_min.csv"
 	ctx := context.Background()
 	err = store.DeleteAllNPIOrganizations(ctx)
@@ -81,8 +80,6 @@ func populateTestEndpointData() {
 	failOnError(err)
 
 	ctx := context.Background()
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
 
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
 	failOnError(dbErr)
@@ -112,10 +109,7 @@ func setupTestServer() {
 }
 
 func Test_EndpointDataIsAvailable(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	defer store.Close()
+	var err error
 	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var link_count int
 	err = response_time_row.Scan(&link_count)
@@ -127,10 +121,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	defer store.Close()
+	var err error
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -270,10 +261,7 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 }
 
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	defer store.Close()
+	var err error
 	response_time_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
 	var id, metric_name, result_label string
 	err = response_time_row.Scan(&id, &metric_name, &result_label)
@@ -292,8 +280,6 @@ func Test_GetCHPLProducts(t *testing.T) {
 	if viper.GetString("chplapikey") == "" {
 		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
 	}
-
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 
 	ctx := context.Background()
 	client := &http.Client{
