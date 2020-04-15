@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.14.x
+- 1.12.x
 git:
   depth: 1
 notifications:
@@ -43,6 +43,7 @@ jobs:
   include:
     - stage: test
       script:
+      - make lint
       # unit tests
       - make test
       # integration tests
