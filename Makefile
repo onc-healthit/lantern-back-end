@@ -35,7 +35,7 @@ populatedb:
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
-	cd ./networkstatsquerier; golangci-lint run -E gofmt
+	#cd ./networkstatsquerier; golangci-lint run -E gofmt
 	cd ./lanternmq; golangci-lint run -E gofmt
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
