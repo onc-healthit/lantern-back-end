@@ -61,6 +61,8 @@ CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
     fhir_endpoint_id        INT REFERENCES fhir_endpoints(id),
     healthit_product_id     INT REFERENCES healthit_products(id),
+    -- TODO: remove once vendor table available
+    vendor                  VARCHAR(500),
     -- TODO: uncomment once vendor table available
     -- vendor_id            INT REFERENCES vendors(id), 
     tls_version             VARCHAR(500),
