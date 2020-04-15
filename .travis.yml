@@ -43,7 +43,7 @@ jobs:
     - stage: test
       script:
       - make test
-      - ./scripts/wait-for-it.sh localhost:3000 -- ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- ./scripts/wait-for-it.sh localhost:9090 -- ./scripts/wait-for-it.sh localhost:9201 -- ./scripts/wait-for-it.sh localhost:3333 -- make test_int
+      - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       env: LANTERN_QHOST=localhost
     - stage: test e2e
       script: make test_e2e
