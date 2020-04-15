@@ -36,13 +36,15 @@ env:
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+- docker-compose up -d --build
 
 jobs:
   include:
     - stage: test
       script:
+      - make lint
       - make test
-      - docker-compose up -d --build; sleep 2m; make test_int
+      - sleep 2m; make test_int
       env: LANTERN_QHOST=localhost
     - stage: test e2e
       script: make test_e2e

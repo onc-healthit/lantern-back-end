@@ -33,6 +33,12 @@ clean_remote:
 populatedb:
 	exec ./scripts/populatedb.sh
 
+lint:
+	cd ./capabilityquerier; golangci-lint run -E gofmt
+	cd ./networkstatsquerier; golangci-lint run -E gofmt
+	cd ./lanternmq; golangci-lint run -E gofmt
+	cd ./fhir; golangci-lint run -E gofmt
+	cd ./endpointmanager; golangci-lint run -E gofmt
 
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
