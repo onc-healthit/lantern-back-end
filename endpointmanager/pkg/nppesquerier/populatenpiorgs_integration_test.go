@@ -4,6 +4,7 @@ package nppesquerier_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -91,7 +92,7 @@ func Test_ParseAndStoreNPIFileContext(t *testing.T) {
 	defer cancel()
 
 	added, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npidata_pfile_fixture.csv", store)
-	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err))
+	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err)))
 	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
 }
 
