@@ -36,13 +36,19 @@ env:
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+# start preparing services for integration test
 - docker-compose up -d --build
 
 jobs:
   include:
     - stage: test
       script:
+      # unit tests
       - make test
+      # integration tests
+      # ensure that necessary services are up before starting the integration tests
+      # localhost:5432: pg_prometheus database
+      # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       env: LANTERN_QHOST=localhost
     - stage: test e2e
