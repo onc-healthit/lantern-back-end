@@ -42,7 +42,7 @@ jobs:
     - stage: test
       script:
       - make test
-      - docker-compose up -d --build; make test_int
+      - docker-compose up -d --build; sleep 2m; make test_int
       env: LANTERN_QHOST=localhost
     - stage: test e2e
       script: make test_e2e
