@@ -20,7 +20,6 @@ var deleteFHIREndpointStatement *sql.Stmt
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
-	var locationJSON []byte
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
 
@@ -33,11 +32,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		http_response,
 		errors,
 		organization_name,
-		fhir_version,
-		authorization_standard,
 		vendor,
 		list_source,
-		location,
 		capability_statement,
 		validation,
 		created_at,
@@ -53,11 +49,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		&endpoint.HTTPResponse,
 		&endpoint.Errors,
 		&endpoint.OrganizationName,
-		&endpoint.FHIRVersion,
-		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
 		&endpoint.ListSource,
-		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpoint.CreatedAt,
@@ -66,10 +59,6 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		return nil, err
 	}
 
-	err = json.Unmarshal(locationJSON, &endpoint.Location)
-	if err != nil {
-		return nil, err
-	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
 		if err != nil {
@@ -86,7 +75,6 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
-	var locationJSON []byte
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
 
@@ -99,11 +87,8 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		http_response,
 		errors,
 		organization_name,
-		fhir_version,
-		authorization_standard,
 		vendor,
 		list_source,
-		location,
 		capability_statement,
 		validation,
 		created_at,
@@ -120,11 +105,8 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		&endpoint.HTTPResponse,
 		&endpoint.Errors,
 		&endpoint.OrganizationName,
-		&endpoint.FHIRVersion,
-		&endpoint.AuthorizationStandard,
 		&endpoint.Vendor,
 		&endpoint.ListSource,
-		&locationJSON,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpoint.CreatedAt,
@@ -133,10 +115,6 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		return nil, err
 	}
 
-	err = json.Unmarshal(locationJSON, &endpoint.Location)
-	if err != nil {
-		return nil, err
-	}
 	if capabilityStatementJSON != nil {
 		endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
 		if err != nil {
@@ -151,10 +129,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 
 // AddFHIREndpoint adds the FHIREndpoint to the database.
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	locationJSON, err := json.Marshal(e.Location)
-	if err != nil {
-		return err
-	}
+	var err error
 	var capabilityStatementJSON []byte
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
@@ -176,11 +151,8 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 		e.HTTPResponse,
 		e.Errors,
 		e.OrganizationName,
-		e.FHIRVersion,
-		e.AuthorizationStandard,
 		e.Vendor,
 		e.ListSource,
-		locationJSON,
 		capabilityStatementJSON,
 		validationJSON)
 
@@ -191,10 +163,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	locationJSON, err := json.Marshal(e.Location)
-	if err != nil {
-		return err
-	}
+	var err error
 	var capabilityStatementJSON []byte
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
@@ -216,11 +185,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.HTTPResponse,
 		e.Errors,
 		e.OrganizationName,
-		e.FHIRVersion,
-		e.AuthorizationStandard,
 		e.Vendor,
 		e.ListSource,
-		locationJSON,
 		capabilityStatementJSON,
 		validationJSON,
 		e.ID)
@@ -266,14 +232,11 @@ func prepareFHIREndpointStatements(s *Store) error {
 			http_response,
 			errors,
 			organization_name,
-			fhir_version,
-			authorization_standard,
 			vendor,
 			list_source,
-			location,
 			capability_statement,
 			validation)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -286,14 +249,11 @@ func prepareFHIREndpointStatements(s *Store) error {
 			http_response = $4,
 			errors = $5,
 			organization_name = $6,
-			fhir_version = $7,
-			authorization_standard = $8,
-			vendor = $9,
-			list_source = $10,
-			location = $11,
-			capability_statement = $12,
-			validation = $13
-		WHERE id = $14`)
+			vendor = $7,
+			list_source = $8,
+			capability_statement = $9,
+			validation = $10
+		WHERE id = $11`)
 	if err != nil {
 		return err
 	}

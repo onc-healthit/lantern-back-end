@@ -24,40 +24,24 @@ func Test_FHIREndpointEqual(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &FHIREndpoint{
-		ID:                    1,
-		URL:                   "example.com/FHIR/DSTU2",
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:          200,
-		Errors:                "Example Error",
-		OrganizationName:      "Example Org",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		ListSource:            "https://open.epic.com/MyApps/EndpointsJson",
-		Location: &Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		ID:                  1,
+		URL:                 "example.com/FHIR/DSTU2",
+		TLSVersion:          "TLS 1.1",
+		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
+		HTTPResponse:        200,
+		Errors:              "Example Error",
+		OrganizationName:    "Example Org",
+		ListSource:          "https://open.epic.com/MyApps/EndpointsJson",
 		CapabilityStatement: cs}
 	var endpoint2 = &FHIREndpoint{
-		ID:                    1,
-		URL:                   "example.com/FHIR/DSTU2",
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:          200,
-		Errors:                "Example Error",
-		OrganizationName:      "Example Org",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		ListSource:            "https://open.epic.com/MyApps/EndpointsJson",
-		Location: &Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		ID:                  1,
+		URL:                 "example.com/FHIR/DSTU2",
+		TLSVersion:          "TLS 1.1",
+		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
+		HTTPResponse:        200,
+		Errors:              "Example Error",
+		OrganizationName:    "Example Org",
+		ListSource:          "https://open.epic.com/MyApps/EndpointsJson",
 		CapabilityStatement: cs}
 
 	if !endpoint1.Equal(endpoint2) {
@@ -75,13 +59,6 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. URL should be different. %s vs %s", endpoint1.URL, endpoint2.URL)
 	}
 	endpoint2.URL = endpoint1.URL
-
-	endpoint2.FHIRVersion = "other"
-	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. FHIRVersion should be different. %s vs %s", endpoint1.FHIRVersion, endpoint2.FHIRVersion)
-	}
-	endpoint2.FHIRVersion = endpoint1.FHIRVersion
-
 	endpoint2.TLSVersion = "other"
 	if endpoint1.Equal(endpoint2) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. TLSVersion should be different. %s vs %s", endpoint1.TLSVersion, endpoint2.TLSVersion)
@@ -116,23 +93,11 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.OrganizationName = endpoint1.OrganizationName
 
-	endpoint2.AuthorizationStandard = "other"
-	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. AuthorizationStandard should be different. %s vs %s", endpoint1.AuthorizationStandard, endpoint2.AuthorizationStandard)
-	}
-	endpoint2.AuthorizationStandard = endpoint1.AuthorizationStandard
-
 	endpoint2.ListSource = "other"
 	if endpoint1.Equal(endpoint2) {
 		t.Errorf("Did not expect endpoint1 to equal endpoint 2. ListSource should be different. %s vs %s", endpoint1.ListSource, endpoint2.ListSource)
 	}
 	endpoint2.ListSource = endpoint1.ListSource
-
-	endpoint2.Location.Address1 = "other"
-	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. Location should be different. %s vs %s", endpoint1.Location.Address1, endpoint2.Location.Address1)
-	}
-	endpoint2.Location.Address1 = endpoint1.Location.Address1
 
 	// @TODO Currently commented out while figuring out Capability Parsing
 	// endpoint2.CapabilityStatement = nil

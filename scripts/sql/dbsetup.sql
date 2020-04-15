@@ -9,18 +9,17 @@ $$ LANGUAGE plpgsql;
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500) UNIQUE,
+    organization_name       VARCHAR(500),
+    list_source             VARCHAR(500),
+    -- TODO: remove from here to next comment
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
     errors                  VARCHAR(500),
-    organization_name       VARCHAR(500),
-    fhir_version            VARCHAR(500),
-    authorization_standard  VARCHAR(500),
-    vendor                  VARCHAR(500),
-    list_source             VARCHAR(500),
-    location                JSONB, -- location of IP address from ipstack.com.
     capability_statement    JSONB,
     validation              JSONB,
+    vendor                  VARCHAR(500),
+    -- TODO: remove above code
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -58,12 +57,30 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE fhir_endpoints_info (
+    id                      SERIAL PRIMARY KEY,
+    fhir_endpoint_id        INT REFERENCES fhir_endpoints(id),
+    healthit_product_id     INT REFERENCES healthit_products(id),
+    -- TODO: uncomment once vendor table available
+    -- vendor_id            INT REFERENCES vendors(id), 
+    tls_version             VARCHAR(500),
+    mime_types              VARCHAR(500)[],
+    http_response           INTEGER,
+    errors                  VARCHAR(500),
+    capability_statement    JSONB,
+    validation              JSONB,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE endpoint_organization (
     endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
     organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
     confidence NUMERIC (5, 3),
     CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
 );
+
+CREATE INDEX fhir_endpoint_url_index ON fhir_endpoints (url);
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints

@@ -33,32 +33,22 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2/",
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir"},
-		HTTPResponse:          200,
-		Errors:                "Example Error",
-		OrganizationName:      "Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		Vendor:                "Cerner",
-		ListSource:            "https://github.com/cerner/ignite-endpoints",
-		Location: &endpointmanager.Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		URL:                 "example.com/FHIR/DSTU2/",
+		TLSVersion:          "TLS 1.1",
+		MIMETypes:           []string{"application/json+fhir"},
+		HTTPResponse:        200,
+		Errors:              "Example Error",
+		OrganizationName:    "Example Inc.",
+		Vendor:              "Cerner",
+		ListSource:          "https://github.com/cerner/ignite-endpoints",
 		CapabilityStatement: cs}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:                   "other.example.com/FHIR/DSTU2/",
-		TLSVersion:            "TLS 1.2",
-		MIMETypes:             []string{"application/fhir+json"},
-		HTTPResponse:          404,
-		Errors:                "Example Error 2",
-		OrganizationName:      "Other Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "R4 2.0"}
+		URL:              "other.example.com/FHIR/DSTU2/",
+		TLSVersion:       "TLS 1.2",
+		MIMETypes:        []string{"application/fhir+json"},
+		HTTPResponse:     404,
+		Errors:           "Example Error 2",
+		OrganizationName: "Other Example Inc."}
 
 	// add endpoints
 
@@ -92,7 +82,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// update endpoint
 
-	e1.FHIRVersion = "Unknown"
+	e1.ListSource = "Unknown"
 
 	err = store.UpdateFHIREndpoint(ctx, e1)
 	if err != nil {

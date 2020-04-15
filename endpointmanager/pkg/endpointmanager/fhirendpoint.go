@@ -13,22 +13,19 @@ import (
 // capability statement found at that endpoint as well as information
 // discovered about the IP address of the endpoint.
 type FHIREndpoint struct {
-	ID                    int
-	URL                   string
-	TLSVersion            string
-	MIMETypes             []string
-	HTTPResponse          int
-	Errors                string
-	OrganizationName      string
-	FHIRVersion           string
-	AuthorizationStandard string // examples: OAuth 2.0, Basic, etc.
-	Vendor                string
-	ListSource            string
-	Location              *Location                            // location of the FHIR API endpoint's IP address from ipstack.com.
-	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	Validation            map[string]interface{}
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
+	ID                  int
+	URL                 string
+	TLSVersion          string
+	MIMETypes           []string
+	HTTPResponse        int
+	Errors              string
+	OrganizationName    string
+	Vendor              string
+	ListSource          string
+	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	Validation          map[string]interface{}
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
 }
 
 // Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -72,19 +69,10 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.OrganizationName != e2.OrganizationName {
 		return false
 	}
-	if e.FHIRVersion != e2.FHIRVersion {
-		return false
-	}
-	if e.AuthorizationStandard != e2.AuthorizationStandard {
-		return false
-	}
 	if e.Vendor != e2.Vendor {
 		return false
 	}
 	if e.ListSource != e2.ListSource {
-		return false
-	}
-	if !e.Location.Equal(e2.Location) {
 		return false
 	}
 	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal

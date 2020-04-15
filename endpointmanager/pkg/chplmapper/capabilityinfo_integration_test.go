@@ -133,16 +133,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	ep := &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2",
-		OrganizationName:      "Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		Location: &endpointmanager.Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		URL:                 "example.com/FHIR/DSTU2",
+		OrganizationName:    "Example Inc.",
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
@@ -160,16 +152,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2",
-		OrganizationName:      "Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		Location: &endpointmanager.Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		URL:                 "example.com/FHIR/DSTU2",
+		OrganizationName:    "Example Inc.",
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
@@ -180,16 +164,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2",
-		OrganizationName:      "Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		Location: &endpointmanager.Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		URL:              "example.com/FHIR/DSTU2",
+		OrganizationName: "Example Inc.",
 	}
 	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
 	th.Assert(t, err == nil, err)
@@ -211,16 +187,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:                   "example.com/FHIR/DSTU2",
-		OrganizationName:      "Example Inc.",
-		FHIRVersion:           "DSTU2",
-		AuthorizationStandard: "OAuth 2.0",
-		Location: &endpointmanager.Location{
-			Address1: "123 Gov Way",
-			Address2: "Suite 123",
-			City:     "A City",
-			State:    "AK",
-			ZipCode:  "00000"},
+		URL:                 "example.com/FHIR/DSTU2",
+		OrganizationName:    "Example Inc.",
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, ep, store)

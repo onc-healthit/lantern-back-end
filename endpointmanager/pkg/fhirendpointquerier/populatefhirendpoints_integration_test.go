@@ -72,7 +72,6 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	// {
 	//	"url": "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
 	// 	"organization_name": "A Woman's Place",
-	//	"fhir_version": "",
 	// 	"authorization_standard": "",
 	//	"location": null,
 	// 	"capability_statement": null,
@@ -81,9 +80,6 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "URL is not what was expected")
 	th.Assert(t, fhirEndpt.OrganizationName == "A Woman's Place, LLC", "Organization Name is not what was expected.")
-	th.Assert(t, fhirEndpt.FHIRVersion == "", "Fhir Version is not what was expected")
-	th.Assert(t, fhirEndpt.AuthorizationStandard == "", "Authorization Standard is not what was expected")
-	th.Assert(t, fhirEndpt.Location == nil, "Location is not what was expected")
 	th.Assert(t, fhirEndpt.CapabilityStatement == nil, "Capability Statement is not what was expected")
 }
 
