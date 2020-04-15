@@ -18,7 +18,7 @@ cd ../../..
 echo "Do you have NPPES data downloaded (http://download.cms.gov/nppes/NPI_Files.html) and do you want to load it into the database? (y/Y to continue. anything else to stop)"
 read cont
 if [ "$cont" = "y" ] || [ "$cont" = "Y" ]; then
-    cd endpointmanager/cmd/nppespopulator
+    cd endpointmanager/cmd/nppesorgpopulator
     echo "Please enter an absolute path for the NPPES data CSV file or the path relative to to this location:"
     pwd
     read nppesdata
