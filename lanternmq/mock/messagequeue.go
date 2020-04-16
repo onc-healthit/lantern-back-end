@@ -17,6 +17,8 @@ type MessageQueue struct {
 
 	NumConcurrentMsgsFn func(chID lanternmq.ChannelID, num int) error
 
+	QueueExistsFn func(chID lanternmq.ChannelID, qName string) (bool, error)
+
 	DeclareQueueFn func(chID lanternmq.ChannelID, name string) error
 
 	PublishToQueueFn func(chID lanternmq.ChannelID, qName string, message string) error
@@ -47,6 +49,11 @@ func (mq *MessageQueue) CreateChannel() (lanternmq.ChannelID, error) {
 // NumConcurrentMsgs mocks lanternmq.NumConcurrentMsgs and calls mq.NumConcurrentMsgsFn with the given arguments.
 func (mq *MessageQueue) NumConcurrentMsgs(chID lanternmq.ChannelID, num int) error {
 	return mq.NumConcurrentMsgsFn(chID, num)
+}
+
+// QueueExists mocks lanternmq.QueueExists and calls mq.QueueExistsFn with the given arguments.
+func (mq *MessageQueue) QueueExists(chID lanternmq.ChannelID, qName string) (bool, error) {
+	return mq.QueueExistsFn(chID, qName)
 }
 
 // DeclareQueue mocks lanternmq.DeclareQueue and calls mq.DeclareQueueFn with the given arguments.
