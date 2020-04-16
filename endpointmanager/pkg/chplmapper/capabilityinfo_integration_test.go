@@ -292,7 +292,7 @@ func Test_getVendorMatch(t *testing.T) {
 	th.Assert(t, len(vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", vendor))
 
 	// allscripts
-	expected = "Allscripts" // the capability statement is missing the publisher
+	expected = "Allscripts"
 
 	path = filepath.Join("../testdata", "allscripts_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
@@ -306,7 +306,7 @@ func Test_getVendorMatch(t *testing.T) {
 	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %s. Got %s.", expected, vendor))
 
 	// meditech
-	expected = "Medical Information Technology, Inc. (MEDITECH)" // the capability statement is missing the publisher
+	expected = "Medical Information Technology, Inc. (MEDITECH)"
 
 	path = filepath.Join("../testdata", "meditech_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)

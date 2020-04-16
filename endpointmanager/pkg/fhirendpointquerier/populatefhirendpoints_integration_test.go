@@ -163,8 +163,6 @@ func Test_AddEndpointData(t *testing.T) {
 
 	endpt1 := testEndpointEntry
 	endpt2 := testEndpointEntry
-	// fhirEndpt := testFHIREndpoint
-	// var savedEndpt *endpointmanager.FHIREndpoint
 
 	var ct int
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM fhir_endpoints;")
