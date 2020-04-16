@@ -121,6 +121,11 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	for _, hitp := range hitps {
 		err = store.AddHealthITProduct(ctx, hitp)
 	}
+	// populate fhir endpoint
+	ep := &endpointmanager.FHIREndpoint{
+		URL:              "example.com/FHIR/DSTU2",
+		OrganizationName: "Example Inc."}
+	store.AddFHIREndpoint(ctx, ep)
 
 	// basic test
 
@@ -131,15 +136,14 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 
-	// endpoint
-	ep := &endpointmanager.FHIREndpoint{
-		URL:                 "example.com/FHIR/DSTU2",
-		OrganizationName:    "Example Inc.",
+	// endpoint info
+	epInfo := &endpointmanager.FHIREndpointInfo{
+		FHIREndpointID:      ep.ID,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
+	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ep.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", ep.Vendor))
+	th.Assert(t, epInfo.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", ep.Vendor))
 
 	// test no match
 
@@ -151,25 +155,22 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// endpoint
-	ep = &endpointmanager.FHIREndpoint{
-		URL:                 "example.com/FHIR/DSTU2",
-		OrganizationName:    "Example Inc.",
+	epInfo = &endpointmanager.FHIREndpointInfo{
+		FHIREndpointID:      ep.ID,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
+	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 
 	// test no capability statement
 
 	// endpoint
-	ep = &endpointmanager.FHIREndpoint{
-		URL:              "example.com/FHIR/DSTU2",
-		OrganizationName: "Example Inc.",
-	}
-	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
+	epInfo = &endpointmanager.FHIREndpointInfo{
+		FHIREndpointID: ep.ID}
+	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 
 	// test error getting match
 
@@ -186,14 +187,13 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// endpoint
-	ep = &endpointmanager.FHIREndpoint{
-		URL:                 "example.com/FHIR/DSTU2",
-		OrganizationName:    "Example Inc.",
+	epInfo = &endpointmanager.FHIREndpointInfo{
+		FHIREndpointID:      ep.ID,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, ep, store)
+	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
-	th.Assert(t, len(ep.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
 }
 
 func Test_getVendorMatch(t *testing.T) {
