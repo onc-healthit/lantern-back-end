@@ -36,7 +36,7 @@ env:
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-- git log $GOPATH/src/github.com/prometheus/client_golang
+- cd networkstatsquerier; go list -m all; cd ..
 # start preparing services for integration test
 - docker-compose up -d --build
 
