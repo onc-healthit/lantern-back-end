@@ -20,8 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":   "TLS 1.2",
 }
 
-var testFhirEndpoint = endpointmanager.FHIREndpoint{
-	URL:          "http://example.com/DTSU2/",
+var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	MIMETypes:    []string{"application/json+fhir"},
 	TLSVersion:   "TLS 1.2",
 	HTTPResponse: 200,
@@ -44,7 +43,7 @@ func setupCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
-	testFhirEndpoint.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityStatement = cs
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
 	th.Assert(t, err == nil, err)
@@ -53,14 +52,15 @@ func setupCapabilityStatement(t *testing.T) {
 
 func Test_formatMessage(t *testing.T) {
 	setupCapabilityStatement(t)
-	expectedEndpt := testFhirEndpoint
+	expectedEndpt := testFhirEndpointInfo
 	tmpMessage := testQueueMsg
 
 	message, err := convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 
 	// basic test
-	endpt, returnErr := formatMessage(message)
+	url, endpt, returnErr := formatMessage(message)
+	th.Assert(t, url == "http://example.com/DTSU2/", fmt.Sprintf("%s and %s are not equal", url, "http://example.com/DTSU2/"))
 	th.Assert(t, returnErr == nil, returnErr)
 	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
 
@@ -68,15 +68,15 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = "http://example.com/DTSU2/"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	endpt, returnErr = formatMessage(message)
+	url, endpt, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
-	th.Assert(t, expectedEndpt.URL == endpt.URL, fmt.Sprintf("%s and %s are not equal", expectedEndpt.URL, endpt.URL))
+	th.Assert(t, url == "http://example.com/DTSU2/", fmt.Sprintf("%s and %s are not equal", url, "http://example.com/DTSU2/"))
 
 	// test incorrect error message
 	tmpMessage["err"] = nil
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect error message")
 	tmpMessage["err"] = ""
 
@@ -84,7 +84,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = nil
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect URL")
 	tmpMessage["url"] = "http://example.com/DTSU2/metadata"
 
@@ -92,7 +92,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["tlsVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect TLS Version")
 	tmpMessage["tlsVersion"] = "TLS 1.2"
 
@@ -100,7 +100,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["mimeTypes"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to incorrect MIME Types")
 	tmpMessage["mimeTypes"] = []string{"application/json+fhir"}
 
@@ -108,7 +108,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["httpResponse"] = "200"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect HTTP response")
 	tmpMessage["httpResponse"] = 200
 }

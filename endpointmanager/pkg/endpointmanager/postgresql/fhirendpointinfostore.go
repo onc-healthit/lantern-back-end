@@ -32,13 +32,12 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		mime_types,
 		http_response,
 		errors,
-		organization_name,
 		vendor,
 		capability_statement,
 		validation,
 		created_at,
 		updated_at
-	FROM fhir_endpoints WHERE id=$1`
+	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
 	err := row.Scan(
@@ -49,7 +48,6 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
 		&endpointInfo.Errors,
-		&endpointInfo.OrganizationName,
 		&endpointInfo.Vendor,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -71,9 +69,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	return &endpointInfo, err
 }
 
-// GetFHIREndpointInfoUsingURL gets a FHIREndpointInfo from the database using the given url as a key.
-// If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
+func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
@@ -87,14 +83,67 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		mime_types,
 		http_response,
 		errors,
-		organization_name,
 		vendor,
-		list_source,
 		capability_statement,
 		validation,
 		created_at,
 		updated_at
-	FROM fhir_endpoints WHERE url=$1`
+	FROM fhir_endpoints_info WHERE fhir_endpoints_info.fhir_endpoint_id = $1`
+
+	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
+
+	err := row.Scan(
+		&endpointInfo.ID,
+		&endpointInfo.FHIREndpointID,
+		&endpointInfo.HealthITProductID,
+		&endpointInfo.TLSVersion,
+		pq.Array(&endpointInfo.MIMETypes),
+		&endpointInfo.HTTPResponse,
+		&endpointInfo.Errors,
+		&endpointInfo.Vendor,
+		&capabilityStatementJSON,
+		&validationJSON,
+		&endpointInfo.CreatedAt,
+		&endpointInfo.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if capabilityStatementJSON != nil {
+		endpointInfo.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+
+	return &endpointInfo, err
+}
+
+// TODO: Maybe don't need
+// GetFHIREndpointInfoUsingURL gets a FHIREndpointInfo from the database using the given url as a key.
+// If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
+func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
+	var endpointInfo endpointmanager.FHIREndpointInfo
+	var capabilityStatementJSON []byte
+	var validationJSON []byte
+
+	sqlStatement := `
+	SELECT
+		fhir_endpoints_info.id,
+		fhir_endpoints_info.fhir_endpoint_id,
+		fhir_endpoints_info.healthit_product_id,
+		fhir_endpoints_info.tls_version,
+		fhir_endpoints_info.mime_types,
+		fhir_endpoints_info.http_response,
+		fhir_endpoints_info.errors,
+		fhir_endpoints_info.vendor,
+		fhir_endpoints_info.capability_statement,
+		fhir_endpoints_info.validation,
+		fhir_endpoints_info.created_at,
+		fhir_endpoints_info.updated_at
+	FROM fhir_endpoints_info, fhir_endpoints WHERE fhir_endpoints.url=$1 AND fhir_endpoints.id = fhir_endpoints_info.fhir_endpoint_id`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
@@ -106,7 +155,6 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
 		&endpointInfo.Errors,
-		&endpointInfo.OrganizationName,
 		&endpointInfo.Vendor,
 		&capabilityStatementJSON,
 		&validationJSON,
@@ -152,7 +200,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
 		e.Errors,
-		e.OrganizationName,
 		e.Vendor,
 		capabilityStatementJSON,
 		validationJSON)
@@ -186,7 +233,6 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
 		e.Errors,
-		e.OrganizationName,
 		e.Vendor,
 		capabilityStatementJSON,
 		validationJSON,
@@ -202,49 +248,26 @@ func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	return err
 }
 
-// GetAllFHIREndpointInfoOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointInfoOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpointInfo, error) {
-	sqlStatement := `
-        SELECT id, organization_name FROM fhir_endpoints`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-
-	if err != nil {
-		return nil, err
-	}
-	var endpoints []endpointmanager.FHIREndpointInfo
-	defer rows.Close()
-	for rows.Next() {
-		var endpointInfo endpointmanager.FHIREndpointInfo
-		err = rows.Scan(&endpointInfo.ID, &endpointInfo.OrganizationName)
-		if err != nil {
-			return nil, err
-		}
-		endpoints = append(endpoints, endpointInfo)
-	}
-	return endpoints, nil
-}
-
 func prepareFHIREndpointInfoStatements(s *Store) error {
 	var err error
 	addFHIREndpointInfoStatement, err = s.DB.Prepare(`
-		INSERT INTO fhir_endpoints (
+		INSERT INTO fhir_endpoints_info (
 			fhir_endpoint_id,
 			healthit_product_id,
 			tls_version,
 			mime_types,
 			http_response,
 			errors,
-			organization_name,
 			vendor,
 			capability_statement,
 			validation)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id`)
 	if err != nil {
 		return err
 	}
 	updateFHIREndpointInfoStatement, err = s.DB.Prepare(`
-		UPDATE fhir_endpoints
+		UPDATE fhir_endpoints_info
 		SET 
 		    fhir_endpoint_id = $1,
 		    healthit_product_id = $2,
@@ -252,16 +275,15 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			mime_types = $4,
 			http_response = $5,
 			errors = $6,
-			organization_name = $7,
-			vendor = $8,
-			capability_statement = $9,
-			validation = $10
-		WHERE id = $11`)
+			vendor = $7,
+			capability_statement = $8,
+			validation = $9
+		WHERE id = $10`)
 	if err != nil {
 		return err
 	}
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
-        DELETE FROM fhir_endpoints
+        DELETE FROM fhir_endpoints_info
         WHERE id = $1`)
 	if err != nil {
 		return err

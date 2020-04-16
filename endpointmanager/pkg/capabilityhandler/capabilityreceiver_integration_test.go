@@ -19,6 +19,13 @@ import (
 
 var store *postgresql.Store
 
+var testFhirEndpoint1 = &endpointmanager.FHIREndpoint{
+	URL: "http://example.com/DTSU2/",
+}
+var testFhirEndpoint2 = &endpointmanager.FHIREndpoint{
+	URL: "https://test-two.com",
+}
+
 var hitps []*endpointmanager.HealthITProduct = []*endpointmanager.HealthITProduct{
 	&endpointmanager.HealthITProduct{
 		Name:                 "EpicCare Ambulatory Base",
@@ -83,7 +90,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	setupCapabilityStatement(t)
 
 	var ct int
-	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM fhir_endpoints;")
+	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM fhir_endpoints_info;")
 	th.Assert(t, err == nil, err)
 	defer ctStmt.Close()
 
@@ -95,10 +102,18 @@ func Test_saveMsgInDB(t *testing.T) {
 	// populate healthit products
 	for _, hitp := range hitps {
 		err = store.AddHealthITProduct(ctx, hitp)
+		th.Assert(t, err == nil, err)
 	}
 
-	expectedEndpt := testFhirEndpoint
+	// add fhir endpoint with url
+	err = store.AddFHIREndpoint(ctx, testFhirEndpoint1)
+	th.Assert(t, err == nil, err)
+	err = store.AddFHIREndpoint(ctx, testFhirEndpoint2)
+	th.Assert(t, err == nil, err)
+
+	expectedEndpt := testFhirEndpointInfo
 	expectedEndpt.Vendor = "Cerner Corporation"
+	expectedEndpt.FHIREndpointID = testFhirEndpoint1.ID
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
@@ -126,13 +141,13 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not store data as expected")
 
-	storedEndpt, err := store.GetFHIREndpointUsingURL(ctx, expectedEndpt.URL)
+	storedEndpt, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint1.ID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
-	expectedEndpt.URL = "https://test-two.com"
+	expectedEndpt.FHIREndpointID = testFhirEndpoint2.ID
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -142,10 +157,10 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "there should be two endpoints in the database")
 
-	storedEndpt, err = store.GetFHIREndpointUsingURL(ctx, expectedEndpt.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint2.ID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
-	expectedEndpt = testFhirEndpoint
+	expectedEndpt = testFhirEndpointInfo
 	queueTmp["url"] = "http://example.com/DTSU2/metadata"
 
 	// check that an item with the same URL updates the endpoint in the database
@@ -159,7 +174,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointUsingURL(ctx, expectedEndpt.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint1.ID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
 

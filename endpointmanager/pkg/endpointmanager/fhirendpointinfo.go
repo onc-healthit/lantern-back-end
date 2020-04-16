@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"database/sql"
 	"sort"
 	"time"
 
@@ -14,13 +15,12 @@ import (
 // discovered about the IP address of the endpoint.
 type FHIREndpointInfo struct {
 	ID                  int
-	FHIREndpointID      int
-	HealthITProductID   int
+	FHIREndpointID      sql.NullInt64
+	HealthITProductID   sql.NullInt64
 	TLSVersion          string
 	MIMETypes           []string
 	HTTPResponse        int
 	Errors              string
-	OrganizationName    string
 	Vendor              string
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	Validation          map[string]interface{}
@@ -68,9 +68,6 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.Errors != e2.Errors {
-		return false
-	}
-	if e.OrganizationName != e2.OrganizationName {
 		return false
 	}
 	if e.Vendor != e2.Vendor {

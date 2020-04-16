@@ -18,27 +18,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
+func formatMessage(message []byte) (string, *endpointmanager.FHIREndpointInfo, error) {
 	var msgJSON map[string]interface{}
 
 	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	url, ok := msgJSON["url"].(string)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast message URL to string")
+		return "", nil, fmt.Errorf("unable to cast message URL to string")
 	}
 
 	errs, ok := msgJSON["err"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast message Error to string", url)
+		return "", nil, fmt.Errorf("%s: unable to cast message Error to string", url)
 	}
 
 	tlsVersion, ok := msgJSON["tlsVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
+		return "", nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
@@ -47,12 +47,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	if msgJSON["mimeTypes"] != nil {
 		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
 		if !ok {
-			return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
+			return "", nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
 		}
 		for _, mimeTypeInt := range mimeTypesInt {
 			mimeType, ok := mimeTypeInt.(string)
 			if !ok {
-				return nil, fmt.Errorf("unable to cast mime type to string")
+				return "", nil, fmt.Errorf("unable to cast mime type to string")
 			}
 			mimeTypes = append(mimeTypes, mimeType)
 		}
@@ -61,7 +61,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	// JSON numbers are golang float64s
 	httpResponseFloat, ok := msgJSON["httpResponse"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast http response to int")
+		return "", nil, fmt.Errorf("unable to cast http response to int")
 	}
 	httpResponse := int(httpResponseFloat)
 
@@ -75,11 +75,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	if msgJSON["capabilityStatement"] != nil {
 		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
+			return "", nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
 		}
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
+			return "", nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
 
@@ -91,7 +91,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 	if msgJSON["capabilityStatement"] != nil {
 		fhirVersion, err := capStat.GetFHIRVersion()
 		if err != nil {
-			return nil, err
+			return "", nil, err
 		}
 		mimeTypeValidObj = mimeTypeValid(mimeTypes, fhirVersion)
 	} else {
@@ -105,8 +105,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		"httpCode": httpCodeObj,
 	}
 
-	fhirEndpoint := endpointmanager.FHIREndpoint{
-		URL:          originalURL,
+	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		TLSVersion:   tlsVersion,
 		MIMETypes:    mimeTypes,
 		HTTPResponse: httpResponse,
@@ -117,17 +116,20 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		CapabilityStatement: capStat,
 	}
 
-	return &fhirEndpoint, nil
+	return originalURL, &fhirEndpoint, nil
 }
 
 // saveMsgInDB formats the message data for the database and either adds a new entry to the database or
 // updates a current one
 func saveMsgInDB(message []byte, args *map[string]interface{}) error {
+	fmt.Print("In saveMsgInDB")
 	var err error
-	var fhirEndpoint *endpointmanager.FHIREndpoint
-	var existingEndpt *endpointmanager.FHIREndpoint
+	var url string
+	var fhirEndpoint *endpointmanager.FHIREndpointInfo
+	var existingEndpt *endpointmanager.FHIREndpointInfo
+	var endptSrc *endpointmanager.FHIREndpoint
 
-	fhirEndpoint, err = formatMessage(message)
+	url, fhirEndpoint, err = formatMessage(message)
 	if err != nil {
 		return err
 	}
@@ -141,7 +143,15 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return fmt.Errorf("unable to cast context from arguments")
 	}
 
-	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
+	endptSrc, err = store.GetFHIREndpointUsingURL(ctx, url)
+	if err != nil {
+		return errors.Wrapf(err, "unable to find fhir endpoint with url %s", url)
+	}
+
+	fhirEndpoint.FHIREndpointID = endptSrc.ID
+	existingEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endptSrc.ID)
+
+	fmt.Printf("fhir endpoint info health it product id: %d\n", fhirEndpoint.HealthITProductID)
 
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
@@ -149,7 +159,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
+		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint)
 		if err != nil {
 			return err
 		}
@@ -167,7 +177,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
+		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
