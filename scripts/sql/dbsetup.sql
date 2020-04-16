@@ -59,8 +59,8 @@ CREATE TABLE healthit_products (
 
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    fhir_endpoint_id        INT REFERENCES fhir_endpoints(id),
-    healthit_product_id     INT REFERENCES healthit_products(id),
+    fhir_endpoint_id        INT REFERENCES fhir_endpoints(id) ON DELETE CASCADE,
+    healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
     -- TODO: remove once vendor table available
     vendor                  VARCHAR(500),
     -- TODO: uncomment once vendor table available

@@ -22,6 +22,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
+	var fhirEndpointIDNullable sql.NullInt64
+	var healthitProductIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
@@ -42,8 +44,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 
 	err := row.Scan(
 		&endpointInfo.ID,
-		&endpointInfo.FHIREndpointID,
-		&endpointInfo.HealthITProductID,
+		&fhirEndpointIDNullable,
+		&healthitProductIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
@@ -64,6 +66,10 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
+	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
+	endpointInfo.FHIREndpointID = ints[0]
+	endpointInfo.HealthITProductID = ints[1]
+
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
 	return &endpointInfo, err
@@ -73,6 +79,8 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
+	var fhirEndpointIDNullable sql.NullInt64
+	var healthitProductIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
@@ -94,8 +102,8 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 
 	err := row.Scan(
 		&endpointInfo.ID,
-		&endpointInfo.FHIREndpointID,
-		&endpointInfo.HealthITProductID,
+		&fhirEndpointIDNullable,
+		&healthitProductIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
@@ -116,6 +124,10 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 		}
 	}
 
+	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
+	endpointInfo.FHIREndpointID = ints[0]
+	endpointInfo.HealthITProductID = ints[1]
+
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
 	return &endpointInfo, err
@@ -128,6 +140,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
+	var fhirEndpointIDNullable sql.NullInt64
+	var healthitProductIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
@@ -149,8 +163,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 
 	err := row.Scan(
 		&endpointInfo.ID,
-		&endpointInfo.FHIREndpointID,
-		&endpointInfo.HealthITProductID,
+		&fhirEndpointIDNullable,
+		&healthitProductIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
@@ -170,6 +184,10 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 			return nil, err
 		}
 	}
+
+	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
+	endpointInfo.FHIREndpointID = ints[0]
+	endpointInfo.HealthITProductID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
@@ -267,6 +285,23 @@ func getNullableInts(regularInts []int) []sql.NullInt64 {
 		nullableInts[i] = nullInt
 	}
 	return nullableInts
+}
+
+// converts nullable into to an integer. null values are made to be 0s. This should only be used for foreign key references. postgres does not use 0 as an index - starts at 1.
+func getRegularInts(nullableInts []sql.NullInt64) []int {
+	regularInts := make([]int, len(nullableInts))
+
+	for i, nullInt := range nullableInts {
+		var regInt int
+
+		if nullInt.Valid == false {
+			regInt = 0
+		} else {
+			regInt = int(nullInt.Int64)
+		}
+		regularInts[i] = regInt
+	}
+	return regularInts
 }
 
 func prepareFHIREndpointInfoStatements(s *Store) error {
