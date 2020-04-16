@@ -36,7 +36,6 @@ env:
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-- cd networkstatsquerier; go list -m all; cd ..
 # start preparing services for integration test
 - docker-compose up -d --build
 
