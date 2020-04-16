@@ -59,7 +59,7 @@ func TestMain(m *testing.M) {
 }
 
 func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
-	queueName := viper.GetString("capquery_qname")
+	queueName := viper.GetString("qname")
 	queueIsEmpty(t, queueName)
 	defer cleanQueue(t, queueName)
 
@@ -133,7 +133,7 @@ func setup() error {
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
+	qName := viper.GetString("qname")
 
 	// set up wrapped queue info
 	mq_, chID_, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
