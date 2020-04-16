@@ -55,9 +55,9 @@ When testing, the capability querier uses the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_TEST_CAPQUERY_QNAME** instead of LANTERN_CAPQUERY_QNAME: The name of the queue being accessed.
+* **LANTERN_TEST_QNAME** instead of LANTERN_CAPQUERY_QNAME: The name of the queue being accessed.
 
-  Default value: capability-statements-test
+  Default value: test-queue
 
 ## Building and Running
 

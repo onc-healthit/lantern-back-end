@@ -101,7 +101,7 @@
             "arguments": {}
         },
         {
-            "name": "capability-statements-test",
+            "name": "test-queue",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,
