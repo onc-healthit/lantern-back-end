@@ -83,6 +83,9 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) (*[]endpointmanager.FHI
 		}
 
 		err = json.Unmarshal(validationJSON, &endpoint.Validation)
+		if err != nil {
+			return nil, err
+		}
 		endpoints = append(endpoints, endpoint)
 	}
 	return &endpoints, nil

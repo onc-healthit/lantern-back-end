@@ -195,26 +195,3 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	return httpResponseCode, tlsVersion, mimeMatches, capStat, nil
 }
-
-func sendToQueue(
-	ctx context.Context,
-	message string,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	queueName string) error {
-
-	// don't send the message if the context is done
-	select {
-	case <-ctx.Done():
-		return errors.Wrap(ctx.Err(), "unable to send message to queue - context ended")
-	default:
-		// ok
-	}
-
-	err := (*mq).PublishToQueue(*ch, queueName, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
