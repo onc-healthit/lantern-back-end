@@ -1,22 +1,20 @@
 package endpointmanager
 
 import (
-	"database/sql"
 	"sort"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 )
 
-// FHIREndpoint represents a fielded FHIR API endpoint hosted by a
+// FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
 // HealthITProduct and populated by a ProviderOrganization.
 // Information about the FHIR API endpoint is populated by the FHIR
-// capability statement found at that endpoint as well as information
-// discovered about the IP address of the endpoint.
+// capability statement found at that endpoint.
 type FHIREndpointInfo struct {
 	ID                  int
-	FHIREndpointID      sql.NullInt64
-	HealthITProductID   sql.NullInt64
+	FHIREndpointID      int
+	HealthITProductID   int
 	TLSVersion          string
 	MIMETypes           []string
 	HTTPResponse        int

@@ -193,9 +193,11 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
+	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+
 	row := addFHIREndpointInfoStatement.QueryRowContext(ctx,
-		e.FHIREndpointID,
-		e.HealthITProductID,
+		nullableInts[0],
+		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
@@ -226,9 +228,11 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
+	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+
 	_, err = updateFHIREndpointInfoStatement.ExecContext(ctx,
-		e.FHIREndpointID,
-		e.HealthITProductID,
+		nullableInts[0],
+		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
@@ -246,6 +250,23 @@ func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
 
 	return err
+}
+
+// converts foreign key ints to nullable ints so we don't have issues with non-existent foreign key references.
+func getNullableInts(regularInts []int) []sql.NullInt64 {
+	nullableInts := make([]sql.NullInt64, len(regularInts))
+
+	for i, regInt := range regularInts {
+		var nullInt sql.NullInt64
+		if regInt < 1 {
+			nullInt.Valid = false
+		} else {
+			nullInt.Valid = true
+			nullInt.Int64 = int64(regInt)
+		}
+		nullableInts[i] = nullInt
+	}
+	return nullableInts
 }
 
 func prepareFHIREndpointInfoStatements(s *Store) error {
