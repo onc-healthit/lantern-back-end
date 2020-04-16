@@ -90,6 +90,11 @@ BEFORE UPDATE ON healthit_products
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_fhir_endpoints_info
+BEFORE UPDATE ON fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, endpts_info.vendor, endpts.organization_name AS endpoint_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
 FROM endpoint_organization AS links
