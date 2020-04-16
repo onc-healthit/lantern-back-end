@@ -143,7 +143,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, epInfo.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", ep.Vendor))
+	th.Assert(t, epInfo.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", epInfo.Vendor))
 
 	// test no match
 
@@ -161,7 +161,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
 
 	// test no capability statement
 
@@ -170,7 +170,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 		FHIREndpointID: ep.ID}
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
 
 	// test error getting match
 
@@ -193,7 +193,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", ep.Vendor))
+	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
 }
 
 func Test_getVendorMatch(t *testing.T) {

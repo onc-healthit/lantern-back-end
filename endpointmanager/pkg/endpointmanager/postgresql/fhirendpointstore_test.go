@@ -4,11 +4,8 @@ package postgresql
 
 import (
 	"context"
-	"io/ioutil"
-	"path/filepath"
 	"testing"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
@@ -20,34 +17,13 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	var err error
 	ctx := context.Background()
 
-	// capability statement
-	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Error(err)
-	}
-	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		t.Error(err)
-	}
-
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:                 "example.com/FHIR/DSTU2/",
-		TLSVersion:          "TLS 1.1",
-		MIMETypes:           []string{"application/json+fhir"},
-		HTTPResponse:        200,
-		Errors:              "Example Error",
-		OrganizationName:    "Example Inc.",
-		Vendor:              "Cerner",
-		ListSource:          "https://github.com/cerner/ignite-endpoints",
-		CapabilityStatement: cs}
+		URL:              "example.com/FHIR/DSTU2/",
+		OrganizationName: "Example Inc.",
+		ListSource:       "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:              "other.example.com/FHIR/DSTU2/",
-		TLSVersion:       "TLS 1.2",
-		MIMETypes:        []string{"application/fhir+json"},
-		HTTPResponse:     404,
-		Errors:           "Example Error 2",
 		OrganizationName: "Other Example Inc."}
 
 	// add endpoints
