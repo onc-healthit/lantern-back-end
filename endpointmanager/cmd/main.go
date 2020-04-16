@@ -10,8 +10,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
-	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
-	"github.com/pkg/errors"
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -20,56 +19,6 @@ func failOnError(err error) {
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
-}
-
-// connectToServerAndQueue creates a connection to an exchange at the given location with the given credentials.
-func connectToServerAndQueue(qUser, qPassword, qHost, qPort, qName string) (lanternmq.MessageQueue, lanternmq.ChannelID, error) {
-	mq := &rabbitmq.MessageQueue{}
-	err := mq.Connect(qUser, qPassword, qHost, qPort)
-	if err != nil {
-		return nil, nil, err
-	}
-	ch, err := mq.CreateChannel()
-	if err != nil {
-		return nil, nil, err
-	}
-	return connectToQueue(mq, ch, qName)
-}
-
-func connectToQueue(mq lanternmq.MessageQueue, ch lanternmq.ChannelID, qName string) (lanternmq.MessageQueue, lanternmq.ChannelID, error) {
-	exists, err := mq.QueueExists(ch, qName)
-	if err != nil {
-		return nil, nil, err
-	}
-	if !exists {
-		return nil, nil, errors.Errorf("queue %s does not exist", qName)
-	}
-
-	return mq, ch, nil
-}
-
-// sendToQueue publishes a message to the given queue
-func sendToQueue(
-	ctx context.Context,
-	message string,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	queueName string) error {
-
-	// don't send the message if the context is done
-	select {
-	case <-ctx.Done():
-		return errors.Wrap(ctx.Err(), "unable to send message to queue - context ended")
-	default:
-		// ok
-	}
-
-	err := (*mq).PublishToQueue(*ch, queueName, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // getEndptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
@@ -94,7 +43,7 @@ func getEnptsAndSend(
 			msgBytes, err := json.Marshal(endpt)
 			failOnError(err)
 			msgStr := string(msgBytes)
-			err = sendToQueue(ctx, msgStr, mq, channelID, qName)
+			err = accessqueue.SendToQueue(ctx, msgStr, mq, channelID, qName)
 			failOnError(err)
 		}
 
@@ -115,12 +64,12 @@ func main() {
 
 	// Set up the queue for sending messages to capabilityquerier and networkstatsquerier
 	capQName := viper.GetString("enptinfo_capquery_qname")
-	mq, channelID, err := connectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
+	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
 	failOnError(err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
 
 	netQName := viper.GetString("enptinfo_netstats_qname")
-	mq, channelID, err = connectToQueue(mq, channelID, netQName)
+	mq, channelID, err = accessqueue.ConnectToQueue(mq, channelID, netQName)
 	failOnError(err)
 	log.Info("Successfully connected to networkstatsquerier Queue!")
 

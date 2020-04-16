@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
 )
 
@@ -61,7 +62,7 @@ func GetAndSendCapabilityStatement(
 	}
 	msgStr := string(msgBytes)
 
-	err = sendToQueue(ctx, msgStr, mq, ch, queueName)
+	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
 	}
