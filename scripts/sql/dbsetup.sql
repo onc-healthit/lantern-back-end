@@ -11,15 +11,6 @@ CREATE TABLE fhir_endpoints (
     url                     VARCHAR(500) UNIQUE,
     organization_name       VARCHAR(500),
     list_source             VARCHAR(500),
-    -- TODO: remove from here to next comment
-    tls_version             VARCHAR(500),
-    mime_types              VARCHAR(500)[],
-    http_response           INTEGER,
-    errors                  VARCHAR(500),
-    capability_statement    JSONB,
-    validation              JSONB,
-    vendor                  VARCHAR(500),
-    -- TODO: remove above code
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
