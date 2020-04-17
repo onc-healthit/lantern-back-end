@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 	"time"
+	"fmt"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -95,6 +96,58 @@ func Test_ParseAndStoreNPIFileContext(t *testing.T) {
 	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err)))
 	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
 }
+
+func Test_ParseAndStoreNPIContactFile(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	ctx := context.Background()
+
+	parsed_orgs, err := nppesquerier.ParseAndStoreNPIContactsFile(ctx, "testdata/npi_contact_file.csv", store)
+	if err != nil {
+		t.Errorf("Error Parsing NPI File: %s", err.Error())
+	}
+	th.Assert(t, parsed_orgs != 212, "Incorrect number of FHIR_URL entries parsed out of npi file")
+
+	// Assert NPI orgs were successfully parsed out of fixture file
+	bad_url_contact, err := store.GetNPIContactByNPIID(ctx, "1346747029")
+	if err != nil {
+		t.Errorf("Error Retriving Parsed NPI Contact: %s", err.Error())
+	}
+	th.Assert(t, bad_url_contact == nil, "Unable to find npi 1346747029 in npi_contacts")
+	th.Assert(t, bad_url_contact.Valid_URL != false, "Invalid URL marked as valid")
+	th.Assert(t, bad_url_contact.Endpoint != "HIPPA and Health IT", "Unexpected Endpoint information for entry")
+
+	good_url_contact, err := store.GetNPIContactByNPIID(ctx, "1760025803")
+	if err != nil {
+		t.Errorf("Error Retriving Parsed NPI Contact: %s", err.Error())
+	}
+	if good_url_contact == nil {
+		t.Errorf("Error Retriving Parsed Contact")
+	}
+	if good_url_contact.Valid_URL != true {
+		t.Errorf("Error Retriving Parsed Contact")
+	}
+	if good_url_contact.Endpoint != "https://dpc.cms.gov/api/v1" {
+		t.Errorf("Error Retriving Parsed Contact")
+	}
+
+}
+
+func Test_ParseAndStoreNPIContactFileContext(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	// Note: it's possible that on a particularly slow or fast machine, this time deadline won't work.
+	// need to set a deadline rather than call cancel so we get through the read of the csv file.
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(4*time.Millisecond))
+	defer cancel()
+
+	added, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npi_contact_file.csv", store)
+	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err)))
+	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
+}
+
 
 func setup() error {
 	var err error

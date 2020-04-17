@@ -25,6 +25,7 @@ func (s *Store) GetNPIContactByNPIID(ctx context.Context, npiID string) (*endpoi
 
 	sqlStatement := `
 	SELECT
+	id,
 	npi_id,
 	endpoint_type,
 	endpoint_type_description,
@@ -60,6 +61,7 @@ func (s *Store) GetNPIContactByNPIID(ctx context.Context, npiID string) (*endpoi
 		&contact.Other_Use_Description,
 		&contact.Content_Type,
 		&contact.Content_Description,
+		&contact.Other_Content_Description,
 		&locationJSON,
 	)
 
