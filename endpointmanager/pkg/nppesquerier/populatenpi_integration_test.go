@@ -122,15 +122,9 @@ func Test_ParseAndStoreNPIContactFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error Retriving Parsed NPI Contact: %s", err.Error())
 	}
-	if good_url_contact == nil {
-		t.Errorf("Error Retriving Parsed Contact")
-	}
-	if good_url_contact.Valid_URL != true {
-		t.Errorf("Error Retriving Parsed Contact")
-	}
-	if good_url_contact.Endpoint != "https://dpc.cms.gov/api/v1" {
-		t.Errorf("Error Retriving Parsed Contact")
-	}
+	th.Assert(t, good_url_contact == nil, "Unable to find npi 1760025803 in npi_contacts")
+	th.Assert(t, good_url_contact.Valid_URL != true, "Valid URL marked as invalid")
+	th.Assert(t, good_url_contact.Endpoint != "https://dpc.cms.gov/api/v1", "Unexpected Endpoint information for entry")
 
 }
 
