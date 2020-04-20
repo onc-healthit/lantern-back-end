@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -58,6 +59,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	sort.Strings(b)
 	for i, v := range a {
 		if v != b[i] {
+			fmt.Printf("%d: %s  -  %s\n", i, v, b[i])
 			return false
 		}
 	}
