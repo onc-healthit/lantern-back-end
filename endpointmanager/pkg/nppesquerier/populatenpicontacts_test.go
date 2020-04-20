@@ -111,6 +111,20 @@ func Test_ReadContactCSVContextCancel(t *testing.T) {
 	th.Assert(t, lines == nil, "expected lines returned after error to be nil")
 }
 
+func Test_IsValidURL(t *testing.T) {
+	th.Assert(t, isValidURL("https://www.foobar.com"), "expected https://www.foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("http://www.foobar.com"), "expected http://www.foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("HTTPS://www.foobar.com"), "expected HTTPS://www.foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("HTTP://www.foobar.com"), "expected HTTP://www.foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("www.foobar.com"), "expected www.foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("foobar.com"), "expected foobar.com to be a valid URL")
+	th.Assert(t, isValidURL("www.foobar.org"), "expected www.foobar.orgto be a valid URL")
+	th.Assert(t, isValidURL("foobar.org"), "expected foobar.org to be a valid URL")
+	th.Assert(t, !isValidURL("foobar"), "expected foobar to not be a valid URL")
+	th.Assert(t, !isValidURL("test.test@foobar.org"), "expected test.test@foobar.org to not be a valid URL")
+	th.Assert(t, !isValidURL("test.test@foobar.com"), "expected test.test@foobar.com to not be a valid URL")
+}
+
 func Test_BuildNPIContactFromNPICsvLine(t *testing.T) {
 	ctx := context.Background()
 

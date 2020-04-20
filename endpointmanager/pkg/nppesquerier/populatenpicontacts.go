@@ -94,9 +94,13 @@ func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIC
 }
 
 func isValidURL(url string) bool {
-	urlregex := `^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$`
-	matched, _ := regexp.MatchString(urlregex, strings.ToLower(url))
-	return matched
+	urlregex := regexp.MustCompile(`^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+	urlmatched := urlregex.MatchString(strings.ToLower(url))
+	// Filter out emails from valid URLS
+	emailregex := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	emailmatched := emailregex.MatchString(strings.ToLower(url))
+
+	return urlmatched && !emailmatched
 }
 
 // readContactCsv accepts a file and returns its content as a multi-dimentional type
@@ -152,6 +156,18 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 				log.Error(err)
 			} else {
 				added += 1
+			}
+			// If contact has a valid URL, add to our fhir endpoints table, source list is NPPES
+			if npiContact.Valid_URL {
+				var fhirEndpoint = &endpointmanager.FHIREndpoint{
+					URL:                   npiContact.Endpoint,
+					OrganizationName:      npiContact.Affiliation_Legal_Business_Name,
+					ListSource:            "NPPES",
+					Location: npiContact.Location}
+				err = store.AddFHIREndpoint(ctx, fhirEndpoint)
+				if err != nil {
+					log.Error(err)
+				}
 			}
 		}
 	}
