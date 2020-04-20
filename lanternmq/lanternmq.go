@@ -79,8 +79,8 @@ type MessageQueue interface {
 	// ProcessMessages applies the 'handler' MessageHandler with arguments 'args' to each
 	// message that is received through 'msgs'. Sends any errors to the 'errs' channel.
 	ProcessMessages(msgs Messages, handler MessageHandler, args *map[string]interface{}, errs chan<- error)
-	// DeclareExchange creates a topic with the name 'name' on the channel with ID 'chID' if one
-	// does not exist.
+	// DeclareExchange creates an exchange with the name 'name' and type 'exchangeType' on the channel with
+	// ID 'chID' if one does not exist.
 	DeclareExchange(chID ChannelID, name string, exchangeType string) error
 	// PublishToExchange sends 'message' to the exchange 'name' on channel with ID 'chID', which will be
 	// routed to receivers using 'routingKey'.

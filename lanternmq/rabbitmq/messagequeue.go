@@ -37,7 +37,8 @@ var _ lanternmq.Messages = &Messages{}
 // * create a channel for that queueing service
 // * state how many messages a receiver can process at one time
 // * declare a durable queue, and send and receive from that queue
-// * declare a durable topic, and send and receive from that topic
+// * declare a durable exchange, and send and receive from that exchange
+//	 * potential exchange options are: 'direct', 'topic', 'headers', and 'fanout'
 // * close the MessageQueue, which includes closing all channels and the connection to the underlying service.
 type MessageQueue struct {
 	connection *amqp.Connection
@@ -268,7 +269,7 @@ func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lantern
 // DeclareExchange creates a target named 'name' and exchangeType 'exchangeType' over the channel with ID 'chID'.
 // It uses RabbitMQ's ExchangeDeclare method with the following arguments:
 // name: name
-// kind: "topic"
+// kind: exchangeType
 // durable: true
 // autoDelete: false
 // internal: false
