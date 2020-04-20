@@ -72,19 +72,35 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// retrieve endpointInfos
 
-	e1, err1 := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint1.ID)
-	if err1 != nil {
-		t.Errorf("Error getting fhir endpointInfo: %s", err1.Error())
+	e1, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint1.ID)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
 	if !e1.Equal(endpointInfo1) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	eID1, err2 := store.GetFHIREndpointInfo(ctx, e1.ID)
-	if err2 != nil {
-		t.Errorf("Error getting fhir endpointInfo: %s", err2.Error())
+	e2, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint2.ID)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
+	}
+	if !e2.Equal(endpointInfo2) {
+		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
+	}
+
+	eID1, err := store.GetFHIREndpointInfo(ctx, e1.ID)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
 	if !eID1.Equal(endpointInfo1) {
+		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
+	}
+
+	eID2, err := store.GetFHIREndpointInfo(ctx, e2.ID)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
+	}
+	if !eID2.Equal(endpointInfo2) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
@@ -107,6 +123,25 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if e1.UpdatedAt.Equal(e1.CreatedAt) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
+
+	// update with nil capability statement
+	capStat := e1.CapabilityStatement
+	e1.CapabilityStatement = nil
+
+	err = store.UpdateFHIREndpointInfo(ctx, e1)
+	if err != nil {
+		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
+	}
+
+	e1, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
+	}
+	if e1.CapabilityStatement != nil {
+		t.Errorf("Expected capability statement to be nil")
+	}
+
+	e1.CapabilityStatement = capStat
 
 	// delete endpointInfos
 

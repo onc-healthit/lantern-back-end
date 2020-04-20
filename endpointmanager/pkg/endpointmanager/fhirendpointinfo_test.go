@@ -104,12 +104,17 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.Errors = endpointInfo1.Errors
 
-	// @TODO Currently commented out while figuring out Capability Parsing
-	// endpointInfo2.CapabilityStatement = nil
-	// if endpointInfo1.Equal(endpointInfo2) {
-	// 	t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
-	// }
-	// endpointInfo2.CapabilityStatement = endpointInfo1.CapabilityStatement
+	endpointInfo2.CapabilityStatement = nil
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
+	}
+	endpointInfo2.CapabilityStatement = endpointInfo1.CapabilityStatement
+
+	endpointInfo1.CapabilityStatement = nil
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
+	}
+	endpointInfo1.CapabilityStatement = endpointInfo2.CapabilityStatement
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

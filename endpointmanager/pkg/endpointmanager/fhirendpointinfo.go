@@ -1,7 +1,6 @@
 package endpointmanager
 
 import (
-	"fmt"
 	"sort"
 	"time"
 
@@ -55,11 +54,12 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	// don't care about order
 	a := make([]string, len(e.MIMETypes))
 	b := make([]string, len(e2.MIMETypes))
+	copy(a, e.MIMETypes)
+	copy(b, e2.MIMETypes)
 	sort.Strings(a)
 	sort.Strings(b)
 	for i, v := range a {
 		if v != b[i] {
-			fmt.Printf("%d: %s  -  %s\n", i, v, b[i])
 			return false
 		}
 	}

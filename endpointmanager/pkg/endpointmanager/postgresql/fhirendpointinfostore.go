@@ -75,6 +75,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	return &endpointInfo, err
 }
 
+// GetFHIREndpointInfoUsingFHIREndpointID gets the FHIREndpointInfo object that corresponds to the FHIREndpoint with the given ID.
 func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
@@ -99,67 +100,6 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.fhir_endpoint_id = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
-
-	err := row.Scan(
-		&endpointInfo.ID,
-		&fhirEndpointIDNullable,
-		&healthitProductIDNullable,
-		&endpointInfo.TLSVersion,
-		pq.Array(&endpointInfo.MIMETypes),
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Errors,
-		&endpointInfo.Vendor,
-		&capabilityStatementJSON,
-		&validationJSON,
-		&endpointInfo.CreatedAt,
-		&endpointInfo.UpdatedAt)
-	if err != nil {
-		return nil, err
-	}
-
-	if capabilityStatementJSON != nil {
-		endpointInfo.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
-	endpointInfo.FHIREndpointID = ints[0]
-	endpointInfo.HealthITProductID = ints[1]
-
-	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
-
-	return &endpointInfo, err
-}
-
-// TODO: Maybe don't need
-// GetFHIREndpointInfoUsingURL gets a FHIREndpointInfo from the database using the given url as a key.
-// If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
-	var endpointInfo endpointmanager.FHIREndpointInfo
-	var capabilityStatementJSON []byte
-	var validationJSON []byte
-	var fhirEndpointIDNullable sql.NullInt64
-	var healthitProductIDNullable sql.NullInt64
-
-	sqlStatement := `
-	SELECT
-		fhir_endpoints_info.id,
-		fhir_endpoints_info.fhir_endpoint_id,
-		fhir_endpoints_info.healthit_product_id,
-		fhir_endpoints_info.tls_version,
-		fhir_endpoints_info.mime_types,
-		fhir_endpoints_info.http_response,
-		fhir_endpoints_info.errors,
-		fhir_endpoints_info.vendor,
-		fhir_endpoints_info.capability_statement,
-		fhir_endpoints_info.validation,
-		fhir_endpoints_info.created_at,
-		fhir_endpoints_info.updated_at
-	FROM fhir_endpoints_info, fhir_endpoints WHERE fhir_endpoints.url=$1 AND fhir_endpoints.id = fhir_endpoints_info.fhir_endpoint_id`
-
-	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
 	err := row.Scan(
 		&endpointInfo.ID,
