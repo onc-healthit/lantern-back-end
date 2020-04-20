@@ -6,6 +6,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/pkg/errors"
 )
 
@@ -30,7 +31,7 @@ var fluffWords = []string{
 // An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
 // In this future, this may be changed to using a vendor table and linking the endpoint entry to
 // the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, store endpointmanager.HealthITProductStore) error {
+func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, store *postgresql.Store) error {
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -45,7 +46,7 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 	return nil
 }
 
-func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store endpointmanager.HealthITProductStore) (string, error) {
+func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (string, error) {
 	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
 	if err != nil {
 		return "", errors.Wrap(err, "error retrieving vendor list from database")

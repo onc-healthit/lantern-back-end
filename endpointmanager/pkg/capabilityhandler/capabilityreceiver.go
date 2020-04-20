@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/pkg/errors"
@@ -131,28 +132,24 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	}
 
-	hitpStore, ok := (*args)["hitpStore"].(endpointmanager.HealthITProductStore)
+	store, ok := (*args)["store"].(*postgresql.Store)
 	if !ok {
-		return fmt.Errorf("unable to cast health it store from arguments")
-	}
-	epStore, ok := (*args)["epStore"].(endpointmanager.FHIREndpointStore)
-	if !ok {
-		return fmt.Errorf("unable to cast fhir endpoint store from argument")
+		return fmt.Errorf("unable to cast postgresql store from arguments")
 	}
 	ctx, ok := (*args)["ctx"].(context.Context)
 	if !ok {
 		return fmt.Errorf("unable to cast context from arguments")
 	}
 
-	existingEndpt, err = epStore.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
+	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, hitpStore)
+		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
 		}
-		err = epStore.AddFHIREndpoint(ctx, fhirEndpoint)
+		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
 		if err != nil {
 			return err
 		}
@@ -166,11 +163,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
 		existingEndpt.Validation = fhirEndpoint.Validation
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, hitpStore)
+		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
 		if err != nil {
 			return err
 		}
-		err = epStore.UpdateFHIREndpoint(ctx, existingEndpt)
+		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
@@ -182,15 +179,13 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
 // statements from it. It then adds the capability statements to the given store.
 func ReceiveCapabilityStatements(ctx context.Context,
-	epStore endpointmanager.FHIREndpointStore,
-	hitpStore endpointmanager.HealthITProductStore,
+	store *postgresql.Store,
 	messageQueue lanternmq.MessageQueue,
 	channelID lanternmq.ChannelID,
 	qName string) error {
 
 	args := make(map[string]interface{})
-	args["hitpStore"] = hitpStore
-	args["epStore"] = epStore
+	args["store"] = store
 	args["ctx"] = ctx
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)

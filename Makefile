@@ -33,6 +33,13 @@ clean_remote:
 populatedb:
 	exec ./scripts/populatedb.sh
 
+lint:
+	cd ./capabilityquerier; golangci-lint run -E gofmt
+	cd ./networkstatsquerier; golangci-lint run -E gofmt
+	cd ./lanternmq; golangci-lint run -E gofmt
+	cd ./fhir; golangci-lint run -E gofmt
+	cd ./endpointmanager; golangci-lint run -E gofmt
+
 csv_export:
 	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_pg_prometheus_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
 

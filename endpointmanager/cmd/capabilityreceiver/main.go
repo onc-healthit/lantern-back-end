@@ -36,6 +36,6 @@ func main() {
 
 	ctx := context.Background()
 
-	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, messageQueue, channelID, qName)
+	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, messageQueue, channelID, qName)
 	failOnError(err)
 }

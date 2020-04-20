@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 
 	"github.com/pkg/errors"
@@ -12,7 +13,7 @@ import (
 )
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
-func AddEndpointData(ctx context.Context, store endpointmanager.FHIREndpointStore, endpoints *fetcher.ListOfEndpoints) error {
+func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fetcher.ListOfEndpoints) error {
 	for i, endpoint := range endpoints.Entries {
 		select {
 		case <-ctx.Done():
@@ -32,7 +33,7 @@ func AddEndpointData(ctx context.Context, store endpointmanager.FHIREndpointStor
 
 // saveEndpointData formats the endpoint as a FHIREndpoint and then checks to see if it's in the database.
 // If it is, ignore it, if it isn't, add it to the database.
-func saveEndpointData(ctx context.Context, store endpointmanager.FHIREndpointStore, endpoint *fetcher.EndpointEntry) error {
+func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fetcher.EndpointEntry) error {
 	fhirEndpoint, err := formatToFHIREndpt(endpoint)
 	if err != nil {
 		return err

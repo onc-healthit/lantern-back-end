@@ -1,7 +1,6 @@
 package endpointmanager
 
 import (
-	"context"
 	"sort"
 	"time"
 
@@ -30,20 +29,6 @@ type FHIREndpoint struct {
 	Validation            map[string]interface{}
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
-}
-
-// FHIREndpointStore is the interface for interacting with the storage layer that holds
-// FHIR endpoint objects.
-type FHIREndpointStore interface {
-	GetFHIREndpoint(context.Context, int) (*FHIREndpoint, error)
-	GetFHIREndpointUsingURL(context.Context, string) (*FHIREndpoint, error)
-	GetAllFHIREndpointOrgNames(ctx context.Context) ([]FHIREndpoint, error)
-
-	AddFHIREndpoint(context.Context, *FHIREndpoint) error
-	UpdateFHIREndpoint(context.Context, *FHIREndpoint) error
-	DeleteFHIREndpoint(context.Context, *FHIREndpoint) error
-
-	Close()
 }
 
 // Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
