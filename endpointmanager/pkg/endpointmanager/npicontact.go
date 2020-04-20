@@ -6,23 +6,23 @@ import (
 
 // NPIContact represents the digitial contact information for an NPI Contact provided by the NPPES database
 type NPIContact struct {
-	ID                      int
-	NPI_ID								string
-	Endpoint_Type						string
-	Endpoint_Type_Description			string
-	Endpoint							string
-	Valid_URL							bool
-	Affiliation							string
-	Endpoint_Description				string
-	Affiliation_Legal_Business_Name		string
+	ID                                         int
+	NPI_ID                                     string
+	Endpoint_Type                              string
+	Endpoint_Type_Description                  string
+	Endpoint                                   string
+	Valid_URL                                  bool
+	Affiliation                                string
+	Endpoint_Description                       string
+	Affiliation_Legal_Business_Name            string
 	Normalized_Affiliation_Legal_Business_Name string
-	Use_Code							string
-	Use_Description						string
-	Other_Use_Description				string
-	Content_Type						string
-	Content_Description					string
-	Other_Content_Description			string
-	Location                			*Location
+	Use_Code                                   string
+	Use_Description                            string
+	Other_Use_Description                      string
+	Content_Type                               string
+	Content_Description                        string
+	Other_Content_Description                  string
+	Location                                   *Location
 }
 
 // NPIContactStore is the interface for interacting with the storage layer that holds
@@ -37,4 +37,3 @@ type NPIContactStore interface {
 	DeleteNPIContact(context.Context, *NPIContact) error
 	Close()
 }
-

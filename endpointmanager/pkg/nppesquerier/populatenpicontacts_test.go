@@ -57,7 +57,7 @@ func Test_ParseNPIContactdataLine(t *testing.T) {
 	}
 	// Use_Description
 	if data.Use_Description != "Test_Use_Description" {
-		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", data. Use_Description)
+		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", data.Use_Description)
 	}
 	// Other_Use_Description
 	if data.Other_Use_Description != "Test_Other_Use_Description" {
@@ -170,7 +170,7 @@ func Test_BuildNPIContactFromNPICsvLine(t *testing.T) {
 	}
 	// Use_Description
 	if npi_contact.Use_Description != "Test_Use_Description" {
-		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", npi_contact. Use_Description)
+		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", npi_contact.Use_Description)
 	}
 	// Other_Use_Description
 	if npi_contact.Other_Use_Description != "Test_Other_Use_Description" {
@@ -196,7 +196,7 @@ func Test_BuildNPIContactFromNPICsvLine(t *testing.T) {
 	if npi_contact.Location.Address2 != "Test_Address_Line_Two" {
 		t.Errorf("Expected Affiliation_Address_Line_Two to be %s, got %s", "", npi_contact.Location.Address2)
 	}
-	// Location.City 
+	// Location.City
 	if npi_contact.Location.City != "Salisbury" {
 		t.Errorf("Expected Affiliation_Address_City to be %s, got %s", "Salisbury", npi_contact.Location.City)
 	}

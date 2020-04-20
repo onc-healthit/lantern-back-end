@@ -15,7 +15,6 @@ var addNPIContactStatement *sql.Stmt
 var updateNPIContactStatement *sql.Stmt
 var updateNPIContactByNPIIDStatement *sql.Stmt
 var deleteNPIContactStatement *sql.Stmt
-var linkNPIContactToFHIREndpointStatement *sql.Stmt
 
 // GetNPIContactByNPIID gets a NPIContact from the database using the NPI id as a key.
 // If the NPIContact does not exist in the database, sql.ErrNoRows will be returned.
