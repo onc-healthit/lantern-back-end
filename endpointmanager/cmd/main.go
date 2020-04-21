@@ -35,12 +35,12 @@ func getEnptsAndSend(
 		listOfEndpoints, err := store.GetAllFHIREndpoints(ctx)
 		failOnError(err)
 
-		for i, endpt := range *listOfEndpoints {
+		for i, endpt := range listOfEndpoints {
 			if i%10 == 0 {
-				log.Infof("Processed %d/%d messages", i, len(*listOfEndpoints))
+				log.Infof("Processed %d/%d messages", i, len(listOfEndpoints))
 			}
 
-			msgBytes, err := json.Marshal(endpt)
+			msgBytes, err := json.Marshal(endpt.URL)
 			failOnError(err)
 			msgStr := string(msgBytes)
 			err = accessqueue.SendToQueue(ctx, msgStr, mq, channelID, qName)

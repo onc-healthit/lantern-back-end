@@ -17,25 +17,11 @@ var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt
 
 // GetAllFHIREndpoints gets all rows in the fhir_endpoints table
-func (s *Store) GetAllFHIREndpoints(ctx context.Context) (*[]endpointmanager.FHIREndpoint, error) {
+func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
 	SELECT
 		id,
-		url,
-		tls_version,
-		mime_types,
-		http_response,
-		errors,
-		organization_name,
-		fhir_version,
-		authorization_standard,
-		vendor,
-		list_source,
-		location,
-		capability_statement,
-		validation,
-		created_at,
-		updated_at
+		url
 	FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
@@ -46,49 +32,15 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) (*[]endpointmanager.FHI
 	defer rows.Close()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
-		var locationJSON []byte
-		var capabilityStatementJSON []byte
-		var validationJSON []byte
 		err = rows.Scan(
 			&endpoint.ID,
-			&endpoint.URL,
-			&endpoint.TLSVersion,
-			pq.Array(&endpoint.MIMETypes),
-			&endpoint.HTTPResponse,
-			&endpoint.Errors,
-			&endpoint.OrganizationName,
-			&endpoint.FHIRVersion,
-			&endpoint.AuthorizationStandard,
-			&endpoint.Vendor,
-			&endpoint.ListSource,
-			&locationJSON,
-			&capabilityStatementJSON,
-			&validationJSON,
-			&endpoint.CreatedAt,
-			&endpoint.UpdatedAt)
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(locationJSON, &endpoint.Location)
-		if err != nil {
-			return nil, err
-		}
-
-		if capabilityStatementJSON != nil {
-			endpoint.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		err = json.Unmarshal(validationJSON, &endpoint.Validation)
+			&endpoint.URL)
 		if err != nil {
 			return nil, err
 		}
 		endpoints = append(endpoints, endpoint)
 	}
-	return &endpoints, nil
+	return endpoints, nil
 }
 
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.

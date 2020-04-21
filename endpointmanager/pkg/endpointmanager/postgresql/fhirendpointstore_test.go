@@ -96,7 +96,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
 	}
 	eLen := 2
-	if len(*endpts) != eLen {
+	if len(endpts) != eLen {
 		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
 	}
 
