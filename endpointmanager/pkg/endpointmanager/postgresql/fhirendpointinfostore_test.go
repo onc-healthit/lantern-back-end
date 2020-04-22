@@ -143,17 +143,19 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	e1.CapabilityStatement = capStat
 
-	// delete endpointInfos
+	// check cascade delete
 
-	err = store.DeleteFHIREndpointInfo(ctx, endpointInfo1)
+	err = store.DeleteFHIREndpoint(ctx, endpoint1) // delete the endpoint
 	if err != nil {
 		t.Errorf("Error deleting fhir endpointInfo: %s", err.Error())
 	}
 
-	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the entry
+	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the corresponding endpoint info enetry
 	if err == nil {
 		t.Errorf("endpointInfo1 was not deleted: %s", err.Error())
 	}
+
+	// delete endpointInfos
 
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we haven't deleted all entries
 	if err != nil {
@@ -163,5 +165,10 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	err = store.DeleteFHIREndpointInfo(ctx, endpointInfo2)
 	if err != nil {
 		t.Errorf("Error deleting fhir endpointInfo: %s", err.Error())
+	}
+
+	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we deleted the entry
+	if err == nil {
+		t.Errorf("error retrieving endpointInfo2 after deleting endpointInfo1: %s", err.Error())
 	}
 }
