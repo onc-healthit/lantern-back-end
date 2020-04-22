@@ -92,7 +92,7 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	errs := make(chan error)
-	go GetEnptsAndSend(ctx, wg, queueName, 1, store, mq, chID, errs)
+	go GetEnptsAndSend(ctx, &wg, queueName, 1, store, mq, chID, errs)
 
 	// need to pause to ensure all messages are on the queue before we count them
 	time.Sleep(10 * time.Second)
