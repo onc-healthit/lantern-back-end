@@ -20,9 +20,9 @@ func failOnError(err error) {
 	}
 }
 
-// getEndptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
+// GetEndptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
 // it continues to repeat this action every time the given interval period has passed
-func getEnptsAndSend(
+func GetEnptsAndSend(
 	ctx context.Context,
 	wg sync.WaitGroup,
 	qName string,
@@ -89,11 +89,11 @@ func main() {
 	ctx := context.Background()
 	wg.Add(1)
 	capInterval := viper.GetInt("capquery_qryintvl")
-	go getEnptsAndSend(ctx, wg, capQName, capInterval, store, &mq, &channelID, errs)
+	go GetEnptsAndSend(ctx, wg, capQName, capInterval, store, &mq, &channelID, errs)
 
 	wg.Add(1)
 	netInterval := viper.GetInt("endptqry_query_interval")
-	go getEnptsAndSend(ctx, wg, netQName, netInterval, store, &mq, &channelID, errs)
+	go GetEnptsAndSend(ctx, wg, netQName, netInterval, store, &mq, &channelID, errs)
 
 	for elem := range errs {
 		log.Warn(elem)

@@ -140,5 +140,31 @@ func SetupConfigForTests() error {
 		panic("Test database and dev/prod database must be different. Test database: " + viper.GetString("dbname") + ". Prod/Dev dataabse: " + prevDbName)
 	}
 
+	prevQName := viper.GetString("capquery_qname")
+
+	viper.SetEnvPrefix("lantern_test")
+	viper.AutomaticEnv()
+
+	err = viper.BindEnv("quser")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("qpassword")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("qname")
+	if err != nil {
+		return err
+	}
+
+	viper.SetDefault("quser", "capabilityquerier")
+	viper.SetDefault("qpassword", "capabilityquerier")
+	viper.SetDefault("qname", "test-queue")
+
+	if prevQName == viper.GetString("qname") {
+		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
+	}
+
 	return nil
 }
