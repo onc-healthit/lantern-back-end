@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -15,6 +16,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
 var chplAPICertProdListPath string = "/collections/certified_products"
@@ -54,7 +56,7 @@ type chplCertifiedProduct struct {
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
 // within the given context 'ctx'.
-func GetCHPLProducts(ctx context.Context, store endpointmanager.HealthITProductStore, cli *http.Client) error {
+func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Client) error {
 	log.Debug("requesting products from CHPL")
 	prodJSON, err := getProductJSON(ctx, cli)
 	if err != nil {
@@ -189,7 +191,7 @@ func getAPIURL(apiDocStr string) (string, error) {
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
 // associated with the most recent certifition edition, most recent certification date, or most criteria is the
 // one that is stored.
-func persistProducts(ctx context.Context, store endpointmanager.HealthITProductStore, prodList *chplCertifiedProductList) error {
+func persistProducts(ctx context.Context, store *postgresql.Store, prodList *chplCertifiedProductList) error {
 	for i, prod := range prodList.Results {
 
 		select {
@@ -216,7 +218,7 @@ func persistProducts(ctx context.Context, store endpointmanager.HealthITProductS
 // exist, determine if it makes sense to update the product (certified to more recent edition, certified at a
 // later date, has more certification criteria), or not.
 func persistProduct(ctx context.Context,
-	store endpointmanager.HealthITProductStore,
+	store *postgresql.Store,
 	prod *chplCertifiedProduct) error {
 
 	newDbProd, err := parseHITProd(prod)
@@ -295,5 +297,5 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	}
 
 	// cert dates are the same. unknown update precedence. throw error and don't perform update.
-	return false, errors.New("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update")
+	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
 }

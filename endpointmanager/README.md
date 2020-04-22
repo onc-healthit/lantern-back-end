@@ -13,6 +13,22 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
 
+* **LANTERN_DBUSER_READONLY**: The database user that the application will use to read from the database.
+
+  Default value: none. This value is not used within the code. Suggested value: 'lantern_ro'
+
+* **LANTERN_DBPASSWORD_READONLY**: The password for accessing the database as user LANTERN_DBUSER_READONLY.
+
+  Default value: none. This value is not used within the code. Suggested value: 'postgrespassword_ro'
+
+* **LANTERN_DBUSER_READWRITE**: The database user that the application will use to read or write to the database.
+
+  Default value: none. This value is not used within the code. Suggested value: 'lantern_rw'
+
+* **LANTERN_DBPASSWORD_READWRITE**: The password for accessing the database as user LANTERN_DBUSER_READWRITE.
+
+  Default value: none. This value is not used within the code. Suggested value: 'postgrespassword_rw'
+
 **These variables can use the default values *in development*. These should be set on the production system.**
 
 * **LANTERN_DBHOST**: The hostname where the database is hosted.

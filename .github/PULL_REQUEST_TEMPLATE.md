@@ -11,8 +11,6 @@ Pull requests into this repository require the following checks to be completed 
 - [ ] Code review has been performed.
   - Code diff has been done and checked to ensure only expected code is being committed.
   - A linter for the language has been run.
-- [ ] `make update_mods branch=<your_PR_branch>` has been run.
-  - The resulting go.mod and go.sum files are the only files in the final commit before the PR is merged
 
 **Primary Reviewer:**
 
@@ -40,4 +38,8 @@ Pull requests into this repository require the following checks to be completed 
 
 **Merger:**
 
-Prior to merging, ensure that all checks have been completed. Delete the branch after the merge is complete.
+Prior to merging, ensure that all checks have been completed. Delete the branch after the merge
+is complete.
+
+Create a new branch `<branch name>_gomodupdate`. Run `make update_mods` to update the `go.mod`
+and `go.sum` files to point to master. Create a PR. Require one sanity check reviewer.
