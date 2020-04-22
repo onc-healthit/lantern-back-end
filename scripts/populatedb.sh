@@ -3,16 +3,16 @@
 set -e
 
 # get endpoint data
-# cd endpointmanager/cmd/endpointpopulator
-# go run main.go ../../../networkstatsquerier/resources/EndpointSources.json CareEvolution
-# go run main.go ../../../networkstatsquerier/resources/CernerEndpointSources.json Cerner
-# go run main.go ../../../networkstatsquerier/resources/EpicEndpointSources.json Epic
-# cd ../../..
+cd endpointmanager/cmd/endpointpopulator
+go run main.go ../../../networkstatsquerier/resources/EndpointSources.json CareEvolution
+go run main.go ../../../networkstatsquerier/resources/CernerEndpointSources.json Cerner
+go run main.go ../../../networkstatsquerier/resources/EpicEndpointSources.json Epic
+cd ../../..
 
-# # get CHPL info into db
-# cd endpointmanager/cmd/chplquerier
-# go run main.go
-# cd ../../..
+# get CHPL info into db
+cd endpointmanager/cmd/chplquerier
+go run main.go
+cd ../../..
 
 # get NPPES pfile data into db
 echo "Do you have an NPPES pfile downloaded (http://download.cms.gov/nppes/NPI_Files.html) and do you want to load it into the database? (y/Y to continue. anything else to stop)"
