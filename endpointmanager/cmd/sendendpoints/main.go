@@ -85,15 +85,15 @@ func main() {
 	errs := make(chan error)
 
 	// Infinite query loop
-	var wg *sync.WaitGroup
+	var wg sync.WaitGroup
 	ctx := context.Background()
 	wg.Add(1)
 	capInterval := viper.GetInt("capquery_qryintvl")
-	go GetEnptsAndSend(ctx, wg, capQName, capInterval, store, &mq, &channelID, errs)
+	go GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &channelID, errs)
 
 	wg.Add(1)
 	netInterval := viper.GetInt("endptqry_query_interval")
-	go GetEnptsAndSend(ctx, wg, netQName, netInterval, store, &mq, &channelID, errs)
+	go GetEnptsAndSend(ctx, &wg, netQName, netInterval, store, &mq, &channelID, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
