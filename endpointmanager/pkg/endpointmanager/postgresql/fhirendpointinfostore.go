@@ -234,7 +234,7 @@ func getRegularInts(nullableInts []sql.NullInt64) []int {
 	for i, nullInt := range nullableInts {
 		var regInt int
 
-		if nullInt.Valid == false {
+		if !nullInt.Valid {
 			regInt = 0
 		} else {
 			regInt = int(nullInt.Int64)
