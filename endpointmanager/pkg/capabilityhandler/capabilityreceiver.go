@@ -122,7 +122,6 @@ func formatMessage(message []byte) (string, *endpointmanager.FHIREndpointInfo, e
 // saveMsgInDB formats the message data for the database and either adds a new entry to the database or
 // updates a current one
 func saveMsgInDB(message []byte, args *map[string]interface{}) error {
-	fmt.Print("In saveMsgInDB")
 	var err error
 	var url string
 	var fhirEndpoint *endpointmanager.FHIREndpointInfo
@@ -150,8 +149,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	fhirEndpoint.FHIREndpointID = endptSrc.ID
 	existingEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endptSrc.ID)
-
-	fmt.Printf("fhir endpoint info health it product id: %d\n", fhirEndpoint.HealthITProductID)
 
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
