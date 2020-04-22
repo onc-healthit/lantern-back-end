@@ -20,11 +20,11 @@ func failOnError(err error) {
 	}
 }
 
-// GetEndptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
+// GetEnptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
 // it continues to repeat this action every time the given interval period has passed
 func GetEnptsAndSend(
 	ctx context.Context,
-	wg sync.WaitGroup,
+	wg *sync.WaitGroup,
 	qName string,
 	qInterval int,
 	store *postgresql.Store,
@@ -85,7 +85,7 @@ func main() {
 	errs := make(chan error)
 
 	// Infinite query loop
-	var wg sync.WaitGroup
+	var wg *sync.WaitGroup
 	ctx := context.Background()
 	wg.Add(1)
 	capInterval := viper.GetInt("capquery_qryintvl")
