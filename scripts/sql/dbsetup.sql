@@ -28,6 +28,19 @@ CREATE TABLE npi_organizations (
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE vendors (
+    id                      SERIAL PRIMARY KEY,
+    name                    VARCHAR(500) UNIQUE,
+    developer_code          VARCHAR(500) UNIQUE,
+    url                     VARCHAR(500),
+    location                JSONB,
+    status                  VARCHAR(500),
+    last_modified_in_chpl   DATE,
+    chpl_id                 INTEGER UNIQUE,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
@@ -82,6 +95,11 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE TRIGGER set_timestamp_npi_organization
 BEFORE UPDATE ON npi_organizations
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_vendors
+BEFORE UPDATE ON vendors
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
