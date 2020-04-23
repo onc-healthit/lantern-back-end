@@ -4,8 +4,8 @@ go 1.14
 
 require (
 	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200422202312-1ceefd232e16
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200422202312-1ceefd232e16
-	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200422202312-1ceefd232e16
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200423141326-16884552d2ed
+	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200423141326-16884552d2ed
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/common v0.9.1
 	github.com/sirupsen/logrus v1.4.2
