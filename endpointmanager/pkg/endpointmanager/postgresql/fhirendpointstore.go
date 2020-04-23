@@ -16,7 +16,7 @@ var addFHIREndpointStatement *sql.Stmt
 var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt
 
-// GetAllFHIREndpoints gets all rows in the fhir_endpoints table
+// GetAllFHIREndpoints gets the id and url from every row in the fhir_endpoints table
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
 	SELECT
