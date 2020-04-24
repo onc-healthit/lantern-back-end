@@ -19,7 +19,7 @@ type FHIREndpointInfo struct {
 	MIMETypes           []string
 	HTTPResponse        int
 	Errors              string
-	Vendor              string
+	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	Validation          map[string]interface{}
 	CreatedAt           time.Time
@@ -70,7 +70,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	if e.Errors != e2.Errors {
 		return false
 	}
-	if e.Vendor != e2.Vendor {
+	if e.VendorID != e2.VendorID {
 		return false
 	}
 	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal

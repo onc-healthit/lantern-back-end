@@ -202,27 +202,6 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 	return hitps, nil
 }
 
-// GetHealthITProductDevelopers returns a list of all of the developers associated with the health IT products.
-func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, error) {
-	var developers []string
-	var developer string
-	sqlStatement := "SELECT DISTINCT developer FROM healthit_products"
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		err = rows.Scan(&developer)
-		if err != nil {
-			return nil, err
-		}
-		developers = append(developers, developer)
-	}
-
-	return developers, nil
-}
-
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	locationJSON, err := json.Marshal(hitp.Location)

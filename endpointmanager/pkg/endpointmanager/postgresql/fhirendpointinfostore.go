@@ -24,17 +24,18 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var validationJSON []byte
 	var fhirEndpointIDNullable sql.NullInt64
 	var healthitProductIDNullable sql.NullInt64
+	var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
 		fhir_endpoint_id,
 		healthit_product_id,
+		vendor_id,
 		tls_version,
 		mime_types,
 		http_response,
 		errors,
-		vendor,
 		capability_statement,
 		validation,
 		created_at,
@@ -46,11 +47,11 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&endpointInfo.ID,
 		&fhirEndpointIDNullable,
 		&healthitProductIDNullable,
+		&vendorIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
 		&endpointInfo.Errors,
-		&endpointInfo.Vendor,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpointInfo.CreatedAt,
@@ -66,9 +67,10 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
+	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable, vendorIDNullable})
 	endpointInfo.FHIREndpointID = ints[0]
 	endpointInfo.HealthITProductID = ints[1]
+	endpointInfo.VendorID = ints[2]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
@@ -82,17 +84,18 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 	var validationJSON []byte
 	var fhirEndpointIDNullable sql.NullInt64
 	var healthitProductIDNullable sql.NullInt64
+	var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
 		fhir_endpoint_id,
 		healthit_product_id,
+		vendor_id,
 		tls_version,
 		mime_types,
 		http_response,
 		errors,
-		vendor,
 		capability_statement,
 		validation,
 		created_at,
@@ -105,11 +108,11 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 		&endpointInfo.ID,
 		&fhirEndpointIDNullable,
 		&healthitProductIDNullable,
+		&vendorIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&endpointInfo.HTTPResponse,
 		&endpointInfo.Errors,
-		&endpointInfo.Vendor,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpointInfo.CreatedAt,
@@ -125,9 +128,10 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
+	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable, vendorIDNullable})
 	endpointInfo.FHIREndpointID = ints[0]
 	endpointInfo.HealthITProductID = ints[1]
+	endpointInfo.VendorID = ints[2]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
@@ -151,16 +155,16 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
-	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID, e.VendorID})
 
 	row := addFHIREndpointInfoStatement.QueryRowContext(ctx,
 		nullableInts[0],
 		nullableInts[1],
+		nullableInts[2],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
 		e.Errors,
-		e.Vendor,
 		capabilityStatementJSON,
 		validationJSON)
 
@@ -186,16 +190,16 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
-	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID, e.VendorID})
 
 	_, err = updateFHIREndpointInfoStatement.ExecContext(ctx,
 		nullableInts[0],
 		nullableInts[1],
+		nullableInts[2],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
 		e.Errors,
-		e.Vendor,
 		capabilityStatementJSON,
 		validationJSON,
 		e.ID)
@@ -250,11 +254,11 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		INSERT INTO fhir_endpoints_info (
 			fhir_endpoint_id,
 			healthit_product_id,
+			vendor_id,
 			tls_version,
 			mime_types,
 			http_response,
 			errors,
-			vendor,
 			capability_statement,
 			validation)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -267,11 +271,11 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		SET 
 		    fhir_endpoint_id = $1,
 		    healthit_product_id = $2,
-			tls_version = $3,
-			mime_types = $4,
-			http_response = $5,
-			errors = $6,
-			vendor = $7,
+			vendor_id = $3,
+			tls_version = $4,
+			mime_types = $5,
+			http_response = $6,
+			errors = $7,
 			capability_statement = $8,
 			validation = $9
 		WHERE id = $10`)

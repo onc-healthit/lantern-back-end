@@ -98,6 +98,27 @@ func (s *Store) GetVendorUsingName(ctx context.Context, name string) (*endpointm
 	return &vendor, err
 }
 
+// GetVendorNames returns a list of all of the vendor names
+func (s *Store) GetVendorNames(ctx context.Context) ([]string, error) {
+	var developers []string
+	var developer string
+	sqlStatement := "SELECT name FROM vendors"
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&developer)
+		if err != nil {
+			return nil, err
+		}
+		developers = append(developers, developer)
+	}
+
+	return developers, nil
+}
+
 // AddVendor adds the Vendor to the database.
 func (s *Store) AddVendor(ctx context.Context, v *endpointmanager.Vendor) error {
 	var err error

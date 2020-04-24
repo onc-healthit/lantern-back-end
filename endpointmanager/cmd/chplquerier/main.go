@@ -34,6 +34,9 @@ func main() {
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
-	err = chplquerier.GetCHPLProducts(ctx, store, client)
+
+	err = chplquerier.GetVendors(ctx, store, client)
 	failOnError(err)
+	// err = chplquerier.GetCHPLProducts(ctx, store, client)
+	// failOnError(err)
 }
