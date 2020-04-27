@@ -49,7 +49,6 @@ CREATE TABLE npi_contacts (
 	affiliation   VARCHAR(500),
 	endpoint_description   VARCHAR(500),
 	affiliation_legal_business_name   VARCHAR(500),
-	normalized_affiliation_legal_business_name   VARCHAR(500),
 	use_code   VARCHAR(500),
 	use_description   VARCHAR(500),
 	other_use_description   VARCHAR(500),

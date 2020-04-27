@@ -21,19 +21,19 @@ func Test_ParseNPIContactdataLine(t *testing.T) {
 	}
 
 	// This is the 3rd line in the test file, empty entries have been populated with test strings for more realistic testing
-	// "1427051648","OTHERS","Other URL","Salisbury","N","Test_Endpoint_Description","Test_Affiliation_Legal_Business_Name","Test_Use_Code","Test_Use_Description","Test_Other_Use_Description","Test_Content_Type","Test_Content_Description","Test_Other_Content_Description","30454 E Rustic Drive","Test_Address_Line_Two","Salisbury","MD","US","21804"
+	// "1427051648","OTHERS","Other URL","Salisbury","N","Test_EndpointDescription","Test_AffiliationLegalBusinessName","Test_UseCode","Test_UseDescription","Test_OtherUseDescription","Test_ContentType","Test_ContentDescription","Test_OtherContentDescription","30454 E Rustic Drive","Test_Address_Line_Two","Salisbury","MD","US","21804"
 	data := parseNPIContactdataLine(lines[2])
 	// NPI
 	if data.NPI != "1427051648" {
 		t.Errorf("Expected NPI to be %s, got %s", "1427051648", data.NPI)
 	}
-	// Endpoint_Type
-	if data.Endpoint_Type != "OTHERS" {
-		t.Errorf("Expected Endpoint_Type to be %s, got %s", "OTHERS", data.Endpoint_Type)
+	// EndpointType
+	if data.EndpointType != "OTHERS" {
+		t.Errorf("Expected EndpointType to be %s, got %s", "OTHERS", data.EndpointType)
 	}
-	// Endpoint_Type_Description
-	if data.Endpoint_Type_Description != "Other URL" {
-		t.Errorf("Expected Endpoint_Type_Description to be %s, got %s", "Other URL", data.Endpoint_Type_Description)
+	// EndpointTypeDescription
+	if data.EndpointTypeDescription != "Other URL" {
+		t.Errorf("Expected EndpointTypeDescription to be %s, got %s", "Other URL", data.EndpointTypeDescription)
 	}
 	// Endpoint
 	if data.Endpoint != "Salisbury" {
@@ -43,37 +43,37 @@ func Test_ParseNPIContactdataLine(t *testing.T) {
 	if data.Affiliation != "N" {
 		t.Errorf("Expected Affiliation to be %s, got %s", "N", data.Affiliation)
 	}
-	// Endpoint_Description
-	if data.Endpoint_Description != "Test_Endpoint_Description" {
-		t.Errorf("Expected Endpoint_Description to be %s, got %s", "Test_Endpoint_Description", data.Endpoint_Description)
+	// EndpointDescription
+	if data.EndpointDescription != "Test_EndpointDescription" {
+		t.Errorf("Expected EndpointDescription to be %s, got %s", "Test_EndpointDescription", data.EndpointDescription)
 	}
-	// Affiliation_Legal_Business_Name
-	if data.Affiliation_Legal_Business_Name != "Test_Affiliation_Legal_Business_Name" {
-		t.Errorf("Expected Affiliation_Legal_Business_Name to be %s, got %s", "Test_Affiliation_Legal_Business_Name", data.Affiliation_Legal_Business_Name)
+	// AffiliationLegalBusinessName
+	if data.AffiliationLegalBusinessName != "Test_AffiliationLegalBusinessName" {
+		t.Errorf("Expected AffiliationLegalBusinessName to be %s, got %s", "Test_AffiliationLegalBusinessName", data.AffiliationLegalBusinessName)
 	}
-	// Use_Code
-	if data.Use_Code != "Test_Use_Code" {
-		t.Errorf("Expected Use_Code to be %s, got %s", "Test_Use_Code", data.Use_Code)
+	// UseCode
+	if data.UseCode != "Test_UseCode" {
+		t.Errorf("Expected UseCode to be %s, got %s", "Test_UseCode", data.UseCode)
 	}
-	// Use_Description
-	if data.Use_Description != "Test_Use_Description" {
-		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", data.Use_Description)
+	// UseDescription
+	if data.UseDescription != "Test_UseDescription" {
+		t.Errorf("Expected UseDescription to be %s, got %s", "Test_UseDescription", data.UseDescription)
 	}
-	// Other_Use_Description
-	if data.Other_Use_Description != "Test_Other_Use_Description" {
-		t.Errorf("Expected Other_Use_Description to be %s, got %s", "Test_Other_Use_Description", data.Other_Use_Description)
+	// OtherUseDescription
+	if data.OtherUseDescription != "Test_OtherUseDescription" {
+		t.Errorf("Expected OtherUseDescription to be %s, got %s", "Test_OtherUseDescription", data.OtherUseDescription)
 	}
-	// Content_Type
-	if data.Content_Type != "Test_Content_Type" {
-		t.Errorf("Expected Content_Type to be %s, got %s", "Test_Content_Type", data.Content_Type)
+	// ContentType
+	if data.ContentType != "Test_ContentType" {
+		t.Errorf("Expected ContentType to be %s, got %s", "Test_ContentType", data.ContentType)
 	}
-	// Content_Description
-	if data.Content_Description != "Test_Content_Description" {
-		t.Errorf("Expected Content_Description to be %s, got %s", "Test_Content_Description", data.Content_Description)
+	// ContentDescription
+	if data.ContentDescription != "Test_ContentDescription" {
+		t.Errorf("Expected ContentDescription to be %s, got %s", "Test_ContentDescription", data.ContentDescription)
 	}
-	// Other_Content_Description
-	if data.Other_Content_Description != "Test_Other_Content_Description" {
-		t.Errorf("Expected Other_Content_Description to be %s, got %s", "Test_Other_Content_Description", data.Other_Content_Description)
+	// OtherContentDescription
+	if data.OtherContentDescription != "Test_OtherContentDescription" {
+		t.Errorf("Expected OtherContentDescription to be %s, got %s", "Test_OtherContentDescription", data.OtherContentDescription)
 	}
 	// Affiliation_Address_Line_One
 	if data.Affiliation_Address_Line_One != "30454 E Rustic Drive" {
@@ -140,13 +140,13 @@ func Test_BuildNPIContactFromNPICsvLine(t *testing.T) {
 	if npi_contact.NPI_ID != "1427051648" {
 		t.Errorf("Expected NPI_ID to be %s, got %s", "1427051648", npi_contact.NPI_ID)
 	}
-	// Endpoint_Type
-	if npi_contact.Endpoint_Type != "OTHERS" {
-		t.Errorf("Expected Endpoint_Type to be %s, got %s", "OTHERS", npi_contact.Endpoint_Type)
+	// EndpointType
+	if npi_contact.EndpointType != "OTHERS" {
+		t.Errorf("Expected EndpointType to be %s, got %s", "OTHERS", npi_contact.EndpointType)
 	}
-	// Endpoint_Type_Description
-	if npi_contact.Endpoint_Type_Description != "Other URL" {
-		t.Errorf("Expected Endpoint_Type_Description to be %s, got %s", "Other URL", npi_contact.Endpoint_Type_Description)
+	// EndpointTypeDescription
+	if npi_contact.EndpointTypeDescription != "Other URL" {
+		t.Errorf("Expected EndpointTypeDescription to be %s, got %s", "Other URL", npi_contact.EndpointTypeDescription)
 	}
 	// Endpoint
 	if npi_contact.Endpoint != "Salisbury" {
@@ -156,37 +156,37 @@ func Test_BuildNPIContactFromNPICsvLine(t *testing.T) {
 	if npi_contact.Affiliation != "N" {
 		t.Errorf("Expected Affiliation to be %s, got %s", "N", npi_contact.Affiliation)
 	}
-	// Endpoint_Description
-	if npi_contact.Endpoint_Description != "Test_Endpoint_Description" {
-		t.Errorf("Expected Endpoint_Description to be %s, got %s", "Test_Endpoint_Description", npi_contact.Endpoint_Description)
+	// EndpointDescription
+	if npi_contact.EndpointDescription != "Test_EndpointDescription" {
+		t.Errorf("Expected EndpointDescription to be %s, got %s", "Test_EndpointDescription", npi_contact.EndpointDescription)
 	}
-	// Affiliation_Legal_Business_Name
-	if npi_contact.Affiliation_Legal_Business_Name != "Test_Affiliation_Legal_Business_Name" {
-		t.Errorf("Expected Affiliation_Legal_Business_Name to be %s, got %s", "Test_Affiliation_Legal_Business_Name", npi_contact.Affiliation_Legal_Business_Name)
+	// AffiliationLegalBusinessName
+	if npi_contact.AffiliationLegalBusinessName != "Test_AffiliationLegalBusinessName" {
+		t.Errorf("Expected AffiliationLegalBusinessName to be %s, got %s", "Test_AffiliationLegalBusinessName", npi_contact.AffiliationLegalBusinessName)
 	}
-	// Use_Code
-	if npi_contact.Use_Code != "Test_Use_Code" {
-		t.Errorf("Expected Use_Code to be %s, got %s", "Test_Use_Code", npi_contact.Use_Code)
+	// UseCode
+	if npi_contact.UseCode != "Test_UseCode" {
+		t.Errorf("Expected UseCode to be %s, got %s", "Test_UseCode", npi_contact.UseCode)
 	}
-	// Use_Description
-	if npi_contact.Use_Description != "Test_Use_Description" {
-		t.Errorf("Expected Use_Description to be %s, got %s", "Test_Use_Description", npi_contact.Use_Description)
+	// UseDescription
+	if npi_contact.UseDescription != "Test_UseDescription" {
+		t.Errorf("Expected UseDescription to be %s, got %s", "Test_UseDescription", npi_contact.UseDescription)
 	}
-	// Other_Use_Description
-	if npi_contact.Other_Use_Description != "Test_Other_Use_Description" {
-		t.Errorf("Expected Other_Use_Description to be %s, got %s", "Test_Other_Use_Description", npi_contact.Other_Use_Description)
+	// OtherUseDescription
+	if npi_contact.OtherUseDescription != "Test_OtherUseDescription" {
+		t.Errorf("Expected OtherUseDescription to be %s, got %s", "Test_OtherUseDescription", npi_contact.OtherUseDescription)
 	}
-	// Content_Type
-	if npi_contact.Content_Type != "Test_Content_Type" {
-		t.Errorf("Expected Content_Type to be %s, got %s", "Test_Content_Type", npi_contact.Content_Type)
+	// ContentType
+	if npi_contact.ContentType != "Test_ContentType" {
+		t.Errorf("Expected ContentType to be %s, got %s", "Test_ContentType", npi_contact.ContentType)
 	}
-	// Content_Description
-	if npi_contact.Content_Description != "Test_Content_Description" {
-		t.Errorf("Expected Content_Description to be %s, got %s", "Test_Content_Description", npi_contact.Content_Description)
+	// ContentDescription
+	if npi_contact.ContentDescription != "Test_ContentDescription" {
+		t.Errorf("Expected ContentDescription to be %s, got %s", "Test_ContentDescription", npi_contact.ContentDescription)
 	}
-	// Other_Content_Description
-	if npi_contact.Other_Content_Description != "Test_Other_Content_Description" {
-		t.Errorf("Expected Other_Content_Description to be %s, got %s", "Test_Other_Content_Description", npi_contact.Other_Content_Description)
+	// OtherContentDescription
+	if npi_contact.OtherContentDescription != "Test_OtherContentDescription" {
+		t.Errorf("Expected OtherContentDescription to be %s, got %s", "Test_OtherContentDescription", npi_contact.OtherContentDescription)
 	}
 	// Location.Address1
 	if npi_contact.Location.Address1 != "30454 E Rustic Drive" {
