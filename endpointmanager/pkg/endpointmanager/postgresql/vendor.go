@@ -95,6 +95,11 @@ func (s *Store) GetVendorUsingName(ctx context.Context, name string) (*endpointm
 		return nil, err
 	}
 
+	err = json.Unmarshal(locationJSON, &vendor.Location)
+	if err != nil {
+		return nil, err
+	}
+
 	return &vendor, err
 }
 
