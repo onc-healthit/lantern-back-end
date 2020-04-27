@@ -76,8 +76,8 @@ func Test_persistProduct(t *testing.T) {
 	ctx = context.Background()
 
 	// check that new item is stored
-	store.AddVendor(ctx, testVendor) // add vendor product so we can link to it
-	hitp.VendorID = testVendor.ID
+	store.AddVendor(ctx, testVendorCHPLProd) // add vendor product so we can link to it
+	hitp.VendorID = testVendorCHPLProd.ID
 
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -151,7 +151,7 @@ func Test_persistProducts(t *testing.T) {
 
 	ctx := context.Background()
 
-	store.AddVendor(ctx, testVendor)
+	store.AddVendor(ctx, testVendorCHPLProd)
 
 	var ct int
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM healthit_products;")
@@ -233,8 +233,8 @@ func Test_parseHITProd(t *testing.T) {
 	prod := testCHPLProd
 	expectedHITProd := testHITP
 
-	store.AddVendor(ctx, testVendor)
-	expectedHITProd.VendorID = testVendor.ID
+	store.AddVendor(ctx, testVendorCHPLProd)
+	expectedHITProd.VendorID = testVendorCHPLProd.ID
 
 	// basic test
 
@@ -260,7 +260,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	var err error
 
-	//	var ct int
+	// var ct int
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM healthit_products;")
 	th.Assert(t, err == nil, err)
 	defer ctStmt.Close()
@@ -268,7 +268,17 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var tc *th.TestClient
 	var ctx context.Context
 
-	// // basic test
+	// basic test
+
+	// prep with vendors
+	tc, err = basicVendorTestClient()
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	th.Assert(t, err == nil, err)
 
 	// // mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
 	// expectedProdsStored := 168

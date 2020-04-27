@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -81,35 +80,12 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 func getProductJSON(ctx context.Context, client *http.Client) ([]byte, error) {
 	chplURL, err := makeCHPLProductURL()
 	if err != nil {
-		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
+		return nil, errors.Wrap(err, "error creating CHPL product URL")
 	}
 
-	// request ceritified products list
-	req, err := http.NewRequest("GET", chplURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "creating http request failed")
-	}
-	req = req.WithContext(ctx)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("CHPL certified products request responded with status: " + resp.Status)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "reading the CHPL response body failed")
-	}
-
-	return body, nil
+	return getJSON(ctx, client, chplURL)
 }
 
-// creates the URL used to query CHPL including the data fields
 func makeCHPLProductURL() (*url.URL, error) {
 	queryArgs := make(map[string]string)
 	fieldStr := strings.Join(fields[:], ",")

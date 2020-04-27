@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -23,28 +22,34 @@ type chplVendorList struct {
 	Developers []chplVendor `json:"developers"`
 }
 
-type chplVendor struct {
-	DeveloperID   int    `json:"developerId"`
-	DeveloperCode string `json:"developerCode"`
-	Name          string `json:"name"`
-	Website       string `json:"website"`
-	Address       struct {
-		AddressID int         `json:"addressId"`
-		Line1     interface{} `json:"line1"`
-		Line2     interface{} `json:"line2"`
-		City      interface{} `json:"city"`
-		State     interface{} `json:"state"`
-		Zipcode   interface{} `json:"zipcode"`
-		Country   interface{} `json:"country"`
-	} `json:"address"`
-	LastModifiedDate string `json:"lastModifiedDate"`
-	Status           struct {
-		ID     int    `json:"id"`
-		Status string `json:"status"`
-	} `json:"status"`
+type chplAddress struct {
+	AddressID int         `json:"addressId"`
+	Line1     interface{} `json:"line1"`
+	Line2     interface{} `json:"line2"`
+	City      interface{} `json:"city"`
+	State     interface{} `json:"state"`
+	Zipcode   interface{} `json:"zipcode"`
+	Country   interface{} `json:"country"`
 }
 
-func GetVendors(ctx context.Context, store *postgresql.Store, cli *http.Client) error {
+type chplStatus struct {
+	ID     int    `json:"id"`
+	Status string `json:"status"`
+}
+
+type chplVendor struct {
+	DeveloperID      int         `json:"developerId"`
+	DeveloperCode    string      `json:"developerCode"`
+	Name             string      `json:"name"`
+	Website          string      `json:"website"`
+	Address          chplAddress `json:"address"`
+	LastModifiedDate string      `json:"lastModifiedDate"`
+	Status           chplStatus  `json:"status"`
+}
+
+// GetCHPLVendors queries CHPL for its vendor list using 'cli' and stores the vendors in 'store'
+// within the given context 'ctx'.
+func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Client) error {
 	log.Debug("requesting vendors from CHPL")
 	prodJSON, err := getVendorJSON(ctx, cli)
 	if err != nil {
@@ -69,41 +74,13 @@ func GetVendors(ctx context.Context, store *postgresql.Store, cli *http.Client) 
 func getVendorJSON(ctx context.Context, client *http.Client) ([]byte, error) {
 	chplURL, err := makeCHPLVendorURL()
 	if err != nil {
-		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
+		return nil, errors.Wrap(err, "error creating CHPL vendor URL")
 	}
 
-	println(chplURL.String())
-
-	// request vendor list
-	req, err := http.NewRequest("GET", chplURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "creating http request failed")
-	}
-	req = req.WithContext(ctx)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("CHPL certified products request responded with status: " + resp.Status)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "reading the CHPL response body failed")
-	}
-
-	println(string(body))
-
-	return body, nil
+	return getJSON(ctx, client, chplURL)
 }
 
-// creates the URL used to query CHPL including the data fields
 func makeCHPLVendorURL() (*url.URL, error) {
-
 	chplURL, err := makeCHPLURL(chplAPIVendorListPath, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")

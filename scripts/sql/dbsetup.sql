@@ -35,7 +35,7 @@ CREATE TABLE vendors (
     url                     VARCHAR(500),
     location                JSONB,
     status                  VARCHAR(500),
-    last_modified_in_chpl   DATE,
+    last_modified_in_chpl   TIMESTAMPTZ,
     chpl_id                 INTEGER UNIQUE,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()

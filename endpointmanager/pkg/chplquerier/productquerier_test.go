@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var testVendor *endpointmanager.Vendor = &endpointmanager.Vendor{
+var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
 	Name:          "Carefluence",
 	DeveloperCode: "D",
 	CHPLID:        4,
@@ -323,7 +323,7 @@ func Test_getProductJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getProductJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL certified products request responded with status: 404 Not Found", "expected response error specifying response code")
+	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
 
 	// test error on URL creation
 
