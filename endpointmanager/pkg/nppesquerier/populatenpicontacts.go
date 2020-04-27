@@ -18,18 +18,18 @@ import (
 // "endpoint_pfile" .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 type NPIContactCsvLine struct {
 	NPI                             string
-	EndpointType                   string
-	EndpointTypeDescription       string
+	EndpointType                    string
+	EndpointTypeDescription         string
 	Endpoint                        string
 	Affiliation                     string
-	EndpointDescription            string
-	AffiliationLegalBusinessName string
-	UseCode                        string
-	UseDescription                 string
-	OtherUseDescription           string
-	ContentType                    string
-	ContentDescription             string
-	OtherContentDescription       string
+	EndpointDescription             string
+	AffiliationLegalBusinessName    string
+	UseCode                         string
+	UseDescription                  string
+	OtherUseDescription             string
+	ContentType                     string
+	ContentDescription              string
+	OtherContentDescription         string
 	Affiliation_Address_Line_One    string
 	Affiliation_Address_Line_Two    string
 	Affiliation_Address_City        string
@@ -41,18 +41,18 @@ type NPIContactCsvLine struct {
 func parseNPIContactdataLine(line []string) NPIContactCsvLine {
 	data := NPIContactCsvLine{
 		NPI:                             line[0],
-		EndpointType:                   line[1],
-		EndpointTypeDescription:       line[2],
+		EndpointType:                    line[1],
+		EndpointTypeDescription:         line[2],
 		Endpoint:                        line[3],
 		Affiliation:                     line[4],
-		EndpointDescription:            line[5],
-		AffiliationLegalBusinessName: line[6],
-		UseCode:                        line[7],
-		UseDescription:                 line[8],
-		OtherUseDescription:           line[9],
-		ContentType:                    line[10],
-		ContentDescription:             line[11],
-		OtherContentDescription:       line[12],
+		EndpointDescription:             line[5],
+		AffiliationLegalBusinessName:    line[6],
+		UseCode:                         line[7],
+		UseDescription:                  line[8],
+		OtherUseDescription:             line[9],
+		ContentType:                     line[10],
+		ContentDescription:              line[11],
+		OtherContentDescription:         line[12],
 		Affiliation_Address_Line_One:    line[13],
 		Affiliation_Address_Line_Two:    line[14],
 		Affiliation_Address_City:        line[15],
@@ -66,20 +66,20 @@ func parseNPIContactdataLine(line []string) NPIContactCsvLine {
 func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIContact {
 	validURL := isValidURL(data.Endpoint)
 	npiContact := &endpointmanager.NPIContact{
-		NPI_ID:                          data.NPI,
-		EndpointType:                   data.EndpointType,
-		EndpointTypeDescription:       data.EndpointTypeDescription,
-		Endpoint:                        data.Endpoint,
-		ValidURL:                       validURL,
-		Affiliation:                     data.Affiliation,
-		EndpointDescription:            data.EndpointDescription,
+		NPI_ID:                       data.NPI,
+		EndpointType:                 data.EndpointType,
+		EndpointTypeDescription:      data.EndpointTypeDescription,
+		Endpoint:                     data.Endpoint,
+		ValidURL:                     validURL,
+		Affiliation:                  data.Affiliation,
+		EndpointDescription:          data.EndpointDescription,
 		AffiliationLegalBusinessName: data.AffiliationLegalBusinessName,
-		UseCode:                  data.UseCode,
-		UseDescription:           data.UseDescription,
-		OtherUseDescription:     data.OtherUseDescription,
-		ContentType:              data.ContentType,
-		ContentDescription:       data.ContentDescription,
-		OtherContentDescription: data.OtherContentDescription,
+		UseCode:                      data.UseCode,
+		UseDescription:               data.UseDescription,
+		OtherUseDescription:          data.OtherUseDescription,
+		ContentType:                  data.ContentType,
+		ContentDescription:           data.ContentDescription,
+		OtherContentDescription:      data.OtherContentDescription,
 		Location: &endpointmanager.Location{
 			Address1: data.Affiliation_Address_Line_One,
 			Address2: data.Affiliation_Address_Line_Two,
@@ -168,5 +168,6 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 			}
 		}
 	}
+	log.Infof("Added %d NPI contacts\n", added)
 	return added, nil
 }
