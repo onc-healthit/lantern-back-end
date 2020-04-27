@@ -45,7 +45,7 @@ CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
     version                 VARCHAR(500),
-    developer               VARCHAR(500),
+    vendor_id               INT REFERENCES vendors(id) ON DELETE CASCADE,
     location                JSONB,
     authorization_standard  VARCHAR(500),
     api_syntax              VARCHAR(500),

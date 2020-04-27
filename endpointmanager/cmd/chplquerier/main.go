@@ -37,6 +37,6 @@ func main() {
 
 	err = chplquerier.GetVendors(ctx, store, client)
 	failOnError(err)
-	// err = chplquerier.GetCHPLProducts(ctx, store, client)
-	// failOnError(err)
+	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	failOnError(err)
 }

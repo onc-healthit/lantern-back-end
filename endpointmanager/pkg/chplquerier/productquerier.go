@@ -144,11 +144,16 @@ func convertProductJSONToObj(ctx context.Context, prodJSON []byte) (*chplCertifi
 }
 
 // takes the JSON model and converts it into an endpointmanager.HealthITProduct
-func parseHITProd(prod *chplCertifiedProduct) (*endpointmanager.HealthITProduct, error) {
+func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
+	id, err := getProductVendorID(ctx, prod, store)
+	if err != nil {
+		return nil, errors.Wrap(err, "getting the product's vendor id failed")
+	}
+
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
 		Version:               prod.Version,
-		Developer:             prod.Developer,
+		VendorID:              id,
 		CertificationStatus:   prod.CertificationStatus,
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
@@ -163,6 +168,15 @@ func parseHITProd(prod *chplCertifiedProduct) (*endpointmanager.HealthITProduct,
 	dbProd.APIURL = apiURL
 
 	return &dbProd, nil
+}
+
+func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
+	vendor, err := store.GetVendorUsingName(ctx, prod.Developer)
+	if err != nil {
+		return -1, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
+	}
+
+	return vendor.ID, nil
 }
 
 // parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
@@ -221,7 +235,7 @@ func persistProduct(ctx context.Context,
 	store *postgresql.Store,
 	prod *chplCertifiedProduct) error {
 
-	newDbProd, err := parseHITProd(prod)
+	newDbProd, err := parseHITProd(ctx, prod, store)
 	if err != nil {
 		return err
 	}
