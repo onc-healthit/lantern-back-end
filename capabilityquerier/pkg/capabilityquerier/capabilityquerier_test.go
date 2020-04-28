@@ -306,37 +306,6 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, httpCode == 404, fmt.Sprintf("expected 404 response code. Got %d", httpCode))
 }
 
-func Test_sendToQueue(t *testing.T) {
-	var ch lanternmq.ChannelID
-	var ctx context.Context
-	var err error
-
-	message := "this is a message"
-	mq := mock.NewBasicMockMessageQueue()
-	ch = 1
-	queueName := "queue name"
-
-	// basic test
-
-	ctx = context.Background()
-
-	err = sendToQueue(ctx, message, &mq, &ch, queueName)
-	th.Assert(t, err == nil, err)
-
-	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expected a message to be in the queue")
-
-	bRcvMsg := <-mq.(*mock.BasicMockMessageQueue).Queue
-	rcvMsg := string(bRcvMsg)
-	th.Assert(t, rcvMsg == message, "expected the recieved message to be the same as the sent message.")
-
-	// test context ends
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
-
-	err = sendToQueue(ctx, message, &mq, &ch, queueName)
-	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
-}
-
 func basicTestClient() (*th.TestClient, error) {
 	return testClientWithContentType(fhir2LessJSONMIMEType)
 }

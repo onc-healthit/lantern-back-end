@@ -3,7 +3,7 @@ module github.com/onc-healthit/lantern-back-end/e2e
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200420150741-ad6fc18d007d
-	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200420150741-ad6fc18d007d
-	github.com/spf13/viper v1.6.2
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200422202312-1ceefd232e16
+	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200423141326-16884552d2ed
+	github.com/spf13/viper v1.6.3
 )

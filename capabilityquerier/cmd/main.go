@@ -11,8 +11,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 
@@ -93,7 +93,7 @@ func main() {
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
 	qName := viper.GetString("capquery_qname")
-	mq, ch, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
+	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
 	failOnError(err)
 	defer mq.Close()
 
