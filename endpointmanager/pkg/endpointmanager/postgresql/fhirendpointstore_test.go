@@ -90,6 +90,16 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
+	// retreive all endpoints
+	endpts, err := store.GetAllFHIREndpoints(ctx)
+	if err != nil {
+		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
+	}
+	eLen := 2
+	if len(endpts) != eLen {
+		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+	}
+
 	// update endpoint
 
 	e1.FHIRVersion = "Unknown"

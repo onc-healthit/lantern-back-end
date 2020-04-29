@@ -31,7 +31,7 @@ env:
   - LANTERN_CAPQUERY_QRYINTVL=1440
   - LANTERN_TEST_QUSER=capabilityquerier
   - LANTERN_TEST_QPASSWORD=capabilityquerier
-  - LANTERN_TEST_CAPQUERY_QNAME=capability-statements-test
+  - LANTERN_TEST_QNAME=test-queue
 
 before_script:
 - go get ./...
