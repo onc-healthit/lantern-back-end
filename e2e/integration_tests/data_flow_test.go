@@ -10,28 +10,27 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
-	"reflect"
 
-	//log "github.com/sirupsen/logrus"
+	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
-	"github.com/onc-healthit/lantern-back-end/lanternmq"
-	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/stretchr/testify/assert"
 )
 
 type Endpoint struct {
@@ -249,56 +248,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
-func Test_RetrieveCapabilityStatements(t *testing.T) {
- 	var err error
-	err = capQuerierConfig.SetupConfigForTests()
-	if err != nil {
-		panic(err)
-	} 
-
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
-
-	hap := th.HostAndPort{Host: qHost, Port: qPort}
-	err = th.CheckResources(hap)
-	if err != nil {
-		panic(err)
-	}
-
-	var mq lanternmq.MessageQueue
-	var chID lanternmq.ChannelID
-	mq, chID, err = queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
-	defer mq.Close()
-	th.Assert(t, err == nil, err)
-	th.Assert(t, mq != nil, "expected message queue to be created")
-	th.Assert(t, chID != nil, "expected channel ID to be created")
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, mq, chID, qName)
-	// wait 30 seconds
-	time.Sleep(30 * time.Second)
-	cancel()
-	
-	// check that fhir_endpoints have capability statements
-	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints where capability_statement is not null;")
-	var capability_statement_count int
-	err = query_str.Scan(&capability_statement_count)
-	failOnError(err)
-
-	if capability_statement_count == 0 {
-		t.Fatalf("Fhir_endpoints db should have capability statements")
-	}
-
-
-
-}
-
-func Test_HealthItProducts(t *testing.T) {
+func Test_GetHealthItProducts(t *testing.T) {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 
@@ -313,7 +263,6 @@ func Test_HealthItProducts(t *testing.T) {
 		t.Fatalf("Healthit product database should initially be empty")
 	}
 
-	// Querying for chpl health it products
 	ctx := context.Background()
 	client := &http.Client{
 		Timeout: time.Second * 35,
@@ -360,6 +309,73 @@ func Test_HealthItProducts(t *testing.T) {
 	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
 	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
+}
+
+func Test_RetrieveCapabilityStatements(t *testing.T) {
+	var err error
+
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+
+	err = capQuerierConfig.SetupConfigForTests()
+	if err != nil {
+		panic(err)
+	}
+
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("capquery_qname")
+
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
+	err = th.CheckResources(hap)
+	if err != nil {
+		panic(err)
+	}
+
+	var mq lanternmq.MessageQueue
+	var chID lanternmq.ChannelID
+	mq, chID, err = queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
+	defer mq.Close()
+	th.Assert(t, err == nil, err)
+	th.Assert(t, mq != nil, "expected message queue to be created")
+	th.Assert(t, chID != nil, "expected channel ID to be created")
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, mq, chID, qName)
+	time.Sleep(30 * time.Second)
+	cancel()
+
+	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints where capability_statement is not null;")
+	var capability_statement_count int
+	err = query_str.Scan(&capability_statement_count)
+	failOnError(err)
+	if capability_statement_count == 0 {
+		t.Fatalf("Fhir_endpoints db should have capability statements")
+	}
+
+	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints;")
+	var fhir_version_count int
+	err = query_str.Scan(&fhir_version_count)
+	failOnError(err)
+	if fhir_version_count < 300 {
+		t.Fatalf("There should be at least 300 capability statement with fhir version specified")
+	}
+
+	expected_vendor_list := [5]string{"Epic Systems Corporation", "Allscripts", "Medical Information Technology, Inc. (MEDITECH)", "Cerner Corporation", "CareEvolution, Inc."}
+	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints where vendor!='';")
+	failOnError(err)
+	var test_vendor_list []string
+	defer rows.Close()
+	for rows.Next() {
+		var vendor string
+		err = rows.Scan(&vendor)
+		failOnError(err)
+		test_vendor_list = append(test_vendor_list, vendor)
+	}
+	th.Assert(t, len(expected_vendor_list) == len(test_vendor_list), "Number of distinct vendors is not what was expected")
+	assert.ElementsMatch(t, expected_vendor_list, test_vendor_list, "List of distinct vendors is not what was expected")
 }
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
