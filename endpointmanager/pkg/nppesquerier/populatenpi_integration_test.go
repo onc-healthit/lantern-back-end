@@ -137,7 +137,7 @@ func Test_ParseAndStoreNPIContactFileContext(t *testing.T) {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(4*time.Millisecond))
 	defer cancel()
 
-	added, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npi_contact_file.csv", store)
+	added, err := nppesquerier.ParseAndStoreNPIContactsFile(ctx, "testdata/npi_contact_file.csv", store)
 	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err)))
 	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
 }
