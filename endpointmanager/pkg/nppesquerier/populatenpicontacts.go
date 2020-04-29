@@ -1,6 +1,7 @@
 package nppesquerier
 
 import (
+	"bufio"
 	"context"
 	"encoding/csv"
 	"os"
@@ -100,6 +101,51 @@ func isValidURL(url string) bool {
 	return urlmatched && !emailmatched
 }
 
+func removeNestedDoubleQuotesFromCSV(filename string) (error, string) {
+	file, err := os.Open(filename)
+
+	if err != nil {
+		return err, ""
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var processedlines []string
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		pattern := regexp.MustCompile(`(,|",")(.*?)","`)
+		matches := pattern.FindAllStringSubmatch(line, -1)
+		for _, match := range matches {
+			// If detected nested quote, remove nested quotes
+			if strings.Contains(match[1], "\"") {
+				sanitized := strings.Replace(match[2], "\"", "", -1)
+				// replace entry with quotes removed
+				line = strings.Replace(line, match[2], sanitized, 1)
+			}
+		}
+		processedlines = append(processedlines, line)
+	}
+
+	file.Close()
+
+	newfilename := strings.Replace(filename, ".csv", "", 1)
+	newfile, err := os.Create(newfilename)
+	if err != nil {
+		return err, ""
+	}
+	for _, processedline := range processedlines {
+		_, err := newfile.WriteString(processedline + "\n")
+		if err != nil {
+			return err, ""
+		}
+	}
+
+	defer newfile.Close()
+
+	return nil, newfilename
+}
+
 // readContactCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
 func readContactCsv(ctx context.Context, filename string) ([][]string, error) {
@@ -110,8 +156,13 @@ func readContactCsv(ctx context.Context, filename string) ([][]string, error) {
 		// ok
 	}
 
+	err, newfilename := removeNestedDoubleQuotesFromCSV(filename)
+	if err != nil {
+		return [][]string{}, err
+	}
+
 	// Open CSV file
-	f, err := os.Open(filename)
+	f, err := os.Open(newfilename)
 	if err != nil {
 		return [][]string{}, err
 	}
@@ -143,7 +194,6 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 		default:
 			// ok
 		}
-
 		data := parseNPIContactdataLine(line)
 		// We will only parse out Contacts with endpoint_type of FHIR
 		if data.EndpointType == "FHIR" {
