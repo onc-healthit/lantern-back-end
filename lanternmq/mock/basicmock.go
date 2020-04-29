@@ -32,6 +32,10 @@ func NewBasicMockMessageQueue() lanternmq.MessageQueue {
 		return nil
 	}
 
+	mq.QueueExistsFn = func(chId lanternmq.ChannelID, qName string) (bool, error) {
+		return true, nil
+	}
+
 	mq.DeclareQueueFn = func(chID lanternmq.ChannelID, name string) error {
 		return nil
 	}

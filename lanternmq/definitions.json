@@ -101,7 +101,21 @@
             "arguments": {}
         },
         {
-            "name": "capability-statements-test",
+            "name": "test-queue",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "endpoints-to-capability",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "endpoints-to-netstats",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,

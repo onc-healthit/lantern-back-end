@@ -50,12 +50,12 @@ func main() {
 	ch, err := mq.CreateChannel()
 	failOnError(err)
 
-	err = mq.DeclareTopic(ch, "logs_topic")
+	err = mq.DeclareExchange(ch, "logs_topic", "topic")
 	failOnError(err)
 
 	body := bodyFrom(os.Args)
 	severity := severityFrom(os.Args)
-	err = mq.PublishToTopic(ch, "logs_topic", severity, body)
+	err = mq.PublishToExchange(ch, "logs_topic", severity, body)
 	failOnError(err)
 	log.Printf(" [x] Sent %s", body)
 }

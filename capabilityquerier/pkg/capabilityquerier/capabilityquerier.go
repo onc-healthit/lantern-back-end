@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
 )
 
@@ -61,7 +62,7 @@ func GetAndSendCapabilityStatement(
 	}
 	msgStr := string(msgBytes)
 
-	err = sendToQueue(ctx, msgStr, mq, ch, queueName)
+	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
 	}
@@ -193,27 +194,4 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 	tlsVersion = getTLSVersion(resp)
 
 	return httpResponseCode, tlsVersion, mimeMatches, capStat, nil
-}
-
-func sendToQueue(
-	ctx context.Context,
-	message string,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	queueName string) error {
-
-	// don't send the message if the context is done
-	select {
-	case <-ctx.Done():
-		return errors.Wrap(ctx.Err(), "unable to send message to queue - context ended")
-	default:
-		// ok
-	}
-
-	err := (*mq).PublishToQueue(*ch, queueName, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
