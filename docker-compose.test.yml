@@ -21,6 +21,10 @@ services:
     volumes:
       - ./prometheus.test.yml:/etc/prometheus/prometheus.yml 
 
+  capability_querier:
+    environment:
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_CAPQUERY_QNAME}
+
   lantern-e2e:
     container_name: lantern-e2e
     environment:
