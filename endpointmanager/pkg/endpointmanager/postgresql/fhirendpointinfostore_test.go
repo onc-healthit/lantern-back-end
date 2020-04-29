@@ -44,7 +44,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID:      endpoint1.ID,
+		URL:                 endpoint1.URL,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir"},
 		HTTPResponse:        200,
@@ -52,11 +52,11 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		Vendor:              "Cerner",
 		CapabilityStatement: cs}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID: endpoint2.ID,
-		TLSVersion:     "TLS 1.2",
-		MIMETypes:      []string{"application/fhir+json"},
-		HTTPResponse:   404,
-		Errors:         "Example Error 2"}
+		URL:          endpoint2.URL,
+		TLSVersion:   "TLS 1.2",
+		MIMETypes:    []string{"application/fhir+json"},
+		HTTPResponse: 404,
+		Errors:       "Example Error 2"}
 
 	// add endpointInfos
 
@@ -72,7 +72,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// retrieve endpointInfos
 
-	e1, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint1.ID)
+	e1, err := store.GetFHIREndpointInfoUsingURL(ctx, endpoint1.URL)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -80,7 +80,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	e2, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint2.ID)
+	e2, err := store.GetFHIREndpointInfoUsingURL(ctx, endpoint2.URL)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -143,19 +143,17 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	e1.CapabilityStatement = capStat
 
-	// check cascade delete
+	// delete endpointInfos
 
-	err = store.DeleteFHIREndpoint(ctx, endpoint1) // delete the endpoint
+	err = store.DeleteFHIREndpointInfo(ctx, endpointInfo1)
 	if err != nil {
 		t.Errorf("Error deleting fhir endpointInfo: %s", err.Error())
 	}
 
-	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the corresponding endpoint info enetry
+	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the entry
 	if err == nil {
-		t.Errorf("endpointInfo1 was not deleted: %s", err.Error())
+		t.Errorf("did not expected endpoint in db")
 	}
-
-	// delete endpointInfos
 
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we haven't deleted all entries
 	if err != nil {
@@ -169,6 +167,6 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we deleted the entry
 	if err == nil {
-		t.Errorf("error retrieving endpointInfo2 after deleting endpointInfo1: %s", err.Error())
+		t.Errorf("did not expected endpoint in db")
 	}
 }

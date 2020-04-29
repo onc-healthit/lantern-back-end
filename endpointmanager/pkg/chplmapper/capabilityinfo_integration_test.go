@@ -138,7 +138,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint info
 	epInfo := &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID:      ep.ID,
+		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
@@ -156,7 +156,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID:      ep.ID,
+		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
@@ -167,7 +167,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID: ep.ID}
+		URL: ep.URL}
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
@@ -188,7 +188,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID:      ep.ID,
+		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)

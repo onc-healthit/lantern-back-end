@@ -13,8 +13,8 @@ import (
 // capability statement found at that endpoint.
 type FHIREndpointInfo struct {
 	ID                  int
-	FHIREndpointID      int
 	HealthITProductID   int
+	URL                 string
 	TLSVersion          string
 	MIMETypes           []string
 	HTTPResponse        int
@@ -36,7 +36,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if e.FHIREndpointID != e2.FHIREndpointID {
+	if e.URL != e2.URL {
 		return false
 	}
 	if e.HealthITProductID != e2.HealthITProductID {

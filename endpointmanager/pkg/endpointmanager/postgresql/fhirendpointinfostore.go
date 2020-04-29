@@ -22,13 +22,12 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
-	var fhirEndpointIDNullable sql.NullInt64
 	var healthitProductIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
-		fhir_endpoint_id,
+		url,
 		healthit_product_id,
 		tls_version,
 		mime_types,
@@ -44,7 +43,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 
 	err := row.Scan(
 		&endpointInfo.ID,
-		&fhirEndpointIDNullable,
+		&endpointInfo.URL,
 		&healthitProductIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
@@ -66,27 +65,25 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
-	endpointInfo.FHIREndpointID = ints[0]
-	endpointInfo.HealthITProductID = ints[1]
+	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable})
+	endpointInfo.HealthITProductID = ints[0]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
 	return &endpointInfo, err
 }
 
-// GetFHIREndpointInfoUsingFHIREndpointID gets the FHIREndpointInfo object that corresponds to the FHIREndpoint with the given ID.
-func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
+// GetFHIREndpointInfoUsingURL gets the FHIREndpointInfo object that corresponds to the FHIREndpoint with the given ID.
+func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
-	var fhirEndpointIDNullable sql.NullInt64
 	var healthitProductIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
-		fhir_endpoint_id,
+		url,
 		healthit_product_id,
 		tls_version,
 		mime_types,
@@ -97,13 +94,13 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 		validation,
 		created_at,
 		updated_at
-	FROM fhir_endpoints_info WHERE fhir_endpoints_info.fhir_endpoint_id = $1`
+	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
-	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
 	err := row.Scan(
 		&endpointInfo.ID,
-		&fhirEndpointIDNullable,
+		&endpointInfo.URL,
 		&healthitProductIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
@@ -125,9 +122,8 @@ func (s *Store) GetFHIREndpointInfoUsingFHIREndpointID(ctx context.Context, id i
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{fhirEndpointIDNullable, healthitProductIDNullable})
-	endpointInfo.FHIREndpointID = ints[0]
-	endpointInfo.HealthITProductID = ints[1]
+	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable})
+	endpointInfo.HealthITProductID = ints[0]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 
@@ -151,11 +147,11 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
-	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+	nullableInts := getNullableInts([]int{e.HealthITProductID})
 
 	row := addFHIREndpointInfoStatement.QueryRowContext(ctx,
+		e.URL,
 		nullableInts[0],
-		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
@@ -186,11 +182,11 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
-	nullableInts := getNullableInts([]int{e.FHIREndpointID, e.HealthITProductID})
+	nullableInts := getNullableInts([]int{e.HealthITProductID})
 
 	_, err = updateFHIREndpointInfoStatement.ExecContext(ctx,
+		e.URL,
 		nullableInts[0],
-		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		e.HTTPResponse,
@@ -248,7 +244,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	var err error
 	addFHIREndpointInfoStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints_info (
-			fhir_endpoint_id,
+			url,
 			healthit_product_id,
 			tls_version,
 			mime_types,
@@ -265,7 +261,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	updateFHIREndpointInfoStatement, err = s.DB.Prepare(`
 		UPDATE fhir_endpoints_info
 		SET 
-		    fhir_endpoint_id = $1,
+		    url = $1,
 		    healthit_product_id = $2,
 			tls_version = $3,
 			mime_types = $4,
