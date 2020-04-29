@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"errors"
 	"fmt"
+	"context"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/streadway/amqp"
@@ -248,13 +249,19 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 // If there's an error processing a message, the error is sent to the 'errs' channel.
 // ProcessMessages should be called as a goroutine. Example:
 //     go mq.ProcessMessages(msgs, handler, nil, errs)
-func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
+func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 	msgsd, ok := msgs.(*Messages)
 	if !ok {
 		errs <- errors.New("the messages are of the wrong type")
 	}
 
 	for d := range msgsd.deliveryChannel {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			// ok
+		}
 		err := handler(d.Body, args)
 		if err != nil {
 			errs <- err

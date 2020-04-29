@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"context"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
@@ -71,8 +72,10 @@ func main() {
 	errs := make(chan error)
 	defer close(errs)
 
-	go mq.ProcessMessages(msgs, handleQueueMessage, nil, errs)
-	go mq.ProcessMessages(tmsgs, handleTopicMessage, nil, errs)
+	ctx := context.Background()
+	
+	go mq.ProcessMessages(ctx, msgs, handleQueueMessage, nil, errs)
+	go mq.ProcessMessages(ctx, tmsgs, handleTopicMessage, nil, errs)
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 
