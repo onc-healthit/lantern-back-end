@@ -143,8 +143,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
 
-	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
+		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
@@ -157,7 +157,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	} else if err != nil {
 		return err
 	} else {
-		// Add the new information if it's valid and update the endpoint in the database
+		// If the endpoint info does exist, update it with the new information.
 		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 		existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
