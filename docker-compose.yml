@@ -82,6 +82,16 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
+  shinydashboard:
+    build:
+      context: ./shinydashboard
+      args:
+        cert_dir: ./certs
+    container_name: lantern-shiny
+    volumes:
+      - ./shinydashboard/lantern/:/srv/shiny-server/lantern
+      - ./shinydashboard/shiny_logs:/var/log/shiny-server
+
 volumes:
   pgdata:
   prometheusData:

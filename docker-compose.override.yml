@@ -36,3 +36,9 @@ services:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
       - LANTERN_TEST_CAPQUERY_QNAME=${LANTERN_TEST_CAPQUERY_QNAME}
+  shinydashboard:
+    build:
+      args:
+        cert_dir: ./certs
+    ports:
+      - "3838:3838"
