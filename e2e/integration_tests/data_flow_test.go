@@ -26,6 +26,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+type Endpoint struct {
+	url               string
+	organization_name string
+	mapped_npi_ids    []string
+}
+
 var store *postgresql.Store
 
 func TestMain(m *testing.M) {
@@ -115,13 +121,16 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 1 {
-		t.Fatalf("Only one endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+	if link_count != 35 {
+		t.Fatalf("Only 35 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
+  
+	expected_link_count := 40
+  
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -138,54 +147,98 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 2 {
-		t.Fatalf("Database should only have made one link given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+	if link_count != expected_link_count {
+		t.Fatalf("Database should only have made 40 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
-	var lantern_org_endpoint_id string
-	err = store.DB.QueryRow("SELECT id FROM fhir_endpoints WHERE organization_name='Lantern Test Org';").Scan(&lantern_org_endpoint_id)
-	failOnError(err)
-
-	// Based on the fixture file npidata_min.csv there should be 2 matches to "Lantern Test Org" NPI ID =: 111111111 and NPI ID: 2222222222
-	// The database ids for these npi orgs should exist in the link table mapped to lantern test org
-	var id_npi_1 string
-	err = store.DB.QueryRow("SELECT id FROM npi_organizations WHERE npi_id='1111111111';").Scan(&id_npi_1)
-	failOnError(err)
-	var id_npi_2 string
-	err = store.DB.QueryRow("SELECT id FROM npi_organizations WHERE npi_id='2222222222';").Scan(&id_npi_2)
-	failOnError(err)
-
-	var linked_endpoint_id string
-	query_str := "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_1 + ";"
-	err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
-	failOnError(err)
-	if linked_endpoint_id != lantern_org_endpoint_id {
-		t.Fatalf("Org mapped to wrong dndpoint id")
-	}
-	query_str = "SELECT endpoint_id FROM endpoint_organization WHERE  organization_id=" + id_npi_2 + ";"
-	err = store.DB.QueryRow(query_str).Scan(&linked_endpoint_id)
-	failOnError(err)
-	if linked_endpoint_id != lantern_org_endpoint_id {
-		t.Fatalf("Org mapped to wrong dndpoint id")
+	// endpoint maps to one org
+	ep1 := Endpoint{
+		url:               "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+		organization_name: "Cape Fear Valley Health",
+		mapped_npi_ids:    []string{"1588667794"},
 	}
 
-	// Assert that deletion from npi_organizations list removes the link
-	query_str = "DELETE FROM npi_organizations WHERE id=" + id_npi_1 + ";"
-	_, err = store.DB.Exec(query_str)
-	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-	failOnError(err)
-	if link_count != 1 {
-		t.Fatalf("Database should only contain 1 link after npi_organization was deleted. Has: " + strconv.Itoa(link_count))
+	// endpoint maps to multiple orgs
+	ep2 := Endpoint{
+		url:               "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2/",
+		organization_name: "Valley Medical Center",
+		mapped_npi_ids:    []string{"1629071758", "1164427431", "1245230598", "1790787307", "1366444978", "1356343735"},
 	}
 
-	// Assert that deletion from fhir_endpoint list removes the link
-	query_str = "DELETE FROM fhir_endpoints WHERE id=" + lantern_org_endpoint_id + ";"
-	_, err = store.DB.Exec(query_str)
+	// endpoint maps to no orgs
+	ep3 := Endpoint{
+		url:               "https://mcproxyprd.med.umich.edu/FHIR-PRD/api/FHIR/DSTU2/",
+		organization_name: "Michigan Medicine",
+		mapped_npi_ids:    []string{},
+	}
 
-	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-	failOnError(err)
-	if link_count != 0 {
-		t.Fatalf("Database should not contain any links. Has: " + strconv.Itoa(link_count))
+	ep_list := []Endpoint{ep1, ep2, ep3}
+
+	for _, ep := range ep_list {
+
+		// Get endpoint id
+		var endpoint_id string
+		query_str := "SELECT id FROM fhir_endpoints WHERE organization_name=$1;"
+		err = store.DB.QueryRow(query_str, ep.organization_name).Scan(&endpoint_id)
+		if err != nil {
+			t.Fatalf("failed org name is " + ep.organization_name)
+		}
+		failOnError(err)
+
+		// Assert that endpoint id has correct url
+		var endpoint_url string
+		query_str = "SELECT url FROM fhir_endpoints WHERE id=$1;"
+		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&endpoint_url)
+		failOnError(err)
+		if endpoint_url != ep.url {
+			t.Fatalf("Endpoint id mapped to wrong endpoint url")
+		}
+		// Assert that the correct endpoint has correct number of npi organizations mapped
+		var num_npi_ids int
+		query_str = "SELECT count(*) FROM endpoint_organization WHERE endpoint_id =$1;"
+		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&num_npi_ids)
+		failOnError(err)
+		if num_npi_ids != len(ep.mapped_npi_ids) {
+			t.Fatalf("Expected number of npi organizations mapped to endpoint is " + strconv.Itoa(len(ep.mapped_npi_ids)) + " Got: " + strconv.Itoa(num_npi_ids))
+		}
+
+		for _, npi_id := range ep.mapped_npi_ids {
+			// Get organization id for each npi id
+			var org_id string
+			query_str = "SELECT id FROM npi_organizations WHERE npi_id=$1;"
+			err = store.DB.QueryRow(query_str, npi_id).Scan(&org_id)
+			failOnError(err)
+			// Assert that each npi organization is mapped to correct endpoint
+			var linked_endpoint_id string
+			query_str = "SELECT endpoint_id FROM endpoint_organization WHERE organization_id =$1;"
+			err = store.DB.QueryRow(query_str, org_id).Scan(&linked_endpoint_id)
+			failOnError(err)
+			if linked_endpoint_id != endpoint_id {
+				t.Fatalf("Endpoint id mapped to wrong npi organization")
+			}
+		}
+
+		// Assert that deletion from npi_organizations list removes the link
+		// Assert that deletion from fhir_endpoints list removes the link
+		if len(ep.mapped_npi_ids) == 1 {
+			query_str = "DELETE FROM npi_organizations WHERE npi_id=$1;"
+			_, err = store.DB.Exec(query_str, ep.mapped_npi_ids[0])
+			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
+			failOnError(err)
+			if link_count != expected_link_count-1 {
+				t.Fatalf("Database should only contain " + strconv.Itoa(expected_link_count-1) + " links after npi_organization was deleted. Has: " + strconv.Itoa(link_count))
+			}
+			expected_link_count = link_count
+		} else {
+			query_str = "DELETE FROM fhir_endpoints WHERE id=$1;"
+			_, err = store.DB.Exec(query_str, endpoint_id)
+			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
+			failOnError(err)
+			if link_count != expected_link_count-len(ep.mapped_npi_ids) {
+				t.Fatalf("Database should contain " + strconv.Itoa(expected_link_count) + " links. Has: " + strconv.Itoa(link_count))
+			}
+			expected_link_count = link_count
+		}
 	}
 }
 
