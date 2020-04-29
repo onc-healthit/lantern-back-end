@@ -66,6 +66,9 @@ func parseNPIContactdataLine(line []string) NPIContactCsvLine {
 
 func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIContact {
 	validURL := isValidURL(data.Endpoint)
+	if strings.Contains(data.Endpoint, "/metadata") {
+		data.Endpoint = strings.Replace(data.Endpoint, "/metadata", "", 1)
+	}
 	npiContact := &endpointmanager.NPIContact{
 		NPI_ID:                       data.NPI,
 		EndpointType:                 data.EndpointType,
@@ -114,11 +117,13 @@ func removeNestedDoubleQuotesFromCSV(filename string) (error, string) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
+		// TODO: This regex is only checking every other field starting with the second feld,
+		// it is capturing all of the free-text fields that include bad-data as of the March/2020 NPI Data
 		pattern := regexp.MustCompile(`(,|",")(.*?)","`)
 		matches := pattern.FindAllStringSubmatch(line, -1)
 		for _, match := range matches {
 			// If detected nested quote, remove nested quotes
-			if strings.Contains(match[1], "\"") {
+			if strings.Contains(match[2], "\"") {
 				sanitized := strings.Replace(match[2], "\"", "", -1)
 				// replace entry with quotes removed
 				line = strings.Replace(line, match[2], sanitized, 1)
@@ -184,6 +189,7 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 	if err != nil {
 		return -1, err
 	}
+	log.Infof("Adding NPI contacts and fhir endpoints, this may result in error messages if there are duplicate fhir endpoints being added")
 	added := 0
 	// Loop through lines & turn into object
 	for i, line := range lines {
