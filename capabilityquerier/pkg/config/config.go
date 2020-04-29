@@ -41,7 +41,7 @@ func SetupConfig() error {
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
-	viper.SetDefault("qhost", "lantern-mq")
+	viper.SetDefault("qhost", "localhost")
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("capquery_numworkers", 10)
