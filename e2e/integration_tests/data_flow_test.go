@@ -14,8 +14,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"reflect"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
+	//log "github.com/sirupsen/logrus"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -29,14 +30,9 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	"github.com/streadway/amqp"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
-
-var qUser, qPassword, qHost, qPort, qName string
-var mq lanternmq.MessageQueue
-var chID lanternmq.ChannelID
-var conn *amqp.Connection
-var channel *amqp.Channel
 
 type Endpoint struct {
 	url               string
@@ -253,54 +249,70 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
-  func Test_RetrieveCapabilityStatements(t *testing.T) {
-
-	//set up connection to queue
+func Test_RetrieveCapabilityStatements(t *testing.T) {
  	var err error
-
 	err = capQuerierConfig.SetupConfigForTests()
 	if err != nil {
 		panic(err)
 	} 
 
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("capquery_qname")
 
-	hap := th.HostAndPort{Host: viper.GetString("qhost"), Port: viper.GetString("qport")}
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
 	err = th.CheckResources(hap)
 	if err != nil {
 		panic(err)
 	}
 
-
-	
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
 	mq, chID, err = queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
+	defer mq.Close()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 
-	ctx := context.Background()
-	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, mq, chID, qName)
+	ctx, cancel := context.WithCancel(context.Background())
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, mq, chID, qName)
+	// wait 30 seconds
+	time.Sleep(30 * time.Second)
+	cancel()
+	
+	// check that fhir_endpoints have capability statements
+	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints where capability_statement is not null;")
+	var capability_statement_count int
+	err = query_str.Scan(&capability_statement_count)
 	failOnError(err)
+
+	if capability_statement_count == 0 {
+		t.Fatalf("Fhir_endpoints db should have capability statements")
+	}
+
+
 
 }
 
-/* func Test_HealthItProducts(t *testing.T) {
+func Test_HealthItProducts(t *testing.T) {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 
 	defer store.Close()
-	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
-	var row_count int
-	err = healthit_prod_row.Scan(&row_count)
-	failOnError(err)
 
-	if row_count != 0 {
-		t.Fatalf("Healthit product database should be empty")
+	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
+	expected_hitp_count := 7828
+	var hitp_count int
+	err = healthit_prod_row.Scan(&hitp_count)
+	failOnError(err)
+	if hitp_count != 0 {
+		t.Fatalf("Healthit product database should initially be empty")
 	}
-	
+
 	// Querying for chpl health it products
 	ctx := context.Background()
 	client := &http.Client{
@@ -309,8 +321,46 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	err = chplquerier.GetCHPLProducts(ctx, store, client)
 	failOnError(err)
 
-	
-} */
+	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
+	err = healthit_prod_row.Scan(&hitp_count)
+	failOnError(err)
+	if hitp_count != expected_hitp_count {
+		t.Fatalf("Database should have " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
+	}
+	// expect this in db
+	//{
+	//	"id":3,
+	//	"chplProductNumber":"CHP-029177",
+	//	"edition":"2014",
+	//	"practiceType":"Inpatient",
+	//	"developer":"Intuitive Medical Documents",
+	//	"product":"Intuitive Medical Document",
+	//	"version":"2.0",
+	//	"certificationDate":1457049600000,
+	//	"certificationStatus":"Active",
+	//	"criteriaMet":"100☺101☺103☺106☺107☺108☺109☺114☺115☺116☺61☺62☺63☺64☺65☺66☺67☺68☺69☺70☺71☺72☺73☺74☺75☺76☺77☺81☺82☺83☺84☺86☺87☺88☺91☺92☺93☺94☺95☺96☺97☺98☺99"
+	//	}
+
+	var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
+		Name:                  "Intuitive Medical Document",
+		Version:               "2.0",
+		Developer:             "Intuitive Medical Documents",
+		CertificationStatus:   "Active",
+		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
+		CertificationEdition:  "2014",
+		CHPLID:                "CHP-029177",
+		CertificationCriteria: []string{"100", "101", "103", "106", "107", "108", "109", "114", "115", "116", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "81", "82", "83", "84", "86", "87", "88", "91", "92", "93", "94", "95", "96", "97", "98", "99"},
+	}
+
+	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Intuitive Medical Document", "2.0")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, hitp.CHPLID == testHITP.CHPLID, "CHPL ID is not what was expected")
+	th.Assert(t, hitp.CertificationEdition == testHITP.CertificationEdition, "Certification edition is not what was expected")
+	th.Assert(t, hitp.Developer == testHITP.Developer, "Developer is not what was expected")
+	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
+	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
+	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
+}
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var client http.Client
