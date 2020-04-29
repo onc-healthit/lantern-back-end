@@ -146,10 +146,15 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	return &dbProd, nil
 }
 
+// returns 0 if no match found.
 func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
 	vendor, err := store.GetVendorUsingName(ctx, prod.Developer)
+	if err == sql.ErrNoRows {
+		log.Warnf("no vendor match for product %s with vendor %s", prod.Product, prod.Developer)
+		return 0, nil
+	}
 	if err != nil {
-		return -1, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
+		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
 	}
 
 	return vendor.ID, nil

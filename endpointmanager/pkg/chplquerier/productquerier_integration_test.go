@@ -5,6 +5,7 @@ package chplquerier
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"os"
 	"strings"
@@ -260,7 +261,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	var err error
 
-	// var ct int
+	var ct int
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM healthit_products;")
 	th.Assert(t, err == nil, err)
 	defer ctStmt.Close()
@@ -280,21 +281,21 @@ func Test_GetCHPLProducts(t *testing.T) {
 	err = GetCHPLVendors(ctx, store, &(tc.Client))
 	th.Assert(t, err == nil, err)
 
-	// // mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
-	// expectedProdsStored := 168
+	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
+	expectedProdsStored := 168
 
-	// tc, err = basicTestClient()
-	// th.Assert(t, err == nil, err)
-	// defer tc.Close()
+	tc, err = basicTestClient()
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
 
-	// ctx = context.Background()
+	ctx = context.Background()
 
-	// err = GetCHPLProducts(ctx, store, &(tc.Client))
-	// th.Assert(t, err == nil, err)
+	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	th.Assert(t, err == nil, err)
 
-	// err = ctStmt.QueryRow().Scan(&ct)
-	// th.Assert(t, err == nil, err)
-	// th.Assert(t, ct == expectedProdsStored, fmt.Sprintf("Expected %d products stored. Actually had %d products stored.", expectedProdsStored, ct))
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == expectedProdsStored, fmt.Sprintf("Expected %d products stored. Actually had %d products stored.", expectedProdsStored, ct))
 
 	// test context ended
 	// also checks what happens when an http request fails
