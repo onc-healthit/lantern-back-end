@@ -89,7 +89,7 @@ func Test_ParseAndStoreNPIFileContext(t *testing.T) {
 
 	// Note: it's possible that on a particularly slow or fast machine, this time deadline won't work.
 	// need to set a deadline rather than call cancel so we get through the read of the csv file.
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(4*time.Millisecond))
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(2*time.Millisecond))
 	defer cancel()
 
 	added, err := nppesquerier.ParseAndStoreNPIFile(ctx, "testdata/npidata_pfile_fixture.csv", store)
