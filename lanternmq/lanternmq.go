@@ -1,7 +1,9 @@
 package lanternmq
+
 import (
 	"context"
 )
+
 // MessageQueue is an interface for writing messages to either a basic queue or a topic. Below are
 // some usage examples.
 //

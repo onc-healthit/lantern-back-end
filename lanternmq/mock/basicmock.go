@@ -1,8 +1,8 @@
 package mock
 
 import (
-	"errors"
 	"context"
+	"errors"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 )

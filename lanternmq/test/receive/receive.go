@@ -7,10 +7,10 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"log"
 	"os"
 	"time"
-	"context"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
@@ -73,7 +73,7 @@ func main() {
 	defer close(errs)
 
 	ctx := context.Background()
-	
+
 	go mq.ProcessMessages(ctx, msgs, handleQueueMessage, nil, errs)
 	go mq.ProcessMessages(ctx, tmsgs, handleTopicMessage, nil, errs)
 

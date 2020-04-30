@@ -16,7 +16,6 @@ import (
 	"time"
 
 	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -27,6 +26,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
 	Assert "github.com/stretchr/testify/assert"
@@ -328,7 +328,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
 	qName := viper.GetString("qname")
-	
+
 	hap := th.HostAndPort{Host: qHost, Port: qPort}
 	err = th.CheckResources(hap)
 	if err != nil {

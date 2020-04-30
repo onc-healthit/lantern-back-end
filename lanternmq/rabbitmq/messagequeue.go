@@ -1,9 +1,9 @@
 package rabbitmq
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"context"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/streadway/amqp"
