@@ -327,8 +327,8 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
-
+	qName := viper.GetString("qname")
+	
 	hap := th.HostAndPort{Host: qHost, Port: qPort}
 	err = th.CheckResources(hap)
 	if err != nil {
