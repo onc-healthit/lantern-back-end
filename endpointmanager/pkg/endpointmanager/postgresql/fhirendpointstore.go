@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -49,7 +50,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	SELECT
 		id,
 		url,
-		organization_name,
+		organization_names,
+		npi_ids,
 		list_source,
 		created_at,
 		updated_at
@@ -59,7 +61,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
-		&endpoint.OrganizationName,
+		pq.Array(&endpoint.OrganizationNames),
+		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
@@ -70,9 +73,9 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	return &endpoint, err
 }
 
-// GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
+// GetFHIREndpointUsingURLAndListSource gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpoint, error) {
+func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url string, listSource string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
 
 	sqlStatement := `
@@ -80,17 +83,19 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 		id,
 		url,
 		organization_name,
+		npi_ids,
 		list_source,
 		created_at,
 		updated_at
-	FROM fhir_endpoints WHERE url=$1`
+	FROM fhir_endpoints WHERE url=$1 AND list_source=$2`
 
-	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, url, listSource)
 
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
-		&endpoint.OrganizationName,
+		pq.Array(&endpoint.OrganizationNames),
+		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
@@ -107,7 +112,8 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 	row := addFHIREndpointStatement.QueryRowContext(ctx,
 		e.URL,
-		e.OrganizationName,
+		pq.Array(e.OrganizationNames),
+		pq.Array(e.NPIIDs),
 		e.ListSource)
 
 	err = row.Scan(&e.ID)
@@ -121,7 +127,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,
-		e.OrganizationName,
+		pq.Array(e.OrganizationNames),
+		pq.Array(e.NPIIDs),
 		e.ListSource,
 		e.ID)
 
@@ -138,7 +145,7 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 // GetAllFHIREndpointOrgNames returns a sql.Rows of all of the orgNames
 func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
-        SELECT id, organization_name FROM fhir_endpoints`
+        SELECT id, organization_names FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 
 	if err != nil {
@@ -148,7 +155,7 @@ func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanag
 	defer rows.Close()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
-		err = rows.Scan(&endpoint.ID, &endpoint.OrganizationName)
+		err = rows.Scan(&endpoint.ID, pq.Array(&endpoint.OrganizationNames))
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +168,8 @@ func prepareFHIREndpointStatements(s *Store) error {
 	var err error
 	addFHIREndpointStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints (url,
-			organization_name,
+			organization_names,
+			npi_ids,
 			list_source)
 		VALUES ($1, $2, $3)
 		RETURNING id`)
@@ -171,9 +179,10 @@ func prepareFHIREndpointStatements(s *Store) error {
 	updateFHIREndpointStatement, err = s.DB.Prepare(`
 		UPDATE fhir_endpoints
 		SET url = $1,
-			organization_name = $2,
-			list_source = $3
-		WHERE id = $4`)
+			organization_names = $2,
+			npi_ids = $3,
+			list_source = $4
+		WHERE id = $5`)
 	if err != nil {
 		return err
 	}

@@ -17,7 +17,8 @@ type OrgKeyword struct {
 
 // EndpointEntry is a struct for each entry of data pulled out of the EndpointSources file
 type EndpointEntry struct {
-	OrganizationName     string
+	OrganizationNames    []string
+	NPIIDs               []string
 	FHIRPatientFacingURI string
 	ListSource           string
 }

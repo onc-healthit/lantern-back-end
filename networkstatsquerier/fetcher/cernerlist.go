@@ -14,7 +14,7 @@ func (cl CernerList) GetEndpoints(cernerList []map[string]interface{}) ListOfEnd
 		}
 		orgName, orgOk := cernerList[entry]["name"].(string)
 		if orgOk {
-			fhirEntry.OrganizationName = orgName
+			fhirEntry.OrganizationNames = []string{orgName}
 		}
 		uri, uriOk := cernerList[entry]["baseUrl"].(string)
 		if uriOk {

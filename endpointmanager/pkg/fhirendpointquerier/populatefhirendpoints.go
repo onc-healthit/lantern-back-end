@@ -39,7 +39,7 @@ func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fe
 		return err
 	}
 
-	existingEndpt, err := store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
+	existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirEndpoint.URL, fhirEndpoint.ListSource)
 	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
 		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
@@ -50,13 +50,16 @@ func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fe
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
 		// Always overwrite the db entry with the new data
-		existingEndpt.OrganizationName = fhirEndpoint.OrganizationName
-		existingEndpt.ListSource = fhirEndpoint.ListSource
+		for _, name := range fhirEndpoint.OrganizationNames {
+			existingEndpt.AddOrganizationName(name)
+		}
+		for _, npiID := range fhirEndpoint.NPIIDs {
+			existingEndpt.AddNPIID(npiID)
+		}
 		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
-		log.Infof("Endpoint already exists (%s, %s). List source %s is overwriting it.", existingEndpt.URL, existingEndpt.OrganizationName, existingEndpt.ListSource)
 	}
 	return nil
 }
@@ -71,9 +74,9 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
-		URL:              uri,
-		OrganizationName: endpoint.OrganizationName,
-		ListSource:       endpoint.ListSource,
+		URL:               uri,
+		OrganizationNames: endpoint.OrganizationNames,
+		ListSource:        endpoint.ListSource,
 	}
 
 	// @TODO Get Location

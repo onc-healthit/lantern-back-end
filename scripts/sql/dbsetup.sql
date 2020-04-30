@@ -28,7 +28,7 @@ $fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,
-    npi_id			     VARCHAR(500) UNIQUE,
+    npi_id			 VARCHAR(500) UNIQUE,
     name             VARCHAR(500),
     secondary_name   VARCHAR(500),
     location         JSONB,
@@ -96,7 +96,8 @@ CREATE TABLE healthit_products (
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
-    organization_name       VARCHAR(500),
+    organization_names      VARCHAR(500)[],
+    npi_ids                 VARCHAR(500)[],
     list_source             VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
