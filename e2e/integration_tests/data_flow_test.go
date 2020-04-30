@@ -16,7 +16,7 @@ import (
 	"time"
 
 	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -337,7 +337,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
-	mq, chID, err = queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
 	defer mq.Close()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, mq != nil, "expected message queue to be created")
