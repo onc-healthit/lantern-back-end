@@ -15,7 +15,6 @@ import (
 	"testing"
 	"time"
 
-	capQuerierConfig "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -133,10 +132,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	defer store.Close()
+	var err error
 	expected_link_count := 40
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
@@ -250,11 +246,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 }
 
 func Test_GetCHPLProducts(t *testing.T) {
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	defer store.Close()
-
+	var err error
 	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
 	expected_hitp_count := 7829
 	var hitp_count int
@@ -314,15 +306,6 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var err error
-
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
-
-	err = capQuerierConfig.SetupConfigForTests()
-	if err != nil {
-		panic(err)
-	}
-
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
