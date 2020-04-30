@@ -65,7 +65,9 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
 	if string(message) == "start" {
 		err := qw.Start(ctx, numWorkers, errs)
-		failOnError(err)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 	if string(message) == "stop" {
