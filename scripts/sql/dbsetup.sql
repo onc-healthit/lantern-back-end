@@ -92,12 +92,12 @@ CREATE TABLE fhir_endpoints_info_history (
     entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     user_id                 VARCHAR(500),
     id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
-    fhir_endpoint_id        INT, -- should link to fhir_endpoints(id). not using 'reference' because if the referenced endpoint is deleted, we still want the historical copies to retain the ID.
     healthit_product_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
     -- TODO: remove once vendor table available
     vendor                  VARCHAR(500),
     -- TODO: uncomment once vendor table available
     -- vendor_id            INT, 
+    url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
