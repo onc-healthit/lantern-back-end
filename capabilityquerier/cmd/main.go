@@ -69,9 +69,10 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		return nil
 	}
 	if string(message) == "stop" {
-		log.Info("Stopping queue workers")
 		err := qw.Stop()
-		failOnError(err)
+		if err != nil {
+			return fmt.Errorf("error stopping queue workers: %s", err.Error())
+		}
 		return nil
 	}
 
@@ -79,24 +80,24 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	// Specifically query the FHIR endpoint metadata
 	metadataURL, err := url.Parse(urlString)
 	if err != nil {
-		log.Warn("endpoint URL parsing error: ", err.Error())
-	} else {
-		metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
+	}
 
-		job := capabilityquerier.Job{
-			Context:      ctx,
-			Duration:     jobDuration,
-			FHIRURL:      metadataURL,
-			Client:       client,
-			MessageQueue: mq,
-			Channel:      ch,
-			QueueName:    qName,
-		}
+	metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 
-		err = qw.Add(&job)
-		if err != nil {
-			log.Warn("error adding job to queue workers: ", err.Error())
-		}
+	job := capabilityquerier.Job{
+		Context:      ctx,
+		Duration:     jobDuration,
+		FHIRURL:      metadataURL,
+		Client:       client,
+		MessageQueue: mq,
+		Channel:      ch,
+		QueueName:    qName,
+	}
+
+	err = qw.Add(&job)
+	if err != nil {
+		return fmt.Errorf("error adding job to queue workers: %s", err.Error())
 	}
 
 	return nil

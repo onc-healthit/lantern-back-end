@@ -81,6 +81,9 @@ func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has 
 // Stop sends a stop signal to all of the workers to stop accepting jobs and to close.
 // Stop throws an error if QueueWorkers has already been stopped and has not been restarted.
 func (qw *QueueWorkers) Stop() error {
+	if qw.numWorkers == 0 {
+		return errors.New("no workers are currently running")
+	}
 
 	select {
 	case <-qw.ctx.Done():
@@ -92,9 +95,6 @@ func (qw *QueueWorkers) Stop() error {
 		// ok
 	}
 
-	if qw.numWorkers == 0 {
-		return errors.New("no workers are currently running")
-	}
 	for i := 0; i < qw.numWorkers; i++ {
 		qw.kill <- true
 	}
