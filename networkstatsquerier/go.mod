@@ -3,7 +3,7 @@ module github.com/onc-healthit/lantern-back-end/networkstatsquerier
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200428210430-2d8002ca9bca
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200430152242-2eba69c9c1ad
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.4.2
