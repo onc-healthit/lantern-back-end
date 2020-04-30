@@ -5,7 +5,6 @@ package integration_tests
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -30,7 +29,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
+	Assert "github.com/stretchr/testify/assert"
 )
 
 type Endpoint struct {
@@ -38,6 +37,8 @@ type Endpoint struct {
 	organization_name string
 	mapped_npi_ids    []string
 }
+
+var store *postgresql.Store
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
@@ -248,14 +249,14 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
-func Test_GetHealthItProducts(t *testing.T) {
+func Test_GetCHPLProducts(t *testing.T) {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
 
 	defer store.Close()
 
 	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
-	expected_hitp_count := 7828
+	expected_hitp_count := 7829
 	var hitp_count int
 	err = healthit_prod_row.Scan(&hitp_count)
 	failOnError(err)
@@ -343,7 +344,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, store, mq, chID, qName)
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
 	time.Sleep(30 * time.Second)
 	cancel()
 
@@ -375,7 +376,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		test_vendor_list = append(test_vendor_list, vendor)
 	}
 	th.Assert(t, len(expected_vendor_list) == len(test_vendor_list), "Number of distinct vendors is not what was expected")
-	assert.ElementsMatch(t, expected_vendor_list, test_vendor_list, "List of distinct vendors is not what was expected")
+	Assert.ElementsMatch(t, expected_vendor_list, test_vendor_list, "List of distinct vendors is not what was expected")
 }
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
