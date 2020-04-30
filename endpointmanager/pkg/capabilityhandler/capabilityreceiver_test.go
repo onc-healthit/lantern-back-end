@@ -2,7 +2,6 @@ package capabilityhandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -20,7 +19,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":   "TLS 1.2",
 }
 
-var testFhirEndpoint = endpointmanager.FHIREndpoint{
+var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:          "http://example.com/DTSU2/",
 	MIMETypes:    []string{"application/json+fhir"},
 	TLSVersion:   "TLS 1.2",
@@ -44,7 +43,7 @@ func setupCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
-	testFhirEndpoint.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityStatement = cs
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
 	th.Assert(t, err == nil, err)
@@ -53,7 +52,7 @@ func setupCapabilityStatement(t *testing.T) {
 
 func Test_formatMessage(t *testing.T) {
 	setupCapabilityStatement(t)
-	expectedEndpt := testFhirEndpoint
+	expectedEndpt := testFhirEndpointInfo
 	tmpMessage := testQueueMsg
 
 	message, err := convertInterfaceToBytes(tmpMessage)
@@ -68,9 +67,8 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = "http://example.com/DTSU2/"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	endpt, returnErr = formatMessage(message)
+	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
-	th.Assert(t, expectedEndpt.URL == endpt.URL, fmt.Sprintf("%s and %s are not equal", expectedEndpt.URL, endpt.URL))
 
 	// test incorrect error message
 	tmpMessage["err"] = nil

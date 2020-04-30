@@ -31,14 +31,14 @@ var fluffWords = []string{
 // An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
 // In this future, this may be changed to using a vendor table and linking the endpoint entry to
 // the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpoint, store *postgresql.Store) error {
+func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
 
 	vendor, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
 	if err != nil {
-		return errors.Wrapf(err, "error matching the capability statement to a vendor for endpoint %s", ep.URL)
+		return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
 	}
 
 	ep.Vendor = vendor
