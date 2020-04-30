@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/google/go-cmp v0.4.0
 	github.com/lib/pq v1.3.0
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200429123655-65ae0414372a
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200430111713-e96c4667b2f9
 	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200409141405-5691b50d3ae0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.4.2
