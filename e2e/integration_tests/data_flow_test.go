@@ -331,15 +331,15 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	time.Sleep(30 * time.Second)
 	cancel()
 
-	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints where capability_statement is not null;")
+	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
 	err = query_str.Scan(&capability_statement_count)
 	failOnError(err)
 	if capability_statement_count == 0 {
-		t.Fatalf("Fhir_endpoints db should have capability statements")
+		t.Fatalf("Fhir_endpoints_info db should have capability statements")
 	}
 
-	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints;")
+	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
 	var fhir_version_count int
 	err = query_str.Scan(&fhir_version_count)
 	failOnError(err)
@@ -348,7 +348,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	}
 
 	expected_vendor_list := [5]string{"Epic Systems Corporation", "Allscripts", "Medical Information Technology, Inc. (MEDITECH)", "Cerner Corporation", "CareEvolution, Inc."}
-	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints where vendor!='';")
+	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints_info where vendor!='';")
 	failOnError(err)
 	var test_vendor_list []string
 	defer rows.Close()
