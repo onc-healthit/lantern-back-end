@@ -47,21 +47,8 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	// check MIMETypes equal
-	if len(e.MIMETypes) != len(e2.MIMETypes) {
+	if !listsEqual(e.MIMETypes, e2.MIMETypes) {
 		return false
-	}
-	// don't care about order
-	a := make([]string, len(e.MIMETypes))
-	b := make([]string, len(e2.MIMETypes))
-	copy(a, e.MIMETypes)
-	copy(b, e2.MIMETypes)
-	sort.Strings(a)
-	sort.Strings(b)
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
 	}
 
 	if e.HTTPResponse != e2.HTTPResponse {
@@ -82,5 +69,26 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
+	return true
+}
+
+func listsEqual(l1 []string, l2 []string) bool {
+
+	// check MIMETypes equal
+	if len(l1) != len(l2) {
+		return false
+	}
+	// don't care about order
+	a := make([]string, len(l1))
+	b := make([]string, len(l2))
+	copy(a, l1)
+	copy(b, l2)
+	sort.Strings(a)
+	sort.Strings(b)
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
 	return true
 }
