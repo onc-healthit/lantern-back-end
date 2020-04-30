@@ -12,7 +12,6 @@ import (
 // prepared statements are left open to be used throughout the execution of the application
 // TODO: figure out if there's a better way to manage this for bulk calls
 var addNPIContactStatement *sql.Stmt
-var updateNPIContactStatement *sql.Stmt
 var updateNPIContactByNPIIDStatement *sql.Stmt
 var deleteNPIContactStatement *sql.Stmt
 
@@ -39,7 +38,9 @@ func (s *Store) GetNPIContactByNPIID(ctx context.Context, npiID string) (*endpoi
 	content_type,
 	content_description,
 	other_content_description,
-	location
+	location,
+	created_at,
+	updated_at
 	FROM npi_contacts WHERE npi_id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatement, npiID)
 
@@ -60,6 +61,8 @@ func (s *Store) GetNPIContactByNPIID(ctx context.Context, npiID string) (*endpoi
 		&contact.ContentDescription,
 		&contact.OtherContentDescription,
 		&locationJSON,
+		&contact.CreatedAt,
+		&contact.UpdatedAt,
 	)
 
 	if err != nil {
@@ -110,33 +113,6 @@ func (s *Store) AddNPIContact(ctx context.Context, contact *endpointmanager.NPIC
 	return err
 }
 
-// UpdateNPIContact updates the NPIContact in the database using the NPIContact's database ID as the key.
-func (s *Store) UpdateNPIContact(ctx context.Context, contact *endpointmanager.NPIContact) error {
-	locationJSON, err := json.Marshal(contact.Location)
-	if err != nil {
-		return err
-	}
-	_, err = updateNPIContactStatement.ExecContext(ctx,
-		contact.ID,
-		contact.NPI_ID,
-		contact.EndpointType,
-		contact.EndpointTypeDescription,
-		contact.Endpoint,
-		contact.ValidURL,
-		contact.Affiliation,
-		contact.EndpointDescription,
-		contact.AffiliationLegalBusinessName,
-		contact.UseCode,
-		contact.UseDescription,
-		contact.OtherUseDescription,
-		contact.ContentType,
-		contact.ContentDescription,
-		contact.OtherUseDescription,
-		locationJSON)
-
-	return err
-}
-
 // UpdateNPIContactByNPIID updates the NPIContact in the database using the NPIContact's NPIID as the key.
 func (s *Store) UpdateNPIContactByNPIID(ctx context.Context, contact *endpointmanager.NPIContact) error {
 	locationJSON, err := json.Marshal(contact.Location)
@@ -145,7 +121,6 @@ func (s *Store) UpdateNPIContactByNPIID(ctx context.Context, contact *endpointma
 	}
 
 	_, err = updateNPIContactByNPIIDStatement.ExecContext(ctx,
-		contact.ID,
 		contact.NPI_ID,
 		contact.EndpointType,
 		contact.EndpointTypeDescription,

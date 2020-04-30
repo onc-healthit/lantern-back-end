@@ -1,5 +1,7 @@
 package endpointmanager
-
+import (
+	"time"
+)
 // NPIContact represents the digitial contact information for an NPI Contact provided by the NPPES database
 type NPIContact struct {
 	ID                           int
@@ -18,4 +20,6 @@ type NPIContact struct {
 	ContentDescription           string
 	OtherContentDescription      string
 	Location                     *Location
+	CreatedAt               	time.Time
+	UpdatedAt               	time.Time
 }
