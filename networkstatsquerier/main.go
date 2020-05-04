@@ -167,12 +167,7 @@ func main() {
 			if err != nil {
 				log.Warn("Endpoint URL Parsing Error: ", err.Error())
 			} else {
-<<<<<<< HEAD
 				getHTTPRequestTiming(metadataURL.String(), orgName)
-=======
-				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-				getHTTPRequestTiming(metadataURL.String())
->>>>>>> ### WILL PROBABLY CAUSE FUTURE CONFLICTS - CAN REMOVE LATER. made some quick updates to network stats querier to not use the organization name.
 			}
 		}
 		runtime.GC()
