@@ -3,13 +3,16 @@ package endpointlinker
 import (
 	"context"
 	"fmt"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/pkg/errors"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/pkg/errors"
 )
 
 func NormalizeOrgName(orgName string) string {
@@ -103,6 +106,24 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, norm
 	return matches, confidenceMap, nil
 }
 
+// updates allMatches and allConfidences. allConfidences gets updated within the function. Because allMatches is a
+// slice and we use 'append', a new slice might be allocated, so we need to return allMatches in case a new slice is
+// created.
+func mergeMatches(allMatches []int, allConfidences map[int]float64, matches []int, confidences map[int]float64) []int {
+	for _, match := range matches {
+		if !helpers.IntArrayContains(allMatches, match) {
+			allMatches = append(allMatches, match)
+			allConfidences[match] = confidences[match]
+		} else {
+			if confidences[match] > allConfidences[match] {
+				allConfidences[match] = confidences[match]
+			}
+		}
+	}
+
+	return allMatches
+}
+
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
 	fhirEndpointOrgNames, err := store.GetAllFHIREndpointOrgNames(ctx)
 	if err != nil {
@@ -118,26 +139,33 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	unmatchable := []string{}
 	// Iterate through fhir endpoints
 	for _, endpoint := range fhirEndpointOrgNames {
-		normalizedEndpointName := NormalizeOrgName(endpoint.OrganizationName)
-		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
-		if err != nil {
-			return errors.Wrap(err, "Error getting matching NPI org IDs")
+		allMatches := make([]int, 0)
+		allConfidences := make(map[int]float64)
+
+		for _, name := range endpoint.OrganizationNames {
+			normalizedEndpointName := NormalizeOrgName(name)
+			matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+			if err != nil {
+				return errors.Wrap(err, "Error getting matching NPI org IDs")
+			}
+
+			allMatches = mergeMatches(allMatches, allConfidences, matches, confidences)
 		}
-		if len(matches) > 0 {
-			matchCount += 1
+
+		if len(allMatches) > 0 {
+			matchCount++
 			// Iterate over matches and add to linking table
-			for _, match := range matches {
-				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID, confidences[match])
+			for _, match := range allMatches {
+				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID, allConfidences[match])
 				if err != nil {
 					return errors.Wrap(err, "Error linking org to FHIR endpoint")
 				}
 			}
 		} else {
 			if verbose {
-				unmatchable = append(unmatchable, endpoint.OrganizationName)
+				unmatchable = append(unmatchable, endpoint.URL)
 			}
 		}
-
 	}
 
 	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpointOrgNames)), verbose)

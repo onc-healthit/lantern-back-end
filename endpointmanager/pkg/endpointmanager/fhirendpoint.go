@@ -3,6 +3,8 @@ package endpointmanager
 import (
 	"strings"
 	"time"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -33,10 +35,10 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.URL != e2.URL {
 		return false
 	}
-	if !listsEqual(e.OrganizationNames, e2.OrganizationNames) {
+	if !helpers.StringArraysEqual(e.OrganizationNames, e2.OrganizationNames) {
 		return false
 	}
-	if !listsEqual(e.NPIIDs, e2.NPIIDs) {
+	if !helpers.StringArraysEqual(e.NPIIDs, e2.NPIIDs) {
 		return false
 	}
 	if e.ListSource != e2.ListSource {
@@ -73,23 +75,14 @@ func NormalizeEndpointURL(url string) string {
 
 // AddOrganizationName adds the name to the endpoint's OrganizationNames list if it's not present already. If it is, it does nothing.
 func (e *FHIREndpoint) AddOrganizationName(orgName string) {
-	if !contains(e.OrganizationNames, orgName) {
+	if !helpers.StringArrayContains(e.OrganizationNames, orgName) {
 		e.OrganizationNames = append(e.OrganizationNames, orgName)
 	}
 }
 
 // AddNPIID adds the name to the endpoint's NPIIDs list if it's not present already. If it is, it does nothing.
 func (e *FHIREndpoint) AddNPIID(npiID string) {
-	if !contains(e.NPIIDs, npiID) {
+	if !helpers.StringArrayContains(e.NPIIDs, npiID) {
 		e.NPIIDs = append(e.NPIIDs, npiID)
 	}
-}
-
-func contains(l []string, s string) bool {
-	for _, s2 := range l {
-		if s == s2 {
-			return true
-		}
-	}
-	return false
 }

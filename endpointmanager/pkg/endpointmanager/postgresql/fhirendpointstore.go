@@ -82,7 +82,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	SELECT
 		id,
 		url,
-		organization_name,
+		organization_names,
 		npi_ids,
 		list_source,
 		created_at,
@@ -171,7 +171,7 @@ func prepareFHIREndpointStatements(s *Store) error {
 			organization_names,
 			npi_ids,
 			list_source)
-		VALUES ($1, $2, $3)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id`)
 	if err != nil {
 		return err
