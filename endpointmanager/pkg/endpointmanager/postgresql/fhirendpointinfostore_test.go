@@ -33,12 +33,13 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// add an endpoint that can later be referenced
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:              "example.com/FHIR/DSTU2/",
-		OrganizationName: "Example Inc.",
-		ListSource:       "https://github.com/cerner/ignite-endpoints"}
+		URL:               "example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Example Inc."},
+		NPIIDs:            []string{"1"},
+		ListSource:        "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:              "other.example.com/FHIR/DSTU2/",
-		OrganizationName: "Other Example Inc."}
+		URL:               "other.example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Other Example Inc."}}
 	store.AddFHIREndpoint(ctx, endpoint1)
 	store.AddFHIREndpoint(ctx, endpoint2)
 

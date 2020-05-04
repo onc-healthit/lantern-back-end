@@ -76,4 +76,4 @@ update_mods:
 	cd ./e2e; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
 	cd ./networkstatsquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
 	cd ./capabilityquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch);go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
-	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
+	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;

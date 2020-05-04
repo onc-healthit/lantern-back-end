@@ -1,10 +1,10 @@
 package endpointmanager
 
 import (
-	"sort"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
 // FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
@@ -47,7 +47,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !listsEqual(e.MIMETypes, e2.MIMETypes) {
+	if !helpers.StringArraysEqual(e.MIMETypes, e2.MIMETypes) {
 		return false
 	}
 
@@ -69,26 +69,5 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	return true
-}
-
-func listsEqual(l1 []string, l2 []string) bool {
-
-	// check MIMETypes equal
-	if len(l1) != len(l2) {
-		return false
-	}
-	// don't care about order
-	a := make([]string, len(l1))
-	b := make([]string, len(l2))
-	copy(a, l1)
-	copy(b, l2)
-	sort.Strings(a)
-	sort.Strings(b)
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
 	return true
 }

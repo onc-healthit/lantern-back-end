@@ -123,8 +123,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	}
 	// populate fhir endpoint
 	ep := &endpointmanager.FHIREndpoint{
-		URL:              "example.com/FHIR/DSTU2",
-		OrganizationName: "Example Inc."}
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Inc."}}
 	store.AddFHIREndpoint(ctx, ep)
 
 	// basic test
