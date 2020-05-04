@@ -359,7 +359,8 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		test_vendor_list = append(test_vendor_list, vendor)
 	}
 	th.Assert(t, len(test_vendor_list)>= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
-	Assert.Contains(t, test_vendor_list, common_vendor_list, "List of distinct vendors should include Epic and Cerner")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
 }
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
