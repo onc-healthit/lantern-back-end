@@ -267,7 +267,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	err = healthit_prod_row.Scan(&hitp_count)
 	failOnError(err)
 	if hitp_count < expected_hitp_count {
-		t.Fatalf("Database should have " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
+		t.Fatalf("Database should have at least " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
 	}
 	// expect this in db
 	//{
