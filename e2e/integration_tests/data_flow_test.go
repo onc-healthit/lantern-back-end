@@ -247,6 +247,11 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 func Test_GetCHPLProducts(t *testing.T) {
 	var err error
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+	}
+
 	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
 	expected_hitp_count := 7829
 	var hitp_count int
@@ -344,6 +349,14 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	failOnError(err)
 	if fhir_version_count < 300 {
 		t.Fatalf("There should be at least 300 capability statement with fhir version specified")
+	}
+}
+
+func Test_VendorList(t *testing.T) {
+	var err error
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
 	}
 
 	common_vendor_list := [2]string{"Epic Systems Corporation", "Cerner Corporation"}
