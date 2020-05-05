@@ -227,8 +227,7 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 				var fhirEndpoint = &endpointmanager.FHIREndpoint{
 					URL:              npiContact.Endpoint,
 					OrganizationName: npiContact.AffiliationLegalBusinessName,
-					ListSource:       "NPPES",
-					Location:         npiContact.Location}
+					ListSource:       "NPPES"}
 				err = store.AddFHIREndpoint(ctx, fhirEndpoint)
 				if err != nil {
 					log.Error(err)
