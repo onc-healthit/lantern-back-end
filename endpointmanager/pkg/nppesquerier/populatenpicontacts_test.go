@@ -37,7 +37,7 @@ func Test_ParseNPIContactdataLine(t *testing.T) {
 	}
 	// Endpoint
 	if data.Endpoint != "https://foobar.com/metadata/" {
-		t.Errorf("Expected Endpoint to be %s, got %s", "Salisbury", data.Endpoint)
+		t.Errorf("Expected Endpoint to be %s, got %s", "https://foobar.com/metadata/", data.Endpoint)
 	}
 	// Affiliation
 	if data.Affiliation != "N" {

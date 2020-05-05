@@ -117,11 +117,12 @@ func removeNestedDoubleQuotesFromCSV(filename string) (error, string) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		// TODO: This regex is only checking every other field starting with the second feld,
-		// it is capturing all of the free-text fields that include bad-data as of the March/2020 NPI Data
-		pattern := regexp.MustCompile(`(,|",")(.*?)","`)
-		matches := pattern.FindAllStringSubmatch(line, -1)
-		for _, match := range matches {
+		// These 2 regexes (pattern1 and pattern2) capture every other value enclosed in quotes in the csv
+		// combined they are able to examine all values. The matches resulting from the regexes need to be
+		// iterated over independently as the values in the regexes are captured in different group indexes
+		pattern1 := regexp.MustCompile(`(,|",")(.*?)","`)
+		matches1 := pattern1.FindAllStringSubmatch(line, -1)
+		for _, match := range matches1 {
 			// If detected nested quote, remove nested quotes
 			if strings.Contains(match[2], "\"") {
 				sanitized := strings.Replace(match[2], "\"", "", -1)
@@ -129,6 +130,17 @@ func removeNestedDoubleQuotesFromCSV(filename string) (error, string) {
 				line = strings.Replace(line, match[2], sanitized, 1)
 			}
 		}
+		pattern2 := regexp.MustCompile(`"(.*?)(,|",")`)
+		matches2 := pattern2.FindAllStringSubmatch(line, -1)
+		for _, match := range matches2 {
+			// If detected nested quote, remove nested quotes
+			if strings.Contains(match[1], "\"") {
+				sanitized := strings.Replace(match[1], "\"", "", -1)
+				// replace entry with quotes removed
+				line = strings.Replace(line, match[1], sanitized, 1)
+			}
+		}
+
 		processedlines = append(processedlines, line)
 	}
 
