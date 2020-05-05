@@ -22,7 +22,6 @@ env:
   - LANTERN_TEST_DBNAME=lantern_test
   - LANTERN_TEST_DBUSER=lantern
   - LANTERN_TEST_DBPASSWORD=postgrespassword
-  - LANTERN_ENDPTLIST="./scripts/EndpointSources.json"
   - LANTERN_QUSER=capabilityquerier
   - LANTERN_QPASSWORD=capabilityquerier
   - LANTERN_QPORT=5672

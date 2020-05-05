@@ -73,20 +73,6 @@
     "policies": [],
     "queues": [
         {
-            "name": "capability-statement-requests",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
-            "name": "network-info-requests",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
             "name": "network-info",
             "vhost": "/",
             "durable": true,
