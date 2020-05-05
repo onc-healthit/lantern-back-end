@@ -9,7 +9,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_history$
     BEGIN
         --
-        -- Create a row in emp_audit to reflect the operation performed on emp,
+        -- Create a row in fhir_endpoints_info_history to reflect the operation performed on fhir_endpoints_info,
         -- make use of the special variable TG_OP to work out the operation.
         --
         IF (TG_OP = 'DELETE') THEN
