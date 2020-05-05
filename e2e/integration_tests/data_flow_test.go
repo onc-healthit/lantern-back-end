@@ -326,10 +326,9 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, _ := context.WithTimeout(context.Background(), 30 * time.Second)
 	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
 	time.Sleep(30 * time.Second)
-	cancel()
 
 	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
