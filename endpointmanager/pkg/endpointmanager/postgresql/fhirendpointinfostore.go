@@ -127,7 +127,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 
 	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
 	endpointInfo.HealthITProductID = ints[0]
-	endpointInfo.VendorID = ints[2]
+	endpointInfo.VendorID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
 

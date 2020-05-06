@@ -23,22 +23,22 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
 	url, ok := msgJSON["url"].(string)
 	if !ok {
-		return "", nil, fmt.Errorf("unable to cast message URL to string")
+		return nil, fmt.Errorf("unable to cast message URL to string")
 	}
 
 	errs, ok := msgJSON["err"].(string)
 	if !ok {
-		return "", nil, fmt.Errorf("%s: unable to cast message Error to string", url)
+		return nil, fmt.Errorf("%s: unable to cast message Error to string", url)
 	}
 
 	tlsVersion, ok := msgJSON["tlsVersion"].(string)
 	if !ok {
-		return "", nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
+		return nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
@@ -47,12 +47,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	if msgJSON["mimeTypes"] != nil {
 		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
 		if !ok {
-			return "", nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
+			return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
 		}
 		for _, mimeTypeInt := range mimeTypesInt {
 			mimeType, ok := mimeTypeInt.(string)
 			if !ok {
-				return "", nil, fmt.Errorf("unable to cast mime type to string")
+				return nil, fmt.Errorf("unable to cast mime type to string")
 			}
 			mimeTypes = append(mimeTypes, mimeType)
 		}
@@ -61,7 +61,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	// JSON numbers are golang float64s
 	httpResponseFloat, ok := msgJSON["httpResponse"].(float64)
 	if !ok {
-		return "", nil, fmt.Errorf("unable to cast http response to int")
+		return nil, fmt.Errorf("unable to cast http response to int")
 	}
 	httpResponse := int(httpResponseFloat)
 
@@ -75,11 +75,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	if msgJSON["capabilityStatement"] != nil {
 		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
 		if !ok {
-			return "", nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
+			return nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
 		}
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
-			return "", nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
+			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
 
@@ -91,7 +91,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	if msgJSON["capabilityStatement"] != nil {
 		fhirVersion, err := capStat.GetFHIRVersion()
 		if err != nil {
-			return "", nil, err
+			return nil, err
 		}
 		mimeTypeValidObj = mimeTypeValid(mimeTypes, fhirVersion)
 	} else {
@@ -127,7 +127,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var fhirEndpoint *endpointmanager.FHIREndpointInfo
 	var existingEndpt *endpointmanager.FHIREndpointInfo
 
-	url, fhirEndpoint, err = formatMessage(message)
+	fhirEndpoint, err = formatMessage(message)
 	if err != nil {
 		return err
 	}
