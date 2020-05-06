@@ -2,8 +2,8 @@ package endpointlinker
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,15 +15,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NormalizeOrgName(orgName string) string {
+func NormalizeOrgName(orgName string) (string, error) {
 	// Regex for only letters
 	orgName = strings.ReplaceAll(orgName, "-", " ")
 	reg, err := regexp.Compile(`[^a-zA-Z0-9\s]+`)
 	if err != nil {
-		log.Fatal(err)
+		return "", errors.Wrap(err, "error compiling regex for normalizing organization name")
 	}
 	characterStrippedName := reg.ReplaceAllString(orgName, "")
-	return strings.ToUpper(characterStrippedName)
+	return strings.ToUpper(characterStrippedName), nil
 }
 
 func intersectionCount(set1 []string, set2 []string) int {
@@ -69,7 +69,7 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func getIdsOfMatchingNPIOrgs(npiOrgNames []endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool) ([]int, map[int]float64, error) {
+func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool) ([]int, map[int]float64, error) {
 	JACCARD_THRESHOLD := .75
 
 	matches := []int{}
@@ -124,6 +124,41 @@ func mergeMatches(allMatches []int, allConfidences map[int]float64, matches []in
 	return allMatches
 }
 
+func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, store *postgresql.Store, verbose bool) ([]int, map[int]float64, error) {
+	matches := make([]int, 0)
+	confidences := make(map[int]float64)
+	for _, npiID := range endpoint.NPIIDs {
+		npiOrg, err := store.GetNPIOrganizationByNPIID(ctx, npiID)
+		if err == sql.ErrNoRows {
+			// do nothing
+		} else if err != nil {
+			return matches, confidences, errors.Wrap(err, "error retrieving referenced NPI organization")
+		} else {
+			matches = append(matches, npiOrg.ID)
+			confidences[npiOrg.ID] = 1
+		}
+	}
+	return matches, confidences, nil
+}
+
+func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool) ([]int, map[int]float64, error) {
+	allMatches := make([]int, 0)
+	allConfidences := make(map[int]float64)
+	for _, name := range endpoint.OrganizationNames {
+		normalizedEndpointName, err := NormalizeOrgName(name)
+		if err != nil {
+			return allMatches, allConfidences, errors.Wrap(err, "Error getting normalizing endpoint organizaton name")
+		}
+		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		if err != nil {
+			return allMatches, allConfidences, errors.Wrap(err, "Error getting matching NPI org IDs")
+		}
+
+		allMatches = mergeMatches(allMatches, allConfidences, matches, confidences)
+	}
+	return allMatches, allConfidences, nil
+}
+
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
 	fhirEndpointOrgNames, err := store.GetAllFHIREndpointOrgNames(ctx)
 	if err != nil {
@@ -142,15 +177,16 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		allMatches := make([]int, 0)
 		allConfidences := make(map[int]float64)
 
-		for _, name := range endpoint.OrganizationNames {
-			normalizedEndpointName := NormalizeOrgName(name)
-			matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
-			if err != nil {
-				return errors.Wrap(err, "Error getting matching NPI org IDs")
-			}
-
-			allMatches = mergeMatches(allMatches, allConfidences, matches, confidences)
+		idMatches, idConfidences, err := matchByID(ctx, endpoint, store, verbose)
+		if err != nil {
+			return errors.Wrap(err, "error matching endpoint to NPI organization by ID")
 		}
+		nameMatches, nameConfidences, err := matchByName(endpoint, npiOrgNames, verbose)
+		if err != nil {
+			return errors.Wrap(err, "error matching endpoint to NPI organization by name")
+		}
+		allMatches = mergeMatches(allMatches, allConfidences, idMatches, idConfidences)
+		allMatches = mergeMatches(allMatches, allConfidences, nameMatches, nameConfidences)
 
 		if len(allMatches) > 0 {
 			matchCount++

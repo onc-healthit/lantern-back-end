@@ -363,9 +363,15 @@ func parseNPIdataLine(line []string) NPICsvLine {
 	return data
 }
 
-func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization {
-	normalizedName := endpointlinker.NormalizeOrgName(data.Provider_Organization_Name_Legal_Business_Name)
-	normalizedSecondary := endpointlinker.NormalizeOrgName(data.Provider_Other_Organization_Name)
+func buildNPIOrgFromNPICsvLine(data NPICsvLine) (*endpointmanager.NPIOrganization, error) {
+	normalizedName, err := endpointlinker.NormalizeOrgName(data.Provider_Organization_Name_Legal_Business_Name)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error normalizing NPI organization legal business name %s", data.Provider_Organization_Name_Legal_Business_Name)
+	}
+	normalizedSecondary, err := endpointlinker.NormalizeOrgName(data.Provider_Other_Organization_Name)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error normalizing NPI organization other name %s", data.Provider_Other_Organization_Name)
+	}
 	npiOrg := &endpointmanager.NPIOrganization{
 		NPI_ID:        data.NPI,
 		Name:          data.Provider_Organization_Name_Legal_Business_Name,
@@ -379,7 +385,7 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) *endpointmanager.NPIOrganization
 		Taxonomy:                data.Healthcare_Provider_Taxonomy_Code_1,
 		NormalizedName:          normalizedName,
 		NormalizedSecondaryName: normalizedSecondary}
-	return npiOrg
+	return npiOrg, nil
 }
 
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
@@ -429,13 +435,17 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		data := parseNPIdataLine(line)
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if data.Entity_Type_Code == "2" {
-			npiOrg := buildNPIOrgFromNPICsvLine(data)
+			npiOrg, err := buildNPIOrgFromNPICsvLine(data)
+			if err != nil {
+				log.Debug(err)
+				continue
+			}
 			err = store.AddNPIOrganization(ctx, npiOrg)
 			if err != nil {
 				log.Debug(err)
-			} else {
-				added += 1
+				continue
 			}
+			added += 1
 		}
 	}
 	return added, nil
