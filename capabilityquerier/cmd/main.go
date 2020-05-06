@@ -2,18 +2,16 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
-	"runtime"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/queue"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
@@ -25,66 +23,90 @@ func failOnError(err error) {
 	}
 }
 
-func queryEndpoints(ctx context.Context,
-	listOfEndpoints *fetcher.ListOfEndpoints,
-	qw *capabilityquerier.QueueWorkers,
-	numWorkers int,
-	jobDuration time.Duration,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	qName string,
-	client *http.Client,
-	errs chan error,
-) {
-	err := qw.Start(ctx, numWorkers, errs)
-	failOnError(err)
-
-	for i, endpointEntry := range listOfEndpoints.Entries {
-		if i%10 == 0 {
-			log.Infof("Processed %d/%d messages", i, len(listOfEndpoints.Entries))
-		}
-		var urlString = endpointEntry.FHIRPatientFacingURI
-		// Specifically query the FHIR endpoint metadata
-		metadataURL, err := url.Parse(urlString)
-		if err != nil {
-			log.Warn("endpoint URL parsing error: ", err.Error())
-		} else {
-			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-
-			job := capabilityquerier.Job{
-				Context:      ctx,
-				Duration:     jobDuration,
-				FHIRURL:      metadataURL,
-				Client:       client,
-				MessageQueue: mq,
-				Channel:      ch,
-				QueueName:    qName,
-			}
-
-			err = qw.Add(&job)
-			if err != nil {
-				log.Warn("error adding job to queue workers: ", err.Error())
-				break
-			}
-		}
+func queryEndpoints(message []byte, args *map[string]interface{}) error {
+	// Get arguments
+	qw, ok := (*args)["qw"].(*capabilityquerier.QueueWorkers)
+	if !ok {
+		return fmt.Errorf("unable to cast capabilityquerier QueueWorkers from arguments")
+	}
+	ctx, ok := (*args)["ctx"].(context.Context)
+	if !ok {
+		return fmt.Errorf("unable to cast context from arguments")
+	}
+	numWorkers, ok := (*args)["numWorkers"].(int)
+	if !ok {
+		return fmt.Errorf("unable to cast numWorkers to int from arguments")
+	}
+	errs, ok := (*args)["errs"].(chan error)
+	if !ok {
+		return fmt.Errorf("unable to cast errs to chan error from arguments")
+	}
+	client, ok := (*args)["client"].(*http.Client)
+	if !ok {
+		return fmt.Errorf("unable to cast client to http.Client from arguments")
+	}
+	jobDuration, ok := (*args)["jobDuration"].(time.Duration)
+	if !ok {
+		return fmt.Errorf("unable to cast jobDuration to time.Duration from arguments")
+	}
+	mq, ok := (*args)["mq"].(*lanternmq.MessageQueue)
+	if !ok {
+		return fmt.Errorf("unable to cast mq to MessageQueue from arguments")
+	}
+	ch, ok := (*args)["ch"].(*lanternmq.ChannelID)
+	if !ok {
+		return fmt.Errorf("unable to cast ch to ChannelID from arguments")
+	}
+	qName, ok := (*args)["qName"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast qName to string from arguments")
 	}
 
-	log.Info("Stopping queue workers")
-	err = qw.Stop()
-	failOnError(err)
-	log.Info("Done retrieving and sending capability statement information")
-	runtime.GC()
+	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
+	if string(message) == "start" {
+		err := qw.Start(ctx, numWorkers, errs)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	if string(message) == "stop" {
+		err := qw.Stop()
+		if err != nil {
+			return fmt.Errorf("error stopping queue workers: %s", err.Error())
+		}
+		return nil
+	}
+
+	urlString := string(message)
+	// Specifically query the FHIR endpoint metadata
+	metadataURL, err := url.Parse(urlString)
+	if err != nil {
+		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
+	}
+
+	metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+
+	job := capabilityquerier.Job{
+		Context:      ctx,
+		Duration:     jobDuration,
+		FHIRURL:      metadataURL,
+		Client:       client,
+		MessageQueue: mq,
+		Channel:      ch,
+		QueueName:    qName,
+	}
+
+	err = qw.Add(&job)
+	if err != nil {
+		return fmt.Errorf("error adding job to queue workers: %s", err.Error())
+	}
+
+	return nil
 }
 
 func main() {
 	err := config.SetupConfig()
-	failOnError(err)
-
-	queryInterval := viper.GetInt("capquery_qryintvl")
-
-	// TODO: continuing to use the list of endpoints and 'fetcher'. however, eventually we'll
-	// be taking messages off of a queue and this code will be removed.
-	listOfEndpoints, err := endpoints.GetEndpoints(viper.GetString("endptlist"))
 	failOnError(err)
 
 	// Set up the queue for sending messages
@@ -92,9 +114,14 @@ func main() {
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	qName := viper.GetString("capquery_qname")
-	mq, ch, err := queue.ConnectToQueue(qUser, qPassword, qHost, qPort, qName)
+	capQName := viper.GetString("capquery_qname")
+	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
 	failOnError(err)
+
+	endptQName := viper.GetString("endptinfo_capquery_qname")
+	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
+	failOnError(err)
+
 	defer mq.Close()
 
 	client := &http.Client{
@@ -102,23 +129,28 @@ func main() {
 	}
 
 	errs := make(chan error)
-	// output errors as they are received
-	go func() {
-		for err := range errs {
-			log.Warn(err.Error())
-		}
-	}()
 
 	numWorkers := viper.GetInt("capquery_numworkers")
 	qw := capabilityquerier.NewQueueWorkers()
+	ctx := context.Background()
 
-	// Infinite query loop
-	for {
-		ctx := context.Background()
+	args := make(map[string]interface{})
+	args["qw"] = qw
+	args["ctx"] = ctx
+	args["numWorkers"] = numWorkers
+	args["errs"] = errs
+	args["client"] = client
+	args["jobDuration"] = 30 * time.Second
+	args["mq"] = &mq
+	args["ch"] = &ch
+	args["qName"] = capQName
 
-		queryEndpoints(ctx, listOfEndpoints, qw, numWorkers, 30*time.Second, &mq, &ch, qName, client, errs)
+	messages, err := mq.ConsumeFromQueue(ch, endptQName)
+	failOnError(err)
 
-		log.Infof("Waiting %d minutes", queryInterval)
-		time.Sleep(time.Duration(queryInterval) * time.Minute)
+	go mq.ProcessMessages(messages, queryEndpoints, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
 	}
 }

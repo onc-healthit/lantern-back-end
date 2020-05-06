@@ -13,6 +13,33 @@ var addFHIREndpointStatement *sql.Stmt
 var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt
 
+// GetAllFHIREndpoints gets the id and url from every row in the fhir_endpoints table
+func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
+	sqlStatement := `
+	SELECT
+		id,
+		url
+	FROM fhir_endpoints`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+
+	var endpoints []endpointmanager.FHIREndpoint
+	defer rows.Close()
+	for rows.Next() {
+		var endpoint endpointmanager.FHIREndpoint
+		err = rows.Scan(
+			&endpoint.ID,
+			&endpoint.URL)
+		if err != nil {
+			return nil, err
+		}
+		endpoints = append(endpoints, endpoint)
+	}
+	return endpoints, nil
+}
+
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.FHIREndpoint, error) {

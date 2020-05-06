@@ -98,7 +98,7 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	expectedEndpt := testFhirEndpointInfo
 	expectedEndpt.VendorID = vendors[1].ID // "Cerner Corporation"
-	expectedEndpt.FHIREndpointID = testFhirEndpoint1.ID
+	expectedEndpt.URL = testFhirEndpoint1.URL
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
@@ -120,19 +120,19 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, errors.Wrap(err, "error"))
 
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not store data as expected")
 
-	storedEndpt, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint1.ID)
+	storedEndpt, err := store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
-	expectedEndpt.FHIREndpointID = testFhirEndpoint2.ID
+	expectedEndpt.URL = testFhirEndpoint2.URL
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -142,7 +142,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "there should be two endpoints in the database")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint2.ID)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint2.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt = testFhirEndpointInfo
@@ -159,7 +159,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, testFhirEndpoint1.ID)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
 

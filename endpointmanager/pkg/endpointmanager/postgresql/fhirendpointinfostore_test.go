@@ -3,6 +3,7 @@
 package postgresql
 
 import (
+	"bytes"
 	"context"
 	"io/ioutil"
 	"path/filepath"
@@ -51,7 +52,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID:      endpoint1.ID,
+		URL:                 endpoint1.URL,
 		VendorID:            cerner.ID,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir"},
@@ -59,11 +60,11 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		Errors:              "Example Error",
 		CapabilityStatement: cs}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
-		FHIREndpointID: endpoint2.ID,
-		TLSVersion:     "TLS 1.2",
-		MIMETypes:      []string{"application/fhir+json"},
-		HTTPResponse:   404,
-		Errors:         "Example Error 2"}
+		URL:          endpoint2.URL,
+		TLSVersion:   "TLS 1.2",
+		MIMETypes:    []string{"application/fhir+json"},
+		HTTPResponse: 404,
+		Errors:       "Example Error 2"}
 
 	// add endpointInfos
 
@@ -79,7 +80,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// retrieve endpointInfos
 
-	e1, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint1.ID)
+	e1, err := store.GetFHIREndpointInfoUsingURL(ctx, endpoint1.URL)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -87,7 +88,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	e2, err := store.GetFHIREndpointInfoUsingFHIREndpointID(ctx, endpoint2.ID)
+	e2, err := store.GetFHIREndpointInfoUsingURL(ctx, endpoint2.URL)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -131,6 +132,8 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
+	e1.HTTPResponse = 200
+
 	// update with nil capability statement
 	capStat := e1.CapabilityStatement
 	e1.CapabilityStatement = nil
@@ -150,19 +153,17 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	e1.CapabilityStatement = capStat
 
-	// check cascade delete
+	// delete endpointInfos
 
-	err = store.DeleteFHIREndpoint(ctx, endpoint1) // delete the endpoint
+	err = store.DeleteFHIREndpointInfo(ctx, endpointInfo1)
 	if err != nil {
 		t.Errorf("Error deleting fhir endpointInfo: %s", err.Error())
 	}
 
-	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the corresponding endpoint info enetry
+	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo1.ID) // ensure we deleted the entry
 	if err == nil {
-		t.Errorf("endpointInfo1 was not deleted: %s", err.Error())
+		t.Errorf("did not expected endpoint in db")
 	}
-
-	// delete endpointInfos
 
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we haven't deleted all entries
 	if err != nil {
@@ -176,6 +177,83 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we deleted the entry
 	if err == nil {
-		t.Errorf("error retrieving endpointInfo2 after deleting endpointInfo1: %s", err.Error())
+		t.Errorf("did not expected endpoint in db")
+	}
+
+	// check history table
+
+	var count int
+	var response int
+	var capStatJson []byte
+
+	// check insertions
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='I';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 insertion for endpointInfo1. Got %d.", count)
+	}
+
+	// check the value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='I';", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("get values for insertion: %s", err.Error())
+	}
+	if response != 200 {
+		t.Errorf("expected http_response to be 200 for endpointInfo1 insert. Got %d.", response)
+	}
+	if bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("expected capability_statement to be present for endpointInfo1 insert. Got nil.")
+	}
+
+	// check updates
+
+	// check that there are two
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 updates for endpointInfo1. Got %d.", count)
+	}
+
+	// get the first update and check its value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at ASC LIMIT 1;", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if response != 700 {
+		t.Errorf("expected http_response to be 700 for update value for endpointInfo1. Got %d.", response)
+	}
+	if bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("expected capability_statement to be present for endpointInfo1 insert. Got nil.")
+	}
+
+	// get the second update and check its value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at DESC LIMIT 1;", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if response != 200 {
+		t.Errorf("expected http_response to be 200 for update value for endpointInfo1. Got %d.", response)
+	}
+	if !bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("did not expect the capability statement to be present.")
+	}
+
+	// check deletes
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='D';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for deletions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 deletion for endpointInfo1. Got %d.", count)
 	}
 }

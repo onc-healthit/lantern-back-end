@@ -6,14 +6,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TABLE fhir_endpoints (
-    id                      SERIAL PRIMARY KEY,
-    url                     VARCHAR(500) UNIQUE,
-    organization_name       VARCHAR(500),
-    list_source             VARCHAR(500),
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_history$
+    BEGIN
+        --
+        -- Create a row in fhir_endpoints_info_history to reflect the operation performed on fhir_endpoints_info,
+        -- make use of the special variable TG_OP to work out the operation.
+        --
+        IF (TG_OP = 'DELETE') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'D', now(), user, OLD.*;
+            RETURN OLD;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'U', now(), user, NEW.*;
+            RETURN NEW;
+        ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'I', now(), user, NEW.*;
+            RETURN NEW;
+        END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,
@@ -61,11 +72,39 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE fhir_endpoints (
+    id                      SERIAL PRIMARY KEY,
+    url                     VARCHAR(500),
+    organization_name       VARCHAR(500),
+    list_source             VARCHAR(500),
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
+);
+
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    fhir_endpoint_id        INT REFERENCES fhir_endpoints(id) ON DELETE CASCADE,
     healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
+    url                     VARCHAR(500) UNIQUE,
+    tls_version             VARCHAR(500),
+    mime_types              VARCHAR(500)[],
+    http_response           INTEGER,
+    errors                  VARCHAR(500),
+    capability_statement    JSONB,
+    validation              JSONB,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE fhir_endpoints_info_history (
+    operation               CHAR(1) NOT NULL,
+    entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    user_id                 VARCHAR(500),
+    id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
+    healthit_product_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
+    vendor_id               INT,  -- should link to healthit_product(id). not using 'reference' because if the referenced vendor is deleted, we still want the historical copies to retain the ID.
+    url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
@@ -110,12 +149,19 @@ BEFORE UPDATE ON fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+-- captures history for the fhir_endpoint_info table
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
+
+
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, vendors.name, endpts.organization_name AS endpoint_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
 FROM endpoint_organization AS links
 LEFT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.id = endpts_info.fhir_endpoint_id
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;
 
 CREATE or REPLACE VIEW endpoint_export AS
@@ -123,5 +169,5 @@ SELECT endpts.url, vendors.name as vendor_name, endpts.organization_name AS endp
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.id = endpts_info.fhir_endpoint_id
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;;

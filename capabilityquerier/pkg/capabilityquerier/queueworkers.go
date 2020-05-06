@@ -67,6 +67,9 @@ func (qw *QueueWorkers) Start(ctx context.Context, numWorkers int, errs chan err
 // Add takes a Job as an argument and sends that job to the workers to be executed when a
 // worker is available.
 func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has completed before we start up the process
+	if qw.numWorkers == 0 {
+		return errors.New("no workers are currently running")
+	}
 	select {
 	case <-qw.ctx.Done():
 		return qw.ctx.Err()
@@ -81,6 +84,9 @@ func (qw *QueueWorkers) Add(job *Job) error { // this checks if the context has 
 // Stop sends a stop signal to all of the workers to stop accepting jobs and to close.
 // Stop throws an error if QueueWorkers has already been stopped and has not been restarted.
 func (qw *QueueWorkers) Stop() error {
+	if qw.numWorkers == 0 {
+		return errors.New("no workers are currently running")
+	}
 
 	select {
 	case <-qw.ctx.Done():
@@ -92,9 +98,6 @@ func (qw *QueueWorkers) Stop() error {
 		// ok
 	}
 
-	if qw.numWorkers == 0 {
-		return errors.New("no workers are currently running")
-	}
 	for i := 0; i < qw.numWorkers; i++ {
 		qw.kill <- true
 	}

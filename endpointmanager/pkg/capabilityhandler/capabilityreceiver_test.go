@@ -21,6 +21,7 @@ var testQueueMsg = map[string]interface{}{
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
+	URL:          "http://example.com/DTSU2/",
 	MIMETypes:    []string{"application/json+fhir"},
 	TLSVersion:   "TLS 1.2",
 	HTTPResponse: 200,
@@ -68,9 +69,8 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = "http://example.com/DTSU2/"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	url, _, returnErr = formatMessage(message)
+	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
-	th.Assert(t, url == "http://example.com/DTSU2/", fmt.Sprintf("%s and %s are not equal", url, "http://example.com/DTSU2/"))
 
 	// test incorrect error message
 	tmpMessage["err"] = nil

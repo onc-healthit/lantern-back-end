@@ -25,7 +25,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	// endpointInfos
 	var endpointInfo1 = &FHIREndpointInfo{
 		ID:                  1,
-		FHIREndpointID:      2,
+		URL:                 "http://www.example.com",
 		HealthITProductID:   3,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
@@ -35,7 +35,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		CapabilityStatement: cs}
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                  1,
-		FHIREndpointID:      2,
+		URL:                 "http://www.example.com",
 		HealthITProductID:   3,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
@@ -54,11 +54,11 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.ID = endpointInfo1.ID
 
-	endpointInfo2.FHIREndpointID = 3
+	endpointInfo2.URL = "other"
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. FHIREndpointID should be different. %d vs %d", endpointInfo1.FHIREndpointID, endpointInfo2.FHIREndpointID)
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. URL should be different. %s vs %s", endpointInfo1.URL, endpointInfo2.URL)
 	}
-	endpointInfo2.FHIREndpointID = endpointInfo1.FHIREndpointID
+	endpointInfo2.URL = endpointInfo1.URL
 
 	endpointInfo2.HealthITProductID = 4
 	if endpointInfo1.Equal(endpointInfo2) {

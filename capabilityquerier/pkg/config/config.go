@@ -34,11 +34,7 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("capquery_qryintvl") // in minutes
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("endptlist")
+	err = viper.BindEnv("endptinfo_capquery_qname")
 	if err != nil {
 		return err
 	}
@@ -49,8 +45,7 @@ func SetupConfig() error {
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("capquery_numworkers", 10)
-	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
-	viper.SetDefault("endptlist", "/etc/lantern/EndpointSources.json")
+	viper.SetDefault("endptinfo_capquery_qname", "endpoints-to-capability")
 
 	return nil
 }
@@ -82,17 +77,17 @@ func SetupConfigForTests() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("capquery_qname")
+	err = viper.BindEnv("qname")
 	if err != nil {
 		return err
 	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
-	viper.SetDefault("capquery_qname", "capability-statements-test")
+	viper.SetDefault("qname", "test-queue")
 
-	if prevQName == viper.GetString("capquery_qname") {
-		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("capquery_qname") + ". Prod/Dev queue: " + prevQName)
+	if prevQName == viper.GetString("qname") {
+		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
 	}
 
 	return nil
