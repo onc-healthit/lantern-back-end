@@ -148,7 +148,7 @@ func main() {
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)
 	failOnError(err)
 
-	go mq.ProcessMessages(messages, queryEndpoints, &args, errs)
+	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
