@@ -2,16 +2,18 @@ package endpointlinker
 
 import (
 	"fmt"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"strconv"
 	"testing"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_NormalizeOrgName(t *testing.T) {
 	orgName := "AMBULANCE & and-chair. SERVICE!"
 	expected := "AMBULANCE  AND CHAIR SERVICE"
-	normalized := NormalizeOrgName(orgName)
+	normalized, err := NormalizeOrgName(orgName)
+	th.Assert(t, err != nil, err)
 	th.Assert(t, (normalized == expected), "Organization name normalization failed. Expected: "+expected+" Got: "+normalized)
 }
 
@@ -53,7 +55,7 @@ func Test_IntersectionCount(t *testing.T) {
 }
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
-	var exactPrimaryNameOrg = endpointmanager.NPIOrganization{
+	var exactPrimaryNameOrg = &endpointmanager.NPIOrganization{
 		ID:                      1,
 		NPI_ID:                  "1",
 		Name:                    "Foo Bar",
@@ -67,7 +69,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var nonExactSecondaryNameOrg = endpointmanager.NPIOrganization{
+	var nonExactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 		ID:                      2,
 		NPI_ID:                  "2",
 		Name:                    "Foo Bar",
@@ -81,7 +83,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var exactSecondaryNameOrg = endpointmanager.NPIOrganization{
+	var exactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 		ID:                      4,
 		NPI_ID:                  "4",
 		Name:                    "Foo Bar",
@@ -95,7 +97,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var exactSecondaryNameOrgNoPrimaryName = endpointmanager.NPIOrganization{
+	var exactSecondaryNameOrgNoPrimaryName = &endpointmanager.NPIOrganization{
 		ID:                      5,
 		NPI_ID:                  "5",
 		Name:                    "Foo Bar",
@@ -109,7 +111,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var nonExactPrimaryNameOrgName = endpointmanager.NPIOrganization{
+	var nonExactPrimaryNameOrgName = &endpointmanager.NPIOrganization{
 		ID:                      6,
 		NPI_ID:                  "6",
 		Name:                    "Foo Bar",
@@ -123,7 +125,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			State:    "AK",
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
-	var nonMatchingOrg = endpointmanager.NPIOrganization{
+	var nonMatchingOrg = &endpointmanager.NPIOrganization{
 		ID:                      7,
 		NPI_ID:                  "7",
 		Name:                    "nothingshouldmatchthis",
@@ -138,7 +140,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
 
-	var nonExactPrimaryAndSecondaryOrgName = endpointmanager.NPIOrganization{
+	var nonExactPrimaryAndSecondaryOrgName = &endpointmanager.NPIOrganization{
 		ID:                      8,
 		NPI_ID:                  "8",
 		Name:                    "Foo Bar",
@@ -153,7 +155,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 			ZipCode:  "00000"},
 		Taxonomy: "208D00000X"}
 
-	var orgs []endpointmanager.NPIOrganization
+	var orgs []*endpointmanager.NPIOrganization
 
 	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
 	th.Assert(t, (err == nil), "Error getting matches from empty list")
