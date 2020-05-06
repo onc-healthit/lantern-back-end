@@ -31,6 +31,7 @@ services:
     environment:
       - LANTERN_DBHOST=pg_prometheus
       - LANTERN_QHOST=lantern-mq
+      - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
     build:
       args:
         cert_dir: ./certs
