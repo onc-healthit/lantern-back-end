@@ -27,6 +27,25 @@ func NewTestClient(handler http.Handler) *TestClient {
 	return &tc
 }
 
+func NewTestClientNoTLS(handler http.Handler) *TestClient {
+	s := httptest.NewServer(handler)
+
+	cli := &http.Client{
+		Transport: &http.Transport{
+			DialContext: func(_ context.Context, network, _ string) (net.Conn, error) {
+				return net.Dial(network, s.Listener.Addr().String())
+			},
+		},
+	}
+
+	tc := TestClient{
+		s.Close,
+		*cli,
+	}
+
+	return &tc
+}
+
 // NewTestClientWithResponse creates a new TestClient using an httptest TLS Server, and requests
 // are responded to using the given response byte string.
 func NewTestClientWithResponse(response []byte) *TestClient {
