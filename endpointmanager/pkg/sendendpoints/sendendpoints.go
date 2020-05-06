@@ -1,7 +1,5 @@
 package sendendpoints
 
-package main
-
 import (
 	"context"
 	"sync"

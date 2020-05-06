@@ -1,6 +1,6 @@
 // +build integration
 
-package main
+package sendendpoints
 
 import (
 	"context"
@@ -16,7 +16,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 
-	//se "github.com/onc-healthit/lantern-back-end/endpointmanager/cmd/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
