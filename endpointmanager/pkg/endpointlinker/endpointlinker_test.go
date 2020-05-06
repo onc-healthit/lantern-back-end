@@ -13,7 +13,7 @@ func Test_NormalizeOrgName(t *testing.T) {
 	orgName := "AMBULANCE & and-chair. SERVICE!"
 	expected := "AMBULANCE  AND CHAIR SERVICE"
 	normalized, err := NormalizeOrgName(orgName)
-	th.Assert(t, err != nil, err)
+	th.Assert(t, err == nil, err)
 	th.Assert(t, (normalized == expected), "Organization name normalization failed. Expected: "+expected+" Got: "+normalized)
 }
 
