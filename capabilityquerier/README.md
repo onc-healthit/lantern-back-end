@@ -5,14 +5,6 @@ The capability querier is a service that queries endpoints for their capability 
 ## Configuration
 The capability querier reads the following environment variables:
 
-**These variables must be set on your system**
-
-* **LANTERN_ENDPTLIST**: The location of the endpoint list. This is temporary until we have communication from the endpoint manager for endpoints to be queried.
-
-  **NOTE**: The default value is the correct value for the docker container. You need to set this to use it locally.
-
-  Default value: /etc/lantern/EndpointSources.json
-
 **These variables can use the default values *in development*. These should be set on the production system.**
 
 * **LANTERN_QHOST**: The hostname where the queue is hosted.
