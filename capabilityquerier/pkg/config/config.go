@@ -65,6 +65,7 @@ func SetupConfigForTests() error {
 	}
 
 	prevQName := viper.GetString("capquery_qname")
+	prevENPTQName := viper.GetString("endptinfo_capquery_qname")
 
 	viper.SetEnvPrefix("lantern_test")
 	viper.AutomaticEnv()
@@ -81,13 +82,21 @@ func SetupConfigForTests() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("endptinfo_capquery_qname")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qname", "test-queue")
+	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-capability")
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
+	}
+	if prevENPTQName == viper.GetString("endptinfo_capquery_qname") {
+		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("endptinfo_capquery_qname") + ". Prod/Dev queue: " + prevENPTQName)
 	}
 
 	return nil

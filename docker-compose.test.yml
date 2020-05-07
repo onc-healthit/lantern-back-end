@@ -23,8 +23,8 @@ services:
 
   capability_querier:
     environment:
-      - LANTERN_TEST_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
+      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
 
   lantern-e2e:
     container_name: lantern-e2e
@@ -32,6 +32,7 @@ services:
       - LANTERN_DBHOST=pg_prometheus
       - LANTERN_QHOST=lantern-mq
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
+      - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
     build:
       args:
         cert_dir: ./certs

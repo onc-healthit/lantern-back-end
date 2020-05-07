@@ -12,10 +12,12 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
@@ -41,7 +43,6 @@ var store *postgresql.Store
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
-
 	var err error
 	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -126,14 +127,14 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 35 {
-		t.Fatalf("Only 35 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+	if link_count != 34 {
+		t.Fatalf("Only 34 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-	expected_link_count := 40
+	expected_link_count := 38
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -151,7 +152,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 40 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 38 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to one org
@@ -316,6 +317,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
 	qName := viper.GetString("qname")
+	capQName := viper.GetString("endptinfo_capquery_qname")
 
 	hap := th.HostAndPort{Host: qHost, Port: qPort}
 	err = th.CheckResources(hap)
@@ -325,13 +327,25 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
-	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
 	defer mq.Close()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
-	ctx, _ := context.WithTimeout(context.Background(), 30 * time.Second)
+	var wg sync.WaitGroup
+	ctx := context.Background()
+	wg.Add(1)
+	errs := make(chan error)
+
+	capInterval := viper.GetInt("capquery_qryintvl")
+	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &chID, errs)
+	time.Sleep(45 * time.Second)
+
+	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
+	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
+	defer mq.Close()
+
 	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
 	time.Sleep(30 * time.Second)
 
@@ -345,10 +359,11 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
 	var fhir_version_count int
+	expected_fhir_version_count := 25
 	err = query_str.Scan(&fhir_version_count)
 	failOnError(err)
-	if fhir_version_count < 300 {
-		t.Fatalf("There should be at least 300 capability statement with fhir version specified")
+	if fhir_version_count < expected_fhir_version_count {
+		t.Fatalf("There should be at least 25 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
 	}
 }
 
