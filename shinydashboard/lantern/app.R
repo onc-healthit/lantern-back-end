@@ -46,6 +46,7 @@ con <- dbConnect(RPostgres::Postgres(),
 
 # Make connections to the various lantern tables
 fhir_endpoints  <- tbl(con, "fhir_endpoints")
+fhir_endpoints_info <- tbl(con, "fhir_endpoints_info")
 metrics_values  <- tbl(con, "metrics_values")
 metrics_labels  <- tbl(con, "metrics_labels")
 end_org         <- tbl(con, "endpoint_organization")
@@ -56,14 +57,15 @@ endpoint_export <- tbl(con, "endpoint_export")
 # Get the table of fhir endpoints. There may be endpoints we have not reached
 # so get counts of indexed and non-indexed endpoints
 fhir_endpoints_tbl <- as_tibble(fhir_endpoints)
+fhir_endpoints_info_tbl <- as_tibble(fhir_endpoints_info)
 fhir_endpoint_totals <- list(
     "all_endpoints"     = nrow(fhir_endpoints_tbl),
-    "indexed_endpoints" = nrow(fhir_endpoints_tbl %>% filter(http_response != 0)),
-    "nonindexed_endpoints" = nrow(fhir_endpoints_tbl %>% filter(http_response == 0))
+    "indexed_endpoints" = nrow(fhir_endpoints_info_tbl %>% filter(http_response != 0)),
+    "nonindexed_endpoints" = nrow(fhir_endpoints_tbl) - nrow(fhir_endpoints_info_tbl %>% filter(http_response != 0))
 )
 
 # get the endpoint tally by http_response received 
-curr_http_response_tally <- fhir_endpoints_tbl %>%
+curr_http_response_tally <- fhir_endpoints_info_tbl %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -71,9 +73,9 @@ curr_http_response_tally <- fhir_endpoints_tbl %>%
 # Get the list of most recent HTTP responses when requesting the capability statement from the 
 # fhir_endpoints 
 response_tally <- list(
-    "http_200" = nrow(curr_http_response_tally %>% filter(http_response==200)),
-    "http_404" = nrow(curr_http_response_tally %>% filter(http_response==404)),
-    "http_503" = nrow(curr_http_response_tally %>% filter(http_response==503))
+    "http_200" = (curr_http_response_tally %>% filter(http_response==200))$n,
+    "http_404" = (curr_http_response_tally %>% filter(http_response==404))$n,
+    "http_503" = (curr_http_response_tally %>% filter(http_response==503))$n
 )
 
 # we want the current set of http response codes from the endpoint monitoring
@@ -107,7 +109,7 @@ http_summary <- http_pct %>%
     summarise(Count=n()) 
 
 # Get the FHIR version for each endpoint
-fhir_version_tbl <- as_tibble(tbl(con,sql("select id,url,vendor,capability_statement->>'fhirVersion' as FHIR from fhir_endpoints where capability_statement->>'fhirVersion' IS NOT NULL")))
+fhir_version_tbl <- as_tibble(tbl(con,sql("select id,url,vendor,capability_statement->>'fhirVersion' as FHIR from fhir_endpoints_info where capability_statement->>'fhirVersion' IS NOT NULL")))
 
 # Get the count of endpoints by vendor, and use "Unknown" for any entries
 # where the vendor field is empty
@@ -122,7 +124,7 @@ fhir_version_vendor_count <- fhir_version_tbl %>%
 fhir_version_list <- as.list(fhir_version_tbl %>% distinct("FHIR Version"=fhir))
 
 # Get the list of distinct vendors for use in filtering
-vendor_list <- as.list(as_tibble(fhir_endpoints %>% distinct(vendor)) %>% mutate(vendor = na_if(vendor,"")) %>% tidyr::replace_na(list(vendor="Unknown")) %>% pull(vendor))
+vendor_list <- as.list(as_tibble(fhir_endpoints_info %>% distinct(vendor)) %>% mutate(vendor = na_if(vendor,"")) %>% tidyr::replace_na(list(vendor="Unknown")) %>% pull(vendor))
 
 # get time series of response time metrics for all endpoints
 # will update with dynamic time ranges, group by 4 minute intervals
