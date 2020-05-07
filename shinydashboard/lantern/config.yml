@@ -1,8 +1,0 @@
-default:
-  lantern:
-    driver: 'Postgres' 
-    server: 'host.docker.internal'
-    uid: 'lantern'
-    pwd: 'postgrespassword'  
-    port: 5432
-    database: 'lantern'
