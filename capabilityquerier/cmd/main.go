@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"path"
+	"strings"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
@@ -80,17 +80,19 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 
 	urlString := string(message)
 	// Specifically query the FHIR endpoint metadata
-	metadataURL, err := url.Parse(urlString)
+	fhirURL, err := url.Parse(urlString)
 	if err != nil {
+		log.Warnf("Error parsing URL string %s\n", urlString)
 		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
 	}
-
-	metadataURL.Path = path.Join(metadataURL.Path, "metadata")
+	if !strings.HasPrefix(urlString, "http") {
+		log.Infof("\n\nurlString1: %s\nurlString2: %s\n\n", urlString, fhirURL.String())
+	}
 
 	job := capabilityquerier.Job{
 		Context:      ctx,
 		Duration:     jobDuration,
-		FHIRURL:      metadataURL,
+		FHIRURL:      fhirURL,
 		Client:       client,
 		MessageQueue: mq,
 		Channel:      ch,

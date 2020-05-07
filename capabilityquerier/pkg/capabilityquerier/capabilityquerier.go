@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -53,14 +54,17 @@ func GetAndSendCapabilityStatement(
 		URL: fhirURL.String(),
 	}
 
-	if !strings.HasPrefix(fhirURL.String(), "http") {
-		log.Infof("Adding http scheme to %s", fhirURL.String())
-		fhirURL.Scheme = "https"
+	_, metadata := path.Split(fhirURL.Path)
+	if metadata != "metadata" {
+		fhirURL.Path = path.Join(fhirURL.Path, "metadata")
 	}
+
+	gotError := false
 
 	err = requestCapabilityStatement(ctx, fhirURL, client, &message)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
+		gotError = true
 		message.Err = err.Error()
 	}
 
@@ -71,10 +75,16 @@ func GetAndSendCapabilityStatement(
 	}
 	msgStr := string(msgBytes)
 
+	if gotError {
+		log.Infof("About to send %s info to queue", fhirURL.String())
+	}
 	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
+	}
+	if gotError {
+		log.Infof("Successfully sent %s info to queue", fhirURL.String())
 	}
 
 	return nil
