@@ -18,7 +18,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
+func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	var msgJSON map[string]interface{}
 
 	err := json.Unmarshal(message, &msgJSON)
@@ -105,7 +105,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 		"httpCode": httpCodeObj,
 	}
 
-	fhirEndpoint := endpointmanager.FHIREndpoint{
+	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		URL:          originalURL,
 		TLSVersion:   tlsVersion,
 		MIMETypes:    mimeTypes,
@@ -124,8 +124,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpoint, error) {
 // updates a current one
 func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var err error
-	var fhirEndpoint *endpointmanager.FHIREndpoint
-	var existingEndpt *endpointmanager.FHIREndpoint
+	var fhirEndpoint *endpointmanager.FHIREndpointInfo
+	var existingEndpt *endpointmanager.FHIREndpointInfo
 
 	fhirEndpoint, err = formatMessage(message)
 	if err != nil {
@@ -141,22 +141,23 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return fmt.Errorf("unable to cast context from arguments")
 	}
 
-	existingEndpt, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
+	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
 
-	// If the URL doesn't exist, add it to the DB
 	if err == sql.ErrNoRows {
+		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
 		}
-		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
+
+		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint)
 		if err != nil {
 			return err
 		}
 	} else if err != nil {
 		return err
 	} else {
-		// Add the new information if it's valid and update the endpoint in the database
+		// If the endpoint info does exist, update it with the new information.
 		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 		existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
@@ -167,13 +168,13 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
+		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
 	}
 
-	return err
+	return nil
 }
 
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability

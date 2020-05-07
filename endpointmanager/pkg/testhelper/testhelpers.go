@@ -53,9 +53,9 @@ func IntegrationDBTestSetup(t *testing.T, db *sql.DB) (func(t *testing.T, db *sq
 	tableNames, err := getTableNames(db)
 	Assert(t, err == nil, err)
 
-	areEmpty, err := tablesAreEmpty(tableNames, db)
+	nonEmptyTable, err := tablesAreEmpty(tableNames, db)
 	Assert(t, err == nil, err)
-	Assert(t, areEmpty, "at least one database table has entries in it. database tables must be empty before running integration tests.")
+	Assert(t, nonEmptyTable == "", fmt.Sprintf("%s has entries in it. database tables must be empty before running integration tests.", nonEmptyTable))
 
 	return integrationDBTestTeardown, nil
 }
@@ -69,12 +69,12 @@ func IntegrationDBTestSetupMain(db *sql.DB) (func(db *sql.DB), error) {
 		panic(err)
 	}
 
-	areEmpty, err := tablesAreEmpty(tableNames, db)
+	nonEmptyTable, err := tablesAreEmpty(tableNames, db)
 	if err != nil {
 		panic(err)
 	}
-	if !areEmpty {
-		panic("at least one database table has entries in it. database tables must be empty before running integration tests.")
+	if nonEmptyTable != "" {
+		panic(fmt.Sprintf("%s has entries in it. database tables must be empty before running integration tests.", nonEmptyTable))
 	}
 
 	return integrationDBTestTeardownMain, nil
@@ -149,21 +149,21 @@ func getTableNames(db *sql.DB) ([]string, error) {
 	return tableNames, err
 }
 
-func tablesAreEmpty(tableNames []string, db *sql.DB) (bool, error) {
+func tablesAreEmpty(tableNames []string, db *sql.DB) (string, error) {
 	for _, tableName := range tableNames {
 		var count int
 		query := fmt.Sprintf("SELECT COUNT(*) FROM %s", tableName)
 		row := db.QueryRow(query)
 		err := row.Scan(&count)
 		if err != nil {
-			return false, err
+			return tableName, err
 		}
 
 		if count != 0 {
-			return false, nil
+			return tableName, nil
 		}
 	}
-	return true, nil
+	return "", nil
 }
 
 func deleteTableEntries(tableNames []string, db *sql.DB) error {

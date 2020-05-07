@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"sync"
 	"time"
 
@@ -40,20 +39,25 @@ func GetEnptsAndSend(
 			errs <- err
 		}
 
+		err = accessqueue.SendToQueue(ctx, "start", mq, channelID, qName)
+		if err != nil {
+			errs <- err
+		}
+
 		for i, endpt := range listOfEndpoints {
 			if i%10 == 0 {
 				log.Infof("Processed %d/%d messages", i, len(listOfEndpoints))
 			}
 
-			msgBytes, err := json.Marshal(endpt.URL)
+			err = accessqueue.SendToQueue(ctx, endpt.URL, mq, channelID, qName)
 			if err != nil {
 				errs <- err
 			}
-			msgStr := string(msgBytes)
-			err = accessqueue.SendToQueue(ctx, msgStr, mq, channelID, qName)
-			if err != nil {
-				errs <- err
-			}
+		}
+
+		err = accessqueue.SendToQueue(ctx, "stop", mq, channelID, qName)
+		if err != nil {
+			errs <- err
 		}
 
 		log.Infof("Waiting %d minutes", qInterval)
@@ -62,8 +66,6 @@ func GetEnptsAndSend(
 }
 
 func main() {
-	log.Info("Started the endpoint manager.")
-
 	err := config.SetupConfig()
 	failOnError(err)
 
