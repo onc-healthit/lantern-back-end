@@ -256,12 +256,10 @@ func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Mess
 	}
 
 	for d := range msgsd.deliveryChannel {
-		select {
+	 /* 	select {
 		case <-ctx.Done():
 			return
-		default:
-			// ok
-		}
+		} */
 		err := handler(d.Body, args)
 		if err != nil {
 			errs <- err
