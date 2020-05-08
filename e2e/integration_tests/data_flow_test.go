@@ -345,9 +345,11 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
 	defer mq.Close()
 	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
-	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
-	failOnError(err)
-
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
+	select {
+	case <-ctx.Done():
+		return
+	}
 	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
 	err = query_str.Scan(&capability_statement_count)
