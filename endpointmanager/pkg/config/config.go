@@ -141,7 +141,6 @@ func SetupConfigForTests() error {
 	}
 
 	prevQName := viper.GetString("capquery_qname")
-	prevENPTQName := viper.GetString("endptinfo_capquery_qname")
 
 	viper.SetEnvPrefix("lantern_test")
 	viper.AutomaticEnv()
@@ -158,7 +157,7 @@ func SetupConfigForTests() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("enptinfo_capquery_qname")
+	err = viper.BindEnv("endptinfo_capquery_qname")
 	if err != nil {
 		return err
 	}
@@ -170,9 +169,6 @@ func SetupConfigForTests() error {
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
-	}
-	if prevENPTQName == viper.GetString("endptinfo_capquery_qname") {
-		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("endptinfo_capquery_qname") + ". Prod/Dev queue: " + prevENPTQName)
 	}
 
 	return nil
