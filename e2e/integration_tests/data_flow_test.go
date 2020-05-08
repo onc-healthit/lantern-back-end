@@ -340,14 +340,13 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	capInterval := viper.GetInt("capquery_qryintvl")
 	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &chID, errs)
-	time.Sleep(45 * time.Second)
+	time.Sleep(30 * time.Second)
 
-	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
 	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
 	defer mq.Close()
-
-	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
-	time.Sleep(30 * time.Second)
+	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
+	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
+	failOnError(err)
 
 	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
@@ -371,7 +370,7 @@ func Test_VendorList(t *testing.T) {
 	var err error
 
 	if viper.GetString("chplapikey") == "" {
-		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
 	}
 
 	common_vendor_list := [2]string{"Epic Systems Corporation", "Cerner Corporation"}
