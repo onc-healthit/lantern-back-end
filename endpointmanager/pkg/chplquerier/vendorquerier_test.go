@@ -74,20 +74,6 @@ var testVendor1 endpointmanager.Vendor = endpointmanager.Vendor{
 	LastModifiedInCHPL: time.Date(2020, time.February, 24, 20, 10, 46, 0, time.UTC),
 }
 
-var testVendor2 endpointmanager.Vendor = endpointmanager.Vendor{
-	Name:          "Cerner Corporation",
-	DeveloperCode: "1221",
-	CHPLID:        222,
-	URL:           "http://www.cerner.com",
-	Location: &endpointmanager.Location{
-		Address1: "2800 Rockcreek Parkway",
-		City:     "Kansas City,",
-		State:    "MO",
-		ZipCode:  "64117"},
-	Status:             "Active",
-	LastModifiedInCHPL: time.Date(2020, time.March, 25, 0, 0, 0, 0, time.UTC),
-}
-
 func Test_makeVendorURL(t *testing.T) {
 
 	// basic test

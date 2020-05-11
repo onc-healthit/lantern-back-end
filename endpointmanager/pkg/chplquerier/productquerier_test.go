@@ -18,12 +18,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
-	Name:          "Carefluence",
-	DeveloperCode: "D",
-	CHPLID:        4,
-}
-
 var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	ID:                  7849,
 	ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160701",
