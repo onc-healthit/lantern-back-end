@@ -4,14 +4,13 @@ import (
 	"context"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
-	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 	"github.com/pkg/errors"
 )
 
 // ConnectToServerAndQueue creates a connection to an exchange at the given location with the given credentials.
 // then connects to the queue with the given queue name
 func ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName string) (lanternmq.MessageQueue, lanternmq.ChannelID, error) {
-	mq := &rabbitmq.MessageQueue{}
+	mq := &lanternmq.MessageQueue{}
 	err := mq.Connect(qUser, qPassword, qHost, qPort)
 	if err != nil {
 		return nil, nil, err
