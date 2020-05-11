@@ -51,6 +51,10 @@ When testing, the capability querier uses the following environment variables:
 
   Default value: test-queue
 
+* **LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME** instead of LANTERN_ENDPTINFO_CAPQUERY_QNAME: The name of the queue being accessed.
+
+  Default value: test-endpoints-to-capability
+
 ## Building and Running
 
 The capability querier currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.

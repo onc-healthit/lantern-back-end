@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 )
 
@@ -25,7 +26,7 @@ type MessageQueue struct {
 
 	ConsumeFromQueueFn func(chID lanternmq.ChannelID, qName string) (lanternmq.Messages, error)
 
-	ProcessMessagesFn func(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error)
+	ProcessMessagesFn func(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error)
 
 	DeclareExchangeFn func(chID lanternmq.ChannelID, name string, exchangeType string) error
 
@@ -71,9 +72,9 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 	return mq.ConsumeFromQueueFn(chID, qName)
 }
 
-// ProcessMessages mocks lanternmq.ProcessMessages and calls mq.ProcessMessagesFn with the given arguments.
-func (mq *MessageQueue) ProcessMessages(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
-	mq.ProcessMessagesFn(msgs, handler, args, errs)
+// ProcessMessages mocks lanternmq.ProcessMessages and sets mq.ProcessMessagesInvoked to true and calls mq.ProcessMessagesFn with the given arguments.
+func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
+	mq.ProcessMessagesFn(ctx, msgs, handler, args, errs)
 }
 
 // DeclareExchange mocks lanternmq.DeclareExchange and calls mq.DeclareExchangeFn with the given arguments.

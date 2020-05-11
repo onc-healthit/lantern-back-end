@@ -195,7 +195,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	}
 
 	errs := make(chan error)
-	go messageQueue.ProcessMessages(messages, saveMsgInDB, &args, errs)
+	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
