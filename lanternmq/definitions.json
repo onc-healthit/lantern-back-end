@@ -73,20 +73,6 @@
     "policies": [],
     "queues": [
         {
-            "name": "capability-statement-requests",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
-            "name": "network-info-requests",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
             "name": "network-info",
             "vhost": "/",
             "durable": true,
@@ -116,6 +102,13 @@
         },
         {
             "name": "endpoints-to-netstats",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "test-endpoints-to-capability",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,

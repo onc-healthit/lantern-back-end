@@ -6,6 +6,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_history$
+    BEGIN
+        --
+        -- Create a row in fhir_endpoints_info_history to reflect the operation performed on fhir_endpoints_info,
+        -- make use of the special variable TG_OP to work out the operation.
+        --
+        IF (TG_OP = 'DELETE') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'D', now(), user, OLD.*;
+            RETURN OLD;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'U', now(), user, NEW.*;
+            RETURN NEW;
+        ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO fhir_endpoints_info_history SELECT 'I', now(), user, NEW.*;
+            RETURN NEW;
+        END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$fhir_endpoints_info_history$ LANGUAGE plpgsql;
+
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,
     npi_id			 VARCHAR(500) UNIQUE,
@@ -15,6 +35,27 @@ CREATE TABLE npi_organizations (
     taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
     normalized_name      VARCHAR(500),
     normalized_secondary_name   VARCHAR(500),
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE npi_contacts (
+    id               SERIAL PRIMARY KEY,
+    npi_id			     VARCHAR(500),
+	endpoint_type   VARCHAR(500),
+	endpoint_type_description   VARCHAR(500),
+	endpoint   VARCHAR(500),
+    valid_url BOOLEAN,
+	affiliation   VARCHAR(500),
+	endpoint_description   VARCHAR(500),
+	affiliation_legal_business_name   VARCHAR(500),
+	use_code   VARCHAR(500),
+	use_description   VARCHAR(500),
+	other_use_description   VARCHAR(500),
+	content_type   VARCHAR(500),
+	content_description   VARCHAR(500),
+	other_content_description   VARCHAR(500),
+    location                JSONB,
     created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -68,6 +109,27 @@ CREATE TABLE fhir_endpoints_info (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE fhir_endpoints_info_history (
+    operation               CHAR(1) NOT NULL,
+    entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    user_id                 VARCHAR(500),
+    id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
+    healthit_product_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
+    -- TODO: remove once vendor table available
+    vendor                  VARCHAR(500),
+    -- TODO: uncomment once vendor table available
+    -- vendor_id            INT, 
+    url                     VARCHAR(500),
+    tls_version             VARCHAR(500),
+    mime_types              VARCHAR(500)[],
+    http_response           INTEGER,
+    errors                  VARCHAR(500),
+    capability_statement    JSONB,
+    validation              JSONB,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE endpoint_organization (
     endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
     organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
@@ -96,6 +158,13 @@ CREATE TRIGGER set_timestamp_fhir_endpoints_info
 BEFORE UPDATE ON fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
+
+-- captures history for the fhir_endpoint_info table
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
+
 
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, endpts_info.vendor, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE

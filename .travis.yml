@@ -22,7 +22,6 @@ env:
   - LANTERN_TEST_DBNAME=lantern_test
   - LANTERN_TEST_DBUSER=lantern
   - LANTERN_TEST_DBPASSWORD=postgrespassword
-  - LANTERN_ENDPTLIST="./scripts/EndpointSources.json"
   - LANTERN_QUSER=capabilityquerier
   - LANTERN_QPASSWORD=capabilityquerier
   - LANTERN_QPORT=5672
@@ -32,6 +31,7 @@ env:
   - LANTERN_TEST_QUSER=capabilityquerier
   - LANTERN_TEST_QPASSWORD=capabilityquerier
   - LANTERN_TEST_QNAME=test-queue
+  - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
 
 before_script:
 - go get ./...

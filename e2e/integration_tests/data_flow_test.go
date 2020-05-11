@@ -5,25 +5,32 @@ package integration_tests
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
+	Assert "github.com/stretchr/testify/assert"
 )
 
 type Endpoint struct {
@@ -36,7 +43,6 @@ var store *postgresql.Store
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
-
 	var err error
 	store, err = postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
@@ -121,16 +127,14 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 35 {
-		t.Fatalf("Only 35 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+	if link_count != 34 {
+		t.Fatalf("Only 34 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-  
-	expected_link_count := 40
-  
+	expected_link_count := 38
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -148,7 +152,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 40 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 38 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to one org
@@ -242,6 +246,151 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
+func Test_GetCHPLProducts(t *testing.T) {
+	var err error
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+	}
+
+	healthit_prod_row := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
+	expected_hitp_count := 7829
+	var hitp_count int
+	err = healthit_prod_row.Scan(&hitp_count)
+	failOnError(err)
+	if hitp_count != 0 {
+		t.Fatalf("Healthit product database should initially be empty")
+	}
+
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	failOnError(err)
+
+	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
+	err = healthit_prod_row.Scan(&hitp_count)
+	failOnError(err)
+	if hitp_count < expected_hitp_count {
+		t.Fatalf("Database should have at least " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
+	}
+	// expect this in db
+	//{
+	//	"id":3,
+	//	"chplProductNumber":"CHP-029177",
+	//	"edition":"2014",
+	//	"practiceType":"Inpatient",
+	//	"developer":"Intuitive Medical Documents",
+	//	"product":"Intuitive Medical Document",
+	//	"version":"2.0",
+	//	"certificationDate":1457049600000,
+	//	"certificationStatus":"Active",
+	//	"criteriaMet":"100☺101☺103☺106☺107☺108☺109☺114☺115☺116☺61☺62☺63☺64☺65☺66☺67☺68☺69☺70☺71☺72☺73☺74☺75☺76☺77☺81☺82☺83☺84☺86☺87☺88☺91☺92☺93☺94☺95☺96☺97☺98☺99"
+	//	}
+
+	var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
+		Name:                  "Intuitive Medical Document",
+		Version:               "2.0",
+		Developer:             "Intuitive Medical Documents",
+		CertificationStatus:   "Active",
+		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
+		CertificationEdition:  "2014",
+		CHPLID:                "CHP-029177",
+		CertificationCriteria: []string{"100", "101", "103", "106", "107", "108", "109", "114", "115", "116", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "81", "82", "83", "84", "86", "87", "88", "91", "92", "93", "94", "95", "96", "97", "98", "99"},
+	}
+
+	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Intuitive Medical Document", "2.0")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, hitp.CHPLID == testHITP.CHPLID, "CHPL ID is not what was expected")
+	th.Assert(t, hitp.CertificationEdition == testHITP.CertificationEdition, "Certification edition is not what was expected")
+	th.Assert(t, hitp.Developer == testHITP.Developer, "Developer is not what was expected")
+	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
+	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
+	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
+}
+
+func Test_RetrieveCapabilityStatements(t *testing.T) {
+	var err error
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("qname")
+	capQName := viper.GetString("endptinfo_capquery_qname")
+
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
+	err = th.CheckResources(hap)
+	if err != nil {
+		panic(err)
+	}
+
+	var mq lanternmq.MessageQueue
+	var chID lanternmq.ChannelID
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
+	defer mq.Close()
+	th.Assert(t, err == nil, err)
+	th.Assert(t, mq != nil, "expected message queue to be created")
+	th.Assert(t, chID != nil, "expected channel ID to be created")
+
+	var wg sync.WaitGroup
+	ctx := context.Background()
+	wg.Add(1)
+	errs := make(chan error)
+
+	capInterval := viper.GetInt("capquery_qryintvl")
+	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &chID, errs)
+	time.Sleep(30 * time.Second)
+
+	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
+	defer mq.Close()
+	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
+	select {
+	case <-ctx.Done():
+		return
+	}
+	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
+	var capability_statement_count int
+	err = query_str.Scan(&capability_statement_count)
+	failOnError(err)
+	if capability_statement_count == 0 {
+		t.Fatalf("Fhir_endpoints_info db should have capability statements")
+	}
+
+	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
+	var fhir_version_count int
+	expected_fhir_version_count := 25
+	err = query_str.Scan(&fhir_version_count)
+	failOnError(err)
+	if fhir_version_count < expected_fhir_version_count {
+		t.Fatalf("There should be at least 25 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
+	}
+}
+
+func Test_VendorList(t *testing.T) {
+	var err error
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
+	}
+
+	common_vendor_list := [2]string{"Epic Systems Corporation", "Cerner Corporation"}
+	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints_info where vendor!='';")
+	failOnError(err)
+	var test_vendor_list []string
+	defer rows.Close()
+	for rows.Next() {
+		var vendor string
+		err = rows.Scan(&vendor)
+		failOnError(err)
+		test_vendor_list = append(test_vendor_list, vendor)
+	}
+	th.Assert(t, len(test_vendor_list)>= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
+}
+
 func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier:3333/metrics")
@@ -324,51 +473,4 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 		t.Fatalf("LanternTestOrg not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
-}
-
-func Test_GetCHPLProducts(t *testing.T) {
-	var err error
-	var actualProdsStored int
-
-	if viper.GetString("chplapikey") == "" {
-		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
-	}
-
-	ctx := context.Background()
-	client := &http.Client{
-		Timeout: time.Second * 35,
-	}
-
-	// as of 12/5/19, at least 7676 entries are expected to be added to the database
-	minNumExpProdsStored := 7676
-
-	err = chplquerier.GetCHPLProducts(ctx, store, client)
-	assert(t, err == nil, err)
-	rows := store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
-	err = rows.Scan(&actualProdsStored)
-	assert(t, err == nil, err)
-	assert(t, actualProdsStored >= minNumExpProdsStored, fmt.Sprintf("Expected at least %d products stored. Actually had %d products stored.", minNumExpProdsStored, actualProdsStored))
-
-	// expect to see this entry in the DB:
-	// {
-	// 	"id": 7849,
-	// 	"chplProductNumber": "15.04.04.2657.Care.01.00.0.160701",
-	// 	"edition": "2015",
-	// 	"developer": "Carefluence",
-	// 	"product": "Carefluence Open API",
-	// 	"version": "1",
-	// 	"certificationDate": 1467331200000,
-	// 	"certificationStatus": "Active",
-	// 	"criteriaMet": "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
-	// 	"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-	// }
-	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Carefluence Open API", "1")
-	assert(t, err == nil, err)
-	assert(t, hitp.CHPLID == "15.04.04.2657.Care.01.00.0.160701", "CHPL ID is not what was expected")
-	assert(t, hitp.CertificationEdition == "2015", "Certification edition is not what was expected")
-	assert(t, hitp.Developer == "Carefluence", "Developer is not what was expected")
-	assert(t, hitp.CertificationDate.Equal(time.Unix(1467331200, 0).UTC()), "Certification date is not what was expected")
-	assert(t, hitp.CertificationStatus == "Active", "Certification status is not what was expected")
-	// TODO: Can continue to assert this format after changes described in https://oncprojectracking.healthit.gov/support/browse/LANTERN-156 are addressed
-	//assert(t, reflect.DeepEqual(hitp.CertificationCriteria, []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"}), "Certification criteria is not what was expected")
 }

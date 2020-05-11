@@ -3,6 +3,7 @@
 package postgresql
 
 import (
+	"bytes"
 	"context"
 	"io/ioutil"
 	"path/filepath"
@@ -125,6 +126,8 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
+	e1.HTTPResponse = 200
+
 	// update with nil capability statement
 	capStat := e1.CapabilityStatement
 	e1.CapabilityStatement = nil
@@ -169,5 +172,82 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	_, err = store.GetFHIREndpointInfo(ctx, endpointInfo2.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("did not expected endpoint in db")
+	}
+
+	// check history table
+
+	var count int
+	var response int
+	var capStatJson []byte
+
+	// check insertions
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='I';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 insertion for endpointInfo1. Got %d.", count)
+	}
+
+	// check the value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='I';", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("get values for insertion: %s", err.Error())
+	}
+	if response != 200 {
+		t.Errorf("expected http_response to be 200 for endpointInfo1 insert. Got %d.", response)
+	}
+	if bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("expected capability_statement to be present for endpointInfo1 insert. Got nil.")
+	}
+
+	// check updates
+
+	// check that there are two
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 updates for endpointInfo1. Got %d.", count)
+	}
+
+	// get the first update and check its value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at ASC LIMIT 1;", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if response != 700 {
+		t.Errorf("expected http_response to be 700 for update value for endpointInfo1. Got %d.", response)
+	}
+	if bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("expected capability_statement to be present for endpointInfo1 insert. Got nil.")
+	}
+
+	// get the second update and check its value
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at DESC LIMIT 1;", endpointInfo1.ID)
+	err = rows.Scan(&response, &capStatJson)
+	if err != nil {
+		t.Errorf("history count for insertions: %s", err.Error())
+	}
+	if response != 200 {
+		t.Errorf("expected http_response to be 200 for update value for endpointInfo1. Got %d.", response)
+	}
+	if !bytes.Equal(capStatJson, []byte("null")) {
+		t.Errorf("did not expect the capability statement to be present.")
+	}
+
+	// check deletes
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='D';", endpointInfo1.ID)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("history count for deletions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 deletion for endpointInfo1. Got %d.", count)
 	}
 }

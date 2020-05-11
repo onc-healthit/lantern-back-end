@@ -1,5 +1,9 @@
 package lanternmq
 
+import (
+	"context"
+)
+
 // MessageQueue is an interface for writing messages to either a basic queue or a topic. Below are
 // some usage examples.
 //
@@ -78,7 +82,7 @@ type MessageQueue interface {
 	ConsumeFromQueue(chID ChannelID, qName string) (Messages, error)
 	// ProcessMessages applies the 'handler' MessageHandler with arguments 'args' to each
 	// message that is received through 'msgs'. Sends any errors to the 'errs' channel.
-	ProcessMessages(msgs Messages, handler MessageHandler, args *map[string]interface{}, errs chan<- error)
+	ProcessMessages(ctx context.Context, msgs Messages, handler MessageHandler, args *map[string]interface{}, errs chan<- error)
 	// DeclareExchange creates an exchange with the name 'name' and type 'exchangeType' on the channel with
 	// ID 'chID' if one does not exist.
 	DeclareExchange(chID ChannelID, name string, exchangeType string) error
