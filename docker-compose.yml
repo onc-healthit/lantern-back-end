@@ -90,7 +90,7 @@ services:
         LANTERN_DBHOST: ${LANTERN_DBHOST}
         LANTERN_DBPORT: ${LANTERN_DBPORT}
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
-    container_name: lantern-shiny
+    image: lantern-back-end_shinydashboard_1:current
     volumes:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server
