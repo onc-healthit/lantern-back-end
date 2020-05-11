@@ -39,6 +39,27 @@ CREATE TABLE npi_organizations (
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE npi_contacts (
+    id               SERIAL PRIMARY KEY,
+    npi_id			     VARCHAR(500),
+	endpoint_type   VARCHAR(500),
+	endpoint_type_description   VARCHAR(500),
+	endpoint   VARCHAR(500),
+    valid_url BOOLEAN,
+	affiliation   VARCHAR(500),
+	endpoint_description   VARCHAR(500),
+	affiliation_legal_business_name   VARCHAR(500),
+	use_code   VARCHAR(500),
+	use_description   VARCHAR(500),
+	other_use_description   VARCHAR(500),
+	content_type   VARCHAR(500),
+	content_description   VARCHAR(500),
+	other_content_description   VARCHAR(500),
+    location                JSONB,
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE vendors (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500) UNIQUE,
@@ -50,7 +71,6 @@ CREATE TABLE vendors (
     chpl_id                 INTEGER UNIQUE,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
 
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,

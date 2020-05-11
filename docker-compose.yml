@@ -80,6 +80,21 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
+  shinydashboard:
+    build:
+      context: ./shinydashboard
+      args:
+        LANTERN_DBNAME: ${LANTERN_DBNAME}
+        LANTERN_DBUSER: ${LANTERN_DBUSER}
+        LANTERN_DBPASSWORD: ${LANTERN_DBPASSWORD}
+        LANTERN_DBHOST: ${LANTERN_DBHOST}
+        LANTERN_DBPORT: ${LANTERN_DBPORT}
+        LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
+    image: lantern_shinydashboard:current
+    volumes:
+      - ./shinydashboard/lantern/:/srv/shiny-server
+      - ./shinydashboard/shiny_logs:/var/log/shiny-server
+
 volumes:
   pgdata:
   prometheusData:

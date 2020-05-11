@@ -1,17 +1,6 @@
 {
   "Entries": [
     {
-      "OrganizationName": "Lantern Test Org",
-      "FHIRPatientFacingURI": "http://lantern-e2e",
-      "Type": "TestType",
-      "Keywords": [
-        {
-          "Kind": "TestKeyword",
-          "Value": "TestValue"
-        }
-      ]
-    },
-    {
       "OrganizationName": "Cape Fear Valley Health",
       "FHIRPatientFacingURI": "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
       "Type": "Epic",

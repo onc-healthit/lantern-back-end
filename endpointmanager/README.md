@@ -186,6 +186,6 @@ To run, perform the following commands:
 
 
 ```bash
-cd endpointmanager/cmd/nppespopulator
+cd endpointmanager/cmd/nppesorgpopulator
 go run main.go <path to nppes csv file>
 ```

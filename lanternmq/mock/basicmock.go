@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"errors"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -53,7 +54,7 @@ func NewBasicMockMessageQueue() lanternmq.MessageQueue {
 		return nil, nil
 	}
 
-	mq.ProcessMessagesFn = func(msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
+	mq.ProcessMessagesFn = func(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 		for msg := range mq.Queue {
 			err := handler(msg, args)
 			if err != nil {
