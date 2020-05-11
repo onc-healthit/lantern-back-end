@@ -247,7 +247,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
-func Test_GetVendorProducts(t *testing.T) {
+func Test_GetCHPLVendors(t *testing.T) {
 	var err error
 	var actualVendsStored int
 
@@ -428,16 +428,23 @@ func Test_VendorList(t *testing.T) {
 		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
 	}
 
-	common_vendor_list := [2]string{"Epic Systems Corporation", "Cerner Corporation"}
-	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints_info where vendor!='';")
+	ctx := context.Background()
+
+	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
 	failOnError(err)
-	var test_vendor_list []string
+	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
+	failOnError(err)
+
+	common_vendor_list := [2]int{epic.ID, cerner.ID}
+	rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
+	failOnError(err)
+	var test_vendor_list []int
 	defer rows.Close()
 	for rows.Next() {
-		var vendor string
-		err = rows.Scan(&vendor)
+		var vendorID int
+		err = rows.Scan(&vendorID)
 		failOnError(err)
-		test_vendor_list = append(test_vendor_list, vendor)
+		test_vendor_list = append(test_vendor_list, vendorID)
 	}
 	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
 	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
