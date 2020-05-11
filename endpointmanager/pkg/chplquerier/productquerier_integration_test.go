@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
@@ -20,6 +21,12 @@ import (
 )
 
 var store *postgresql.Store
+
+var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
+	Name:          "Carefluence",
+	DeveloperCode: "D",
+	CHPLID:        4,
+}
 
 func TestMain(m *testing.M) {
 	var err error
