@@ -71,6 +71,7 @@ CREATE TABLE vendors (
     chpl_id                 INTEGER UNIQUE,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
@@ -190,4 +191,4 @@ FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;;
+LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;
