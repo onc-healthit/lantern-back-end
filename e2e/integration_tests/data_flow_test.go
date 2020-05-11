@@ -128,9 +128,9 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-  
+
 	expected_link_count := 40
-  
+
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -326,6 +326,54 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	// TODO add additional queries for other metrics
 }
 
+func Test_GetVendorProducts(t *testing.T) {
+	var err error
+	var actualVendsStored int
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+	}
+
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+
+	// as of 5/11/20, at least 1440 entries are expected to be added to the database
+	minNumExpVendsStored := 1440
+
+	err = chplquerier.GetCHPLVendors(ctx, store, client)
+	assert(t, err == nil, err)
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM vendors;")
+	err = rows.Scan(&actualVendsStored)
+	assert(t, err == nil, err)
+	assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
+
+	// expect to see this entry in the database:
+	// {
+	// "developerId": 1658,
+	// "developerCode": "2657",
+	// "name": "Carefluence",
+	// "website": "http://www.carefluence.com",
+	// "selfDeveloper": false,
+	// "address": {
+	// 	"addressId": 101,
+	// 	"line1": "8359 Office Park Drive",
+	// 	"line2": null,
+	// 	"city": "Grand Blanc",
+	// 	"state": "MI",
+	// 	"zipcode": "48439",
+	// 	"country": "US"
+	// }
+	vend, err := store.GetVendorUsingName(ctx, "Carefluence")
+	assert(t, err == nil, err)
+	assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
+	assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
+	assert(t, vend.Name == "Carefluence", "Name not as expected")
+	assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
+	assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
+}
+
 func Test_GetCHPLProducts(t *testing.T) {
 	var err error
 	var actualProdsStored int
@@ -354,7 +402,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// 	"id": 7849,
 	// 	"chplProductNumber": "15.04.04.2657.Care.01.00.0.160701",
 	// 	"edition": "2015",
-	// 	"developer": "Carefluence",
+	// 	"vendorID": <id corresponding to vendor "Carefluence">
 	// 	"product": "Carefluence Open API",
 	// 	"version": "1",
 	// 	"certificationDate": 1467331200000,
@@ -362,11 +410,13 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// 	"criteriaMet": "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
 	// 	"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 	// }
+	vend, err := store.GetVendorUsingName(ctx, "Carefluence")
+	assert(t, err == nil, err)
 	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Carefluence Open API", "1")
 	assert(t, err == nil, err)
 	assert(t, hitp.CHPLID == "15.04.04.2657.Care.01.00.0.160701", "CHPL ID is not what was expected")
 	assert(t, hitp.CertificationEdition == "2015", "Certification edition is not what was expected")
-	assert(t, hitp.Developer == "Carefluence", "Developer is not what was expected")
+	assert(t, hitp.VendorID == vend.ID, "Developer is not what was expected")
 	assert(t, hitp.CertificationDate.Equal(time.Unix(1467331200, 0).UTC()), "Certification date is not what was expected")
 	assert(t, hitp.CertificationStatus == "Active", "Certification status is not what was expected")
 	// TODO: Can continue to assert this format after changes described in https://oncprojectracking.healthit.gov/support/browse/LANTERN-156 are addressed
