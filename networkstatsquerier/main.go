@@ -101,15 +101,6 @@ func setupServer() {
 	}
 }
 
-func initializeLogger() {
-	log.SetFormatter(&log.JSONFormatter{})
-	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
-	if err != nil {
-		log.Fatal("LogFile creation error: ", err.Error())
-	}
-	log.SetOutput(f)
-}
-
 func failOnError(err error) {
 	if err != nil {
 		log.Fatalf("%s", err)
@@ -117,7 +108,6 @@ func failOnError(err error) {
 }
 
 func main() {
-	initializeLogger()
 	config.SetupConfig()
 	go setupServer()
 

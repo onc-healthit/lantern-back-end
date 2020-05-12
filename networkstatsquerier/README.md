@@ -15,10 +15,6 @@ The Network Statistics Querier reads the following environment variables:
 
   Default value: 3333
 
-* **LANTERN_ENDPTQRY_LOGFILE**: The location of the logfile for log messages
-
-  Default value: endpointQuerierLog.json
-
 * **LANTERN_ENDPTQRY_QUERY_INTERVAL**: Number of minutes to wait between queries (Note: actual time between queries will be greater since the time it takes to run the queries is non-zero)
 
   Default value: 10
