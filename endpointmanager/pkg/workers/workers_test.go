@@ -1,9 +1,8 @@
-package capabilityquerier
+package workers
 
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"testing"
 	"time"
 
@@ -26,23 +25,16 @@ func Test_StartAddAndStop(t *testing.T) {
 
 	jctx := context.Background()
 	duration := 30 * time.Second
-
-	fhirURL := &url.URL{}
-	fhirURL, err = fhirURL.Parse(sampleURL)
-	th.Assert(t, err == nil, err)
-
-	tc, err := testClientWithContentType(fhir2LessJSONMIMEType)
-	th.Assert(t, err == nil, err)
-	defer tc.Close()
+	args := make(map[string]interface{})
+	args["mq"] = mq
+	args["ch"] = ch
+	args["queueName"] = queueName
 
 	job := Job{
-		Context:      jctx,
-		Duration:     duration,
-		FHIRURL:      fhirURL,
-		Client:       &(tc.Client),
-		MessageQueue: &mq,
-		Channel:      &ch,
-		QueueName:    queueName,
+		Context:     jctx,
+		Duration:    duration,
+		Handler:     testfn,
+		HandlerArgs: &args,
 	}
 
 	// basic test
@@ -51,15 +43,15 @@ func Test_StartAddAndStop(t *testing.T) {
 	ctx := context.Background()
 	numWorkers := 3
 
-	qw := NewQueueWorkers()
-	err = qw.Start(ctx, numWorkers, errs)
+	work := NewWorkers()
+	err = work.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, qw.waitGroup != nil, "expected a wait group to be initiated")
-	th.Assert(t, qw.numWorkers == numWorkers, fmt.Sprintf("should have %d workers; have %d", numWorkers, qw.numWorkers))
-	th.Assert(t, qw.ctx == ctx, "queue workers context should be the same as the passed in context")
+	th.Assert(t, work.waitGroup != nil, "expected a wait group to be initiated")
+	th.Assert(t, work.numWorkers == numWorkers, fmt.Sprintf("should have %d workers; have %d", numWorkers, work.numWorkers))
+	th.Assert(t, work.ctx == ctx, "queue workers context should be the same as the passed in context")
 
 	for i := 0; i < numWorkers*2; i++ {
-		err = qw.Add(&job)
+		err = work.Add(&job)
 		th.Assert(t, err == nil, err)
 	}
 
@@ -67,9 +59,9 @@ func Test_StartAddAndStop(t *testing.T) {
 	numOnQueue := len(mq.(*mock.BasicMockMessageQueue).Queue)
 	th.Assert(t, numOnQueue < numWorkers*2, fmt.Sprintf("expected less than %d items to be on the queue. had %d.", 2*numWorkers, numOnQueue))
 
-	err = qw.Stop()
+	err = work.Stop()
 	th.Assert(t, err == nil, err)
-	th.Assert(t, qw.numWorkers == 0, "after stopping, there should be no workers")
+	th.Assert(t, work.numWorkers == 0, "after stopping, there should be no workers")
 
 	// expect all items to be on queue after stopped
 	numOnQueue = len(mq.(*mock.BasicMockMessageQueue).Queue)
@@ -77,16 +69,16 @@ func Test_StartAddAndStop(t *testing.T) {
 
 	// stop after already stopped
 
-	err = qw.Stop()
+	err = work.Stop()
 	th.Assert(t, err.Error() == "no workers are currently running", "expected error saying no workers are running.")
 
 	// start after already started
 
-	err = qw.Start(ctx, numWorkers, errs)
+	err = work.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
-	err = qw.Start(ctx, numWorkers, errs)
+	err = work.Start(ctx, numWorkers, errs)
 	th.Assert(t, err.Error() == "workers have already started", "expected error saying workers were already running.")
-	err = qw.Stop()
+	err = work.Stop()
 	th.Assert(t, err == nil, err)
 
 	// canceled context
@@ -95,17 +87,35 @@ func Test_StartAddAndStop(t *testing.T) {
 	cancel()
 
 	// expect it to start fine
-	err = qw.Start(ctx, numWorkers, errs)
+	err = work.Start(ctx, numWorkers, errs)
 	th.Assert(t, err == nil, err)
 
 	// expect error when adding a new job
-	err = qw.Add(&job)
+	err = work.Add(&job)
 	th.Assert(t, errors.Cause(err) == context.Canceled, "expected to error out due to context ending")
 	// shouldn't have anything new on the queue
 	th.Assert(t, numOnQueue == numWorkers*2, fmt.Sprintf("expected %d items to be on the queue. had %d.", 2*numWorkers, numOnQueue))
 
 	// expect no issues with stopping
-	err = qw.Stop()
+	err = work.Stop()
 	th.Assert(t, err == nil, err)
-	th.Assert(t, qw.numWorkers == 0, "after stopping, there should be no workers")
+	th.Assert(t, work.numWorkers == 0, "after stopping, there should be no workers")
+}
+
+func testfn(ctx context.Context, args *map[string]interface{}) error {
+	// @TODO Add mock queue here
+	mq, ok := (*args)["mq"].(lanternmq.MessageQueue)
+	if !ok {
+		return fmt.Errorf("unable to cast mq to MessageQueue from arguments")
+	}
+	ch, ok := (*args)["ch"].(lanternmq.ChannelID)
+	if !ok {
+		return fmt.Errorf("unable to cast ch to ChannelID from arguments")
+	}
+	queueName, ok := (*args)["queueName"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast queueName to string from arguments")
+	}
+	mq.PublishToQueue(ch, queueName, "test String")
+	return nil
 }
