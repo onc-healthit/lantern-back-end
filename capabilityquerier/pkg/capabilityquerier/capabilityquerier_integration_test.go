@@ -85,7 +85,13 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 		} else {
 			fmt.Printf("Getting and sending capability statement %d/10\n", i+1)
 			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-			err = capabilityquerier.GetAndSendCapabilityStatement(ctx, metadataURL, client, mq, chID, queueName)
+			args := make(map[string]interface{})
+			args["FHIRURL"] = metadataURL
+			args["client"] = client
+			args["mq"] = mq
+			args["ch"] = chID
+			args["qName"] = queueName
+			err = capabilityquerier.GetAndSendCapabilityStatement(ctx, &args)
 			th.Assert(t, err == nil, err)
 		}
 	}
