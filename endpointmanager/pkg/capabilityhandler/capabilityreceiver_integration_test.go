@@ -19,7 +19,7 @@ import (
 var store *postgresql.Store
 
 var testFhirEndpoint1 = &endpointmanager.FHIREndpoint{
-	URL: "http://example.com/DTSU2/",
+	URL: "http://example.com/DTSU2/metadata",
 }
 var testFhirEndpoint2 = &endpointmanager.FHIREndpoint{
 	URL: "https://test-two.com",

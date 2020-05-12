@@ -75,11 +75,6 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
 
-	url, err := NormalizeURL(url)
-	if err != nil {
-		return nil, err
-	}
-
 	sqlStatement := `
 	SELECT
 		id,
@@ -92,7 +87,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
-	err = row.Scan(
+	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
 		&endpoint.OrganizationName,
@@ -110,8 +105,6 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
 
-	e.URL, err = NormalizeURL(e.URL)
-
 	row := addFHIREndpointStatement.QueryRowContext(ctx,
 		e.URL,
 		e.OrganizationName,
@@ -125,8 +118,6 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
-
-	e.URL, err = NormalizeURL(e.URL)
 
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,

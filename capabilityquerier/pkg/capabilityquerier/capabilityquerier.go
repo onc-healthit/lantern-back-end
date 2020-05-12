@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -39,6 +38,28 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
+// Prepends url with https://www. or https:// and appends with metadata/ if needed
+func normalizeURL(url string) string{
+	normalized := ""
+    // for cases such as foobar.com
+    if !strings.HasPrefix(url, "https://www.") && !strings.HasPrefix(url, "http://www.")  {
+        normalized = "https://www." + url
+    }
+    // for cases such as www.foobar.com
+    if strings.HasPrefix(url, "www.") {
+        normalized = "https://" +  url
+	}
+	
+	// for cases such as foobar.com/
+	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
+		if !strings.HasSuffix(url, "/") {
+			normalized = normalized + "/"
+		}
+		normalized = normalized + "metadata"
+	}
+    return normalized
+}
+
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
 // statement and accompanying data on a receiving queue.
 func GetAndSendCapabilityStatement(
@@ -54,17 +75,9 @@ func GetAndSendCapabilityStatement(
 		URL: fhirURL.String(),
 	}
 
-	_, metadata := path.Split(fhirURL.Path)
-	if metadata != "metadata" {
-		fhirURL.Path = path.Join(fhirURL.Path, "metadata")
-	}
-
-	gotError := false
-
 	err = requestCapabilityStatement(ctx, fhirURL, client, &message)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
-		gotError = true
 		message.Err = err.Error()
 	}
 
@@ -75,16 +88,10 @@ func GetAndSendCapabilityStatement(
 	}
 	msgStr := string(msgBytes)
 
-	if gotError {
-		log.Infof("About to send %s info to queue", fhirURL.String())
-	}
 	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
-	}
-	if gotError {
-		log.Infof("Successfully sent %s info to queue", fhirURL.String())
 	}
 
 	return nil
@@ -99,9 +106,11 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	var tlsVersion string
 	var capResp []byte
 
-	req, err := http.NewRequest("GET", fhirURL.String(), nil)
+	normalizedURL := normalizeURL(fhirURL.String())
+
+	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
-		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
+		return errors.Wrap(err, "unable to create new GET request from URL: "+normalizedURL)
 	}
 	req = req.WithContext(ctx)
 

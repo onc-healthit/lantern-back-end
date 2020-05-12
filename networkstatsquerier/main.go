@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"runtime"
 	"time"
 
@@ -169,7 +168,6 @@ func main() {
 			if err != nil {
 				log.Warn("Endpoint URL Parsing Error: ", err.Error())
 			} else {
-				metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 				getHTTPRequestTiming(metadataURL.String(), orgName)
 			}
 		}

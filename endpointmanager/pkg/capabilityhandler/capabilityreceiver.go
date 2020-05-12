@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -29,10 +28,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	url, ok := msgJSON["url"].(string)
 	if !ok {
 		return nil, fmt.Errorf("unable to cast message URL to string")
-	}
-
-	if strings.Contains(url, "Elation") {
-		log.Infof("Received queued message")
 	}
 
 	errs, ok := msgJSON["err"].(string)
@@ -103,10 +98,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		"httpCode": httpCodeObj,
 	}
 
-	if strings.Contains(url, "Elation") {
-
-	}
-
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		URL:          url,
 		TLSVersion:   tlsVersion,
@@ -117,10 +108,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			"errors": validationObj,
 		},
 		CapabilityStatement: capStat,
-	}
-
-	if strings.Contains(url, "Elation") {
-		log.Infof("Created fhir endpoint for %s:\n\n%+v\n", url, fhirEndpoint)
 	}
 
 	return &fhirEndpoint, nil
@@ -138,10 +125,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	}
 
-	if strings.Contains(fhirEndpoint.URL, "Elation") {
-		log.Infof("Got endpoint")
-	}
-
 	store, ok := (*args)["store"].(*postgresql.Store)
 	if !ok {
 		return fmt.Errorf("unable to cast postgresql store from arguments")
@@ -155,9 +138,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	if err == sql.ErrNoRows {
 
-		if strings.Contains(fhirEndpoint.URL, "Elation") {
-			log.Infof("Adding new endpoint")
-		}
 		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {
@@ -170,9 +150,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	} else if err != nil {
 		return err
 	} else {
-		if strings.Contains(fhirEndpoint.URL, "Elation") {
-			log.Infof("Updating existing endpoint")
-		}
 		// If the endpoint info does exist, update it with the new information.
 		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion

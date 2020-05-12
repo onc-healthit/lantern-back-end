@@ -83,8 +83,6 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 
-	url, err := NormalizeURL(url)
-
 	sqlStatement := `
 	SELECT
 		id,
@@ -103,7 +101,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
-	err = row.Scan(
+	err := row.Scan(
 		&endpointInfo.ID,
 		&endpointInfo.URL,
 		&healthitProductIDNullable,
@@ -141,8 +139,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
-	e.URL, err = NormalizeURL(e.URL)
-
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
@@ -178,8 +174,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	var err error
 	var capabilityStatementJSON []byte
-
-	e.URL, err = NormalizeURL(e.URL)
 
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()

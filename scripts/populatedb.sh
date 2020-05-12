@@ -4,9 +4,9 @@ set -e
 
 # get endpoint data
 cd endpointmanager/cmd/endpointpopulator
-#go run main.go ../../../networkstatsquerier/resources/EndpointSources.json CareEvolution
-#go run main.go ../../../networkstatsquerier/resources/CernerEndpointSources.json Cerner
-#go run main.go ../../../networkstatsquerier/resources/EpicEndpointSources.json Epic
+go run main.go ../../../networkstatsquerier/resources/EndpointSources.json CareEvolution
+go run main.go ../../../networkstatsquerier/resources/CernerEndpointSources.json Cerner
+go run main.go ../../../networkstatsquerier/resources/EpicEndpointSources.json Epic
 cd ../../..
 
 # get CHPL info into db

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
@@ -84,9 +83,6 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	if err != nil {
 		log.Warnf("Error parsing URL string %s\n", urlString)
 		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
-	}
-	if !strings.HasPrefix(urlString, "http") {
-		log.Infof("\n\nurlString1: %s\nurlString2: %s\n\n", urlString, fhirURL.String())
 	}
 
 	job := capabilityquerier.Job{
