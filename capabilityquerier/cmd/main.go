@@ -9,7 +9,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/lanternmq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/spf13/viper"
 
@@ -24,7 +24,7 @@ func failOnError(err error) {
 
 func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	// Get arguments
-	qw, ok := (*args)["qw"].(*capabilityquerier.QueueWorkers)
+	wkrs, ok := (*args)["workers"].(*workers.Workers)
 	if !ok {
 		return fmt.Errorf("unable to cast capabilityquerier QueueWorkers from arguments")
 	}
@@ -40,37 +40,21 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	if !ok {
 		return fmt.Errorf("unable to cast errs to chan error from arguments")
 	}
-	client, ok := (*args)["client"].(*http.Client)
-	if !ok {
-		return fmt.Errorf("unable to cast client to http.Client from arguments")
-	}
 	jobDuration, ok := (*args)["jobDuration"].(time.Duration)
 	if !ok {
 		return fmt.Errorf("unable to cast jobDuration to time.Duration from arguments")
 	}
-	mq, ok := (*args)["mq"].(*lanternmq.MessageQueue)
-	if !ok {
-		return fmt.Errorf("unable to cast mq to MessageQueue from arguments")
-	}
-	ch, ok := (*args)["ch"].(*lanternmq.ChannelID)
-	if !ok {
-		return fmt.Errorf("unable to cast ch to ChannelID from arguments")
-	}
-	qName, ok := (*args)["qName"].(string)
-	if !ok {
-		return fmt.Errorf("unable to cast qName to string from arguments")
-	}
 
 	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
 	if string(message) == "start" {
-		err := qw.Start(ctx, numWorkers, errs)
+		err := wkrs.Start(ctx, numWorkers, errs)
 		if err != nil {
 			return err
 		}
 		return nil
 	}
 	if string(message) == "stop" {
-		err := qw.Stop()
+		err := wkrs.Stop()
 		if err != nil {
 			return fmt.Errorf("error stopping queue workers: %s", err.Error())
 		}
@@ -85,19 +69,23 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
 	}
 
-	job := capabilityquerier.Job{
-		Context:      ctx,
-		Duration:     jobDuration,
-		FHIRURL:      fhirURL,
-		Client:       client,
-		MessageQueue: mq,
-		Channel:      ch,
-		QueueName:    qName,
+	jobArgs := make(map[string]interface{})
+	jobArgs["FHIRURL"] = fhirURL
+	jobArgs["client"] = (*args)["client"]
+	jobArgs["mq"] = (*args)["mq"]
+	jobArgs["ch"] = (*args)["ch"]
+	jobArgs["qName"] = (*args)["qName"]
+
+	job := workers.Job{
+		Context:     ctx,
+		Duration:    jobDuration,
+		Handler:     (capabilityquerier.GetAndSendCapabilityStatement),
+		HandlerArgs: &jobArgs,
 	}
 
-	err = qw.Add(&job)
+	err = wkrs.Add(&job)
 	if err != nil {
-		return fmt.Errorf("error adding job to queue workers: %s", err.Error())
+		return fmt.Errorf("error adding job to workers: %s", err.Error())
 	}
 
 	return nil
@@ -129,11 +117,11 @@ func main() {
 	errs := make(chan error)
 
 	numWorkers := viper.GetInt("capquery_numworkers")
-	qw := capabilityquerier.NewQueueWorkers()
+	workers := workers.NewWorkers()
 	ctx := context.Background()
 
 	args := make(map[string]interface{})
-	args["qw"] = qw
+	args["workers"] = workers
 	args["ctx"] = ctx
 	args["numWorkers"] = numWorkers
 	args["errs"] = errs

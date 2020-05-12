@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -41,13 +42,28 @@ type Message struct {
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
 // statement and accompanying data on a receiving queue.
-func GetAndSendCapabilityStatement(
-	ctx context.Context,
-	fhirURL *url.URL,
-	client *http.Client,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	queueName string) error {
+func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interface{}) error {
+
+	fhirURL, ok := (*args)["FHIRURL"].(*url.URL)
+	if !ok {
+		return fmt.Errorf("unable to cast FHIRURL to url.URL from arguments")
+	}
+	client, ok := (*args)["client"].(*http.Client)
+	if !ok {
+		return fmt.Errorf("unable to cast client to http.Client from arguments")
+	}
+	mq, ok := (*args)["mq"].(*lanternmq.MessageQueue)
+	if !ok {
+		return fmt.Errorf("unable to cast mq to MessageQueue from arguments")
+	}
+	ch, ok := (*args)["ch"].(*lanternmq.ChannelID)
+	if !ok {
+		return fmt.Errorf("unable to cast ch to ChannelID from arguments")
+	}
+	queueName, ok := (*args)["qName"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast qName to string from arguments")
+	}
 
 	var err error
 	message := Message{
