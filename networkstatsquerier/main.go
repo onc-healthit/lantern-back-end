@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/config"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier"
 	"github.com/spf13/viper"
 
@@ -100,23 +101,6 @@ func setupServer() {
 	}
 }
 
-func setupConfig() {
-	var err error
-	viper.SetEnvPrefix("lantern_endptqry")
-	viper.AutomaticEnv()
-
-	err = viper.BindEnv("port")
-	failOnError(err)
-	err = viper.BindEnv("logfile")
-	failOnError(err)
-	err = viper.BindEnv("query_interval")
-	failOnError(err)
-
-	viper.SetDefault("port", 3333)
-	viper.SetDefault("logfile", "endpointQuerierLog.json")
-	viper.SetDefault("query_interval", 10)
-}
-
 func initializeLogger() {
 	log.SetFormatter(&log.JSONFormatter{})
 	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
@@ -133,8 +117,8 @@ func failOnError(err error) {
 }
 
 func main() {
-	setupConfig()
 	initializeLogger()
+	config.SetupConfig()
 	go setupServer()
 
 	var endpointsFile string
