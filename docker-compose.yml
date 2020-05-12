@@ -4,6 +4,17 @@ services:
   endpoint_querier:
     build: 
       context: ./networkstatsquerier
+    depends_on:
+        - lantern-mq
+    environment:
+        - LANTERN_QUSER=${LANTERN_QUSER}
+        - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
+        - LANTERN_QHOST=${LANTERN_QHOST}
+        - LANTERN_QPORT=${LANTERN_QPORT}
+        - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
+    volumes:
+        - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
   pg_prometheus:
     image: timescale/pg_prometheus:latest-pg11

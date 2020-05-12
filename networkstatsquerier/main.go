@@ -2,13 +2,19 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
+<<<<<<< 1216bac01245a9cc97266263dcdce796e3c1c7f3
 	"os"
 	"runtime"
+=======
+	"path"
+>>>>>>> Networkstats querier now uses the queue to get the endpoint information.
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/config"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier"
 	"github.com/spf13/viper"
@@ -27,6 +33,7 @@ var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
 // getHTTPRequestTiming records the http request characteristics for the endpoint specified by urlString
+<<<<<<< e9c8d57d345fff6bc47875038460bdea130d3340
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
 func getHTTPRequestTiming(urlString string) {
 	ctx := context.Background()
@@ -34,22 +41,74 @@ func getHTTPRequestTiming(urlString string) {
 	// This includes dropping the request connection if there's no reply within 30 seconds.
 	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))
 	defer cancelFunc()
-
-	var resp, responseTime, err = querier.GetResponseAndTiming(ctx, urlString)
-
-	if err != nil {
-		log.WithFields(log.Fields{"url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
-	} else {
-		responseTimeGaugeVec.WithLabelValues(urlString).Set(responseTime)
-
-		if resp != nil && resp.StatusCode != http.StatusOK {
-			totalFailedUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
-		}
-		if resp != nil {
-			httpCodesGaugeVec.WithLabelValues(urlString).Set(float64(resp.StatusCode))
-		}
-		totalUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
+=======
+func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
+	// Get arguments
+	wkrs, ok := (*args)["workers"].(*workers.Workers)
+	if !ok {
+		return fmt.Errorf("unable to cast Workers from arguments")
 	}
+	ctx, ok := (*args)["ctx"].(context.Context)
+	if !ok {
+		return fmt.Errorf("unable to cast context from arguments")
+	}
+	numWorkers, ok := (*args)["numWorkers"].(int)
+	if !ok {
+		return fmt.Errorf("unable to cast numWorkers to int from arguments")
+	}
+	errs, ok := (*args)["errs"].(chan error)
+	if !ok {
+		return fmt.Errorf("unable to cast errs to chan error from arguments")
+	}
+	jobDuration, ok := (*args)["jobDuration"].(time.Duration)
+	if !ok {
+		return fmt.Errorf("unable to cast jobDuration to time.Duration from arguments")
+	}
+>>>>>>> Networkstats querier now uses the queue to get the endpoint information.
+
+	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
+	if string(message) == "start" {
+		err := wkrs.Start(ctx, numWorkers, errs)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	if string(message) == "stop" {
+		err := wkrs.Stop()
+		if err != nil {
+			return fmt.Errorf("error stopping queue workers: %s", err.Error())
+		}
+		return nil
+	}
+
+	urlString := string(message)
+	// Specifically query the FHIR endpoint metadata
+	metadataURL, err := url.Parse(urlString)
+	if err != nil {
+		return fmt.Errorf("Endpoint URL Parsing Error: %s", err.Error())
+	}
+
+	jobArgs := make(map[string]interface{})
+	jobArgs["urlString"] = metadataURL.String()
+	jobArgs["respTime"] = responseTimeGaugeVec
+	jobArgs["failUptime"] = totalFailedUptimeChecksCounterVec
+	jobArgs["httpCodes"] = httpCodesGaugeVec
+	jobArgs["totalUptime"] = totalUptimeChecksCounterVec
+
+	job := workers.Job{
+		Context:     ctx,
+		Duration:    jobDuration,
+		Handler:     (querier.GetResponseAndTiming),
+		HandlerArgs: &jobArgs,
+	}
+
+	err = wkrs.Add(&job)
+	if err != nil {
+		return fmt.Errorf("error adding job to workers: %s", err.Error())
+	}
+
+	return nil
 }
 
 func initializeMetrics() {
@@ -111,25 +170,9 @@ func main() {
 	config.SetupConfig()
 	go setupServer()
 
-	var endpointsFile string
-	var source string
-	if len(os.Args) == 3 {
-		endpointsFile = os.Args[1]
-		source = os.Args[2]
-	} else if len(os.Args) == 2 {
-		log.Error("missing endpoints list source command-line argument")
-		return
-	} else {
-		log.Error("missing endpoints list command-line argument")
-		return
-	}
-	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
-	var listOfEndpoints, err = fetcher.GetEndpointsFromFilepath(endpointsFile, source)
-	if err != nil {
-		log.Fatal("Endpoint List Parsing Error: ", err.Error())
-	}
 	initializeMetrics()
 
+<<<<<<< e9c8d57d345fff6bc47875038460bdea130d3340
 	var queryCount = 0
 	// Infinite query loop
 	for {
@@ -155,5 +198,37 @@ func main() {
 		}
 		queryCount += 1
 	}
+=======
+	// Set up the queue for receiving messages
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("enptinfo_netstats_qname")
+	mq, ch, err := accessqueue.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	failOnError(err)
+	defer mq.Close()
 
+	messages, err := mq.ConsumeFromQueue(ch, qName)
+	failOnError(err)
+
+	// @TODO Setup numworkers environment variable for networkstatsquerier
+	numWorkers := 10
+	workers := workers.NewWorkers()
+	ctx := context.Background()
+>>>>>>> Networkstats querier now uses the queue to get the endpoint information.
+
+	args := make(map[string]interface{})
+	errs := make(chan error)
+	args["workers"] = workers
+	args["ctx"] = ctx
+	args["numWorkers"] = numWorkers
+	args["errs"] = errs
+	args["jobDuration"] = 30 * time.Second
+
+	go mq.ProcessMessages(ctx, messages, getHTTPRequestTiming, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
 }
