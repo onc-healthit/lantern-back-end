@@ -106,10 +106,10 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 	return matches, confidenceMap, nil
 }
 
-// updates allMatches and allConfidences. allConfidences gets updated within the function. Because allMatches is a
-// slice and we use 'append', a new slice might be allocated, so we need to return allMatches in case a new slice is
-// created.
-func mergeMatches(allMatches []int, allConfidences map[int]float64, matches []int, confidences map[int]float64) []int {
+// updates allMatches and allConfidences. Because allMatches is a slice and we use 'append', a new slice might be allocated,
+// so we need to return allMatches in case a new slice is created. Also return allConfidences to make the function work more
+// intuitively.
+func mergeMatches(allMatches []int, allConfidences map[int]float64, matches []int, confidences map[int]float64) ([]int, map[int]float64) {
 	for _, match := range matches {
 		if !helpers.IntArrayContains(allMatches, match) {
 			allMatches = append(allMatches, match)
@@ -121,7 +121,7 @@ func mergeMatches(allMatches []int, allConfidences map[int]float64, matches []in
 		}
 	}
 
-	return allMatches
+	return allMatches, allConfidences
 }
 
 func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, store *postgresql.Store, verbose bool) ([]int, map[int]float64, error) {
@@ -154,7 +154,7 @@ func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpoint
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting matching NPI org IDs")
 		}
 
-		allMatches = mergeMatches(allMatches, allConfidences, matches, confidences)
+		allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
 	}
 	return allMatches, allConfidences, nil
 }
@@ -185,8 +185,8 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		if err != nil {
 			return errors.Wrap(err, "error matching endpoint to NPI organization by name")
 		}
-		allMatches = mergeMatches(allMatches, allConfidences, idMatches, idConfidences)
-		allMatches = mergeMatches(allMatches, allConfidences, nameMatches, nameConfidences)
+		allMatches, allConfidences = mergeMatches(allMatches, allConfidences, idMatches, idConfidences)
+		allMatches, allConfidences = mergeMatches(allMatches, allConfidences, nameMatches, nameConfidences)
 
 		if len(allMatches) > 0 {
 			matchCount++
