@@ -89,13 +89,44 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
+	// add or update endpoint
+	e1.ListSource = "New List Source"
+	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
+	if err != nil {
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
+	}
+	e1, err = store.GetFHIREndpointUsingURLAndListSource(ctx, e1.URL, e1.ListSource)
+	if err != nil {
+		t.Errorf("Error getting fhir endpoint: %s", err.Error())
+	}
+	if e1.ID == endpoint1.ID {
+		t.Errorf("should have created a new entry")
+	}
+
+	e1.OrganizationNames = []string{"Org 1", "Org 2"}
+	e1.NPIIDs = []string{"2", "3"}
+	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
+	if err != nil {
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
+	}
+	e1, err = store.GetFHIREndpoint(ctx, e1.ID)
+	if err != nil {
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
+	}
+	if !helpers.StringArraysEqual(e1.OrganizationNames, []string{"Org 1", "Org 2", "Example Inc."}) {
+		t.Errorf("Expected organization names array to be merged with new org names")
+	}
+	if !helpers.StringArraysEqual(e1.NPIIDs, []string{"1", "2", "3"}) {
+		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
+	}
+
 	// get all org names
 
 	endpointNames, err := store.GetAllFHIREndpointOrgNames(ctx)
 	if err != nil {
 		t.Errorf("Error getting endpoint organization normalized names: %s", err.Error())
 	}
-	eLength := 2
+	eLength := 3
 	if len(endpointNames) != eLength {
 		t.Errorf("Expected endpoint org list to have length %d. Got %d.", eLength, len(endpointNames))
 	}

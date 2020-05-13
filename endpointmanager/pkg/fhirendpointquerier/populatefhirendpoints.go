@@ -2,7 +2,6 @@ package populatefhirendpoints
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -39,29 +38,9 @@ func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fe
 		return err
 	}
 
-	existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirEndpoint.URL, fhirEndpoint.ListSource)
-	// If the URL doesn't exist, add it to the DB
-	if err == sql.ErrNoRows {
-		err = store.AddFHIREndpoint(ctx, fhirEndpoint)
-		if err != nil {
-			return errors.Wrap(err, "adding fhir endpoint to store failed")
-		}
-	} else if err != nil {
-		return errors.Wrap(err, "getting fhir endpoint from store failed")
-	} else {
-		// Always overwrite the db entry with the new data
-		for _, name := range fhirEndpoint.OrganizationNames {
-			existingEndpt.AddOrganizationName(name)
-		}
-		for _, npiID := range fhirEndpoint.NPIIDs {
-			existingEndpt.AddNPIID(npiID)
-		}
-		err = store.UpdateFHIREndpoint(ctx, existingEndpt)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	err = store.AddOrUpdateFHIREndpoint(ctx, fhirEndpoint)
+
+	return err
 }
 
 // formatToFHIREndpt takes an entry in the list of endpoints and formats it for the fhir_endpoints table in the database

@@ -6,6 +6,7 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/pkg/errors"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -104,6 +105,33 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	}
 
 	return &endpoint, err
+}
+
+// AddOrUpdateFHIREndpoint adds the endpoint if it doesn't already exist. If it does exist, it updates the endpoint.
+func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+	existingEndpt, err := s.GetFHIREndpointUsingURLAndListSource(ctx, e.URL, e.ListSource)
+	if err == sql.ErrNoRows {
+		err = s.AddFHIREndpoint(ctx, e)
+		if err != nil {
+			return errors.Wrap(err, "adding fhir endpoint to store failed")
+		}
+	} else if err != nil {
+		return errors.Wrap(err, "getting fhir endpoint from store failed")
+	} else {
+		// Merge new data with old data
+		// Org names and NPI IDs only possible new data
+		for _, name := range e.OrganizationNames {
+			existingEndpt.AddOrganizationName(name)
+		}
+		for _, npiID := range e.NPIIDs {
+			existingEndpt.AddNPIID(npiID)
+		}
+		err = s.UpdateFHIREndpoint(ctx, existingEndpt)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // AddFHIREndpoint adds the FHIREndpoint to the database.
