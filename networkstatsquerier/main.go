@@ -204,7 +204,7 @@ func main() {
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	qName := viper.GetString("enptinfo_netstats_qname")
+	qName := viper.GetString("endptinfo_netstats_qname")
 	mq, ch, err := accessqueue.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
 	failOnError(err)
 	defer mq.Close()

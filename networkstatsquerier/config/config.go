@@ -38,7 +38,7 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("enptinfo_netstats_qname")
+	err = viper.BindEnv("endptinfo_netstats_qname")
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func SetupConfig() error {
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qhost", "localhost")
 	viper.SetDefault("qport", "5672")
-	viper.SetDefault("enptinfo_netstats_qname", "endpoints-to-netstats")
+	viper.SetDefault("endptinfo_netstats_qname", "endpoints-to-netstats")
 
 	return nil
 }
