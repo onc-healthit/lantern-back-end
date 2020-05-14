@@ -15,29 +15,33 @@ var addFHIREndpointStatement *sql.Stmt
 var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt
 
-// GetAllFHIREndpoints gets the id and url from every row in the fhir_endpoints table
-func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
+// GetAllFHIREndpoints returns a list of all of the fhir endpoints
+func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
 	SELECT
 		id,
-		url
+		url,
+		organization_names,
+		npi_ids
 	FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 
-	var endpoints []endpointmanager.FHIREndpoint
+	var endpoints []*endpointmanager.FHIREndpoint
 	defer rows.Close()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
 			&endpoint.ID,
-			&endpoint.URL)
+			&endpoint.URL,
+			pq.Array(&endpoint.OrganizationNames),
+			pq.Array(&endpoint.NPIIDs))
 		if err != nil {
 			return nil, err
 		}
-		endpoints = append(endpoints, endpoint)
+		endpoints = append(endpoints, &endpoint)
 	}
 	return endpoints, nil
 }
@@ -168,28 +172,6 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	_, err := deleteFHIREndpointStatement.ExecContext(ctx, e.ID)
 
 	return err
-}
-
-// GetAllFHIREndpointOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
-	sqlStatement := `
-        SELECT id, organization_names FROM fhir_endpoints`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-
-	if err != nil {
-		return nil, err
-	}
-	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
-	for rows.Next() {
-		var endpoint endpointmanager.FHIREndpoint
-		err = rows.Scan(&endpoint.ID, pq.Array(&endpoint.OrganizationNames))
-		if err != nil {
-			return nil, err
-		}
-		endpoints = append(endpoints, &endpoint)
-	}
-	return endpoints, nil
 }
 
 func prepareFHIREndpointStatements(s *Store) error {

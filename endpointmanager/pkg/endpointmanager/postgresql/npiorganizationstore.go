@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"database/sql"
 
@@ -16,6 +17,8 @@ var updateNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationByNPIIDStatement *sql.Stmt
 var deleteNPIOrganizationStatement *sql.Stmt
 var linkNPIOrganizationToFHIREndpointStatement *sql.Stmt
+var getNPIOrganizationFHIREndpointLinkStatement *sql.Stmt
+var updateNPIOrganizationFHIREndpointLinkLink *sql.Stmt
 
 // GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
@@ -206,10 +209,38 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 }
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
-func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointID int, confidence float64) error {
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
+	fmt.Printf("linking %d to %s\n", orgID, endpointURL)
 	_, err := linkNPIOrganizationToFHIREndpointStatement.ExecContext(ctx,
 		orgID,
-		endpointID,
+		endpointURL,
+		confidence)
+	return err
+}
+
+func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID int, endpointURL string) (int, string, float64, error) {
+	var retOrgID int
+	var retEndpointURL string
+	var retConfidence float64
+
+	row := getNPIOrganizationFHIREndpointLinkStatement.QueryRowContext(ctx,
+		orgID,
+		endpointURL)
+
+	err := row.Scan(
+		&retOrgID,
+		&retEndpointURL,
+		&retConfidence,
+	)
+
+	return retOrgID, retEndpointURL, retConfidence, err
+}
+
+func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
+	fmt.Printf("updating link %d to %s\n", orgID, endpointURL)
+	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
+		orgID,
+		endpointURL,
 		confidence)
 	return err
 }
@@ -264,9 +295,27 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	linkNPIOrganizationToFHIREndpointStatement, err = s.DB.Prepare(`
 		INSERT INTO endpoint_organization (
 			organization_id,
-			endpoint_id,
+			url,
 			confidence)
 		VALUES ($1, $2, $3)`)
+	if err != nil {
+		return err
+	}
+	getNPIOrganizationFHIREndpointLinkStatement, err = s.DB.Prepare(`
+		SELECT
+			organization_id,
+			url,
+			confidence
+		FROM endpoint_organization
+		WHERE organization_id=$1 AND url=$2
+	`)
+	if err != nil {
+		return err
+	}
+	updateNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
+		UPDATE endpoint_organization
+		SET confidence = $3
+		WHERE organization_id = $1 AND url = $2`)
 	if err != nil {
 		return err
 	}

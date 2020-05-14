@@ -59,16 +59,6 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
-	// retreive all endpoints
-	endpts, err := store.GetAllFHIREndpoints(ctx)
-	if err != nil {
-		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
-	}
-	eLen := 2
-	if len(endpts) != eLen {
-		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
-	}
-
 	// update endpoint
 
 	e1.ListSource = "Unknown"
@@ -120,18 +110,18 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
 	}
 
-	// get all org names
+	// retreive all endpoints
 
-	endpointNames, err := store.GetAllFHIREndpointOrgNames(ctx)
+	endpts, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
-		t.Errorf("Error getting endpoint organization normalized names: %s", err.Error())
+		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
 	}
-	eLength := 3
-	if len(endpointNames) != eLength {
-		t.Errorf("Expected endpoint org list to have length %d. Got %d.", eLength, len(endpointNames))
+	eLen := 3
+	if len(endpts) != eLen {
+		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
 	}
 
-	for _, ep := range endpointNames {
+	for _, ep := range endpts {
 		if ep.ID == endpoint1.ID {
 			eName := []string{"Example Inc."}
 			if !helpers.StringArraysEqual(ep.OrganizationNames, eName) {

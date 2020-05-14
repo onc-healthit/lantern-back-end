@@ -194,14 +194,14 @@ func readContactCsv(ctx context.Context, filename string) ([][]string, error) {
 	return lines[1:], nil
 }
 
-// ParseAndStoreNPIFile parses NPI Org data out of fname, writes it to store and returns the number of Contacts processed
+// ParseAndStoreNPIContactsFile parses NPI Org data out of fname, writes it to store and returns the number of Contacts processed
 func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider Contact .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 	lines, err := readContactCsv(ctx, fname)
 	if err != nil {
 		return -1, err
 	}
-	log.Infof("Adding NPI contacts and fhir endpoints, this may result in error messages if there are duplicate fhir endpoints being added")
+	log.Infof("Adding NPI contacts and fhir endpoints.")
 	added := 0
 	// Loop through lines & turn into object
 	for i, line := range lines {
@@ -225,9 +225,14 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 			// If contact has a valid URL, add to our fhir endpoints table, source list is NPPES
 			if npiContact.ValidURL {
 				var fhirEndpoint = &endpointmanager.FHIREndpoint{
-					URL:               npiContact.Endpoint,
-					OrganizationNames: []string{npiContact.AffiliationLegalBusinessName},
-					ListSource:        "NPPES"}
+					URL:        npiContact.Endpoint,
+					ListSource: "NPPES"}
+				if npiContact.AffiliationLegalBusinessName != "" {
+					fhirEndpoint.OrganizationNames = []string{npiContact.AffiliationLegalBusinessName}
+				}
+				if npiContact.NPI_ID != "" {
+					fhirEndpoint.NPIIDs = []string{npiContact.NPI_ID}
+				}
 				err = store.AddOrUpdateFHIREndpoint(ctx, fhirEndpoint)
 				if err != nil {
 					log.Error(err)
