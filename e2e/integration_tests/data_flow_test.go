@@ -466,35 +466,45 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 		t.Fatalf("Error retrieving metrics from endpoint querier")
 	}
 
+	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
+	// during a run
+	possibleUrls := [5]string{
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/metadata",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/metadata",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/metadata",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/metadata",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata",
+	}
+
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	failOnError(err)
 
 	bodyString := string(bodyBytes)
 
-<<<<<<< 0b533c91e1d6260739074b5a37fa539b9c9b3f9a
-	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"http://lantern-e2e\"} 200") {
-		t.Fatalf("Endpoint querier missing or incorrect response code metric for http://lantern-e2e")
+	requestCheck := false
+	httpRespCheck := false
+	uptimeCheck := false
+
+	for _, url := range possibleUrls {
+		reqFormat := fmt.Sprintf("AllEndpoints_http_request_responses{url=\"%s\"} 200", url)
+		if strings.Contains(bodyString, reqFormat) {
+			requestCheck = true
+		}
+
+		respFormat := fmt.Sprintf("AllEndpoints_http_response_time{url=\"%s\"}", url)
+		if strings.Contains(bodyString, respFormat) {
+			httpRespCheck = true
+		}
+
+		uptimeFormat := fmt.Sprintf("AllEndpoints_total_uptime_checks{url=\"%s\"}", url)
+		if strings.Contains(bodyString, uptimeFormat) {
+			uptimeCheck = true
+		}
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"http://lantern-e2e\"}") {
-		t.Fatalf("Endpoint querier missing response time metric for http://lantern-e2e")
-	}
-
-	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"http://lantern-e2e\"}") {
-		t.Fatalf("Endpoint querier missing uptime checks metric for http://lantern-e2e")
-=======
-	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"} 200") {
-		t.Fatalf("Endpoint querier missing or incorrect response code metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
-	}
-
-	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"}") {
-		t.Fatalf("Endpoint querier missing response time metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
-	}
-
-	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"}") {
-		t.Fatalf("Endpoint querier missing uptime checks metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
->>>>>>> Update networkstatsquerier tests in e2e
-	}
+	th.Assert(t, requestCheck == true, "Endpoint querier missing or incorrect response code metric for all tested URLs")
+	th.Assert(t, httpRespCheck == true, "Endpoint querier missing response time metric for all tested URLs")
+	th.Assert(t, uptimeCheck == true, "Endpoint querier missing uptime checks metric for all tested URLs")
 }
 func Test_QuerierAvailableToPrometheus(t *testing.T) {
 	type PrometheusTargets struct {
@@ -542,17 +552,35 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	var err error
 	ctx := context.Background()
-	expectedResultLabel := "{\"job\": \"FHIRQUERY\", \"url\": \"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\", \"instance\": \"endpoint_querier:3333\"}"
 	response_time_rows, err := store.DB.QueryContext(ctx, "SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
 	failOnError(err)
+
+	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
+	// during a run
+	possibleUrls := [5]string{
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/metadata",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/metadata",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/metadata",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/metadata",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata",
+	}
 
 	isInDB := false
 	defer response_time_rows.Close()
 	for response_time_rows.Next() {
 		var id, metric_name, result_label string
 		err = response_time_rows.Scan(&id, &metric_name, &result_label)
-		if result_label == expectedResultLabel {
-			isInDB = true
+		for _, url := range possibleUrls {
+			if strings.Contains(result_label, url) {
+				expectedResultLabel := fmt.Sprintf("{\"job\": \"FHIRQUERY\", \"url\": \"%s\", \"instance\": \"endpoint_querier:3333\"}", url)
+				if result_label == expectedResultLabel {
+					isInDB = true
+					break
+				}
+			}
+		}
+		if isInDB {
+			break
 		}
 	}
 	if !isInDB {
