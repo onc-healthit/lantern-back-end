@@ -189,7 +189,7 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 // GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
 func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*endpointmanager.NPIOrganization, error) {
 	sqlStatement := `
-	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
+	SELECT id, normalized_name, normalized_secondary_name, npi_id FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
@@ -198,7 +198,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 	defer rows.Close()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
-		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName, &org.NPI_ID)
 		if err != nil {
 			return nil, err
 		}
@@ -208,7 +208,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 }
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
-func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
 	_, err := linkNPIOrganizationToFHIREndpointStatement.ExecContext(ctx,
 		orgID,
 		endpointURL,
@@ -216,7 +216,7 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int
 	return err
 }
 
-func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID int, endpointURL string) (int, string, float64, error) {
+func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) (int, string, float64, error) {
 	var retOrgID int
 	var retEndpointURL string
 	var retConfidence float64
@@ -234,7 +234,7 @@ func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID in
 	return retOrgID, retEndpointURL, retConfidence, err
 }
 
-func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
+func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
 	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
 		orgID,
 		endpointURL,
@@ -291,7 +291,7 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	}
 	linkNPIOrganizationToFHIREndpointStatement, err = s.DB.Prepare(`
 		INSERT INTO endpoint_organization (
-			organization_id,
+			organization_npi_id,
 			url,
 			confidence)
 		VALUES ($1, $2, $3)`)
@@ -300,11 +300,11 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	}
 	getNPIOrganizationFHIREndpointLinkStatement, err = s.DB.Prepare(`
 		SELECT
-			organization_id,
+			organization_npi_id,
 			url,
 			confidence
 		FROM endpoint_organization
-		WHERE organization_id=$1 AND url=$2
+		WHERE organization_npi_id=$1 AND url=$2
 	`)
 	if err != nil {
 		return err
@@ -312,7 +312,7 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	updateNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
 		UPDATE endpoint_organization
 		SET confidence = $3
-		WHERE organization_id = $1 AND url = $2`)
+		WHERE organization_npi_id = $1 AND url = $2`)
 	if err != nil {
 		return err
 	}

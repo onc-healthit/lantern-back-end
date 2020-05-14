@@ -328,11 +328,6 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		URL:               "other.example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Other Example Inc."}}
 
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.URL, .85)
-	if err == nil {
-		t.Fatal("Expected an error linking NPI org and endpoint that are not yet in the DB.")
-	}
-
 	err = store.AddNPIOrganization(ctx, npio1)
 	if err != nil {
 		t.Errorf("Error adding npi organization: %s", err.Error())
@@ -341,7 +336,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.URL, .85)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.NPI_ID, endpoint1.URL, .85)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -354,7 +349,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.ID, endpoint2.URL, .75)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.NPI_ID, endpoint2.URL, .75)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -369,26 +364,26 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		t.Fatalf("Expected two rows in DB")
 	}
 
-	rows, err := store.DB.Query("SELECT organization_id, url, confidence FROM endpoint_organization")
+	rows, err := store.DB.Query("SELECT organization_npi_id, url, confidence FROM endpoint_organization")
 	defer rows.Close()
 
 	for rows.Next() {
 		var endpointURL string
-		var npioID int
+		var npioID string
 		var confidence float64
 
 		err = rows.Scan(&npioID, &endpointURL, &confidence)
 
 		if endpointURL == endpoint1.URL {
-			if npioID != npio1.ID {
-				t.Fatalf("Expected ID %d to be ID %d", npioID, npio1.ID)
+			if npioID != npio1.NPI_ID {
+				t.Fatalf("Expected ID %s to be ID %s", npioID, npio1.NPI_ID)
 			}
 			if confidence != .85 {
 				t.Fatalf("Expected confidence %f to be %f", confidence, .85)
 			}
 		} else if endpointURL == endpoint2.URL {
-			if npioID != npio2.ID {
-				t.Fatalf("Expected ID %d to be ID %d", npioID, npio2.ID)
+			if npioID != npio2.NPI_ID {
+				t.Fatalf("Expected ID %s to be ID %s", npioID, npio2.NPI_ID)
 			}
 			if confidence != .75 {
 				t.Fatalf("Expected confidence %f to be %f", confidence, .75)

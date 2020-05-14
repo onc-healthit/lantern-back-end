@@ -206,10 +206,10 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 }
 
 func Test_mergeMatches(t *testing.T) {
-	var allMatches []int
-	var allConfidences map[int]float64
-	var matches []int
-	var confidences map[int]float64
+	var allMatches []string
+	var allConfidences map[string]float64
+	var matches []string
+	var confidences map[string]float64
 
 	// test with uninitialized
 	allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
@@ -218,82 +218,82 @@ func Test_mergeMatches(t *testing.T) {
 	th.Assert(t, len(allConfidences) == expected, "expected no matches")
 
 	// test with initialized
-	allMatches = make([]int, 0, 5)
-	allConfidences = make(map[int]float64)
-	matches = make([]int, 0, 5)
-	confidences = make(map[int]float64)
+	allMatches = make([]string, 0, 5)
+	allConfidences = make(map[string]float64)
+	matches = make([]string, 0, 5)
+	confidences = make(map[string]float64)
 	allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
 	expected = 0
 	th.Assert(t, len(allMatches) == expected, "expected no matches")
 	th.Assert(t, len(allConfidences) == expected, "expected no matches")
 
 	// test merging values into empty 'allMatches' and 'allConfidences'
-	matches = []int{1, 2, 3}
-	confidences = make(map[int]float64)
-	confidences[1] = 1.0
-	confidences[2] = .75
-	confidences[3] = .5
+	matches = []string{"1", "2", "3"}
+	confidences = make(map[string]float64)
+	confidences["1"] = 1.0
+	confidences["2"] = .75
+	confidences["3"] = .5
 	allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
 	expected = 3
 	th.Assert(t, len(allMatches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
 	th.Assert(t, len(allConfidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
-	id := 1
+	id := "1"
 	conf := 1.0
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 2
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "2"
 	conf = .75
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 3
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "3"
 	conf = .5
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
 
 	// test adding new
-	matches = []int{4}
-	confidences = make(map[int]float64)
-	confidences[4] = .6
+	matches = []string{"4"}
+	confidences = make(map[string]float64)
+	confidences["4"] = .6
 	allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
 	expected = 4
 	th.Assert(t, len(allMatches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
 	th.Assert(t, len(allConfidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
-	id = 1
+	id = "1"
 	conf = 1.0
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 2
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "2"
 	conf = .75
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 3
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "3"
 	conf = .5
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 4
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "4"
 	conf = .6
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
 
 	// test updating with both higher, lower, same, and new confidences
-	matches = []int{2, 3, 4, 5}
-	confidences = make(map[int]float64)
-	confidences[2] = .5
-	confidences[3] = 1.0
-	confidences[4] = .6
-	confidences[5] = .8
+	matches = []string{"2", "3", "4", "5"}
+	confidences = make(map[string]float64)
+	confidences["2"] = .5
+	confidences["3"] = 1.0
+	confidences["4"] = .6
+	confidences["5"] = .8
 	allMatches, allConfidences = mergeMatches(allMatches, allConfidences, matches, confidences)
 	expected = 5
 	th.Assert(t, len(allMatches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
 	th.Assert(t, len(allConfidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(allMatches)))
-	id = 1
+	id = "1"
 	conf = 1.0
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 2
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "2"
 	conf = .75
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 3
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "3"
 	conf = 1.0
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 4
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "4"
 	conf = .6
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
-	id = 5
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
+	id = "5"
 	conf = .8
-	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %d to be %f. got %f", id, conf, allConfidences[id]))
+	th.Assert(t, allConfidences[id] == conf, fmt.Sprintf("expected confidence for %s to be %f. got %f", id, conf, allConfidences[id]))
 }
 
 func Test_matchByName(t *testing.T) {
@@ -337,19 +337,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org := exactPrimaryNameOrg
 	expectedConf := 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = .75
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = .75
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAZ"}
@@ -360,19 +360,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = .75
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// check that highest confidence value is used
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR"
@@ -384,19 +384,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// checking non-existent org name causes no issues
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR" and "BLAH"
@@ -408,17 +408,17 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 }
