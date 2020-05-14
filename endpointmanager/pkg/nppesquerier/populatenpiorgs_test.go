@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 )
@@ -94,12 +96,9 @@ func Test_BuildNPIOrgFromNPICsvLine(t *testing.T) {
 		t.Errorf("Expected NPI_ID to be %s, got %s", "1497758544", npi_org.NPI_ID)
 	}
 	// Name Field
-	if npi_org.Name != "CUMBERLAND COUNTY HOSPITAL SYSTEM, INC" {
-		t.Errorf("Expected Name to be %s, got %s", "CUMBERLAND COUNTY HOSPITAL SYSTEM, INC", npi_org.Name)
-	}
-	// Secondary Name Field
-	if npi_org.SecondaryName != "CAPE FEAR VALLEY HOME HEALTH AND HOSPICE" {
-		t.Errorf("Expected Name to be %s, got %s", "CAPE FEAR VALLEY HOME HEALTH AND HOSPICE", npi_org.SecondaryName)
+	expected := []string{"CUMBERLAND COUNTY HOSPITAL SYSTEM, INC", "CAPE FEAR VALLEY HOME HEALTH AND HOSPICE"}
+	if !helpers.StringArraysEqual(npi_org.Names, expected) {
+		t.Errorf("Expected Name to be %v, got %v", expected, npi_org.Names)
 	}
 	// 	Location.Address1
 	if npi_org.Location.Address1 != "3418 VILLAGE DR" {

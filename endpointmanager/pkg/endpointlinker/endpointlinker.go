@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// NormalizeOrgName normalizes the given string by capitalizing all letters and replacing '-' with ' ', and removing all special characters
 func NormalizeOrgName(orgName string) (string, error) {
 	// Regex for only letters
 	orgName = strings.ReplaceAll(orgName, "-", " ")
@@ -79,24 +80,17 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
 		confidence := 0.0
-		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
-		if jaccard1 == 1 {
-			confidence = 1
-			consideredMatch = true
-			verbosePrint("Exact Match Primary Name: "+normalizedEndpointName, verbose)
-		} else if jaccard2 == 1 {
-			confidence = 1
-			consideredMatch = true
-			verbosePrint("Exact Match Secondary Name: "+normalizedEndpointName, verbose)
-		} else if jaccard1 >= JACCARD_THRESHOLD && jaccard1 > jaccard2 {
-			confidence = jaccard1
-			consideredMatch = true
-			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedName+" Match Score: "+fmt.Sprintf("%f", jaccard1), verbose)
-		} else if jaccard2 >= JACCARD_THRESHOLD {
-			consideredMatch = true
-			confidence = jaccard2
-			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedSecondaryName+" Match Score: "+fmt.Sprintf("%f", jaccard2), verbose)
+		for _, npiOrgName := range npiOrg.NormalizedNames {
+			jaccard := calculateJaccardIndex(normalizedEndpointName, npiOrgName)
+			if jaccard == 1 {
+				confidence = 1
+				consideredMatch = true
+				verbosePrint("Exact Match Primary Name: "+normalizedEndpointName, verbose)
+			} else if jaccard >= JACCARD_THRESHOLD && jaccard > confidence {
+				confidence = jaccard
+				consideredMatch = true
+				verbosePrint(normalizedEndpointName+"=>"+npiOrgName+" Match Score: "+fmt.Sprintf("%f", jaccard), verbose)
+			}
 		}
 		if consideredMatch {
 			// multiply confidence by .9 for all name matches to demonstrate that these matches are not as good as the id matches
@@ -181,6 +175,9 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 	return nil
 }
 
+// LinkAllOrgsAndEndpoints links endpoints to NPI organization by first looking at any NPI IDs associated
+// with the endpoint, then looking at the Jaccard similarity index between the endpoint's organization name
+// and the organization name stored in the database.
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
 	fhirEndpointOrgNames, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {

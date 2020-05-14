@@ -373,18 +373,24 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) (*endpointmanager.NPIOrganizatio
 		return nil, errors.Wrapf(err, "error normalizing NPI organization other name %s", data.Provider_Other_Organization_Name)
 	}
 	npiOrg := &endpointmanager.NPIOrganization{
-		NPI_ID:        data.NPI,
-		Name:          data.Provider_Organization_Name_Legal_Business_Name,
-		SecondaryName: data.Provider_Other_Organization_Name,
+		NPI_ID: data.NPI,
+		Names:  []string{},
 		Location: &endpointmanager.Location{
 			Address1: data.Provider_First_Line_Business_Practice_Location_Address,
 			Address2: data.Provider_Second_Line_Business_Practice_Location_Address,
 			City:     data.Provider_Business_Practice_Location_Address_City_Name,
 			State:    data.Provider_Business_Practice_Location_Address_State_Name,
 			ZipCode:  data.Provider_Business_Practice_Location_Address_Postal_Code},
-		Taxonomy:                data.Healthcare_Provider_Taxonomy_Code_1,
-		NormalizedName:          normalizedName,
-		NormalizedSecondaryName: normalizedSecondary}
+		Taxonomy:        data.Healthcare_Provider_Taxonomy_Code_1,
+		NormalizedNames: []string{}}
+	if data.Provider_Organization_Name_Legal_Business_Name != "" {
+		npiOrg.Names = append(npiOrg.Names, data.Provider_Organization_Name_Legal_Business_Name)
+		npiOrg.NormalizedNames = append(npiOrg.NormalizedNames, normalizedName)
+	}
+	if data.Provider_Other_Organization_Name != "" {
+		npiOrg.Names = append(npiOrg.Names, data.Provider_Other_Organization_Name)
+		npiOrg.NormalizedNames = append(npiOrg.NormalizedNames, normalizedSecondary)
+	}
 	return npiOrg, nil
 }
 
