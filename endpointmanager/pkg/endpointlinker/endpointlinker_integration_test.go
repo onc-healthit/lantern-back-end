@@ -81,7 +81,7 @@ func Test_matchByID(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org := exactPrimaryNameOrg
 	expectedConf := 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
 
 	// test with multiple matches
 	ep.NPIIDs = []string{"1", "2", "3", "4"}
@@ -91,13 +91,13 @@ func Test_matchByID(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
 }
 
 func setup() error {
