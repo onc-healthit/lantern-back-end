@@ -11,7 +11,11 @@ services:
 
   prometheus:
     volumes:
-      - ./prometheus.test.yml:/etc/prometheus/prometheus.yml 
+      - ./prometheus.test.yml:/etc/prometheus/prometheus.yml
+
+  endpoint_querier:
+    environment:
+      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_QNAME}
 
   capability_querier:
     environment:

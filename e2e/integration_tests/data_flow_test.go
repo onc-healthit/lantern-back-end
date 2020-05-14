@@ -425,6 +425,37 @@ func Test_VendorList(t *testing.T) {
 }
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
+	var err error
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("qname")
+
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
+	err = th.CheckResources(hap)
+	if err != nil {
+		panic(err)
+	}
+
+	// Set-up the test queue
+	var mq lanternmq.MessageQueue
+	var chID lanternmq.ChannelID
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	defer mq.Close()
+	th.Assert(t, err == nil, err)
+	th.Assert(t, mq != nil, "expected message queue to be created")
+	th.Assert(t, chID != nil, "expected channel ID to be created")
+
+	var wg sync.WaitGroup
+	ctx := context.Background()
+	wg.Add(1)
+	errs := make(chan error)
+
+	// send endpoints so the networkstats querier can read them
+	go se.GetEnptsAndSend(ctx, &wg, qName, 10, store, &mq, &chID, errs)
+	time.Sleep(30 * time.Second)
+
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier:3333/metrics")
 	failOnError(err)
@@ -440,6 +471,7 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 
 	bodyString := string(bodyBytes)
 
+<<<<<<< 0b533c91e1d6260739074b5a37fa539b9c9b3f9a
 	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"http://lantern-e2e\"} 200") {
 		t.Fatalf("Endpoint querier missing or incorrect response code metric for http://lantern-e2e")
 	}
@@ -450,6 +482,18 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 
 	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"http://lantern-e2e\"}") {
 		t.Fatalf("Endpoint querier missing uptime checks metric for http://lantern-e2e")
+=======
+	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"} 200") {
+		t.Fatalf("Endpoint querier missing or incorrect response code metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
+	}
+
+	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"}") {
+		t.Fatalf("Endpoint querier missing response time metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
+	}
+
+	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\"}") {
+		t.Fatalf("Endpoint querier missing uptime checks metric for https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata")
+>>>>>>> Update networkstatsquerier tests in e2e
 	}
 }
 func Test_QuerierAvailableToPrometheus(t *testing.T) {
@@ -497,13 +541,22 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	var err error
-	response_time_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
-	var id, metric_name, result_label string
-	err = response_time_row.Scan(&id, &metric_name, &result_label)
+	ctx := context.Background()
+	expectedResultLabel := "{\"job\": \"FHIRQUERY\", \"url\": \"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata\", \"instance\": \"endpoint_querier:3333\"}"
+	response_time_rows, err := store.DB.QueryContext(ctx, "SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
 	failOnError(err)
 
-	if result_label != "{\"job\": \"FHIRQUERY\", \"url\": \"http://lantern-e2e\", \"instance\": \"endpoint_querier:3333\"}" {
-		t.Fatalf("http://lantern-e2e not found in AllEndpoints_http_response_time metric")
+	isInDB := false
+	defer response_time_rows.Close()
+	for response_time_rows.Next() {
+		var id, metric_name, result_label string
+		err = response_time_rows.Scan(&id, &metric_name, &result_label)
+		if result_label == expectedResultLabel {
+			isInDB = true
+		}
+	}
+	if !isInDB {
+		t.Fatalf("https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }
