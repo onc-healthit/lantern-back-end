@@ -61,17 +61,22 @@ func Test_matchByID(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, "expected no confidences")
 
 	// test with non matching org
-	store.AddNPIOrganization(ctx, nonMatchingOrg)
+	err = store.AddNPIOrganization(ctx, nonMatchingOrg)
+	th.Assert(t, err == nil, err)
 	matches, confidences, err = matchByID(ctx, ep, store, false)
 	expected = 0
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, "expected no matches")
 	th.Assert(t, len(confidences) == expected, "expected no confidences")
 
-	store.AddNPIOrganization(ctx, exactPrimaryNameOrg)
-	store.AddNPIOrganization(ctx, nonExactSecondaryNameOrg)
-	store.AddNPIOrganization(ctx, exactSecondaryNameOrg)
-	store.AddNPIOrganization(ctx, exactSecondaryNameOrgNoPrimaryName)
+	err = store.AddNPIOrganization(ctx, exactPrimaryNameOrg)
+	th.Assert(t, err == nil, err)
+	err = store.AddNPIOrganization(ctx, nonExactSecondaryNameOrg)
+	th.Assert(t, err == nil, err)
+	err = store.AddNPIOrganization(ctx, exactSecondaryNameOrg)
+	th.Assert(t, err == nil, err)
+	err = store.AddNPIOrganization(ctx, exactSecondaryNameOrgNoPrimaryName)
+	th.Assert(t, err == nil, err)
 
 	// test with single match
 	ep.NPIIDs = []string{"1"}
