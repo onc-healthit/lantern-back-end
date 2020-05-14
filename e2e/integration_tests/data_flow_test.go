@@ -208,15 +208,10 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		}
 
 		for _, npi_id := range ep.mapped_npi_ids {
-			// Get organization id for each npi id
-			var org_id string
-			query_str = "SELECT id FROM npi_organizations WHERE npi_id=$1;"
-			err = store.DB.QueryRow(query_str, npi_id).Scan(&org_id)
-			failOnError(err)
 			// Assert that each npi organization is mapped to correct endpoint
 			var linked_endpoint_url string
-			query_str = "SELECT url FROM endpoint_organization WHERE organization_id =$1;"
-			err = store.DB.QueryRow(query_str, org_id).Scan(&linked_endpoint_url)
+			query_str = "SELECT url FROM endpoint_organization WHERE organization_npi_id =$1;"
+			err = store.DB.QueryRow(query_str, npi_id).Scan(&linked_endpoint_url)
 			failOnError(err)
 			if linked_endpoint_url != ep.url {
 				t.Fatalf("Endpoint url mapped to wrong npi organization")
