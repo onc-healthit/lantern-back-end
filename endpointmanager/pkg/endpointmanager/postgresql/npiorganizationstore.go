@@ -3,7 +3,6 @@ package postgresql
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"database/sql"
 
@@ -210,7 +209,6 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
 func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
-	fmt.Printf("linking %d to %s\n", orgID, endpointURL)
 	_, err := linkNPIOrganizationToFHIREndpointStatement.ExecContext(ctx,
 		orgID,
 		endpointURL,
@@ -237,7 +235,6 @@ func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID in
 }
 
 func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID int, endpointURL string, confidence float64) error {
-	fmt.Printf("updating link %d to %s\n", orgID, endpointURL)
 	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
 		orgID,
 		endpointURL,
