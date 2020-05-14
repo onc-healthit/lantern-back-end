@@ -16,6 +16,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("numworkers")
+	if err != nil {
+		return err
+	}
 
 	// Queue Setup
 
@@ -44,6 +48,7 @@ func SetupConfig() error {
 	}
 
 	viper.SetDefault("port", 3333)
+	viper.SetDefault("numworkers", 10)
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")

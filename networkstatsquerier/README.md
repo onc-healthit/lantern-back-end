@@ -19,6 +19,10 @@ The Network Statistics Querier reads the following environment variables:
 
   Default value: 10
 
+* **LANTERN_ENDPTQRY_NUMWORKERS**: The number of workers to use to parallelize processing of the queue messages.
+
+  Default value: 10
+
 ## Building And Running
 
 After the Network Statistics Querier starts, all output is directed to the configured log file. To check that the endpoint querier is running as expected, navigate to `http://localhost:<configured port>/metrics` to see the metrics being collected by the querier.

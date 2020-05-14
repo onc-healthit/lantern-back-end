@@ -214,8 +214,7 @@ func main() {
 	messages, err := mq.ConsumeFromQueue(ch, qName)
 	failOnError(err)
 
-	// @TODO Setup numworkers environment variable for networkstatsquerier
-	numWorkers := 10
+	numWorkers := viper.GetInt("numworkers")
 	workers := workers.NewWorkers()
 	ctx := context.Background()
 >>>>>>> Networkstats querier now uses the queue to get the endpoint information.

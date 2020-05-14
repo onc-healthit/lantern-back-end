@@ -12,6 +12,7 @@ services:
         - LANTERN_QHOST=${LANTERN_QHOST}
         - LANTERN_QPORT=${LANTERN_QPORT}
         - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
+        - LANTERN_ENDPTQRY_NUMWORKERS=${LANTERN_ENDPTQRY_NUMWORKERS}
     volumes:
         - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main

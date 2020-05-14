@@ -102,8 +102,8 @@ func Test_StartAddAndStop(t *testing.T) {
 	th.Assert(t, work.numWorkers == 0, "after stopping, there should be no workers")
 }
 
+// testfn is an example handler function for the Job to run that just sends a test string over a queue
 func testfn(ctx context.Context, args *map[string]interface{}) error {
-	// @TODO Add mock queue here
 	mq, ok := (*args)["mq"].(lanternmq.MessageQueue)
 	if !ok {
 		return fmt.Errorf("unable to cast mq to MessageQueue from arguments")
