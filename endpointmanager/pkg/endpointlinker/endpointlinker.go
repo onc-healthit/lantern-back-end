@@ -159,8 +159,25 @@ func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpoint
 	return allMatches, allConfidences, nil
 }
 
+func addMatch(ctx context.Context, store *postgresql.Store, orgID int, endpoint *endpointmanager.FHIREndpoint, confidence float64) error {
+	_, _, storedConfidence, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpoint.URL)
+	if err == sql.ErrNoRows {
+		err = store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpoint.URL, confidence)
+		if err != nil {
+			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+		}
+	} else if err != nil {
+		return err
+	} else {
+		if storedConfidence < confidence {
+			store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpoint.URL, confidence)
+		}
+	}
+	return nil
+}
+
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
-	fhirEndpointOrgNames, err := store.GetAllFHIREndpointOrgNames(ctx)
+	fhirEndpointOrgNames, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
 		return errors.Wrap(err, "Error getting endpoint org names")
 	}
@@ -192,7 +209,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			matchCount++
 			// Iterate over matches and add to linking table
 			for _, match := range allMatches {
-				err = store.LinkNPIOrganizationToFHIREndpoint(ctx, match, endpoint.ID, allConfidences[match])
+				err = addMatch(ctx, store, match, endpoint, allConfidences[match])
 				if err != nil {
 					return errors.Wrap(err, "Error linking org to FHIR endpoint")
 				}

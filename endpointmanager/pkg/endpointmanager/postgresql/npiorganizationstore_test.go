@@ -328,7 +328,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		URL:               "other.example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Other Example Inc."}}
 
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.ID, .85)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.URL, .85)
 	if err == nil {
 		t.Fatal("Expected an error linking NPI org and endpoint that are not yet in the DB.")
 	}
@@ -341,7 +341,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.ID, .85)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.URL, .85)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -354,7 +354,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.ID, endpoint2.ID, .75)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.ID, endpoint2.URL, .75)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -369,24 +369,24 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		t.Fatalf("Expected two rows in DB")
 	}
 
-	rows, err := store.DB.Query("SELECT organization_id, endpoint_id, confidence FROM endpoint_organization")
+	rows, err := store.DB.Query("SELECT organization_id, url, confidence FROM endpoint_organization")
 	defer rows.Close()
 
 	for rows.Next() {
-		var endpointID int
+		var endpointURL string
 		var npioID int
 		var confidence float64
 
-		err = rows.Scan(&npioID, &endpointID, &confidence)
+		err = rows.Scan(&npioID, &endpointURL, &confidence)
 
-		if endpointID == endpoint1.ID {
+		if endpointURL == endpoint1.URL {
 			if npioID != npio1.ID {
 				t.Fatalf("Expected ID %d to be ID %d", npioID, npio1.ID)
 			}
 			if confidence != .85 {
 				t.Fatalf("Expected confidence %f to be %f", confidence, .85)
 			}
-		} else if endpointID == endpoint2.ID {
+		} else if endpointURL == endpoint2.URL {
 			if npioID != npio2.ID {
 				t.Fatalf("Expected ID %d to be ID %d", npioID, npio2.ID)
 			}
@@ -396,46 +396,5 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		} else {
 			t.Fatal("Getting unexpected entries in DB.")
 		}
-	}
-
-	// test deletion
-
-	// delete endpoint and ensure corresponding linked entry deleted
-	store.DeleteFHIREndpoint(ctx, endpoint1)
-
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization")
-	err = row.Scan(&count)
-	if err != nil {
-		t.Fatalf("Got scanning row: %+v.", err)
-	}
-	if count != 1 {
-		t.Fatalf("Expected one row in DB")
-	}
-
-	rows, err = store.DB.Query("SELECT organization_id, endpoint_id, confidence FROM endpoint_organization")
-	defer rows.Close()
-
-	for rows.Next() {
-		var endpointID int
-		var npioID int
-		var confidence float64
-
-		err = rows.Scan(&npioID, &endpointID, &confidence)
-
-		if endpointID != endpoint2.ID {
-			t.Fatal("Getting unexpected entries in DB.")
-		}
-	}
-
-	// delete npi org and ensure linked entry is deleted
-	store.DeleteNPIOrganization(ctx, npio2)
-
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization")
-	err = row.Scan(&count)
-	if err != nil {
-		t.Fatalf("Got scanning row: %+v.", err)
-	}
-	if count != 0 {
-		t.Fatalf("Expected no rows in DB")
 	}
 }

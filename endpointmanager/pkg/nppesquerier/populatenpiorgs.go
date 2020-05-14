@@ -432,6 +432,10 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 			// ok
 		}
 
+		if i%10000 == 0 {
+			log.Infof("Processed %d/%d NPI entities. Added %d organizations.\n", i, len(lines), added)
+		}
+
 		data := parseNPIdataLine(line)
 		// We will only parse out organizations (entiy_type_code == 2), not individual providers
 		if data.Entity_Type_Code == "2" {
