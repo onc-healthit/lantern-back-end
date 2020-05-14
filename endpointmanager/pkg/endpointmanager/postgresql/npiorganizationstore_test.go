@@ -6,6 +6,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
@@ -18,34 +20,30 @@ func Test_DeleteAllNPIOrganizations(t *testing.T) {
 	ctx := context.Background()
 
 	var npio1 = &endpointmanager.NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Hospital #1 of America",
-		SecondaryName: "Hospital #1 of America Second Name",
+		ID:     1,
+		NPI_ID: "1",
+		Names:  []string{"Hospital #1 of America", "Hospital #1 of America Second Name"},
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "HOSPITAL  OF AMERICA",
-		NormalizedSecondaryName: "HOSPITAL  OF AMERICA SECOND NAME"}
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"HOSPITAL  OF AMERICA", "HOSPITAL  OF AMERICA SECOND NAME"}}
 
 	var npio2 = &endpointmanager.NPIOrganization{
-		ID:            2,
-		NPI_ID:        "2",
-		Name:          "Hospital #2 of America",
-		SecondaryName: "",
+		ID:     2,
+		NPI_ID: "2",
+		Names:  []string{"Hospital #2 of America"},
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "HOSPITAL  OF AMERICA",
-		NormalizedSecondaryName: ""}
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"HOSPITAL  OF AMERICA"}}
 
 	// add organizations
 
@@ -109,29 +107,25 @@ func Test_PersistNPIOrganization(t *testing.T) {
 	ctx := context.Background()
 
 	var npio1 = &endpointmanager.NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Hospital #1 of America",
-		SecondaryName: "Hospital #1 of America Second Name",
+		ID:     1,
+		NPI_ID: "1",
+		Names:  []string{"Hospital #1 of America", "Hospital #1 of America Second Name"},
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "HOSPITAL  OF AMERICA",
-		NormalizedSecondaryName: "HOSPITAL  OF AMERICA SECOND NAME"}
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"HOSPITAL  OF AMERICA", "HOSPITAL  OF AMERICA SECOND NAME"}}
 
 	var npio2 = &endpointmanager.NPIOrganization{
-		ID:                      2,
-		NPI_ID:                  "2",
-		Name:                    "A Primary Name",
-		SecondaryName:           "A Secondary Name",
-		Location:                &endpointmanager.Location{},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "A PRIMARY NAME",
-		NormalizedSecondaryName: "A SECONDARY NAME"}
+		ID:              2,
+		NPI_ID:          "2",
+		Names:           []string{"A Primary Name", "A Secondary Name"},
+		Location:        &endpointmanager.Location{},
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"A PRIMARY NAME", "A SECONDARY NAME"}}
 
 	// add organizations
 
@@ -194,23 +188,15 @@ func Test_PersistNPIOrganization(t *testing.T) {
 
 	for _, org := range npio_get_names {
 		if org.ID == npio1.ID {
-			ePrim := "HOSPITAL  OF AMERICA"
-			eSec := "HOSPITAL  OF AMERICA SECOND NAME"
-			if org.NormalizedName != ePrim {
-				t.Errorf("Expected normalized primary name to be %s. Got %s.", ePrim, org.NormalizedName)
-			}
-			if org.NormalizedSecondaryName != eSec {
-				t.Errorf("Expected normalized secondary name to be %s. Got %s.", eSec, org.NormalizedSecondaryName)
+			eNames := []string{"HOSPITAL  OF AMERICA", "HOSPITAL  OF AMERICA SECOND NAME"}
+			if !helpers.StringArraysEqual(org.NormalizedNames, eNames) {
+				t.Errorf("Expected normalized name to be %v. Got %v.", eNames, org.NormalizedNames)
 			}
 		}
 		if org.ID == npio2.ID {
-			ePrim := "A PRIMARY NAME"
-			eSec := "A SECONDARY NAME"
-			if org.NormalizedName != ePrim {
-				t.Errorf("Expected normalized primary name to be %s. Got %s.", ePrim, org.NormalizedName)
-			}
-			if org.NormalizedSecondaryName != eSec {
-				t.Errorf("Expected normalized secondary name to be %s. Got %s.", eSec, org.NormalizedSecondaryName)
+			eNames := []string{"A PRIMARY NAME", "A SECONDARY NAME"}
+			if !helpers.StringArraysEqual(org.NormalizedNames, eNames) {
+				t.Errorf("Expected normalized name to be %v. Got %v.", eNames, org.NormalizedNames)
 			}
 		}
 	}
@@ -295,28 +281,24 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 
 	// orgs
 	var npio1 = &endpointmanager.NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Hospital #1 of America",
-		SecondaryName: "Hospital #1 of America Second Name",
+		ID:     1,
+		NPI_ID: "1",
+		Names:  []string{"Hospital #1 of America", "Hospital #1 of America Second Name"},
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
 			City:     "A City",
 			State:    "AK",
 			ZipCode:  "00000"},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "HOSPITAL  OF AMERICA",
-		NormalizedSecondaryName: "HOSPITAL  OF AMERICA SECOND NAME"}
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"HOSPITAL  OF AMERICA", "HOSPITAL  OF AMERICA SECOND NAME"}}
 	var npio2 = &endpointmanager.NPIOrganization{
-		ID:                      2,
-		NPI_ID:                  "2",
-		Name:                    "A Primary Name",
-		SecondaryName:           "A Secondary Name",
-		Location:                &endpointmanager.Location{},
-		Taxonomy:                "208D00000X",
-		NormalizedName:          "A PRIMARY NAME",
-		NormalizedSecondaryName: "A SECONDARY NAME"}
+		ID:              2,
+		NPI_ID:          "2",
+		Names:           []string{"A Primary Name", "A Secondary Name"},
+		Location:        &endpointmanager.Location{},
+		Taxonomy:        "208D00000X",
+		NormalizedNames: []string{"A PRIMARY NAME", "A SECONDARY NAME"}}
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{

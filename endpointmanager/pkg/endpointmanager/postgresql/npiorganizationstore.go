@@ -6,6 +6,7 @@ import (
 
 	"database/sql"
 
+	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -29,12 +30,10 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npiID string) (*e
 	SELECT
 		id,
 		npi_id,
-		name,
-		secondary_name,
+		names,
 		location,
 		taxonomy,
-		normalized_name,
-		normalized_secondary_name,
+		normalized_names,
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE npi_id=$1`
@@ -43,12 +42,10 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npiID string) (*e
 	err := row.Scan(
 		&org.ID,
 		&org.NPI_ID,
-		&org.Name,
-		&org.SecondaryName,
+		pq.Array(&org.Names),
 		&locationJSON,
 		&org.Taxonomy,
-		&org.NormalizedName,
-		&org.NormalizedSecondaryName,
+		pq.Array(&org.NormalizedNames),
 		&org.CreatedAt,
 		&org.UpdatedAt)
 
@@ -82,12 +79,10 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 	SELECT
 		id,
 		npi_id,
-		name,
-		secondary_name,
+		names,
 		location,
 		taxonomy,
-		normalized_name,
-		normalized_secondary_name,
+		normalized_names,
 		created_at,
 		updated_at
 	FROM npi_organizations WHERE id=$1`
@@ -96,12 +91,10 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 	err := row.Scan(
 		&org.ID,
 		&org.NPI_ID,
-		&org.Name,
-		&org.SecondaryName,
+		pq.Array(&org.Names),
 		&locationJSON,
 		&org.Taxonomy,
-		&org.NormalizedName,
-		&org.NormalizedSecondaryName,
+		pq.Array(&org.NormalizedNames),
 		&org.CreatedAt,
 		&org.UpdatedAt)
 
@@ -128,12 +121,10 @@ func (s *Store) AddNPIOrganization(ctx context.Context, org *endpointmanager.NPI
 	row := addNPIOrganizationStatement.QueryRowContext(ctx,
 		//sqlStatement,
 		org.NPI_ID,
-		org.Name,
-		org.SecondaryName,
+		pq.Array(org.Names),
 		locationJSON,
 		org.Taxonomy,
-		org.NormalizedName,
-		org.NormalizedSecondaryName)
+		pq.Array(org.NormalizedNames))
 
 	err = row.Scan(&org.ID)
 
@@ -150,12 +141,10 @@ func (s *Store) UpdateNPIOrganization(ctx context.Context, org *endpointmanager.
 	_, err = updateNPIOrganizationStatement.ExecContext(ctx,
 		org.ID,
 		org.NPI_ID,
-		org.Name,
-		org.SecondaryName,
+		pq.Array(org.Names),
 		locationJSON,
 		org.Taxonomy,
-		org.NormalizedName,
-		org.NormalizedSecondaryName)
+		pq.Array(org.NormalizedNames))
 
 	return err
 }
@@ -169,12 +158,10 @@ func (s *Store) UpdateNPIOrganizationByNPIID(ctx context.Context, org *endpointm
 
 	_, err = updateNPIOrganizationByNPIIDStatement.ExecContext(ctx,
 		org.NPI_ID,
-		org.Name,
-		org.SecondaryName,
+		pq.Array(org.Names),
 		locationJSON,
 		org.Taxonomy,
-		org.NormalizedName,
-		org.NormalizedSecondaryName)
+		pq.Array(org.NormalizedNames))
 
 	return err
 }
@@ -189,7 +176,7 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 // GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
 func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*endpointmanager.NPIOrganization, error) {
 	sqlStatement := `
-	SELECT id, normalized_name, normalized_secondary_name, npi_id FROM npi_organizations`
+	SELECT id, normalized_names, npi_id FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
@@ -198,7 +185,7 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 	defer rows.Close()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
-		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName, &org.NPI_ID)
+		err = rows.Scan(&org.ID, pq.Array(&org.NormalizedNames), &org.NPI_ID)
 		if err != nil {
 			return nil, err
 		}
@@ -216,6 +203,7 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID str
 	return err
 }
 
+// GetNPIOrganizationFHIREndpointLink retrieves an existing link and its confidence level
 func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) (int, string, float64, error) {
 	var retOrgID int
 	var retEndpointURL string
@@ -234,6 +222,7 @@ func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID st
 	return retOrgID, retEndpointURL, retConfidence, err
 }
 
+// UpdateNPIOrganizationFHIREndpointLink updates an existing link with a new confidence level
 func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
 	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
 		orgID,
@@ -247,13 +236,11 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	addNPIOrganizationStatement, err = s.DB.Prepare(`
 		INSERT INTO npi_organizations (
 			npi_id,
-			name,
-			secondary_name,
+			names,
 			location,
 			taxonomy,
-			normalized_name,
-			normalized_secondary_name)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+			normalized_names)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -261,24 +248,20 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	updateNPIOrganizationStatement, err = s.DB.Prepare(`
 		UPDATE npi_organizations
 		SET npi_id = $2,
-		        name = $3,
-		        secondary_name = $4,
-		        location = $5,
-		        taxonomy = $6,
-		        normalized_name = $7,
-		        normalized_secondary_name = $8
+		        names = $3,
+		        location = $4,
+		        taxonomy = $5,
+		        normalized_names = $6
 		WHERE id=$1`)
 	if err != nil {
 		return err
 	}
 	updateNPIOrganizationByNPIIDStatement, err = s.DB.Prepare(`
 		UPDATE npi_organizations
-		SET name = $2,
-			secondary_name = $3,
-			location = $4,
-			taxonomy = $5,
-			normalized_name = $6,
-			normalized_secondary_name = $7
+		SET names = $2,
+			location = $3,
+			taxonomy = $4,
+			normalized_names = $5
 		WHERE npi_id=$1`)
 	if err != nil {
 		return err

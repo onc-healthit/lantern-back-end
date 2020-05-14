@@ -8,10 +8,9 @@ import (
 
 func Test_NPIOrganizationEqual(t *testing.T) {
 	var npio1 = &NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Hospital #1 of America",
-		SecondaryName: "Hospital #1 of America Second Name",
+		ID:     1,
+		NPI_ID: "1",
+		Names:  []string{"Hospital #1 of America", "Hospital #1 of America Second Name"},
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -21,10 +20,9 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 		Taxonomy: "208D00000X"}
 
 	var npio2 = &NPIOrganization{
-		ID:            1,
-		NPI_ID:        "1",
-		Name:          "Hospital #1 of America",
-		SecondaryName: "Hospital #1 of America Second Name",
+		ID:     1,
+		NPI_ID: "1",
+		Names:  []string{"Hospital #1 of America", "Hospital #1 of America Second Name"},
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -43,11 +41,11 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 	}
 	npio2.ID = npio1.ID
 
-	npio2.Name = "other"
+	npio2.Names = []string{"other"}
 	if npio1.Equal(npio2) {
-		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. Name should be different. %s vs %s", npio2.Name, npio2.Name)
+		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. Name should be different. %v vs %v", npio2.Names, npio2.Names)
 	}
-	npio2.Name = npio1.Name
+	npio2.Names = npio1.Names
 
 	npio2.Location.Address1 = "other"
 	if npio1.Equal(npio2) {
