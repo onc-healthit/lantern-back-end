@@ -33,8 +33,6 @@ func main() {
 	err = store.DeleteAllNPIContacts(ctx)
 	failOnError(err)
 
-	log.Info("Adding NPI FHIR URLs to database...")
-	added, err := nppesquerier.ParseAndStoreNPIContactsFile(ctx, fname, store)
-	log.Infof("Added %d NPI FHIR URLs to database\n", added)
+	_, err = nppesquerier.ParseAndStoreNPIContactsFile(ctx, fname, store)
 	failOnError(err)
 }

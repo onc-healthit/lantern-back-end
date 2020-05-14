@@ -12,6 +12,8 @@ import (
 
 // prepared statements are left open to be used throughout the execution of the application
 // TODO: figure out if there's a better way to manage this for bulk calls
+var getNPIOrganizationStatement *sql.Stmt
+var getNPIOrganizationByNPIIDStatement *sql.Stmt
 var addNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationByNPIIDStatement *sql.Stmt
@@ -26,18 +28,7 @@ func (s *Store) GetNPIOrganizationByNPIID(ctx context.Context, npiID string) (*e
 	var org endpointmanager.NPIOrganization
 	var locationJSON []byte
 
-	sqlStatement := `
-	SELECT
-		id,
-		npi_id,
-		names,
-		location,
-		taxonomy,
-		normalized_names,
-		created_at,
-		updated_at
-	FROM npi_organizations WHERE npi_id=$1`
-	row := s.DB.QueryRowContext(ctx, sqlStatement, npiID)
+	row := getNPIOrganizationByNPIIDStatement.QueryRowContext(ctx, npiID)
 
 	err := row.Scan(
 		&org.ID,
@@ -75,18 +66,7 @@ func (s *Store) GetNPIOrganization(ctx context.Context, id int) (*endpointmanage
 	var org endpointmanager.NPIOrganization
 	var locationJSON []byte
 
-	sqlStatement := `
-	SELECT
-		id,
-		npi_id,
-		names,
-		location,
-		taxonomy,
-		normalized_names,
-		created_at,
-		updated_at
-	FROM npi_organizations WHERE id=$1`
-	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
+	row := getNPIOrganizationStatement.QueryRowContext(ctx, id)
 
 	err := row.Scan(
 		&org.ID,
@@ -233,6 +213,34 @@ func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID
 
 func prepareNPIOrganizationStatements(s *Store) error {
 	var err error
+	getNPIOrganizationStatement, err = s.DB.Prepare(`
+	SELECT
+		id,
+		npi_id,
+		names,
+		location,
+		taxonomy,
+		normalized_names,
+		created_at,
+		updated_at
+	FROM npi_organizations WHERE id=$1`)
+	if err != nil {
+		return err
+	}
+	getNPIOrganizationByNPIIDStatement, err = s.DB.Prepare(`
+	SELECT
+		id,
+		npi_id,
+		names,
+		location,
+		taxonomy,
+		normalized_names,
+		created_at,
+		updated_at
+	FROM npi_organizations WHERE npi_id=$1`)
+	if err != nil {
+		return err
+	}
 	addNPIOrganizationStatement, err = s.DB.Prepare(`
 		INSERT INTO npi_organizations (
 			npi_id,

@@ -43,3 +43,17 @@ func (org *NPIOrganization) Equal(org2 *NPIOrganization) bool {
 
 	return true
 }
+
+// AddName adds the name to the organization's names list if it's not present already. If it is, it does nothing.
+func (org *NPIOrganization) AddName(name string) {
+	if !helpers.StringArrayContains(org.Names, name) {
+		org.Names = append(org.Names, name)
+	}
+}
+
+// AddNormalizedName adds the normalized name to the organization's normalized names list if it's not present already. If it is, it does nothing.
+func (org *NPIOrganization) AddNormalizedName(name string) {
+	if !helpers.StringArrayContains(org.NormalizedNames, name) {
+		org.NormalizedNames = append(org.NormalizedNames, name)
+	}
+}
