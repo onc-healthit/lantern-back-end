@@ -182,10 +182,10 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 		// Get endpoint id
 		var endpoint_id string
-		query_str := "SELECT id FROM fhir_endpoints WHERE organization_name=$1;"
-		err = store.DB.QueryRow(query_str, ep.organization_name).Scan(&endpoint_id)
+		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
+		err = store.DB.QueryRow(query_str, ep.url).Scan(&endpoint_id)
 		if err != nil {
-			t.Fatalf("failed org name is " + ep.organization_name)
+			t.Fatalf("failed org url is "+ep.url+"\nError %v\n", err)
 		}
 		failOnError(err)
 
@@ -407,16 +407,16 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 
 	bodyString := string(bodyBytes)
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{orgName=\"LanternTestOrg\"} 200") {
-		t.Fatalf("Endpoint querier missing or incorrect response code metric for LanternTestOrg")
+	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"http://lantern-e2e/metadata\"} 200") {
+		t.Fatalf("Endpoint querier missing or incorrect response code metric for http://lantern-e2e/metadata")
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{orgName=\"LanternTestOrg\"}") {
-		t.Fatalf("Endpoint querier missing response time metric for LanternTestOrg")
+	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"http://lantern-e2e/metadata\"}") {
+		t.Fatalf("Endpoint querier missing response time metric for http://lantern-e2e/metadata")
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{orgName=\"LanternTestOrg\"}") {
-		t.Fatalf("Endpoint querier missing uptime checks metric for LanternTestOrg")
+	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"http://lantern-e2e/metadata\"}") {
+		t.Fatalf("Endpoint querier missing uptime checks metric for http://lantern-e2e/metadata")
 	}
 }
 func Test_QuerierAvailableToPrometheus(t *testing.T) {
@@ -469,8 +469,8 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	err = response_time_row.Scan(&id, &metric_name, &result_label)
 	failOnError(err)
 
-	if result_label != "{\"job\": \"FHIRQUERY\", \"orgName\": \"LanternTestOrg\", \"instance\": \"endpoint_querier:3333\"}" {
-		t.Fatalf("LanternTestOrg not found in AllEndpoints_http_response_time metric")
+	if result_label != "{\"job\": \"FHIRQUERY\", \"url\": \"http://lantern-e2e/metadata\", \"instance\": \"endpoint_querier:3333\"}" {
+		t.Fatalf("http://lantern-e2e/metadata not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }
