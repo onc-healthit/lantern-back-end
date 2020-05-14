@@ -167,7 +167,9 @@ func failOnError(err error) {
 }
 
 func main() {
-	config.SetupConfig()
+	err := config.SetupConfig()
+	failOnError(err)
+
 	go setupServer()
 
 	initializeMetrics()

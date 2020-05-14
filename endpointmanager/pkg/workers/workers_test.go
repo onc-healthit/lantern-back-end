@@ -116,6 +116,9 @@ func testfn(ctx context.Context, args *map[string]interface{}) error {
 	if !ok {
 		return fmt.Errorf("unable to cast queueName to string from arguments")
 	}
-	mq.PublishToQueue(ch, queueName, "test String")
+	err := mq.PublishToQueue(ch, queueName, "test String")
+	if err != nil {
+		return err
+	}
 	return nil
 }
