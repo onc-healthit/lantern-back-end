@@ -179,20 +179,20 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	th.Assert(t, (len(matches) == 5), "There should have been 6 matchs returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 5), "There should have been 6 confidences returned "+strconv.Itoa(len(confidences)))
 	confidence := fmt.Sprintf("%f", confidences[matches[0]])
-	// FOO FOO BAR and primary name FOO FOO BAR have confidence of 1
-	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
+	// FOO FOO BAR and primary name FOO FOO BAR have confidence of 1 * .9
+	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[1]])
-	// FOO FOO BAR and secondary name FOO FOO BAR BAZ have confidence of .75
-	th.Assert(t, (confidence == "0.750000"), "Exact match confidence should have been 0.750000 confidence got "+confidence)
+	// FOO FOO BAR and secondary name FOO FOO BAR BAZ have confidence of .75 * .9
+	th.Assert(t, (confidence == "0.675000"), "Exact match confidence should have been 0.675000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[2]])
-	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000
-	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
+	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000 * .9
+	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[3]])
-	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000
-	th.Assert(t, (confidence == "1.000000"), "Exact match confidence should have been 1.000000 confidence got "+confidence)
+	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000 * .9
+	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[4]])
-	// FOO FOO BAR and primary name FOO FOO BAR BAZ have confidence of .75
-	th.Assert(t, (confidence == "0.750000"), "Exact match confidence should have been 0.750000 confidence got "+confidence)
+	// FOO FOO BAR and primary name FOO FOO BAR BAZ have confidence of .75 * .9
+	th.Assert(t, (confidence == "0.675000"), "Exact match confidence should have been 0.675000 confidence got "+confidence)
 
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
 	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false)
@@ -200,9 +200,9 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	th.Assert(t, (len(matches) == 1), "There should have been 6 matchs returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 1), "There should have been 6 confidences returned "+strconv.Itoa(len(confidences)))
 	confidence = fmt.Sprintf("%f", confidences[matches[0]])
-	// ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT and secondary name ONE TWO THREE FOUR FIVE SIX SEVEN should have confidence of .875000
-	// .875 > than primary name ONE TWO THREE FOUR FIVE SIX match of .75
-	th.Assert(t, (confidence == "0.875000"), "Exact match confidence should have been 0.875000 confidence got "+confidence)
+	// ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT and secondary name ONE TWO THREE FOUR FIVE SIX SEVEN should have confidence of .875000 * .9
+	// .875 *.9 > than primary name ONE TWO THREE FOUR FIVE SIX match of .75 * .9
+	th.Assert(t, (confidence == "0.787500"), "Exact match confidence should have been 0.787500 confidence got "+confidence)
 }
 
 func Test_mergeMatches(t *testing.T) {
@@ -336,19 +336,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org := exactPrimaryNameOrg
-	expectedConf := 1.0
+	expectedConf := 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
-	expectedConf = .75
+	expectedConf = .75 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
-	expectedConf = .75
+	expectedConf = .75 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ"
@@ -359,19 +359,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
-	expectedConf = .75
+	expectedConf = .75 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// check that highest confidence value is used
@@ -383,19 +383,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// checking non-existent org name causes no issues
@@ -407,18 +407,18 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
-	expectedConf = 1.0
+	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 }
