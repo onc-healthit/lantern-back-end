@@ -172,7 +172,10 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 		return err
 	} else {
 		if storedConfidence < confidence {
-			store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpoint.URL, confidence)
+			err = store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpoint.URL, confidence)
+			if err != nil {
+				return errors.Wrap(err, "Error update org to FHIR endpoint link")
+			}
 		}
 	}
 	return nil
