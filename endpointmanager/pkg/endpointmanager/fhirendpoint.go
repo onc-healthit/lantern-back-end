@@ -1,8 +1,8 @@
 package endpointmanager
 
 import (
-	"time"
 	"strings"
+	"time"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -43,12 +43,12 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 }
 
 // Prepends url with https:// and appends with metadata/ if needed
-func NormalizeURL(url string) string{
+func NormalizeURL(url string) string {
 	normalized := url
-    // for cases such as foobar.com
-    if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://")  {
-        normalized = "https://" + normalized
-    }
+	// for cases such as foobar.com
+	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
+		normalized = "https://" + normalized
+	}
 
 	// for cases such as foobar.com/
 	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
@@ -57,5 +57,5 @@ func NormalizeURL(url string) string{
 		}
 		normalized = normalized + "metadata"
 	}
-    return normalized
+	return normalized
 }
