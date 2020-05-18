@@ -7,7 +7,7 @@ import (
 	"net/http/httptrace"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/fhirendpoint"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 // Need to define timeout or else it is infinite

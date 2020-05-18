@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/fhirendpoint"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
