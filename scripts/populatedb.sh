@@ -39,9 +39,27 @@ if [ "$cont" = "y" ] || [ "$cont" = "Y" ]; then
     read nppesdata
     echo "Loading data from $nppesdata..."
     go run main.go $nppesdata
-    cd ../endpointlinker
-    go run main.go
     cd ../../..
 else
     echo "No NPPES pfile data will be loaded."
 fi
+
+# get NPPES othername data into db
+echo "Do you have an NPPES othername file downloaded (http://download.cms.gov/nppes/NPI_Files.html) and do you want to load it into the database? (y/Y to continue. anything else to stop)"
+read cont
+if [ "$othernamecont" = "y" ] || [ "$othernamecont" = "Y" ]; then
+    cd endpointmanager/cmd/nppesorgpopulator
+    echo "Please enter an absolute path for the NPPES othername CSV file or the path relative to to this location:"
+    pwd
+    read nppesothernamedata
+    echo "Loading data from $nppesothernamedata..."
+    go run main.go $nppesothernamedata
+    cd ../../..
+else
+    echo "No NPPES pfile data will be loaded."
+fi
+
+# run the linker
+cd endpointmanager/cmd/endpointlinker
+go run main.go
+cd ../../..

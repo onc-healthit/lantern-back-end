@@ -6,6 +6,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -24,6 +25,7 @@ func parseOthernamesLine(line []string) OthernamesCsvLine {
 	return data
 }
 
+// only adds a name if its normalized name isn't already stored
 func addToNPIOrgFromOthernamesCsvLine(ctx context.Context, store *postgresql.Store, data OthernamesCsvLine) (bool, error) {
 	npiOrg, err := store.GetNPIOrganizationByNPIID(ctx, data.NPI)
 	if err == sql.ErrNoRows {
@@ -35,6 +37,10 @@ func addToNPIOrgFromOthernamesCsvLine(ctx context.Context, store *postgresql.Sto
 	normalizedName, err := endpointlinker.NormalizeOrgName(data.Provider_Other_Organization_Name)
 	if err != nil {
 		return false, errors.Wrap(err, "error normalizing name "+data.Provider_Other_Organization_Name)
+	}
+
+	if helpers.StringArrayContains(npiOrg.NormalizedNames, normalizedName) {
+		return false, nil
 	}
 
 	npiOrg.AddName(data.Provider_Other_Organization_Name)
