@@ -2,7 +2,6 @@ package querier
 
 import (
 	"context"
-	"strings"
 	"net/http"
 	"net/http/httptrace"
 	"time"
@@ -22,7 +21,7 @@ func GetResponseAndTiming(ctx context.Context, urlString string) (*http.Response
 		return nil, -1, err.(error)
 	}
 
-	normalizedURL := FHIREndpoint.NormalizeURL(urlString)
+	normalizedURL := endpointmanager.NormalizeURL(urlString)
 
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
