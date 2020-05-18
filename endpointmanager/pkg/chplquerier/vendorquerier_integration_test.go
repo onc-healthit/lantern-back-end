@@ -64,10 +64,10 @@ func Test_persistVendor(t *testing.T) {
 
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == 1, "did not store data as expected")
+	th.Assert(t, ct == 1, "initial stored data does not equal expected store data")
 	storedVend, err = store.GetVendorUsingName(ctx, "Epic Systems Corporation")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vend.Equal(storedVend), "2stored data does not equal expected store data")
+	th.Assert(t, vend.Equal(storedVend), "updated stored data does not equal expected store data")
 
 	// check that error adding to store throws error
 	chplVend = testCHPLVendor1

@@ -282,7 +282,7 @@ func Test_convertVendorJSONToObj(t *testing.T) {
 	ctx = context.Background()
 	vendorList, err := convertVendorJSONToObj(ctx, []byte(vendorListJSON))
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vendorList.Developers != nil, "Expected develoeprs field to be filled out for vendors.")
+	th.Assert(t, vendorList.Developers != nil, "Expected developers field to be filled out for vendors.")
 	th.Assert(t, len(vendorList.Developers) == len(expectedVendorList.Developers), fmt.Sprintf("Number of vendors is %d. Should be %d.", len(vendorList.Developers), len(expectedVendorList.Developers)))
 
 	for i, vend := range vendorList.Developers {
