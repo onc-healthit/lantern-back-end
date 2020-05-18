@@ -2,6 +2,7 @@ package endpointmanager
 
 import (
 	"time"
+	"strings"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -39,4 +40,26 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	}
 
 	return true
+}
+
+// Prepends url with https://www. or https:// and appends with metadata/ if needed
+func NormalizeURL(url string) string{
+	normalized := ""
+    // for cases such as foobar.com
+    if !strings.HasPrefix(url, "https://www.") && !strings.HasPrefix(url, "http://www.")  {
+        normalized = "https://www." + url
+    }
+    // for cases such as www.foobar.com
+    if strings.HasPrefix(url, "www.") {
+        normalized = "https://" +  url
+	}
+
+	// for cases such as foobar.com/
+	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
+		if !strings.HasSuffix(url, "/") {
+			normalized = normalized + "/"
+		}
+		normalized = normalized + "metadata"
+	}
+    return normalized
 }

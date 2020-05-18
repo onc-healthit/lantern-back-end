@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/fhirendpoint"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
@@ -36,28 +37,6 @@ type Message struct {
 	TLSVersion          string      `json:"tlsVersion"`
 	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
-}
-
-// Prepends url with https://www. or https:// and appends with metadata/ if needed
-func normalizeURL(url string) string{
-	normalized := ""
-    // for cases such as foobar.com
-    if !strings.HasPrefix(url, "https://www.") && !strings.HasPrefix(url, "http://www.")  {
-        normalized = "https://www." + url
-    }
-    // for cases such as www.foobar.com
-    if strings.HasPrefix(url, "www.") {
-        normalized = "https://" +  url
-	}
-	
-	// for cases such as foobar.com/
-	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
-		if !strings.HasSuffix(url, "/") {
-			normalized = normalized + "/"
-		}
-		normalized = normalized + "metadata"
-	}
-    return normalized
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
@@ -106,7 +85,7 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	var tlsVersion string
 	var capResp []byte
 
-	normalizedURL := normalizeURL(fhirURL.String())
+	normalizedURL := FHIREndpoint.NormalizeURL(fhirURL.String())
 
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
