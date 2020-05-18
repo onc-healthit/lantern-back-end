@@ -123,23 +123,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, errors.Wrap(err, "error"))
 
 	err = ctStmt.QueryRow().Scan(&ct)
-	print("1HERE!")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not store data as expected")
 
-	print("2HERE!")
 	storedEndpt, err := store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
-	print("235553HERE!")
 	th.Assert(t, err == nil, err)
-	print("233HERE!")
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
-	print("33HERE!")
 	expectedEndpt.URL = testFhirEndpoint2.URL
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
-	print("3HERE!")
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, err == nil, err)
