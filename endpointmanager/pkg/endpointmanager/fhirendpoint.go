@@ -42,17 +42,13 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	return true
 }
 
-// Prepends url with https://www. or https:// and appends with metadata/ if needed
+// Prepends url with https:// and appends with metadata/ if needed
 func NormalizeURL(url string) string{
-	normalized := ""
+	normalized := url
     // for cases such as foobar.com
-    if !strings.HasPrefix(url, "https://www.") && !strings.HasPrefix(url, "http://www.")  {
-        normalized = "https://www." + url
+    if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://")  {
+        normalized = "https://" + normalized
     }
-    // for cases such as www.foobar.com
-    if strings.HasPrefix(url, "www.") {
-        normalized = "https://" +  url
-	}
 
 	// for cases such as foobar.com/
 	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
