@@ -60,7 +60,7 @@ func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Clie
 	log.Debug("converting chpl json into vendor objects")
 	prodList, err := convertVendorJSONToObj(ctx, prodJSON)
 	if err != nil {
-		return errors.Wrap(err, "converting vendor JSON into a 'chplCertifiedProductList' object failed")
+		return errors.Wrap(err, "converting vendor JSON into a 'chplVendorList' object failed")
 	}
 	log.Debug("done converting chpl json into evndor objects")
 
