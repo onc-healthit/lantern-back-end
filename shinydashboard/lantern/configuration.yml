@@ -1,0 +1,27 @@
+libraries:
+  - "shiny"
+  - "shinydashboard"
+  - "DBI"
+  - "readr"
+  - "dplyr"
+  - "RPostgres"
+  - "ggplot2"
+  - "plotly"
+  - "scales"
+  - "forcats"
+  - "dygraphs"
+  - "config"
+  - "here"
+  - "lubridate"
+  - "xts"
+  
+function_files:
+  - "functions/db_connection.R"
+  - "functions/endpoints.R"
+  - "functions/performance.R"
+  
+module_files:
+  - "modules/dashboardmodule.R"
+  - "modules/availabilitymodule.R"
+  - "modules/performancemodule.R"
+  
