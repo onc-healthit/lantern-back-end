@@ -20,13 +20,14 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var hitp endpointmanager.HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
+	var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
 		name,
 		version,
-		developer,
+		vendor_id,
 		location,
 		authorization_standard,
 		api_syntax,
@@ -46,7 +47,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.ID,
 		&hitp.Name,
 		&hitp.Version,
-		&hitp.Developer,
+		&vendorIDNullable,
 		&locationJSON,
 		&hitp.AuthorizationStandard,
 		&hitp.APISyntax,
@@ -62,6 +63,9 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	if err != nil {
 		return nil, err
 	}
+
+	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
+	hitp.VendorID = ints[0]
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -79,13 +83,14 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var hitp endpointmanager.HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
+	var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
 		name,
 		version,
-		developer,
+		vendor_id,
 		location,
 		authorization_standard,
 		api_syntax,
@@ -105,7 +110,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.ID,
 		&hitp.Name,
 		&hitp.Version,
-		&hitp.Developer,
+		&vendorIDNullable,
 		&locationJSON,
 		&hitp.AuthorizationStandard,
 		&hitp.APISyntax,
@@ -122,6 +127,9 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		return nil, err
 	}
 
+	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
+	hitp.VendorID = ints[0]
+
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
 		return nil, err
@@ -132,19 +140,20 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	return &hitp, err
 }
 
-// GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given developer
-func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer string) ([]*endpointmanager.HealthITProduct, error) {
+// GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given vendor_id
+func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int) ([]*endpointmanager.HealthITProduct, error) {
 	var hitps []*endpointmanager.HealthITProduct
 	var hitp endpointmanager.HealthITProduct
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
+	var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
 		id,
 		name,
 		version,
-		developer,
+		vendor_id,
 		location,
 		authorization_standard,
 		api_syntax,
@@ -157,8 +166,8 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 		chpl_id,
 		created_at,
 		updated_at
-	FROM healthit_products WHERE developer=$1`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement, developer)
+	FROM healthit_products WHERE vendor_id=$1`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement, vendorID)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +178,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 			&hitp.ID,
 			&hitp.Name,
 			&hitp.Version,
-			&hitp.Developer,
+			&vendorIDNullable,
 			&locationJSON,
 			&hitp.AuthorizationStandard,
 			&hitp.APISyntax,
@@ -185,6 +194,9 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 		if err != nil {
 			return nil, err
 		}
+
+		ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
+		hitp.VendorID = ints[0]
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
 		if err != nil {
@@ -202,27 +214,6 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, developer st
 	return hitps, nil
 }
 
-// GetHealthITProductDevelopers returns a list of all of the developers associated with the health IT products.
-func (s *Store) GetHealthITProductDevelopers(ctx context.Context) ([]string, error) {
-	var developers []string
-	var developer string
-	sqlStatement := "SELECT DISTINCT developer FROM healthit_products"
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		err = rows.Scan(&developer)
-		if err != nil {
-			return nil, err
-		}
-		developers = append(developers, developer)
-	}
-
-	return developers, nil
-}
-
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	locationJSON, err := json.Marshal(hitp.Location)
@@ -235,10 +226,12 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		return err
 	}
 
+	nullableInts := getNullableInts([]int{hitp.VendorID})
+
 	row := addHealthITProductStatement.QueryRowContext(ctx,
 		hitp.Name,
 		hitp.Version,
-		hitp.Developer,
+		nullableInts[0],
 		locationJSON,
 		hitp.AuthorizationStandard,
 		hitp.APISyntax,
@@ -267,10 +260,12 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		return err
 	}
 
+	nullableInts := getNullableInts([]int{hitp.VendorID})
+
 	_, err = updateHealthITProductStatement.ExecContext(ctx,
 		hitp.Name,
 		hitp.Version,
-		hitp.Developer,
+		nullableInts[0],
 		hitp.AuthorizationStandard,
 		hitp.APISyntax,
 		hitp.APIURL,
@@ -299,7 +294,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		INSERT INTO healthit_products (
 			name,
 			version,
-			developer,
+			vendor_id,
 			location,
 			authorization_standard,
 			api_syntax,
@@ -319,7 +314,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		UPDATE healthit_products
 		SET name = $1,
 			version = $2,
-			developer = $3,
+			vendor_id = $3,
 			authorization_standard = $4,
 			api_syntax = $5,
 			api_url = $6,

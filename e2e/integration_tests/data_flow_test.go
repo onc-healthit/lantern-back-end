@@ -5,6 +5,7 @@ package integration_tests
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,7 +18,6 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
-	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
@@ -25,6 +25,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
+	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -246,6 +247,54 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
+func Test_GetCHPLVendors(t *testing.T) {
+	var err error
+	var actualVendsStored int
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+	}
+
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+
+	// as of 5/11/20, at least 1440 entries are expected to be added to the database
+	minNumExpVendsStored := 1440
+
+	err = chplquerier.GetCHPLVendors(ctx, store, client)
+	assert(t, err == nil, err)
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM vendors;")
+	err = rows.Scan(&actualVendsStored)
+	assert(t, err == nil, err)
+	assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
+
+	// expect to see this entry in the database:
+	// {
+	// "developerId": 1658,
+	// "developerCode": "2657",
+	// "name": "Carefluence",
+	// "website": "http://www.carefluence.com",
+	// "selfDeveloper": false,
+	// "address": {
+	// 	"addressId": 101,
+	// 	"line1": "8359 Office Park Drive",
+	// 	"line2": null,
+	// 	"city": "Grand Blanc",
+	// 	"state": "MI",
+	// 	"zipcode": "48439",
+	// 	"country": "US"
+	// }
+	vend, err := store.GetVendorUsingName(ctx, "Carefluence")
+	assert(t, err == nil, err)
+	assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
+	assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
+	assert(t, vend.Name == "Carefluence", "Name not as expected")
+	assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
+	assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
+}
+
 func Test_GetCHPLProducts(t *testing.T) {
 	var err error
 
@@ -275,6 +324,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	if hitp_count < expected_hitp_count {
 		t.Fatalf("Database should have at least " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
 	}
+
 	// expect this in db
 	//{
 	//	"id":3,
@@ -289,10 +339,13 @@ func Test_GetCHPLProducts(t *testing.T) {
 	//	"criteriaMet":"100☺101☺103☺106☺107☺108☺109☺114☺115☺116☺61☺62☺63☺64☺65☺66☺67☺68☺69☺70☺71☺72☺73☺74☺75☺76☺77☺81☺82☺83☺84☺86☺87☺88☺91☺92☺93☺94☺95☺96☺97☺98☺99"
 	//	}
 
+	vend, err := store.GetVendorUsingName(ctx, "Intuitive Medical Documents")
+	assert(t, err == nil, err)
+
 	var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 		Name:                  "Intuitive Medical Document",
 		Version:               "2.0",
-		Developer:             "Intuitive Medical Documents",
+		VendorID:              vend.ID,
 		CertificationStatus:   "Active",
 		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2014",
@@ -304,7 +357,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, hitp.CHPLID == testHITP.CHPLID, "CHPL ID is not what was expected")
 	th.Assert(t, hitp.CertificationEdition == testHITP.CertificationEdition, "Certification edition is not what was expected")
-	th.Assert(t, hitp.Developer == testHITP.Developer, "Developer is not what was expected")
+	th.Assert(t, hitp.VendorID == testHITP.VendorID, "Developer is not what was expected")
 	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
 	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
@@ -344,7 +397,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
 	defer mq.Close()
-	ctx, _ = context.WithTimeout(context.Background(), 30 * time.Second)
+	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
 	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
 	select {
 	case <-ctx.Done():
@@ -375,18 +428,25 @@ func Test_VendorList(t *testing.T) {
 		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
 	}
 
-	common_vendor_list := [2]string{"Epic Systems Corporation", "Cerner Corporation"}
-	rows, err := store.DB.Query("SELECT DISTINCT vendor FROM fhir_endpoints_info where vendor!='';")
+	ctx := context.Background()
+
+	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
 	failOnError(err)
-	var test_vendor_list []string
+	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
+	failOnError(err)
+
+	common_vendor_list := [2]int{epic.ID, cerner.ID}
+	rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
+	failOnError(err)
+	var test_vendor_list []int
 	defer rows.Close()
 	for rows.Next() {
-		var vendor string
-		err = rows.Scan(&vendor)
+		var vendorID int
+		err = rows.Scan(&vendorID)
 		failOnError(err)
-		test_vendor_list = append(test_vendor_list, vendor)
+		test_vendor_list = append(test_vendor_list, vendorID)
 	}
-	th.Assert(t, len(test_vendor_list)>= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
+	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
 	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
 	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
 }

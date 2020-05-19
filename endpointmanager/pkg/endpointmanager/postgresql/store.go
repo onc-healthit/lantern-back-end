@@ -58,6 +58,10 @@ func NewStore(host string, port int, user string, password string, dbname string
 	if err != nil {
 		return nil, err
 	}
+	err = prepareVendorStatements(&store)
+	if err != nil {
+		return nil, err
+	}
 	err = prepareNPIContactStatements(&store)
 	if err != nil {
 		return nil, err
@@ -69,4 +73,38 @@ func NewStore(host string, port int, user string, password string, dbname string
 // Close closes the postgresql database connection.
 func (s *Store) Close() {
 	s.DB.Close()
+}
+
+// converts foreign key ints to nullable ints so we don't have issues with non-existent foreign key references.
+func getNullableInts(regularInts []int) []sql.NullInt64 {
+	nullableInts := make([]sql.NullInt64, len(regularInts))
+
+	for i, regInt := range regularInts {
+		var nullInt sql.NullInt64
+		if regInt < 1 {
+			nullInt.Valid = false
+		} else {
+			nullInt.Valid = true
+			nullInt.Int64 = int64(regInt)
+		}
+		nullableInts[i] = nullInt
+	}
+	return nullableInts
+}
+
+// converts nullable into to an integer. null values are made to be 0s. This should only be used for foreign key references. postgres does not use 0 as an index - starts at 1.
+func getRegularInts(nullableInts []sql.NullInt64) []int {
+	regularInts := make([]int, len(nullableInts))
+
+	for i, nullInt := range nullableInts {
+		var regInt int
+
+		if !nullInt.Valid {
+			regInt = 0
+		} else {
+			regInt = int(nullInt.Int64)
+		}
+		regularInts[i] = regInt
+	}
+	return regularInts
 }

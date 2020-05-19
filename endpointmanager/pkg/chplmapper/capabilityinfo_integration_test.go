@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -22,65 +21,36 @@ import (
 
 var store *postgresql.Store
 
-var hitps []*endpointmanager.HealthITProduct = []*endpointmanager.HealthITProduct{
-	&endpointmanager.HealthITProduct{
-		Name:                 "Carefluence Open API",
-		Version:              "1",
-		Developer:            "Carefluence",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2016, 7, 1, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2014",
-		CHPLID:               "15.04.04.2657.Care.01.00.0.160701",
-		APIURL:               "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
+	&endpointmanager.Vendor{
+		Name:          "Epic Systems Corporation",
+		DeveloperCode: "A",
+		CHPLID:        1,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "EpicCare Ambulatory Base",
-		Version:              "February 2020",
-		Developer:            "Epic Systems Corporation",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2020, 2, 20, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.1447.Epic.AM.13.1.200220",
-		APIURL:               "https://open.epic.com/Interface/FHIR",
+	&endpointmanager.Vendor{
+		Name:          "Cerner Corporation",
+		DeveloperCode: "B",
+		CHPLID:        2,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "PowerChart (Clinical)",
-		Version:              "2018.01",
-		Developer:            "Cerner Corporation",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2018, 7, 27, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.1221.Powe.18.03.1.180727",
-		APIURL:               "http://fhir.cerner.com/authorization/",
+	&endpointmanager.Vendor{
+		Name:          "Cerner Health Services, Inc.",
+		DeveloperCode: "C",
+		CHPLID:        3,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "Health Services Analytics",
-		Version:              "8.00 SP1-SP5",
-		Developer:            "Cerner Health Services, Inc.",
-		CertificationStatus:  "Withdrawn by Developer",
-		CertificationDate:    time.Date(2017, 12, 5, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2014",
-		CHPLID:               "14.07.07.1222.HEA5.03.01.1.171205",
+	&endpointmanager.Vendor{
+		Name:          "Carefluence",
+		DeveloperCode: "D",
+		CHPLID:        4,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "MEDITECH 6.0 Electronic Health Record Core HCIS",
-		Version:              "v6.08",
-		Developer:            "Medical Information Technology, Inc. (MEDITECH)",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2017, 12, 20, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.2931.MEDI.EH.00.1.171220",
-		APIURL:               "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
+	&endpointmanager.Vendor{
+		Name:          "Medical Information Technology, Inc. (MEDITECH)",
+		DeveloperCode: "E",
+		CHPLID:        5,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "Sunrise Acute Care for Hospital-based Providers",
-		Version:              "16.3 CU3",
-		Developer:            "Allscripts",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2017, 12, 1, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.2891.Sunr.16.03.1.171201",
-		APIURL:               "https://developer.allscripts.com/Content/fhir/",
+	&endpointmanager.Vendor{
+		Name:          "Allscripts",
+		DeveloperCode: "F",
+		CHPLID:        6,
 	},
 }
 
@@ -118,8 +88,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	var err error
 
 	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	for _, vendor := range vendors {
+		err = store.AddVendor(ctx, vendor)
 	}
 	// populate fhir endpoint
 	ep := &endpointmanager.FHIREndpoint{
@@ -143,7 +113,8 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, epInfo.Vendor == "Cerner Corporation", fmt.Sprintf("expected vendor value to be 'Cerner Corporation'. Instead got %s", epInfo.Vendor))
+	// "Cerner Corporation" second item in vendor list
+	th.Assert(t, epInfo.VendorID == vendors[1].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[1].ID, epInfo.VendorID))
 
 	// test no match
 
@@ -161,7 +132,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
+	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
 	// test no capability statement
 
@@ -170,7 +141,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 		URL: ep.URL}
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
+	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
 	// test error getting match
 
@@ -193,7 +164,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 
 	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
-	th.Assert(t, len(epInfo.Vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", epInfo.Vendor))
+	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 }
 
 func Test_getVendorMatch(t *testing.T) {
@@ -202,23 +173,23 @@ func Test_getVendorMatch(t *testing.T) {
 
 	var path string
 	var err error
-	var expected string
+	var expected int
 
 	var dstu2JSON []byte
 	var dstu2 capabilityparser.CapabilityStatement
-	var vendor string
+	var vendor int
 
 	ctx := context.Background()
 
 	var dstu2Int map[string]interface{}
 
 	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	for _, vendorItem := range vendors {
+		err = store.AddVendor(ctx, vendorItem)
 	}
 
 	// cerner
-	expected = "Cerner Corporation"
+	expected = vendors[1].ID // "Cerner Corporation"
 
 	path = filepath.Join("../testdata", "cerner_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
@@ -229,10 +200,10 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %s. Got %s.", expected, vendor))
+	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %d. Got %d.", expected, vendor))
 
 	// epic
-	expected = "Epic Systems Corporation" // this uses the "hackMatch" capability
+	expected = vendors[0].ID // "Epic Systems Corporation" // this uses the "hackMatch" capability
 
 	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
@@ -243,7 +214,7 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %s. Got %s.", expected, vendor))
+	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %d. Got %d.", expected, vendor))
 
 	// test error getting hackmatch
 	err = json.Unmarshal(dstu2JSON, &dstu2Int)
@@ -257,10 +228,10 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err != nil, "expected error due to accessing the copyright")
-	th.Assert(t, len(vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", vendor))
+	th.Assert(t, vendor == 0, fmt.Sprintf("expected no vendor value. Instead got %d", vendor))
 
 	// allscripts
-	expected = "Allscripts"
+	expected = vendors[5].ID // "Allscripts"
 
 	path = filepath.Join("../testdata", "allscripts_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
@@ -271,10 +242,10 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %s. Got %s.", expected, vendor))
+	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %d. Got %d.", expected, vendor))
 
 	// meditech
-	expected = "Medical Information Technology, Inc. (MEDITECH)"
+	expected = vendors[4].ID // "Medical Information Technology, Inc. (MEDITECH)"
 
 	path = filepath.Join("../testdata", "meditech_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
@@ -285,7 +256,7 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %s. Got %s.", expected, vendor))
+	th.Assert(t, vendor == expected, fmt.Sprintf("expected vendor to be %d. Got %d.", expected, vendor))
 
 	// test error getting match
 
@@ -302,7 +273,7 @@ func Test_getVendorMatch(t *testing.T) {
 
 	vendor, err = getVendorMatch(ctx, dstu2, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
-	th.Assert(t, len(vendor) == 0, fmt.Sprintf("expected no vendor value. Instead got %s", vendor))
+	th.Assert(t, vendor == 0, fmt.Sprintf("expected no vendor value. Instead got %d", vendor))
 }
 
 func Test_publisherMatch(t *testing.T) {
@@ -322,11 +293,11 @@ func Test_publisherMatch(t *testing.T) {
 	ctx := context.Background()
 
 	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	for _, vendorItem := range vendors {
+		err = store.AddVendor(ctx, vendorItem)
 	}
 
-	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
+	vendorsRaw, err := store.GetVendorNames(ctx)
 	th.Assert(t, err == nil, err)
 	vendorsNorm := normalizeList(vendorsRaw)
 
@@ -419,11 +390,11 @@ func Test_hackMatch(t *testing.T) {
 	ctx := context.Background()
 
 	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	for _, vendorItem := range vendors {
+		err = store.AddVendor(ctx, vendorItem)
 	}
 
-	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
+	vendorsRaw, err := store.GetVendorNames(ctx)
 	th.Assert(t, err == nil, err)
 	vendorsNorm := normalizeList(vendorsRaw)
 
@@ -458,11 +429,11 @@ func Test_hackMatchEpic(t *testing.T) {
 	ctx := context.Background()
 
 	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	for _, vendorItem := range vendors {
+		err = store.AddVendor(ctx, vendorItem)
 	}
 
-	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
+	vendorsRaw, err := store.GetVendorNames(ctx)
 	th.Assert(t, err == nil, err)
 	vendorsNorm := normalizeList(vendorsRaw)
 

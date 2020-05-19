@@ -34,7 +34,6 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	Name:                  "Carefluence Open API",
 	Version:               "1",
-	Developer:             "Carefluence",
 	CertificationStatus:   "Active",
 	CertificationDate:     time.Date(2016, 7, 1, 0, 0, 0, 0, time.UTC),
 	CertificationEdition:  "2014",
@@ -156,28 +155,6 @@ func Test_convertProductJSONToObj(t *testing.T) {
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok
-	default:
-		t.Fatal("Expected JSON syntax error")
-	}
-}
-
-func Test_parseHITProd(t *testing.T) {
-	prod := testCHPLProd
-	expectedHITProd := testHITP
-
-	// basic test
-
-	hitProd, err := parseHITProd(&prod)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, hitProd.Equal(&expectedHITProd), "CHPL Product did not parse into HealthITProduct as expected.")
-
-	// test bad url in api doc string
-
-	prod.APIDocumentation = "170.315 (g)(7)☹.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-	_, err = parseHITProd(&prod)
-	switch errors.Cause(err).(type) {
-	case *url.Error:
-		// expect url.Error because bad URL provided and we check that using the url package.
 	default:
 		t.Fatal("Expected JSON syntax error")
 	}
@@ -340,7 +317,7 @@ func Test_getProductJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getProductJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL certified products request responded with status: 404 Not Found", "expected response error specifying response code")
+	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
 
 	// test error on URL creation
 

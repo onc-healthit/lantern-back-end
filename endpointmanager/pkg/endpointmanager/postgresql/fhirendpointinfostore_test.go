@@ -32,7 +32,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Error(err)
 	}
 
-	// add an endpoint that can later be referenced
+	// add endpoints that can later be referenced
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:              "example.com/FHIR/DSTU2/",
 		OrganizationName: "Example Inc.",
@@ -43,14 +43,21 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	store.AddFHIREndpoint(ctx, endpoint1)
 	store.AddFHIREndpoint(ctx, endpoint2)
 
+	// add vendor that can later be referenced
+	cerner := &endpointmanager.Vendor{
+		Name:          "Cerner Corporation",
+		DeveloperCode: "1221",
+		CHPLID:        222,
+	}
+
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
 		URL:                 endpoint1.URL,
+		VendorID:            cerner.ID,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir"},
 		HTTPResponse:        200,
 		Errors:              "Example Error",
-		Vendor:              "Cerner",
 		CapabilityStatement: cs}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:          endpoint2.URL,

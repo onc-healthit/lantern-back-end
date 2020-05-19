@@ -1,0 +1,2739 @@
+{
+    "developers": [
+        {
+            "developerId": 2048,
+            "developerCode": "3047",
+            "name": "Caremesh Inc",
+            "website": "https://caremesh.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 547,
+                "line1": "12110 Sunset Hills Road",
+                "line2": null,
+                "city": "Reston",
+                "state": "VA",
+                "zipcode": "20190",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1271,
+                "fullName": "Justin Sims",
+                "friendlyName": null,
+                "email": "jsims@caremesh.com",
+                "phoneNumber": "7036287099",
+                "title": null
+            },
+            "lastModifiedDate": "1562011073885",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2051,
+                    "developerId": 2048,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1562011073885,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2049,
+            "developerCode": "3048",
+            "name": "Office Practicum",
+            "website": "https://www.officepracticum.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 620,
+                "line1": "602 Office Center Drive, Suite 350",
+                "line2": null,
+                "city": "Fort Washington",
+                "state": "PA",
+                "zipcode": "19034",
+                "country": "USA"
+            },
+            "contact": {
+                "contactId": 1274,
+                "fullName": "Peter Minio",
+                "friendlyName": null,
+                "email": "pminio@officepracticum.com",
+                "phoneNumber": "800-218-9916",
+                "title": null
+            },
+            "lastModifiedDate": "1571065265811",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2052,
+                    "developerId": 2049,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1563481430492,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2050,
+            "developerCode": "3049",
+            "name": "Ulrich Medical Concepts",
+            "website": "http://www.ulrichmedicalconcepts.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 758,
+                "line1": "1640 McCracken Boulevard",
+                "line2": null,
+                "city": "Paducah",
+                "state": "Kentucky",
+                "zipcode": "42001",
+                "country": "USA"
+            },
+            "contact": {
+                "contactId": 1275,
+                "fullName": "Sandra Ulrich",
+                "friendlyName": null,
+                "email": "info@ulrichmedicalconcepts.com",
+                "phoneNumber": "866-885-1150",
+                "title": null
+            },
+            "lastModifiedDate": "1577464431396",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2053,
+                    "developerId": 2050,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1563901449799,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2051,
+            "developerCode": "3050",
+            "name": "PHI Medical Office Solutions",
+            "website": "https://www.phimedos.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 556,
+                "line1": "5405 Roberts Street",
+                "line2": null,
+                "city": "Shawnee",
+                "state": "KS",
+                "zipcode": "66226",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1279,
+                "fullName": "Jim Kilmartin",
+                "friendlyName": null,
+                "email": "jimk@phimedos.com",
+                "phoneNumber": "8009097240",
+                "title": null
+            },
+            "lastModifiedDate": "1565644610942",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2054,
+                    "developerId": 2051,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1565644610942,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2052,
+            "developerCode": "3051",
+            "name": "EyeCare Partners, LLC",
+            "website": "http://eyecare-partners.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 561,
+                "line1": "15933 Clayton Road, Suite 210",
+                "line2": null,
+                "city": "Ballwin",
+                "state": "MO",
+                "zipcode": "63011",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1283,
+                "fullName": "Frank Szofran",
+                "friendlyName": null,
+                "email": "frankszofran@clarksoneyecare.com",
+                "phoneNumber": "636-227-2600",
+                "title": null
+            },
+            "lastModifiedDate": "1567041262394",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2055,
+                    "developerId": 2052,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1566400202239,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 5,
+            "developerCode": "1004",
+            "name": "A-Z Professional Provider Services, LLC",
+            "website": null,
+            "selfDeveloper": false,
+            "address": null,
+            "contact": null,
+            "lastModifiedDate": "1459469973357",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 1,
+                    "developerId": 5,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973357,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2053,
+            "developerCode": "3052",
+            "name": "Sapphire Health",
+            "website": "https://www.sapphire-health.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 574,
+                "line1": "645 Kolter Drive",
+                "line2": null,
+                "city": "Indiana",
+                "state": "PA",
+                "zipcode": "15701",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1284,
+                "fullName": "Holly Angelo",
+                "friendlyName": "Holly",
+                "email": "info@sapphire-health.com",
+                "phoneNumber": "877-532-2345",
+                "title": "Quality Analyst"
+            },
+            "lastModifiedDate": "1572363132503",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2056,
+                    "developerId": 2053,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1567190648559,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2054,
+            "developerCode": "3053",
+            "name": "Rhinogram, LLC",
+            "website": "https://www.rhinogram.com/",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 590,
+                "line1": "2158 Northgate Park Lane, Suite 220",
+                "line2": null,
+                "city": "Chattanooga",
+                "state": "TN",
+                "zipcode": "37415",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1292,
+                "fullName": "Mandy Hancock",
+                "friendlyName": null,
+                "email": "mandy@rhinogram.com",
+                "phoneNumber": "423-800-7644",
+                "title": null
+            },
+            "lastModifiedDate": "1568404696956",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Negative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2057,
+                    "developerId": 2054,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1568404696956,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 6,
+            "developerCode": "1005",
+            "name": "A1 Medical Software Systems Inc.",
+            "website": "http://www.a1mss.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 137,
+                "line1": "1469  Colonial Blvd",
+                "line2": null,
+                "city": "Fort Myers",
+                "state": "FL",
+                "zipcode": "33907",
+                "country": "USA"
+            },
+            "contact": {
+                "contactId": 521,
+                "fullName": "Helmut Heiss",
+                "friendlyName": "Helmut",
+                "email": "office@a1mss.com",
+                "phoneNumber": "(239) 277-1122",
+                "title": null
+            },
+            "lastModifiedDate": "1473699362378",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 67,
+                    "developerId": 6,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973361,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2055,
+            "developerCode": "3054",
+            "name": "Payoda Technology Inc.",
+            "website": "https://www.healthviewx.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 612,
+                "line1": "5055 W. Park Blvd., Suite 400",
+                "line2": null,
+                "city": "Plano",
+                "state": "Texas",
+                "zipcode": "75093",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1297,
+                "fullName": "Sujana Arul Selvi A",
+                "friendlyName": null,
+                "email": "sujana.arulselvi@payoda.com",
+                "phoneNumber": "214-461-0242",
+                "title": null
+            },
+            "lastModifiedDate": "1570055497639",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2058,
+                    "developerId": 2055,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1570055497639,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 7,
+            "developerCode": "1006",
+            "name": "A21 Healthcare IT Solutions",
+            "website": null,
+            "selfDeveloper": false,
+            "address": null,
+            "contact": null,
+            "lastModifiedDate": "1459469973370",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2,
+                    "developerId": 7,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973370,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2056,
+            "developerCode": "3055",
+            "name": "Skilled Wound Care",
+            "website": "https://www.skilledwoundcare.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 693,
+                "line1": "12021 Wilshire Blvd #745",
+                "line2": null,
+                "city": "Los Angeles",
+                "state": "CA",
+                "zipcode": "90064",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1334,
+                "fullName": "Kiran Annavarapu",
+                "friendlyName": null,
+                "email": "kiran@skilledwoundcare.com",
+                "phoneNumber": "213-605-2468",
+                "title": null
+            },
+            "lastModifiedDate": "1571848566950",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "N/A",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2059,
+                    "developerId": 2056,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1571848566950,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2057,
+            "developerCode": "3056",
+            "name": "PRN Software (DoseSpot)",
+            "website": "https://www.dosespot.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 706,
+                "line1": "980 Washington St., Suite 330",
+                "line2": null,
+                "city": "Dedham",
+                "state": "MA",
+                "zipcode": "02026",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1336,
+                "fullName": "John Ketcham",
+                "friendlyName": null,
+                "email": "john@dosespot.com",
+                "phoneNumber": "781-613-8879 x 125",
+                "title": null
+            },
+            "lastModifiedDate": "1573576946849",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2060,
+                    "developerId": 2057,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1573506596951,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2058,
+            "developerCode": "3057",
+            "name": "Medicus Clinical, LLC",
+            "website": "https://assertus.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 707,
+                "line1": "36 Corporate Office Park 20 Rd.  ASSERTUS Building Suite 104",
+                "line2": null,
+                "city": "Guaynabo",
+                "state": "PR",
+                "zipcode": "00966",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1337,
+                "fullName": "Leonardo Fernandez Segura",
+                "friendlyName": null,
+                "email": "leonardo.fernandez@assertus.com",
+                "phoneNumber": "(787)622-2202",
+                "title": null
+            },
+            "lastModifiedDate": "1573677850390",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2061,
+                    "developerId": 2058,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1573677850390,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 11,
+            "developerCode": "1010",
+            "name": "ABH Enterprises, LLC",
+            "website": null,
+            "selfDeveloper": false,
+            "address": null,
+            "contact": null,
+            "lastModifiedDate": "1459469973385",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 3,
+                    "developerId": 11,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973385,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2059,
+            "developerCode": "3058",
+            "name": "Lille Group, Inc.",
+            "website": "https://www.lillegroup.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 773,
+                "line1": "PO Box 35",
+                "line2": null,
+                "city": "Guilderland",
+                "state": "NY",
+                "zipcode": "12084",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1355,
+                "fullName": "Jordan Rosen",
+                "friendlyName": null,
+                "email": "ehr_cert_inquiry@lillegroup.com",
+                "phoneNumber": "800-604-6650",
+                "title": null
+            },
+            "lastModifiedDate": "1577766614398",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": {
+                        "transparencyAttestation": "Negative",
+                        "removed": false
+                    }
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2062,
+                    "developerId": 2059,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1577766614398,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 12,
+            "developerCode": "1011",
+            "name": "ACL Laboratories",
+            "website": null,
+            "selfDeveloper": false,
+            "address": null,
+            "contact": null,
+            "lastModifiedDate": "1459469973389",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": {
+                        "transparencyAttestation": "N/A",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 4,
+                    "developerId": 12,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973389,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2060,
+            "developerCode": "3059",
+            "name": "mdTimeline, LLC",
+            "website": "https://mdtimeline.com/",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 774,
+                "line1": "466 Ave. Hostos",
+                "line2": null,
+                "city": "Hato Rey",
+                "state": "PR",
+                "zipcode": "00918",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1356,
+                "fullName": "Ernesto Rodriguez",
+                "friendlyName": null,
+                "email": "erodriguez@mdtimeline.com",
+                "phoneNumber": "787-275-5120",
+                "title": null
+            },
+            "lastModifiedDate": "1577804562831",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2063,
+                    "developerId": 2060,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1577804562831,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2061,
+            "developerCode": "3060",
+            "name": "DocToMe, Inc.",
+            "website": "https://www.ethizo.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 792,
+                "line1": "518 33rd Ave CT NW",
+                "line2": null,
+                "city": "Gig Harbor",
+                "state": "Washington",
+                "zipcode": "98335",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1359,
+                "fullName": "Jawad Iqbal",
+                "friendlyName": null,
+                "email": "jawad@doctome.org",
+                "phoneNumber": "(253) 777-7279",
+                "title": null
+            },
+            "lastModifiedDate": "1584411156417",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2064,
+                    "developerId": 2061,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1578423336226,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 15,
+            "developerCode": "1014",
+            "name": "ACS State Healthcare, LLC",
+            "website": null,
+            "selfDeveloper": false,
+            "address": null,
+            "contact": null,
+            "lastModifiedDate": "1459469973400",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": null
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 5,
+                    "developerId": 15,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973400,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2065,
+            "developerCode": "3064",
+            "name": "DB Consultants, Inc.",
+            "website": "http://www.quick-charts.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 799,
+                "line1": "1515 Crenshaw Ct.",
+                "line2": null,
+                "city": "Pleasant Hill,",
+                "state": "IA",
+                "zipcode": "50327",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1363,
+                "fullName": "Dave Havenridge",
+                "friendlyName": null,
+                "email": "Dave@quick-charts.com",
+                "phoneNumber": "515-490-8216",
+                "title": null
+            },
+            "lastModifiedDate": "1578588875017",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2068,
+                    "developerId": 2065,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1578588875017,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 18,
+            "developerCode": "1017",
+            "name": "ADS Technologies, Inc.",
+            "website": "https://fiehr.com/",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 554,
+                "line1": "174 Water Front, Suite 330",
+                "line2": null,
+                "city": "Oxon Hill",
+                "state": "MD",
+                "zipcode": "20745",
+                "country": "USA"
+            },
+            "contact": {
+                "contactId": 1277,
+                "fullName": "Samish Shah",
+                "friendlyName": null,
+                "email": "samishs@fiehr.com",
+                "phoneNumber": "301 904-2189",
+                "title": null
+            },
+            "lastModifiedDate": "1565292868296",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 6,
+                    "developerId": 18,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1459469973411,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2066,
+            "developerCode": "3065",
+            "name": "Radiologex",
+            "website": "https://www.radiologex.com/",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 805,
+                "line1": "19450 Jamboree Rd. Suite 310",
+                "line2": null,
+                "city": "Irvine,",
+                "state": "CA",
+                "zipcode": "92612",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1366,
+                "fullName": "George Tyler",
+                "friendlyName": null,
+                "email": "gt@blockchainassets.global",
+                "phoneNumber": "714-333-5077",
+                "title": null
+            },
+            "lastModifiedDate": "1579127413602",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2069,
+                    "developerId": 2066,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1579127413602,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "developerId": 2067,
+            "developerCode": "3066",
+            "name": "Viviphi Ltd",
+            "website": "http://www.viecure.com",
+            "selfDeveloper": false,
+            "address": {
+                "addressId": 808,
+                "line1": "4949 S. Syracuse St., Ste. 450",
+                "line2": null,
+                "city": "Denver,",
+                "state": "CO",
+                "zipcode": "80237",
+                "country": "US"
+            },
+            "contact": {
+                "contactId": 1367,
+                "fullName": "Nancy Hogue",
+                "friendlyName": null,
+                "email": "nancy.hogue@viecure.com",
+                "phoneNumber": "(720) 443-5420",
+                "title": null
+            },
+            "lastModifiedDate": "1579802070875",
+            "deleted": false,
+            "transparencyAttestations": [
+                {
+                    "acbId": 3,
+                    "acbName": "Drummond Group",
+                    "attestation": {
+                        "transparencyAttestation": "Affirmative",
+                        "removed": false
+                    }
+                },
+                {
+                    "acbId": 4,
+                    "acbName": "SLI Compliance",
+                    "attestation": null
+                },
+                {
+                    "acbId": 6,
+                    "acbName": "ICSA Labs",
+                    "attestation": null
+                },
+                {
+                    "acbId": 2,
+                    "acbName": "CCHIT",
+                    "attestation": null
+                },
+                {
+                    "acbId": 5,
+                    "acbName": "Surescripts LLC",
+                    "attestation": null
+                },
+                {
+                    "acbId": 1,
+                    "acbName": "UL LLC",
+                    "attestation": null
+                }
+            ],
+            "statusEvents": [
+                {
+                    "id": 2070,
+                    "developerId": 2067,
+                    "status": {
+                        "id": 1,
+                        "status": "Active"
+                    },
+                    "statusDate": 1579802070875,
+                    "reason": null
+                }
+            ],
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        {
+    "developerId": 448,
+    "developerCode": "1447",
+    "name": "Epic Systems Corporation",
+    "website": "http://www.epic.com",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 844,
+        "line1": "1979 Milky Way",
+        "line2": null,
+        "city": "Verona,",
+        "state": "WI",
+        "zipcode": "53593",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 1002,
+        "fullName": "Sasha TerMaat",
+        "friendlyName": null,
+        "email": "info@epic.com",
+        "phoneNumber": "608-271-9000",
+        "title": null
+    },
+    "lastModifiedDate": "1582575046948",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 1543,
+            "developerId": 448,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469975038,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 223,
+    "developerCode": "1222",
+    "name": "Cerner Health Services, Inc.",
+    "website": "http://www.cerner.com",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 234,
+        "line1": "51 Valley Stream Parkway",
+        "line2": "MS - T08",
+        "city": "Malvern",
+        "state": "PA",
+        "zipcode": "19355-1406",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 700,
+        "fullName": "Besher Tabbara",
+        "friendlyName": "Besher",
+        "email": "besher.tabbara@cerner.com",
+        "phoneNumber": "(610) 219-8669",
+        "title": null
+    },
+    "lastModifiedDate": "1484864506487",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 1919,
+            "developerId": 223,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974200,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 224,
+    "developerCode": "1223",
+    "name": "ChartLogic, a Division of Medsphere Systems Corporation",
+    "website": "http://www.medsphere.com",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 813,
+        "line1": "1220 E. 7800 S., Floor 3",
+        "line2": null,
+        "city": "Sandy",
+        "state": "Utah",
+        "zipcode": "84094",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 1142,
+        "fullName": "Michelle Knighton",
+        "friendlyName": null,
+        "email": "michelle.knighton@medsphere.com",
+        "phoneNumber": "541.639.4443",
+        "title": null
+    },
+    "lastModifiedDate": "1580497380805",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 189,
+            "developerId": 224,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974204,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+
+{
+    "developerId": 428,
+    "developerCode": "1427",
+    "name": "Emerge Clinical Decision Solutions",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": {
+        "contactId": 188,
+        "fullName": "Spencer McDonald",
+        "friendlyName": "Spencer",
+        "email": "s.mcdonald@emergecds.com",
+        "phoneNumber": "214-999-0800",
+        "title": null
+    },
+    "lastModifiedDate": "1464747166342",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 392,
+            "developerId": 428,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974961,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 429,
+    "developerCode": "1428",
+    "name": "Emergisoft",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469974964",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 374,
+            "developerId": 429,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974964,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 430,
+    "developerCode": "1429",
+    "name": "Emmi Solutions",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469974968",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 375,
+            "developerId": 430,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974968,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 431,
+    "developerCode": "1430",
+    "name": "Emory Healthcare",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469974972",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 376,
+            "developerId": 431,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974972,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 432,
+    "developerCode": "1431",
+    "name": "Empathic Clinical Suites, LLC",
+    "website": "https://www.empathicsoftware.com",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 728,
+        "line1": "910 1st Street South",
+        "line2": null,
+        "city": "Hopkins",
+        "state": "MN",
+        "zipcode": "55343",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 1341,
+        "fullName": "Debra Lindell",
+        "friendlyName": null,
+        "email": "debralindell@empathic.com",
+        "phoneNumber": "9524736200",
+        "title": null
+    },
+    "lastModifiedDate": "1575319368841",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 377,
+            "developerId": 432,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974975,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 433,
+    "developerCode": "1432",
+    "name": "Empower Technologies, Inc.",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469974984",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 378,
+            "developerId": 433,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974984,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 435,
+    "developerCode": "1434",
+    "name": "EnSoftek, Inc",
+    "website": "https://www.drcloudemr.com/",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 542,
+        "line1": "735 SW 158th Ave Suite 140",
+        "line2": null,
+        "city": "Portland",
+        "state": "OR",
+        "zipcode": "97229",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 1268,
+        "fullName": "Ramesh Nagul",
+        "friendlyName": null,
+        "email": "ramesh@drcloudemr.com",
+        "phoneNumber": "503-643-1226",
+        "title": null
+    },
+    "lastModifiedDate": "1559234805633",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 379,
+            "developerId": 435,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469974991,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 440,
+    "developerCode": "1439",
+    "name": "EnableDoc LLC",
+    "website": "http://www.enabledoc.com/",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 829,
+        "line1": "7700 Falstaff Road",
+        "line2": null,
+        "city": "McLean",
+        "state": "VA",
+        "zipcode": "22102",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 289,
+        "fullName": "Steve Rothschild",
+        "friendlyName": null,
+        "email": "steve@enabledoc.com",
+        "phoneNumber": "877-540-0933",
+        "title": null
+    },
+    "lastModifiedDate": "1582147304140",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 394,
+            "developerId": 440,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469975009,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 441,
+    "developerCode": "1440",
+    "name": "Encite, Inc.",
+    "website": "http://www.encite.us",
+    "selfDeveloper": false,
+    "address": {
+        "addressId": 855,
+        "line1": "841 Munn Road, Suite 325",
+        "line2": null,
+        "city": "Fort Mill,",
+        "state": "SC",
+        "zipcode": "29715",
+        "country": "USA"
+    },
+    "contact": {
+        "contactId": 1377,
+        "fullName": "Donald Stewart",
+        "friendlyName": null,
+        "email": "dstewart@encite.us",
+        "phoneNumber": "704-461-1259",
+        "title": null
+    },
+    "lastModifiedDate": "1583185253323",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": {
+                "transparencyAttestation": "Affirmative",
+                "removed": false
+            }
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 380,
+            "developerId": 441,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469975013,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 446,
+    "developerCode": "1445",
+    "name": "Engineered Care, Inc.",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469975031",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 381,
+            "developerId": 446,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469975031,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+},
+{
+    "developerId": 447,
+    "developerCode": "1446",
+    "name": "Enterprise Healthcare Systems Inc. (MDPlus.Net)",
+    "website": null,
+    "selfDeveloper": false,
+    "address": null,
+    "contact": null,
+    "lastModifiedDate": "1459469975034",
+    "deleted": false,
+    "transparencyAttestations": [
+        {
+            "acbId": 3,
+            "acbName": "Drummond Group",
+            "attestation": null
+        },
+        {
+            "acbId": 4,
+            "acbName": "SLI Compliance",
+            "attestation": null
+        },
+        {
+            "acbId": 6,
+            "acbName": "ICSA Labs",
+            "attestation": null
+        },
+        {
+            "acbId": 2,
+            "acbName": "CCHIT",
+            "attestation": null
+        },
+        {
+            "acbId": 5,
+            "acbName": "Surescripts LLC",
+            "attestation": null
+        },
+        {
+            "acbId": 1,
+            "acbName": "UL LLC",
+            "attestation": null
+        }
+    ],
+    "statusEvents": [
+        {
+            "id": 382,
+            "developerId": 447,
+            "status": {
+                "id": 1,
+                "status": "Active"
+            },
+            "statusDate": 1459469975034,
+            "reason": null
+        }
+    ],
+    "status": {
+        "id": 1,
+        "status": "Active"
+    }
+}
+]}

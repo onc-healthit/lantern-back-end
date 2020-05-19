@@ -11,6 +11,24 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
+var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
+	&endpointmanager.Vendor{
+		Name:          "Epic Systems Corporation",
+		DeveloperCode: "A",
+		CHPLID:        1,
+	},
+	&endpointmanager.Vendor{
+		Name:          "Cerner Corporation",
+		DeveloperCode: "B",
+		CHPLID:        2,
+	},
+	&endpointmanager.Vendor{
+		Name:          "Cerner Health Services, Inc.",
+		DeveloperCode: "C",
+		CHPLID:        3,
+	},
+}
+
 func Test_PersistHealthITProduct(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
@@ -18,10 +36,14 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	var err error
 	ctx := context.Background()
 
+	for _, vendor := range vendors {
+		store.AddVendor(ctx, vendor)
+	}
+
 	var hitp1 = &endpointmanager.HealthITProduct{
-		Name:      "Health IT System 1",
-		Version:   "1.0",
-		Developer: "Epic",
+		Name:     "Health IT System 1",
+		Version:  "1.0",
+		VendorID: vendors[0].ID, // epic
 		Location: &endpointmanager.Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -40,10 +62,9 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",
-		Developer:            "Cerner",
+		VendorID:             vendors[1].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
 		CertificationEdition: "2014"}
-
 	// add products
 
 	err = store.AddHealthITProduct(ctx, hitp1)
@@ -76,7 +97,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 
 	// retrieve products using vendor
 
-	h1s, err := store.GetHealthITProductsUsingVendor(ctx, "Epic")
+	h1s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[0].ID)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -87,7 +108,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
-	h2s, err := store.GetHealthITProductsUsingVendor(ctx, "Cerner")
+	h2s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[1].ID)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
@@ -96,21 +117,6 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	}
 	if !h2s[0].Equal(hitp2) {
 		t.Errorf("retrieved product is not equal to saved product.")
-	}
-
-	// get developer list
-	devs, err := store.GetHealthITProductDevelopers(ctx)
-	if err != nil {
-		t.Errorf("Error getting developer list: %s", err.Error())
-	}
-	if len(devs) != 2 {
-		t.Error("Expected developer list to have two entries")
-	}
-	if !contains(devs, "Epic") {
-		t.Error("Expected developer list to contain 'Epic'")
-	}
-	if !contains(devs, "Cerner") {
-		t.Error("Expected developer list to contain 'Epic'")
 	}
 
 	// update product
