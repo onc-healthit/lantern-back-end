@@ -121,7 +121,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	_, err = store.GetFHIREndpoint(ctx, endpoint1.ID) // ensure we deleted the entry
 	if err == nil {
-		t.Errorf("endpoint1 was not deleted: %s", err.Error())
+		t.Errorf("endpoint1 was not deleted")
 	}
 
 	_, err = store.GetFHIREndpoint(ctx, endpoint2.ID) // ensure we haven't deleted all entries

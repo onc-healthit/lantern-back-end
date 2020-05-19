@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
@@ -20,6 +21,12 @@ import (
 )
 
 var store *postgresql.Store
+
+var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
+	Name:          "Carefluence",
+	DeveloperCode: "D",
+	CHPLID:        4,
+}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -77,6 +84,9 @@ func Test_persistProduct(t *testing.T) {
 	ctx = context.Background()
 
 	// check that new item is stored
+	store.AddVendor(ctx, testVendorCHPLProd) // add vendor product so we can link to it
+	hitp.VendorID = testVendorCHPLProd.ID
+
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
 
@@ -148,6 +158,8 @@ func Test_persistProducts(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
+
+	store.AddVendor(ctx, testVendorCHPLProd)
 
 	var ct int
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM healthit_products;")
@@ -221,6 +233,35 @@ func Test_persistProducts(t *testing.T) {
 	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
 }
 
+func Test_parseHITProd(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	ctx := context.Background()
+	prod := testCHPLProd
+	expectedHITProd := testHITP
+
+	store.AddVendor(ctx, testVendorCHPLProd)
+	expectedHITProd.VendorID = testVendorCHPLProd.ID
+
+	// basic test
+
+	hitProd, err := parseHITProd(ctx, &prod, store)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, hitProd.Equal(&expectedHITProd), "CHPL Product did not parse into HealthITProduct as expected.")
+
+	// test bad url in api doc string
+
+	prod.APIDocumentation = "170.315 (g)(7)☹.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	_, err = parseHITProd(ctx, &prod, store)
+	switch errors.Cause(err).(type) {
+	case *url.Error:
+		// expect url.Error because bad URL provided and we check that using the url package.
+	default:
+		t.Fatal("Expected JSON syntax error")
+	}
+}
+
 func Test_GetCHPLProducts(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
@@ -236,6 +277,16 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var ctx context.Context
 
 	// basic test
+
+	// prep with vendors
+	tc, err = basicVendorTestClient()
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	th.Assert(t, err == nil, err)
 
 	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
 	expectedProdsStored := 168

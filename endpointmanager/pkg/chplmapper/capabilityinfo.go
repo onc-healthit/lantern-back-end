@@ -36,36 +36,47 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 		return nil
 	}
 
-	vendor, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
+	vendorID, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
 	}
 
-	ep.Vendor = vendor
+	ep.VendorID = vendorID
 
 	return nil
 }
 
-func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (string, error) {
-	vendorsRaw, err := store.GetHealthITProductDevelopers(ctx)
+func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (int, error) {
+	var vendorID int
+	vendorsRaw, err := store.GetVendorNames(ctx)
 	if err != nil {
-		return "", errors.Wrap(err, "error retrieving vendor list from database")
+		return 0, errors.Wrap(err, "error retrieving vendor list from database")
 	}
 	vendorsNorm := normalizeList(vendorsRaw)
 
 	match, err := publisherMatch(capStat, vendorsNorm, vendorsRaw)
 	if err != nil {
-		return "", errors.Wrap(err, "error matching health it developers in database using capability statement publisher")
+		return 0, errors.Wrap(err, "error matching vendors in database using capability statement publisher")
 	}
 
 	if match == "" {
 		match, err = hackMatch(capStat, vendorsNorm, vendorsRaw)
 		if err != nil {
-			return "", errors.Wrap(err, "error matching health it developers in database using method other than capability statement publisher")
+			return 0, errors.Wrap(err, "error matching vendors in database using method other than capability statement publisher")
 		}
 	}
 
-	return match, nil
+	if match == "" {
+		vendorID = 0
+	} else {
+		vendor, err := store.GetVendorUsingName(ctx, match)
+		vendorID = vendor.ID
+		if err != nil {
+			return 0, errors.Wrapf(err, "error retrieving vendor using name %s", match)
+		}
+	}
+
+	return vendorID, nil
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {

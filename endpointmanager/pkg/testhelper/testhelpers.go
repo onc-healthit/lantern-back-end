@@ -63,7 +63,6 @@ func IntegrationDBTestSetup(t *testing.T, db *sql.DB) (func(t *testing.T, db *sq
 // IntegrationDBTestSetupMain ensures that the database is empty before running any tests and returns
 // a teardown function that will delete all entries in the database.
 func IntegrationDBTestSetupMain(db *sql.DB) (func(db *sql.DB), error) {
-
 	tableNames, err := getTableNames(db)
 	if err != nil {
 		panic(err)
@@ -163,16 +162,34 @@ func tablesAreEmpty(tableNames []string, db *sql.DB) (string, error) {
 			return tableName, nil
 		}
 	}
+
 	return "", nil
 }
 
 func deleteTableEntries(tableNames []string, db *sql.DB) error {
+	// delete all non-history tables first
 	for _, tableName := range tableNames {
+		if strings.HasSuffix(tableName, "_history") {
+			continue
+		}
 		query := fmt.Sprintf("DELETE FROM %s", tableName)
 		_, err := db.Exec(query)
 		if err != nil {
 			return err
 		}
 	}
+
+	// delete history tables last
+	for _, tableName := range tableNames {
+		if !strings.HasSuffix(tableName, "_history") {
+			continue
+		}
+		query := fmt.Sprintf("DELETE FROM %s", tableName)
+		_, err := db.Exec(query)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

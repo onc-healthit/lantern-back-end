@@ -1,8 +1,12 @@
 package chplquerier
 
 import (
+	"context"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -28,4 +32,30 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	chplURL.Path = chplAPIPath + path
 
 	return chplURL, nil
+}
+
+func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL) ([]byte, error) {
+	// request ceritified products list
+	req, err := http.NewRequest("GET", chplURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "creating http request failed")
+	}
+	req = req.WithContext(ctx)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("CHPL request responded with status: " + resp.Status)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "reading the CHPL response body failed")
+	}
+
+	return body, nil
 }

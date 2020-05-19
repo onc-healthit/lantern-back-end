@@ -11,10 +11,10 @@ import (
 func Test_HealthITProductEqual(t *testing.T) {
 	now := time.Now()
 	var hitp1 = &HealthITProduct{
-		ID:        1,
-		Name:      "Health IT System 1",
-		Version:   "1.0",
-		Developer: "Epic",
+		ID:       1,
+		Name:     "Health IT System 1",
+		Version:  "1.0",
+		VendorID: 2,
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -31,10 +31,10 @@ func Test_HealthITProductEqual(t *testing.T) {
 		LastModifiedInCHPL:    now,
 		CHPLID:                "ID"}
 	var hitp2 = &HealthITProduct{
-		ID:        1,
-		Name:      "Health IT System 1",
-		Version:   "1.0",
-		Developer: "Epic",
+		ID:       1,
+		Name:     "Health IT System 1",
+		Version:  "1.0",
+		VendorID: 2,
 		Location: &Location{
 			Address1: "123 Gov Way",
 			Address2: "Suite 123",
@@ -73,11 +73,11 @@ func Test_HealthITProductEqual(t *testing.T) {
 	}
 	hitp2.Version = hitp1.Version
 
-	hitp2.Developer = "other"
+	hitp2.VendorID = 3
 	if hitp1.Equal(hitp2) {
-		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. Developer should be different. %s vs %s", hitp1.Developer, hitp2.Developer)
+		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. Developer should be different. %d vs %d", hitp1.VendorID, hitp2.VendorID)
 	}
-	hitp2.Developer = hitp1.Developer
+	hitp2.VendorID = hitp1.VendorID
 
 	hitp2.Location.Address1 = "other"
 	if hitp1.Equal(hitp2) {

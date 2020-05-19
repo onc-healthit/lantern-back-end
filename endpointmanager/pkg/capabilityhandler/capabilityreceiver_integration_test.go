@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -26,35 +25,21 @@ var testFhirEndpoint2 = &endpointmanager.FHIREndpoint{
 	URL: "https://test-two.com",
 }
 
-var hitps []*endpointmanager.HealthITProduct = []*endpointmanager.HealthITProduct{
-	&endpointmanager.HealthITProduct{
-		Name:                 "EpicCare Ambulatory Base",
-		Version:              "February 2020",
-		Developer:            "Epic Systems Corporation",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2020, 2, 20, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.1447.Epic.AM.13.1.200220",
-		APIURL:               "https://open.epic.com/Interface/FHIR",
+var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
+	&endpointmanager.Vendor{
+		Name:          "Epic Systems Corporation",
+		DeveloperCode: "A",
+		CHPLID:        1,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "PowerChart (Clinical)",
-		Version:              "2018.01",
-		Developer:            "Cerner Corporation",
-		CertificationStatus:  "Active",
-		CertificationDate:    time.Date(2018, 7, 27, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2015",
-		CHPLID:               "15.04.04.1221.Powe.18.03.1.180727",
-		APIURL:               "http://fhir.cerner.com/authorization/",
+	&endpointmanager.Vendor{
+		Name:          "Cerner Corporation",
+		DeveloperCode: "B",
+		CHPLID:        2,
 	},
-	&endpointmanager.HealthITProduct{
-		Name:                 "Health Services Analytics",
-		Version:              "8.00 SP1-SP5",
-		Developer:            "Cerner Health Services, Inc.",
-		CertificationStatus:  "Withdrawn by Developer",
-		CertificationDate:    time.Date(2017, 12, 5, 0, 0, 0, 0, time.UTC),
-		CertificationEdition: "2014",
-		CHPLID:               "14.07.07.1222.HEA5.03.01.1.171205",
+	&endpointmanager.Vendor{
+		Name:          "Cerner Health Services, Inc.",
+		DeveloperCode: "C",
+		CHPLID:        3,
 	},
 }
 
@@ -99,9 +84,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	ctx := context.Background()
 
-	// populate healthit products
-	for _, hitp := range hitps {
-		err = store.AddHealthITProduct(ctx, hitp)
+	// populate vendors
+	for _, vendor := range vendors {
+		err = store.AddVendor(ctx, vendor)
 		th.Assert(t, err == nil, err)
 	}
 
@@ -112,7 +97,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	expectedEndpt := testFhirEndpointInfo
-	expectedEndpt.Vendor = "Cerner Corporation"
+	expectedEndpt.VendorID = vendors[1].ID // "Cerner Corporation"
 	expectedEndpt.URL = testFhirEndpoint1.URL
 	queueTmp := testQueueMsg
 

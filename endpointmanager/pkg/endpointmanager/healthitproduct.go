@@ -15,7 +15,7 @@ type HealthITProduct struct {
 	ID                    int
 	Name                  string
 	Version               string
-	Developer             string    // the name of the vendor that creates the product.
+	VendorID              int       // the id of the vendor that creates the product.
 	Location              *Location // the address listed in CHPL for the Developer.
 	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
 	APISyntax             string    // the format of the information provided by the API, for example, REST, FHIR STU3, etc.
@@ -46,7 +46,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp.Version != hitp2.Version {
 		return false
 	}
-	if hitp.Developer != hitp2.Developer {
+	if hitp.VendorID != hitp2.VendorID {
 		return false
 	}
 	if !hitp.Location.Equal(hitp2.Location) {
@@ -88,7 +88,7 @@ func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 
 	hitp.Name = hitp2.Name
 	hitp.Version = hitp2.Version
-	hitp.Developer = hitp2.Developer
+	hitp.VendorID = hitp2.VendorID
 	hitp.Location = hitp2.Location
 	hitp.AuthorizationStandard = hitp2.AuthorizationStandard
 	hitp.APISyntax = hitp2.APISyntax

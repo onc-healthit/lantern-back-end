@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -81,35 +80,12 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 func getProductJSON(ctx context.Context, client *http.Client) ([]byte, error) {
 	chplURL, err := makeCHPLProductURL()
 	if err != nil {
-		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
+		return nil, errors.Wrap(err, "error creating CHPL product URL")
 	}
 
-	// request ceritified products list
-	req, err := http.NewRequest("GET", chplURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "creating http request failed")
-	}
-	req = req.WithContext(ctx)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("CHPL certified products request responded with status: " + resp.Status)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "reading the CHPL response body failed")
-	}
-
-	return body, nil
+	return getJSON(ctx, client, chplURL)
 }
 
-// creates the URL used to query CHPL including the data fields
 func makeCHPLProductURL() (*url.URL, error) {
 	queryArgs := make(map[string]string)
 	fieldStr := strings.Join(fields[:], ",")
@@ -144,11 +120,16 @@ func convertProductJSONToObj(ctx context.Context, prodJSON []byte) (*chplCertifi
 }
 
 // takes the JSON model and converts it into an endpointmanager.HealthITProduct
-func parseHITProd(prod *chplCertifiedProduct) (*endpointmanager.HealthITProduct, error) {
+func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
+	id, err := getProductVendorID(ctx, prod, store)
+	if err != nil {
+		return nil, errors.Wrap(err, "getting the product's vendor id failed")
+	}
+
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
 		Version:               prod.Version,
-		Developer:             prod.Developer,
+		VendorID:              id,
 		CertificationStatus:   prod.CertificationStatus,
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
@@ -163,6 +144,20 @@ func parseHITProd(prod *chplCertifiedProduct) (*endpointmanager.HealthITProduct,
 	dbProd.APIURL = apiURL
 
 	return &dbProd, nil
+}
+
+// returns 0 if no match found.
+func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
+	vendor, err := store.GetVendorUsingName(ctx, prod.Developer)
+	if err == sql.ErrNoRows {
+		log.Warnf("no vendor match for product %s with vendor %s", prod.Product, prod.Developer)
+		return 0, nil
+	}
+	if err != nil {
+		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
+	}
+
+	return vendor.ID, nil
 }
 
 // parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
@@ -221,7 +216,7 @@ func persistProduct(ctx context.Context,
 	store *postgresql.Store,
 	prod *chplCertifiedProduct) error {
 
-	newDbProd, err := parseHITProd(prod)
+	newDbProd, err := parseHITProd(ctx, prod, store)
 	if err != nil {
 		return err
 	}
