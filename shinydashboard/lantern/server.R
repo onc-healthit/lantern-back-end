@@ -12,5 +12,4 @@ function(input, output, session) {
    callModule(
     performance,
     "performance_page") 
-
 }

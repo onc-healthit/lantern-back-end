@@ -16,10 +16,6 @@ purrr::walk(config_yaml$module_files, source)
 root <- ifelse(Sys.getenv("HOME")=='/home/shiny',".","lantern")
 http_response_code_tbl <- read_csv(here(root,"http_codes.csv")) %>% mutate(code_chr=as.character(code))
 
-
-
-
-
 # we want the current set of http response codes from the endpoint monitoring
 # first get the entries from the metrics_labels table for http_request_responses
 http_response_ids <- metrics_labels %>%
@@ -53,7 +49,7 @@ http_summary <- http_pct %>%
   summarise(Count=n()) 
 
 # Get the FHIR version for each endpoint
-fhir_version_tbl <- as_tibble(tbl(con,sql("select id,url,vendor,capability_statement->>'fhirVersion' as FHIR from fhir_endpoints_info where capability_statement->>'fhirVersion' IS NOT NULL")))
+fhir_version_tbl <- as_tibble(tbl(con,sql("select f.id,f.url,v.name as vendor,f.capability_statement->>'fhirVersion' as FHIR from fhir_endpoints_info f LEFT JOIN vendors v on f.vendor_id = v.id where capability_statement->>'fhirVersion' IS NOT NULL")))
 
 # Get the count of endpoints by vendor, and use "Unknown" for any entries
 # where the vendor field is empty
@@ -68,5 +64,5 @@ fhir_version_vendor_count <- fhir_version_tbl %>%
 fhir_version_list <- as.list(fhir_version_tbl %>% distinct("FHIR Version"=fhir))
 
 # Get the list of distinct vendors for use in filtering
-vendor_list <- as.list(as_tibble(fhir_endpoints_info %>% distinct(vendor)) %>% mutate(vendor = na_if(vendor,"")) %>% tidyr::replace_na(list(vendor="Unknown")) %>% pull(vendor))
+vendor_list <- as.list(fhir_version_tbl %>% distinct(vendor) %>% pull(vendor))
 
