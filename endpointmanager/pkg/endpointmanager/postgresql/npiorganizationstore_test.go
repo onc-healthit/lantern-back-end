@@ -4,6 +4,7 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -364,32 +365,23 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		t.Fatalf("Expected two rows in DB")
 	}
 
-	rows, err := store.DB.Query("SELECT organization_npi_id, url, confidence FROM endpoint_organization")
-	defer rows.Close()
+	sNpiID, sEpURL, sConfidence, err := store.GetNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio1.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio1.NPI_ID))
+	th.Assert(t, sEpURL == endpoint1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint1.URL))
+	th.Assert(t, sConfidence == .85, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .85))
 
-	for rows.Next() {
-		var endpointURL string
-		var npioID string
-		var confidence float64
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npio2.NPI_ID, endpoint2.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio2.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio2.NPI_ID))
+	th.Assert(t, sEpURL == endpoint2.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint2.URL))
+	th.Assert(t, sConfidence == .75, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .75))
 
-		err = rows.Scan(&npioID, &endpointURL, &confidence)
-
-		if endpointURL == endpoint1.URL {
-			if npioID != npio1.NPI_ID {
-				t.Fatalf("Expected ID %s to be ID %s", npioID, npio1.NPI_ID)
-			}
-			if confidence != .85 {
-				t.Fatalf("Expected confidence %f to be %f", confidence, .85)
-			}
-		} else if endpointURL == endpoint2.URL {
-			if npioID != npio2.NPI_ID {
-				t.Fatalf("Expected ID %s to be ID %s", npioID, npio2.NPI_ID)
-			}
-			if confidence != .75 {
-				t.Fatalf("Expected confidence %f to be %f", confidence, .75)
-			}
-		} else {
-			t.Fatal("Getting unexpected entries in DB.")
-		}
-	}
+	err = store.UpdateNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL, .5)
+	th.Assert(t, err == nil, err)
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio1.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio1.NPI_ID))
+	th.Assert(t, sEpURL == endpoint1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint1.URL))
+	th.Assert(t, sConfidence == .5, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .5))
 }

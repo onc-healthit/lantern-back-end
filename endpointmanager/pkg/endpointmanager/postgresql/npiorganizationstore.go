@@ -216,8 +216,10 @@ func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID str
 	return err
 }
 
-func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) (int, string, float64, error) {
-	var retOrgID int
+// GetNPIOrganizationFHIREndpointLink retrieves the organization id, endpoint url, and confidence for the requested organization id and
+// endpoint url. If the link doesn't exist, returns a SQL no rows error.
+func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) (string, string, float64, error) {
+	var retOrgID string
 	var retEndpointURL string
 	var retConfidence float64
 
@@ -234,6 +236,7 @@ func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID st
 	return retOrgID, retEndpointURL, retConfidence, err
 }
 
+// UpdateNPIOrganizationFHIREndpointLink updates the confidence value for the link between the organization id and the endpoint url.
 func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
 	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
 		orgID,
