@@ -11,6 +11,16 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+// PrometheusArgs is a struct of the prometheus collectors and a URL used to access
+// the collectors
+type PrometheusArgs struct {
+	URLString                         string
+	ResponseTimeGaugeVec              *prometheus.GaugeVec
+	TotalUptimeChecksCounterVec       *prometheus.CounterVec
+	TotalFailedUptimeChecksCounterVec *prometheus.CounterVec
+	HTTPCodesGaugeVec                 *prometheus.GaugeVec
+}
+
 // Need to define timeout or else it is infinite
 var netClient = &http.Client{
 	Timeout: time.Second * 35,
@@ -21,25 +31,9 @@ var netClient = &http.Client{
 // under the label specified by urlString
 func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) error {
 	// Get arguments
-	urlString, ok := (*args)["urlString"].(string)
+	promArgs, ok := (*args)["promArgs"].(PrometheusArgs)
 	if !ok {
-		return fmt.Errorf("unable to cast urlString to string from arguments")
-	}
-	responseTimeGaugeVec, ok := (*args)["respTime"].(*prometheus.GaugeVec)
-	if !ok {
-		return fmt.Errorf("unable to cast respTime to *prometheus.GaugeVec from arguments")
-	}
-	totalUptimeChecksCounterVec, ok := (*args)["totalUptime"].(*prometheus.CounterVec)
-	if !ok {
-		return fmt.Errorf("unable to cast totalUptime to *prometheus.CounterVec from arguments")
-	}
-	totalFailedUptimeChecksCounterVec, ok := (*args)["failUptime"].(*prometheus.CounterVec)
-	if !ok {
-		return fmt.Errorf("unable to cast failUptime to *prometheus.CounterVec from arguments")
-	}
-	httpCodesGaugeVec, ok := (*args)["httpCodes"].(*prometheus.GaugeVec)
-	if !ok {
-		return fmt.Errorf("unable to cast httpCodes to *prometheus.GaugeVec from arguments")
+		return fmt.Errorf("unable to case promArgs to type PrometheusArgs from arguments")
 	}
 
 	// recover from fatal errors
@@ -68,15 +62,15 @@ func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) err
 
 	var responseTime = float64(time.Since(start).Seconds())
 
-	responseTimeGaugeVec.WithLabelValues(urlString).Set(responseTime)
+	promArgs.ResponseTimeGaugeVec.WithLabelValues(promArgs.URLString).Set(responseTime)
 
 	if resp != nil && resp.StatusCode != http.StatusOK {
-		totalFailedUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
+		promArgs.TotalFailedUptimeChecksCounterVec.WithLabelValues(promArgs.URLString).Inc()
 	}
 	if resp != nil {
-		httpCodesGaugeVec.WithLabelValues(urlString).Set(float64(resp.StatusCode))
+		promArgs.HTTPCodesGaugeVec.WithLabelValues(promArgs.URLString).Set(float64(resp.StatusCode))
 	}
-	totalUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
+	promArgs.TotalUptimeChecksCounterVec.WithLabelValues(promArgs.URLString).Inc()
 
 	return err
 }
