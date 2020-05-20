@@ -85,7 +85,7 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	var tlsVersion string
 	var capResp []byte
 
-	normalizedURL := endpointmanager.NormalizeURL(fhirURL.String())
+	normalizedURL := endpointmanager.NormalizeEndpointURL(fhirURL.String())
 
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
