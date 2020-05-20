@@ -116,7 +116,9 @@ CREATE TABLE fhir_endpoints_info (
     capability_statement    JSONB,
     validation              JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    smart_http_response     INTEGER,
+    smart_response          JSONB
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -134,7 +136,9 @@ CREATE TABLE fhir_endpoints_info_history (
     capability_statement    JSONB,
     validation              JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    smart_http_response     INTEGER,
+    smart_response          JSONB
 );
 
 CREATE TABLE endpoint_organization (

@@ -64,6 +64,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 	httpResponse := int(httpResponseFloat)
 
+	smarthttpResponseFloat, ok := msgJSON["smarthttpResponse"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast http response to int")
+	}
+	smarthttpResponse := int(smarthttpResponseFloat)
+
 	var capStat capabilityparser.CapabilityStatement
 	if msgJSON["capabilityStatement"] != nil {
 		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
@@ -74,6 +80,14 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
+	}
+ 	var smartResponse endpointmanager.SMARTResponse
+	if msgJSON["smartResp"] != nil {
+		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
+		}
+		smartResponse, err = endpointmanager.NewSMARTRespFromInterface(smartInt)
 	}
 
 	/**
@@ -108,6 +122,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			"errors": validationObj,
 		},
 		CapabilityStatement: capStat,
+		SMARTHTTPResponse: smarthttpResponse,
+		SMARTResponse: smartResponse,
 	}
 
 	return &fhirEndpoint, nil
@@ -124,7 +140,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
-
+	
 	store, ok := (*args)["store"].(*postgresql.Store)
 	if !ok {
 		return fmt.Errorf("unable to cast postgresql store from arguments")
@@ -157,6 +173,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
 		existingEndpt.Validation = fhirEndpoint.Validation
+		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+		existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
 		if err != nil {
 			return err
@@ -190,7 +208,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	errs := make(chan error)
 	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
 
-	for elem := range errs {
+ 	for elem := range errs {
 		log.Warn(elem)
 	}
 
