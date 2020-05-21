@@ -50,13 +50,6 @@ func NormalizeURL(url string) string {
 		normalized = "https://" + normalized
 	}
 
-	// for cases such as foobar.com/
-	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
-		if !strings.HasSuffix(url, "/") {
-			normalized = normalized + "/"
-		}
-		normalized = normalized + "metadata"
-	}
 	return normalized
 }
 
