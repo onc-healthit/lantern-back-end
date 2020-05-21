@@ -73,10 +73,6 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		log.Warnf("Error parsing URL string %s\n", urlString)
 		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
 	}
-	wellKnownURL, err := url.Parse(urlString)
-
-	metadataURL.Path = path.Join(metadataURL.Path, "metadata")
-	wellKnownURL.Path = path.Join(wellKnownURL.Path, "/.well-known/smart-configuration")
 
 	jobArgs := make(map[string]interface{})
 

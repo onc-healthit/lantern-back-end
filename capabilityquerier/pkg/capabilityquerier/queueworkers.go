@@ -24,7 +24,6 @@ type Job struct {
 	MessageQueue *lanternmq.MessageQueue
 	Channel      *lanternmq.ChannelID
 	QueueName    string
-	SMARTURL *url.URL
 }
 
 // QueueWorkers handles the provided number of queue workers and allows jobs to be sent to the queue
@@ -113,7 +112,7 @@ func jobHandler(job *Job) error {
 	jobCtx, cancel := context.WithDeadline(job.Context, time.Now().Add(job.Duration))
 	defer cancel()
 
-	err := GetAndSendCapabilityStatement(jobCtx, job.FHIRURL, job.SMARTURL, job.Client, job.MessageQueue, job.Channel, job.QueueName)
+	err := GetAndSendCapabilityStatement(jobCtx, job.FHIRURL, job.Client, job.MessageQueue, job.Channel, job.QueueName)
 	return err
 }
 

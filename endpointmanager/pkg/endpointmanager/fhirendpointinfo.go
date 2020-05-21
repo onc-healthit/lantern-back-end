@@ -25,51 +25,8 @@ type FHIREndpointInfo struct {
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	SMARTHTTPResponse   int
-	SMARTResponse       SMARTResponse
+	SMARTResponse       capabilityparser.SMARTResponse
 }
-
-type SMARTResponse interface {
-	Equal(SMARTResponse) bool
-	GetJSON() ([]byte, error)
-}
-type Response struct {
-	resp map[string]interface{}
-}
-
-type ResponseBody struct {
-	Response
-}
-
-func NewResponseBody(response map[string]interface{}) *ResponseBody {
-	return &ResponseBody{
-		Response: Response{
-			resp: response,
-		},
-	}
-}
-
-func NewSMARTRespFromInterface(response map[string]interface{}) (SMARTResponse, error) {
-	if response == nil {
-		return nil, nil
-	}
-	return NewResponseBody(response), nil
-}
-
-func NewSMARTResp(respJSON []byte) (SMARTResponse, error) {
-	var err error
-	var respMsg map[string]interface{}
-
-	if len(respJSON) == 0 {
-		return nil, nil
-	}
-
-	err = json.Unmarshal(respJSON, &respMsg)
-	if err != nil {
-		return nil, errors.Wrap(err, "error unmarshalling JSON capability statement")
-	}
-
-	return NewSMARTRespFromInterface(respMsg)
-} 
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
@@ -124,30 +81,4 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	}
 
 	return true
-}
-
- // Equal checks if the smart response body is equal to the given smart response body.
-func (resp *Response) Equal(resp2 SMARTResponse) bool {
-	if resp2 == nil {
-		return false
-	}
-
-	j1, err := resp.GetJSON()
-	if err != nil {
-		return false
-	}
-	j2, err := resp2.GetJSON()
-	if err != nil {
-		return false
-	}
-	if !bytes.Equal(j1, j2) {
-		return false
-	}
-
-	return true
-}
-
-// GetJSON returns the JSON representation of the capability statement.
-func (resp *Response) GetJSON() ([]byte, error) {
-	return json.Marshal(resp.resp)
 }
