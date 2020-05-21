@@ -217,28 +217,6 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 				t.Fatalf("Endpoint url mapped to wrong npi organization")
 			}
 		}
-
-		// // Assert that deletion from npi_organizations list removes the link
-		// // Assert that deletion from fhir_endpoints list removes the link
-		// if len(ep.mapped_npi_ids) == 1 {
-		// 	query_str = "DELETE FROM npi_organizations WHERE npi_id=$1;"
-		// 	_, err = store.DB.Exec(query_str, ep.mapped_npi_ids[0])
-		// 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-		// 	failOnError(err)
-		// 	if link_count != expected_link_count-1 {
-		// 		t.Fatalf("Database should only contain " + strconv.Itoa(expected_link_count-1) + " links after npi_organization was deleted. Has: " + strconv.Itoa(link_count))
-		// 	}
-		// 	expected_link_count = link_count
-		// } else {
-		// 	query_str = "DELETE FROM fhir_endpoints WHERE id=$1;"
-		// 	_, err = store.DB.Exec(query_str, endpoint_id)
-		// 	err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-		// 	failOnError(err)
-		// 	if link_count != expected_link_count-len(ep.mapped_npi_ids) {
-		// 		t.Fatalf("Database should contain " + strconv.Itoa(expected_link_count) + " links. Has: " + strconv.Itoa(link_count))
-		// 	}
-		// 	expected_link_count = link_count
-		// }
 	}
 }
 
