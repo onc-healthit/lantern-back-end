@@ -47,11 +47,14 @@ func Test_GetHTTP200Response(t *testing.T) {
 	defer cancelFunc()
 
 	args := make(map[string]interface{})
-	args["urlString"] = capabilityStatmentURL
-	args["respTime"] = responseTimeGaugeVec
-	args["totalUptime"] = totalUptimeChecksCounterVec
-	args["failUptime"] = totalFailedUptimeChecksCounterVec
-	args["httpCodes"] = httpCodesGaugeVec
+	promArgs := PrometheusArgs{
+		URLString:                         capabilityStatmentURL,
+		ResponseTimeGaugeVec:              responseTimeGaugeVec,
+		TotalUptimeChecksCounterVec:       totalUptimeChecksCounterVec,
+		TotalFailedUptimeChecksCounterVec: totalFailedUptimeChecksCounterVec,
+		HTTPCodesGaugeVec:                 httpCodesGaugeVec,
+	}
+	args["promArgs"] = promArgs
 	var err = GetResponseAndTiming(ctx, &args)
 
 	if err != nil {

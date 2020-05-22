@@ -77,7 +77,7 @@ func Test_GetEnptsAndSend(t *testing.T) {
 
 	queueName := viper.GetString("qname")
 	queueIsEmpty(t, queueName)
-	defer cleanQueue(t, queueName)
+	defer checkCleanQueue(t, qName, channel)
 
 	ctx := context.Background()
 	var err error
@@ -95,7 +95,7 @@ func Test_GetEnptsAndSend(t *testing.T) {
 
 	// need to pause to ensure all messages are on the queue before we count them
 	time.Sleep(10 * time.Second)
-	count, err := queueCount(queueName)
+	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
 	// Expect 5 messages: start meesage, 3 endpoints, and stop message
 	th.Assert(t, count == 5, fmt.Sprintf("expected there to be 5 messages in the queue, instead got %d", count))
@@ -103,33 +103,14 @@ func Test_GetEnptsAndSend(t *testing.T) {
 }
 
 func queueIsEmpty(t *testing.T, queueName string) {
-	count, err := queueCount(queueName)
+	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 0, "should be no messages in queue.")
 }
 
-func cleanQueue(t *testing.T, queueName string) {
-	_, err := channel.QueuePurge(queueName, false)
+func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
 	th.Assert(t, err == nil, err)
-	count, err := queueCount(queueName)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 0, "should be no messages in queue.")
-}
-
-func queueCount(queueName string) (int, error) {
-	queue, err := channel.QueueDeclarePassive(
-		queueName,
-		true,
-		false,
-		false,
-		false,
-		nil, // args
-	)
-	if err != nil {
-		return -1, err
-	}
-
-	return queue.Messages, nil
 }
 
 func setup() error {

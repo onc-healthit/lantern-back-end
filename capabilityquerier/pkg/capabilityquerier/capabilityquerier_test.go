@@ -62,11 +62,14 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	args := make(map[string]interface{})
-	args["FHIRURL"] = fhirURL
-	args["client"] = &(tc.Client)
-	args["mq"] = &mq
-	args["ch"] = &ch
-	args["qName"] = queueName
+	querierArgs := QuerierArgs{
+		FhirURL:      fhirURL,
+		Client:       &(tc.Client),
+		MessageQueue: &mq,
+		ChannelID:    &ch,
+		QueueName:    queueName,
+	}
+	args["querierArgs"] = querierArgs
 
 	// execute tested function
 	err = GetAndSendCapabilityStatement(ctx, &args)
@@ -89,7 +92,8 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
-	args["client"] = &(tc.Client)
+	querierArgs.Client = &(tc.Client)
+	args["querierArgs"] = querierArgs
 
 	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)

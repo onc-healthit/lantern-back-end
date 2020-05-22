@@ -3,6 +3,7 @@
 package accessqueue_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -49,7 +50,7 @@ func TestMain(m *testing.M) {
 
 func Test_ConnectToServerAndQueue(t *testing.T) {
 	queueIsEmpty(t, qName)
-	defer cleanQueue(t, qName)
+	defer checkCleanQueue(t, qName, channel)
 
 	var chID lanternmq.ChannelID
 	var err error
@@ -84,7 +85,7 @@ func Test_ConnectToServerAndQueue(t *testing.T) {
 
 func Test_ConnectToQueue(t *testing.T) {
 	queueIsEmpty(t, qName)
-	defer cleanQueue(t, qName)
+	defer checkCleanQueue(t, qName, channel)
 
 	var err error
 
@@ -110,34 +111,82 @@ func Test_ConnectToQueue(t *testing.T) {
 	th.Assert(t, errors.Cause(err).Error() == "ChannelID not of correct type", "given channel should not exist")
 }
 
+func Test_CleanQueue(t *testing.T) {
+	queueIsEmpty(t, qName)
+	defer checkCleanQueue(t, qName, channel)
+
+	var err error
+
+	// set up
+	mq2 := &rabbitmq.MessageQueue{}
+	err = mq2.Connect(qUser, qPassword, qHost, qPort)
+	th.Assert(t, err == nil, "unable to connect to message queue server")
+	ch, err := mq2.CreateChannel()
+	th.Assert(t, err == nil, "unable to create channel to message queue server")
+
+	// all ok
+	mq_, _, err := aq.ConnectToQueue(mq2, ch, qName)
+	mq = &mq_
+	th.Assert(t, err == nil, err)
+
+	// add message to queue then clean
+	ctx := context.Background()
+	err = aq.SendToQueue(ctx, "clean queue message", mq, &ch, qName)
+	th.Assert(t, err == nil, err)
+
+	// ack the message so it will get purged
+	_, _, err = channel.Get(qName, true)
+	th.Assert(t, err == nil, err)
+
+	err = aq.CleanQueue(qName, channel)
+	th.Assert(t, err == nil, err)
+}
+
+func Test_QueueCount(t *testing.T) {
+	queueIsEmpty(t, qName)
+	defer checkCleanQueue(t, qName, channel)
+
+	var err error
+
+	// set up
+	mq2 := &rabbitmq.MessageQueue{}
+	err = mq2.Connect(qUser, qPassword, qHost, qPort)
+	th.Assert(t, err == nil, "unable to connect to message queue server")
+	ch, err := mq2.CreateChannel()
+	th.Assert(t, err == nil, "unable to create channel to message queue server")
+
+	// all ok
+	mq_, _, err := aq.ConnectToQueue(mq2, ch, qName)
+	mq = &mq_
+	th.Assert(t, err == nil, err)
+
+	// base test
+	count, err := aq.QueueCount(qName, channel)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 0, "there should be no messages in the queue")
+
+	// add message to queue
+	ctx := context.Background()
+	err = aq.SendToQueue(ctx, "queue count message", mq, &ch, qName)
+	th.Assert(t, err == nil, err)
+	// ack the message
+	_, _, err = channel.Get(qName, true)
+	th.Assert(t, err == nil, err)
+
+	count, err = aq.QueueCount(qName, channel)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, fmt.Sprintf("there should be one message in the queue, instead there are %d", count))
+}
+
 func queueIsEmpty(t *testing.T, queueName string) {
-	count, err := queueCount(queueName)
+	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 0, "should be no messages in queue.")
 }
 
-func cleanQueue(t *testing.T, queueName string) {
-	_, err := channel.QueuePurge(queueName, false)
+func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
 	th.Assert(t, err == nil, err)
-	count, err := queueCount(queueName)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 0, "should be no messages in queue.")
-}
-
-func queueCount(queueName string) (int, error) {
-	queue, err := channel.QueueDeclarePassive(
-		queueName,
-		true,
-		false,
-		false,
-		false,
-		nil, // args
-	)
-	if err != nil {
-		return -1, err
-	}
-
-	return queue.Messages, nil
 }
 
 func setup() error {
