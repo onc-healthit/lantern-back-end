@@ -31,6 +31,7 @@ import (
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
+	"github.com/streadway/amqp"
 	Assert "github.com/stretchr/testify/assert"
 )
 
@@ -41,6 +42,10 @@ type Endpoint struct {
 }
 
 var store *postgresql.Store
+var qUser, qPassword, qHost, qPort, testQName string
+
+var conn *amqp.Connection
+var channel *amqp.Channel
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
@@ -51,6 +56,7 @@ func TestMain(m *testing.M) {
 	}
 
 	teardown, err := th.IntegrationDBTestSetupMain(store.DB)
+	testQueueSetup()
 
 	populateTestNPIData()
 	populateTestEndpointData()
@@ -61,6 +67,8 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	teardown(store.DB)
+	channel.Close()
+	conn.Close()
 
 	os.Exit(code)
 }
@@ -119,6 +127,55 @@ func setupTestServer() {
 	if err != nil {
 		log.Fatal("HTTP Server Creation Error: ", err.Error())
 	}
+}
+
+func testQueueSetup() {
+	var err error
+
+	qUser = viper.GetString("quser")
+	qPassword = viper.GetString("qpassword")
+	qHost = viper.GetString("qhost")
+	qPort = viper.GetString("qport")
+	testQName = viper.GetString("qname")
+
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
+	err = th.CheckResources(hap)
+	if err != nil {
+		log.Fatal("Check Resources Error: ", err.Error())
+	}
+
+	fmt.Printf("amqp://%s:%s@%s:%s/", qUser, qPassword, qHost, qPort)
+	// setup specific queue info so we can test what's in the queue
+	s := fmt.Sprintf("amqp://%s:%s@%s:%s/", qUser, qPassword, qHost, qPort)
+	conn, err = amqp.Dial(s)
+	if err != nil {
+		log.Fatal("Database Connection Error: ", err.Error())
+	}
+
+	channel, err = conn.Channel()
+	if err != nil {
+		log.Fatal("Channel Connection Error: ", err.Error())
+	}
+}
+
+func sendEndpointsOverQueue(ctx context.Context, t *testing.T, queueName string, mq lanternmq.MessageQueue, chID lanternmq.ChannelID) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	errs := make(chan error)
+
+	go se.GetEnptsAndSend(ctx, &wg, queueName, 10, store, &mq, &chID, errs)
+	time.Sleep(30 * time.Second)
+}
+
+func queueIsEmpty(t *testing.T, queueName string) {
+	count, err := aq.QueueCount(queueName, channel)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 0, "should be no messages in queue.")
+}
+
+func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
+	th.Assert(t, err == nil, err)
 }
 
 func Test_EndpointDataIsAvailable(t *testing.T) {
@@ -338,18 +395,9 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var err error
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("qname")
+	queueIsEmpty(t, testQName)
+	defer checkCleanQueue(t, testQName, channel)
 	capQName := viper.GetString("endptinfo_capquery_qname")
-
-	hap := th.HostAndPort{Host: qHost, Port: qPort}
-	err = th.CheckResources(hap)
-	if err != nil {
-		panic(err)
-	}
 
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
@@ -359,19 +407,13 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
-	var wg sync.WaitGroup
 	ctx := context.Background()
-	wg.Add(1)
-	errs := make(chan error)
+	sendEndpointsOverQueue(ctx, t, capQName, mq, chID)
 
-	capInterval := viper.GetInt("capquery_qryintvl")
-	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &chID, errs)
-	time.Sleep(30 * time.Second)
-
-	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
+	mq, chID, err = aq.ConnectToQueue(mq, chID, testQName)
 	defer mq.Close()
 	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
-	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, testQName)
 	select {
 	case <-ctx.Done():
 		return
@@ -426,35 +468,20 @@ func Test_VendorList(t *testing.T) {
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var err error
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("qname")
-
-	hap := th.HostAndPort{Host: qHost, Port: qPort}
-	err = th.CheckResources(hap)
-	if err != nil {
-		panic(err)
-	}
+	queueIsEmpty(t, testQName)
+	defer checkCleanQueue(t, testQName, channel)
 
 	// Set-up the test queue
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
-	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, testQName)
 	defer mq.Close()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
-	var wg sync.WaitGroup
 	ctx := context.Background()
-	wg.Add(1)
-	errs := make(chan error)
-
-	// send endpoints so the networkstats querier can read them
-	go se.GetEnptsAndSend(ctx, &wg, qName, 10, store, &mq, &chID, errs)
-	time.Sleep(30 * time.Second)
+	sendEndpointsOverQueue(ctx, t, testQName, mq, chID)
 
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier:3333/metrics")
@@ -584,7 +611,7 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 		}
 	}
 	if !isInDB {
-		t.Fatalf("https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata not found in AllEndpoints_http_response_time metric")
+		t.Fatalf("None of the tested URLs were found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }
