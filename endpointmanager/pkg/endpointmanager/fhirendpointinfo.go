@@ -73,7 +73,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	if e.SMARTHTTPResponse != e2.SMARTHTTPResponse {
 		return false
 	}
- 	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
+	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
 		return false
 	}
 	if e.SMARTResponse == nil && e2.SMARTResponse != nil {

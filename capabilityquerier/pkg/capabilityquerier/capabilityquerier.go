@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"path"
 	"net/http"
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -40,7 +40,7 @@ type Message struct {
 	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 	SMARTHTTPResponse   int         `json:"smarthttpResponse"`
-	SMARTResp 			interface{} `json:"smartResp"`
+	SMARTResp           interface{} `json:"smartResp"`
 }
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
@@ -86,7 +86,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	err = requestCapabilityStatement(ctx, wellKnownURL, "well-known", qa.Client, &message)
 	if err != nil {
 		message.Err = err.Error()
-	} 
+	}
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
@@ -153,8 +153,8 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, endptType
 		}
 	}
 
- 	switch endptType {
-	case "metadata": 
+	switch endptType {
+	case "metadata":
 		message.HTTPResponse = httpResponseCode
 		message.CapabilityStatement = capabilityStatement
 	case "well-known":

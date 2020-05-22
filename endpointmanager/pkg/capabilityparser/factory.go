@@ -68,10 +68,10 @@ func NewSMARTResp(respJSON []byte) (SMARTResponse, error) {
 	}
 
 	return NewSMARTRespFromInterface(respMsg)
-} 
+}
 
- // Equal checks if the smart response body is equal to the given smart response body.
- func (resp *Response) Equal(resp2 SMARTResponse) bool {
+// Equal checks if the smart response body is equal to the given smart response body.
+func (resp *Response) Equal(resp2 SMARTResponse) bool {
 	if resp2 == nil {
 		return false
 	}

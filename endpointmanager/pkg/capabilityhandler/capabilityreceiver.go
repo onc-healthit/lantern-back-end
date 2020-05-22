@@ -66,7 +66,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	smarthttpResponseFloat, ok := msgJSON["smarthttpResponse"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast http response to int")
+		return nil, fmt.Errorf("unable to cast smart http response to int")
 	}
 	smarthttpResponse := int(smarthttpResponseFloat)
 
@@ -81,13 +81,16 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
- 	var smartResponse capabilityparser.SMARTResponse
+	var smartResponse capabilityparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
 		if !ok {
 			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
 		}
 		smartResponse, err = capabilityparser.NewSMARTRespFromInterface(smartInt)
+		if err != nil {
+			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse response body out of message", url))
+		}
 	}
 
 	/**
@@ -122,8 +125,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			"errors": validationObj,
 		},
 		CapabilityStatement: capStat,
-		SMARTHTTPResponse: smarthttpResponse,
-		SMARTResponse: smartResponse,
+		SMARTHTTPResponse:   smarthttpResponse,
+		SMARTResponse:       smartResponse,
 	}
 
 	return &fhirEndpoint, nil
@@ -140,7 +143,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
-	
+
 	store, ok := (*args)["store"].(*postgresql.Store)
 	if !ok {
 		return fmt.Errorf("unable to cast postgresql store from arguments")
@@ -208,7 +211,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	errs := make(chan error)
 	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
 
- 	for elem := range errs {
+	for elem := range errs {
 		log.Warn(elem)
 	}
 

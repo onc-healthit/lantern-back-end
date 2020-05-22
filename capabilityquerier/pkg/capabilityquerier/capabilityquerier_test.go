@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"net/http"
 	"net/url"
@@ -20,8 +22,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq/mock"
 )
 
-var sampleURL = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/metadata"
-var sampleURLNoTLS = "http://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/metadata"
+var sampleURL = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/"
+var sampleURLNoTLS = "http://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/"
 
 func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	var ctx context.Context
@@ -48,7 +50,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	// create the expected result
 	expectedCapStat, err := capabilityStatement()
 	th.Assert(t, err == nil, err)
-	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
+	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType, fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
 		URL:          fhirURL.String(),
@@ -58,7 +60,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
-	expectedMsg, err := json.Marshal(expectedMsgStruct)
+	expectedMsg, err := json.Marshal(expectedMsgStruct.CapabilityStatement)
 	th.Assert(t, err == nil, err)
 
 	args := make(map[string]interface{})
@@ -76,6 +78,10 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
+
+	var msgJSON map[string]interface{}
+	_ = json.Unmarshal(message, &msgJSON)
+	message, _ = json.Marshal(msgJSON["capabilityStatement"])
 	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the capability statement on the queue to be the same as the one sent")
 
 	// context canceled error
@@ -113,6 +119,8 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	var expectedMimeType, expectedTLSVersion string
 	var err error
 	var message Message
+	var smartResp []byte
+	var expectedSmartResp = []byte("null")
 
 	// basic test: fhir2LessJSONMIMEType
 
@@ -124,14 +132,16 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	expectedTLSVersion = "TLS 1.0"
 
 	ctx = context.Background()
-	fhirURL = &url.URL{}
 	fhirURL, err = fhirURL.Parse(sampleURL)
+	metadataURL := &url.URL{}
+	*metadataURL = *fhirURL
+	metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 	th.Assert(t, err == nil, err)
 	tc, err = testClientWithContentType(fhir2LessJSONMIMEType)
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	err = requestCapabilityStatement(ctx, metadataURL, "metadata", &(tc.Client), &message)
 	th.Assert(t, err == nil, err)
 	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
@@ -139,6 +149,22 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, len(message.MIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MIMETypes)))
 	th.Assert(t, message.MIMETypes[0] == expectedMimeType || message.MIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MIMETypes[0], message.MIMETypes[1]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
+
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+
+	// check that response from well known endpt is null
+	wellKnownURL := &url.URL{}
+	*wellKnownURL = *fhirURL
+	wellKnownURL.Path = path.Join(wellKnownURL.Path, "/.well-known/smart-configuration")
+	err = requestCapabilityStatement(ctx, wellKnownURL, "well-known", client, &message)
+	th.Assert(t, err == nil, err)
+	smartResp, err = json.Marshal(message.SMARTResp)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, bytes.Equal(smartResp, expectedSmartResp), "response from well known endpt did not match expected response")
+	th.Assert(t, len(message.MIMETypes) == 2, fmt.Sprintf("expected two matched mime type. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType || message.MIMETypes[1] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s and %s", expectedMimeType, message.MIMETypes[0], message.MIMETypes[1]))
 
 	// basic test: fhir3PlusJSONMIMEType
 
@@ -157,7 +183,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	err = requestCapabilityStatement(ctx, fhirURL, "metadata", &(tc.Client), &message)
 	th.Assert(t, err == nil, err)
 	capStat, err = json.Marshal(message.CapabilityStatement)
 	th.Assert(t, err == nil, err)
@@ -174,7 +200,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc.Close() // makes request fail
 
-	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	err = requestCapabilityStatement(ctx, fhirURL, "metadata", &(tc.Client), &message)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because we closed the connection that we're querying.
@@ -190,7 +216,7 @@ func Test_requestCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	err = requestCapabilityStatement(ctx, fhirURL, &(tc.Client), &message)
+	err = requestCapabilityStatement(ctx, fhirURL, "metadata", &(tc.Client), &message)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(message.MIMETypes) == 0, "expected no matched mime types")
 }
