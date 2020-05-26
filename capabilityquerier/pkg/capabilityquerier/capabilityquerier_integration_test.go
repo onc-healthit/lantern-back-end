@@ -61,7 +61,7 @@ func TestMain(m *testing.M) {
 func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 	queueName := viper.GetString("qname")
 	queueIsEmpty(t, queueName)
-	defer checkCleanQueue(t, qName, channel)
+	defer checkCleanQueue(t, queueName, channel)
 
 	var err error
 
@@ -98,7 +98,7 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 			th.Assert(t, err == nil, err)
 		}
 	}
-	count, err := queueCount(queueName)
+	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
 	// need to pause to ensure all messages are on the queue before we count them
 	time.Sleep(10 * time.Second)

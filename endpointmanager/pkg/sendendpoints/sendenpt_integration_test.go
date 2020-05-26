@@ -15,6 +15,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/spf13/viper"
@@ -77,7 +78,7 @@ func Test_GetEnptsAndSend(t *testing.T) {
 
 	queueName := viper.GetString("qname")
 	queueIsEmpty(t, queueName)
-	defer checkCleanQueue(t, qName, channel)
+	defer checkCleanQueue(t, queueName, channel)
 
 	ctx := context.Background()
 	var err error
