@@ -22,6 +22,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// workerArgs is a struct to hold the values necessary to set up workers for processing information
+// (see endpointmanager/pkg/workers)
 type workerArgs struct {
 	workers     *workers.Workers
 	ctx         context.Context
@@ -37,7 +39,11 @@ var responseTimeGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
-// getHTTPRequestTiming records the http request characteristics for the endpoint specified by urlString
+// getHTTPRequestTiming records the http request characteristics an endpoint given in the message variable
+// This function is expected to be called by the lanternmq ProcessMessages function.
+// parameter message:  the queue message that is being processed by this function, which is just an endpoint.
+// parameter args:     expected to be a map of the string "workerArgs" to the above workerArgs struct. It is formatted
+// 					   this way because queue processing is generalized.
 func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
 	// Get arguments
 	wa, ok := (*args)["workerArgs"].(workerArgs)

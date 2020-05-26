@@ -11,8 +11,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// PrometheusArgs is a struct of the prometheus collectors and a URL used to access
-// the collectors
+// PrometheusArgs is a struct of the prometheus collectors that are used to save the values like
+// response time and response code from the URL request and the URLString used to make the request and
+// access the collectors
 type PrometheusArgs struct {
 	URLString                         string
 	ResponseTimeGaugeVec              *prometheus.GaugeVec
@@ -27,8 +28,10 @@ var netClient = &http.Client{
 }
 
 // GetResponseAndTiming gets the response and response time for an http request to the
-// endpoint at urlString and records the metrics into the appropriate prometheus register
-// under the label specified by urlString
+// endpoint at a given urlString and records the metrics into the appropriate prometheus
+// register under the label specified by urlString
+// The args are expected to be a map of the string "promArgs" to the above PrometheusArgs struct. It is formatted
+// this way in order for it to be able to be called by a worker (see endpointmanager/pkg/workers)
 func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) error {
 	// Get arguments
 	promArgs, ok := (*args)["promArgs"].(PrometheusArgs)

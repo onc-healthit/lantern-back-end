@@ -40,7 +40,8 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
-// QuerierArgs is a struct of the queue connection information as well as the client and url for querying
+// QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
+// the Client and FhirURL for querying
 type QuerierArgs struct {
 	FhirURL      *url.URL
 	Client       *http.Client
@@ -49,8 +50,10 @@ type QuerierArgs struct {
 	QueueName    string
 }
 
-// GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
+// GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
 // statement and accompanying data on a receiving queue.
+// The args are expected to be a map of the string "querierArgs" to the above QuerierArgs struct. It is formatted
+// this way in order for it to be able to be called by a worker (see endpointmanager/pkg/workers)
 func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interface{}) error {
 	// Get arguments
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)

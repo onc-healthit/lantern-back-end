@@ -17,6 +17,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// queryArgs is a struct to hold the values necessary to set up workers for processing information
+// (see endpointmanager/pkg/workers) as well as the arguments for the capabilityquerier.QuerierArgs
+// struct that is used when calling capabilityquerier.GetAndSendCapabilityStatement
 type queryArgs struct {
 	workers     *workers.Workers
 	ctx         context.Context
@@ -35,6 +38,11 @@ func failOnError(err error) {
 	}
 }
 
+// queryEndpoints gets an endpoint from the queue message and queries it to get the Capability Statement.
+// This function is expected to be called by the lanternmq ProcessMessages function.
+// parameter message:  the queue message that is being processed by this function, which is just an endpoint.
+// parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
+// 					   this way because queue processing is generalized.
 func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	// Get arguments
 	qa, ok := (*args)["queryArgs"].(queryArgs)
