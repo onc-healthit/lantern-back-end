@@ -6,6 +6,55 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func Test_FHIREndpoinNormalizeEndpointURL(t *testing.T) {
+	if NormalizeEndpointURL("foobar.com") != "https://foobar.com/metadata" {
+		t.Errorf("Expected foobar.com to be normalized to https://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("http://foobar.com") != "http://foobar.com/metadata" {
+		t.Errorf("Expected http://foobar.com to be normalized to http://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("https://foobar.com") != "https://foobar.com/metadata" {
+		t.Errorf("Expected https://foobar.com to be normalized to https://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("foobar.com/metadata") != "https://foobar.com/metadata" {
+		t.Errorf("Expected foobar.com/metadata to be normalized to https://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("http://foobar.com/metadata") != "http://foobar.com/metadata" {
+		t.Errorf("Expected http://foobar.com/metadata to be normalized to http://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("https://foobar.com/metadata") != "https://foobar.com/metadata" {
+		t.Errorf("Expected https://foobar.com/metadata to be normalized to https://foobar.com/metadata")
+	}
+	if NormalizeEndpointURL("http://foobar.com/metadata/") != "http://foobar.com/metadata/" {
+		t.Errorf("Expected http://foobar.com/metadata/ to be normalized to http://foobar.com/metadata/")
+	}
+	if NormalizeEndpointURL("https://foobar.com/metadata/") != "https://foobar.com/metadata/" {
+		t.Errorf("Expected https://foobar.com/metadata/ to be normalized to https://foobar.com/metadata/")
+	}
+	if NormalizeEndpointURL("foobar.com/metadata/") != "https://foobar.com/metadata/" {
+		t.Errorf("Expected foobar.com/metadata/ to be normalized to https://foobar.com/metadata/")
+	}
+}
+func Test_FHIREndpoinNormalizeURL(t *testing.T) {
+	if NormalizeURL("foobar.com") != "https://foobar.com" {
+		t.Errorf("Expected foobar.com to be normalized to https://foobar.com")
+	}
+	if NormalizeURL("http://foobar.com") != "http://foobar.com" {
+		t.Errorf("Expected http://foobar.com to be normalized to http://foobar.com")
+	}
+	if NormalizeURL("https://foobar.com") != "https://foobar.com" {
+		t.Errorf("Expected https://foobar.com to be normalized to https://foobar.com")
+	}
+	if NormalizeURL("foobar.com/") != "https://foobar.com/" {
+		t.Errorf("Expected foobar.com/ to be normalized to https://foobar.com/")
+	}
+	if NormalizeURL("http://foobar.com/") != "http://foobar.com/" {
+		t.Errorf("Expected http://foobar.com/ to be normalized to http://foobar.com/")
+	}
+	if NormalizeURL("https://foobar.com/") != "https://foobar.com/" {
+		t.Errorf("Expected https://foobar.com/ to be normalized to https://foobar.com/")
+	}
+}
 func Test_FHIREndpointEqual(t *testing.T) {
 	// endpoints
 	var endpoint1 = &FHIREndpoint{

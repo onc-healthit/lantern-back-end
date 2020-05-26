@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"time"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 // Need to define timeout or else it is infinite
@@ -19,7 +21,9 @@ func GetResponseAndTiming(ctx context.Context, urlString string) (*http.Response
 		return nil, -1, err.(error)
 	}
 
-	req, err := http.NewRequest("GET", urlString, nil)
+	normalizedURL := endpointmanager.NormalizeEndpointURL(urlString)
+
+	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
 		return nil, -1, err
 	}

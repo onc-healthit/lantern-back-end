@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -65,12 +64,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 	httpResponse := int(httpResponseFloat)
 
-	// remove "metadata" from the url
-	originalURL, file := path.Split(url)
-	if file != "metadata" {
-		originalURL = url
-	}
-
 	var capStat capabilityparser.CapabilityStatement
 	if msgJSON["capabilityStatement"] != nil {
 		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
@@ -106,7 +99,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:          originalURL,
+		URL:          url,
 		TLSVersion:   tlsVersion,
 		MIMETypes:    mimeTypes,
 		HTTPResponse: httpResponse,
@@ -144,6 +137,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
 
 	if err == sql.ErrNoRows {
+
 		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {

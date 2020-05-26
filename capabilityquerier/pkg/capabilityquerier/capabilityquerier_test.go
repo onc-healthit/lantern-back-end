@@ -21,6 +21,7 @@ import (
 )
 
 var sampleURL = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/metadata"
+var sampleURLNoTLS = "http://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/metadata"
 
 func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	var ctx context.Context
@@ -227,6 +228,22 @@ func Test_getTLSVersion(t *testing.T) {
 
 	tlsVersion = getTLSVersion(resp)
 	th.Assert(t, tlsVersion == expectedTLSVersion, fmt.Sprintf("expected %s; received %s", expectedTLSVersion, tlsVersion))
+
+	// No TLS
+
+	expectedTLSVersion = "No TLS"
+
+	req, err = http.NewRequest("GET", sampleURLNoTLS, nil)
+	th.Assert(t, err == nil, err)
+
+	tc, err = testClientWithNoTLS()
+	th.Assert(t, err == nil, err)
+	resp, err = tc.Client.Do(req)
+	th.Assert(t, err == nil, err)
+
+	tlsVersion = getTLSVersion(resp)
+	th.Assert(t, tlsVersion == expectedTLSVersion, fmt.Sprintf("expected %s; received %s", expectedTLSVersion, tlsVersion))
+
 }
 
 func Test_mimeTypesMatch(t *testing.T) {
@@ -336,6 +353,23 @@ func testClientWithTLSVersion(tlsVersion uint16) (*th.TestClient, error) {
 	transport := tc.Client.Transport.(*http.Transport)
 	transport.TLSClientConfig.MaxVersion = tlsVersion
 	transport.TLSClientConfig.MinVersion = tlsVersion
+
+	return tc, nil
+}
+
+func testClientWithNoTLS() (*th.TestClient, error) {
+
+	path := filepath.Join("testdata", "metadata.json")
+	okResponse, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write(okResponse)
+	})
+
+	tc := th.NewTestClientNoTLS(h)
 
 	return tc, nil
 }

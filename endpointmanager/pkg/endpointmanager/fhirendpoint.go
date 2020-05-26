@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"strings"
 	"time"
 )
 
@@ -39,4 +40,29 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	}
 
 	return true
+}
+
+// Prepends url with https:// if needed
+func NormalizeURL(url string) string {
+	normalized := url
+	// for cases such as foobar.com
+	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
+		normalized = "https://" + normalized
+	}
+
+	return normalized
+}
+
+// Prepends url with https:// and appends with metadata/ if needed
+func NormalizeEndpointURL(url string) string {
+	normalized := NormalizeURL(url)
+
+	// for cases such as foobar.com/
+	if !strings.HasSuffix(url, "/metadata") && !strings.HasSuffix(url, "/metadata/") {
+		if !strings.HasSuffix(url, "/") {
+			normalized = normalized + "/"
+		}
+		normalized = normalized + "metadata"
+	}
+	return normalized
 }

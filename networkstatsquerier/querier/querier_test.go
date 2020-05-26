@@ -28,7 +28,7 @@ func MetadataResponseStub(t *testing.T) *httptest.Server {
 func Test_GetHTTP200Response(t *testing.T) {
 	server := MetadataResponseStub(t)
 	defer server.Close()
-	var capabilityStatmentURL = server.URL + "/metadata"
+	var capabilityStatmentURL = server.URL
 	ctx := context.Background()
 	// Drop connection if no reply within 30 seconds
 	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))

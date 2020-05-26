@@ -12,7 +12,7 @@ import (
 )
 
 var testQueueMsg = map[string]interface{}{
-	"url":          "http://example.com/DTSU2/metadata",
+	"url":          "http://example.com/DTSU2/",
 	"err":          "",
 	"mimeTypes":    []string{"application/json+fhir"},
 	"httpResponse": 200,

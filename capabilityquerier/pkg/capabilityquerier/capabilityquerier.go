@@ -9,9 +9,11 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 var fhir3PlusJSONMIMEType = "application/fhir+json"
@@ -23,6 +25,7 @@ var tls11 = "TLS 1.1"
 var tls12 = "TLS 1.2"
 var tls13 = "TLS 1.3"
 var tlsUnknown = "TLS version unknown"
+var tlsNone = "No TLS"
 
 // Message is the structure that gets sent on the queue with capability statement inforation. It includes the URL of
 // the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
@@ -53,17 +56,20 @@ func GetAndSendCapabilityStatement(
 
 	err = requestCapabilityStatement(ctx, fhirURL, client, &message)
 	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
 		message.Err = err.Error()
 	}
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
 		return errors.Wrapf(err, "error marshalling json message for request to %s", fhirURL.String())
 	}
 	msgStr := string(msgBytes)
 
 	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
 	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
 	}
 
@@ -79,9 +85,11 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 	var tlsVersion string
 	var capResp []byte
 
-	req, err := http.NewRequest("GET", fhirURL.String(), nil)
+	normalizedURL := endpointmanager.NormalizeEndpointURL(fhirURL.String())
+
+	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
-		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL.String())
+		return errors.Wrap(err, "unable to create new GET request from URL: "+normalizedURL)
 	}
 	req = req.WithContext(ctx)
 
@@ -123,20 +131,23 @@ func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *h
 }
 
 func getTLSVersion(resp *http.Response) string {
-	switch resp.TLS.Version {
-	case tls.VersionSSL30: //nolint
-		return ssl30
-	case tls.VersionTLS10:
-		return tls10
-	case tls.VersionTLS11:
-		return tls11
-	case tls.VersionTLS12:
-		return tls12
-	case tls.VersionTLS13:
-		return tls13
-	default:
-		return tlsUnknown
+	if resp.TLS != nil {
+		switch resp.TLS.Version {
+		case tls.VersionSSL30: //nolint
+			return ssl30
+		case tls.VersionTLS10:
+			return tls10
+		case tls.VersionTLS11:
+			return tls11
+		case tls.VersionTLS12:
+			return tls12
+		case tls.VersionTLS13:
+			return tls13
+		default:
+			return tlsUnknown
+		}
 	}
+	return tlsNone
 }
 
 func isJSONMIMEType(mimeType string) bool {
