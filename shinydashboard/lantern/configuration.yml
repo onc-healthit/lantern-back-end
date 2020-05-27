@@ -14,6 +14,7 @@ libraries:
   - "here"
   - "lubridate"
   - "xts"
+  - "knitr"
   
 function_files:
   - "functions/db_connection.R"
@@ -24,4 +25,3 @@ module_files:
   - "modules/dashboardmodule.R"
   - "modules/availabilitymodule.R"
   - "modules/performancemodule.R"
-  
