@@ -1,4 +1,8 @@
 ﻿code,label,label_p
+100,Continue,(Continue)
+101,Switching Protocols,(Switching Protocols)
+102,Processing,(Processing)
+103,Early Hints,(Early Hints)
 200,OK - Success,(OK - Success)
 201,Created,(Created)
 202,Accepted,(Accepted)
