@@ -68,7 +68,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	err = requestCapabilityStatement(ctx, qa.FhirURL, qa.Client, &message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL.String())
 		message.Err = err.Error()
 	}
 

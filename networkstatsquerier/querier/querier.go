@@ -44,7 +44,7 @@ func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) err
 		return err.(error)
 	}
 
-	normalizedURL := endpointmanager.NormalizeEndpointURL(urlString)
+	normalizedURL := endpointmanager.NormalizeEndpointURL(promArgs.URLString)
 
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {

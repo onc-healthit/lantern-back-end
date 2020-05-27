@@ -496,11 +496,11 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
 	// during a run
 	possibleUrls := [5]string{
-		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/metadata",
-		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/metadata",
-		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/metadata",
-		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/metadata",
-		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata",
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
 	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
@@ -585,11 +585,11 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
 	// during a run
 	possibleUrls := [5]string{
-		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/metadata",
-		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/metadata",
-		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/metadata",
-		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/metadata",
-		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/metadata",
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
 	}
 
 	isInDB := false
