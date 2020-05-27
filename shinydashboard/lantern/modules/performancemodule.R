@@ -1,3 +1,5 @@
+library(dygraphs)
+library(xts)
 
 performance_UI <- function(id) {
 

@@ -1,3 +1,4 @@
+library(lubridate)
 
 get_avg_response_time <- function() {
   # get time series of response time metrics for all endpoints

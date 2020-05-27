@@ -5,7 +5,7 @@ ui <- dashboardPage(
     title = "Lantern Dashboard",
     titleWidth = 200
   ),
-  # Sidebar with a slider input for number of bins 
+  # Sidebar with menu items for each module
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"),selected=TRUE),
@@ -39,7 +39,7 @@ ui <- dashboardPage(
     )
   ),
   
-  # Show a plot of the generated distribution
+  # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
     tabItems(
       tabItem("dashboard_tab",

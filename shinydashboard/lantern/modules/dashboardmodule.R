@@ -1,5 +1,6 @@
 library(shiny)
 library(shinydashboard)
+library(readr)
 
 dashboard_UI <- function(id) {
 
@@ -42,7 +43,22 @@ dashboard <- function(
   
   fhir_endpoint_totals <- get_endpoint_totals(fhir_endpoints,fhir_endpoints_info)
   response_tally       <- get_response_tally(fhir_endpoints_info)
-
+  http_pct             <- get_http_response_summary(fhir_endpoints_info_history)
+  
+  # Get the count of endpoints by vendor
+  fhir_version_vendor_count <- endpoint_export_tbl %>%
+    group_by(vendor_name,fhir_version) %>%
+    tally() %>%
+    select(Vendor=vendor_name,"FHIR Version"=fhir_version,"Count"=n)
+  
+  # create a summary table to show the response codes received along with 
+  # the description for each code
+  http_summary <- http_pct %>%
+    left_join(http_response_code_tbl, by=c("code" = "code_chr")) %>%
+    select(id,code,label) %>%
+    group_by("HTTP Response" = code,"Status"=label) %>%
+    summarise(Count=n()) 
+  
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
       "Total Endpoints", fhir_endpoint_totals$all_endpoints, icon = icon("fire", lib = "glyphicon"),
@@ -83,6 +99,6 @@ dashboard <- function(
   })
 
   output$http_code_table   <- renderTable(http_summary)
-  output$fhir_vendor_table <- renderTable(fhir_version_vendor_count)
+  output$fhir_vendor_table <- renderTable(get_fhir_version_vendor_count(endpoint_export_tbl))
   
 }
