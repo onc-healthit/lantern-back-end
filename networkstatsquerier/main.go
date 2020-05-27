@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
-	"runtime"
-	"path"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
@@ -50,7 +47,6 @@ func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
 	if !ok {
 		return fmt.Errorf("unable to cast workerArgs from arguments")
 	}
->>>>>>> Networkstats querier now uses the queue to get the endpoint information.
 
 	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
 	if string(message) == "start" {
@@ -162,33 +158,6 @@ func main() {
 
 	initializeMetrics()
 
-<<<<<<< e9c8d57d345fff6bc47875038460bdea130d3340
-	var queryCount = 0
-	// Infinite query loop
-	for {
-		for _, endpointEntry := range listOfEndpoints.Entries {
-			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
-			var urlString = endpointEntry.FHIRPatientFacingURI
-			// Specifically query the FHIR endpoint metadata
-			metadataURL, err := url.Parse(urlString)
-			if err != nil {
-				log.Warn("Endpoint URL Parsing Error: ", err.Error())
-			} else {
-				getHTTPRequestTiming(metadataURL.String())
-			}
-		}
-		runtime.GC()
-
-		// If the query interval is zero we will be continuously blasting out requests which causes broken connection issues
-		// This is an issue in tests where we reduce the number of endpoint entries this introduces a minimum required pause time
-		if viper.GetInt("query_interval") == 0 {
-			time.Sleep(time.Duration(10 * time.Second))
-		} else {
-			time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
-		}
-		queryCount += 1
-	}
-=======
 	// Set up the queue for receiving messages
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
@@ -205,11 +174,7 @@ func main() {
 	numWorkers := viper.GetInt("numworkers")
 	workers := workers.NewWorkers()
 	ctx := context.Background()
-<<<<<<< b1f6fc17a0043648daa738a311d536661be01686
->>>>>>> Networkstats querier now uses the queue to get the endpoint information.
-=======
 	errs := make(chan error)
->>>>>>> Create an object to pass through as an argument instead of all of the arguments individually.
 
 	args := make(map[string]interface{})
 	args["workerArgs"] = workerArgs{
