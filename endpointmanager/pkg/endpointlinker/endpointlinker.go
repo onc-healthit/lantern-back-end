@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -26,40 +27,43 @@ func NormalizeOrgName(orgName string) (string, error) {
 	return strings.ToUpper(characterStrippedName), nil
 }
 
-func intersectionCount(set1 []string, set2 []string) int {
+func intersectionCount(set1 []string, set2 []string, tokenVal map[string]float64) (float64, float64) {
 	set1Map := make(map[string]int)
-	intersectionCount := 0
+	intersectionCount := 0.0
+	denom := 0.0
 	for _, name := range set1 {
 		if _, exists := set1Map[name]; !exists {
 			set1Map[name] = 1
+			denom += tokenVal[name]
 		} else {
 			set1Map[name] += 1
+			denom += tokenVal[name]
 		}
 	}
 	for _, name := range set2 {
+		denom += denom + tokenVal[name]
 		if set1Map[name] > 0 {
-			intersectionCount += 1
+			intersectionCount += tokenVal[name]
 			set1Map[name] -= 1
 		}
 	}
-	return intersectionCount
+	denom = denom - intersectCount
+	return intersectionCount, denom
 }
 
-func calculateJaccardIndex(string1 string, string2 string) float64 {
+func calculateJaccardIndex(string1 string, string2 string, tokenVal map[string]float64) float64 {
 	// https://www.statisticshowto.datasciencecentral.com/jaccard-index/
 	// Find the number of common tokens and divide it by the total number of unique tokens
 	string1Tokens := strings.Fields(string1)
 	string2Tokens := strings.Fields(string2)
-	intersectionCount := intersectionCount(string1Tokens, string2Tokens)
+	intersectionCount, denom := intersectionCount(string1Tokens, string2Tokens, tokenVal)
 	// By taking the total tokens count and subtracting by the intersection we allow for there to be
 	// repeated tokens. ie: foo foo bar and foo bar would not be considered identical
-	string1TokensCount := len(string1Tokens)
-	string2TokensCount := len(string2Tokens)
-	denom := float64(string1TokensCount + string2TokensCount - intersectionCount)
+
 	if denom == 0 {
 		denom = 1
 	}
-	return float64(intersectionCount) / denom
+	return float64(intersectionCount / denom)
 }
 
 // This function is available for making the matching algorithm easier to tune
@@ -69,7 +73,7 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool) ([]string, map[string]float64, error) {
+func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
 	JACCARD_THRESHOLD := .75
 
 	matches := []string{}
@@ -79,8 +83,8 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
 		confidence := 0.0
-		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName)
-		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName)
+		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName, tokenVal)
+		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName, tokenVal)
 		if jaccard1 == 1 {
 			confidence = 1
 			consideredMatch = true
@@ -151,7 +155,7 @@ func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpoint
 		if err != nil {
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting normalizing endpoint organizaton name")
 		}
-		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose)
+		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose, tokenVal)
 		if err != nil {
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting matching NPI org IDs")
 		}
@@ -181,6 +185,102 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 	return nil
 }
 
+func countTokens(npiOrg []endpointmanager.NPIOrganization, FHIREndpoints []endpointmanager.FHIREndpoint) map[string]float64 {
+	tokenCounterAll := make(map[string]int)
+	tokenCounterNPI := make(map[string]int)
+	tokenCounterEndpoints := make(map[string]int)
+	firstKey := ""
+	var totalTokens int
+	var totalUniqueTokens int
+	for _, organization := range npiOrg {
+		orgNameTokens := strings.Fields(organization.NormalizedName)
+		secondaryOrgNameTokens := strings.Fields(organization.NormalizedSecondaryName)
+		for _, orgToken := range orgNameTokens {
+			if _, contains := tokenCounterAll[orgToken]; !contains {
+				totalUniqueTokens += 1
+			}
+			tokenCounterAll[orgToken] += 1
+			tokenCounterNPI[orgToken] += 1
+			totalTokens++
+
+			if tokenCounterAll[orgToken] >= tokenCounterAll[firstKey] {
+				firstKey = orgToken
+			}
+		}
+		for _, orgSecondaryToken := range secondaryOrgNameTokens {
+			if _, contains := tokenCounterAll[orgSecondaryToken]; !contains {
+				totalUniqueTokens += 1
+			}
+			tokenCounterAll[orgSecondaryToken] += 1
+			tokenCounterNPI[orgSecondaryToken] += 1
+			totalTokens++
+
+			if tokenCounterAll[orgSecondaryToken] >= tokenCounterAll[firstKey] {
+				firstKey = orgSecondaryToken
+			}
+		}
+	}
+	for _, endpoint := range FHIREndpoints {
+		endpointName := NormalizeOrgName(endpoint.OrganizationName)
+		endpointNameTokens := strings.Fields(endpointName)
+		for _, endpointToken := range endpointNameTokens {
+			if _, contains := tokenCounterAll[endpointToken]; !contains {
+				totalUniqueTokens += 1
+			}
+			tokenCounterAll[endpointToken] += 1
+			tokenCounterEndpoints[endpointToken] += 1
+			totalTokens++
+
+			if tokenCounterAll[endpointToken] >= tokenCounterAll[firstKey] {
+				firstKey = endpointToken
+			}
+		}
+	}
+
+	tokenMean := int(math.Round(float64(totalTokens) / float64(totalUniqueTokens)))
+	tokenStandardDev := calculateStandardDev(tokenCounterAll, tokenMean, totalUniqueTokens)
+	tokenVal := computeTokenValues(tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, totalStrings, firstKey, tokenMean, tokenStandardDev)
+	return tokenVal
+}
+
+func calculateStandardDev(tokenCounterAll map[string]int, tokenMean int, totalUniqueTokens int) int {
+	squaredDiffSum := 0.0
+	for _, value := range tokenCounterAll {
+		squaredDiffSum += math.Pow(float64(value-tokenMean), 2.0)
+	}
+
+	sqrtStandardDev := math.Sqrt(squaredDiffSum / float64(totalUniqueTokens))
+	return int(math.Round(sqrtStandardDev))
+}
+
+func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]int, tokenCountsEndpoints map[string]int, firstKey string, tokenMean int, tokenStandardDev int) map[string]float64 {
+	tokenVal := make(map[string]float64)
+	for key, value := range tokenCounts {
+		tokenVal[key] = 1.0 - (float64(value) / float64(tokenCounts[firstKey]))
+
+		if value < tokenMean {
+			tokenVal[key] *= 3.0
+		} else if value < tokenMean+(tokenStandardDev/3) {
+			tokenVal[key] *= 1.5
+		} else if value < tokenMean+(tokenStandardDev) {
+			tokenVal[key] *= 1.2
+		} else if value > tokenMean+(tokenStandardDev*9) {
+			tokenVal[key] /= 1.8
+		} else if value > tokenMean+(tokenStandardDev*6) {
+			tokenVal[key] /= 1.5
+		} else if value > tokenMean+(tokenStandardDev*3) {
+			tokenVal[key] /= 1.2
+		}
+
+		if tokenCountsNPI[key] == 0 || tokenCountsEndpoints[key] == 0 {
+			tokenVal[key] /= 2.5
+		}
+
+	}
+
+	return tokenVal
+}
+
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
 	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
@@ -191,6 +291,8 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	if err != nil {
 		return errors.Wrap(err, "Error getting normalized org names")
 	}
+
+	tokenVal := countTokens(npiOrgNames, fhirEndpoints)
 
 	matchCount := 0
 	unmatchable := []string{}
@@ -203,7 +305,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		if err != nil {
 			return errors.Wrap(err, "error matching endpoint to NPI organization by ID")
 		}
-		nameMatches, nameConfidences, err := matchByName(endpoint, npiOrgNames, verbose)
+		nameMatches, nameConfidences, err := matchByName(endpoint, npiOrgNames, verbose, tokenVal)
 		if err != nil {
 			return errors.Wrap(err, "error matching endpoint to NPI organization by name")
 		}
