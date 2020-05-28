@@ -15,7 +15,7 @@ services:
 
   endpoint_querier:
     environment:
-      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_QNAME}
+      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
 
   capability_querier:
     environment:
@@ -29,6 +29,7 @@ services:
       - LANTERN_QHOST=lantern-mq
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+      - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
     build:
       args:
         cert_dir: ./certs

@@ -468,20 +468,21 @@ func Test_VendorList(t *testing.T) {
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var err error
-	queueIsEmpty(t, testQName)
-	defer checkCleanQueue(t, testQName, channel)
+	netQueue := viper.GetString("endptinfo_netstats_qname")
+	queueIsEmpty(t, netQueue)
+	defer checkCleanQueue(t, netQueue, channel)
 
 	// Set-up the test queue
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
-	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, testQName)
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, netQueue)
 	defer mq.Close()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
 	ctx := context.Background()
-	sendEndpointsOverQueue(ctx, t, testQName, mq, chID)
+	sendEndpointsOverQueue(ctx, t, netQueue, mq, chID)
 
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier:3333/metrics")
