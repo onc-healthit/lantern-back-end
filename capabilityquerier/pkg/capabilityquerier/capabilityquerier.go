@@ -144,12 +144,12 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		if supportsFHIR3MIMEType {
 			message.MIMETypes = append(message.MIMETypes, fhir3PlusJSONMIMEType)
 		}
+	}
 
-		if capResp != nil {
-			err = json.Unmarshal(capResp, &(jsonResponse))
-			if err != nil {
-				return err
-			}
+	if capResp != nil {
+		err = json.Unmarshal(capResp, &(jsonResponse))
+		if err != nil {
+			return err
 		}
 	}
 
