@@ -39,6 +39,35 @@ func Test_FHIREndpoinNormalizeEndpointURL(t *testing.T) {
 		t.Errorf("Expected foobar.com/metadata/ to be normalized to https://foobar.com/metadata/")
 	}
 }
+func Test_FHIREndpoinNormalizeWellKnownURL(t *testing.T) {
+	if NormalizeWellKnownURL("foobar.com") != "https://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected foobar.com to be normalized to https://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("http://foobar.com") != "http://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected http://foobar.com to be normalized to http://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("https://foobar.com") != "https://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected https://foobar.com to be normalized to https://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("foobar.com/.well-known/smart-configuration") != "https://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected foobar.com/metadata to be normalized to https://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("http://foobar.com/.well-known/smart-configuration") != "http://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected http://foobar.com/.well-known/smart-configuration to be normalized to http://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("https://foobar.com/.well-known/smart-configuration") != "https://foobar.com/.well-known/smart-configuration" {
+		t.Errorf("Expected https://foobar.com/.well-known/smart-configuration to be normalized to https://foobar.com/.well-known/smart-configuration")
+	}
+	if NormalizeWellKnownURL("http://foobar.com/.well-known/smart-configuration/") != "http://foobar.com/.well-known/smart-configuration/" {
+		t.Errorf("Expected http://foobar.com/.well-known/smart-configuration/ to be normalized to http://foobar.com/.well-known/smart-configuration/")
+	}
+	if NormalizeWellKnownURL("https://foobar.com/.well-known/smart-configuration/") != "https://foobar.com/.well-known/smart-configuration/" {
+		t.Errorf("Expected https://foobar.com/.well-known/smart-configuration/ to be normalized to https://foobar.com/.well-known/smart-configuration/")
+	}
+	if NormalizeWellKnownURL("foobar.com/.well-known/smart-configuration/") != "https://foobar.com/.well-known/smart-configuration/" {
+		t.Errorf("Expected foobar.com/.well-known/smart-configuration/ to be normalized to https://foobar.com/.well-known/smart-configuration/")
+	}
+}
 func Test_FHIREndpoinNormalizeURL(t *testing.T) {
 	if NormalizeURL("foobar.com") != "https://foobar.com" {
 		t.Errorf("Expected foobar.com to be normalized to https://foobar.com")
