@@ -87,10 +87,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		if !ok {
 			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
 		}
-		smartResponse, err = capabilityparser.NewSMARTRespFromInterface(smartInt)
-		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse response body out of message", url))
-		}
+		smartResponse = capabilityparser.NewSMARTRespFromInterface(smartInt)
 	}
 
 	/**

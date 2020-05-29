@@ -47,11 +47,11 @@ func NewResponseBody(response map[string]interface{}) *ResponseBody {
 	}
 }
 
-func NewSMARTRespFromInterface(response map[string]interface{}) (SMARTResponse, error) {
+func NewSMARTRespFromInterface(response map[string]interface{}) SMARTResponse {
 	if response == nil {
-		return nil, nil
+		return nil
 	}
-	return NewResponseBody(response), nil
+	return NewResponseBody(response)
 }
 
 func NewSMARTResp(respJSON []byte) (SMARTResponse, error) {
@@ -64,10 +64,10 @@ func NewSMARTResp(respJSON []byte) (SMARTResponse, error) {
 
 	err = json.Unmarshal(respJSON, &respMsg)
 	if err != nil {
-		return nil, errors.Wrap(err, "error unmarshalling JSON capability statement")
+		return nil, errors.Wrap(err, "error unmarshalling JSON response from well known endpoint")
 	}
 
-	return NewSMARTRespFromInterface(respMsg)
+	return NewSMARTRespFromInterface(respMsg), nil
 }
 
 // Equal checks if the smart response body is equal to the given smart response body.

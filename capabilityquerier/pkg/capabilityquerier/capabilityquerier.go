@@ -84,7 +84,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
 	// Query well known endpoint
-	err = requestCapabilityStatement(ctx, wellKnownURL, wellknown, qa.Client, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 	if err != nil {
 		message.Err = err.Error()
 	}
@@ -119,9 +119,17 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	}
 	req = req.WithContext(ctx)
 
-	httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-	if err != nil {
-		return err
+	if endptType == wellknown && len(message.MIMETypes) > 0 {
+		httpResponseCode, _, _, capResp, err = requestWithMimeType(req, message.MIMETypes[0], client)
+		if err != nil {
+			return err
+		}
+	} else {
+		httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+		if err != nil {
+			return err
+		}
+
 	}
 
 	if endptType == metadata {
