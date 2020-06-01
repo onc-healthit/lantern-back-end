@@ -53,14 +53,20 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:          fhirURL.String(),
-		MIMETypes:    expectedMimeType,
-		TLSVersion:   expectedTLSVersion,
-		HTTPResponse: 200,
+		URL:               fhirURL.String(),
+		MIMETypes:         expectedMimeType,
+		TLSVersion:        expectedTLSVersion,
+		HTTPResponse:      200,
+		SMARTHTTPResponse: 200,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
-	expectedMsg, err := json.Marshal(expectedMsgStruct.CapabilityStatement)
+	// GetAndSendCapabilityStatement uses one client to call requestCapabilityStatementAndSmartOnFhir
+	// which makes make multiple request. The tes client only returns the metadata info which is why smart_response
+	// has the same value as capabilityStatement
+	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.SMARTResp))
+	th.Assert(t, err == nil, err)
+	expectedMsg, err := json.Marshal(expectedMsgStruct)
 	th.Assert(t, err == nil, err)
 
 	args := make(map[string]interface{})
@@ -78,10 +84,6 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
-
-	var msgJSON map[string]interface{}
-	_ = json.Unmarshal(message, &msgJSON)
-	message, _ = json.Marshal(msgJSON["capabilityStatement"])
 	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the capability statement on the queue to be the same as the one sent")
 
 	// context canceled error
