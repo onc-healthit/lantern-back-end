@@ -167,7 +167,7 @@ func main() {
 			if err != nil {
 				log.Warn("Endpoint URL Parsing Error: ", err.Error())
 			} else {
-				getHTTPRequestTiming(metadataURL.String(), orgName)
+				getHTTPRequestTiming(metadataURL.String())
 			}
 		}
 		runtime.GC()
