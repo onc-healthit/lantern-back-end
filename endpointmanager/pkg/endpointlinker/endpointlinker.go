@@ -221,9 +221,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			}
 		} else {
 			if verbose {
-				for _, name := range endpoint.OrganizationNames {
-					unmatchable = append(unmatchable, name)
-				}
+				unmatchable = append(unmatchable, endpoint.OrganizationNames...)
 			}
 		}
 	}
