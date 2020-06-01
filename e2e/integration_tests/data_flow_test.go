@@ -440,16 +440,16 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 
 	bodyString := string(bodyBytes)
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"http://lantern-e2e/metadata\"} 200") {
-		t.Fatalf("Endpoint querier missing or incorrect response code metric for http://lantern-e2e/metadata")
+	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{url=\"http://lantern-e2e\"} 200") {
+		t.Fatalf("Endpoint querier missing or incorrect response code metric for http://lantern-e2e")
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"http://lantern-e2e/metadata\"}") {
-		t.Fatalf("Endpoint querier missing response time metric for http://lantern-e2e/metadata")
+	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{url=\"http://lantern-e2e\"}") {
+		t.Fatalf("Endpoint querier missing response time metric for http://lantern-e2e")
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"http://lantern-e2e/metadata\"}") {
-		t.Fatalf("Endpoint querier missing uptime checks metric for http://lantern-e2e/metadata")
+	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{url=\"http://lantern-e2e\"}") {
+		t.Fatalf("Endpoint querier missing uptime checks metric for http://lantern-e2e")
 	}
 }
 func Test_QuerierAvailableToPrometheus(t *testing.T) {
@@ -502,8 +502,8 @@ func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	err = response_time_row.Scan(&id, &metric_name, &result_label)
 	failOnError(err)
 
-	if result_label != "{\"job\": \"FHIRQUERY\", \"url\": \"http://lantern-e2e/metadata\", \"instance\": \"endpoint_querier:3333\"}" {
-		t.Fatalf("http://lantern-e2e/metadata not found in AllEndpoints_http_response_time metric")
+	if result_label != "{\"job\": \"FHIRQUERY\", \"url\": \"http://lantern-e2e\", \"instance\": \"endpoint_querier:3333\"}" {
+		t.Fatalf("http://lantern-e2e not found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }
