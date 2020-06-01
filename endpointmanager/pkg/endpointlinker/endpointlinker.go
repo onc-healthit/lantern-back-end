@@ -182,7 +182,7 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 }
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
-	fhirEndpointOrgNames, err := store.GetAllFHIREndpoints(ctx)
+	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
 		return errors.Wrap(err, "Error getting endpoint org names")
 	}
@@ -195,7 +195,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	matchCount := 0
 	unmatchable := []string{}
 	// Iterate through fhir endpoints
-	for _, endpoint := range fhirEndpointOrgNames {
+	for _, endpoint := range fhirEndpoints {
 		allMatches := make([]string, 0)
 		allConfidences := make(map[string]float64)
 
@@ -221,12 +221,14 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 			}
 		} else {
 			if verbose {
-				unmatchable = append(unmatchable, endpoint.URL)
+				for _, name := range endpoint.OrganizationNames {
+					unmatchable = append(unmatchable, name)
+				}
 			}
 		}
 	}
 
-	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpointOrgNames)), verbose)
+	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpoints)), verbose)
 
 	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
 	if verbose {
