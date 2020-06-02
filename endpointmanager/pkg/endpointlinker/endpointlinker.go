@@ -239,7 +239,7 @@ func countTokens(npiOrg []endpointmanager.NPIOrganization, FHIREndpoints []endpo
 
 	tokenMean := int(math.Round(float64(totalTokens) / float64(totalUniqueTokens)))
 	tokenStandardDev := calculateStandardDev(tokenCounterAll, tokenMean, totalUniqueTokens)
-	tokenVal := computeTokenValues(tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, totalStrings, firstKey, tokenMean, tokenStandardDev)
+	tokenVal := computeTokenValues(tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, firstKey, tokenMean, tokenStandardDev)
 	return tokenVal
 }
 
