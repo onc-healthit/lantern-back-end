@@ -257,19 +257,22 @@ func calculateStandardDev(tokenCounterAll map[string]int, tokenMean int, totalUn
 
 func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]int, tokenCountsEndpoints map[string]int, firstKey string, tokenMean int, tokenStandardDev int) map[string]float64 {
 	tokenVal := make(map[string]float64)
+	fluffDictionary := makeFluffDictionary()
 	for key, value := range tokenCounts {
 		tokenVal[key] = 1.0 - (float64(value) / float64(tokenCounts[firstKey]))
 
-		if value < tokenMean {
-			tokenVal[key] *= 3.0
+		if fluffDictionary[key] == true {
+			tokenVal[key] *= 0.3
+		} else if value < tokenMean {
+			tokenVal[key] *= 2.5
 		} else if value < tokenMean+(tokenStandardDev/3) {
 			tokenVal[key] *= 1.5
 		} else if value < tokenMean+(tokenStandardDev) {
 			tokenVal[key] *= 1.2
 		} else if value < tokenMean+(tokenStandardDev*3) {
-			tokenVal[key] *= 0.9
+			tokenVal[key] *= 0.8
 		} else if value < tokenMean+(tokenStandardDev*6) {
-			tokenVal[key] *= 0.7
+			tokenVal[key] *= 0.6
 		} else {
 			tokenVal[key] *= 0.5
 		}
@@ -281,6 +284,29 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 	}
 
 	return tokenVal
+}
+
+func makeFluffDictionary() map[string]bool {
+	var fluffDictionary = make(map[string]bool)
+
+	fluffDictionary["LLC"] = true
+	fluffDictionary["PA"] = true
+	fluffDictionary["LLC"] = true
+	fluffDictionary["LTD"] = true
+	fluffDictionary["PC"] = true
+	fluffDictionary["LLP"] = true
+	fluffDictionary["AND"] = true
+	fluffDictionary["OF"] = true
+	fluffDictionary["IN"] = true
+	fluffDictionary["THE"] = true
+	fluffDictionary["LLP"] = true
+	fluffDictionary["MCC"] = true
+	fluffDictionary["MMC"] = true
+	fluffDictionary["TO"] = true
+	fluffDictionary["PLC"] = true
+	fluffDictionary["PLLC"] = true
+
+	return fluffDictionary
 }
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
