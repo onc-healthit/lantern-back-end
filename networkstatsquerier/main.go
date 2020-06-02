@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
-	"os"
-	"runtime"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
+	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/config"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/querier"
 	"github.com/spf13/viper"
 
@@ -18,6 +19,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// workerArgs is a struct to hold the values necessary to set up workers for processing information
+// (see endpointmanager/pkg/workers)
+type workerArgs struct {
+	workers     *workers.Workers
+	ctx         context.Context
+	numWorkers  int
+	errs        chan error
+	jobDuration time.Duration
+}
+
 // Metrics collected inside built-in prometheus vector.
 // Each METRIC has its own registrations
 var httpCodesGaugeVec *prometheus.GaugeVec
@@ -25,30 +36,63 @@ var responseTimeGaugeVec *prometheus.GaugeVec
 var totalUptimeChecksCounterVec *prometheus.CounterVec
 var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
-// getHTTPRequestTiming records the http request characteristics for the endpoint specified by urlString
-// Record the metrics into the appropriate prometheus register under the label specified by organizationName
-func getHTTPRequestTiming(urlString string) {
-	ctx := context.Background()
-	// Closing context if HTTP request and response processing is not completed within 30 seconds.
-	// This includes dropping the request connection if there's no reply within 30 seconds.
-	ctx, cancelFunc := context.WithDeadline(ctx, time.Now().Add(30*time.Second))
-	defer cancelFunc()
-
-	var resp, responseTime, err = querier.GetResponseAndTiming(ctx, urlString)
-
-	if err != nil {
-		log.WithFields(log.Fields{"url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
-	} else {
-		responseTimeGaugeVec.WithLabelValues(urlString).Set(responseTime)
-
-		if resp != nil && resp.StatusCode != http.StatusOK {
-			totalFailedUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
-		}
-		if resp != nil {
-			httpCodesGaugeVec.WithLabelValues(urlString).Set(float64(resp.StatusCode))
-		}
-		totalUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
+// getHTTPRequestTiming records the http request characteristics an endpoint given in the message variable
+// This function is expected to be called by the lanternmq ProcessMessages function.
+// parameter message:  the queue message that is being processed by this function, which is just an endpoint.
+// parameter args:     expected to be a map of the string "workerArgs" to the above workerArgs struct. It is formatted
+// 					   this way because queue processing is generalized.
+func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
+	// Get arguments
+	wa, ok := (*args)["workerArgs"].(workerArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast workerArgs from arguments")
 	}
+
+	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
+	if string(message) == "start" {
+		err := wa.workers.Start(wa.ctx, wa.numWorkers, wa.errs)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	if string(message) == "stop" {
+		err := wa.workers.Stop()
+		if err != nil {
+			return fmt.Errorf("error stopping queue workers: %s", err.Error())
+		}
+		return nil
+	}
+
+	urlString := string(message)
+	// Specifically query the FHIR endpoint metadata
+	metadataURL, err := url.Parse(urlString)
+	if err != nil {
+		return fmt.Errorf("Endpoint URL Parsing Error: %s", err.Error())
+	}
+
+	jobArgs := make(map[string]interface{})
+	jobArgs["promArgs"] = querier.PrometheusArgs{
+		URLString:                         metadataURL.String(),
+		ResponseTimeGaugeVec:              responseTimeGaugeVec,
+		TotalFailedUptimeChecksCounterVec: totalFailedUptimeChecksCounterVec,
+		HTTPCodesGaugeVec:                 httpCodesGaugeVec,
+		TotalUptimeChecksCounterVec:       totalUptimeChecksCounterVec,
+	}
+
+	job := workers.Job{
+		Context:     wa.ctx,
+		Duration:    wa.jobDuration,
+		Handler:     (querier.GetResponseAndTiming),
+		HandlerArgs: &jobArgs,
+	}
+
+	err = wa.workers.Add(&job)
+	if err != nil {
+		return fmt.Errorf("error adding job to workers: %s", err.Error())
+	}
+
+	return nil
 }
 
 func initializeMetrics() {
@@ -100,32 +144,6 @@ func setupServer() {
 	}
 }
 
-func setupConfig() {
-	var err error
-	viper.SetEnvPrefix("lantern_endptqry")
-	viper.AutomaticEnv()
-
-	err = viper.BindEnv("port")
-	failOnError(err)
-	err = viper.BindEnv("logfile")
-	failOnError(err)
-	err = viper.BindEnv("query_interval")
-	failOnError(err)
-
-	viper.SetDefault("port", 3333)
-	viper.SetDefault("logfile", "endpointQuerierLog.json")
-	viper.SetDefault("query_interval", 10)
-}
-
-func initializeLogger() {
-	log.SetFormatter(&log.JSONFormatter{})
-	f, err := os.OpenFile(viper.GetString("logfile"), os.O_WRONLY|os.O_CREATE, 0755)
-	if err != nil {
-		log.Fatal("LogFile creation error: ", err.Error())
-	}
-	log.SetOutput(f)
-}
-
 func failOnError(err error) {
 	if err != nil {
 		log.Fatalf("%s", err)
@@ -133,53 +151,43 @@ func failOnError(err error) {
 }
 
 func main() {
-	setupConfig()
-	initializeLogger()
+	err := config.SetupConfig()
+	failOnError(err)
+
 	go setupServer()
 
-	var endpointsFile string
-	var source string
-	if len(os.Args) == 3 {
-		endpointsFile = os.Args[1]
-		source = os.Args[2]
-	} else if len(os.Args) == 2 {
-		log.Error("missing endpoints list source command-line argument")
-		return
-	} else {
-		log.Error("missing endpoints list command-line argument")
-		return
-	}
-	// Data in resources/EndpointSources was taken from https://fhirfetcher.github.io/data.json
-	var listOfEndpoints, err = fetcher.GetEndpointsFromFilepath(endpointsFile, source)
-	if err != nil {
-		log.Fatal("Endpoint List Parsing Error: ", err.Error())
-	}
 	initializeMetrics()
 
-	var queryCount = 0
-	// Infinite query loop
-	for {
-		for _, endpointEntry := range listOfEndpoints.Entries {
-			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
-			var urlString = endpointEntry.FHIRPatientFacingURI
-			// Specifically query the FHIR endpoint metadata
-			metadataURL, err := url.Parse(urlString)
-			if err != nil {
-				log.Warn("Endpoint URL Parsing Error: ", err.Error())
-			} else {
-				getHTTPRequestTiming(metadataURL.String())
-			}
-		}
-		runtime.GC()
+	// Set up the queue for receiving messages
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qName := viper.GetString("endptinfo_netstats_qname")
+	mq, ch, err := accessqueue.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	failOnError(err)
+	defer mq.Close()
 
-		// If the query interval is zero we will be continuously blasting out requests which causes broken connection issues
-		// This is an issue in tests where we reduce the number of endpoint entries this introduces a minimum required pause time
-		if viper.GetInt("query_interval") == 0 {
-			time.Sleep(time.Duration(10 * time.Second))
-		} else {
-			time.Sleep(time.Duration(viper.GetInt("query_interval")) * time.Minute)
-		}
-		queryCount += 1
+	messages, err := mq.ConsumeFromQueue(ch, qName)
+	failOnError(err)
+
+	numWorkers := viper.GetInt("numworkers")
+	workers := workers.NewWorkers()
+	ctx := context.Background()
+	errs := make(chan error)
+
+	args := make(map[string]interface{})
+	args["workerArgs"] = workerArgs{
+		workers:     workers,
+		ctx:         ctx,
+		numWorkers:  numWorkers,
+		errs:        errs,
+		jobDuration: 30 * time.Second,
 	}
 
+	go mq.ProcessMessages(ctx, messages, getHTTPRequestTiming, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
 }

@@ -7,6 +7,10 @@ services:
         cert_dir: ./certs
     ports:
       - "3333:3333"
+    environment:
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+      - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME={LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
   prometheus:
     ports:
       - "9090:9090"

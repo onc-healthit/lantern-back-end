@@ -61,8 +61,18 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	expectedMsg, err := json.Marshal(expectedMsgStruct)
 	th.Assert(t, err == nil, err)
 
+	args := make(map[string]interface{})
+	querierArgs := QuerierArgs{
+		FhirURL:      fhirURL,
+		Client:       &(tc.Client),
+		MessageQueue: &mq,
+		ChannelID:    &ch,
+		QueueName:    queueName,
+	}
+	args["querierArgs"] = querierArgs
+
 	// execute tested function
-	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
@@ -72,7 +82,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, errors.Cause(err) == context.Canceled, "expected GetAndSendCapabilityStatement to error out due to context ending")
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 0, "expect no messages on the queue")
 
@@ -82,7 +92,10 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
-	err = GetAndSendCapabilityStatement(ctx, fhirURL, &(tc.Client), &mq, &ch, queueName)
+	querierArgs.Client = &(tc.Client)
+	args["querierArgs"] = querierArgs
+
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue

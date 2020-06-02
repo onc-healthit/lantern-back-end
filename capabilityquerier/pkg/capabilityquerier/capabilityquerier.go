@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -39,38 +40,47 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 }
 
-// GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoints and then puts the capability
+// QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
+// the Client and FhirURL for querying
+type QuerierArgs struct {
+	FhirURL      *url.URL
+	Client       *http.Client
+	MessageQueue *lanternmq.MessageQueue
+	ChannelID    *lanternmq.ChannelID
+	QueueName    string
+}
+
+// GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
 // statement and accompanying data on a receiving queue.
-func GetAndSendCapabilityStatement(
-	ctx context.Context,
-	fhirURL *url.URL,
-	client *http.Client,
-	mq *lanternmq.MessageQueue,
-	ch *lanternmq.ChannelID,
-	queueName string) error {
+// The args are expected to be a map of the string "querierArgs" to the above QuerierArgs struct. It is formatted
+// this way in order for it to be able to be called by a worker (see endpointmanager/pkg/workers)
+func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interface{}) error {
+	// Get arguments
+	qa, ok := (*args)["querierArgs"].(QuerierArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
+	}
 
 	var err error
 	message := Message{
-		URL: fhirURL.String(),
+		URL: qa.FhirURL.String(),
 	}
 
-	err = requestCapabilityStatement(ctx, fhirURL, client, &message)
+	err = requestCapabilityStatement(ctx, qa.FhirURL, qa.Client, &message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL.String())
 		message.Err = err.Error()
 	}
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
-		return errors.Wrapf(err, "error marshalling json message for request to %s", fhirURL.String())
+		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURL.String())
 	}
 	msgStr := string(msgBytes)
 
-	err = aq.SendToQueue(ctx, msgStr, mq, ch, queueName)
+	err = aq.SendToQueue(ctx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), fhirURL.String())
-		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", fhirURL.String(), queueName)
+		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL.String(), qa.QueueName)
 	}
 
 	return nil
