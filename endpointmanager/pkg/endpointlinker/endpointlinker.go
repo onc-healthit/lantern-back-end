@@ -29,26 +29,26 @@ func NormalizeOrgName(orgName string) (string, error) {
 
 func intersectionCount(set1 []string, set2 []string, tokenVal map[string]float64) (float64, float64) {
 	set1Map := make(map[string]int)
-	intersectionCount := 0.0
+	intersectCount := 0.0
 	denom := 0.0
 	for _, name := range set1 {
 		if _, exists := set1Map[name]; !exists {
 			set1Map[name] = 1
-			denom += tokenVal[name]
+			denom = denom + tokenVal[name]
 		} else {
 			set1Map[name] += 1
-			denom += tokenVal[name]
+			denom = denom + tokenVal[name]
 		}
 	}
 	for _, name := range set2 {
-		denom += denom + tokenVal[name]
+		denom = denom + tokenVal[name]
 		if set1Map[name] > 0 {
-			intersectionCount += tokenVal[name]
+			intersectCount = intersectCount + tokenVal[name]
 			set1Map[name] -= 1
 		}
 	}
 	denom = denom - intersectCount
-	return intersectionCount, denom
+	return intersectCount, denom
 }
 
 func calculateJaccardIndex(string1 string, string2 string, tokenVal map[string]float64) float64 {
@@ -85,11 +85,11 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 		confidence := 0.0
 		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName, tokenVal)
 		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName, tokenVal)
-		if jaccard1 == 1 {
+		if jaccard1 > .99 {
 			confidence = 1
 			consideredMatch = true
 			verbosePrint("Exact Match Primary Name: "+normalizedEndpointName, verbose)
-		} else if jaccard2 == 1 {
+		} else if jaccard2 > .99 {
 			confidence = 1
 			consideredMatch = true
 			verbosePrint("Exact Match Secondary Name: "+normalizedEndpointName, verbose)
@@ -147,7 +147,7 @@ func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, stor
 	return matches, confidences, nil
 }
 
-func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool) ([]string, map[string]float64, error) {
+func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
 	allMatches := make([]string, 0)
 	allConfidences := make(map[string]float64)
 	for _, name := range endpoint.OrganizationNames {
@@ -185,7 +185,7 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 	return nil
 }
 
-func countTokens(npiOrg []endpointmanager.NPIOrganization, FHIREndpoints []endpointmanager.FHIREndpoint) map[string]float64 {
+func countTokens(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) map[string]float64 {
 	tokenCounterAll := make(map[string]int)
 	tokenCounterNPI := make(map[string]int)
 	tokenCounterEndpoints := make(map[string]int)
@@ -221,18 +221,20 @@ func countTokens(npiOrg []endpointmanager.NPIOrganization, FHIREndpoints []endpo
 		}
 	}
 	for _, endpoint := range FHIREndpoints {
-		endpointName := NormalizeOrgName(endpoint.OrganizationName)
-		endpointNameTokens := strings.Fields(endpointName)
-		for _, endpointToken := range endpointNameTokens {
-			if _, contains := tokenCounterAll[endpointToken]; !contains {
-				totalUniqueTokens += 1
-			}
-			tokenCounterAll[endpointToken] += 1
-			tokenCounterEndpoints[endpointToken] += 1
-			totalTokens++
+		for _, name := range endpoint.OrganizationNames {
+			endpointName, _ := NormalizeOrgName(name)
+			endpointNameTokens := strings.Fields(endpointName)
+			for _, endpointToken := range endpointNameTokens {
+				if _, contains := tokenCounterAll[endpointToken]; !contains {
+					totalUniqueTokens += 1
+				}
+				tokenCounterAll[endpointToken] += 1
+				tokenCounterEndpoints[endpointToken] += 1
+				totalTokens++
 
-			if tokenCounterAll[endpointToken] >= tokenCounterAll[firstKey] {
-				firstKey = endpointToken
+				if tokenCounterAll[endpointToken] >= tokenCounterAll[firstKey] {
+					firstKey = endpointToken
+				}
 			}
 		}
 	}
@@ -264,16 +266,16 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 			tokenVal[key] *= 1.5
 		} else if value < tokenMean+(tokenStandardDev) {
 			tokenVal[key] *= 1.2
-		} else if value > tokenMean+(tokenStandardDev*9) {
-			tokenVal[key] /= 1.8
-		} else if value > tokenMean+(tokenStandardDev*6) {
-			tokenVal[key] /= 1.5
-		} else if value > tokenMean+(tokenStandardDev*3) {
-			tokenVal[key] /= 1.2
+		} else if value < tokenMean+(tokenStandardDev*3) {
+			tokenVal[key] *= 0.9
+		} else if value < tokenMean+(tokenStandardDev*6) {
+			tokenVal[key] *= 0.7
+		} else {
+			tokenVal[key] *= 0.5
 		}
 
 		if tokenCountsNPI[key] == 0 || tokenCountsEndpoints[key] == 0 {
-			tokenVal[key] /= 2.5
+			tokenVal[key] *= 0.4
 		}
 
 	}
