@@ -1,9 +1,13 @@
 package endpointmanager
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	_ "github.com/lib/pq"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_FHIREndpoinNormalizeEndpointURL(t *testing.T) {
@@ -58,15 +62,17 @@ func Test_FHIREndpoinNormalizeURL(t *testing.T) {
 func Test_FHIREndpointEqual(t *testing.T) {
 	// endpoints
 	var endpoint1 = &FHIREndpoint{
-		ID:               1,
-		URL:              "example.com/FHIR/DSTU2",
-		OrganizationName: "Example Org",
-		ListSource:       "https://open.epic.com/MyApps/EndpointsJson"}
+		ID:                1,
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
+		NPIIDs:            []string{"1", "2", "3"},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
 	var endpoint2 = &FHIREndpoint{
-		ID:               1,
-		URL:              "example.com/FHIR/DSTU2",
-		OrganizationName: "Example Org",
-		ListSource:       "https://open.epic.com/MyApps/EndpointsJson"}
+		ID:                1,
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
+		NPIIDs:            []string{"1", "2", "3"},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
@@ -84,11 +90,17 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.URL = endpoint1.URL
 
-	endpoint2.OrganizationName = "other"
+	endpoint2.OrganizationNames = []string{"Other 1"}
 	if endpoint1.Equal(endpoint2) {
-		t.Errorf("Did not expect endpoint1 to equal endpoint 2. OrganizationName should be different. %s vs %s", endpoint1.OrganizationName, endpoint2.OrganizationName)
+		t.Error("Did not expect endpoint1 to equal endpoint 2. OrganizationNames should be different.")
 	}
-	endpoint2.OrganizationName = endpoint1.OrganizationName
+	endpoint2.OrganizationNames = endpoint1.OrganizationNames
+
+	endpoint2.NPIIDs = []string{"Other 1"}
+	if endpoint1.Equal(endpoint2) {
+		t.Error("Did not expect endpoint1 to equal endpoint 2. NPIIDs should be different.")
+	}
+	endpoint2.NPIIDs = endpoint1.NPIIDs
 
 	endpoint2.ListSource = "other"
 	if endpoint1.Equal(endpoint2) {
@@ -111,4 +123,64 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Nil endpoint 1 should equal nil endpoint 2.")
 	}
+}
+
+func Test_AddOrganizationName(t *testing.T) {
+	var endpoint = &FHIREndpoint{
+		ID:                1,
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{},
+		NPIIDs:            []string{"1", "2", "3"},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+
+	var orgName string
+	var expected []string
+
+	// test with empty org names list
+	orgName = "Example Org Name 1"
+	expected = []string{"Example Org Name 1"}
+	endpoint.AddOrganizationName(orgName)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
+
+	// test with non-empty org names list
+	orgName = "Example Org Name 2"
+	expected = []string{"Example Org Name 2", "Example Org Name 1"}
+	endpoint.AddOrganizationName(orgName)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
+
+	// test with org name that's already in list
+	orgName = "Example Org Name 2"
+	expected = []string{"Example Org Name 2", "Example Org Name 1"}
+	endpoint.AddOrganizationName(orgName)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
+}
+
+func Test_AddNPIID(t *testing.T) {
+	var endpoint = &FHIREndpoint{
+		ID:                1,
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Org Name 1", "Example Org Name 2"},
+		NPIIDs:            []string{},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+
+	var npiID string
+	var expected []string
+
+	// test with empty npi ids list
+	npiID = "1"
+	expected = []string{"1"}
+	endpoint.AddNPIID(npiID)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
+
+	// test with non-empty npi ids list
+	npiID = "2"
+	expected = []string{"2", "1"}
+	endpoint.AddNPIID(npiID)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
+
+	// test with npi id that's already in list
+	npiID = "2"
+	expected = []string{"2", "1"}
+	endpoint.AddNPIID(npiID)
+	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
 }

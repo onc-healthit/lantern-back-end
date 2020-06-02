@@ -27,7 +27,7 @@ var totalFailedUptimeChecksCounterVec *prometheus.CounterVec
 
 // getHTTPRequestTiming records the http request characteristics for the endpoint specified by urlString
 // Record the metrics into the appropriate prometheus register under the label specified by organizationName
-func getHTTPRequestTiming(urlString string, organizationName string) {
+func getHTTPRequestTiming(urlString string) {
 	ctx := context.Background()
 	// Closing context if HTTP request and response processing is not completed within 30 seconds.
 	// This includes dropping the request connection if there's no reply within 30 seconds.
@@ -37,17 +37,17 @@ func getHTTPRequestTiming(urlString string, organizationName string) {
 	var resp, responseTime, err = querier.GetResponseAndTiming(ctx, urlString)
 
 	if err != nil {
-		log.WithFields(log.Fields{"organization": organizationName, "url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
+		log.WithFields(log.Fields{"url": urlString}).Warn("Error getting response charactaristics for endpoint.", err.Error())
 	} else {
-		responseTimeGaugeVec.WithLabelValues(organizationName).Set(responseTime)
+		responseTimeGaugeVec.WithLabelValues(urlString).Set(responseTime)
 
 		if resp != nil && resp.StatusCode != http.StatusOK {
-			totalFailedUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
+			totalFailedUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
 		}
 		if resp != nil {
-			httpCodesGaugeVec.WithLabelValues(organizationName).Set(float64(resp.StatusCode))
+			httpCodesGaugeVec.WithLabelValues(urlString).Set(float64(resp.StatusCode))
 		}
-		totalUptimeChecksCounterVec.WithLabelValues(organizationName).Inc()
+		totalUptimeChecksCounterVec.WithLabelValues(urlString).Inc()
 	}
 }
 
@@ -56,33 +56,33 @@ func initializeMetrics() {
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "http_request_responses",
-			Help:      "HTTP request responses partitioned by orgName",
+			Help:      "HTTP request responses partitioned by url",
 		},
-		[]string{"orgName"})
+		[]string{"url"})
 
 	responseTimeGaugeVec = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: "AllEndpoints",
 			Name:      "http_response_time",
-			Help:      "HTTP response time partitioned by orgName",
+			Help:      "HTTP response time partitioned by url",
 		},
-		[]string{"orgName"})
+		[]string{"url"})
 
 	totalUptimeChecksCounterVec = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: "AllEndpoints",
 			Name:      "total_uptime_checks",
-			Help:      "Total number of uptime checks partitioned by orgName",
+			Help:      "Total number of uptime checks partitioned by url",
 		},
-		[]string{"orgName"})
+		[]string{"url"})
 
 	totalFailedUptimeChecksCounterVec = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: "AllEndpoints",
 			Name:      "total_failed_uptime_checks",
-			Help:      "Total number of failed uptime checks partitioned by orgName",
+			Help:      "Total number of failed uptime checks partitioned by url",
 		},
-		[]string{"orgName"})
+		[]string{"url"})
 
 	prometheus.MustRegister(httpCodesGaugeVec)
 	prometheus.MustRegister(responseTimeGaugeVec)
@@ -162,13 +162,12 @@ func main() {
 		for _, endpointEntry := range listOfEndpoints.Entries {
 			// TODO: Distribute calls using a worker of some sort so that we are not sending out a million requests at once
 			var urlString = endpointEntry.FHIRPatientFacingURI
-			var orgName = endpointEntry.OrganizationName
 			// Specifically query the FHIR endpoint metadata
 			metadataURL, err := url.Parse(urlString)
 			if err != nil {
 				log.Warn("Endpoint URL Parsing Error: ", err.Error())
 			} else {
-				getHTTPRequestTiming(metadataURL.String(), orgName)
+				getHTTPRequestTiming(metadataURL.String())
 			}
 		}
 		runtime.GC()

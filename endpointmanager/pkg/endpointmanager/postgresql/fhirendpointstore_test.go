@@ -6,6 +6,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
@@ -19,12 +21,13 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:              "example.com/FHIR/DSTU2/",
-		OrganizationName: "Example Inc.",
-		ListSource:       "https://github.com/cerner/ignite-endpoints"}
+		URL:               "example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Example Inc."},
+		NPIIDs:            []string{"1"},
+		ListSource:        "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:              "other.example.com/FHIR/DSTU2/",
-		OrganizationName: "Other Example Inc."}
+		URL:               "other.example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Other Example Inc."}}
 
 	// add endpoints
 
@@ -40,7 +43,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// retrieve endpoints
 
-	e1, err1 := store.GetFHIREndpointUsingURL(ctx, endpoint1.URL)
+	e1, err1 := store.GetFHIREndpointUsingURLAndListSource(ctx, endpoint1.URL, endpoint1.ListSource)
 	if err1 != nil {
 		t.Errorf("Error getting fhir endpoint: %s", err1.Error())
 	}
@@ -54,16 +57,6 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 	if !eID1.Equal(endpoint1) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
-	}
-
-	// retreive all endpoints
-	endpts, err := store.GetAllFHIREndpoints(ctx)
-	if err != nil {
-		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
-	}
-	eLen := 2
-	if len(endpts) != eLen {
-		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
 	}
 
 	// update endpoint
@@ -86,28 +79,59 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
-	// get all org names
-
-	endpointNames, err := store.GetAllFHIREndpointOrgNames(ctx)
+	// add or update endpoint
+	e1.ListSource = "New List Source"
+	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
 	if err != nil {
-		t.Errorf("Error getting endpoint organization normalized names: %s", err.Error())
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
 	}
-	eLength := 2
-	if len(endpointNames) != eLength {
-		t.Errorf("Expected endpoint org list to have length %d. Got %d.", eLength, len(endpointNames))
+	e1, err = store.GetFHIREndpointUsingURLAndListSource(ctx, e1.URL, e1.ListSource)
+	if err != nil {
+		t.Errorf("Error getting fhir endpoint: %s", err.Error())
+	}
+	if e1.ID == endpoint1.ID {
+		t.Errorf("should have created a new entry")
 	}
 
-	for _, ep := range endpointNames {
+	e1.OrganizationNames = []string{"Org 1", "Org 2"}
+	e1.NPIIDs = []string{"2", "3"}
+	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
+	if err != nil {
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
+	}
+	e1, err = store.GetFHIREndpoint(ctx, e1.ID)
+	if err != nil {
+		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
+	}
+	if !helpers.StringArraysEqual(e1.OrganizationNames, []string{"Org 1", "Org 2", "Example Inc."}) {
+		t.Errorf("Expected organization names array to be merged with new org names")
+	}
+	if !helpers.StringArraysEqual(e1.NPIIDs, []string{"1", "2", "3"}) {
+		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
+	}
+
+	// retreive all endpoints
+
+	endpts, err := store.GetAllFHIREndpoints(ctx)
+	if err != nil {
+		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
+	}
+	eLen := 3
+	if len(endpts) != eLen {
+		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+	}
+
+	for _, ep := range endpts {
 		if ep.ID == endpoint1.ID {
-			eName := "Example Inc."
-			if ep.OrganizationName != eName {
-				t.Errorf("Expected org name to be %s. Got %s.", eName, ep.OrganizationName)
+			eName := []string{"Example Inc."}
+			if !helpers.StringArraysEqual(ep.OrganizationNames, eName) {
+				t.Errorf("Expected org name to be %v. Got %v.", eName, ep.OrganizationNames)
 			}
 		}
 		if ep.ID == endpoint2.ID {
-			eName := "Other Example Inc."
-			if ep.OrganizationName != eName {
-				t.Errorf("Expected org name to be %s. Got %s.", eName, ep.OrganizationName)
+			eName := []string{"Other Example Inc."}
+			if !helpers.StringArraysEqual(ep.OrganizationNames, eName) {
+				t.Errorf("Expected org name to be %v. Got %v.", eName, ep.OrganizationNames)
 			}
 		}
 	}
