@@ -52,7 +52,7 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 	return validations
 }
 
-// r4MimeTypeValid checks to see if the application/fhir+json mime type was a valid mime type for this endpoint
+// r4MimeTypeValid checks to see if the R4 required mime type application/fhir+json was a valid mime type for this endpoint
 func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
 	mimeString := strings.Join(mimeTypes, ", ")
 	ruleError := endpointmanager.Rule{
