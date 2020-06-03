@@ -33,6 +33,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
+<<<<<<< da84cd6f3d5f1acf22e47e38e0ef00dea299995d
 			Results: []Rule{
 				{
 					RuleName:  "httpResponse",
@@ -42,6 +43,14 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 					Comment:   "Not 200",
 					Reference: "reference.com",
 					ImplGuide: "Guide",
+=======
+			Errors: []Rule{
+				Rule{
+					RuleName:  "httpResponse",
+					Expected:  "200",
+					Comment:   "Not 200",
+					Reference: "reference.com",
+>>>>>>> Update tests
 				},
 			},
 		},
@@ -92,6 +101,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
+<<<<<<< da84cd6f3d5f1acf22e47e38e0ef00dea299995d
 			Results: []Rule{
 				{
 					RuleName:  "httpResponse",
@@ -101,6 +111,14 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 					Comment:   "Not 200",
 					Reference: "reference.com",
 					ImplGuide: "Guide",
+=======
+			Errors: []Rule{
+				Rule{
+					RuleName:  "httpResponse",
+					Expected:  "200",
+					Comment:   "Not 200",
+					Reference: "reference.com",
+>>>>>>> Update tests
 				},
 			},
 		},
