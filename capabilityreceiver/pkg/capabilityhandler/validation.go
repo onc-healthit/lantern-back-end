@@ -72,11 +72,6 @@ func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
 	}
 
 	ruleError.Valid = false
-	ruleError.RuleName = r4MimeTypeRule
-	ruleError.Expected = fhir3PlusJSONMIMEType
-	ruleError.Comment = `The formal MIME-type for FHIR resources is application/fhir+json for FHIR
-	version STU3 and above. The correct mime type SHALL be used by clients and servers.`
-	ruleError.Reference = "http://hl7.org/fhir/http.html"
 	return ruleError
 }
 
