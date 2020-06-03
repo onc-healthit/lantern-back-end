@@ -283,7 +283,7 @@ This will start a RabbitMQ container listening on the default port of 5672. If y
  database dir   : /var/lib/rabbitmq/mnesia/rabbit@lantern-mq
 ```
 
-You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `guest:guest`.
+You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `lanternadmin:lanternadmin`.
 
 ### Grafana
 
