@@ -59,7 +59,9 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		MIMETypes:           []string{"application/json+fhir"},
 		HTTPResponse:        200,
 		Errors:              "Example Error",
-		CapabilityStatement: cs}
+		CapabilityStatement: cs,
+		SMARTHTTPResponse: 	 0,
+		SMARTResponse:           nil}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:          endpoint2.URL,
 		TLSVersion:   "TLS 1.2",

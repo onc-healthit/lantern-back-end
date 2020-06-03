@@ -24,6 +24,8 @@ type FHIREndpointInfo struct {
 	Validation          map[string]interface{}
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
+	SMARTHTTPResponse   int
+	SMARTResponse       capabilityparser.SMARTResponse
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -66,6 +68,15 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
+	if e.SMARTHTTPResponse != e2.SMARTHTTPResponse {
+		return false
+	}
+	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
+		return false
+	}
+	if e.SMARTResponse == nil && e2.SMARTResponse != nil {
 		return false
 	}
 

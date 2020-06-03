@@ -17,6 +17,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type EndpointType string
+
+const (
+	metadata  EndpointType = "metadata"
+	wellknown EndpointType = "well-known"
+)
+
 var fhir3PlusJSONMIMEType = "application/fhir+json"
 var fhir2LessJSONMIMEType = "application/json+fhir"
 
@@ -38,6 +45,8 @@ type Message struct {
 	TLSVersion          string      `json:"tlsVersion"`
 	HTTPResponse        int         `json:"httpResponse"`
 	CapabilityStatement interface{} `json:"capabilityStatement"`
+	SMARTHTTPResponse   int         `json:"smarthttpResponse"`
+	SMARTResp           interface{} `json:"smartResp"`
 }
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
@@ -65,10 +74,18 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	message := Message{
 		URL: qa.FhirURL.String(),
 	}
-
-	err = requestCapabilityStatement(ctx, qa.FhirURL, qa.Client, &message)
+	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL.String())
+	// Query fhir endpoint
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL.String())
+		message.Err = err.Error()
+	}
+
+	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
+	// Query well known endpoint
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
+	if err != nil {
 		message.Err = err.Error()
 	}
 
@@ -87,54 +104,71 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 }
 
 // fills out message with http response code, tls version, capability statement, and supported mime types
-func requestCapabilityStatement(ctx context.Context, fhirURL *url.URL, client *http.Client, message *Message) error {
+func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, message *Message) error {
 	var err error
 	var httpResponseCode int
 	var supportsFHIR3MIMEType bool
 	var supportsFHIR2MIMEType bool
 	var tlsVersion string
 	var capResp []byte
+	var jsonResponse interface{}
 
-	normalizedURL := endpointmanager.NormalizeEndpointURL(fhirURL.String())
-
-	req, err := http.NewRequest("GET", normalizedURL, nil)
+	req, err := http.NewRequest("GET", fhirURL, nil)
 	if err != nil {
-		return errors.Wrap(err, "unable to create new GET request from URL: "+normalizedURL)
+		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL)
 	}
 	req = req.WithContext(ctx)
 
-	httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-	if err != nil {
-		return err
-	}
-
-	if httpResponseCode != http.StatusOK || !supportsFHIR3MIMEType {
-		// replace all values based on fhir 2 mime type if there were any issues with fhir 3 mime type request
-		httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+	if endptType == wellknown && len(message.MIMETypes) > 0 {
+		httpResponseCode, _, _, capResp, err = requestWithMimeType(req, message.MIMETypes[0], client)
 		if err != nil {
 			return err
 		}
 	} else {
-		// only chech fhir 2 mime type support
-		_, _, supportsFHIR2MIMEType, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+		httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	if endptType == metadata {
+		if httpResponseCode != http.StatusOK || !supportsFHIR3MIMEType {
+			// replace all values based on fhir 2 mime type if there were any issues with fhir 3 mime type request
+			httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			if err != nil {
+				return err
+			}
+		} else {
+			// only chech fhir 2 mime type support
+			_, _, supportsFHIR2MIMEType, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			if err != nil {
+				return err
+			}
+		}
+		if supportsFHIR2MIMEType {
+			message.MIMETypes = append(message.MIMETypes, fhir2LessJSONMIMEType)
+		}
+		if supportsFHIR3MIMEType {
+			message.MIMETypes = append(message.MIMETypes, fhir3PlusJSONMIMEType)
+		}
+	}
+
+	if capResp != nil {
+		err = json.Unmarshal(capResp, &(jsonResponse))
 		if err != nil {
 			return err
 		}
 	}
 
-	message.HTTPResponse = httpResponseCode
-	message.TLSVersion = tlsVersion
-	if supportsFHIR2MIMEType {
-		message.MIMETypes = append(message.MIMETypes, fhir2LessJSONMIMEType)
-	}
-	if supportsFHIR3MIMEType {
-		message.MIMETypes = append(message.MIMETypes, fhir3PlusJSONMIMEType)
-	}
-	if capResp != nil {
-		err = json.Unmarshal(capResp, &(message.CapabilityStatement))
-		if err != nil {
-			return err
-		}
+	switch endptType {
+	case metadata:
+		message.TLSVersion = tlsVersion
+		message.HTTPResponse = httpResponseCode
+		message.CapabilityStatement = jsonResponse
+	case wellknown:
+		message.SMARTHTTPResponse = httpResponseCode
+		message.SMARTResp = jsonResponse
 	}
 
 	return nil

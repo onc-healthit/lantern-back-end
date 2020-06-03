@@ -86,3 +86,16 @@ func (e *FHIREndpoint) AddNPIID(npiID string) {
 		e.NPIIDs = append(e.NPIIDs, npiID)
 	}
 }
+
+// Prepends url with https:// and appends with .well-know/smart-configuration/ if needed
+func NormalizeWellKnownURL(url string) string {
+	normalized := NormalizeURL(url)
+
+	if !strings.HasSuffix(url, "/.well-known/smart-configuration") && !strings.HasSuffix(url, "/.well-known/smart-configuration/") {
+		if !strings.HasSuffix(url, "/") {
+			normalized = normalized + "/"
+		}
+		normalized = normalized + ".well-known/smart-configuration"
+	}
+	return normalized
+}
