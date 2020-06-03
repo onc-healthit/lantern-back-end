@@ -45,7 +45,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 					ImplGuide: "Guide",
 =======
 			Errors: []Rule{
-				Rule{
+				{
 					RuleName:  "httpResponse",
 					Expected:  "200",
 					Comment:   "Not 200",
@@ -113,7 +113,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 					ImplGuide: "Guide",
 =======
 			Errors: []Rule{
-				Rule{
+				{
 					RuleName:  "httpResponse",
 					Expected:  "200",
 					Comment:   "Not 200",
