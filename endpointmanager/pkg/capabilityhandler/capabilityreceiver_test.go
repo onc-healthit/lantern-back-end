@@ -21,6 +21,18 @@ var testQueueMsg = map[string]interface{}{
 	"smartResp":         nil,
 }
 
+var testValidationObj = endpointmanager.Validation{
+	Errors: []endpointmanager.Rule{
+		endpointmanager.Rule{
+			RuleName:  endpointmanager.R4MimeTypeRule,
+			Expected:  "application/fhir+json",
+			Comment:   "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers.",
+			Reference: "http://hl7.org/fhir/http.html",
+		},
+	},
+	Warnings: []endpointmanager.Rule{},
+}
+
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:               "http://example.com/DTSU2/",
 	MIMETypes:         []string{"application/json+fhir"},
@@ -29,6 +41,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	Errors:            "",
 	SMARTHTTPResponse: 0,
 	SMARTResponse:     nil,
+	Validation:        testValidationObj,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
