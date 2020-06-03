@@ -23,7 +23,7 @@ var testQueueMsg = map[string]interface{}{
 
 var testValidationObj = endpointmanager.Validation{
 	Errors: []endpointmanager.Rule{
-		endpointmanager.Rule{
+		{
 			RuleName:  endpointmanager.R4MimeTypeRule,
 			Expected:  "application/fhir+json",
 			Comment:   "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers.",

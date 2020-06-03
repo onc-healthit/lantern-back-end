@@ -34,7 +34,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		VendorID:          2,
 		Validation: Validation{
 			Errors: []Rule{
-				Rule{
+				{
 					RuleName:  "httpResponse",
 					Expected:  "200",
 					Comment:   "Not 200",
@@ -54,7 +54,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		VendorID:          2,
 		Validation: Validation{
 			Errors: []Rule{
-				Rule{
+				{
 					RuleName:  "httpResponse",
 					Expected:  "200",
 					Comment:   "Not 200",

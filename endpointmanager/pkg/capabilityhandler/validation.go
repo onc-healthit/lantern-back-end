@@ -34,8 +34,9 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 		fhirVersion, err := capStat.GetFHIRVersion()
 		if err != nil {
 			returnedRule = generalMimeTypeValid(mimeTypes, "")
+		} else {
+			returnedRule = generalMimeTypeValid(mimeTypes, fhirVersion)
 		}
-		returnedRule = generalMimeTypeValid(mimeTypes, fhirVersion)
 	} else {
 		returnedRule = generalMimeTypeValid(mimeTypes, "")
 	}
