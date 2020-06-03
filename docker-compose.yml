@@ -69,6 +69,7 @@ services:
     volumes:
       - ./lanternmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - rabbitmqdata:/var/lib/rabbitmq
 
   lantern_front_end:
     image: onchealthit/lantern-front-end
@@ -111,5 +112,6 @@ volumes:
   pgdata:
   prometheusData:
   grafanaData:
+  rabbitmqdata:
 
 
