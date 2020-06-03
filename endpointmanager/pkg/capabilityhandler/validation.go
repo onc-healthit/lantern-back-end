@@ -4,29 +4,12 @@ import (
 	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
 var version3plus = []string{"3.0.0", "3.0.1", "4.0.0", "4.0.1"}
 var fhir3PlusJSONMIMEType = "application/fhir+json"
 var fhir2LessJSONMIMEType = "application/json+fhir"
-
-// RuleOption is an enum of the names given to the rule validation checks
-type RuleOption string
-
-const (
-	r4MimeTypeRule      RuleOption = "r4MimeType"
-	generalMimeTypeRule RuleOption = "generalMimeType"
-	httpResponseRule    RuleOption = "httpResponse"
-)
-
-// Rule is the structure for both validation errors and warnings that are saved in
-// the Validations struct
-type Rule struct {
-	RuleName  RuleOption `json:"ruleName"`
-	Expected  string     `json:"expected"`
-	Comment   string     `json:"comment"`
-	Reference string     `json:"reference"`
-}
 
 func contains(arr []string, str string) bool {
 	for _, a := range arr {
@@ -38,17 +21,12 @@ func contains(arr []string, str string) bool {
 }
 
 // RunValidationChecks runs all of the validation checks based on the rule requirements from ONC
-// The final Validation object is formatted as a map of strings to arrays of the rule struct
-// return value: 	{
-// 						"Errors":   []rule,
-//						"Warnings": []rule,
-// 					}
-func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpResponse int, mimeTypes []string) map[string]interface{} {
-	var validationErrors []Rule
-	validationWarnings := make([]Rule, 0)
+func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpResponse int, mimeTypes []string) endpointmanager.Validation {
+	var validationErrors []endpointmanager.Rule
+	validationWarnings := make([]endpointmanager.Rule, 0)
 
 	returnedRule := r4MimeTypeValid(mimeTypes)
-	if returnedRule != (Rule{}) {
+	if returnedRule != (endpointmanager.Rule{}) {
 		validationErrors = append(validationErrors, returnedRule)
 	}
 
@@ -61,26 +39,26 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 	} else {
 		returnedRule = generalMimeTypeValid(mimeTypes, "")
 	}
-	if returnedRule != (Rule{}) {
+	if returnedRule != (endpointmanager.Rule{}) {
 		validationErrors = append(validationErrors, returnedRule)
 	}
 
 	returnedRule = httpResponseValid(httpResponse)
-	if returnedRule != (Rule{}) {
+	if returnedRule != (endpointmanager.Rule{}) {
 		validationErrors = append(validationErrors, returnedRule)
 	}
 
-	validations := map[string]interface{}{
-		"Errors":   validationErrors,
-		"Warnings": validationWarnings,
+	validations := endpointmanager.Validation{
+		Errors:   validationErrors,
+		Warnings: validationWarnings,
 	}
 
 	return validations
 }
 
 // r4MimeTypeValid checks to see if the application/fhir+json mime type was a valid mime type for this endpoint
-func r4MimeTypeValid(mimeTypes []string) Rule {
-	var ruleError Rule
+func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
 
 	for _, mt := range mimeTypes {
 		if mt == fhir3PlusJSONMIMEType {
@@ -88,21 +66,20 @@ func r4MimeTypeValid(mimeTypes []string) Rule {
 		}
 	}
 
-	ruleError.RuleName = r4MimeTypeRule
+	ruleError.RuleName = endpointmanager.R4MimeTypeRule
 	ruleError.Expected = fhir3PlusJSONMIMEType
-	ruleError.Comment = `The formal MIME-type for FHIR resources is application/fhir+json for FHIR
-	version STU3 and above. The correct mime type SHALL be used by clients and servers.`
+	ruleError.Comment = "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers."
 	ruleError.Reference = "http://hl7.org/fhir/http.html"
 	return ruleError
 }
 
 // generalMimeTypeValid checks if the mime type is valid for the given fhirVersion.
 // @TODO We might not care about this if endpoints are supposed to be version R4
-func generalMimeTypeValid(mimeTypes []string, fhirVersion string) Rule {
-	var ruleError Rule
+func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
 
 	if len(fhirVersion) == 0 {
-		ruleError.RuleName = generalMimeTypeRule
+		ruleError.RuleName = endpointmanager.GeneralMimeTypeRule
 		ruleError.Expected = "N/A"
 		ruleError.Comment = "Unknown FHIR Version; cannot validate mime type."
 		return ruleError
@@ -127,7 +104,7 @@ func generalMimeTypeValid(mimeTypes []string, fhirVersion string) Rule {
 
 	errorMsg := "FHIR Version " + fhirVersion + " requires the Mime Type to be " + mimeError
 
-	ruleError.RuleName = generalMimeTypeRule
+	ruleError.RuleName = endpointmanager.GeneralMimeTypeRule
 	ruleError.Expected = mimeError
 	ruleError.Comment = errorMsg
 	ruleError.Reference = "http://hl7.org/fhir/http.html"
@@ -135,23 +112,21 @@ func generalMimeTypeValid(mimeTypes []string, fhirVersion string) Rule {
 }
 
 // httpReponseValid checks for the http response and returns
-func httpResponseValid(httpResponse int) Rule {
-	var ruleError Rule
+func httpResponseValid(httpResponse int) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
 
 	if httpResponse == 200 {
 		return ruleError
 	}
 
 	s := strconv.Itoa(httpResponse)
-	ruleError.RuleName = httpResponseRule
+	ruleError.RuleName = endpointmanager.HTTPResponseRule
 	ruleError.Expected = "200"
 	ruleError.Reference = "http://hl7.org/fhir/http.html"
-	ruleError.Comment = `The HTTP response code was ` + s + ` instead of 200. 
-	Applications SHALL return a resource that describes the functionality of the server end-point.`
+	ruleError.Comment = "The HTTP response code was " + s + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point."
 
 	if httpResponse == 0 {
-		ruleError.Comment = `The GET request failed with no returned HTTP response status code.
-		Applications SHALL return a resource that describes the functionality of the server end-point.`
+		ruleError.Comment = "The GET request failed with no returned HTTP response status code. Applications SHALL return a resource that describes the functionality of the server end-point."
 	}
 
 	return ruleError
