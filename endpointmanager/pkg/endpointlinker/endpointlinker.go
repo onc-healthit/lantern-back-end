@@ -74,8 +74,8 @@ func verbosePrint(message string, verbose bool) {
 	}
 }
 
-func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
-	JACCARD_THRESHOLD := .85
+func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool, tokenVal map[string]float64, jaccard_threshold float64) ([]string, map[string]float64, error) {
+	JACCARD_THRESHOLD := jaccard_threshold
 
 	matches := []string{}
 	confidenceMap := make(map[string]float64)
@@ -148,7 +148,7 @@ func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, stor
 	return matches, confidences, nil
 }
 
-func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
+func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool, tokenVal map[string]float64, jaccard_threshold float64) ([]string, map[string]float64, error) {
 	allMatches := make([]string, 0)
 	allConfidences := make(map[string]float64)
 	for _, name := range endpoint.OrganizationNames {
@@ -156,7 +156,7 @@ func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpoint
 		if err != nil {
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting normalizing endpoint organizaton name")
 		}
-		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose, tokenVal)
+		matches, confidences, err := getIdsOfMatchingNPIOrgs(npiOrgNames, normalizedEndpointName, verbose, tokenVal, jaccard_threshold)
 		if err != nil {
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting matching NPI org IDs")
 		}
@@ -326,6 +326,7 @@ func makeFluffDictionary() map[string]bool {
 }
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
+	jaccard_threshold := .85
 	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
 		return errors.Wrap(err, "Error getting endpoint org names")
@@ -349,7 +350,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		if err != nil {
 			return errors.Wrap(err, "error matching endpoint to NPI organization by ID")
 		}
-		nameMatches, nameConfidences, err := matchByName(endpoint, npiOrgNames, verbose, tokenVal)
+		nameMatches, nameConfidences, err := matchByName(endpoint, npiOrgNames, verbose, tokenVal, jaccard_threshold)
 		if err != nil {
 			return errors.Wrap(err, "error matching endpoint to NPI organization by name")
 		}

@@ -175,13 +175,13 @@ func Test_IntersectionCount(t *testing.T) {
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	var orgs []*endpointmanager.NPIOrganization
 
-	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues)
+	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from empty list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
 
 	orgs = append(orgs, nonMatchingOrg)
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
@@ -193,7 +193,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryNameOrgName)
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", false, tokenValues)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 5), "There should have been 5 matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 5), "There should have been 5 confidences returned "+strconv.Itoa(len(confidences)))
@@ -214,7 +214,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	th.Assert(t, (confidence == "0.787500"), "Exact match confidence should have been 0.787500 confidence got "+confidence)
 
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false, tokenValues)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 1), "There should have been 1 matchs returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidences returned "+strconv.Itoa(len(confidences)))
@@ -326,7 +326,7 @@ func Test_matchByName(t *testing.T) {
 		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
 
 	// test with no orgs
-	matches, confidences, err := matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err := matchByName(ep, orgs, false, tokenValues, .85)
 	expected := 0
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, "expected no matches")
@@ -335,7 +335,7 @@ func Test_matchByName(t *testing.T) {
 	orgs = append(orgs, nonMatchingOrg)
 
 	// test with non matching org
-	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 0
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, "expected no matches")
@@ -349,7 +349,7 @@ func Test_matchByName(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM"
-	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -372,7 +372,7 @@ func Test_matchByName(t *testing.T) {
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM"}
-	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -396,7 +396,7 @@ func Test_matchByName(t *testing.T) {
 	// check that highest confidence value is used
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
-	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -420,7 +420,7 @@ func Test_matchByName(t *testing.T) {
 	// checking non-existent org name causes no issues
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM" and "BLAH"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM", "BLAH"}
-	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
