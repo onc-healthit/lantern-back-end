@@ -19,6 +19,7 @@ import (
 func NormalizeOrgName(orgName string) (string, error) {
 	// Regex for only letters
 	orgName = strings.ReplaceAll(orgName, "-", " ")
+	orgName = strings.ReplaceAll(orgName, "/", " ")
 	reg, err := regexp.Compile(`[^a-zA-Z0-9\s]+`)
 	if err != nil {
 		return "", errors.Wrap(err, "error compiling regex for normalizing organization name")
@@ -74,7 +75,7 @@ func verbosePrint(message string, verbose bool) {
 }
 
 func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
-	JACCARD_THRESHOLD := .75
+	JACCARD_THRESHOLD := .78
 
 	matches := []string{}
 	confidenceMap := make(map[string]float64)
@@ -262,23 +263,29 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 		tokenVal[key] = 1.0 - (float64(value) / float64(tokenCounts[firstKey]))
 
 		if fluffDictionary[key] == true {
-			tokenVal[key] *= 0.3
+			tokenVal[key] *= 0.2
 		} else if value < tokenMean {
 			tokenVal[key] *= 2.5
 		} else if value < tokenMean+(tokenStandardDev/3) {
-			tokenVal[key] *= 1.5
+			tokenVal[key] *= 1.6
 		} else if value < tokenMean+(tokenStandardDev) {
-			tokenVal[key] *= 1.2
+			tokenVal[key] *= 1.3
+		} else if value < tokenMean+(tokenStandardDev*3) {
+			tokenVal[key] *= 1.0
 		} else if value < tokenMean+(tokenStandardDev*6) {
 			tokenVal[key] *= 0.8
 		} else if value < tokenMean+(tokenStandardDev*9) {
 			tokenVal[key] *= 0.6
 		} else {
-			tokenVal[key] *= 0.5
+			tokenVal[key] *= 0.4
 		}
 
-		if tokenCountsNPI[key] == 0 || tokenCountsEndpoints[key] == 0 {
-			tokenVal[key] *= 0.4
+		if tokenCountsNPI[key] == 0 && tokenCountsEndpoints[key] != 0 {
+			tokenVal[key] *= 0.1
+			continue
+		} else if tokenCountsNPI[key] != 0 && tokenCountsEndpoints[key] == 0 {
+			tokenVal[key] *= 0.3
+			continue
 		}
 
 	}
@@ -290,10 +297,14 @@ func makeFluffDictionary() map[string]bool {
 	var fluffDictionary = make(map[string]bool)
 
 	fluffDictionary["LLC"] = true
+	fluffDictionary["EMS"] = true
+	fluffDictionary["DR"] = true
 	fluffDictionary["PA"] = true
+	fluffDictionary["MD"] = true
 	fluffDictionary["LLC"] = true
 	fluffDictionary["LTD"] = true
 	fluffDictionary["PC"] = true
+	fluffDictionary["DPM"] = true
 	fluffDictionary["LLP"] = true
 	fluffDictionary["AND"] = true
 	fluffDictionary["OF"] = true
@@ -305,6 +316,11 @@ func makeFluffDictionary() map[string]bool {
 	fluffDictionary["TO"] = true
 	fluffDictionary["PLC"] = true
 	fluffDictionary["PLLC"] = true
+	fluffDictionary["SYSTEM"] = true
+	fluffDictionary["SERVICES"] = true
+	fluffDictionary["REGIONAL"] = true
+	fluffDictionary["DPMPC"] = true
+	fluffDictionary["MDSC"] = true
 
 	return fluffDictionary
 }
