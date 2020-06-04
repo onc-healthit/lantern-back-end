@@ -348,7 +348,7 @@ func Test_matchByName(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryNameOrgName)
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
-	// expect some matches with varying confidences to "FOO FOO BAR"
+	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM"
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
 	th.Assert(t, err == nil, err)
@@ -370,7 +370,7 @@ func Test_matchByName(t *testing.T) {
 	expectedConf = .875 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
-	// expect some matches with varying confidences to "FOO FOO BAR BAZ"
+	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM"}
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
@@ -394,7 +394,7 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// check that highest confidence value is used
-	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR"
+	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
@@ -418,7 +418,7 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// checking non-existent org name causes no issues
-	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR" and "BLAH"
+	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM" and "BLAH"
 	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM", "BLAH"}
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
