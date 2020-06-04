@@ -14,8 +14,8 @@ var exactPrimaryNameOrg = &endpointmanager.NPIOrganization{
 	NPI_ID:                  "1",
 	Name:                    "Foo Bar",
 	SecondaryName:           "",
-	NormalizedName:          "FOO FOO BAR",
-	NormalizedSecondaryName: "FOO FOO BAR BAZ",
+	NormalizedName:          "FOO FOO BAR BAR BAZ BAZ BAM",
+	NormalizedSecondaryName: "FOO FOO BAR BAR BAZ BAZ BAM BAM",
 	Location: &endpointmanager.Location{
 		Address1: "123 Gov Way",
 		Address2: "Suite 123",
@@ -29,7 +29,7 @@ var nonExactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 	Name:                    "Foo Bar",
 	SecondaryName:           "foo bar baz",
 	NormalizedName:          "NOTHING SHOULD MATCH THIS",
-	NormalizedSecondaryName: "FOO FOO BAR BAZ",
+	NormalizedSecondaryName: "FOO FOO BAR BAR BAZ BAZ BAM BAM",
 	Location: &endpointmanager.Location{
 		Address1: "somerandomstring",
 		Address2: "Foo Bar",
@@ -42,8 +42,8 @@ var exactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 	NPI_ID:                  "4",
 	Name:                    "Foo Bar",
 	SecondaryName:           "foo bar baz",
-	NormalizedName:          "FOO FOO BAR BAZ",
-	NormalizedSecondaryName: "FOO FOO BAR",
+	NormalizedName:          "FOO FOO BAR BAR BAZ BAZ BAM BAM",
+	NormalizedSecondaryName: "FOO FOO BAR BAR BAZ BAZ BAM",
 	Location: &endpointmanager.Location{
 		Address1: "somerandomstring",
 		Address2: "Foo Bar",
@@ -57,7 +57,7 @@ var exactSecondaryNameOrgNoPrimaryName = &endpointmanager.NPIOrganization{
 	Name:                    "Foo Bar",
 	SecondaryName:           "foo bar baz",
 	NormalizedName:          "",
-	NormalizedSecondaryName: "FOO FOO BAR",
+	NormalizedSecondaryName: "FOO FOO BAR BAR BAZ BAZ BAM",
 	Location: &endpointmanager.Location{
 		Address1: "somerandomstring",
 		Address2: "Foo Bar",
@@ -70,7 +70,7 @@ var nonExactPrimaryNameOrgName = &endpointmanager.NPIOrganization{
 	NPI_ID:                  "6",
 	Name:                    "Foo Bar",
 	SecondaryName:           "foo bar baz",
-	NormalizedName:          "FOO FOO BAR BAZ",
+	NormalizedName:          "FOO FOO BAR BAR BAZ BAZ BAM BAM",
 	NormalizedSecondaryName: "NOTHING SHOULD MATCH THIS",
 	Location: &endpointmanager.Location{
 		Address1: "somerandomstring",
@@ -108,6 +108,25 @@ var nonExactPrimaryAndSecondaryOrgName = &endpointmanager.NPIOrganization{
 		ZipCode:  "00000"},
 	Taxonomy: "208D00000X"}
 
+var tokenValues = map[string]float64{
+	"FOO":                    1.0,
+	"BAR":                    1.0,
+	"BAZ":                    1.0,
+	"BAM":                    1.0,
+	"NOTHING":                1.0,
+	"SHOULD":                 1.0,
+	"MATCH":                  1.0,
+	"THIS":                   1.0,
+	"NOTHINGSHOULDMATCHTHIS": 1.0,
+	"ONE":                    1.0,
+	"TWO":                    1.0,
+	"THREE":                  1.0,
+	"FOUR":                   1.0,
+	"FIVE":                   1.0,
+	"SIX":                    1.0,
+	"SEVEN":                  1.0,
+	"EIGHT":                  1.0}
+
 func Test_NormalizeOrgName(t *testing.T) {
 	orgName := "AMBULANCE & and-chair. SERVICE!"
 	expected := "AMBULANCE  AND CHAIR SERVICE"
@@ -117,52 +136,52 @@ func Test_NormalizeOrgName(t *testing.T) {
 }
 
 func Test_calculateJaccardIndex(t *testing.T) {
-	jaccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR")
+	jaccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR", tokenValues)
 	ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == 1), "Jaccard index expected to be 1, was "+ind)
 
-	jaccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR")
+	jaccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR", tokenValues)
 	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 
-	jaccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR")
+	jaccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR", tokenValues)
 	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 }
 
 func Test_IntersectionCount(t *testing.T) {
-	emptyListIntersections := intersectionCount([]string{}, []string{})
-	th.Assert(t, (emptyListIntersections == 0), "Intersection count of empty lists should be zero, got "+strconv.Itoa(emptyListIntersections))
+	emptyListIntersections, emptyListDenom := intersectionCount([]string{}, []string{}, tokenValues)
+	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 0), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be zero, got "+strconv.Itoa(int(emptyListDenom)))
 
-	emptyListIntersections = intersectionCount([]string{"foo"}, []string{})
-	th.Assert(t, (emptyListIntersections == 0), "Intersection count of empty lists should be zero, got "+strconv.Itoa(emptyListIntersections))
+	emptyListIntersections, emptyListDenom = intersectionCount([]string{"FOO"}, []string{}, tokenValues)
+	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 1), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be one, got "+strconv.Itoa(int(emptyListDenom)))
 
-	emptyListIntersections = intersectionCount([]string{"foo"}, []string{"bar"})
-	th.Assert(t, (emptyListIntersections == 0), "Intersection count of empty lists should be zero, got "+strconv.Itoa(emptyListIntersections))
+	emptyListIntersections, emptyListDenom = intersectionCount([]string{"FOO"}, []string{"BAR"}, tokenValues)
+	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 2), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be two, got "+strconv.Itoa(int(emptyListDenom)))
 
-	nonEmptyListIntersections := intersectionCount([]string{"foo"}, []string{"foo"})
-	th.Assert(t, (nonEmptyListIntersections == 1), "Intersection count of empty lists should be one, got "+strconv.Itoa(nonEmptyListIntersections))
+	nonEmptyListIntersections, nonEmptyListDenom := intersectionCount([]string{"FOO"}, []string{"FOO"}, tokenValues)
+	th.Assert(t, (int(nonEmptyListIntersections) == 1 && int(nonEmptyListDenom) == 1), "Intersection count of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListDenom)))
 
-	nonEmptyListIntersections = intersectionCount([]string{"foo", "bar"}, []string{"bar"})
-	th.Assert(t, (nonEmptyListIntersections == 1), "Intersection count of empty lists should be one, got "+strconv.Itoa(nonEmptyListIntersections))
+	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR"}, []string{"BAR"}, tokenValues)
+	th.Assert(t, (int(nonEmptyListIntersections) == 1 && int(nonEmptyListDenom) == 2), "Intersection count of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListDenom)))
 
-	nonEmptyListIntersections = intersectionCount([]string{"foo", "bar"}, []string{"bar", "foo"})
-	th.Assert(t, (nonEmptyListIntersections == 2), "Intersection count of empty lists should be two, got "+strconv.Itoa(nonEmptyListIntersections))
+	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR"}, []string{"BAR", "FOO"}, tokenValues)
+	th.Assert(t, (int(nonEmptyListIntersections) == 2 && int(nonEmptyListDenom) == 2), "Intersection count of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListDenom)))
 
-	nonEmptyListIntersections = intersectionCount([]string{"foo", "bar", "foo", "foo"}, []string{"bar", "foo", "foo"})
-	th.Assert(t, (nonEmptyListIntersections == 3), "Intersection count of empty lists should be three, got "+strconv.Itoa(nonEmptyListIntersections))
+	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR", "FOO", "FOO"}, []string{"BAR", "FOO", "FOO"}, tokenValues)
+	th.Assert(t, (int(nonEmptyListIntersections) == 3 && int(nonEmptyListDenom) == 4), "Intersection count of non-empty lists should be three, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be four, got "+strconv.Itoa(int(nonEmptyListDenom)))
 }
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	var orgs []*endpointmanager.NPIOrganization
 
-	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
+	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues)
 	th.Assert(t, (err == nil), "Error getting matches from empty list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
 
 	orgs = append(orgs, nonMatchingOrg)
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
@@ -174,31 +193,31 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryNameOrgName)
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR", false)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", false, tokenValues)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 5), "There should have been 6 matchs returned got: "+strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 5), "There should have been 6 confidences returned "+strconv.Itoa(len(confidences)))
+	th.Assert(t, (len(matches) == 5), "There should have been 5 matches returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 5), "There should have been 5 confidences returned "+strconv.Itoa(len(confidences)))
 	confidence := fmt.Sprintf("%f", confidences[matches[0]])
-	// FOO FOO BAR and primary name FOO FOO BAR have confidence of 1 * .9
+	// FOO FOO BAR BAR BAZ BAZ BAM and primary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1 * .9
 	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[1]])
-	// FOO FOO BAR and secondary name FOO FOO BAR BAZ have confidence of .75 * .9
-	th.Assert(t, (confidence == "0.675000"), "Exact match confidence should have been 0.675000 confidence got "+confidence)
+	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM BAM have confidence of .875 * .9
+	th.Assert(t, (confidence == "0.787500"), "Exact match confidence should have been 0.787500 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[2]])
-	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000 * .9
+	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1.000000 * .9
 	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[3]])
-	// FOO FOO BAR and secondary name FOO FOO BAR have confidence of 1.000000 * .9
+	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1.000000 * .9
 	th.Assert(t, (confidence == "0.900000"), "Exact match confidence should have been 0.900000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[4]])
-	// FOO FOO BAR and primary name FOO FOO BAR BAZ have confidence of .75 * .9
-	th.Assert(t, (confidence == "0.675000"), "Exact match confidence should have been 0.675000 confidence got "+confidence)
+	// FOO FOO BAR BAR BAZ BAZ BAM and primary name FOO FOO BAR BAR BAZ BAZ BAM BAM have confidence of .875 * .9
+	th.Assert(t, (confidence == "0.787500"), "Exact match confidence should have been 0.787500 confidence got "+confidence)
 
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false, tokenValues)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 1), "There should have been 6 matchs returned got: "+strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 1), "There should have been 6 confidences returned "+strconv.Itoa(len(confidences)))
+	th.Assert(t, (len(matches) == 1), "There should have been 1 matchs returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidences returned "+strconv.Itoa(len(confidences)))
 	confidence = fmt.Sprintf("%f", confidences[matches[0]])
 	// ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT and secondary name ONE TWO THREE FOUR FIVE SIX SEVEN should have confidence of .875000 * .9
 	// .875 *.9 > than primary name ONE TWO THREE FOUR FIVE SIX match of .75 * .9
@@ -302,12 +321,12 @@ func Test_matchByName(t *testing.T) {
 	var ep = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR"},
+		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM"},
 		NPIIDs:            []string{"1", "2", "3"},
 		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
 
 	// test with no orgs
-	matches, confidences, err := matchByName(ep, orgs, false)
+	matches, confidences, err := matchByName(ep, orgs, false, tokenValues)
 	expected := 0
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, "expected no matches")
@@ -316,7 +335,7 @@ func Test_matchByName(t *testing.T) {
 	orgs = append(orgs, nonMatchingOrg)
 
 	// test with non matching org
-	matches, confidences, err = matchByName(ep, orgs, false)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 0
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, "expected no matches")
@@ -330,7 +349,7 @@ func Test_matchByName(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
 	// expect some matches with varying confidences to "FOO FOO BAR"
-	matches, confidences, err = matchByName(ep, orgs, false)
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -339,7 +358,7 @@ func Test_matchByName(t *testing.T) {
 	expectedConf := 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
-	expectedConf = .75 * .9
+	expectedConf = .875 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0 * .9
@@ -348,12 +367,12 @@ func Test_matchByName(t *testing.T) {
 	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
-	expectedConf = .75 * .9
+	expectedConf = .875 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAZ"}
-	matches, confidences, err = matchByName(ep, orgs, false)
+	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM"}
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -368,7 +387,7 @@ func Test_matchByName(t *testing.T) {
 	expectedConf = 1.0 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
-	expectedConf = .75 * .9
+	expectedConf = .875 * .9
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0 * .9
@@ -376,8 +395,8 @@ func Test_matchByName(t *testing.T) {
 
 	// check that highest confidence value is used
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAZ", "FOO FOO BAR"}
-	matches, confidences, err = matchByName(ep, orgs, false)
+	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
@@ -400,8 +419,8 @@ func Test_matchByName(t *testing.T) {
 
 	// checking non-existent org name causes no issues
 	// expect some matches with varying confidences to "FOO FOO BAR BAZ" and "FOO FOO BAR" and "BLAH"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAZ", "FOO FOO BAR", "BLAH"}
-	matches, confidences, err = matchByName(ep, orgs, false)
+	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM", "BLAH"}
+	matches, confidences, err = matchByName(ep, orgs, false, tokenValues)
 	expected = 5
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))

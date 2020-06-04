@@ -75,7 +75,7 @@ func verbosePrint(message string, verbose bool) {
 }
 
 func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, normalizedEndpointName string, verbose bool, tokenVal map[string]float64) ([]string, map[string]float64, error) {
-	JACCARD_THRESHOLD := .78
+	JACCARD_THRESHOLD := .85
 
 	matches := []string{}
 	confidenceMap := make(map[string]float64)
@@ -86,12 +86,12 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 		confidence := 0.0
 		jaccard1 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName, tokenVal)
 		jaccard2 := calculateJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName, tokenVal)
-		if jaccard1 > .99 {
-			confidence = 1
+		if jaccard1 >= .99 {
+			confidence = jaccard1
 			consideredMatch = true
 			verbosePrint("Exact Match Primary Name: "+normalizedEndpointName, verbose)
-		} else if jaccard2 > .99 {
-			confidence = 1
+		} else if jaccard2 >= .99 {
+			confidence = jaccard2
 			consideredMatch = true
 			verbosePrint("Exact Match Secondary Name: "+normalizedEndpointName, verbose)
 		} else if jaccard1 >= JACCARD_THRESHOLD && jaccard1 > jaccard2 {
@@ -186,7 +186,7 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 	return nil
 }
 
-func countTokens(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) map[string]float64 {
+func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) map[string]float64 {
 	tokenCounterAll := make(map[string]int)
 	tokenCounterNPI := make(map[string]int)
 	tokenCounterEndpoints := make(map[string]int)
@@ -262,7 +262,7 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 	for key, value := range tokenCounts {
 		tokenVal[key] = 1.0 - (float64(value) / float64(tokenCounts[firstKey]))
 
-		if fluffDictionary[key] == true {
+		if fluffDictionary[key] {
 			tokenVal[key] *= 0.2
 		} else if value < tokenMean {
 			tokenVal[key] *= 2.5
@@ -336,7 +336,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		return errors.Wrap(err, "Error getting normalized org names")
 	}
 
-	tokenVal := countTokens(npiOrgNames, fhirEndpoints)
+	tokenVal := getTokenVals(npiOrgNames, fhirEndpoints)
 
 	matchCount := 0
 	unmatchable := []string{}
