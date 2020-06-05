@@ -20,6 +20,7 @@ func NormalizeOrgName(orgName string) (string, error) {
 	// Regex for only letters
 	orgName = strings.ReplaceAll(orgName, "-", " ")
 	orgName = strings.ReplaceAll(orgName, "/", " ")
+	orgName = strings.ReplaceAll(orgName, ",", " ")
 	reg, err := regexp.Compile(`[^a-zA-Z0-9\s]+`)
 	if err != nil {
 		return "", errors.Wrap(err, "error compiling regex for normalizing organization name")
@@ -186,13 +187,14 @@ func addMatch(ctx context.Context, store *postgresql.Store, orgID string, endpoi
 	return nil
 }
 
-func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) map[string]float64 {
+func countTokens(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) (map[string]int, map[string]int, map[string]int, int, int, string) {
 	tokenCounterAll := make(map[string]int)
 	tokenCounterNPI := make(map[string]int)
 	tokenCounterEndpoints := make(map[string]int)
 	firstKey := ""
 	var totalTokens int
 	var totalUniqueTokens int
+	//Counts all the tokens in the primary and secondary normalized names for NPI organizations
 	for _, organization := range npiOrg {
 		orgNameTokens := strings.Fields(organization.NormalizedName)
 		secondaryOrgNameTokens := strings.Fields(organization.NormalizedSecondaryName)
@@ -221,6 +223,7 @@ func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*en
 			}
 		}
 	}
+	//Counts all tokens in the FHIR endpoint names
 	for _, endpoint := range FHIREndpoints {
 		for _, name := range endpoint.OrganizationNames {
 			endpointName, _ := NormalizeOrgName(name)
@@ -239,11 +242,7 @@ func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*en
 			}
 		}
 	}
-
-	tokenMean := int(math.Round(float64(totalTokens) / float64(totalUniqueTokens)))
-	tokenStandardDev := calculateStandardDev(tokenCounterAll, tokenMean, totalUniqueTokens)
-	tokenVal := computeTokenValues(tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, firstKey, tokenMean, tokenStandardDev)
-	return tokenVal
+	return tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, totalUniqueTokens, totalTokens, firstKey
 }
 
 func calculateStandardDev(tokenCounterAll map[string]int, tokenMean int, totalUniqueTokens int) int {
@@ -262,6 +261,7 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 	for key, value := range tokenCounts {
 		tokenVal[key] = 1.0 - (float64(value) / float64(tokenCounts[firstKey]))
 
+		//token count ranges that multiply token value to adjust weight of tokens according to their rarity
 		if fluffDictionary[key] {
 			tokenVal[key] *= 0.2
 		} else if value < tokenMean {
@@ -280,6 +280,7 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 			tokenVal[key] *= 0.4
 		}
 
+		//Multiplies token value to adjust weight of tokens that appear in one list (NPI organization/FHIR endpoints) but not the other
 		if tokenCountsNPI[key] == 0 && tokenCountsEndpoints[key] != 0 {
 			tokenVal[key] *= 0.1
 			continue
@@ -318,11 +319,27 @@ func makeFluffDictionary() map[string]bool {
 	fluffDictionary["PLLC"] = true
 	fluffDictionary["SYSTEM"] = true
 	fluffDictionary["SERVICES"] = true
-	fluffDictionary["REGIONAL"] = true
 	fluffDictionary["DPMPC"] = true
 	fluffDictionary["MDSC"] = true
+	fluffDictionary["CORP"] = true
+	fluffDictionary["HSHS"] = true
+	fluffDictionary["ST"] = true
+	fluffDictionary["CARE"] = true
+	fluffDictionary["INC"] = true
+	fluffDictionary["CLINIC"] = true
+	fluffDictionary["GROUP"] = true
+	fluffDictionary["CENTERS"] = true
+	fluffDictionary["CENTER"] = true
 
 	return fluffDictionary
+}
+
+func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*endpointmanager.FHIREndpoint) map[string]float64 {
+	tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, totalUniqueTokens, totalTokens, firstKey := countTokens(npiOrg, FHIREndpoints)
+	tokenMean := int(math.Round(float64(totalTokens) / float64(totalUniqueTokens)))
+	tokenStandardDev := calculateStandardDev(tokenCounterAll, tokenMean, totalUniqueTokens)
+	tokenVal := computeTokenValues(tokenCounterAll, tokenCounterNPI, tokenCounterEndpoints, firstKey, tokenMean, tokenStandardDev)
+	return tokenVal
 }
 
 func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
