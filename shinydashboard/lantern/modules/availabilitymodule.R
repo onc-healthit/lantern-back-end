@@ -20,7 +20,7 @@ availability <- function(
   
   # we want to graph all non-200 results by response code, but they need to be factors
   # so they can be shown as separate categories on the graph, rather than as a scalar value
-  http_pct <- get_http_response_summary(fhir_endpoints_info_history)
+  http_pct <- get_http_response_summary_tbl(db_tables)
   
   # we need a table with the code as a factor for use in ggplot
   http_pctf <- http_pct %>% 

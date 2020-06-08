@@ -4,7 +4,11 @@ function(input, output, session) {
   callModule(
     dashboard,
     "dashboard_page")
-        
+  
+  callModule(
+    endpointsmodule,
+    "endpoints_page")
+  
    callModule(
     availability,
     "availability_page")

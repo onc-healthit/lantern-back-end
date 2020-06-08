@@ -3,7 +3,7 @@ library(lubridate)
 get_avg_response_time <- function() {
   # get time series of response time metrics for all endpoints
   # will update with dynamic time ranges, group by 4 minute intervals
-  all_endpoints_response_time <- as_tibble(tbl(con,sql("SELECT floor(extract(epoch from metrics_values.time)/240)*240 AS time, AVG(metrics_values.value) 
+  all_endpoints_response_time <- as_tibble(tbl(db_connection,sql("SELECT floor(extract(epoch from metrics_values.time)/240)*240 AS time, AVG(metrics_values.value) 
   FROM metrics_labels, metrics_values
   WHERE metrics_labels.metric_name = 'AllEndpoints_http_response_time' 
   AND metrics_labels.id = metrics_values.labels_id

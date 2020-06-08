@@ -1,4 +1,6 @@
 # Define base user interface
+fhir_version_list <- get_fhir_version_list(endpoint_export_tbl)
+vendor_list <- get_vendor_list(endpoint_export_tbl)
 
 ui <- dashboardPage(
   dashboardHeader(
@@ -9,6 +11,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"),selected=TRUE),
+      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab", badgeLabel = "new",
                badgeColor = "green"
       ),
@@ -45,6 +48,10 @@ ui <- dashboardPage(
       tabItem("dashboard_tab",
               h1("Current Endpoint Metrics"),
               dashboard_UI("dashboard_page")
+      ),
+      tabItem("endpoints_tab",
+              h1("List of Endpoints"),
+              endpointsmodule_UI("endpoints_page")
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")
