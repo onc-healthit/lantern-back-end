@@ -81,7 +81,6 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	// validationTest := cmp.Equal(e.Validation, e2.Validation)
 	if !cmp.Equal(e.Validation, e2.Validation) {
 		return false
 	}
