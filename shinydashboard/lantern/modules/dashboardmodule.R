@@ -20,19 +20,27 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
+    h3("Endpoint Counts by Vendor and FHIR Version"),
     fluidRow(
-      column(width=6,
-             h3("Endpoint Counts by Vendor and FHIR Version"),
-             tableOutput(ns("fhir_vendor_table")),
-             plotOutput(ns("vendor_share_plot"))
+      column(width=4,
+             tableOutput(ns("fhir_vendor_table"))
       ),
-      column(width=6,
-             h3("All Endpoint Responses"),
+      column(width=8,
+             plotOutput(ns("vendor_share_plot"))
+      )
+    ),
+    h3("All Endpoint Responses"),
+    fluidRow(
+      column(width=4,
              tableOutput(ns("http_code_table")),
              p("All HTTP response codes ever received and count of endpoints which returned that code at some point in history"),
+      ),
+      column(width=8,
+           plotOutput(ns("response_code_plot"))
       )
     )
-  )
+    
+      )
 }
 
 dashboard <- function(
@@ -53,8 +61,8 @@ dashboard <- function(
   http_summary <- http_pct %>%
     left_join(http_response_code_tbl, by=c("code" = "code_chr")) %>%
     select(id,code,label) %>%
-    group_by("HTTP Response" = code,"Status"=label) %>%
-    summarise(Count=n()) 
+    group_by(code,label) %>%
+    summarise(count=n()) 
   
   vendor_count_tbl <- get_fhir_version_vendor_count(endpoint_export_tbl)
   
@@ -102,7 +110,7 @@ dashboard <- function(
     )
   })
 
-  output$http_code_table   <- renderTable(http_summary)
+  output$http_code_table   <- renderTable(http_summary %>% rename("HTTP Response" = code,Status=label,Count=count))
 
   output$fhir_vendor_table <- renderTable(vendor_count_tbl %>% select(Vendor=vendor_name,'FHIR Version'=fhir_version,Count=n))
 
@@ -119,5 +127,12 @@ dashboard <- function(
       scale_fill_manual(values=c("#66C2A5","#8DA0CB","#EFA182","#E78AC3","#A6D854"))
   })
 
-  
+  output$response_code_plot <- renderPlot({
+    ggplot(http_summary %>% mutate(Response=paste(code,"-",label)), aes(x=code,fill=as.factor(Response),y=count)) + 
+    geom_bar(stat="identity") +
+    labs(fill="Code",
+         title="All HTTP Response Codes Ever Received from Endpoints",
+         x="HTTP Response Received",
+         y = "Count of endpoints")
+  })  
 }
