@@ -1,6 +1,4 @@
 # Define base user interface
-fhir_version_list <- get_fhir_version_list(endpoint_export_tbl)
-vendor_list <- get_vendor_list(endpoint_export_tbl)
 
 ui <- dashboardPage(
   dashboardHeader(
@@ -11,33 +9,16 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"),selected=TRUE),
-      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
-      menuItem("Availability", icon = icon("th"), tabName = "availability_tab", badgeLabel = "new",
-               badgeColor = "green"
+      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table"), badgeLabel = "new",
+               badgeColor = "green"),
+      menuItem("Availability", icon = icon("th"), tabName = "availability_tab"
       ),
       menuItem("Performance", icon = icon("bar-chart-o"),
                menuSubItem("Mean Response Time", tabName = "performance_tab")
       ),
       menuItem("Location", tabName = "location_tab", icon=icon("map")),
       menuItem("About Lantern",tabName = "about_tab", icon=icon("info-circle")),
-      hr(),
-      p("For future use..."),
-      selectInput(
-        inputId = "fhir_version",
-        label = "FHIR Version:",
-        choices = fhir_version_list,
-        selected = 99,
-        size = length(fhir_version_list),
-        selectize = FALSE
-      ),
-      selectInput(
-        inputId = "vendor",
-        label = "Vendor:",
-        choices = vendor_list,
-        selected = 99,
-        size = length(vendor_list),
-        selectize = FALSE
-      )
+      hr()
       
     )
   ),

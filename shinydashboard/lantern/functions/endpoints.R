@@ -20,7 +20,8 @@ get_endpoint_totals_list <- function(db_tables) {
 
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function(db_tables) {
-  as_tibble(db_tables$fhir_endpoints) %>%
+  db_tables$fhir_endpoints %>%
+    collect() %>%
     left_join(endpoint_export_tbl %>%
     distinct(url,vendor_name,fhir_version,tls_version,mime_types,http_response), by=c("url"="url")) %>%
     select(url,organization_name,updated_at,vendor_name,fhir_version,tls_version,http_response) %>%
@@ -74,15 +75,21 @@ get_fhir_version_factors <- function(endpoint_tbl) {
 
 # Get the list of distinct fhir versions for use in filtering
 get_fhir_version_list <- function(endpoint_tbl) {
-    as.list(endpoint_tbl %>%
-            arrange(fhir_version) %>%
-            distinct("FHIR Version"=fhir_version))
+  fhir_version_list <- list('All Versions' = G$ALL_FHIR_VERSIONS)
+  fh <- endpoint_tbl %>%
+    distinct(fhir_version) %>%
+    split(.$fhir_version) %>%
+    map(~ .$fhir_version)
+  fhir_version_list <- c(fhir_version_list,fh)
 }
 
 # Get the list of distinct vendor names for use in filtering
 get_vendor_list <- function(endpoint_tbl) {
-  vendor_list <- as.list(endpoint_tbl %>%
-                         distinct(vendor_name) %>%
-                         arrange(vendor_name) %>%
-                         pull(vendor_name))
+  vendor_list <- list('All Vendors' = G$ALL_VENDORS)
+  vl <- endpoint_tbl %>%
+           distinct(vendor_name) %>%
+           arrange(vendor_name) %>%
+           split(.$vendor_name) %>%
+           map(~ .$vendor_name) 
+  vendor_list <- c(vendor_list,vl)
 }
