@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -109,6 +110,39 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	}
 
 	return &endpoint, err
+}
+
+// GetFHIREndpointsUsingListSourceAndUpdateTime retrieves all fhir endpoints from the database from the given
+// listsource that update time is before the given update time.
+func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context, updateTime time.Time, listSource string) ([]*endpointmanager.FHIREndpoint, error) {
+	sqlStatement := `
+	SELECT
+		id,
+		url,
+		organization_names,
+		npi_ids
+	FROM fhir_endpoints WHERE list_source=$1 AND updated_at<$2`
+
+	rows, err := s.DB.QueryContext(ctx, sqlStatement, listSource, updateTime)
+	if err != nil {
+		return nil, err
+	}
+
+	var endpoints []*endpointmanager.FHIREndpoint
+	defer rows.Close()
+	for rows.Next() {
+		var endpoint endpointmanager.FHIREndpoint
+		err = rows.Scan(
+			&endpoint.ID,
+			&endpoint.URL,
+			pq.Array(&endpoint.OrganizationNames),
+			pq.Array(&endpoint.NPIIDs))
+		if err != nil {
+			return nil, err
+		}
+		endpoints = append(endpoints, &endpoint)
+	}
+	return endpoints, nil
 }
 
 // AddOrUpdateFHIREndpoint adds the endpoint if it doesn't already exist. If it does exist, it updates the endpoint.

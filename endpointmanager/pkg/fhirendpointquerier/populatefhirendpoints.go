@@ -2,6 +2,7 @@ package populatefhirendpoints
 
 import (
 	"context"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -13,6 +14,8 @@ import (
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
 func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fetcher.ListOfEndpoints) error {
+	var firstUpdate time.Time
+	var listsource = endpoints.Entries[0].ListSource
 	for i, endpoint := range endpoints.Entries {
 		select {
 		case <-ctx.Done():
@@ -26,7 +29,19 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 			log.Warn(err)
 			continue
 		}
+		if firstUpdate.IsZero() {
+			// get time of update for first endpoint
+			fhirURL := endpointmanager.NormalizeURL(endpoint.FHIRPatientFacingURI)
+			existingEndpt, _ := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
+			firstUpdate = existingEndpt.UpdatedAt
+		}
 	}
+
+	err := removeOldEndpoints(ctx, store, firstUpdate, listsource)
+	if err != nil {
+		log.Warn(err)
+	}
+
 	return nil
 }
 
@@ -61,4 +76,27 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	// @TODO Get Location
 
 	return &dbEntry, nil
+}
+
+// removeOldEndpoints removes fhir endpoints from fhir_endpoints and fhir_endpoints_info
+// that were not updated from given list source
+func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
+	// get endpoints that are from this listsource and have an update time before this time
+	fhirEndpoints, err := store.GetFHIREndpointsUsingListSourceAndUpdateTime(ctx, updateTime, listSource)
+	if err != nil {
+		return err
+	}
+
+	// remove these endpoints from fhir_endpoints
+	for _, endpoint := range fhirEndpoints {
+		err = store.DeleteFHIREndpoint(ctx, endpoint)
+		if err != nil {
+			log.Warn(err)
+			continue
+		}
+	}
+
+	log.Infof("Removed %d FHIR URLs from database\n", len(fhirEndpoints))
+
+	return nil
 }
