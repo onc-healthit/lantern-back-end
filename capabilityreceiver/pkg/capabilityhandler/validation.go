@@ -26,7 +26,10 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 	var validationResults []endpointmanager.Rule
 	validationWarnings := make([]endpointmanager.Rule, 0)
 
-	returnedRule := r4MimeTypeValid(mimeTypes)
+	returnedRule := capStatExists(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = r4MimeTypeValid(mimeTypes)
 	validationResults = append(validationResults, returnedRule)
 
 	if capStat != nil {
@@ -52,7 +55,22 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 	return validations
 }
 
-// r4MimeTypeValid checks to see if the R4 required mime type application/fhir+json was a valid mime type for this endpoint
+// capStatExists checks to see if the given capability statement is nil
+func capStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+
+	if capStat != nil {
+		return ruleError
+	}
+
+	ruleError.RuleName = endpointmanager.CapStatExistRule
+	ruleError.Expected = "true"
+	ruleError.Comment = "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
+	ruleError.Reference = "http://hl7.org/fhir/http.html"
+	return ruleError
+}
+
+// r4MimeTypeValid checks to see if the application/fhir+json mime type was a valid mime type for this endpoint
 func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
 	mimeString := strings.Join(mimeTypes, ", ")
 	ruleError := endpointmanager.Rule{

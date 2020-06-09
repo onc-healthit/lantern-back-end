@@ -129,4 +129,5 @@ const (
 	R4MimeTypeRule      RuleOption = "r4MimeType"
 	GeneralMimeTypeRule RuleOption = "generalMimeType"
 	HTTPResponseRule    RuleOption = "httpResponse"
+	CapStatExistRule    RuleOption = "capStatExist"
 )
