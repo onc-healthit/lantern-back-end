@@ -2,6 +2,7 @@ package populatefhirendpoints
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -87,16 +88,24 @@ func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime
 		return err
 	}
 
-	// remove these endpoints from fhir_endpoints
 	for _, endpoint := range fhirEndpoints {
 		err = store.DeleteFHIREndpoint(ctx, endpoint)
 		if err != nil {
 			log.Warn(err)
 			continue
 		}
+		existingEndpoint, err := store.GetFHIREndpointInfoUsingURL(ctx, endpoint.URL)
+		if err == sql.ErrNoRows {
+			log.Warn(err)
+			continue
+		} else {
+			err = store.DeleteFHIREndpointInfo(ctx, existingEndpoint)
+			if err != nil {
+				log.Warn(err)
+				continue
+			}
+		}
 	}
-
-	log.Infof("Removed %d FHIR URLs from database\n", len(fhirEndpoints))
 
 	return nil
 }
