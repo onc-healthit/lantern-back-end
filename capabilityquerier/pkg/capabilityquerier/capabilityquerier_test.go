@@ -71,11 +71,12 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 
 	args := make(map[string]interface{})
 	querierArgs := QuerierArgs{
-		FhirURL:      fhirURL,
-		Client:       &(tc.Client),
-		MessageQueue: &mq,
-		ChannelID:    &ch,
-		QueueName:    queueName,
+		FhirURL:       fhirURL,
+		FhirURLString: sampleURL,
+		Client:        &(tc.Client),
+		MessageQueue:  &mq,
+		ChannelID:     &ch,
+		QueueName:     queueName,
 	}
 	args["querierArgs"] = querierArgs
 
