@@ -76,7 +76,7 @@ func convertInterfaceToBytes(message map[string]interface{}) ([]byte, error) {
 
 func setupCapabilityStatement(t *testing.T) {
 	// capability statement
-	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
