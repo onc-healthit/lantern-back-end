@@ -208,6 +208,7 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d/go.mod h1:o96d
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6 h1:+wJAkmqrYYmQ5tH7o9ssLXq4UMwEeDZEdv/hQwABaoE=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:D1+Dbr7oRkqfpFVytc9HB9DcaqbVhG63FMi0WxLakUE=
+github.com/onc-healthit/lantern-back-end v0.0.0-20200603174830-cc6f9e99bfd9 h1:/mLXQJu/9LtBQYcj5DP1NUmf9T2t9nDleVdKK368EOg=
 github.com/onc-healthit/lantern-back-end/capabilityquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:coNhm1eDaFhpn7ludPQYFlLFntXTyIb+7VPO5Wb2fBc=
 github.com/onc-healthit/lantern-back-end/capabilityquerier v0.0.0-20200413101328-40c884330475/go.mod h1:cS1E3uTdXgFHj/YF1Udap/CuHJnMPBruJuNf6Dhe33c=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200319151735-49dd5d7c3af0/go.mod h1:IYetlCA7Jkwo2HjEJkzRiwN4hVUB+5p3Kss5z40DQPQ=
@@ -224,6 +225,7 @@ github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200603144611-f
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200603144611-f0db4e5475c0/go.mod h1:71ckPr22ssw7Q3cVOiWTIxtoR+Qd47JDOt18Rkr3ug0=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200603163357-60518f40a5cf h1:XHQ5p5bHY1y7VHEjT6ofswI4hTij3XWokZqxwvXCmCE=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200603163357-60518f40a5cf/go.mod h1:NWmyt1g9EfThSETTHTDfCuvGp7yVP4pugik78AgEV/8=
+github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200603174830-cc6f9e99bfd9 h1:RvBNPsWo37+oSz7yW83rjpW8sm2wpS9tUZ4jQoJPsZQ=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200609215636-10d6ecb89582 h1:6aO3JS1FAJpCGuQRk5bNG/f6zCYZNI5+Bh2PJeXrmUw=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200609215636-10d6ecb89582/go.mod h1:/pfp0SA83DVq5gLI/me9o18F6XLXyEI5Wi7Z6VrvGaI=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200318142043-2e3efa6899ea/go.mod h1:RW06wTVLYNRw9cNhK2cGtSJYYbsBq7Hom1ffIGV7RZU=

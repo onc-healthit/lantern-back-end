@@ -92,9 +92,13 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	cancel()
 
 	err = GetAndSendCapabilityStatement(ctx, &args)
-	th.Assert(t, errors.Cause(err) == context.Canceled, "expected GetAndSendCapabilityStatement to error out due to context ending")
-	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 0, "expect no messages on the queue")
-
+	th.Assert(t, err == nil, "expected GetAndSendCapabilityStatement not to error out due to context ending")
+	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one messages on the queue")
+	message = <-mq.(*mock.BasicMockMessageQueue).Queue
+	var messageStruct Message
+	err = json.Unmarshal(message, &messageStruct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, messageStruct.HTTPResponse == 0, fmt.Sprintf("expected to capture 0 response in message, got %v", messageStruct.HTTPResponse))
 	// server error response
 	ctx = context.Background()
 
@@ -108,10 +112,9 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
-	var messageStruct Message
 	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, messageStruct.HTTPResponse == 404, "expected to capture 404 response in message")
+	th.Assert(t, messageStruct.HTTPResponse == 404, fmt.Sprintf("expected to capture 404 response in message, got %v", messageStruct.HTTPResponse))
 }
 
 func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
