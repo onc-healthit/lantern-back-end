@@ -31,6 +31,7 @@ import (
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 	"github.com/spf13/viper"
+	"github.com/streadway/amqp"
 	Assert "github.com/stretchr/testify/assert"
 )
 
@@ -41,6 +42,10 @@ type Endpoint struct {
 }
 
 var store *postgresql.Store
+var qUser, qPassword, qHost, qPort, testQName string
+
+var conn *amqp.Connection
+var channel *amqp.Channel
 
 func TestMain(m *testing.M) {
 	config.SetupConfigForTests()
@@ -51,6 +56,7 @@ func TestMain(m *testing.M) {
 	}
 
 	teardown, err := th.IntegrationDBTestSetupMain(store.DB)
+	testQueueSetup()
 
 	populateTestNPIData()
 	populateTestEndpointData()
@@ -61,6 +67,8 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	teardown(store.DB)
+	channel.Close()
+	conn.Close()
 
 	os.Exit(code)
 }
@@ -119,6 +127,55 @@ func setupTestServer() {
 	if err != nil {
 		log.Fatal("HTTP Server Creation Error: ", err.Error())
 	}
+}
+
+func testQueueSetup() {
+	var err error
+
+	qUser = viper.GetString("quser")
+	qPassword = viper.GetString("qpassword")
+	qHost = viper.GetString("qhost")
+	qPort = viper.GetString("qport")
+	testQName = viper.GetString("qname")
+
+	hap := th.HostAndPort{Host: qHost, Port: qPort}
+	err = th.CheckResources(hap)
+	if err != nil {
+		log.Fatal("Check Resources Error: ", err.Error())
+	}
+
+	fmt.Printf("amqp://%s:%s@%s:%s/", qUser, qPassword, qHost, qPort)
+	// setup specific queue info so we can test what's in the queue
+	s := fmt.Sprintf("amqp://%s:%s@%s:%s/", qUser, qPassword, qHost, qPort)
+	conn, err = amqp.Dial(s)
+	if err != nil {
+		log.Fatal("Database Connection Error: ", err.Error())
+	}
+
+	channel, err = conn.Channel()
+	if err != nil {
+		log.Fatal("Channel Connection Error: ", err.Error())
+	}
+}
+
+func sendEndpointsOverQueue(ctx context.Context, t *testing.T, queueName string, mq lanternmq.MessageQueue, chID lanternmq.ChannelID) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	errs := make(chan error)
+
+	go se.GetEnptsAndSend(ctx, &wg, queueName, 10, store, &mq, &chID, errs)
+	time.Sleep(30 * time.Second)
+}
+
+func queueIsEmpty(t *testing.T, queueName string) {
+	count, err := aq.QueueCount(queueName, channel)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 0, "should be no messages in queue.")
+}
+
+func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
+	th.Assert(t, err == nil, err)
 }
 
 func Test_EndpointDataIsAvailable(t *testing.T) {
@@ -183,10 +240,10 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 		// Get endpoint id
 		var endpoint_id string
-		query_str := "SELECT id FROM fhir_endpoints WHERE organization_name=$1;"
-		err = store.DB.QueryRow(query_str, ep.organization_name).Scan(&endpoint_id)
+		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
+		err = store.DB.QueryRow(query_str, ep.url).Scan(&endpoint_id)
 		if err != nil {
-			t.Fatalf("failed org name is " + ep.organization_name)
+			t.Fatalf("failed org url is "+ep.url+"\nError %v\n", err)
 		}
 		failOnError(err)
 
@@ -200,49 +257,22 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		}
 		// Assert that the correct endpoint has correct number of npi organizations mapped
 		var num_npi_ids int
-		query_str = "SELECT count(*) FROM endpoint_organization WHERE endpoint_id =$1;"
-		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&num_npi_ids)
+		query_str = "SELECT count(*) FROM endpoint_organization WHERE url =$1;"
+		err = store.DB.QueryRow(query_str, ep.url).Scan(&num_npi_ids)
 		failOnError(err)
 		if num_npi_ids != len(ep.mapped_npi_ids) {
 			t.Fatalf("Expected number of npi organizations mapped to endpoint is " + strconv.Itoa(len(ep.mapped_npi_ids)) + " Got: " + strconv.Itoa(num_npi_ids))
 		}
 
 		for _, npi_id := range ep.mapped_npi_ids {
-			// Get organization id for each npi id
-			var org_id string
-			query_str = "SELECT id FROM npi_organizations WHERE npi_id=$1;"
-			err = store.DB.QueryRow(query_str, npi_id).Scan(&org_id)
-			failOnError(err)
 			// Assert that each npi organization is mapped to correct endpoint
-			var linked_endpoint_id string
-			query_str = "SELECT endpoint_id FROM endpoint_organization WHERE organization_id =$1;"
-			err = store.DB.QueryRow(query_str, org_id).Scan(&linked_endpoint_id)
+			var linked_endpoint_url string
+			query_str = "SELECT url FROM endpoint_organization WHERE organization_npi_id =$1;"
+			err = store.DB.QueryRow(query_str, npi_id).Scan(&linked_endpoint_url)
 			failOnError(err)
-			if linked_endpoint_id != endpoint_id {
-				t.Fatalf("Endpoint id mapped to wrong npi organization")
+			if linked_endpoint_url != ep.url {
+				t.Fatalf("Endpoint url mapped to wrong npi organization")
 			}
-		}
-
-		// Assert that deletion from npi_organizations list removes the link
-		// Assert that deletion from fhir_endpoints list removes the link
-		if len(ep.mapped_npi_ids) == 1 {
-			query_str = "DELETE FROM npi_organizations WHERE npi_id=$1;"
-			_, err = store.DB.Exec(query_str, ep.mapped_npi_ids[0])
-			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-			failOnError(err)
-			if link_count != expected_link_count-1 {
-				t.Fatalf("Database should only contain " + strconv.Itoa(expected_link_count-1) + " links after npi_organization was deleted. Has: " + strconv.Itoa(link_count))
-			}
-			expected_link_count = link_count
-		} else {
-			query_str = "DELETE FROM fhir_endpoints WHERE id=$1;"
-			_, err = store.DB.Exec(query_str, endpoint_id)
-			err = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;").Scan(&link_count)
-			failOnError(err)
-			if link_count != expected_link_count-len(ep.mapped_npi_ids) {
-				t.Fatalf("Database should contain " + strconv.Itoa(expected_link_count) + " links. Has: " + strconv.Itoa(link_count))
-			}
-			expected_link_count = link_count
 		}
 	}
 }
@@ -365,18 +395,9 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var err error
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	qName := viper.GetString("qname")
+	queueIsEmpty(t, testQName)
+	defer checkCleanQueue(t, testQName, channel)
 	capQName := viper.GetString("endptinfo_capquery_qname")
-
-	hap := th.HostAndPort{Host: qHost, Port: qPort}
-	err = th.CheckResources(hap)
-	if err != nil {
-		panic(err)
-	}
 
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
@@ -386,19 +407,13 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	th.Assert(t, mq != nil, "expected message queue to be created")
 	th.Assert(t, chID != nil, "expected channel ID to be created")
 
-	var wg sync.WaitGroup
 	ctx := context.Background()
-	wg.Add(1)
-	errs := make(chan error)
+	sendEndpointsOverQueue(ctx, t, capQName, mq, chID)
 
-	capInterval := viper.GetInt("capquery_qryintvl")
-	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &chID, errs)
-	time.Sleep(30 * time.Second)
-
-	mq, chID, err = aq.ConnectToQueue(mq, chID, qName)
+	mq, chID, err = aq.ConnectToQueue(mq, chID, testQName)
 	defer mq.Close()
 	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
-	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, qName)
+	go capabilityhandler.ReceiveCapabilityStatements(ctx, store, mq, chID, testQName)
 	select {
 	case <-ctx.Done():
 		return
@@ -452,6 +467,23 @@ func Test_VendorList(t *testing.T) {
 }
 
 func Test_MetricsAvailableInQuerier(t *testing.T) {
+	var err error
+	netQueue := viper.GetString("endptinfo_netstats_qname")
+	queueIsEmpty(t, netQueue)
+	defer checkCleanQueue(t, netQueue, channel)
+
+	// Set-up the test queue
+	var mq lanternmq.MessageQueue
+	var chID lanternmq.ChannelID
+	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, netQueue)
+	defer mq.Close()
+	th.Assert(t, err == nil, err)
+	th.Assert(t, mq != nil, "expected message queue to be created")
+	th.Assert(t, chID != nil, "expected channel ID to be created")
+
+	ctx := context.Background()
+	sendEndpointsOverQueue(ctx, t, netQueue, mq, chID)
+
 	var client http.Client
 	resp, err := client.Get("http://endpoint_querier:3333/metrics")
 	failOnError(err)
@@ -462,22 +494,45 @@ func Test_MetricsAvailableInQuerier(t *testing.T) {
 		t.Fatalf("Error retrieving metrics from endpoint querier")
 	}
 
+	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
+	// during a run
+	possibleUrls := [5]string{
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
+	}
+
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	failOnError(err)
 
 	bodyString := string(bodyBytes)
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_request_responses{orgName=\"LanternTestOrg\"} 200") {
-		t.Fatalf("Endpoint querier missing or incorrect response code metric for LanternTestOrg")
+	requestCheck := false
+	httpRespCheck := false
+	uptimeCheck := false
+
+	for _, url := range possibleUrls {
+		reqFormat := fmt.Sprintf("AllEndpoints_http_request_responses{url=\"%s\"} 200", url)
+		if strings.Contains(bodyString, reqFormat) {
+			requestCheck = true
+		}
+
+		respFormat := fmt.Sprintf("AllEndpoints_http_response_time{url=\"%s\"}", url)
+		if strings.Contains(bodyString, respFormat) {
+			httpRespCheck = true
+		}
+
+		uptimeFormat := fmt.Sprintf("AllEndpoints_total_uptime_checks{url=\"%s\"}", url)
+		if strings.Contains(bodyString, uptimeFormat) {
+			uptimeCheck = true
+		}
 	}
 
-	if !strings.Contains(bodyString, "AllEndpoints_http_response_time{orgName=\"LanternTestOrg\"}") {
-		t.Fatalf("Endpoint querier missing response time metric for LanternTestOrg")
-	}
-
-	if !strings.Contains(bodyString, "AllEndpoints_total_uptime_checks{orgName=\"LanternTestOrg\"}") {
-		t.Fatalf("Endpoint querier missing uptime checks metric for LanternTestOrg")
-	}
+	th.Assert(t, requestCheck == true, "Endpoint querier missing or incorrect response code metric for all tested URLs")
+	th.Assert(t, httpRespCheck == true, "Endpoint querier missing response time metric for all tested URLs")
+	th.Assert(t, uptimeCheck == true, "Endpoint querier missing uptime checks metric for all tested URLs")
 }
 func Test_QuerierAvailableToPrometheus(t *testing.T) {
 	type PrometheusTargets struct {
@@ -524,13 +579,40 @@ func Test_QuerierAvailableToPrometheus(t *testing.T) {
 
 func Test_MetricsWrittenToPostgresDB(t *testing.T) {
 	var err error
-	response_time_row := store.DB.QueryRow("SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
-	var id, metric_name, result_label string
-	err = response_time_row.Scan(&id, &metric_name, &result_label)
+	ctx := context.Background()
+	response_time_rows, err := store.DB.QueryContext(ctx, "SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
 	failOnError(err)
 
-	if result_label != "{\"job\": \"FHIRQUERY\", \"orgName\": \"LanternTestOrg\", \"instance\": \"endpoint_querier:3333\"}" {
-		t.Fatalf("LanternTestOrg not found in AllEndpoints_http_response_time metric")
+	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
+	// during a run
+	possibleUrls := [5]string{
+		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
+		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
+	}
+
+	isInDB := false
+	defer response_time_rows.Close()
+	for response_time_rows.Next() {
+		var id, metric_name, result_label string
+		err = response_time_rows.Scan(&id, &metric_name, &result_label)
+		for _, url := range possibleUrls {
+			if strings.Contains(result_label, url) {
+				expectedResultLabel := fmt.Sprintf("{\"job\": \"FHIRQUERY\", \"url\": \"%s\", \"instance\": \"endpoint_querier:3333\"}", url)
+				if result_label == expectedResultLabel {
+					isInDB = true
+					break
+				}
+			}
+		}
+		if isInDB {
+			break
+		}
+	}
+	if !isInDB {
+		t.Fatalf("None of the tested URLs were found in AllEndpoints_http_response_time metric")
 	}
 	// TODO add additional queries for other metrics
 }

@@ -11,4 +11,4 @@ RUN go install ./...
 
 RUN go build main.go 
 
-CMD ["./main", "./resources/EndpointSources.json", "CareEvolution"]
+CMD ["./main"]

@@ -16,6 +16,8 @@ var updateNPIOrganizationStatement *sql.Stmt
 var updateNPIOrganizationByNPIIDStatement *sql.Stmt
 var deleteNPIOrganizationStatement *sql.Stmt
 var linkNPIOrganizationToFHIREndpointStatement *sql.Stmt
+var getNPIOrganizationFHIREndpointLinkStatement *sql.Stmt
+var updateNPIOrganizationFHIREndpointLinkLink *sql.Stmt
 
 // GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
@@ -185,31 +187,60 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 }
 
 // GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
-func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]endpointmanager.NPIOrganization, error) {
+func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*endpointmanager.NPIOrganization, error) {
 	sqlStatement := `
-	SELECT id, normalized_name, normalized_secondary_name FROM npi_organizations`
+	SELECT id, normalized_name, normalized_secondary_name, npi_id FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
-	var orgs []endpointmanager.NPIOrganization
+	var orgs []*endpointmanager.NPIOrganization
 	defer rows.Close()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
-		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName)
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName, &org.NPI_ID)
 		if err != nil {
 			return nil, err
 		}
-		orgs = append(orgs, org)
+		orgs = append(orgs, &org)
 	}
 	return orgs, nil
 }
 
 // LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
-func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID int, endpointID int, confidence float64) error {
+func (s *Store) LinkNPIOrganizationToFHIREndpoint(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
 	_, err := linkNPIOrganizationToFHIREndpointStatement.ExecContext(ctx,
 		orgID,
-		endpointID,
+		endpointURL,
+		confidence)
+	return err
+}
+
+// GetNPIOrganizationFHIREndpointLink retrieves the organization id, endpoint url, and confidence for the requested organization id and
+// endpoint url. If the link doesn't exist, returns a SQL no rows error.
+func (s *Store) GetNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) (string, string, float64, error) {
+	var retOrgID string
+	var retEndpointURL string
+	var retConfidence float64
+
+	row := getNPIOrganizationFHIREndpointLinkStatement.QueryRowContext(ctx,
+		orgID,
+		endpointURL)
+
+	err := row.Scan(
+		&retOrgID,
+		&retEndpointURL,
+		&retConfidence,
+	)
+
+	return retOrgID, retEndpointURL, retConfidence, err
+}
+
+// UpdateNPIOrganizationFHIREndpointLink updates the confidence value for the link between the organization id and the endpoint url.
+func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string, confidence float64) error {
+	_, err := updateNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
+		orgID,
+		endpointURL,
 		confidence)
 	return err
 }
@@ -263,10 +294,28 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	}
 	linkNPIOrganizationToFHIREndpointStatement, err = s.DB.Prepare(`
 		INSERT INTO endpoint_organization (
-			organization_id,
-			endpoint_id,
+			organization_npi_id,
+			url,
 			confidence)
 		VALUES ($1, $2, $3)`)
+	if err != nil {
+		return err
+	}
+	getNPIOrganizationFHIREndpointLinkStatement, err = s.DB.Prepare(`
+		SELECT
+			organization_npi_id,
+			url,
+			confidence
+		FROM endpoint_organization
+		WHERE organization_npi_id=$1 AND url=$2
+	`)
+	if err != nil {
+		return err
+	}
+	updateNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
+		UPDATE endpoint_organization
+		SET confidence = $3
+		WHERE organization_npi_id = $1 AND url = $2`)
 	if err != nil {
 		return err
 	}

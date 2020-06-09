@@ -28,7 +28,7 @@ $fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,
-    npi_id			     VARCHAR(500) UNIQUE,
+    npi_id			 VARCHAR(500) UNIQUE,
     name             VARCHAR(500),
     secondary_name   VARCHAR(500),
     location         JSONB,
@@ -96,7 +96,8 @@ CREATE TABLE healthit_products (
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
-    organization_name       VARCHAR(500),
+    organization_names      VARCHAR(500)[],
+    npi_ids                 VARCHAR(500)[],
     list_source             VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -115,7 +116,9 @@ CREATE TABLE fhir_endpoints_info (
     capability_statement    JSONB,
     validation              JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    smart_http_response     INTEGER,
+    smart_response          JSONB
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -133,14 +136,18 @@ CREATE TABLE fhir_endpoints_info_history (
     capability_statement    JSONB,
     validation              JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    smart_http_response     INTEGER,
+    smart_response          JSONB
 );
 
 CREATE TABLE endpoint_organization (
-    endpoint_id INT REFERENCES fhir_endpoints (id) ON DELETE CASCADE,
-    organization_id INT REFERENCES npi_organizations (id) ON DELETE CASCADE,
+    url             VARCHAR(500),
+    organization_npi_id VARCHAR(500),
     confidence NUMERIC (5, 3),
-    CONSTRAINT endpoint_org PRIMARY KEY (endpoint_id, organization_id)
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
 );
 
 CREATE INDEX fhir_endpoint_url_index ON fhir_endpoints (url);
@@ -170,6 +177,11 @@ BEFORE UPDATE ON fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_endpoint_organization
+BEFORE UPDATE ON endpoint_organization
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
@@ -178,17 +190,17 @@ EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 
 CREATE or REPLACE VIEW org_mapping AS
-SELECT endpts.url, vendors.name, endpts.organization_name AS endpoint_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
+SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
 FROM endpoint_organization AS links
-LEFT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
-LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id
+LEFT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;
+LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
+LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
 CREATE or REPLACE VIEW endpoint_export AS
-SELECT endpts.url, vendors.name as vendor_name, endpts.organization_name AS endpoint_name, endpts_info.tls_version, endpts_info.mime_types, endpts_info.http_response, endpts_info.capability_statement->>'fhirVersion' AS FHIR_VERSION, endpts_info.capability_statement->>'publisher' AS PUBLISHER, endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME, endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION, endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
+SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, endpts_info.tls_version, endpts_info.mime_types, endpts_info.http_response, endpts_info.capability_statement->>'fhirVersion' AS FHIR_VERSION, endpts_info.capability_statement->>'publisher' AS PUBLISHER, endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME, endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION, endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
 FROM endpoint_organization AS links
-RIGHT JOIN fhir_endpoints AS endpts ON links.endpoint_id = endpts.id
-LEFT JOIN npi_organizations AS orgs ON links.organization_id = orgs.id
+RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;
+LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
+LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;

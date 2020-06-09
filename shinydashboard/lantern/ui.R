@@ -19,7 +19,6 @@ ui <- dashboardPage(
       menuItem("Location", tabName = "location_tab", icon=icon("map")),
       menuItem("About Lantern",tabName = "about_tab", icon=icon("info-circle")),
       hr()
-      
     )
   ),
   

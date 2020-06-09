@@ -12,19 +12,23 @@ import (
 )
 
 var testQueueMsg = map[string]interface{}{
-	"url":          "http://example.com/DTSU2/metadata",
-	"err":          "",
-	"mimeTypes":    []string{"application/json+fhir"},
-	"httpResponse": 200,
-	"tlsVersion":   "TLS 1.2",
+	"url":               "http://example.com/DTSU2/",
+	"err":               "",
+	"mimeTypes":         []string{"application/json+fhir"},
+	"httpResponse":      200,
+	"tlsVersion":        "TLS 1.2",
+	"smarthttpResponse": 0,
+	"smartResp":         nil,
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:          "http://example.com/DTSU2/",
-	MIMETypes:    []string{"application/json+fhir"},
-	TLSVersion:   "TLS 1.2",
-	HTTPResponse: 200,
-	Errors:       "",
+	URL:               "http://example.com/DTSU2/",
+	MIMETypes:         []string{"application/json+fhir"},
+	TLSVersion:        "TLS 1.2",
+	HTTPResponse:      200,
+	Errors:            "",
+	SMARTHTTPResponse: 0,
+	SMARTResponse:     nil,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -84,8 +88,8 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect URL")
-	tmpMessage["url"] = "http://example.com/DTSU2/metadata"
 
+	tmpMessage["url"] = "http://example.com/DTSU2/"
 	// test incorrect TLS Version
 	tmpMessage["tlsVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
@@ -109,4 +113,12 @@ func Test_formatMessage(t *testing.T) {
 	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect HTTP response")
 	tmpMessage["httpResponse"] = 200
+
+	// test incorrect http response
+	tmpMessage["smarthttpResponse"] = "200"
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect smart HTTP response")
+	tmpMessage["smarthttpResponse"] = 200
 }

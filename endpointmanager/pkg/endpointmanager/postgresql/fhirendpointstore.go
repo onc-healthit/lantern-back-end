@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/pkg/errors"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -13,29 +15,33 @@ var addFHIREndpointStatement *sql.Stmt
 var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt
 
-// GetAllFHIREndpoints gets the id and url from every row in the fhir_endpoints table
-func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
+// GetAllFHIREndpoints returns a list of all of the fhir endpoints
+func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
 	SELECT
 		id,
-		url
+		url,
+		organization_names,
+		npi_ids
 	FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 
-	var endpoints []endpointmanager.FHIREndpoint
+	var endpoints []*endpointmanager.FHIREndpoint
 	defer rows.Close()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
 			&endpoint.ID,
-			&endpoint.URL)
+			&endpoint.URL,
+			pq.Array(&endpoint.OrganizationNames),
+			pq.Array(&endpoint.NPIIDs))
 		if err != nil {
 			return nil, err
 		}
-		endpoints = append(endpoints, endpoint)
+		endpoints = append(endpoints, &endpoint)
 	}
 	return endpoints, nil
 }
@@ -49,7 +55,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	SELECT
 		id,
 		url,
-		organization_name,
+		organization_names,
+		npi_ids,
 		list_source,
 		created_at,
 		updated_at
@@ -59,7 +66,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
-		&endpoint.OrganizationName,
+		pq.Array(&endpoint.OrganizationNames),
+		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
@@ -70,27 +78,29 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	return &endpoint, err
 }
 
-// GetFHIREndpointUsingURL gets a FHIREndpoint from the database using the given url as a key.
+// GetFHIREndpointUsingURLAndListSource gets a FHIREndpoint from the database using the given url as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
-func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpoint, error) {
+func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url string, listSource string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
 
 	sqlStatement := `
 	SELECT
 		id,
 		url,
-		organization_name,
+		organization_names,
+		npi_ids,
 		list_source,
 		created_at,
 		updated_at
-	FROM fhir_endpoints WHERE url=$1`
+	FROM fhir_endpoints WHERE url=$1 AND list_source=$2`
 
-	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, url, listSource)
 
 	err := row.Scan(
 		&endpoint.ID,
 		&endpoint.URL,
-		&endpoint.OrganizationName,
+		pq.Array(&endpoint.OrganizationNames),
+		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
@@ -99,6 +109,33 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) (*endpo
 	}
 
 	return &endpoint, err
+}
+
+// AddOrUpdateFHIREndpoint adds the endpoint if it doesn't already exist. If it does exist, it updates the endpoint.
+func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+	existingEndpt, err := s.GetFHIREndpointUsingURLAndListSource(ctx, e.URL, e.ListSource)
+	if err == sql.ErrNoRows {
+		err = s.AddFHIREndpoint(ctx, e)
+		if err != nil {
+			return errors.Wrap(err, "adding fhir endpoint to store failed")
+		}
+	} else if err != nil {
+		return errors.Wrap(err, "getting fhir endpoint from store failed")
+	} else {
+		// Merge new data with old data
+		// Org names and NPI IDs only possible new data
+		for _, name := range e.OrganizationNames {
+			existingEndpt.AddOrganizationName(name)
+		}
+		for _, npiID := range e.NPIIDs {
+			existingEndpt.AddNPIID(npiID)
+		}
+		err = s.UpdateFHIREndpoint(ctx, existingEndpt)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // AddFHIREndpoint adds the FHIREndpoint to the database.
@@ -107,7 +144,8 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 
 	row := addFHIREndpointStatement.QueryRowContext(ctx,
 		e.URL,
-		e.OrganizationName,
+		pq.Array(e.OrganizationNames),
+		pq.Array(e.NPIIDs),
 		e.ListSource)
 
 	err = row.Scan(&e.ID)
@@ -121,7 +159,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,
-		e.OrganizationName,
+		pq.Array(e.OrganizationNames),
+		pq.Array(e.NPIIDs),
 		e.ListSource,
 		e.ID)
 
@@ -135,35 +174,14 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	return err
 }
 
-// GetAllFHIREndpointOrgNames returns a sql.Rows of all of the orgNames
-func (s *Store) GetAllFHIREndpointOrgNames(ctx context.Context) ([]endpointmanager.FHIREndpoint, error) {
-	sqlStatement := `
-        SELECT id, organization_name FROM fhir_endpoints`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-
-	if err != nil {
-		return nil, err
-	}
-	var endpoints []endpointmanager.FHIREndpoint
-	defer rows.Close()
-	for rows.Next() {
-		var endpoint endpointmanager.FHIREndpoint
-		err = rows.Scan(&endpoint.ID, &endpoint.OrganizationName)
-		if err != nil {
-			return nil, err
-		}
-		endpoints = append(endpoints, endpoint)
-	}
-	return endpoints, nil
-}
-
 func prepareFHIREndpointStatements(s *Store) error {
 	var err error
 	addFHIREndpointStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints (url,
-			organization_name,
+			organization_names,
+			npi_ids,
 			list_source)
-		VALUES ($1, $2, $3)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -171,9 +189,10 @@ func prepareFHIREndpointStatements(s *Store) error {
 	updateFHIREndpointStatement, err = s.DB.Prepare(`
 		UPDATE fhir_endpoints
 		SET url = $1,
-			organization_name = $2,
-			list_source = $3
-		WHERE id = $4`)
+			organization_names = $2,
+			npi_ids = $3,
+			list_source = $4
+		WHERE id = $5`)
 	if err != nil {
 		return err
 	}

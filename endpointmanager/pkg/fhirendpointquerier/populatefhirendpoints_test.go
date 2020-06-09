@@ -9,15 +9,15 @@ import (
 )
 
 var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationName:     "A Woman's Place",
+	OrganizationNames:    []string{"A Woman's Place"},
 	FHIRPatientFacingURI: "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
 	ListSource:           "CareEvolution",
 }
 
 var testFHIREndpoint endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
-	OrganizationName: "A Woman's Place",
-	URL:              "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
-	ListSource:       "CareEvolution",
+	OrganizationNames: []string{"A Woman's Place"},
+	URL:               "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
+	ListSource:        "CareEvolution",
 }
 
 func Test_formatToFHIREndpt(t *testing.T) {

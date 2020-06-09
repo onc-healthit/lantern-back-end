@@ -146,7 +146,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt = testFhirEndpointInfo
-	queueTmp["url"] = "http://example.com/DTSU2/metadata"
+	queueTmp["url"] = "http://example.com/DTSU2/"
 
 	// check that an item with the same URL updates the endpoint in the database
 	queueTmp["tlsVersion"] = "TLS 1.3"
@@ -175,7 +175,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err != nil, "expected error adding product")
 
 	// resetting values
-	queueTmp["url"] = "http://example.com/DTSU2/metadata"
+	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
 }
 

@@ -43,11 +43,23 @@ func Test_NPIOrganizationEqual(t *testing.T) {
 	}
 	npio2.ID = npio1.ID
 
+	npio2.NPI_ID = "other"
+	if npio1.Equal(npio2) {
+		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. NPI ID should be different. %s vs %s", npio2.NPI_ID, npio2.NPI_ID)
+	}
+	npio2.NPI_ID = npio1.NPI_ID
+
 	npio2.Name = "other"
 	if npio1.Equal(npio2) {
 		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. Name should be different. %s vs %s", npio2.Name, npio2.Name)
 	}
 	npio2.Name = npio1.Name
+
+	npio2.SecondaryName = "other"
+	if npio1.Equal(npio2) {
+		t.Errorf("Did not expect npi organization 1 to equal npi organization 2. Secondary name should be different. %s vs %s", npio2.SecondaryName, npio2.SecondaryName)
+	}
+	npio2.SecondaryName = npio1.SecondaryName
 
 	npio2.Location.Address1 = "other"
 	if npio1.Equal(npio2) {

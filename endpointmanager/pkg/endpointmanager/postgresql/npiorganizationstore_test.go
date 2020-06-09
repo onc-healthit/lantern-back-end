@@ -4,6 +4,7 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -320,16 +321,13 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:              "example.com/FHIR/DSTU2/",
-		OrganizationName: "Example Inc."}
+		URL:               "example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Example Inc."},
+		NPIIDs:            []string{"1"},
+		ListSource:        "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:              "other.example.com/FHIR/DSTU2/",
-		OrganizationName: "Other Example Inc."}
-
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.ID, .85)
-	if err == nil {
-		t.Fatal("Expected an error linking NPI org and endpoint that are not yet in the DB.")
-	}
+		URL:               "other.example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Other Example Inc."}}
 
 	err = store.AddNPIOrganization(ctx, npio1)
 	if err != nil {
@@ -339,7 +337,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.ID, endpoint1.ID, .85)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio1.NPI_ID, endpoint1.URL, .85)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -352,7 +350,7 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding endpoint: %s", err.Error())
 	}
-	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.ID, endpoint2.ID, .75)
+	err = store.LinkNPIOrganizationToFHIREndpoint(ctx, npio2.NPI_ID, endpoint2.URL, .75)
 	if err != nil {
 		t.Fatalf("Got error linking NPI org and endpoint: %+v.", err)
 	}
@@ -367,73 +365,23 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		t.Fatalf("Expected two rows in DB")
 	}
 
-	rows, err := store.DB.Query("SELECT organization_id, endpoint_id, confidence FROM endpoint_organization")
-	defer rows.Close()
+	sNpiID, sEpURL, sConfidence, err := store.GetNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio1.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio1.NPI_ID))
+	th.Assert(t, sEpURL == endpoint1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint1.URL))
+	th.Assert(t, sConfidence == .85, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .85))
 
-	for rows.Next() {
-		var endpointID int
-		var npioID int
-		var confidence float64
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npio2.NPI_ID, endpoint2.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio2.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio2.NPI_ID))
+	th.Assert(t, sEpURL == endpoint2.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint2.URL))
+	th.Assert(t, sConfidence == .75, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .75))
 
-		err = rows.Scan(&npioID, &endpointID, &confidence)
-
-		if endpointID == endpoint1.ID {
-			if npioID != npio1.ID {
-				t.Fatalf("Expected ID %d to be ID %d", npioID, npio1.ID)
-			}
-			if confidence != .85 {
-				t.Fatalf("Expected confidence %f to be %f", confidence, .85)
-			}
-		} else if endpointID == endpoint2.ID {
-			if npioID != npio2.ID {
-				t.Fatalf("Expected ID %d to be ID %d", npioID, npio2.ID)
-			}
-			if confidence != .75 {
-				t.Fatalf("Expected confidence %f to be %f", confidence, .75)
-			}
-		} else {
-			t.Fatal("Getting unexpected entries in DB.")
-		}
-	}
-
-	// test deletion
-
-	// delete endpoint and ensure corresponding linked entry deleted
-	store.DeleteFHIREndpoint(ctx, endpoint1)
-
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization")
-	err = row.Scan(&count)
-	if err != nil {
-		t.Fatalf("Got scanning row: %+v.", err)
-	}
-	if count != 1 {
-		t.Fatalf("Expected one row in DB")
-	}
-
-	rows, err = store.DB.Query("SELECT organization_id, endpoint_id, confidence FROM endpoint_organization")
-	defer rows.Close()
-
-	for rows.Next() {
-		var endpointID int
-		var npioID int
-		var confidence float64
-
-		err = rows.Scan(&npioID, &endpointID, &confidence)
-
-		if endpointID != endpoint2.ID {
-			t.Fatal("Getting unexpected entries in DB.")
-		}
-	}
-
-	// delete npi org and ensure linked entry is deleted
-	store.DeleteNPIOrganization(ctx, npio2)
-
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization")
-	err = row.Scan(&count)
-	if err != nil {
-		t.Fatalf("Got scanning row: %+v.", err)
-	}
-	if count != 0 {
-		t.Fatalf("Expected no rows in DB")
-	}
+	err = store.UpdateNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL, .5)
+	th.Assert(t, err == nil, err)
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npio1.NPI_ID, endpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npio1.NPI_ID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npio1.NPI_ID))
+	th.Assert(t, sEpURL == endpoint1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, endpoint1.URL))
+	th.Assert(t, sConfidence == .5, fmt.Sprintf("expected stored confidence '%f' to be the same as the confidence that was stored '%f'.", sConfidence, .5))
 }

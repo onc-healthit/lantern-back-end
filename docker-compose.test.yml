@@ -1,14 +1,6 @@
 version: '3'
 
 services:
-  endpoint_querier:
-    environment:
-      - LANTERN_ENDPTQRY_QUERY_INTERVAL=0
-    entrypoint:
-      - "./main"
-      - "./resources/TestEndpointSources.json"
-      - "CareEvolution"
-
   prometheus_postgresql_adapter:
     command:
       -pg-host=pg_prometheus
@@ -19,7 +11,11 @@ services:
 
   prometheus:
     volumes:
-      - ./prometheus.test.yml:/etc/prometheus/prometheus.yml 
+      - ./prometheus.test.yml:/etc/prometheus/prometheus.yml
+
+  endpoint_querier:
+    environment:
+      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
 
   capability_querier:
     environment:
@@ -33,6 +29,7 @@ services:
       - LANTERN_QHOST=lantern-mq
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+      - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
     build:
       args:
         cert_dir: ./certs

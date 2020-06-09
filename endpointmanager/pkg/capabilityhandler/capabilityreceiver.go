@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -65,11 +64,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 	httpResponse := int(httpResponseFloat)
 
-	// remove "metadata" from the url
-	originalURL, file := path.Split(url)
-	if file != "metadata" {
-		originalURL = url
+	smarthttpResponseFloat, ok := msgJSON["smarthttpResponse"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast smart http response to int")
 	}
+	smarthttpResponse := int(smarthttpResponseFloat)
 
 	var capStat capabilityparser.CapabilityStatement
 	if msgJSON["capabilityStatement"] != nil {
@@ -81,6 +80,14 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
+	}
+	var smartResponse capabilityparser.SMARTResponse
+	if msgJSON["smartResp"] != nil {
+		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
+		}
+		smartResponse = capabilityparser.NewSMARTRespFromInterface(smartInt)
 	}
 
 	/**
@@ -106,7 +113,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:          originalURL,
+		URL:          url,
 		TLSVersion:   tlsVersion,
 		MIMETypes:    mimeTypes,
 		HTTPResponse: httpResponse,
@@ -115,6 +122,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			"errors": validationObj,
 		},
 		CapabilityStatement: capStat,
+		SMARTHTTPResponse:   smarthttpResponse,
+		SMARTResponse:       smartResponse,
 	}
 
 	return &fhirEndpoint, nil
@@ -144,6 +153,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
 
 	if err == sql.ErrNoRows {
+
 		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
 		if err != nil {
@@ -163,6 +173,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
 		existingEndpt.Validation = fhirEndpoint.Validation
+		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+		existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
 		if err != nil {
 			return err

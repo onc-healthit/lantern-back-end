@@ -42,4 +42,3 @@ endpoint_export_tbl <- as_tibble(db_tables$endpoint_export) %>%
   mutate(vendor_name = na_if(vendor_name,"")) %>%
   tidyr::replace_na(list(vendor_name="Unknown")) %>%
   tidyr::replace_na(list(fhir_version="Unknown"))
-

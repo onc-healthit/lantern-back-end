@@ -3,6 +3,7 @@ library(shinydashboard)
 library(readr)
 library(scales)
 
+
 dashboard_UI <- function(id) {
 
   ns <- NS(id)
@@ -24,16 +25,11 @@ dashboard_UI <- function(id) {
              h3("Endpoint Counts by Vendor and FHIR Version"),
              tableOutput(ns("fhir_vendor_table")),
              plotOutput(ns("vendor_share_plot"))
-             
       ),
       column(width=6,
              h3("All Endpoint Responses"),
              tableOutput(ns("http_code_table")),
              p("All HTTP response codes ever received and count of endpoints which returned that code at some point in history"),
-      )
-    ),
-    fluidRow(
-      column(width=12,
       )
     )
   )
@@ -52,7 +48,7 @@ dashboard <- function(
   response_tally       <- get_response_tally_list(db_tables)
   http_pct             <- get_http_response_summary_tbl(db_tables)
 
-    # create a summary table to show the response codes received along with 
+  # create a summary table to show the response codes received along with 
   # the description for each code
   http_summary <- http_pct %>%
     left_join(http_response_code_tbl, by=c("code" = "code_chr")) %>%
@@ -107,7 +103,9 @@ dashboard <- function(
   })
 
   output$http_code_table   <- renderTable(http_summary)
+
   output$fhir_vendor_table <- renderTable(vendor_count_tbl %>% select(Vendor=vendor_name,'FHIR Version'=fhir_version,Count=n))
+
   output$vendor_share_plot <- renderPlot({
    ggplot(vendor_count_tbl, aes(y = n, x = short_name, fill = fhir_version)) + 
       geom_bar(stat = "identity") +
@@ -120,5 +118,6 @@ dashboard <- function(
            title = "Endpoints by Vendor and FHIR Version") +
       scale_fill_manual(values=c("#66C2A5","#8DA0CB","#EFA182","#E78AC3","#A6D854"))
   })
+
   
 }

@@ -27,11 +27,13 @@ env:
   - LANTERN_QPORT=5672
   - LANTERN_CAPQUERY_QNAME=capability-statements
   - LANTERN_CAPQUERY_NUMWORKERS=10
+  - LANTERN_ENDPTQRY_NUMWORKERS=10
   - LANTERN_CAPQUERY_QRYINTVL=1440
   - LANTERN_TEST_QUSER=capabilityquerier
   - LANTERN_TEST_QPASSWORD=capabilityquerier
   - LANTERN_TEST_QNAME=test-queue
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
+  - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME=test-endpoints-to-netstats
 
 before_script:
 - go get ./...

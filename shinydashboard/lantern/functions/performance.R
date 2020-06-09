@@ -7,7 +7,7 @@ get_avg_response_time <- function() {
   FROM metrics_labels, metrics_values
   WHERE metrics_labels.metric_name = 'AllEndpoints_http_response_time' 
   AND metrics_labels.id = metrics_values.labels_id
-  AND metrics_values.time BETWEEN '2020-01-01T00:00:00Z' AND '2020-07-01T00:00:00Z'
+  AND metrics_values.time BETWEEN '2020-01-01T00:00:00Z' AND '2020-08-01T00:00:00Z'
   GROUP BY time
   ORDER BY time ")) ) %>% mutate(date=as_datetime(time)) %>% select(date,avg)
 

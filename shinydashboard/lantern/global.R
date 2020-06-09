@@ -19,5 +19,6 @@ purrr::walk(config_yaml$module_files, source)
 # Load table of http response codes and descriptions
 http_response_code_tbl <- read_csv(here(root,"http_codes.csv"),col_types = cols(code="i")) %>% mutate(code_chr=as.character(code))
 
+# Define magic numbers for user interface
 G <- list('ALL_FHIR_VERSIONS' = '99',
           'ALL_VENDORS' = '99')

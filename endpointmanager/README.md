@@ -79,6 +79,10 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
   Default value: lantern_test
 
+* **LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME** instead of LANTERN_ENDPTINFO_NETSTATS_QNAME: The name of the queue being accessed.
+
+  Default value: test-endpoints-to-netstats
+
 ## Packages
 
 The Endpoint Manager includes many packages with distinct purposes.

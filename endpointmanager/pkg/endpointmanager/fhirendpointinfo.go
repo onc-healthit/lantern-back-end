@@ -1,10 +1,10 @@
 package endpointmanager
 
 import (
-	"sort"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
 // FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
@@ -24,6 +24,8 @@ type FHIREndpointInfo struct {
 	Validation          map[string]interface{}
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
+	SMARTHTTPResponse   int
+	SMARTResponse       capabilityparser.SMARTResponse
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -47,21 +49,8 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	// check MIMETypes equal
-	if len(e.MIMETypes) != len(e2.MIMETypes) {
+	if !helpers.StringArraysEqual(e.MIMETypes, e2.MIMETypes) {
 		return false
-	}
-	// don't care about order
-	a := make([]string, len(e.MIMETypes))
-	b := make([]string, len(e2.MIMETypes))
-	copy(a, e.MIMETypes)
-	copy(b, e2.MIMETypes)
-	sort.Strings(a)
-	sort.Strings(b)
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
 	}
 
 	if e.HTTPResponse != e2.HTTPResponse {
@@ -79,6 +68,15 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
+	if e.SMARTHTTPResponse != e2.SMARTHTTPResponse {
+		return false
+	}
+	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
+		return false
+	}
+	if e.SMARTResponse == nil && e2.SMARTResponse != nil {
 		return false
 	}
 

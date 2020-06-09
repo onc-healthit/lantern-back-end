@@ -161,11 +161,16 @@ func SetupConfigForTests() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("endptinfo_netstats_qname")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qname", "test-queue")
 	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-capability")
+	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-netstats")
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)

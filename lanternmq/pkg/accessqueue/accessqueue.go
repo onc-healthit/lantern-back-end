@@ -2,10 +2,12 @@ package accessqueue
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 	"github.com/pkg/errors"
+	"github.com/streadway/amqp"
 )
 
 // ConnectToServerAndQueue creates a connection to an exchange at the given location with the given credentials.
@@ -58,4 +60,33 @@ func SendToQueue(
 	}
 
 	return nil
+}
+
+// CleanQueue purges the messages in the given channel and then counts to make
+// sure no messages are left
+func CleanQueue(queueName string, channel *amqp.Channel) error {
+	_, err := channel.QueuePurge(queueName, false)
+	if err != nil {
+		return err
+	}
+
+	count, err := QueueCount(queueName, channel)
+	if err != nil {
+		return err
+	}
+	if count != 0 {
+		return fmt.Errorf("should be no messages in queue, instead there are %d", count)
+	}
+
+	return nil
+}
+
+// QueueCount counts how many messages are currently in the queue
+func QueueCount(queueName string, channel *amqp.Channel) (int, error) {
+	queue, err := channel.QueueInspect(queueName)
+	if err != nil {
+		return -1, err
+	}
+
+	return queue.Messages, nil
 }
