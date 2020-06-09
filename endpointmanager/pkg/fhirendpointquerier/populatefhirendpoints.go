@@ -32,9 +32,17 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		}
 		if firstUpdate.IsZero() {
 			// get time of update for first endpoint
-			fhirURL := endpointmanager.NormalizeURL(endpoint.FHIRPatientFacingURI)
-			existingEndpt, _ := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
-			firstUpdate = existingEndpt.UpdatedAt
+			fhirURL := endpoint.FHIRPatientFacingURI
+			if fhirURL[len(fhirURL)-1:] != "/" {
+				fhirURL = fhirURL + "/"
+			}
+			existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
+			if err != nil {
+				log.Warn(err)
+				continue
+			} else {
+				firstUpdate = existingEndpt.UpdatedAt
+			}
 		}
 	}
 
@@ -106,6 +114,8 @@ func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime
 			}
 		}
 	}
+
+	log.Infof("Removed %d endpoints", len(fhirEndpoints))
 
 	return nil
 }
