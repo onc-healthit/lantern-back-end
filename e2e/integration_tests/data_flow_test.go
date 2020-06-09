@@ -4,6 +4,7 @@ package integration_tests
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -24,6 +25,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
 	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -43,6 +45,8 @@ type Endpoint struct {
 
 var store *postgresql.Store
 var qUser, qPassword, qHost, qPort, testQName string
+var endptList = "./testdata/TestEndpointSources.json"
+var shortEndptList = "./testdata/TestEndpointSources_1.json"
 
 var conn *amqp.Connection
 var channel *amqp.Channel
@@ -59,7 +63,7 @@ func TestMain(m *testing.M) {
 	testQueueSetup()
 
 	populateTestNPIData()
-	populateTestEndpointData()
+	populateTestEndpointData(endptList)
 	go setupTestServer()
 	// Give time for the querier to query the test server we just setup
 	time.Sleep(30 * time.Second)
@@ -94,8 +98,8 @@ func populateTestNPIData() {
 	failOnError(err)
 }
 
-func populateTestEndpointData() {
-	content, err := ioutil.ReadFile("./testdata/TestEndpointSources.json")
+func populateTestEndpointData(testEndpointList string) {
+	content, err := ioutil.ReadFile(testEndpointList)
 	failOnError(err)
 	listOfEndpoints, err := fetcher.GetListOfEndpoints(content, "Test")
 	failOnError(err)
@@ -436,9 +440,76 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	}
 }
 
-func Test_VendorList(t *testing.T) {
+func Test_UpdateEndpointList(t *testing.T) {
 	var err error
 
+	populateTestEndpointData(shortEndptList)
+
+	expected_endpt_ct := 28
+	expected_link_count := 38
+	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
+	var endpt_count int
+	err = endpt_ct_st.Scan(&endpt_count)
+	failOnError(err)
+	if endpt_count != expected_endpt_ct {
+		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
+	}
+
+	ctx := context.Background()
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+
+	var link_count int
+	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	err = endpoint_orgs_row.Scan(&link_count)
+	failOnError(err)
+	if link_count != expected_link_count {
+		t.Fatalf("endpoint_organization should still have %d links after update", link_count)
+	}
+
+	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
+	var endpt_info_count int
+	err = endpt_info_ct_st.Scan(&endpt_info_count)
+	failOnError(err)
+	if endpt_info_count != expected_endpt_ct {
+		t.Fatalf("fhir_endpoints_info should have %d endpoints after update. Got: %d", expected_endpt_ct, link_count)
+	}
+
+	// List of endpoint urls that were removed in TestEndpointSources_1.json
+	fhir_urls := []string{"https://eloh-mapilive.primehealthcare.com/v1/argonaut/v1/",
+				"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/", 
+				"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
+				"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
+				"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+				"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
+
+	expected_deleted_endpt := 6
+	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")
+	var deleted_fhir_urls []string
+	failOnError(err)
+	defer rows.Close()
+	for rows.Next() {
+		var fhirURL string
+		err = rows.Scan(&fhirURL)
+		failOnError(err)
+		deleted_fhir_urls = append(deleted_fhir_urls, fhirURL)
+	}
+
+	if len(deleted_fhir_urls) != expected_deleted_endpt {
+		t.Fatalf("%d endpoints should have been deleted from fhir_endpoints_info update. Got: %d", expected_deleted_endpt, len(deleted_fhir_urls))
+	}
+	th.Assert(t, helpers.StringArraysEqual(deleted_fhir_urls, fhir_urls), fmt.Sprintf("expected %v to equal %v", deleted_fhir_urls, fhir_urls))
+
+	for _, url := range fhir_urls {
+		var endpoint_id string
+		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
+		err = store.DB.QueryRow(query_str, url).Scan(&endpoint_id)
+		th.Assert(t, err ==  sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
+	}
+}
+
+func Test_VendorList(t *testing.T) {
+	var err error
+	
 	if viper.GetString("chplapikey") == "" {
 		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
 	}
