@@ -22,6 +22,11 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
 
+  capability_receiver:
+    environment:
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
+      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+
   lantern-e2e:
     container_name: lantern-e2e
     environment:

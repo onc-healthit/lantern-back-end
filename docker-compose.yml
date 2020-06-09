@@ -53,16 +53,6 @@ services:
     depends_on:
       - prometheus_postgresql_adapter
       - pg_prometheus
-
-  grafana:
-    image: grafana/grafana
-    volumes:
-      - grafanaData:/var/lib/grafana
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-    ports:
-      - "80:3000"
   
   lantern-mq:
     image: rabbitmq:3-management
@@ -71,10 +61,32 @@ services:
       - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
       - rabbitmqdata:/var/lib/rabbitmq
 
-  lantern_front_end:
-    image: onchealthit/lantern-front-end
-    ports:
-      - "8090:80"
+  endpoint_manager:
+    build: 
+      context: ./endpointmanager
+    depends_on:
+      - lantern-mq
+      - pg_prometheus
+    environment:
+      - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
+      - LANTERN_DBHOST=${LANTERN_DBHOST}
+      - LANTERN_DBPORT=${LANTERN_DBPORT}
+      - LANTERN_DBUSER=${LANTERN_DBUSER}
+      - LANTERN_DBPASSWORD=${LANTERN_DBPASSWORD}
+      - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
+      - LANTERN_DBNAME=${LANTERN_DBNAME}
+      - LANTERN_QUSER=${LANTERN_QUSER}
+      - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
+      - LANTERN_QHOST=${LANTERN_QHOST}
+      - LANTERN_QPORT=${LANTERN_QPORT}
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
+      - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
+      - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
+    volumes:
+      - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+      - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
   
   capability_querier:
     build: 
@@ -93,6 +105,28 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
+  capability_receiver:
+    build: 
+      context: ./capabilityreceiver
+    depends_on:
+      - lantern-mq
+      - pg_prometheus
+    environment:
+      - LANTERN_DBHOST=${LANTERN_DBHOST}
+      - LANTERN_DBPORT=${LANTERN_DBPORT}
+      - LANTERN_DBUSER=${LANTERN_DBUSER}
+      - LANTERN_DBPASSWORD=${LANTERN_DBPASSWORD}
+      - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
+      - LANTERN_DBNAME=${LANTERN_DBNAME}
+      - LANTERN_QUSER=${LANTERN_QUSER}
+      - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
+      - LANTERN_QHOST=${LANTERN_QHOST}
+      - LANTERN_QPORT=${LANTERN_QPORT}
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
+    volumes:
+      - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
+
   shinydashboard:
     build:
       context: ./shinydashboard
@@ -104,6 +138,8 @@ services:
         LANTERN_DBPORT: ${LANTERN_DBPORT}
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
     image: lantern_shinydashboard:current
+    depends_on:
+      - pg_prometheus
     volumes:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server

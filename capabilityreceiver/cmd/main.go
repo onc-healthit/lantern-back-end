@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 

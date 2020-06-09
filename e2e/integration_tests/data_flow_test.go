@@ -18,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
