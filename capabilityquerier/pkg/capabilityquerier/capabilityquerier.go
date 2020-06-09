@@ -52,11 +52,12 @@ type Message struct {
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
 // the Client and FhirURL for querying
 type QuerierArgs struct {
-	FhirURL      *url.URL
-	Client       *http.Client
-	MessageQueue *lanternmq.MessageQueue
-	ChannelID    *lanternmq.ChannelID
-	QueueName    string
+	FhirURL       *url.URL
+	FhirURLString string
+	Client        *http.Client
+	MessageQueue  *lanternmq.MessageQueue
+	ChannelID     *lanternmq.ChannelID
+	QueueName     string
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
@@ -72,17 +73,17 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	var err error
 	message := Message{
-		URL: qa.FhirURL.String(),
+		URL: qa.FhirURLString,
 	}
-	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL.String())
+	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURLString)
 	// Query fhir endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL.String())
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURLString)
 		message.Err = err.Error()
 	}
 
-	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
+	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURLString)
 	// Query well known endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 	if err != nil {
@@ -91,13 +92,13 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
-		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURL.String())
+		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURLString)
 	}
 	msgStr := string(msgBytes)
-
-	err = aq.SendToQueue(ctx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
+	tempCtx := context.Background()
+	err = aq.SendToQueue(tempCtx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
 	if err != nil {
-		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL.String(), qa.QueueName)
+		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURLString, qa.QueueName)
 	}
 
 	return nil

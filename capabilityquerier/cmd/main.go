@@ -77,11 +77,12 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	jobArgs := make(map[string]interface{})
 
 	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
-		FhirURL:      fhirURL,
-		Client:       qa.client,
-		MessageQueue: qa.mq,
-		ChannelID:    qa.ch,
-		QueueName:    qa.qName,
+		FhirURL:       fhirURL,
+		FhirURLString: urlString,
+		Client:        qa.client,
+		MessageQueue:  qa.mq,
+		ChannelID:     qa.ch,
+		QueueName:     qa.qName,
 	}
 
 	job := workers.Job{
