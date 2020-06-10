@@ -33,12 +33,14 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
-			Errors: []Rule{
+			Results: []Rule{
 				{
 					RuleName:  "httpResponse",
+					Valid:     false,
 					Expected:  "200",
 					Comment:   "Not 200",
 					Reference: "reference.com",
+					ImplGuide: "Guide",
 				},
 			},
 		},
@@ -53,12 +55,14 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
-			Errors: []Rule{
+			Results: []Rule{
 				{
 					RuleName:  "httpResponse",
+					Valid:     false,
 					Expected:  "200",
 					Comment:   "Not 200",
 					Reference: "reference.com",
+					ImplGuide: "Guide",
 				},
 			},
 		},
@@ -138,13 +142,13 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 
 	endpointInfo2.Validation = Validation{}
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %s vs %s", endpointInfo1.Validation, endpointInfo2.Validation)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
 	}
 	endpointInfo2.Validation = endpointInfo1.Validation
 
 	endpointInfo1.Validation = Validation{}
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %s vs %s", endpointInfo1.Validation, endpointInfo2.Validation)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
 	}
 	endpointInfo1.Validation = endpointInfo2.Validation
 

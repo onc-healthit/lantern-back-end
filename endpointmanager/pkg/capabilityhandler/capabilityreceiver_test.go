@@ -22,12 +22,30 @@ var testQueueMsg = map[string]interface{}{
 }
 
 var testValidationObj = endpointmanager.Validation{
-	Errors: []endpointmanager.Rule{
+	Results: []endpointmanager.Rule{
 		{
 			RuleName:  endpointmanager.R4MimeTypeRule,
+			Valid:     false,
 			Expected:  "application/fhir+json",
 			Comment:   "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers.",
 			Reference: "http://hl7.org/fhir/http.html",
+			ImplGuide: "USCore 3.1",
+		},
+		{
+			RuleName:  endpointmanager.GeneralMimeTypeRule,
+			Valid:     true,
+			Expected:  "application/json+fhir",
+			Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
+			Reference: "http://hl7.org/fhir/http.html",
+			ImplGuide: "USCore 3.1",
+		},
+		{
+			RuleName:  endpointmanager.HTTPResponseRule,
+			Valid:     true,
+			Expected:  "200",
+			Comment:   "",
+			Reference: "http://hl7.org/fhir/http.html",
+			ImplGuide: "USCore 3.1",
 		},
 	},
 	Warnings: []endpointmanager.Rule{},
