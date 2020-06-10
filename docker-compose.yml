@@ -86,7 +86,7 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
   
   capability_querier:
     build: 
@@ -125,7 +125,7 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
 
   shinydashboard:
     build:
