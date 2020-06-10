@@ -2,7 +2,6 @@ package endpointlinker
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"testing"
 
@@ -136,41 +135,18 @@ func Test_NormalizeOrgName(t *testing.T) {
 	th.Assert(t, (normalized == expected), "Organization name normalization failed. Expected: "+expected+" Got: "+normalized)
 }
 
-func Test_calculateJaccardIndex(t *testing.T) {
-	jaccardIndex := calculateJaccardIndex("FOO BAR", "FOO BAR", tokenValues)
+func Test_calculateWeightedJaccardIndex(t *testing.T) {
+	jaccardIndex := calculateWeightedJaccardIndex("FOO BAR", "FOO BAR", tokenValues)
 	ind := strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == 1), "Jaccard index expected to be 1, was "+ind)
 
-	jaccardIndex = calculateJaccardIndex("FOO BAZ BAR", "FOO BAR", tokenValues)
+	jaccardIndex = calculateWeightedJaccardIndex("FOO BAZ BAR", "FOO BAR", tokenValues)
 	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
 
-	jaccardIndex = calculateJaccardIndex("FOO FOO BAR", "FOO BAR", tokenValues)
+	jaccardIndex = calculateWeightedJaccardIndex("FOO FOO BAR", "FOO BAR", tokenValues)
 	ind = strconv.FormatFloat(jaccardIndex, 'f', -1, 64)
 	th.Assert(t, (jaccardIndex == .6666666666666666), "Jaccard index expected to be .6666666666666666, was "+ind)
-}
-
-func Test_IntersectionCount(t *testing.T) {
-	emptyListIntersections, emptyListDenom := intersectionCount([]string{}, []string{}, tokenValues)
-	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 0), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be zero, got "+strconv.Itoa(int(emptyListDenom)))
-
-	emptyListIntersections, emptyListDenom = intersectionCount([]string{"FOO"}, []string{}, tokenValues)
-	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 1), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be one, got "+strconv.Itoa(int(emptyListDenom)))
-
-	emptyListIntersections, emptyListDenom = intersectionCount([]string{"FOO"}, []string{"BAR"}, tokenValues)
-	th.Assert(t, (int(emptyListIntersections) == 0 && int(emptyListDenom) == 2), "Intersection count of empty lists should be zero, got "+strconv.Itoa(int(emptyListIntersections))+", Denominator of empty lists should be two, got "+strconv.Itoa(int(emptyListDenom)))
-
-	nonEmptyListIntersections, nonEmptyListDenom := intersectionCount([]string{"FOO"}, []string{"FOO"}, tokenValues)
-	th.Assert(t, (int(nonEmptyListIntersections) == 1 && int(nonEmptyListDenom) == 1), "Intersection count of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListDenom)))
-
-	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR"}, []string{"BAR"}, tokenValues)
-	th.Assert(t, (int(nonEmptyListIntersections) == 1 && int(nonEmptyListDenom) == 2), "Intersection count of non-empty lists should be one, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListDenom)))
-
-	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR"}, []string{"BAR", "FOO"}, tokenValues)
-	th.Assert(t, (int(nonEmptyListIntersections) == 2 && int(nonEmptyListDenom) == 2), "Intersection count of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be two, got "+strconv.Itoa(int(nonEmptyListDenom)))
-
-	nonEmptyListIntersections, nonEmptyListDenom = intersectionCount([]string{"FOO", "BAR", "FOO", "FOO"}, []string{"BAR", "FOO", "FOO"}, tokenValues)
-	th.Assert(t, (int(nonEmptyListIntersections) == 3 && int(nonEmptyListDenom) == 4), "Intersection count of non-empty lists should be three, got "+strconv.Itoa(int(nonEmptyListIntersections))+", Denominator of non-empty lists should be four, got "+strconv.Itoa(int(nonEmptyListDenom)))
 }
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
@@ -478,14 +454,10 @@ func Test_countTokens(t *testing.T) {
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)
 	FHIREndpoints = append(FHIREndpoints, ep3)
-	tokenCountsAll, NPITokenCounts, EndpointTokenCounts, totalUniqueTokens, totalTokens, firstKey := countTokens(npiOrgs, FHIREndpoints)
+	tokenCountsAll, NPITokenCounts, EndpointTokenCounts, firstKey := countTokens(npiOrgs, FHIREndpoints)
 
-	expectedUnique := 21
-	expectedTotal := 116
 	expectedFirstKey := "FOO"
 
-	th.Assert(t, expectedUnique == totalUniqueTokens, fmt.Sprintf("expected unique tokens total to be 22, but got %v.", totalUniqueTokens))
-	th.Assert(t, expectedTotal == totalTokens, fmt.Sprintf("expected total tokens to be 118, but got %v.", totalTokens))
 	th.Assert(t, expectedFirstKey == firstKey, fmt.Sprintf("expected first key to be 'FOO', but got %s.", firstKey))
 
 	th.Assert(t, tokenCountsAll["FOO"] == 21, fmt.Sprintf("expected FOO count to be 21, but got %v.", tokenCountsAll["FOO"]))
@@ -501,30 +473,6 @@ func Test_countTokens(t *testing.T) {
 
 }
 
-func Test_calculateStandardDev(t *testing.T) {
-	var tokenCounts = map[string]int{
-		"FOO":     20,
-		"BAR":     15,
-		"BAZ":     7,
-		"BAM":     9,
-		"NOTHING": 8,
-		"SHOULD":  27,
-		"MATCH":   12,
-		"THIS":    9,
-		"EMPTY":   0}
-	totalUniqueTokens := 9.0
-	totalTokens := 107.0
-	mean := int(math.Round(totalTokens / totalUniqueTokens))
-	th.Assert(t, mean == 12, fmt.Sprintf("expected mean to be 12, but got %v.", mean))
-	standardDev := calculateStandardDev(tokenCounts, mean, int(totalUniqueTokens))
-	th.Assert(t, standardDev == 7, fmt.Sprintf("expected standard deviation to be 7, but got %v.", standardDev))
-
-	emptyCounts := map[string]int{
-		"FOO": 0}
-	standardDev = calculateStandardDev(emptyCounts, 0, 1)
-	th.Assert(t, standardDev == 0, fmt.Sprintf("expected standard deviation to be 0, but got %v.", standardDev))
-
-}
 func Test_computeTokenValues(t *testing.T) {
 	var tokenCountsAll = map[string]int{
 		"FOO":            600,
@@ -586,57 +534,57 @@ func Test_computeTokenValues(t *testing.T) {
 
 	tokenVals := computeTokenValues(tokenCountsAll, tokenCountsNPI, tokenCountsEndpoints, firstKey, randTokenMean, randStandardDev)
 
-	//CORP token found in fluff dictionary (multiply by 0.2)
+	// CORP token found in fluff dictionary (multiply by 0.2)
 	tokenValResult := fmt.Sprintf("%f", tokenVals["CORP"])
 	expectedResult := fmt.Sprintf("%f", corpVal*0.2)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("CORP expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//SHOULD token count < mean (multiply by 2.5)
+	// SHOULD token count < mean (multiply by 2.5)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SHOULD"])
 	expectedResult = fmt.Sprintf("%f", shouldVal*2.5)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("SHOULD expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//NOTHING token count < mean + (standardDev/3) (multiply by 1.6)
+	// NOTHING token count < mean + (standardDev/3) (multiply by 1.6)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["NOTHING"])
 	expectedResult = fmt.Sprintf("%f", nothingVal*1.6)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("NOTHING expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//EMPTY token count < mean + standardDev (multiply by 1.3)
+	// EMPTY token count < mean + standardDev (multiply by 1.3)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["EMPTY"])
 	expectedResult = fmt.Sprintf("%f", emptyVal*1.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("EMPTY expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//BAR token count < mean + (standardDev*3) (multiply by 1.0)
+	// BAR token count < mean + (standardDev*3) (multiply by 1.0)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BAR"])
 	expectedResult = fmt.Sprintf("%f", barVal*1.0)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("BAR expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//BLAH token count < mean + (standardDev*6) (multiply by 0.8)
+	// BLAH token count < mean + (standardDev*6) (multiply by 0.8)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BLAH"])
 	expectedResult = fmt.Sprintf("%f", blahVal*0.8)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("BLAH expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//MATCH token count < mean + (standardDev*9) (multiply by 0.6)
+	// MATCH token count < mean + (standardDev*9) (multiply by 0.6)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["MATCH"])
 	expectedResult = fmt.Sprintf("%f", matchVal*0.6)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("MATCH expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//THIS token count > mean + (standardDev*9) (multiply by 0.4)
+	// THIS token count > mean + (standardDev*9) (multiply by 0.4)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["THIS"])
 	expectedResult = fmt.Sprintf("%f", thisVal*0.4)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("THIS expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//ONLYINNPI token count > mean + (standardDev*9) and only found in NPI token count (multiply by 0.4 and then 0.3)
+	// ONLYINNPI token count > mean + (standardDev*9) and only found in NPI token count (multiply by 0.4 and then 0.3)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["ONLYINNPI"])
 	expectedResult = fmt.Sprintf("%f", onlyinnpiVal*0.4*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("ONLYINNPI expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//ONLYINENDPOINT token count < mean + (standardDev*6) and only found in Endpoint token count (multiply by 0.8 and then 0.1)
+	// ONLYINENDPOINT token count < mean + (standardDev*6) and only found in Endpoint token count (multiply by 0.8 and then 0.1)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["ONLYINENDPOINT"])
 	expectedResult = fmt.Sprintf("%f", onlyinendpointVal*0.8*0.1)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("ONLYINENDPOINT expected %s value. got %s.", expectedResult, tokenValResult))
 
-	//Word that does not exist in token counts should return 0 for a value
+	// Word that does not exist in token counts should return 0 for a value
 	tokenValResult = fmt.Sprintf("%f", tokenVals["NOTINLIST"])
 	expectedResult = fmt.Sprintf("%f", 0.0)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("NOTINLIST expected %s value. got %s.", expectedResult, tokenValResult))
@@ -671,9 +619,9 @@ func Test_getTokenVals(t *testing.T) {
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)
 
-	//Total value of tokens = 105, total value of unique tokens = 19, mean = 6 standard deviation = 6
-	//Divide by 20 as this is the highest token count
-	fooValue := 0.0 //(1.0 - 20.0/20.0)
+	// Total value of tokens = 105, total value of unique tokens = 19, mean = 6 standard deviation = 6
+	// Divide by 20 as this is the highest token count
+	fooValue := 0.0 // (1.0 - 20.0/20.0)
 	bamValue := 1.0 - (16.0 / 20.0)
 	fiveValue := 1.0 - (3.0 / 20.0)
 	sevenValue := 1.0 - (1.0 / 20.0)
@@ -682,27 +630,27 @@ func Test_getTokenVals(t *testing.T) {
 
 	tokenVals := getTokenVals(npiOrgs, FHIREndpoints)
 
-	//Foo with count of 20 has value 0.0, and 20 < mean + standardDev*3 so multiplied by 1.0
+	// Foo with count of 20 has value 0.0, and 20 < mean + standardDev*3 so multiplied by 1.0
 	tokenValResult := fmt.Sprintf("%f", tokenVals["FOO"])
 	expectedResult := fmt.Sprintf("%f", fooValue*1.0)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	//Bam with count of 16 has value 0.2, and 16 < mean + standardDev*3 so multiplied by 1.0
+	// Bam with count of 16 has value 0.2, and 16 < mean + standardDev*3 so multiplied by 1.0
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BAM"])
 	expectedResult = fmt.Sprintf("%f", bamValue*1.0)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	//Five with count of 3 has value 0.85, and 3 < mean so multiplied by 2.5
+	// Five with count of 3 has value 0.85, and 3 < mean so multiplied by 2.5
 	tokenValResult = fmt.Sprintf("%f", tokenVals["FIVE"])
 	expectedResult = fmt.Sprintf("%f", fiveValue*2.5)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	//System with count of 2 has value 0.9, and "SYSTEM" is in fluff dictionary so multiplied by 0.2, and "SYSTEM" in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
+	// System with count of 2 has value 0.9, and "SYSTEM" is in fluff dictionary so multiplied by 0.2, and "SYSTEM" in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SYSTEM"])
 	expectedResult = fmt.Sprintf("%f", systemValue*0.2*0.1)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	//Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
+	// Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BLAH"])
 	expectedResult = fmt.Sprintf("%f", blahValue*2.5*0.1)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	//Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.3
+	// Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.3
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SEVEN"])
 	expectedResult = fmt.Sprintf("%f", sevenValue*2.5*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
