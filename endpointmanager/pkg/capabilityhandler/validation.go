@@ -22,13 +22,11 @@ func contains(arr []string, str string) bool {
 
 // RunValidationChecks runs all of the validation checks based on the rule requirements from ONC
 func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpResponse int, mimeTypes []string) endpointmanager.Validation {
-	var validationErrors []endpointmanager.Rule
+	var validationResults []endpointmanager.Rule
 	validationWarnings := make([]endpointmanager.Rule, 0)
 
 	returnedRule := r4MimeTypeValid(mimeTypes)
-	if returnedRule != (endpointmanager.Rule{}) {
-		validationErrors = append(validationErrors, returnedRule)
-	}
+	validationResults = append(validationResults, returnedRule)
 
 	if capStat != nil {
 		fhirVersion, err := capStat.GetFHIRVersion()
@@ -40,17 +38,13 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 	} else {
 		returnedRule = generalMimeTypeValid(mimeTypes, "")
 	}
-	if returnedRule != (endpointmanager.Rule{}) {
-		validationErrors = append(validationErrors, returnedRule)
-	}
+	validationResults = append(validationResults, returnedRule)
 
 	returnedRule = httpResponseValid(httpResponse)
-	if returnedRule != (endpointmanager.Rule{}) {
-		validationErrors = append(validationErrors, returnedRule)
-	}
+	validationResults = append(validationResults, returnedRule)
 
 	validations := endpointmanager.Validation{
-		Errors:   validationErrors,
+		Results:  validationResults,
 		Warnings: validationWarnings,
 	}
 
@@ -59,7 +53,14 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 
 // r4MimeTypeValid checks to see if the application/fhir+json mime type was a valid mime type for this endpoint
 func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
-	var ruleError endpointmanager.Rule
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.R4MimeTypeRule,
+		Valid:     true,
+		Expected:  fhir3PlusJSONMIMEType,
+		Comment:   "",
+		Reference: "http://hl7.org/fhir/http.html",
+		ImplGuide: "USCore 3.1",
+	}
 
 	for _, mt := range mimeTypes {
 		if mt == fhir3PlusJSONMIMEType {
@@ -67,20 +68,25 @@ func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
 		}
 	}
 
-	ruleError.RuleName = endpointmanager.R4MimeTypeRule
-	ruleError.Expected = fhir3PlusJSONMIMEType
+	ruleError.Valid = false
 	ruleError.Comment = "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers."
-	ruleError.Reference = "http://hl7.org/fhir/http.html"
 	return ruleError
 }
 
 // generalMimeTypeValid checks if the mime type is valid for the given fhirVersion.
 // @TODO We might not care about this if endpoints are supposed to be version R4
 func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
-	var ruleError endpointmanager.Rule
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.GeneralMimeTypeRule,
+		Valid:     true,
+		Expected:  "",
+		Comment:   "",
+		Reference: "http://hl7.org/fhir/http.html",
+		ImplGuide: "USCore 3.1",
+	}
 
 	if len(fhirVersion) == 0 {
-		ruleError.RuleName = endpointmanager.GeneralMimeTypeRule
+		ruleError.Valid = false
 		ruleError.Expected = "N/A"
 		ruleError.Comment = "Unknown FHIR Version; cannot validate mime type."
 		return ruleError
@@ -90,6 +96,8 @@ func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanage
 	for _, mt := range mimeTypes {
 		if contains(version3plus, fhirVersion) {
 			if mt == fhir3PlusJSONMIMEType {
+				ruleError.Expected = fhir3PlusJSONMIMEType
+				ruleError.Comment = "FHIR Version " + fhirVersion + " requires the Mime Type to be " + fhir3PlusJSONMIMEType
 				return ruleError
 			}
 			mimeError = fhir3PlusJSONMIMEType
@@ -97,38 +105,42 @@ func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanage
 			// The fhirVersion has to be valid in order to create a valid capability statement
 			// so if it's gotten this far, the fhirVersion has to be less than 3
 			if mt == fhir2LessJSONMIMEType {
+				ruleError.Expected = fhir2LessJSONMIMEType
+				ruleError.Comment = "FHIR Version " + fhirVersion + " requires the Mime Type to be " + fhir2LessJSONMIMEType
 				return ruleError
 			}
 			mimeError = fhir2LessJSONMIMEType
 		}
 	}
 
-	errorMsg := "FHIR Version " + fhirVersion + " requires the Mime Type to be " + mimeError
-
-	ruleError.RuleName = endpointmanager.GeneralMimeTypeRule
+	ruleError.Valid = false
 	ruleError.Expected = mimeError
-	ruleError.Comment = errorMsg
-	ruleError.Reference = "http://hl7.org/fhir/http.html"
+	ruleError.Comment = "FHIR Version " + fhirVersion + " requires the Mime Type to be " + mimeError
 	return ruleError
 }
 
 // httpReponseValid checks for the http response and returns
 func httpResponseValid(httpResponse int) endpointmanager.Rule {
-	var ruleError endpointmanager.Rule
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.HTTPResponseRule,
+		Valid:     true,
+		Expected:  "200",
+		Comment:   "",
+		Reference: "http://hl7.org/fhir/http.html",
+		ImplGuide: "USCore 3.1",
+	}
 
 	if httpResponse == 200 {
 		return ruleError
 	}
 
 	s := strconv.Itoa(httpResponse)
-	ruleError.RuleName = endpointmanager.HTTPResponseRule
-	ruleError.Expected = "200"
-	ruleError.Reference = "http://hl7.org/fhir/http.html"
 	ruleError.Comment = "The HTTP response code was " + s + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point."
 
 	if httpResponse == 0 {
 		ruleError.Comment = "The GET request failed with no returned HTTP response status code. Applications SHALL return a resource that describes the functionality of the server end-point."
 	}
 
+	ruleError.Valid = false
 	return ruleError
 }

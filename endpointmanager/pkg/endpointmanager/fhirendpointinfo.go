@@ -91,7 +91,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 // Validation holds all of the errors and warnings from running the validation checks
 // it is saved in JSON format to the fhir_endpoints_info database table
 type Validation struct {
-	Errors   []Rule `json:"errors"`
+	Results  []Rule `json:"results"`
 	Warnings []Rule `json:"warnings"`
 }
 
@@ -99,9 +99,11 @@ type Validation struct {
 // the Validations struct
 type Rule struct {
 	RuleName  RuleOption `json:"ruleName"`
+	Valid     bool       `json:"valid"`
 	Expected  string     `json:"expected"`
 	Comment   string     `json:"comment"`
 	Reference string     `json:"reference"`
+	ImplGuide string     `json:"implGuide"`
 }
 
 // RuleOption is an enum of the names given to the rule validation checks
