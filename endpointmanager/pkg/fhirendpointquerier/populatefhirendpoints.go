@@ -115,7 +115,7 @@ func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime
 		}
 	}
 
-	log.Infof("Removed %d endpoints", len(fhirEndpoints))
+	log.Infof("Removed %d endpoints from list source %s", len(fhirEndpoints), listSource)
 
 	return nil
 }
