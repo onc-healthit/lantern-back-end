@@ -75,7 +75,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	message := Message{
 		URL: qa.FhirURLString,
 	}
-	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURLString)
+	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL.String())
 	// Query fhir endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
@@ -83,7 +83,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		message.Err = err.Error()
 	}
 
-	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURLString)
+	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
 	// Query well known endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 	if err != nil {
