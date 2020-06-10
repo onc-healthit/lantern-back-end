@@ -95,6 +95,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURLString)
 	}
 	msgStr := string(msgBytes)
+	//Blank context passed in to SendToQueue to prevent terminating error due to an endpoint timeout
 	tempCtx := context.Background()
 	err = aq.SendToQueue(tempCtx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
 	if err != nil {
