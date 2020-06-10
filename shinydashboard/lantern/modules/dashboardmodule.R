@@ -120,6 +120,7 @@ dashboard <- function(
       geom_text( aes(label = stat(y), group=short_name),
         stat = 'summary', fun = sum, vjust = -1
       ) +
+      theme(text = element_text(size = 15)) +
       labs(fill = "FHIR Version",
            x = NULL,
            y = "Number of Endpoints",
@@ -130,7 +131,8 @@ dashboard <- function(
   output$response_code_plot <- renderPlot({
     ggplot(http_summary %>% mutate(Response=paste(code,"-",label)), aes(x=code,fill=as.factor(Response),y=count)) + 
     geom_bar(stat="identity") +
-    labs(fill="Code",
+      theme(text = element_text(size = 15)) +
+      labs(fill="Code",
          title="All HTTP Response Codes Ever Received from Endpoints",
          x="HTTP Response Received",
          y = "Count of endpoints")

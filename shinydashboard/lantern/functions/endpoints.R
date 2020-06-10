@@ -23,9 +23,11 @@ get_fhir_endpoints_tbl <- function(db_tables) {
   db_tables$fhir_endpoints %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-    distinct(url,vendor_name,fhir_version,tls_version,mime_types,http_response), by=c("url"="url")) %>%
-    select(url,organization_name,updated_at,vendor_name,fhir_version,tls_version,http_response) %>%
-    left_join(http_response_code_tbl %>% select(code,label),by=c("http_response"="code"))
+        distinct(url,vendor_name,fhir_version,tls_version,mime_types,http_response), by=c("url"="url")) %>%
+    mutate(updated=as.Date(updated_at)) %>%
+    select(url,organization_name,updated,vendor_name,fhir_version,tls_version,http_response) %>%
+    left_join(http_response_code_tbl %>% select(code,label),by=c("http_response"="code")) %>%
+    mutate(status=paste(http_response,"-",label))
 }
 
 # get the endpoint tally by http_response received 
