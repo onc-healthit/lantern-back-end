@@ -24,8 +24,20 @@ services:
 
   capability_receiver:
     environment:
+      - LANTERN_DBHOST=pg_prometheus
+      - LANTERN_QHOST=lantern-mq
       - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+
+  endpoint_manager:
+    environment:
+      - LANTERN_DBHOST=pg_prometheus
+      - LANTERN_QHOST=lantern-mq
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
+      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
 
   lantern-e2e:
     container_name: lantern-e2e
@@ -41,4 +53,4 @@ services:
       context: ./e2e
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh grafana:3000 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- /etc/lantern/wait-for-it.sh lantern-mq:15672 -- /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh prometheus:9090 -- /etc/lantern/wait-for-it.sh prometheus_postgresql_adapter:9201 -- /etc/lantern/wait-for-it.sh endpoint_querier:3333 -- go test -v -tags=e2e ./...
+    command: /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- /etc/lantern/wait-for-it.sh lantern-mq:15672 -- /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh prometheus:9090 -- /etc/lantern/wait-for-it.sh prometheus_postgresql_adapter:9201 -- /etc/lantern/wait-for-it.sh endpoint_querier:3333 -- go test -v -tags=e2e ./...
