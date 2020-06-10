@@ -192,7 +192,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-	expected_link_count := 38
+	expected_link_count := 32
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -210,7 +210,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 38 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 32 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to one org
