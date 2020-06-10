@@ -79,15 +79,26 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	// Query fhir endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURLString)
-		message.Err = err.Error()
+		select {
+		case <-ctx.Done():
+			log.Warnf("Got error: server could not be reached from URL: %s", qa.FhirURLString)
+			message.Err = "server could not be reached from URL: " + metadataURL
+		default:
+			log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURLString)
+			message.Err = err.Error()
+		}
 	}
 
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
 	// Query well known endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 	if err != nil {
-		message.Err = err.Error()
+		select {
+		case <-ctx.Done():
+			message.Err = "server could not be reached from URL: " + wellKnownURL
+		default:
+			message.Err = err.Error()
+		}
 	}
 
 	msgBytes, err := json.Marshal(message)
