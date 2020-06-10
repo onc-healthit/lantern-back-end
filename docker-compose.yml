@@ -147,7 +147,6 @@ services:
 volumes:
   pgdata:
   prometheusData:
-  grafanaData:
   rabbitmqdata:
 
 
