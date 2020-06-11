@@ -2,6 +2,7 @@ package capabilityhandler
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -53,11 +54,13 @@ func RunValidationChecks(capStat capabilityparser.CapabilityStatement, httpRespo
 
 // r4MimeTypeValid checks to see if the application/fhir+json mime type was a valid mime type for this endpoint
 func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
+	mimeString := strings.Join(mimeTypes, ", ")
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.R4MimeTypeRule,
 		Valid:     true,
 		Expected:  fhir3PlusJSONMIMEType,
-		Comment:   "",
+		Actual:    mimeString,
+		Comment:   "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers.",
 		Reference: "http://hl7.org/fhir/http.html",
 		ImplGuide: "USCore 3.1",
 	}
@@ -69,17 +72,18 @@ func r4MimeTypeValid(mimeTypes []string) endpointmanager.Rule {
 	}
 
 	ruleError.Valid = false
-	ruleError.Comment = "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers."
 	return ruleError
 }
 
 // generalMimeTypeValid checks if the mime type is valid for the given fhirVersion.
 // @TODO We might not care about this if endpoints are supposed to be version R4
 func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
+	mimeString := strings.Join(mimeTypes, ",")
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.GeneralMimeTypeRule,
 		Valid:     true,
 		Expected:  "",
+		Actual:    mimeString,
 		Comment:   "",
 		Reference: "http://hl7.org/fhir/http.html",
 		ImplGuide: "USCore 3.1",
@@ -121,10 +125,12 @@ func generalMimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanage
 
 // httpReponseValid checks for the http response and returns
 func httpResponseValid(httpResponse int) endpointmanager.Rule {
+	strResp := strconv.Itoa(httpResponse)
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.HTTPResponseRule,
 		Valid:     true,
 		Expected:  "200",
+		Actual:    strResp,
 		Comment:   "",
 		Reference: "http://hl7.org/fhir/http.html",
 		ImplGuide: "USCore 3.1",
@@ -134,8 +140,7 @@ func httpResponseValid(httpResponse int) endpointmanager.Rule {
 		return ruleError
 	}
 
-	s := strconv.Itoa(httpResponse)
-	ruleError.Comment = "The HTTP response code was " + s + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point."
+	ruleError.Comment = "The HTTP response code was " + strResp + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point."
 
 	if httpResponse == 0 {
 		ruleError.Comment = "The GET request failed with no returned HTTP response status code. Applications SHALL return a resource that describes the functionality of the server end-point."

@@ -101,6 +101,7 @@ type Rule struct {
 	RuleName  RuleOption `json:"ruleName"`
 	Valid     bool       `json:"valid"`
 	Expected  string     `json:"expected"`
+	Actual    string     `json:"actual"`
 	Comment   string     `json:"comment"`
 	Reference string     `json:"reference"`
 	ImplGuide string     `json:"implGuide"`
