@@ -57,23 +57,24 @@ This removes all docker images, networks, and local volumes.
 2. **If you have a clean database or want to update the data in your database** 
     1. Run the following command to begin populating the database usinig the data found in `lantern-back-end/endpointmanager/resources`
 
-      The populated db scrpt expects the resources directory to contain the following files:
-        * CernerEndpointSources.json
-        * EndpointSources.json
-        * EpicEndpointSources.json
-        * endpoint_pfile.csv
-        * npidata_pfile.csv 
+    The populated db scrpt expects the resources directory to contain the following files:
+      * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
+      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution (no longer updated)
+      * **EpicEndpointSources.json** - JSON file containing endpoint information from Epic
+      * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
+      * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
+        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`
 
-        ```bash
-        make populatedb
-        ```
-        This runs the following tasks inside the endpoint manager container:
-        * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
-        * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
-        * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-        * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
-          * this is item will take an hour to load if you use the full npidata_pfile
+      ```bash
+      make populatedb
+      ```
 
+      This runs the following tasks inside the endpoint manager container:
+      * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+      * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+      * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
+      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
+        * this is item will take an hour to load if you use the full npidata_pfile
 
 1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
 
