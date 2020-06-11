@@ -2032,29 +2032,6 @@
             ]
         },
         {
-            "OrganizationName": "Cedars-Sinai Health System",
-            "FHIRPatientFacingURI": "https://cslinkmobile.csmc.edu/fhirproxy/api/FHIR/DSTU2/",
-            "Type": "Epic",
-            "Keywords": [
-                {
-                    "Kind": "Keyword",
-                    "Value": "Cedars-Sinai"
-                },
-                {
-                    "Kind": "State",
-                    "Value": "CA"
-                },
-                {
-                    "Kind": "State",
-                    "Value": "California"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "90048"
-                }
-            ]
-        },
-        {
             "OrganizationName": "CentraCare Health and Affiliates",
             "FHIRPatientFacingURI": "https://epicmobile.centracare.com/fhir/api/FHIR/DSTU2/",
             "Type": "Epic",
@@ -4407,41 +4384,6 @@
                 {
                     "Kind": "Keyword",
                     "Value": "Geisinger Affiliates"
-                }
-            ]
-        },
-        {
-            "OrganizationName": "Genesis Healthcare System",
-            "FHIRPatientFacingURI": "https://fhir.genesishcs.org/api/FHIR/DSTU2/",
-            "Type": "Epic",
-            "Keywords": [
-                {
-                    "Kind": "Keyword",
-                    "Value": "Genesis"
-                },
-                {
-                    "Kind": "Keyword",
-                    "Value": "Zanesville"
-                },
-                {
-                    "Kind": "State",
-                    "Value": "OH"
-                },
-                {
-                    "Kind": "State",
-                    "Value": "Ohio"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "43701"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "43725"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "43821"
                 }
             ]
         },
@@ -13694,41 +13636,6 @@
                 {
                     "Kind": "Zip",
                     "Value": "27157"
-                }
-            ]
-        },
-        {
-            "OrganizationName": "WakeMed Health and Hospitals",
-            "FHIRPatientFacingURI": "https://epic-soap.wakemed.org/FHIR/api/FHIR/DSTU2/",
-            "Type": "Epic",
-            "Keywords": [
-                {
-                    "Kind": "Keyword",
-                    "Value": "Cary Hospital"
-                },
-                {
-                    "Kind": "Keyword",
-                    "Value": "Raleigh Campus"
-                },
-                {
-                    "Kind": "Keyword",
-                    "Value": "WakeMed Children’s Hospital"
-                },
-                {
-                    "Kind": "Keyword",
-                    "Value": "WakeMed Health and Hospitals"
-                },
-                {
-                    "Kind": "State",
-                    "Value": "NC"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "27518"
-                },
-                {
-                    "Kind": "Zip",
-                    "Value": "27610"
                 }
             ]
         },
