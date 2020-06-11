@@ -86,7 +86,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"A Woman's Place, LLC"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
-	// This endpoint list has 7 endpoints removed from it
+	// This endpoint list has 10 endpoints removed from it
 	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../../networkstatsquerier/resources/EndpointSources_1.json", "CareEvolution")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
