@@ -192,7 +192,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-	expected_link_count := 38
+	expected_link_count := 32
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -210,21 +210,21 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 38 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
-	}
-
-	// endpoint maps to one org
-	ep1 := Endpoint{
-		url:               "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
-		organization_name: "Cape Fear Valley Health",
-		mapped_npi_ids:    []string{"1588667794"},
+		t.Fatalf("Database should only have made 32 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to multiple orgs
+	ep1 := Endpoint{
+		url:               "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+		organization_name: "Cape Fear Valley Health",
+		mapped_npi_ids:    []string{"1111111111", "1497758544", "1639172869", "1790784999", "1588667794"},
+	}
+
+	// endpoint maps to one org
 	ep2 := Endpoint{
 		url:               "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2/",
 		organization_name: "Valley Medical Center",
-		mapped_npi_ids:    []string{"1629071758", "1164427431", "1245230598", "1790787307", "1366444978", "1356343735"},
+		mapped_npi_ids:    []string{"1245230598"},
 	}
 
 	// endpoint maps to no orgs
