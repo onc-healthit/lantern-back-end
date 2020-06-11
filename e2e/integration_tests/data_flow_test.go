@@ -446,7 +446,6 @@ func Test_UpdateEndpointList(t *testing.T) {
 	populateTestEndpointData(shortEndptList)
 
 	expected_endpt_ct := 28
-	expected_link_count := 38
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var endpt_count int
 	err = endpt_ct_st.Scan(&endpt_count)
@@ -458,6 +457,9 @@ func Test_UpdateEndpointList(t *testing.T) {
 	ctx := context.Background()
 	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
 
+	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
+	// to organizations
+	expected_link_count := 38
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)

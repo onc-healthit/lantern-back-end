@@ -29,6 +29,11 @@ var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	FHIRPatientFacingURI: "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
 	ListSource:           "CareEvolution",
 }
+var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
+	OrganizationNames: []string{"Access Community Health Network"},
+	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
+	ListSource:        "CareEvolution",
+}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -95,7 +100,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	err = rows.Scan(&actualNumEndptsStored)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-7, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-7, actualNumEndptsStored))
+	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-10, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
 	// This endpoint should be removed from table
 	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "CareEvolution")
 	th.Assert(t, err == sql.ErrNoRows, err)	
@@ -213,7 +218,7 @@ func Test_AddEndpointData(t *testing.T) {
 	th.Assert(t, storedEndpt != nil, "Did not store first product as expected")
 	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.FHIRPatientFacingURI, endpt2.ListSource)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, storedEndpt != nil, "Did not store first product as expected")
+	th.Assert(t, storedEndpt != nil, "Did not store second product as expected")
 
 	// reset values
 	_, err = store.DB.Exec("DELETE FROM fhir_endpoints;")
@@ -235,6 +240,19 @@ func Test_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, helpers.StringArraysEqual(storedEndpt.OrganizationNames, []string{"A Woman's Place", "New Name"}),
 		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndpt.OrganizationNames, endpt2.OrganizationNames))
+
+	endpt2 = testEndpointEntry2
+	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt2}}
+	err = AddEndpointData(ctx, store, &listEndpoints)
+	th.Assert(t, err == nil, err)
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 1, "expected one endpoint after update")
+	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.FHIRPatientFacingURI, endpt1.ListSource)
+	th.Assert(t, err == sql.ErrNoRows, "Endpoint should be deleted")
+	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.FHIRPatientFacingURI, endpt2.ListSource)
+	th.Assert(t, helpers.StringArraysEqual(storedEndpt.OrganizationNames, []string{"Access Community Health Network"}),
+		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndpt.OrganizationNames, endpt2.OrganizationNames))
 }
 
 func Test_RemoveOldEndpoints(t *testing.T) {
@@ -243,45 +261,41 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 
 	var err error
 
-	endpt1 := testEndpointEntry
-	endpt2 := testEndpointEntry2
-	listEndpoints := fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
-	expectedEndptsStored := 2
+	endpt1 := testFHIREndpoint
+	endpt2 := testFHIREndpoint2
+	
 	ctx := context.Background()
 
+	query_str := "SELECT COUNT(*) FROM fhir_endpoints;"
 	var ct int
-	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM fhir_endpoints;")
+	// Add first endpoint
+	err = store.AddFHIREndpoint(ctx, &endpt1)
 	th.Assert(t, err == nil, err)
-	defer ctStmt.Close()
+	err = store.DB.QueryRow(query_str).Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 1, "did not persist endpoint as expected")
+	var endptID int
+	err = store.DB.QueryRow("SELECT id FROM fhir_endpoints LIMIT 1;").Scan(&endptID)
+	th.Assert(t, err == nil, err)
+	savedEndpt, err := store.GetFHIREndpoint(ctx, endptID)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, endpt1.Equal(savedEndpt), "stored data does not equal expected store data")
 
-	err = ctStmt.QueryRow().Scan(&ct)
+	// Add second endpoint
+	err = store.AddFHIREndpoint(ctx, &endpt2)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == 0, "should not have stored data")
-	
-	err = AddEndpointData(ctx, store, &listEndpoints)
+	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
-	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, ct == 2, "did not persist second endpoint as expected")
+	savedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == expectedEndptsStored, fmt.Sprintf("Expected %d products stored. Actually had %d products stored.", expectedEndptsStored, ct))
-	storedEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.FHIRPatientFacingURI, endpt1.ListSource)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, storedEndpt != nil, "Did not store first product as expected")
-	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.FHIRPatientFacingURI, endpt2.ListSource)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, storedEndpt != nil, "Did not store first product as expected")
+	th.Assert(t, endpt2.Equal(savedEndpt), "stored data does not equal expected store data")
 
-	endpt1.OrganizationNames = []string{"New Name"}
-	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1}}
-	err = AddEndpointData(ctx, store, &listEndpoints)
+	// Check that first endpoint is removed based on update time
+	err = removeOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt2.ListSource)
 	th.Assert(t, err == nil, err)
-	err = ctStmt.QueryRow().Scan(&ct)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == 1, "expected one endpoint to be deleted after update")
-	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.FHIRPatientFacingURI, endpt2.ListSource)
-	th.Assert(t, err == sql.ErrNoRows, "Endpoint should be deleted")
-	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.FHIRPatientFacingURI, endpt1.ListSource)
-	th.Assert(t, helpers.StringArraysEqual(storedEndpt.OrganizationNames, []string{"A Woman's Place", "New Name"}),
-		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndpt.OrganizationNames, endpt1.OrganizationNames))
+	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
+	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
 }
 
 func setup() error {

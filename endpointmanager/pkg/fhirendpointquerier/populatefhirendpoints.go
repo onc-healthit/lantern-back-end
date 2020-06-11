@@ -88,7 +88,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 }
 
 // removeOldEndpoints removes fhir endpoints from fhir_endpoints and fhir_endpoints_info
-// that were not updated from given list source
+// that are no longer in the given listsource
 func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
 	// get endpoints that are from this listsource and have an update time before this time
 	fhirEndpoints, err := store.GetFHIREndpointsUsingListSourceAndUpdateTime(ctx, updateTime, listSource)
