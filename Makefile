@@ -31,7 +31,7 @@ clean_remote:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
 populatedb:
-	exec ./scripts/populatedb.sh
+	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
