@@ -101,7 +101,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 			verbosePrint(normalizedEndpointName+"=>"+npiOrg.NormalizedSecondaryName+" Match Score: "+fmt.Sprintf("%f", jaccard2), verbose)
 		}
 		if consideredMatch {
-			// multiply confidence by .9 for all name matches to demonstrate that these matches are not as good as the id matches
+			// multiply confidence by .99 for all name matches to demonstrate that these matches are not as good as the id matches
 			confidence = confidence * .99
 			confidenceMap[npiOrg.NPI_ID] = confidence
 			matches = append(matches, npiOrg.NPI_ID)

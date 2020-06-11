@@ -213,14 +213,14 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		t.Fatalf("Database should only have made 32 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
-	// endpoint maps to one org
+	// endpoint maps to multiple orgs
 	ep1 := Endpoint{
 		url:               "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 		organization_name: "Cape Fear Valley Health",
 		mapped_npi_ids:    []string{"1111111111", "1497758544", "1639172869", "1790784999", "1588667794"},
 	}
 
-	// endpoint maps to multiple orgs
+	// endpoint maps to one org
 	ep2 := Endpoint{
 		url:               "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2/",
 		organization_name: "Valley Medical Center",
