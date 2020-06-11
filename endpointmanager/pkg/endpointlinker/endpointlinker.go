@@ -102,7 +102,7 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 		}
 		if consideredMatch {
 			// multiply confidence by .9 for all name matches to demonstrate that these matches are not as good as the id matches
-			confidence = confidence * .9
+			confidence = confidence * .99
 			confidenceMap[npiOrg.NPI_ID] = confidence
 			matches = append(matches, npiOrg.NPI_ID)
 		}
