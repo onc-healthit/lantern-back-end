@@ -217,14 +217,14 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	ep1 := Endpoint{
 		url:               "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 		organization_name: "Cape Fear Valley Health",
-		mapped_npi_ids:    []string{"1588667794"},
+		mapped_npi_ids:    []string{"1111111111", "1497758544", "1639172869", "1790784999", "1588667794"},
 	}
 
 	// endpoint maps to multiple orgs
 	ep2 := Endpoint{
 		url:               "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2/",
 		organization_name: "Valley Medical Center",
-		mapped_npi_ids:    []string{"1629071758", "1164427431", "1245230598", "1790787307", "1366444978", "1356343735"},
+		mapped_npi_ids:    []string{"1245230598"},
 	}
 
 	// endpoint maps to no orgs
