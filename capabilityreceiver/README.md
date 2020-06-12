@@ -53,11 +53,11 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
 ## Building and Running
 
-The capability reciever currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
+The capability receiver currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
 
 ### Using Docker-Compose
 
-The capability reciever has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+The capability receiver has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
 
 ### Using the Individual Docker Container
 
