@@ -95,7 +95,14 @@ make stop
 
 ## Starting Services Behind SSL-Inspecting Proxy
 
-If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into a `certs` directory at the root directory of the project. Docker-Compose will copy these certs into the containers that need to use the certificates.
+If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into the following directories:
+  * `capabalitiyquerier/certs/`
+  * `capabilitiyreceiver/certs/`
+  * `endpointmanager/certs/`
+  * `lanternmq/certs`
+  * `networstatsquerier/certs/`
+  * `shinydashboard/certs/`
+  * `e2e/certs`
 
 # Testing Lantern - Basic Flow
 
