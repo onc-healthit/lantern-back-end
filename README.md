@@ -75,9 +75,9 @@ This removes all docker images, networks, and local volumes.
       * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
         * this is item will take an hour to load if you use the full npidata_pfile
 
-1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
+1. **If you want to requery and rereceive capability statements**, open a new tab and run the following:
 
-    In the first tab (this runs forever), run:
+    In the new tab (this runs forever), run:
 
     ```bash
     cd capabilityquerier/cmd
