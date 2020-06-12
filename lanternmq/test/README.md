@@ -36,7 +36,7 @@ The tests also assume that you have RabbitMQ running. See the [instructions for 
    ...
    ```
 
-   Expected result: You should see the recievers sharing the messages based on how long it takes them to process a message. You should not see the messages alternating between the two receivers. An example result using the messages above sent in quick succession:
+   Expected result: You should see the receivers sharing the messages based on how long it takes them to process a message. You should not see the messages alternating between the two receivers. An example result using the messages above sent in quick succession:
 
    ```
    $ cd receive
