@@ -3,9 +3,9 @@ module github.com/onc-healthit/lantern-back-end/capabilityquerier
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200610112323-8bf2439f07b0
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200610112323-8bf2439f07b0
-	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200610112323-8bf2439f07b0
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200612203229-4d77a9a4c976
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200612203229-4d77a9a4c976
+	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200612203229-4d77a9a4c976
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/common v0.9.1
 	github.com/sirupsen/logrus v1.4.2
