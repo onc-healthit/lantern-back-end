@@ -45,7 +45,6 @@ This removes all docker images, networks, and local volumes.
     ```
 
     This starts all of the following services:
-    * **Lantern Front End** - The front end for the Lantern application (localhost:8090)
     * **PostgreSQL** - application database
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
     * **Prometheus / Prometheus remote storage adapter for PostgreSQL** - continuously queries the endpoints to determine response status and response time
