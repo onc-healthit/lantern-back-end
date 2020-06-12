@@ -262,7 +262,8 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	var err error
 
 	endpt1 := testFHIREndpoint
-	endpt2 := testFHIREndpoint2
+	endpt2 := testFHIREndpoint
+	endpt3 := testFHIREndpoint2
 	
 	ctx := context.Background()
 
@@ -281,21 +282,43 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, endpt1.Equal(savedEndpt), "stored data does not equal expected store data")
 
-	// Add second endpoint
+	// Add endpoint with same url but different listsource
+	endpt2.ListSource = "test"
 	err = store.AddFHIREndpoint(ctx, &endpt2)
-	th.Assert(t, err == nil, err)
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not persist second endpoint as expected")
-	savedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
+	endptInfo := endpointmanager.FHIREndpointInfo{
+		URL: endpt2.URL,
+	}
+	err = store.AddFHIREndpointInfo(ctx, &endptInfo)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, endpt2.Equal(savedEndpt), "stored data does not equal expected store data")
 
-	// Check that first endpoint is removed based on update time
-	err = removeOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt2.ListSource)
+	// Add third endpoint
+	err = store.AddFHIREndpoint(ctx, &endpt3)
 	th.Assert(t, err == nil, err)
+	err = store.DB.QueryRow(query_str).Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 3, "did not persist third endpoint as expected")
+	savedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt3.URL, endpt3.ListSource)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, endpt3.Equal(savedEndpt), "stored data does not equal expected store data")
+
+	err = removeOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt3.ListSource)
+	th.Assert(t, err == nil, err)
+	err = store.DB.QueryRow(query_str).Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "Expected only one endpoint to deleted")
+	// Check that first endpoint is removed based on update time
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
+	// Check that second endpoint still exist
+	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
+	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")
+	// Test that endpoint is not removed from fhir_endpoints_info because it still exist in
+	// fhir_endpoints but from different listsource
+	_, err = store.GetFHIREndpointInfoUsingURL(ctx, endpt2.URL)
+	th.Assert(t, err == nil, "Expected endpoint to still persist in fhir_endpoints_info")
 }
 
 func setup() error {

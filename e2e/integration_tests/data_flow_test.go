@@ -465,7 +465,7 @@ func Test_UpdateEndpointList(t *testing.T) {
 	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 	if link_count != expected_link_count {
-		t.Fatalf("endpoint_organization should still have %d links after update", link_count)
+		t.Fatalf("endpoint_organization should still have %d links after update", expected_link_count)
 	}
 
 	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
