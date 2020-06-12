@@ -3,6 +3,7 @@ package endpointmanager
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
@@ -21,7 +22,7 @@ type FHIREndpointInfo struct {
 	Errors              string
 	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	Validation          map[string]interface{}
+	Validation          Validation
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	SMARTHTTPResponse   int
@@ -80,5 +81,37 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
+	if !cmp.Equal(e.Validation, e2.Validation) {
+		return false
+	}
+
 	return true
 }
+
+// Validation holds all of the errors and warnings from running the validation checks
+// it is saved in JSON format to the fhir_endpoints_info database table
+type Validation struct {
+	Results  []Rule `json:"results"`
+	Warnings []Rule `json:"warnings"`
+}
+
+// Rule is the structure for both validation errors and warnings that are saved in
+// the Validations struct
+type Rule struct {
+	RuleName  RuleOption `json:"ruleName"`
+	Valid     bool       `json:"valid"`
+	Expected  string     `json:"expected"`
+	Actual    string     `json:"actual"`
+	Comment   string     `json:"comment"`
+	Reference string     `json:"reference"`
+	ImplGuide string     `json:"implGuide"`
+}
+
+// RuleOption is an enum of the names given to the rule validation checks
+type RuleOption string
+
+const (
+	R4MimeTypeRule      RuleOption = "r4MimeType"
+	GeneralMimeTypeRule RuleOption = "generalMimeType"
+	HTTPResponseRule    RuleOption = "httpResponse"
+)

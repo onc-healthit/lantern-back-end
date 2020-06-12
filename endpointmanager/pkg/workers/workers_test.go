@@ -55,9 +55,9 @@ func Test_StartAddAndStop(t *testing.T) {
 		th.Assert(t, err == nil, err)
 	}
 
-	// expect to have not al items on queue because added more jobs than there are workers.
+	// expect to have less than or equal to all items on queue because added more jobs than there are workers.
 	numOnQueue := len(mq.(*mock.BasicMockMessageQueue).Queue)
-	th.Assert(t, numOnQueue < numWorkers*2, fmt.Sprintf("expected less than %d items to be on the queue. had %d.", 2*numWorkers, numOnQueue))
+	th.Assert(t, numOnQueue <= numWorkers*2, fmt.Sprintf("expected less than or equal to %d items to be on the queue. had %d.", 2*numWorkers, numOnQueue))
 
 	err = work.Stop()
 	th.Assert(t, err == nil, err)

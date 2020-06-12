@@ -24,24 +24,50 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &FHIREndpointInfo{
-		ID:                  1,
-		URL:                 "http://www.example.com",
-		HealthITProductID:   3,
-		TLSVersion:          "TLS 1.1",
-		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:        200,
-		Errors:              "Example Error",
-		VendorID:            2,
+		ID:                1,
+		URL:               "http://www.example.com",
+		HealthITProductID: 3,
+		TLSVersion:        "TLS 1.1",
+		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
+		HTTPResponse:      200,
+		Errors:            "Example Error",
+		VendorID:          2,
+		Validation: Validation{
+			Results: []Rule{
+				{
+					RuleName:  "httpResponse",
+					Valid:     false,
+					Expected:  "200",
+					Actual:    "404",
+					Comment:   "Not 200",
+					Reference: "reference.com",
+					ImplGuide: "Guide",
+				},
+			},
+		},
 		CapabilityStatement: cs}
 	var endpointInfo2 = &FHIREndpointInfo{
-		ID:                  1,
-		URL:                 "http://www.example.com",
-		HealthITProductID:   3,
-		TLSVersion:          "TLS 1.1",
-		MIMETypes:           []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:        200,
-		Errors:              "Example Error",
-		VendorID:            2,
+		ID:                1,
+		URL:               "http://www.example.com",
+		HealthITProductID: 3,
+		TLSVersion:        "TLS 1.1",
+		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
+		HTTPResponse:      200,
+		Errors:            "Example Error",
+		VendorID:          2,
+		Validation: Validation{
+			Results: []Rule{
+				{
+					RuleName:  "httpResponse",
+					Valid:     false,
+					Expected:  "200",
+					Actual:    "404",
+					Comment:   "Not 200",
+					Reference: "reference.com",
+					ImplGuide: "Guide",
+				},
+			},
+		},
 		CapabilityStatement: cs}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
@@ -115,6 +141,18 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
 	}
 	endpointInfo1.CapabilityStatement = endpointInfo2.CapabilityStatement
+
+	endpointInfo2.Validation = Validation{}
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
+	}
+	endpointInfo2.Validation = endpointInfo1.Validation
+
+	endpointInfo1.Validation = Validation{}
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
+	}
+	endpointInfo1.Validation = endpointInfo2.Validation
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

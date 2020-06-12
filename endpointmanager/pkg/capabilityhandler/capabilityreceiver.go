@@ -90,37 +90,15 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		smartResponse = capabilityparser.NewSMARTRespFromInterface(smartInt)
 	}
 
-	/**
-	Quick Validation
-	*/
-
-	var mimeTypeValidObj validationError
-	if msgJSON["capabilityStatement"] != nil {
-		fhirVersion, err := capStat.GetFHIRVersion()
-		if err != nil {
-			return nil, err
-		}
-		mimeTypeValidObj = mimeTypeValid(mimeTypes, fhirVersion)
-	} else {
-		mimeTypeValidObj = mimeTypeValid(mimeTypes, "")
-	}
-
-	httpCodeObj := httpResponseValid(httpResponse)
-
-	validationObj := map[string]interface{}{
-		"mimeType": mimeTypeValidObj,
-		"httpCode": httpCodeObj,
-	}
+	validationObj := RunValidationChecks(capStat, httpResponse, mimeTypes)
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:          url,
-		TLSVersion:   tlsVersion,
-		MIMETypes:    mimeTypes,
-		HTTPResponse: httpResponse,
-		Errors:       errs,
-		Validation: map[string]interface{}{
-			"errors": validationObj,
-		},
+		URL:                 url,
+		TLSVersion:          tlsVersion,
+		MIMETypes:           mimeTypes,
+		HTTPResponse:        httpResponse,
+		Errors:              errs,
+		Validation:          validationObj,
 		CapabilityStatement: capStat,
 		SMARTHTTPResponse:   smarthttpResponse,
 		SMARTResponse:       smartResponse,
