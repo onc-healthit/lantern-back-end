@@ -7,5 +7,6 @@ blank_theme <- theme_minimal()+
     panel.border = element_blank(),
     panel.grid=element_blank(),
     axis.ticks = element_blank(),
-    plot.title=element_text(size=14, face="bold")
+    plot.title=element_text(size=14, face="bold"),
+    text = element_text(size = 20)
   )
