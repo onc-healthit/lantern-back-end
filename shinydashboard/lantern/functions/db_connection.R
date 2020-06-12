@@ -11,15 +11,15 @@ db_config <- list("dbname" = Sys.getenv("LANTERN_DBNAME"),
                   "password" = Sys.getenv("LANTERN_DBPASSWORD")
 )
 
-db_config$host <- ifelse(Sys.getenv("HOME")=='/home/shiny',db_config$host,"localhost")
+db_config$host <- ifelse(Sys.getenv("HOME") == "/home/shiny", db_config$host, "localhost")
 
 # Connect to the Lantern database
 db_connection <-
   dbConnect(
     RPostgres::Postgres(),
-    dbname = db_config$dbname, 
+    dbname = db_config$dbname,
     host = db_config$host, # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
-    port = db_config$port, 
+    port = db_config$port,
     user = db_config$user,
     password = db_config$password
 )
@@ -39,6 +39,6 @@ db_tables <- list(
 
 # Get the Endpoint export table and clean up for UI
 endpoint_export_tbl <- as_tibble(db_tables$endpoint_export) %>%
-  mutate(vendor_name = na_if(vendor_name,"")) %>%
-  tidyr::replace_na(list(vendor_name="Unknown")) %>%
-  tidyr::replace_na(list(fhir_version="Unknown"))
+  mutate(vendor_name = na_if(vendor_name, "")) %>%
+  tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+  tidyr::replace_na(list(fhir_version = "Unknown"))
