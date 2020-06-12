@@ -2,14 +2,6 @@
 
 Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
 
-To run, perform the following commands:
-
-```bash
-cd cmd/capabilityreceiver
-go run main.go
-```
-
-
 ## Configuration
 The FHIR Endpoint Manager reads the following environment variables:
 
@@ -58,3 +50,24 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 * **LANTERN_TEST_DBNAME** instead of LANTERN_DBNAME: The name of the database being accessed.
 
   Default value: lantern_test
+
+## Building and Running
+
+The capability reciever currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
+
+### Using Docker-Compose
+
+The capability reciever has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+
+### Using the Individual Docker Container
+
+At this time, it's not recommended to start this as an individual container because of the dependence on the message queue and the database.
+
+### Running alone
+
+To run, perform the following commands:
+
+```bash
+cd cmd/capabilityreceiver
+go run main.go
+```
