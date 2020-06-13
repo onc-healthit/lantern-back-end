@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -52,12 +51,11 @@ type Message struct {
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
 // the Client and FhirURL for querying
 type QuerierArgs struct {
-	FhirURL       *url.URL
-	FhirURLString string
-	Client        *http.Client
-	MessageQueue  *lanternmq.MessageQueue
-	ChannelID     *lanternmq.ChannelID
-	QueueName     string
+	FhirURL      string
+	Client       *http.Client
+	MessageQueue *lanternmq.MessageQueue
+	ChannelID    *lanternmq.ChannelID
+	QueueName    string
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
@@ -73,44 +71,36 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	var err error
 	message := Message{
-		URL: qa.FhirURLString,
+		URL: qa.FhirURL,
 	}
-	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL.String())
+	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL)
 	// Query fhir endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
 		select {
 		case <-ctx.Done():
-			log.Warnf("Got error: server could not be reached from URL: %s", qa.FhirURLString)
+			log.Warnf("Got error: server could not be reached from URL: %s", qa.FhirURL)
 			message.Err = "server could not be reached from URL: " + metadataURL
 		default:
-			log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURLString)
+			log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL)
 			message.Err = err.Error()
 		}
 	}
 
-	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL.String())
+	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL)
 	// Query well known endpoint
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
-	if err != nil {
-		select {
-		case <-ctx.Done():
-			message.Err = "server could not be reached from URL: " + wellKnownURL
-		default:
-			message.Err = err.Error()
-		}
-	}
+	requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
-		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURLString)
+		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURL)
 	}
 	msgStr := string(msgBytes)
 	// Blank context passed in to SendToQueue to prevent terminating error due to an endpoint timeout
 	tempCtx := context.Background()
 	err = aq.SendToQueue(tempCtx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
 	if err != nil {
-		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURLString, qa.QueueName)
+		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL, qa.QueueName)
 	}
 
 	return nil
