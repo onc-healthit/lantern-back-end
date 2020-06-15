@@ -459,7 +459,7 @@ func Test_UpdateEndpointList(t *testing.T) {
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
-	expected_link_count := 38
+	expected_link_count := 32
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
