@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// base struct to handle any methods that don't change between the versions of of FHIR
+// base struct to handle any methods that don't change between the versions of FHIR
 // capability statements
 type baseParser struct {
 	capStat map[string]interface{}

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 
@@ -98,7 +99,15 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		return nil, fmt.Errorf("Response time is not a float")
 	}
 
-	validationObj := RunValidationChecks(capStat, httpResponse, mimeTypes)
+	fhirVersion := ""
+	if capStat != nil {
+		fhirVersion, err = capStat.GetFHIRVersion()
+		if err != nil {
+			fhirVersion = ""
+		}
+	}
+	validator := validation.GetValidationForVersion(fhirVersion)
+	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion)
 	includedFields := RunIncludedFieldsChecks(capInt)
 	supportedResources := RunSupportedResourcesChecks(capInt)
 
