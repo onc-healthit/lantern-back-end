@@ -1,4 +1,5 @@
 # Functions to compute metrics on endpoints
+library(purrr)
 
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
@@ -91,19 +92,21 @@ get_fhir_version_list <- function(endpoint_tbl) {
   fh <- endpoint_tbl %>%
     distinct(fhir_version) %>%
     split(.$fhir_version) %>%
-    map(~ .$fhir_version)
+    purrr::map(~ .$fhir_version)
   fhir_version_list <- c(fhir_version_list, fh)
 }
 
 # Get the list of distinct vendor names for use in filtering
-get_vendor_list <- function(endpoint_tbl) {
+get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- list(
     "All Vendors" = ui_special_values$ALL_VENDORS
   )
-  vl <- endpoint_tbl %>%
+
+  vl <- endpoint_export_tbl %>%
            distinct(vendor_name) %>%
            arrange(vendor_name) %>%
            split(.$vendor_name) %>%
-           map(~ .$vendor_name)
+           purrr::map(~ .$vendor_name)
+
   vendor_list <- c(vendor_list, vl)
 }

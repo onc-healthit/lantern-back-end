@@ -15,6 +15,7 @@ libraries:
   - "lubridate"
   - "xts"
   - "knitr"
+  - "purrr"
   
 function_files:
   - "functions/db_connection.R"

@@ -38,7 +38,8 @@ db_tables <- list(
 )
 
 # Get the Endpoint export table and clean up for UI
-endpoint_export_tbl <- as_tibble(db_tables$endpoint_export) %>%
+endpoint_export_tbl <- db_tables$endpoint_export %>%
+  collect() %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
   tidyr::replace_na(list(vendor_name = "Unknown")) %>%
   tidyr::replace_na(list(fhir_version = "Unknown"))
