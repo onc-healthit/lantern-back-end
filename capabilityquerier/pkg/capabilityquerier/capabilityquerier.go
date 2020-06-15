@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -73,7 +74,12 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	message := Message{
 		URL: qa.FhirURL,
 	}
-	metadataURL := endpointmanager.NormalizeEndpointURL(qa.FhirURL)
+	castURL, err := url.Parse(qa.FhirURL)
+	if err != nil {
+		log.Warnf("Error parsing URL string %s\n", qa.FhirURL)
+		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
+	}
+	metadataURL := endpointmanager.NormalizeEndpointURL(castURL.String())
 	// Query fhir endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
 	if err != nil {
@@ -87,11 +93,11 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		}
 	}
 
-	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL)
+	wellKnownURL := endpointmanager.NormalizeWellKnownURL(castURL.String())
 	// Query well known endpoint
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
 	if err != nil {
-		log.Warnf("Got error:\n%s\n\nfrom wellknown URL: %s", err.Error(), wellknown)
+		log.Warnf("Got error:\n%s\n\nfrom wellknown URL: %s", err.Error(), wellKnownURL)
 	}
 
 	msgBytes, err := json.Marshal(message)
