@@ -89,7 +89,10 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(qa.FhirURL)
 	// Query well known endpoint
-	requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
+	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom wellknown URL: %s", err.Error(), wellknown)
+	}
 
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
