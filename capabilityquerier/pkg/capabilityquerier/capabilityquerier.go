@@ -74,6 +74,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	message := Message{
 		URL: qa.FhirURL,
 	}
+	// Cast string url to type url then cast back to string to ensure url string in correct url format
 	castURL, err := url.Parse(qa.FhirURL)
 	if err != nil {
 		log.Warnf("Error parsing URL string %s\n", qa.FhirURL)
