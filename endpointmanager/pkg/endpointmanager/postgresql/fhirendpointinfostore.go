@@ -22,6 +22,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
+	var includedFieldsJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
@@ -41,7 +42,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		created_at,
 		updated_at,
 		smart_http_response,
-		smart_response
+		smart_response,
+		included_fields
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
@@ -59,7 +61,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
 		&endpointInfo.SMARTHTTPResponse,
-		&smartResponseJSON)
+		&smartResponseJSON,
+		&includedFieldsJSON)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +79,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	endpointInfo.VendorID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 
 	if smartResponseJSON != nil {
 		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
@@ -92,6 +96,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
+	var includedFieldsJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
@@ -111,7 +116,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		created_at,
 		updated_at,
 		smart_http_response,
-		smart_response
+		smart_response,
+		included_fields
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
@@ -130,7 +136,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
 		&endpointInfo.SMARTHTTPResponse,
-		&smartResponseJSON)
+		&smartResponseJSON,
+		&includedFieldsJSON)
 	if err != nil {
 		return nil, err
 	}
@@ -147,6 +154,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	endpointInfo.VendorID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 
 	if smartResponseJSON != nil {
 		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
@@ -174,6 +182,12 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	if err != nil {
 		return err
 	}
+
+	includedFieldsJSON, err := json.Marshal(e.IncludedFields)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -197,7 +211,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		capabilityStatementJSON,
 		validationJSON,
 		e.SMARTHTTPResponse,
-		smartResponseJSON)
+		smartResponseJSON,
+		includedFieldsJSON)
 
 	err = row.Scan(&e.ID)
 
@@ -221,6 +236,12 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	if err != nil {
 		return err
 	}
+
+	includedFieldsJSON, err := json.Marshal(e.IncludedFields)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -245,6 +266,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		validationJSON,
 		e.SMARTHTTPResponse,
 		smartResponseJSON,
+		includedFieldsJSON,
 		e.ID)
 
 	return err
@@ -271,8 +293,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			capability_statement,
 			validation,
 			smart_http_response,
-			smart_response)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+			smart_response
+			included_fields)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -291,7 +314,8 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation = $9,
 			smart_http_response = $10,
 			smart_response = $11
-		WHERE id = $12`)
+			included_fields = $12
+		WHERE id = $13`)
 	if err != nil {
 		return err
 	}

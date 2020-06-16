@@ -27,6 +27,7 @@ type FHIREndpointInfo struct {
 	UpdatedAt           time.Time
 	SMARTHTTPResponse   int
 	SMARTResponse       capabilityparser.SMARTResponse
+	IncludedFields      map[string]bool
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.

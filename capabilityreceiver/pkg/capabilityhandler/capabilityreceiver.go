@@ -91,6 +91,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 
 	validationObj := RunValidationChecks(capStat, httpResponse, mimeTypes)
+	includedFields := RunIncludedFieldsChecks(capStat)
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		URL:                 url,
@@ -102,6 +103,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		CapabilityStatement: capStat,
 		SMARTHTTPResponse:   smarthttpResponse,
 		SMARTResponse:       smartResponse,
+		IncludedFields:      includedFields,
 	}
 
 	return &fhirEndpoint, nil
