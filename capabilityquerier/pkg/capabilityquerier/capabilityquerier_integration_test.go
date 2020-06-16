@@ -87,7 +87,7 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 			args := make(map[string]interface{})
 			querierArgs := capabilityquerier.QuerierArgs{
-				FhirURL:      metadataURL,
+				FhirURL:      metadataURL.String(),
 				Client:       client,
 				MessageQueue: mq,
 				ChannelID:    chID,

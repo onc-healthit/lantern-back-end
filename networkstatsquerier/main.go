@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
@@ -65,15 +64,10 @@ func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
 	}
 
 	urlString := string(message)
-	// Specifically query the FHIR endpoint metadata
-	metadataURL, err := url.Parse(urlString)
-	if err != nil {
-		return fmt.Errorf("Endpoint URL Parsing Error: %s", err.Error())
-	}
 
 	jobArgs := make(map[string]interface{})
 	jobArgs["promArgs"] = querier.PrometheusArgs{
-		URLString:                         metadataURL.String(),
+		URLString:                         urlString,
 		ResponseTimeGaugeVec:              responseTimeGaugeVec,
 		TotalFailedUptimeChecksCounterVec: totalFailedUptimeChecksCounterVec,
 		HTTPCodesGaugeVec:                 httpCodesGaugeVec,
@@ -87,7 +81,7 @@ func getHTTPRequestTiming(message []byte, args *map[string]interface{}) error {
 		HandlerArgs: &jobArgs,
 	}
 
-	err = wa.workers.Add(&job)
+	err := wa.workers.Add(&job)
 	if err != nil {
 		return fmt.Errorf("error adding job to workers: %s", err.Error())
 	}
