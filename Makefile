@@ -62,7 +62,7 @@ test_int:
 
 test_e2e:
 	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up  --scale shinydashboard=0 --build --abort-on-container-exit
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 test_all:
