@@ -1,0 +1,926 @@
+{
+  "Entries": [
+    {
+      "OrganizationName": "Jackson Memorial Hospital",
+      "FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9NRYwNOTpYhpe-Vh6-aSWRYPlx02SAgP",
+      "Type": "Cerner",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "1611 NW 12th Avenue"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Jackson Memorial Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Jasckson"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Memorial"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Park Plaza West"
+          },
+          {
+              "Kind": "State",
+              "Value": "FL"
+          },
+          {
+              "Kind": "State",
+              "Value": "Florida"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "33136"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Englewood Hospital and Medical Center",
+      "FHIRPatientFacingURI": "https://epicproxy.et1073.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "and"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Englewood"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Medical"
+          },
+          {
+              "Kind": "State",
+              "Value": "New Jersey"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "07631"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Peninsula Regional Medical Center",
+      "FHIRPatientFacingURI": "https://eweb.peninsula.org/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Laurel"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Millsboro"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Peninsula Regional Medical Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Salisbury"
+          },
+          {
+              "Kind": "State",
+              "Value": "DE"
+          },
+          {
+              "Kind": "State",
+              "Value": "MD"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "19966"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "21801"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "21863"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "The Brooklyn Hospital Center",
+      "FHIRPatientFacingURI": "https://epicproxy.et1043.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Brooklyn Hospital Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "TBHC"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "The Brooklyn Hospital Center"
+          },
+          {
+              "Kind": "State",
+              "Value": "New York"
+          },
+          {
+              "Kind": "State",
+              "Value": "NY"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "11201"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "11208"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "11222"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "11225"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "United Regional Health Care System",
+      "FHIRPatientFacingURI": "https://epicproxy.et1096.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": []
+    },
+    {
+      "OrganizationName": "University of Colorado Health",
+      "FHIRPatientFacingURI": "https://ss.uch.edu/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Aurora"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Broomfield"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Broomfield Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Highland Ranch"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Highlands Ranch Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Longs Peak Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "University of Colorado Health"
+          },
+          {
+              "Kind": "State",
+              "Value": "Colorado"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "80045"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "80129"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "80504"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Mount Auburn Hospital",
+      "FHIRPatientFacingURI": "https://fhir.mah.org/prd-fhir/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Cambridge"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Mount Auburn Hospital"
+          },
+          {
+              "Kind": "State",
+              "Value": "MA"
+          },
+          {
+              "Kind": "State",
+              "Value": "Massachusetts"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "02138"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Salem Health",
+      "FHIRPatientFacingURI": "https://prd.salemhealth.org/fhir/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Salem"
+          },
+          {
+              "Kind": "State",
+              "Value": "Oregon"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "97301"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Riverview Health",
+      "FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Health"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Riverview"
+          },
+          {
+              "Kind": "State",
+              "Value": "Michigan"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "48025"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Mercy Medical Center",
+      "FHIRPatientFacingURI": "https://pdsoap.mercycare.org/FHIR/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Cedar Rapids"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "mercy"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Mercy Medical Center"
+          },
+          {
+              "Kind": "State",
+              "Value": "Iowa"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "52403"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Connecticut Children's Medical Center",
+      "FHIRPatientFacingURI": "https://epicproxy.connecticutchildrens.org/FHIR/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Connecticut Children’s NICU at University of Connecticut Health Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Connecticut Children's Medical Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Farmington"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Hartford"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Waterbury"
+          },
+          {
+              "Kind": "State",
+              "Value": "CT"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "06032"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Fairview Health Services",
+      "FHIRPatientFacingURI": "https://sfd.fairview.org/FHIR/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Fairview Ridges Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Fairview Southdale Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Minneapolis"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "University of Minnesota Masonic Children's Hospital"
+          },
+          {
+              "Kind": "State",
+              "Value": "Minnesota"
+          },
+          {
+              "Kind": "State",
+              "Value": "MN"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "55109"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Doylestown Hospital",
+      "FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/IGCGAD",
+      "Type": "eClinicalWorks",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Doylestown"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Doylestown Hospital"
+          },
+          {
+              "Kind": "State",
+              "Value": "PA"
+          },
+          {
+              "Kind": "State",
+              "Value": "Pennsylvania"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "18902"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Valley Medical Center",
+      "FHIRPatientFacingURI": "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Renton"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "UW Medicine"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Valley"
+          },
+          {
+              "Kind": "State",
+              "Value": "WA"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "98055-5010"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "University of Arkansas for Medical Sciences",
+      "FHIRPatientFacingURI": "https://ucsoap.uams.edu/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Arkansas"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Little Rock"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "UAMS"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "University of Arkansas for Medical Sciences"
+          },
+          {
+              "Kind": "State",
+              "Value": "Arkansas"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "72205"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "King's Daughters Medical Center",
+      "FHIRPatientFacingURI": "https://epicsoap.kdmc.net/PRD-FHIR/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Ashland"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "KDMS – Central Avenue Primary Care"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "King’s Daughters Medical Center Ohio"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "King's Daughters Medical Center"
+          },
+          {
+              "Kind": "State",
+              "Value": "KY"
+          },
+          {
+              "Kind": "State",
+              "Value": "OH"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Hospital for Special Surgery",
+      "FHIRPatientFacingURI": "https://epicproxy.et0927.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "for"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Hospital"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Special"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Surgery"
+          },
+          {
+              "Kind": "State",
+              "Value": "NY"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "10021"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Trinity Health Of New England Medical Group Springfield",
+      "FHIRPatientFacingURI": "https://rmgpxy.riverbendmedical.com/fhir_proxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Mercy Medical Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Psychiatric Hospital in Holyoke, MA"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Springfield"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Trinity Health Of New England Medical Group Springfield"
+          },
+          {
+              "Kind": "State",
+              "Value": "MA"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "01104"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "01118"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "PeaceHealth",
+      "FHIRPatientFacingURI": "https://soapproxy.peacehealth.org/FHIRProxy/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "PeaceHealth"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "PeaceHealth Ketchikan Medical Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "PeaceHealth Southwest Medical Center"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Sacred Heart Medical Center University District"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Vancouver"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Eugene"
+          },
+          {
+              "Kind": "State",
+              "Value": "Oregon"
+          },
+          {
+              "Kind": "State",
+              "Value": "Alaska"
+          },
+          {
+              "Kind": "State",
+              "Value": "Washington"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "University of Maryland Medical System",
+      "FHIRPatientFacingURI": "https://fhir.umm.edu/fhir/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Aberdeen"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Baltimore"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Denton"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Dundalk"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Easton"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "University of Maryland Medical System"
+          },
+          {
+              "Kind": "State",
+              "Value": "MD"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "21212"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "21222"
+          }
+      ]
+    },
+    {
+      "OrganizationName": "Virginia Hospital Center",
+      "FHIRPatientFacingURI": "https://common.virginiahospitalcenter.com/FHIRPRD/api/FHIR/DSTU2/",
+      "Type": "Epic",
+      "Keywords": [
+          {
+              "Kind": "Keyword",
+              "Value": "Arlington"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Carlin Springs Campus"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "VHC Physician Group"
+          },
+          {
+              "Kind": "Keyword",
+              "Value": "Virginia Hospital Center"
+          },
+          {
+              "Kind": "State",
+              "Value": "VA"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "22204"
+          },
+          {
+              "Kind": "Zip",
+              "Value": "22314"
+          }
+      ]
+    },
+    {
+        "OrganizationName": "Loyola Medicine",
+        "FHIRPatientFacingURI": "https://rxhub.luhs.org/fhir/api/FHIR/DSTU2/",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Chicago"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Gottlieb Memorial Hospital"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Loyola"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "MacNeal Hospital"
+            },
+            {
+                "Kind": "State",
+                "Value": "Illinois"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "60402"
+            }
+        ]
+    },
+    {
+        "OrganizationName": "LCMC Health",
+        "FHIRPatientFacingURI": "https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Children’s Hospital of New Orleans"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "LCMC Health"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "LCMC Health Ridgelake Health Center"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "New Orleans"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "New Orleans East Hospital"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "University Medical Center New Orleans"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "West Jefferson Medical Center"
+            },
+            {
+                "Kind": "State",
+                "Value": "LA"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "70072"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "70127"
+            }
+        ]
+    },
+    {
+        "OrganizationName": "MaineHealth",
+        "FHIRPatientFacingURI": "https://fhir.mainehealth.org/FHIRPRD/api/FHIR/DSTU2",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Barbara Bush Children's Hospital"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Maine Medical Center Bramhall"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "MaineHealth"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Scarborough"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "South Portland"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Southern Maine Health Care"
+            },
+            {
+                "Kind": "State",
+                "Value": "ME"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "04074"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "04102"
+            }
+        ]
+    },
+    {
+        "OrganizationName": "Mayo Clinic",
+        "FHIRPatientFacingURI": "https://pep.api.mayo.edu/epicfhirdstu2mu/v1/api/FHIR/DSTU2/",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Jacksonville"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Mayo Clinic"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Mayo Clinic's Campus in Arizona"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Phoenix"
+            },
+            {
+                "Kind": "State",
+                "Value": "FL"
+            },
+            {
+                "Kind": "State",
+                "Value": "Minnesota"
+            }
+        ]
+    },
+    {
+        "OrganizationName": "Metro Detroit Endocrinology Center",
+        "FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/BGJABA",
+        "Type": "eClinicalWorks",
+        "Keywords": []
+    },
+    {
+        "OrganizationName": "Michigan Medicine",
+        "FHIRPatientFacingURI": "https://mcproxyprd.med.umich.edu/FHIR-PRD/api/FHIR/DSTU2/",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Ann Arbor"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Michigan Medicine"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Petoskey"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "U-M Medical Center"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Ypsilanti"
+            },
+            {
+                "Kind": "State",
+                "Value": "MI"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "48109"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "48116"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "48198"
+            }
+        ]
+    },
+    {
+        "OrganizationName": "Oregon Health – Science University",
+        "FHIRPatientFacingURI": "https://epicmobile.ohsu.edu/FHIR-DSTU2/api/FHIR/DSTU2/",
+        "Type": "Epic",
+        "Keywords": [
+            {
+                "Kind": "Keyword",
+                "Value": "Marquam Hill"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Oregon Health & Science University"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Portland"
+            },
+            {
+                "Kind": "Keyword",
+                "Value": "Robertson Life Sciences Building and Skourtes Tower"
+            },
+            {
+                "Kind": "State",
+                "Value": "Oregon"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "97239"
+            },
+            {
+                "Kind": "Zip",
+                "Value": "97239-3098"
+            }
+        ]
+    }
+  ]
+}

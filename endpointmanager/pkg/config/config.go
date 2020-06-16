@@ -170,7 +170,7 @@ func SetupConfigForTests() error {
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qname", "test-queue")
 	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-capability")
-	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-netstats")
+	viper.SetDefault("endptinfo_netstats_qname", "test-endpoints-to-netstats")
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
