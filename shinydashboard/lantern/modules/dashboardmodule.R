@@ -130,6 +130,9 @@ dashboard <- function(
   output$response_code_plot <- renderPlot({
     ggplot(http_summary %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) + 
     geom_bar(stat = "identity") +
+      geom_text(aes(label = stat(y), group = code),
+                stat = 'summary', fun = sum, vjust = -1
+      ) +
       theme(text = element_text(size = 15)) +
       labs(fill = "Code",
          title = "All HTTP Response Codes Ever Received from Endpoints",

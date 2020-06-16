@@ -13,7 +13,7 @@ vendor_short_names <- data.frame(
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  all <- db_tables$fhir_endpoints %>% count() %>% pull(n)
+  all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
   indexed <- db_tables$fhir_endpoints_info %>% count() %>% pull(n)
   fhir_endpoint_totals <- list(
     "all_endpoints"     = all,
@@ -26,6 +26,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function(db_tables) {
   db_tables$fhir_endpoints %>%
     collect() %>%
+    distinct(url, .keep_all=TRUE) %>%
     left_join(endpoint_export_tbl %>%
           distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response),
         by = c("url" = "url")) %>%
