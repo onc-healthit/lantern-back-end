@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptrace"
+	"net/url"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -44,7 +45,12 @@ func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) err
 		return err.(error)
 	}
 
-	normalizedURL := endpointmanager.NormalizeEndpointURL(promArgs.URLString)
+	// Specifically query the FHIR endpoint metadata
+	metadataURL, err := url.Parse(promArgs.URLString)
+	if err != nil {
+		return fmt.Errorf("Endpoint URL Parsing Error: %s", err.Error())
+	}
+	normalizedURL := endpointmanager.NormalizeEndpointURL(metadataURL.String())
 
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
