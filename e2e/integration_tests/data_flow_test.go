@@ -18,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
@@ -438,10 +438,26 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	if fhir_version_count < expected_fhir_version_count {
 		t.Fatalf("There should be at least 25 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
 	}
-}
 
-func Test_UpdateEndpointList(t *testing.T) {
-	var err error
+	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
+	failOnError(err)
+	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
+	failOnError(err)
+
+	common_vendor_list := [2]int{epic.ID, cerner.ID}
+	vendor_rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
+	failOnError(err)
+	var test_vendor_list []int
+	defer vendor_rows.Close()
+	for vendor_rows.Next() {
+		var vendorID int
+		err = vendor_rows.Scan(&vendorID)
+		failOnError(err)
+		test_vendor_list = append(test_vendor_list, vendorID)
+	}
+	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
+	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
 
 	populateTestEndpointData(shortEndptList)
 
@@ -454,7 +470,6 @@ func Test_UpdateEndpointList(t *testing.T) {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
 	}
 
-	ctx := context.Background()
 	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
@@ -508,37 +523,6 @@ func Test_UpdateEndpointList(t *testing.T) {
 		th.Assert(t, err ==  sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
 	}
 }
-
-func Test_VendorList(t *testing.T) {
-	var err error
-	
-	if viper.GetString("chplapikey") == "" {
-		t.Skip("Skipping Test_VendorList because the CHPL API key is not set.")
-	}
-
-	ctx := context.Background()
-
-	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
-	failOnError(err)
-	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
-	failOnError(err)
-
-	common_vendor_list := [2]int{epic.ID, cerner.ID}
-	rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
-	failOnError(err)
-	var test_vendor_list []int
-	defer rows.Close()
-	for rows.Next() {
-		var vendorID int
-		err = rows.Scan(&vendorID)
-		failOnError(err)
-		test_vendor_list = append(test_vendor_list, vendorID)
-	}
-	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
-	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
-	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
-}
-
 func Test_MetricsAvailableInQuerier(t *testing.T) {
 	var err error
 	netQueue := viper.GetString("endptinfo_netstats_qname")
