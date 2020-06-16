@@ -67,6 +67,7 @@ services:
     depends_on:
       - lantern-mq
       - pg_prometheus
+    restart: on-failure
     environment:
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
       - LANTERN_DBHOST=${LANTERN_DBHOST}
@@ -111,6 +112,7 @@ services:
     depends_on:
       - lantern-mq
       - pg_prometheus
+    restart: on-failure
     environment:
       - LANTERN_DBHOST=${LANTERN_DBHOST}
       - LANTERN_DBPORT=${LANTERN_DBPORT}
