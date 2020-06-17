@@ -60,7 +60,7 @@ func commonFieldsChecksAll(capStat capabilityparser.CapabilityStatement) map[str
 	return includedFields
 }
 
-func checkIncluded(resp string, err error) interface{} {
+func checkIncluded(resp string, err error) bool {
 	if resp != "" && err == nil {
 		return true
 	}
