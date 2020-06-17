@@ -21,6 +21,7 @@ To run Lantern, several environment variables need to be set. These are defined 
   * [Endpoint Manager](endpointmanager/README.md)
   * [Network Statistics Querier](networkstatsquerier/README.md)
   * [Capability Querier](capabilityquerier/README.md)
+  * [Capability Receiver](capabilityreceiver/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
 
 ## Clean your environment
@@ -43,53 +44,45 @@ This removes all docker images, networks, and local volumes.
     make run
     ```
 
-    This starts all of the services except for the endpointmanager:
-    * **Lantern Front End** - The front end for the Lantern application (localhost:8090)
-    * **Grafana** - the data visualization service (localhost:80)
+    This starts all of the following services:
     * **PostgreSQL** - application database
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
     * **Prometheus / Prometheus remote storage adapter for PostgreSQL** - continuously queries the endpoints to determine response status and response time
     * **Capability Querier** - queries the endpoints for their capability statements once a day. Kicks off the initial query immediately.
+    * **Capability Receiver** - receives the capability statements from the queue, peforms validations and saves the results to fhir_endpoints_info
+    * **Endpoint Manager** - sends endpoints to the netstats and capability querying queues
 
-2. **If you have a clean database** 
-    1. Run the following command to begin populating the database:
 
-        ```bash
-        make populatedb
-        ```
+2. **If you have a clean database or want to update the data in your database** 
+    1. Run the following command to begin populating the database usinig the data found in `lantern-back-end/endpointmanager/resources`
 
-        This runs:
-        * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
-        * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
-        * the **NPPES populator**, which adds provider data from the monthly NPPES export to the database. 
-          * this is an optional item to add to the database, and can take around and hour to load.
+    The populated db scrpt expects the resources directory to contain the following files:
+      * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
+      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution (no longer updated)
+      * **EpicEndpointSources.json** - JSON file containing endpoint information from Epic
+      * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
+      * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
+        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`
 
-    1. Open a new tab and run the following:
+      ```bash
+      make populatedb
+      ```
 
-        ```bash
-        cd endpointmanager/cmd/capabilityreceiver
-        go run main.go
-        cd ../../..
-        ```
+      This runs the following tasks inside the endpoint manager container:
+      * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+      * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+      * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
+      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
+        * this is item will take an hour to load if you use the full npidata_pfile
 
-        This receives messages off of the queue. This also does some endpoint linking and processing. This action runs forever.
+1. **If you want to requery and rereceive capability statements**, open a new tab and run the following:
 
-1. **If you want to requery and rereceive capability statements**, open two new tabs and run the following:
-
-    In the first tab (this runs forever), run:
+    In the new tab (this runs forever), run:
 
     ```bash
     cd capabilityquerier/cmd
     go run main.go
     cd ../..
-    ```
-
-    If you do not already have the capability receiver running, in the second tab (this runs forever), run:
-
-    ```bash
-    cd endpointmanager/cmd/capabilityreceiver
-    go run main.go
-    cd ../../..
     ```
 
 ## Stop Lantern
@@ -102,7 +95,14 @@ make stop
 
 ## Starting Services Behind SSL-Inspecting Proxy
 
-If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into a `certs` directory at the root directory of the project. Docker-Compose will copy these certs into the containers that need to use the certificates.
+If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into the following directories:
+  * `capabalitiyquerier/certs/`
+  * `capabilitiyreceiver/certs/`
+  * `endpointmanager/certs/`
+  * `lanternmq/certs`
+  * `networstatsquerier/certs/`
+  * `shinydashboard/certs/`
+  * `e2e/certs`
 
 # Testing Lantern - Basic Flow
 
@@ -140,13 +140,13 @@ See each internal service's README to see how to run that service as a standalon
   * [Endpoint Manager](endpointmanager/README.md)
   * [Network Statistics Querier](networkstatsquerier/README.md)
   * [Capability Querier](capabilityquerier/README.md)
+  * [Capability Receiver](capabilityreceiver/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
 
 ## External Services
 
 * Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
 * RabbitMQ
-* Grafana
 
 
 ### Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
@@ -287,7 +287,7 @@ You can also check that you have access to the admin page by navigating to `http
 
 ### Grafana
 
-Grafana creates many of the visualizations used by Lantern through querying the PostgreSQL database.
+Grafana can be used to visualize the time-series netstats data collected by Lantern
 
 To start Grafana, run the following:
 
