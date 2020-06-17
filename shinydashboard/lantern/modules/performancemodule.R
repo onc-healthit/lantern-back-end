@@ -12,16 +12,18 @@ performance_UI <- function(id) {
 }
 
 performance <- function(
-    input, 
-    output, 
+    input,
+    output,
     session
-){
+) {
   ns <- session$ns
-  
+
   response_time_xts <- get_avg_response_time()
 
   output$mean_response_time_plot <- renderDygraph({
-    dygraph(response_time_xts,main="Endpoint Mean Response Time",ylab="seconds",xlab="Date")
+    dygraph(response_time_xts,
+            main = "Endpoint Mean Response Time",
+            ylab = "seconds",
+            xlab = "Date")
   })
-
 }

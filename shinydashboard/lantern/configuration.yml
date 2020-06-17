@@ -15,13 +15,16 @@ libraries:
   - "lubridate"
   - "xts"
   - "knitr"
+  - "purrr"
   
 function_files:
   - "functions/db_connection.R"
   - "functions/endpoints.R"
   - "functions/performance.R"
+  - "functions/graphing.R"
   
 module_files:
   - "modules/dashboardmodule.R"
   - "modules/availabilitymodule.R"
   - "modules/performancemodule.R"
+  - "modules/endpointsmodule.R"
