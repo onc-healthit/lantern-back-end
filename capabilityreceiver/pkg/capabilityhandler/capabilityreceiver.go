@@ -71,11 +71,14 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	smarthttpResponse := int(smarthttpResponseFloat)
 
 	var capStat capabilityparser.CapabilityStatement
+	var capInt map[string]interface{}
 	if msgJSON["capabilityStatement"] != nil {
-		capInt, ok := msgJSON["capabilityStatement"].(map[string]interface{})
+		capInt, ok = msgJSON["capabilityStatement"].(map[string]interface{})
+
 		if !ok {
 			return nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
 		}
+
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
@@ -91,7 +94,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	}
 
 	validationObj := RunValidationChecks(capStat, httpResponse, mimeTypes)
-	includedFields := RunIncludedFieldsChecks(capStat)
+	includedFields := RunIncludedFieldsChecks(capStat, capInt)
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		URL:                 url,
