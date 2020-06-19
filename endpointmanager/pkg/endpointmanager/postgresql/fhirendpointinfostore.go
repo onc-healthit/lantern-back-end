@@ -79,7 +79,13 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	endpointInfo.VendorID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+	if err != nil {
+		return nil, err
+	}
 	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+	if err != nil {
+		return nil, err
+	}
 
 	if smartResponseJSON != nil {
 		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
@@ -154,7 +160,13 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	endpointInfo.VendorID = ints[1]
 
 	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+	if err != nil {
+		return nil, err
+	}
 	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+	if err != nil {
+		return nil, err
+	}
 
 	if smartResponseJSON != nil {
 		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)

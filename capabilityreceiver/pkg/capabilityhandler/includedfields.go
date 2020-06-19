@@ -66,10 +66,7 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 		field := capInt[name]
 
 		if index == (len(fieldNames) - 1) {
-			if field != nil {
-				return true
-			}
-			return false
+			return field != nil
 		}
 
 		if name == "contact" {

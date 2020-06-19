@@ -208,6 +208,7 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
+	th.Assert(t, err == nil, err)
 
 	includedFields = RunIncludedFieldsChecks(capStat)
 	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
