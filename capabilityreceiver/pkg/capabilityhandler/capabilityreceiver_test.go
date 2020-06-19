@@ -203,7 +203,7 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields["contact.name"] == false, "Expected contact in includedFields to be false, was true")
 
-	path := filepath.Join("../../testdata", "capability_test2.json")
+	path := filepath.Join("../../testdata", "wellstar_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	var capStat map[string]interface{}
