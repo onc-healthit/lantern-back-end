@@ -9,5 +9,3 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
 )
-
-replace github.com/onc-healthit/lantern-back-end/endpointmanager => /Users/emichaud/go/src/github.com/onc-healthit/lantern-back-end/endpointmanager
