@@ -1,5 +1,6 @@
 package capabilityhandler
 
+// RunIncludedFieldsChecks stores whether each field in capability statement is populated or not populated
 func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
 	if capInt == nil {
 		return nil
@@ -55,6 +56,7 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
 	return includedFields
 }
 
+// Checks whether the given field is populated in the capability statement
 func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 	for index, name := range fieldNames {
 		if capInt[name] == nil {
