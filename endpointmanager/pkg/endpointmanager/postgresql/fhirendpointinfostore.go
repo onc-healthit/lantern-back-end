@@ -82,9 +82,11 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
-	if err != nil {
-		return nil, err
+	if includedFieldsJSON != nil {
+		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if smartResponseJSON != nil {
@@ -163,9 +165,11 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
-	if err != nil {
-		return nil, err
+	if includedFieldsJSON != nil {
+		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if smartResponseJSON != nil {
