@@ -158,6 +158,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.Validation = fhirEndpoint.Validation
 		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
 		existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
+		existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
 		if err != nil {
 			return err

@@ -45,6 +45,40 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 				},
 			},
 		},
+		IncludedFields: map[string]bool{
+			"url":                        true,
+			"date":                       true,
+			"kind":                       true,
+			"name":                       true,
+			"title":                      false,
+			"format":                     true,
+			"status":                     true,
+			"contact":                    false,
+			"imports":                    false,
+			"profile":                    false,
+			"purpose":                    false,
+			"version":                    false,
+			"copyright":                  false,
+			"publisher":                  true,
+			"useContext":                 false,
+			"description":                true,
+			"fhirVersion":                true,
+			"patchFormat":                false,
+			"contact.name":               false,
+			"experimental":               false,
+			"instantiates":               false,
+			"jurisdiction":               false,
+			"requirements":               false,
+			"acceptUnknown":              true,
+			"software.name":              false,
+			"contact.telecom":            false,
+			"software.version":           false,
+			"implementation.url":         false,
+			"implementationGuide":        false,
+			"software.releaseDate":       false,
+			"implementation.custodian":   false,
+			"implementation.description": false,
+		},
 		CapabilityStatement: cs}
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                1,
@@ -67,6 +101,40 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 					ImplGuide: "Guide",
 				},
 			},
+		},
+		IncludedFields: map[string]bool{
+			"url":                        true,
+			"date":                       true,
+			"kind":                       true,
+			"name":                       true,
+			"title":                      false,
+			"format":                     true,
+			"status":                     true,
+			"contact":                    false,
+			"imports":                    false,
+			"profile":                    false,
+			"purpose":                    false,
+			"version":                    false,
+			"copyright":                  false,
+			"publisher":                  true,
+			"useContext":                 false,
+			"description":                true,
+			"fhirVersion":                true,
+			"patchFormat":                false,
+			"contact.name":               false,
+			"experimental":               false,
+			"instantiates":               false,
+			"jurisdiction":               false,
+			"requirements":               false,
+			"acceptUnknown":              true,
+			"software.name":              false,
+			"contact.telecom":            false,
+			"software.version":           false,
+			"implementation.url":         false,
+			"implementationGuide":        false,
+			"software.releaseDate":       false,
+			"implementation.custodian":   false,
+			"implementation.description": false,
 		},
 		CapabilityStatement: cs}
 
@@ -153,6 +221,24 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
 	}
 	endpointInfo1.Validation = endpointInfo2.Validation
+
+	endpointInfo1.IncludedFields["url"] = false
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields["url"], endpointInfo2.IncludedFields["url"])
+	}
+	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
+
+	endpointInfo2.IncludedFields = make(map[string]bool)
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields, endpointInfo2.IncludedFields)
+	}
+	endpointInfo2.IncludedFields = endpointInfo1.IncludedFields
+
+	endpointInfo1.IncludedFields = make(map[string]bool)
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields, endpointInfo2.IncludedFields)
+	}
+	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

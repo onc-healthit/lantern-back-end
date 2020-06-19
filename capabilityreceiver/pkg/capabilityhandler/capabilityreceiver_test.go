@@ -54,6 +54,41 @@ var testValidationObj = endpointmanager.Validation{
 	Warnings: []endpointmanager.Rule{},
 }
 
+var testIncludedFields = map[string]bool{
+	"url":                        true,
+	"date":                       true,
+	"kind":                       true,
+	"name":                       true,
+	"title":                      false,
+	"format":                     true,
+	"status":                     true,
+	"contact":                    false,
+	"imports":                    false,
+	"profile":                    false,
+	"purpose":                    false,
+	"version":                    false,
+	"copyright":                  false,
+	"publisher":                  true,
+	"useContext":                 false,
+	"description":                true,
+	"fhirVersion":                true,
+	"patchFormat":                false,
+	"contact.name":               false,
+	"experimental":               false,
+	"instantiates":               false,
+	"jurisdiction":               false,
+	"requirements":               false,
+	"acceptUnknown":              true,
+	"software.name":              false,
+	"contact.telecom":            false,
+	"software.version":           false,
+	"implementation.url":         false,
+	"implementationGuide":        false,
+	"software.releaseDate":       false,
+	"implementation.custodian":   false,
+	"implementation.description": false,
+}
+
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:               "http://example.com/DTSU2/",
 	MIMETypes:         []string{"application/json+fhir"},
@@ -63,6 +98,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	SMARTHTTPResponse: 0,
 	SMARTResponse:     nil,
 	Validation:        testValidationObj,
+	IncludedFields:    testIncludedFields,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -155,4 +191,30 @@ func Test_formatMessage(t *testing.T) {
 	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect smart HTTP response")
 	tmpMessage["smarthttpResponse"] = 200
+}
+
+func Test_RunIncludedFieldsChecks(t *testing.T) {
+	setupCapabilityStatement(t)
+	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
+	includedFields := RunIncludedFieldsChecks(capInt)
+	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
+	th.Assert(t, includedFields["name"] == true, "Expected name in includedFields to be true, was false")
+	th.Assert(t, includedFields["software.name"] == false, "Expected software.name in includedFields to be false, was true")
+	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
+	th.Assert(t, includedFields["contact.name"] == false, "Expected contact in includedFields to be false, was true")
+
+	path := filepath.Join("../../testdata", "capability_test2.json")
+	csJSON, err := ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	var capStat map[string]interface{}
+	err = json.Unmarshal(csJSON, &capStat)
+
+	includedFields = RunIncludedFieldsChecks(capStat)
+	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
+	th.Assert(t, includedFields["name"] == false, "Expected name in includedFields to be false, was true")
+	th.Assert(t, includedFields["software.name"] == true, "Expected software.name in includedFields to be true, was false")
+	th.Assert(t, includedFields["software.releaseDate"] == true, "Expected software.name in includedFields to be true, was false")
+	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
+	th.Assert(t, includedFields["contact.name"] == false, "Expected contact in includedFields to be false, was true")
+
 }

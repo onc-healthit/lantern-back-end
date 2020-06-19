@@ -86,6 +86,10 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
+	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
+		return false
+	}
+
 	return true
 }
 
