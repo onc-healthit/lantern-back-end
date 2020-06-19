@@ -201,9 +201,9 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["name"] == true, "Expected name in includedFields to be true, was false")
 	th.Assert(t, includedFields["software.name"] == false, "Expected software.name in includedFields to be false, was true")
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact.name"] == false, "Expected contact in includedFields to be false, was true")
+	th.Assert(t, includedFields["contact.name"] == false, "Expected contact.name in includedFields to be false, was true")
 
-	path := filepath.Join("../../testdata", "wellstar_capability_dstu2.json")
+	path := filepath.Join("../../testdata", "wellstar_capability_tester.json")
 	csJSON, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	var capStat map[string]interface{}
@@ -215,6 +215,7 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["software.name"] == true, "Expected software.name in includedFields to be true, was false")
 	th.Assert(t, includedFields["software.releaseDate"] == true, "Expected software.name in includedFields to be true, was false")
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact.name"] == false, "Expected contact in includedFields to be false, was true")
+	th.Assert(t, includedFields["contact.name"] == true, "Expected contact in includedFields to be true, was false")
+	th.Assert(t, includedFields["contact.telecom"] == false, "Expected contact.telecom in includedFields to be false, was true")
 
 }
