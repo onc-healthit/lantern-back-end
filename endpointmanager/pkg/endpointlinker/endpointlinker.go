@@ -270,7 +270,6 @@ func makeFluffDictionary() map[string]bool {
 	fluffDictionary["DR"] = true
 	fluffDictionary["PA"] = true
 	fluffDictionary["MD"] = true
-	fluffDictionary["LLC"] = true
 	fluffDictionary["LTD"] = true
 	fluffDictionary["PC"] = true
 	fluffDictionary["DPM"] = true
@@ -279,7 +278,6 @@ func makeFluffDictionary() map[string]bool {
 	fluffDictionary["OF"] = true
 	fluffDictionary["IN"] = true
 	fluffDictionary["THE"] = true
-	fluffDictionary["LLP"] = true
 	fluffDictionary["MCC"] = true
 	fluffDictionary["MMC"] = true
 	fluffDictionary["TO"] = true
