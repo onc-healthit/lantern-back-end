@@ -17,8 +17,6 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
 		{"date"},
 		{"publisher"},
 		{"contact"},
-		{"contact", "name"},
-		{"contact", "telecom"},
 		{"description"},
 		{"requirements"},
 		{"useContext"},
@@ -40,12 +38,22 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
 		{"acceptUnknown"},
 		{"implementationGuide"},
 		{"profile"},
+		{"messaging"},
+		{"document"},
 	}
 
 	for _, fieldNames := range fieldsList {
 		var stringIndex string
-		if len(fieldNames) == 2 {
-			stringIndex = fieldNames[0] + "." + fieldNames[1]
+		if len(fieldNames) != 1 {
+			for index, name := range fieldNames {
+				if index == (len(fieldNames) - 1) {
+					stringIndex = stringIndex + name
+				} else if index == 0 {
+					stringIndex = name + "."
+				} else {
+					stringIndex = stringIndex + "." + name
+				}
+			}
 		} else {
 			stringIndex = fieldNames[0]
 		}
@@ -69,12 +77,7 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 			return field != nil
 		}
 
-		if name == "contact" {
-			capArr := field.([]interface{})
-			capInt = capArr[0].(map[string]interface{})
-		} else {
-			capInt = field.(map[string]interface{})
-		}
+		capInt = field.(map[string]interface{})
 
 	}
 
