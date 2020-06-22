@@ -237,7 +237,7 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 		} else if value < tokenMean+(tokenStandardDev) {
 			tokenVal[key] *= 1.3
 		} else if value < tokenMean+(tokenStandardDev*3) {
-			tokenVal[key] *= 1.0
+			tokenVal[key] *= 1
 		} else if value < tokenMean+(tokenStandardDev*6) {
 			tokenVal[key] *= 0.8
 		} else if value < tokenMean+(tokenStandardDev*9) {
