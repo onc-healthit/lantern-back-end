@@ -73,20 +73,20 @@ var testIncludedFields = map[string]bool{
 	"description":                true,
 	"fhirVersion":                true,
 	"patchFormat":                false,
-	"contact.name":               false,
 	"experimental":               false,
 	"instantiates":               false,
 	"jurisdiction":               false,
 	"requirements":               false,
 	"acceptUnknown":              true,
 	"software.name":              false,
-	"contact.telecom":            false,
 	"software.version":           false,
 	"implementation.url":         false,
 	"implementationGuide":        false,
 	"software.releaseDate":       false,
 	"implementation.custodian":   false,
 	"implementation.description": false,
+	"messaging":                  false,
+	"document":                   false,
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
@@ -201,7 +201,7 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["name"] == true, "Expected name in includedFields to be true, was false")
 	th.Assert(t, includedFields["software.name"] == false, "Expected software.name in includedFields to be false, was true")
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact.name"] == false, "Expected contact.name in includedFields to be false, was true")
+	th.Assert(t, includedFields["contact"] == false, "Expected contact.name in includedFields to be false, was true")
 
 	path := filepath.Join("../../testdata", "wellstar_capability_tester.json")
 	csJSON, err := ioutil.ReadFile(path)
@@ -216,7 +216,6 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["software.name"] == true, "Expected software.name in includedFields to be true, was false")
 	th.Assert(t, includedFields["software.releaseDate"] == true, "Expected software.name in includedFields to be true, was false")
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact.name"] == true, "Expected contact in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact.telecom"] == false, "Expected contact.telecom in includedFields to be false, was true")
+	th.Assert(t, includedFields["contact"] == true, "Expected contact in includedFields to be true, was false")
 
 }
