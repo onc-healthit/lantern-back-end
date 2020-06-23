@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
