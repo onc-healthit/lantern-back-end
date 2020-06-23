@@ -40,7 +40,8 @@ func GetEnptsAndSend(
 			if i%10 == 0 {
 				log.Infof("Processed %d/%d messages", i, len(listOfEndpoints))
 			}
-
+			// Add a short time buffer as we enqueue items
+			time.Sleep(time.Duration(500 * time.Millisecond))
 			err = accessqueue.SendToQueue(ctx, endpt.URL, mq, channelID, qName)
 			if err != nil {
 				errs <- err
