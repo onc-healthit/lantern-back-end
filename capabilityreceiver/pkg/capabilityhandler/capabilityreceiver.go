@@ -108,7 +108,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		SMARTHTTPResponse:   smarthttpResponse,
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
-		supportedResources:  supportedResources,
+		SupportedResources:  supportedResources,
 	}
 
 	return &fhirEndpoint, nil

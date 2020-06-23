@@ -317,7 +317,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_http_response,
 			smart_response,
 			included_fields,
-			supported_fields
+			supported_resources)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		RETURNING id`)
 	if err != nil {
@@ -338,7 +338,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_http_response = $10,
 			smart_response = $11,
 			included_fields = $12,
-			supported_fields = $13
+			supported_resources = $13
 			
 		WHERE id = $14`)
 	if err != nil {
