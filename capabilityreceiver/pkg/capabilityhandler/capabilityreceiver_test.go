@@ -110,9 +110,8 @@ func convertInterfaceToBytes(message map[string]interface{}) ([]byte, error) {
 	return returnMsg, nil
 }
 
-func setupCapabilityStatement(t *testing.T) {
+func setupCapabilityStatement(t *testing.T, path string) {
 	// capability statement
-	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
@@ -125,7 +124,7 @@ func setupCapabilityStatement(t *testing.T) {
 }
 
 func Test_formatMessage(t *testing.T) {
-	setupCapabilityStatement(t)
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	expectedEndpt := testFhirEndpointInfo
 	tmpMessage := testQueueMsg
 
@@ -194,7 +193,7 @@ func Test_formatMessage(t *testing.T) {
 }
 
 func Test_RunIncludedFieldsChecks(t *testing.T) {
-	setupCapabilityStatement(t)
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
 	includedFields := RunIncludedFieldsChecks(capInt)
 	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
@@ -203,14 +202,10 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields["contact"] == false, "Expected contact.name in includedFields to be false, was true")
 
-	path := filepath.Join("../../testdata", "wellstar_capability_tester.json")
-	csJSON, err := ioutil.ReadFile(path)
-	th.Assert(t, err == nil, err)
-	var capStat map[string]interface{}
-	err = json.Unmarshal(csJSON, &capStat)
-	th.Assert(t, err == nil, err)
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	includedFields = RunIncludedFieldsChecks(capInt)
 
-	includedFields = RunIncludedFieldsChecks(capStat)
 	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields["name"] == false, "Expected name in includedFields to be false, was true")
 	th.Assert(t, includedFields["software.name"] == true, "Expected software.name in includedFields to be true, was false")
