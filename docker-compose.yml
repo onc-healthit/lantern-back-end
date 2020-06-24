@@ -88,6 +88,7 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
+      - ./resources/prod_resources/:/etc/lantern/resources
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
   
   capability_querier:
