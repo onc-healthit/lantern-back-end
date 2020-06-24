@@ -54,7 +54,8 @@ This removes all docker images, networks, and local volumes.
 
 
 2. **If you have a clean database or want to update the data in your database** 
-    1. Run the following command to begin populating the database usinig the data found in `lantern-back-end/endpointmanager/resources`
+    1. Run the following command to begin populating the database usinig the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
+      -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
     The populated db scrpt expects the resources directory to contain the following files:
       * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
