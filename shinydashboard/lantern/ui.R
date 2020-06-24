@@ -9,11 +9,10 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
-      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table"), badgeLabel = "new", badgeColor = "green"),
+      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
-      menuItem("Performance", icon = icon("bar-chart-o"),
-               menuSubItem("Mean Response Time", tabName = "performance_tab")
-      ),
+      menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
+      menuItem("Capability", icon=icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       hr()
@@ -36,6 +35,9 @@ ui <- dashboardPage(
       ),
       tabItem("availability_tab",
               availability_UI("availability_page")
+      ),
+      tabItem("capability_tab",
+              capabilitymodule_UI("capability_page")
       ),
       tabItem("location_tab",
               h3("Map of Zip Codes with identified endpoint/organization"),

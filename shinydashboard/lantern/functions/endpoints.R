@@ -14,7 +14,7 @@ vendor_short_names <- data.frame(
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
   all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% count() %>% pull(n)
+  indexed <- db_tables$fhir_endpoints_info %>% distinct(url) %>% count() %>% pull(n)
   fhir_endpoint_totals <- list(
     "all_endpoints"     = all,
     "indexed_endpoints" = indexed,
@@ -111,3 +111,22 @@ get_vendor_list <- function(endpoint_export_tbl) {
 
   vendor_list <- c(vendor_list, vl)
 }
+
+get_fhir_resources_tbl <- function(db_tables) {
+  fei <- db_tables$fhir_endpoints_info %>% collect() %>% head(10)
+  res <- fei %>%
+    purrr::pmap_dfr(function(...) {
+      current <- tibble(...)
+      cs <- jsonlite::fromJSON(fei %>% filter(id==current$id) %>% .$capability_statement) 
+      if (!is.null(cs)) {
+        resources <- purrr::pluck(cs,"rest","resource",1)
+        type_df <- as_tibble(resources$type) %>% rename(type=value)
+        type_df$endpoint_id <- current$id
+        type_df$fhir_version <- cs$fhirVersion
+        type_df
+      } else {
+        NULL
+      }
+    })
+}
+

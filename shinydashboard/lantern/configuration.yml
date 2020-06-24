@@ -16,6 +16,7 @@ libraries:
   - "xts"
   - "knitr"
   - "purrr"
+  - "treemapify"
   
 function_files:
   - "functions/db_connection.R"
@@ -28,3 +29,4 @@ module_files:
   - "modules/availabilitymodule.R"
   - "modules/performancemodule.R"
   - "modules/endpointsmodule.R"
+  - "modules/capabilitymodule.R"

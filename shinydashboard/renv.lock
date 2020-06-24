@@ -261,6 +261,13 @@
       "Repository": "CRAN",
       "Hash": "b8cff1d1391fd1ad8b65877f4c7f2e53"
     },
+    "ggfittext": {
+      "Package": "ggfittext",
+      "Version": "0.9.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1c658d36302cf96a331c0059587fae70"
+    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.3.1",
@@ -583,6 +590,13 @@
       "Repository": "CRAN",
       "Hash": "6f76f71042411426ec8df6c54f34e6dd"
     },
+    "shades": {
+      "Package": "shades",
+      "Version": "1.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3a2cf5eecb2cbca814d01d56bfb51494"
+    },
     "shiny": {
       "Package": "shiny",
       "Version": "1.4.0.2",
@@ -659,6 +673,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "a8c653ef8ce67683f588e6088ed45572"
+    },
+    "treemapify": {
+      "Package": "treemapify",
+      "Version": "2.5.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1394a8f67dd47f10cb74fd6516bb36d8"
     },
     "utf8": {
       "Package": "utf8",
