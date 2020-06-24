@@ -2,6 +2,7 @@ package sendendpoints
 
 import (
 	"context"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -35,6 +36,11 @@ func GetEnptsAndSend(
 		if err != nil {
 			errs <- err
 		}
+
+		// Shuffle Endpoints So that We Are Not Querying As Rapidly
+		rand.Shuffle(len(listOfEndpoints), func(i, j int) {
+			listOfEndpoints[i], listOfEndpoints[j] = listOfEndpoints[j], listOfEndpoints[i]
+		})
 
 		for i, endpt := range listOfEndpoints {
 			if i%10 == 0 {
