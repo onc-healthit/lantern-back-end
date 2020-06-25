@@ -128,16 +128,13 @@ func getTableNames(db *sql.DB) ([]string, error) {
 			return nil, err
 		}
 
-		// ignore tablenames where the schema is in the ignore list or the name starts with 'metrics'
+		// ignore tablenames where the schema is in the ignore list
 		ignore := false
 		for _, schemaNameToIgnore := range schemaNamesToIgnore {
 			if schemaName == schemaNameToIgnore {
 				ignore = true
 				break
 			}
-		}
-		if strings.HasPrefix(tableName, "metrics") {
-			ignore = true
 		}
 
 		if !ignore {
