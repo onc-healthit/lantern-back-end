@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 )
 
 // GetEndpoints gets the endpoints from a resource file.

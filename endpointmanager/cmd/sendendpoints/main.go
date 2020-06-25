@@ -26,16 +26,11 @@ func main() {
 	failOnError(err)
 	log.Info("Successfully connected to DB!")
 
-	// Set up the queue for sending messages to capabilityquerier and networkstatsquerier
+	// Set up the queue for sending messages to capabilityquerier
 	capQName := viper.GetString("enptinfo_capquery_qname")
 	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
 	failOnError(err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
-
-	netQName := viper.GetString("enptinfo_netstats_qname")
-	mq, channelID, err = accessqueue.ConnectToQueue(mq, channelID, netQName)
-	failOnError(err)
-	log.Info("Successfully connected to networkstatsquerier Queue!")
 
 	errs := make(chan error)
 
@@ -45,10 +40,6 @@ func main() {
 	wg.Add(1)
 	capInterval := viper.GetInt("capquery_qryintvl")
 	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &channelID, errs)
-
-	wg.Add(1)
-	netInterval := viper.GetInt("endptqry_query_interval")
-	go se.GetEnptsAndSend(ctx, &wg, netQName, netInterval, store, &mq, &channelID, errs)
 
 	for elem := range errs {
 		log.Warn(elem)

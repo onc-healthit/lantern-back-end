@@ -22,7 +22,7 @@ import (
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	"github.com/spf13/viper"
 )
 
@@ -147,7 +147,7 @@ func setup() error {
 
 	// grab endpoints
 	// TODO: eventually this method of getting endpoints will change
-	endpoints, err = eps.GetEndpoints("../../../networkstatsquerier/resources/EndpointSources.json")
+	endpoints, err = eps.GetEndpoints("../../../endpointmanager/resources/EndpointSources.json")
 
 	return err
 }
