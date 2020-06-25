@@ -19,9 +19,18 @@ var r4 = []string{"4.0.0", "4.0.1"}
 type CapabilityStatement interface {
 	GetPublisher() (string, error)
 	GetFHIRVersion() (string, error)
+	GetSoftware() (map[string]interface{}, error)
 	GetSoftwareName() (string, error)
 	GetSoftwareVersion() (string, error)
 	GetCopyright() (string, error)
+	GetRest() ([]map[string]interface{}, error)
+	GetResourceList(map[string]interface{}) ([]map[string]interface{}, error)
+	GetKind() (string, error)
+	GetImplementation() (map[string]interface{}, error)
+	GetMessaging() ([]map[string]interface{}, error)
+	GetMessagingEndpoint(map[string]interface{}) ([]map[string]interface{}, error)
+	GetDocument() ([]map[string]interface{}, error)
+	GetDescription() (string, error)
 
 	Equal(CapabilityStatement) bool
 	GetJSON() ([]byte, error)
