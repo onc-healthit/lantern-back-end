@@ -15,7 +15,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/viper"
@@ -70,7 +70,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../../networkstatsquerier/resources/EndpointSources.json", "CareEvolution")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "CareEvolution")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -92,7 +92,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 10 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../../networkstatsquerier/resources/EndpointSources_1.json", "CareEvolution")
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources_1.json", "CareEvolution")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)

@@ -1,19 +1,6 @@
 version: '3'
 
 services:
-  endpoint_querier:
-    build:
-      args:
-        cert_dir: ./certs
-    ports:
-      - "3333:3333"
-    environment:
-      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
-      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
-      - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME={LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
-  prometheus:
-    ports:
-      - "9090:9090"
   pg_prometheus:
     ports:
       - "5432:5432"

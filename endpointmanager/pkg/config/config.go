@@ -71,14 +71,6 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("enptinfo_netstats_qname")
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("endptqry_query_interval")
-	if err != nil {
-		return err
-	}
 
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
@@ -94,8 +86,6 @@ func SetupConfig() error {
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
 	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
-	viper.SetDefault("enptinfo_netstats_qname", "endpoints-to-netstats")
-	viper.SetDefault("endptqry_query_interval", 10)
 
 	return nil
 }
@@ -161,16 +151,11 @@ func SetupConfigForTests() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("endptinfo_netstats_qname")
-	if err != nil {
-		return err
-	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qname", "test-queue")
 	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-capability")
-	viper.SetDefault("endptinfo_netstats_qname", "test-endpoints-to-netstats")
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)

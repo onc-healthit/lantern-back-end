@@ -1,23 +1,6 @@
 version: '3'
 
 services:
-  endpoint_querier:
-    build: 
-      context: ./networkstatsquerier
-    depends_on:
-        - lantern-mq
-    restart: on-failure
-    environment:
-        - LANTERN_QUSER=${LANTERN_QUSER}
-        - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
-        - LANTERN_QHOST=${LANTERN_QHOST}
-        - LANTERN_QPORT=${LANTERN_QPORT}
-        - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
-        - LANTERN_ENDPTQRY_NUMWORKERS=${LANTERN_ENDPTQRY_NUMWORKERS}
-    volumes:
-        - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
-
   pg_prometheus:
     image: timescale/pg_prometheus:latest-pg11
     volumes:
@@ -30,30 +13,6 @@ services:
       - POSTGRES_DB=${LANTERN_DBNAME}
     command:
       -csynchronous_commit=off
-
-  prometheus_postgresql_adapter:
-    image: timescale/prometheus-postgresql-adapter
-    depends_on:
-      - pg_prometheus
-    restart: on-failure
-    volumes:
-      - ./scripts/pause_start_prometheus_postgresql_adapter.sh:/pause_start_prometheus_postgresql_adapter.sh
-    entrypoint: "/pause_start_prometheus_postgresql_adapter.sh"
-    command:
-      -pg-host=pg_prometheus
-      -pg-password=${LANTERN_DBPASSWORD}
-      -pg-database=${LANTERN_DBNAME}
-      -pg-user=${LANTERN_DBUSER}
-      -pg-prometheus-log-samples
-
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - prometheusData:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml 
-    depends_on:
-      - prometheus_postgresql_adapter
-      - pg_prometheus
   
   lantern-mq:
     image: rabbitmq:3-management
@@ -84,7 +43,6 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
-      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
@@ -151,7 +109,6 @@ services:
 
 volumes:
   pgdata:
-  prometheusData:
   rabbitmqdata:
 
 

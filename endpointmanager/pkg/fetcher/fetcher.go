@@ -119,7 +119,7 @@ func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error
 	if err != nil {
 		return result, errors.Wrap(err,
 			`provided endpoint list was not formatted as expected.
-			See 'Expected Endpoint Source Formatting' in the Network Statistics Querier README.`)
+			See 'Expected Endpoint Source Formatting' in the Endpoint Manager README.`)
 	}
 
 	// return nil if null or {} was passed in as the rawendpts byte array
@@ -130,7 +130,7 @@ func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error
 	defaultList, ok := initialList["Entries"]
 	if !ok {
 		return result, fmt.Errorf(`the given endpoint list is not formatted in the default format,
-			see 'Expected Endpoint Source Formatting' in the Network Statistics Querier README`)
+			see 'Expected Endpoint Source Formatting' in the Endpoint Manager README`)
 	}
 	result = getDefaultEndpoints(defaultList, source)
 

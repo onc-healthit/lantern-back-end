@@ -19,7 +19,6 @@
 To run Lantern, several environment variables need to be set. These are defined within each project's README. Each README defines the variables that *must* be set on the system vs those whose default values are sufficient.
 
   * [Endpoint Manager](endpointmanager/README.md)
-  * [Network Statistics Querier](networkstatsquerier/README.md)
   * [Capability Querier](capabilityquerier/README.md)
   * [Capability Receiver](capabilityreceiver/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
@@ -47,10 +46,9 @@ This removes all docker images, networks, and local volumes.
     This starts all of the following services:
     * **PostgreSQL** - application database
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
-    * **Prometheus / Prometheus remote storage adapter for PostgreSQL** - continuously queries the endpoints to determine response status and response time
     * **Capability Querier** - queries the endpoints for their capability statements once a day. Kicks off the initial query immediately.
     * **Capability Receiver** - receives the capability statements from the queue, peforms validations and saves the results to fhir_endpoints_info
-    * **Endpoint Manager** - sends endpoints to the netstats and capability querying queues
+    * **Endpoint Manager** - sends endpoints to the capability querying queues
 
 
 2. **If you have a clean database or want to update the data in your database** 
@@ -101,7 +99,6 @@ If you are operating behind a proxy that does SSL-Inspection you will have to co
   * `capabilitiyreceiver/certs/`
   * `endpointmanager/certs/`
   * `lanternmq/certs`
-  * `networstatsquerier/certs/`
   * `shinydashboard/certs/`
   * `e2e/certs`
 
@@ -139,105 +136,14 @@ There are three types of tests for Lantern and three corresponding commands:
 See each internal service's README to see how to run that service as a standalone service.
 
   * [Endpoint Manager](endpointmanager/README.md)
-  * [Network Statistics Querier](networkstatsquerier/README.md)
   * [Capability Querier](capabilityquerier/README.md)
   * [Capability Receiver](capabilityreceiver/README.md)
   * [Lantern Message Queue](lanternmq/README.md)
 
 ## External Services
 
-* Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
+* PostgreSQL
 * RabbitMQ
-
-
-### Prometheus, the Prometheus Remote Storage Adapter for PostgreSQL, and PostgreSQL
-
-Prometheus is used to capture time-series-based data from the FHIR API endpoints. It stores these in the PostgreSQL database using Timescale's PostgreSQL extension, [`pg_prometheus`](https://github.com/timescale/pg_prometheus) as well as the the [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter).
-
-The PostgreSQL database is used to store all information related to the FHIR API endpoints. This includes the timeseries data captured by Prometheus as well as information from the capability statement, information gathered from Inferno, information about the EHR vendors from [CHPL](https://chpl.healthit.gov/#/search), and information about the provider organization using the endpoint.
-
-In order for Prometheus to use a remote PostgreSQL database for storage there are 3 components that need to be in place. A helpful tutorial that details each of the steps can be found [here](https://docs.timescale.com/latest/tutorials/prometheus-adapter).
-
-If you haven't created docker volumes for Prometheus pr PostgreSQL, you'll have to run the following commands.
-
-```bash
-docker volume ls # To list already created volumes
-docker volume create prometheusData # Volume to persist Prometheus data
-docker volume create pgdata # Volume to persist data written to PostgreSQL database
-```
-
-The three components are:
-
-* [PostgreSQL Database with the pg_prometheus extension](https://github.com/timescale/pg_prometheus)
-* [Prometheus remote storage adapter for PostgreSQL](https://github.com/timescale/prometheus-postgresql-adapter)
-* [Prometheus](https://github.com/prometheus/prometheus)
-
-These need to be started in the following order with the given commands:
-
-1. PostgreSQL Database
-
-    ```bash
-    docker run --name pg_prometheus -e POSTGRES_PASSWORD=<postgrespassword> -e POSTGRES_USER=lantern -e POSTGRES_DB=lantern -p 5432:5432 --volume pgdata:/var/lib/postgresql/data timescale/pg_prometheus:latest-pg11 postgres -csynchronous_commit=off
-    ```
-
-    Note that this will create a database called `lantern` with the admin user name `lantern`.
-
-2. Prometheus remote storage adapter for PostgreSQL
-
-    It is important that the `pg_prometheus` container started in step 1 is up and running before starting the `prometheus_postgresql_adapter` container, as the `prometheus_postgresql_adapter` container will need to run database setup tasks the first time that it is run.
-
-    ```bash
-    docker run --name prometheus_postgresql_adapter --link pg_prometheus -p 9201:9201 timescale/prometheus-postgresql-adapter:latest -pg-host=pg_prometheus -pg-password=<postgrespassword> -pg-database=lantern -pg-user=lantern -pg-prometheus-log-samples
-    ```
-
-3. Prometheus
-
-    Both the `pg_prometheus` and `prometheus_postgresql_adapter` containers need to be running before running this container.
-
-    ```bash
-    docker run -p 9090:9090 --link prometheus_postgresql_adapter -v <AbsoluePathToConfig>/prometheus.yml:/etc/prometheus/prometheus.yml --volume prometheusData:/prometheus prom/prometheus
-    ```
-
-#### [Prometheus Configuration File](prometheus.yml)
-
-**In order to instruct Prometheus to write the collected data to a Postgres database**, you'll have to configure the location of the Postgres remote storage adapter. For example:
-
-```yml
-remote_write:
-    - url: "http://prometheus_postgresql_adapter:9201/write"
-remote_read:
-    - url: "http://prometheus_postgresql_adapter:9201/read"
-```
-
-**To add the Endpoint Querier as a Prometheus target**, the information below should be contained in the configuration file.
-
-```yaml
-scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-
-  - job_name: 'FHIRQUERY'
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-    - targets: ['<endpoint_querier_container_name>:<endpoint_port>']
-```
-
-For example:
-
-```yaml
-scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-
-  - job_name: 'FHIRQUERY'
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-    - targets: ['endpoint_querier:3333']
-```
 
 #### Initializing the Database by hand
 
@@ -285,30 +191,6 @@ This will start a RabbitMQ container listening on the default port of 5672. If y
 ```
 
 You can also check that you have access to the admin page by navigating to `http://localhost:15672` and using username and password `lanternadmin:lanternadmin`.
-
-### Grafana
-
-Grafana can be used to visualize the time-series netstats data collected by Lantern
-
-To start Grafana, run the following:
-
-```bash
-docker run -d -p 3000:3000 grafana/grafana
-```
-
-You can check that Grafana is up by nagivating to `http://localhost:3000` and using username and password `admin:admin`.
-
-#### Viewing Collected Data in Grafana
-
-1. Navigate to `http://localhost:3000/` in a web browser
-2. Login using Username: admin, Password admin
-3. Add PostgreSQL as data source
-    - If you are running the postgres database on a local docker container and are publishing port 5432, location is `localhost:5432` or `host.docker.internal:5432` (if on a MAC).
-    - If you started the postgres database using the docker-compose file in this repository (#starting-all-services-using-docker-compose) then the postgres database will be located at `pg_prometheus:5432`
-    - Enter `lantern` in the Database and User fields and enterthe PostgreSQL password you started the PostgreSQL docker container with in the Password field. Toggle "TimescaleDB" to on. Finally select `disable` for SSL Mode.
-4. From the main page create a Dashboard, adding visualizations for the metrics you would like to explore.
-
-There are sample Grafana dashboards in the `scripts/grafana` folder. These dashboards show examples of viewing Lantern's collected data for FHIR endpoints. 
 
 # Using Docker Compose
 
@@ -446,7 +328,7 @@ brew install golangci/tap/golangci-lint
 More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
 
 ## GoMod
-If you make changes in one package and would like to use those changes in another package that depends on the first package that you change, commit your code and run `make update_mods branch=<your_working_branch>` This is especially relevant when running your new code in docker images built for the e2e, capabilityquerier and networkstatsquerier branches as the go.mod files are what will be used to determine which versions of the packages should be checked out when the docker images are built. Your final commit in a PR should be the go.mod and go.sum updates that occur as a result of running `make update_mods branch=<your_working_branch>`
+If you make changes in one package and would like to use those changes in another package that depends on the first package that you change, commit your code and run `make update_mods branch=<your_working_branch>` This is especially relevant when running your new code in docker images built for the e2e, capabilityquerier, endpointmanager, capabilityreciever packages as the go.mod files are what will be used to determine which versions of the packages should be checked out when the docker images are built. Your final commit in a PR should be the go.mod and go.sum updates that occur as a result of running `make update_mods branch=<your_working_branch>`
 
 
 # License
