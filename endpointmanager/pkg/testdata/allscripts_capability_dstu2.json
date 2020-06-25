@@ -96,6 +96,48 @@
         "xml",
         "json"
     ],
+    "messaging": [
+        {
+            "endpoint": [
+                {
+                    "protocol": {
+                        "system": "http://hl7.org/fhir/message-transport",
+                        "code": "mllp"
+                    },
+                    "address": "mllp:10.1.1.10:9234"
+                }
+            ],
+            "reliableCache": 30,
+            "documentation": "ADT A08 equivalent for external system notifications",
+            "event": [
+                {
+                    "code": {
+                        "system": "http://hl7.org/fhir/message-type",
+                        "code": "admin-notify"
+                    },
+                    "category": "Consequence",
+                    "mode": "receiver",
+                    "focus": "Patient",
+                    "request": {
+                        "reference": "StructureDefinition/daf-patient"
+                    },
+                    "response": {
+                        "reference": "StructureDefinition/MessageHeader"
+                    },
+                    "documentation": "Notification of an update to a patient resource. changing the links is not supported"
+                }
+            ]
+        }
+    ],
+    "document": [
+        {
+            "mode": "consumer",
+            "documentation": "Basic rules for all documents in the EHR system",
+            "profile": {
+                "reference": "http://fhir.hl7.org/base/Profilebc054d23-75e1-4dc6-aca5-838b6b1ac81d/_history/b5fdd9fc-b021-4ea1-911a-721a60663796"
+            }
+        }
+    ],
     "profile": [
         {
             "reference": "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance",
