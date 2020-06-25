@@ -391,10 +391,10 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) (*endpointmanager.NPIOrganizatio
 
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
-func readCsv(ctx context.Context, filename string) (*csv.Reader, error) {
+func readCsv(ctx context.Context, filename string) (*csv.Reader, *os.File, error) {
 	select {
 	case <-ctx.Done():
-		return nil, errors.Wrap(ctx.Err(), "did not read csv; context ended")
+		return nil, nil, errors.Wrap(ctx.Err(), "did not read csv; context ended")
 	default:
 		// ok
 	}
@@ -402,22 +402,23 @@ func readCsv(ctx context.Context, filename string) (*csv.Reader, error) {
 	// Open CSV file
 	f, err := os.Open(filename)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	defer f.Close()
 
 	reader := csv.NewReader(f)
 	// return reader
-	return reader, nil
+	return reader, f, nil
 }
 
 // ParseAndStoreNPIFile parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
 func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
-	reader, err := readCsv(ctx, fname)
+	reader, f, err := readCsv(ctx, fname)
+	defer f.Close()
 	if err != nil {
 		return -1, err
 	}
+	//Remove header
 	line, err := reader.Read()
 	if err != nil {
 		return -1, err
@@ -429,6 +430,9 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		line, err = reader.Read()
 		if err == io.EOF {
 			break
+		}
+		if err != nil {
+			return -1, err
 		}
 		// break out of loop and return error if context has ended
 		select {
