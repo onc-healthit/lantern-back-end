@@ -646,12 +646,12 @@ func Test_getTokenVals(t *testing.T) {
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SYSTEM"])
 	expectedResult = fmt.Sprintf("%f", systemValue*0.2*0.1)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	// Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
+	// Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.2
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BLAH"])
-	expectedResult = fmt.Sprintf("%f", blahValue*2.5*0.1)
+	expectedResult = fmt.Sprintf("%f", blahValue*2.5*0.2)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	// Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.3
+	// Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.2
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SEVEN"])
-	expectedResult = fmt.Sprintf("%f", sevenValue*2.5*0.3)
+	expectedResult = fmt.Sprintf("%f", sevenValue*2.5*0.2)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
 }

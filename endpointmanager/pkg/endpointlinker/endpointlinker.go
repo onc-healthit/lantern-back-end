@@ -247,12 +247,8 @@ func computeTokenValues(tokenCounts map[string]int, tokenCountsNPI map[string]in
 		}
 
 		//Multiplies token value to adjust weight of tokens that appear in one list (NPI organization/FHIR endpoints) but not the other
-		if tokenCountsNPI[key] == 0 && tokenCountsEndpoints[key] != 0 {
-			tokenVal[key] *= 0.1
-			continue
-		} else if tokenCountsNPI[key] != 0 && tokenCountsEndpoints[key] == 0 {
-			tokenVal[key] *= 0.3
-			continue
+		if (tokenCountsNPI[key] == 0 && tokenCountsEndpoints[key] != 0) || (tokenCountsNPI[key] != 0 && tokenCountsEndpoints[key] == 0) {
+			tokenVal[key] *= 0.2
 		}
 
 	}
