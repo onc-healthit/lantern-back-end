@@ -31,7 +31,7 @@ get_fhir_endpoints_tbl <- function(db_tables) {
           distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response),
         by = c("url" = "url")) %>%
     mutate(updated = as.Date(updated_at)) %>%
-    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, http_response) %>%
+    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response) %>%
     left_join(http_response_code_tbl %>% select(code, label),
               by = c("http_response" = "code")) %>%
     mutate(status = paste(http_response, "-", label))

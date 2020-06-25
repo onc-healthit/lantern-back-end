@@ -46,7 +46,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- DT::renderDataTable({
     datatable(selected_fhir_endpoints(),
-              colnames = c("URL", "Organization", "Updated", "Vendor", "FHIR Version", "TLS Version", "Status"),
+              colnames = c("URL", "Organization", "Updated", "Vendor", "FHIR Version", "TLS Version", "MIME Types", "Status"),
               rownames = FALSE
     )
     })

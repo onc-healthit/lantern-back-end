@@ -51,7 +51,8 @@ func GetResponseAndTiming(ctx context.Context, args *map[string]interface{}) err
 		return fmt.Errorf("Endpoint URL Parsing Error: %s", err.Error())
 	}
 	normalizedURL := endpointmanager.NormalizeEndpointURL(metadataURL.String())
-
+	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
+	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", normalizedURL, nil)
 	if err != nil {
 		return err

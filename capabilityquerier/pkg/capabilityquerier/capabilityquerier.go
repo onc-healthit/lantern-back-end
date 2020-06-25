@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -125,7 +126,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	var tlsVersion string
 	var capResp []byte
 	var jsonResponse interface{}
-
+	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
+	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", fhirURL, nil)
 	if err != nil {
 		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL)

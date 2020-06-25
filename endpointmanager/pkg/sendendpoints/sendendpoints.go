@@ -2,6 +2,7 @@ package sendendpoints
 
 import (
 	"context"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -36,11 +37,17 @@ func GetEnptsAndSend(
 			errs <- err
 		}
 
+		// Shuffle Endpoints So that We Are Not Querying As Rapidly
+		rand.Shuffle(len(listOfEndpoints), func(i, j int) {
+			listOfEndpoints[i], listOfEndpoints[j] = listOfEndpoints[j], listOfEndpoints[i]
+		})
+
 		for i, endpt := range listOfEndpoints {
 			if i%10 == 0 {
 				log.Infof("Processed %d/%d messages", i, len(listOfEndpoints))
 			}
-
+			// Add a short time buffer as we enqueue items
+			time.Sleep(time.Duration(500 * time.Millisecond))
 			err = accessqueue.SendToQueue(ctx, endpt.URL, mq, channelID, qName)
 			if err != nil {
 				errs <- err
