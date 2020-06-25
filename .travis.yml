@@ -33,7 +33,6 @@ env:
   - LANTERN_TEST_QPASSWORD=capabilityquerier
   - LANTERN_TEST_QNAME=test-queue
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
-  - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME=test-endpoints-to-netstats
 
 before_script:
 - go get ./...

@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
 )
 
 var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
