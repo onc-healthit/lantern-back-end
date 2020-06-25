@@ -15,8 +15,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	eps "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	"github.com/prometheus/common/log"
 	"github.com/streadway/amqp"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"

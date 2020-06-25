@@ -6,7 +6,7 @@ services:
       - "5432:5432"
     volumes:
       - ./scripts/sql/testdbsetup.sql:/docker-entrypoint-initdb.d/testdbsetup.sql
-      - ./scripts/sql/dbusersetup_dev.sql:/docker-entrypoint-initdb.d/dbusersetup_dev.sql
+      - ./scripts/sql/dbusersetup_dev.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - LANTERN_DBUSER_READONLY=${LANTERN_DBUSER_READONLY}
       - LANTERN_DBPASSWORD_READONLY=${LANTERN_DBPASSWORD_READONLY}
@@ -27,7 +27,6 @@ services:
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
       - LANTERN_TEST_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
-      - LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME=${LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME}
     volumes:
       - ./resources/dev_resources/:/etc/lantern/resources
 
