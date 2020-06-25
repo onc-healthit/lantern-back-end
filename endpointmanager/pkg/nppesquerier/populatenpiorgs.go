@@ -420,7 +420,7 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 	defer f.Close()
 
 	//Remove header
-	line, err := reader.Read()
+	_, err = reader.Read()
 	if err != nil {
 		return -1, err
 	}
@@ -430,7 +430,7 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 	// Loop through lines & turn into object
 	for {
 
-		line, err = reader.Read()
+		line, err := reader.Read()
 		if err == io.EOF {
 			break
 		}
