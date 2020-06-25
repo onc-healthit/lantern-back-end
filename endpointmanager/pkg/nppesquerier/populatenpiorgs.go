@@ -3,6 +3,7 @@ package nppesquerier
 import (
 	"context"
 	"encoding/csv"
+	"io"
 	"os"
 
 	"github.com/pkg/errors"
@@ -405,12 +406,7 @@ func readCsv(ctx context.Context, filename string) (*csv.Reader, error) {
 	}
 	defer f.Close()
 
-	// return lines without header line
 	reader := csv.NewReader(f)
-	_, err = reader.Read()
-	if err != nil {
-		return nil, err
-	}
 	// return reader
 	return reader, nil
 }
@@ -422,11 +418,18 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 	if err != nil {
 		return -1, err
 	}
-	added := 0
 	line, err := reader.Read()
+	if err != nil {
+		return -1, err
+	}
+	added := 0
 	i := 0
 	// Loop through lines & turn into object
-	for line != nil {
+	for {
+		line, err = reader.Read()
+		if err == io.EOF {
+			break
+		}
 		// break out of loop and return error if context has ended
 		select {
 		case <-ctx.Done():
@@ -454,7 +457,6 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 			}
 			added += 1
 		}
-		line, err = reader.Read()
 		i++
 	}
 	return added, nil

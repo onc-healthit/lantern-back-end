@@ -16,9 +16,8 @@ func Test_ParseNPIdataLine(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error reading NPI data from fixture file")
 	}
-	reader.Read()
-	reader.Read()
 	line, err := reader.Read()
+	line, err = reader.Read()
 	println(len(line))
 	th.Assert(t, err != nil, "Expected Read not to throw an error")
 
