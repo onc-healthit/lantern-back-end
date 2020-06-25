@@ -390,7 +390,7 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) (*endpointmanager.NPIOrganizatio
 
 // ReadCsv accepts a file and returns its content as a multi-dimentional type
 // with lines and each column. Only parses to string type.
-func readCsv(ctx context.Context, filename string) ([][]string, error) {
+func readCsv(ctx context.Context, filename string) (*csv.Reader, error) {
 	select {
 	case <-ctx.Done():
 		return nil, errors.Wrap(ctx.Err(), "did not read csv; context ended")
@@ -401,29 +401,32 @@ func readCsv(ctx context.Context, filename string) ([][]string, error) {
 	// Open CSV file
 	f, err := os.Open(filename)
 	if err != nil {
-		return [][]string{}, err
+		return nil, err
 	}
 	defer f.Close()
 
-	// Read File into a Variable
-	lines, err := csv.NewReader(f).ReadAll()
-	if err != nil {
-		return [][]string{}, err
-	}
 	// return lines without header line
-	return lines[1:], nil
+	reader := csv.NewReader(f)
+	_, err = reader.Read()
+	if err != nil {
+		return nil, err
+	}
+	// return reader
+	return reader, nil
 }
 
 // ParseAndStoreNPIFile parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
 func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
-	lines, err := readCsv(ctx, fname)
+	reader, err := readCsv(ctx, fname)
 	if err != nil {
 		return -1, err
 	}
 	added := 0
+	line, err := reader.Read()
+	i := 0
 	// Loop through lines & turn into object
-	for i, line := range lines {
+	for line != nil {
 		// break out of loop and return error if context has ended
 		select {
 		case <-ctx.Done():
@@ -433,7 +436,7 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		}
 
 		if i%10000 == 0 {
-			log.Infof("Processed %d/%d NPI entities. Added %d organizations.\n", i, len(lines), added)
+			log.Infof("Processed %d/%d NPI entities. Added %d organizations.\n", i, len(line), added)
 		}
 
 		data := parseNPIdataLine(line)
@@ -451,6 +454,8 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 			}
 			added += 1
 		}
+		line, err = reader.Read()
+		i++
 	}
 	return added, nil
 }
