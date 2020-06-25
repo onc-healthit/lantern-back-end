@@ -17,7 +17,12 @@ var fhir2LessJSONMIMEType = "application/json+fhir"
 type baseVal struct {
 }
 
-func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement, httpResponse int, mimeTypes []string, fhirVersion string) endpointmanager.Validation {
+func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
+	httpResponse int,
+	mimeTypes []string,
+	fhirVersion string,
+	tlsVersion string,
+	smartHTTPRsp int) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 	validationWarnings := make([]endpointmanager.Rule, 0)
 
@@ -29,6 +34,12 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement, h
 
 	returnedRule = bv.HTTPResponseValid(httpResponse)
 	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = bv.FhirVersion(fhirVersion)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRules := bv.KindValid(capStat)
+	validationResults = append(validationResults, returnedRules[0])
 
 	validations := endpointmanager.Validation{
 		Results:  validationResults,
@@ -118,5 +129,91 @@ func (bv *baseVal) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
 	}
 
 	ruleError.Valid = false
+	return ruleError
+}
+
+func (bv *baseVal) FhirVersion(fhirVersion string) endpointmanager.Rule {
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.FHIRVersion,
+		Valid:     true,
+		Expected:  "4.0.1",
+		Actual:    fhirVersion,
+		Comment:   "ONC Certification Criteria requires support of FHIR Version 4.0.1",
+		Reference: "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf",
+		ImplGuide: "USCore 3.1",
+	}
+
+	if fhirVersion != "4.0.1" {
+		ruleError.Valid = false
+	}
+
+	return ruleError
+}
+
+func (bv *baseVal) TLSVersion(tlsVersion string) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) PatientResourceExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) OtherResourceExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
+	ruleError := endpointmanager.Rule{
+		RuleName: endpointmanager.KindRule,
+		Valid:    true,
+		Expected: "instance",
+		Comment:  "Kind value should be set to 'instance' because this is a specific system instance.",
+	}
+	kind, err := capStat.GetKind()
+	if err != nil {
+		ruleError.Valid = false
+	}
+	ruleError.Actual = kind
+	returnVal := []endpointmanager.Rule{
+		ruleError,
+	}
+	return returnVal
+}
+
+func (bv *baseVal) MessagingEndpointValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) EndpointFunctionValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) DescribeEndpointValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) DocumentSetValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) UniqueResources(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+func (bv *baseVal) SearchParamsUnique(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	var ruleError endpointmanager.Rule
 	return ruleError
 }

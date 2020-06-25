@@ -107,7 +107,8 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		}
 	}
 	validator := validation.GetValidationForVersion(fhirVersion)
-	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion)
+
+	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse)
 	includedFields := RunIncludedFieldsChecks(capInt)
 	supportedResources := RunSupportedResourcesChecks(capInt)
 

@@ -13,10 +13,22 @@ var r4 = []string{"4.0.0", "4.0.1"}
 
 // Validator @TODO this will be updated once I know what I'm doing
 type Validator interface {
-	RunValidation(capabilityparser.CapabilityStatement, int, []string, string) endpointmanager.Validation
+	RunValidation(capabilityparser.CapabilityStatement, int, []string, string, string, int) endpointmanager.Validation
 	CapStatExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	MimeTypeValid([]string, string) endpointmanager.Rule
 	HTTPResponseValid(int) endpointmanager.Rule
+	FhirVersion(string) endpointmanager.Rule
+	TLSVersion(string) endpointmanager.Rule
+	PatientResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	OtherResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	SmartHTTPResponseValid(int) endpointmanager.Rule
+	KindValid(capabilityparser.CapabilityStatement) []endpointmanager.Rule
+	MessagingEndpointValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	EndpointFunctionValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	DescribeEndpointValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	DocumentSetValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	UniqueResources(capabilityparser.CapabilityStatement) endpointmanager.Rule
+	SearchParamsUnique(capabilityparser.CapabilityStatement) endpointmanager.Rule
 }
 
 // GetValidationForVersion checks the given fhir version and then runs the validation checks

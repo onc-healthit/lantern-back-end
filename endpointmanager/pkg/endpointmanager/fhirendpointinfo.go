@@ -126,8 +126,20 @@ type Rule struct {
 type RuleOption string
 
 const (
-	R4MimeTypeRule      RuleOption = "r4MimeType"
 	GeneralMimeTypeRule RuleOption = "generalMimeType"
 	HTTPResponseRule    RuleOption = "httpResponse"
 	CapStatExistRule    RuleOption = "capStatExist"
+	FHIRVersion         RuleOption = "fhirVersion"
+	TLSVersion          RuleOption = "tlsVersion"
+	PatResourceExists   RuleOption = "patResourceExists"
+	OtherResourceExists RuleOption = "otherResourceExists"
+	SmartHTTPRespRule   RuleOption = "smartHttpResponse"
+	KindRule            RuleOption = "kindRule"
+	InstanceRule        RuleOption = "instanceRule"
+	MessagingEndptRule  RuleOption = "messagingEndptRule"
+	EndptFunctionRule   RuleOption = "endpointFunctionRule"
+	DescribeEndptRule   RuleOption = "describeEndpointRule"
+	DocumentValidRule   RuleOption = "documentValidRule"
+	UniqueResourcesRule RuleOption = "uniqueResourcesRule"
+	SearchParamsRule    RuleOption = "searchParamsRule"
 )
