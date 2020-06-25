@@ -579,9 +579,9 @@ func Test_computeTokenValues(t *testing.T) {
 	expectedResult = fmt.Sprintf("%f", onlyinnpiVal*0.4*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("ONLYINNPI expected %s value. got %s.", expectedResult, tokenValResult))
 
-	// ONLYINENDPOINT token count < mean + (standardDev*6) and only found in Endpoint token count (multiply by 0.8 and then 0.1)
+	// ONLYINENDPOINT token count < mean + (standardDev*6) and only found in Endpoint token count (multiply by 0.8 and then 0.3)
 	tokenValResult = fmt.Sprintf("%f", tokenVals["ONLYINENDPOINT"])
-	expectedResult = fmt.Sprintf("%f", onlyinendpointVal*0.8*0.1)
+	expectedResult = fmt.Sprintf("%f", onlyinendpointVal*0.8*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("ONLYINENDPOINT expected %s value. got %s.", expectedResult, tokenValResult))
 
 	// Word that does not exist in token counts should return 0 for a value
@@ -642,16 +642,16 @@ func Test_getTokenVals(t *testing.T) {
 	tokenValResult = fmt.Sprintf("%f", tokenVals["FIVE"])
 	expectedResult = fmt.Sprintf("%f", fiveValue*2.5)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	// System with count of 2 has value 0.9, and "SYSTEM" is in fluff dictionary so multiplied by 0.2, and "SYSTEM" in fhir endpoint tokens but not npi organization tokens so multiply by 0.1
+	// System with count of 2 has value 0.9, and "SYSTEM" is in fluff dictionary so multiplied by 0.2, and "SYSTEM" in fhir endpoint tokens but not npi organization tokens so multiply by 0.3
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SYSTEM"])
-	expectedResult = fmt.Sprintf("%f", systemValue*0.2*0.1)
+	expectedResult = fmt.Sprintf("%f", systemValue*0.2*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	// Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.2
+	// Blah with count of 2 has value 0.9, and 2 < mean so multiplied by 2.5, and "BLAH" is in in fhir endpoint tokens but not npi organization tokens so multiply by 0.3
 	tokenValResult = fmt.Sprintf("%f", tokenVals["BLAH"])
-	expectedResult = fmt.Sprintf("%f", blahValue*2.5*0.2)
+	expectedResult = fmt.Sprintf("%f", blahValue*2.5*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
-	// Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.2
+	// Seven with count of 1 has value 0.95, and 1 < mean so multiplied by 2.5, and "SEVEN" is in in npi organization tokens but not fhir endpoint tokens so multiply by 0.3
 	tokenValResult = fmt.Sprintf("%f", tokenVals["SEVEN"])
-	expectedResult = fmt.Sprintf("%f", sevenValue*2.5*0.2)
+	expectedResult = fmt.Sprintf("%f", sevenValue*2.5*0.3)
 	th.Assert(t, tokenValResult == expectedResult, fmt.Sprintf("expected %s value. got %s.", expectedResult, tokenValResult))
 }
