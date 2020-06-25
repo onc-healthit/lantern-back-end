@@ -214,7 +214,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 32 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 36 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to multiple orgs
