@@ -53,6 +53,11 @@ get_response_tally_list <- function(db_tables) {
   )
 }
 
+# get the date of the most recently updated fhir_endpoint
+get_endpoint_last_updated <- function(db_tables) {
+  as.character.Date(db_tables$fhir_endpoints_info %>% arrange(desc(updated_at)) %>% head(1) %>% pull(updated_at))
+}
+
 # Compute the percentage of each response code for all responses received
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info_history %>%
@@ -113,7 +118,7 @@ get_vendor_list <- function(endpoint_export_tbl) {
 }
 
 get_fhir_resources_tbl <- function(db_tables) {
-  fei <- db_tables$fhir_endpoints_info %>% collect() %>% head(10)
+  fei <- db_tables$fhir_endpoints_info %>% collect() %>% head(100)
   res <- fei %>%
     purrr::pmap_dfr(function(...) {
       current <- tibble(...)
@@ -122,6 +127,7 @@ get_fhir_resources_tbl <- function(db_tables) {
         resources <- purrr::pluck(cs,"rest","resource",1)
         type_df <- as_tibble(resources$type) %>% rename(type=value)
         type_df$endpoint_id <- current$id
+        type_df$vendor_id <- current$vendor_id
         type_df$fhir_version <- cs$fhirVersion
         type_df
       } else {

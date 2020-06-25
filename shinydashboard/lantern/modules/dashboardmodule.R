@@ -9,6 +9,8 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+    textOutput(ns("last_updated")),
+    br(),
     fluidRow(
       infoBoxOutput(ns("total_endpoints_box"), width = 4),
       infoBoxOutput(ns("indexed_endpoints_box"), width = 4),
@@ -69,6 +71,8 @@ dashboard <- function(
     filter(!(vendor_name == "Unknown")) %>%
     group_by(vendor_name) %>%
     summarise(total = sum(n))
+  
+  output$last_updated <- renderText(paste("Last Updated:", get_endpoint_last_updated(db_tables)))
   
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
