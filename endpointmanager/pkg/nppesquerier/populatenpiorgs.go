@@ -404,9 +404,9 @@ func readCsv(ctx context.Context, filename string) (*csv.Reader, *os.File, error
 	if err != nil {
 		return nil, nil, err
 	}
-
 	reader := csv.NewReader(f)
-	// return reader
+
+	// return reader and opened file for calling function to close
 	return reader, f, nil
 }
 
@@ -414,19 +414,22 @@ func readCsv(ctx context.Context, filename string) (*csv.Reader, *os.File, error
 func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
 	reader, f, err := readCsv(ctx, fname)
-	defer f.Close()
 	if err != nil {
 		return -1, err
 	}
+	defer f.Close()
+
 	//Remove header
 	line, err := reader.Read()
 	if err != nil {
 		return -1, err
 	}
+
 	added := 0
 	i := 0
 	// Loop through lines & turn into object
 	for {
+
 		line, err = reader.Read()
 		if err == io.EOF {
 			break
@@ -434,6 +437,7 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		if err != nil {
 			return -1, err
 		}
+
 		// break out of loop and return error if context has ended
 		select {
 		case <-ctx.Done():
