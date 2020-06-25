@@ -12,8 +12,4 @@ function(input, output, session) {
    callModule(
     availability,
     "availability_page")
-      
-   callModule(
-    performance,
-    "performance_page") 
 }

@@ -11,9 +11,6 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table"), badgeLabel = "new", badgeColor = "green"),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
-      menuItem("Performance", icon = icon("bar-chart-o"),
-               menuSubItem("Mean Response Time", tabName = "performance_tab")
-      ),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       hr()
@@ -30,9 +27,6 @@ ui <- dashboardPage(
       tabItem("endpoints_tab",
               h1("List of Endpoints"),
               endpointsmodule_UI("endpoints_page")
-      ),
-      tabItem("performance_tab",
-              performance_UI("performance_page")
       ),
       tabItem("availability_tab",
               availability_UI("availability_page")
