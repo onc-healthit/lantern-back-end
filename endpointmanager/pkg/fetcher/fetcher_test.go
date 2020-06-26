@@ -31,14 +31,14 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	// test default list
 
 	var expectedEndpoints = 397
-	var endpoints, _ = GetEndpointsFromFilepath("../resources/EndpointSources.json", "CareEvolution")
+	var endpoints, _ = GetEndpointsFromFilepath("../../resources/EndpointSources.json", "CareEvolution")
 	var endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test epic list
 
 	expectedEndpoints = 364
-	endpoints, _ = GetEndpointsFromFilepath("../resources/EpicEndpointSources.json", "Epic")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
