@@ -109,10 +109,7 @@ func (v *r4Validation) HTTPResponseValid(httpResponse int) endpointmanager.Rule 
 	baseRule := v.baseVal.HTTPResponseValid(httpResponse)
 	baseRule.Reference = "http://hl7.org/fhir/http.html"
 	baseRule.ImplGuide = "USCore 3.1"
-	if (httpResponse != 0) && (httpResponse != 200) {
-		strResp := strconv.Itoa(httpResponse)
-		baseRule.Comment = "The HTTP response code was " + strResp + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point."
-	}
+	baseRule.Comment = baseRule.Comment + "Applications SHALL return a resource that describes the functionality of the server end-point."
 	return baseRule
 }
 
@@ -122,7 +119,7 @@ func (v *r4Validation) TLSVersion(tlsVersion string) endpointmanager.Rule {
 		Valid:     true,
 		Expected:  "TLS 1.2, TLS 1.3",
 		Actual:    tlsVersion,
-		Comment:   "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection.",
+		Comment:   "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection.",
 		Reference: "https://www.hl7.org/fhir/us/core/security.html",
 		ImplGuide: "USCore 3.1",
 	}
@@ -153,22 +150,19 @@ func (v *r4Validation) OtherResourceExists(capStat capabilityparser.CapabilitySt
 func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpointmanager.RuleOption) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName:  rule,
-		Valid:     true,
+		Valid:     false,
+		Actual:    "false",
 		Expected:  "true",
 		ImplGuide: "USCore 3.1",
 	}
 
 	if capStat == nil {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
 		ruleError.Comment = "The Capability Statement does not exist; cannot check resource profiles. "
 		return ruleError
 	}
 
 	rest, err := capStat.GetRest()
 	if err != nil {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
 		ruleError.Comment = "Rest field does not exist. "
 		return ruleError
 	}
@@ -177,38 +171,34 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 	for _, restElem := range rest {
 		resourceList, err := capStat.GetResourceList(restElem)
 		if err != nil || len(resourceList) == 0 {
-			ruleError.Valid = false
-			ruleError.Actual = "false"
 			ruleError.Comment = "The Resource Profiles do not exist. "
 			return ruleError
 		}
 		for _, resource := range resourceList {
 			typeVal := resource["type"]
 			if typeVal == nil {
-				ruleError.Valid = false
-				ruleError.Actual = "false"
 				ruleError.Comment = "The Resource Profiles are not properly formatted. "
 				return ruleError
 			}
 			typeStr, ok := typeVal.(string)
 			if !ok {
-				ruleError.Valid = false
-				ruleError.Actual = "false"
 				ruleError.Comment = "The Resource Profiles are not properly formatted. "
 				return ruleError
 			}
 			if rule == endpointmanager.OtherResourceExists {
 				if stringInList(typeStr, usCoreProfiles) {
+					ruleError.Valid = true
+					ruleError.Actual = "true"
 					return ruleError
 				}
 			} else if rule == endpointmanager.PatResourceExists {
 				if typeStr == "Patient" {
+					ruleError.Valid = true
+					ruleError.Actual = "true"
 					return ruleError
 				}
 			} else if rule == endpointmanager.UniqueResourcesRule {
 				if stringInList(typeStr, uniqueRecs) {
-					ruleError.Valid = false
-					ruleError.Actual = "false"
 					ruleError.Comment = fmt.Sprintf("The resource type %s is not unique. ", typeStr)
 					return ruleError
 				}
@@ -216,13 +206,9 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 			} else if rule == endpointmanager.SearchParamsRule {
 				check, err := areSearchParamsValid(resource)
 				if err != nil {
-					ruleError.Valid = false
-					ruleError.Actual = "false"
 					ruleError.Comment = ruleError.Comment + fmt.Sprintf("The resource type %s is not formatted properly. ", typeStr)
 				} else {
 					if !check {
-						ruleError.Valid = false
-						ruleError.Actual = "false"
 						ruleError.Comment = ruleError.Comment + fmt.Sprintf("The resource type %s does not have unique searchParams. ", typeStr)
 					}
 				}
@@ -231,10 +217,10 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 	}
 
 	if rule == endpointmanager.UniqueResourcesRule || rule == endpointmanager.SearchParamsRule {
+		ruleError.Valid = true
+		ruleError.Actual = "true"
 		return ruleError
 	}
-	ruleError.Valid = false
-	ruleError.Actual = "false"
 	return ruleError
 }
 
@@ -283,9 +269,9 @@ func (v *r4Validation) MessagingEndpointValid(capStat capabilityparser.Capabilit
 	baseComment := "Messaging end-point is required (and is only permitted) when a statement is for an implementation. This endpoint must be an implementation."
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.MessagingEndptRule,
-		Valid:     true,
+		Valid:     false,
 		Expected:  "true",
-		Actual:    "true",
+		Actual:    "false",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
@@ -293,28 +279,24 @@ func (v *r4Validation) MessagingEndpointValid(capStat capabilityparser.Capabilit
 
 	kindRule := v.baseVal.KindValid(capStat)
 	if !kindRule[0].Valid {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
 		ruleError.Comment = kindRule[0].Comment + " " + baseComment
 		return ruleError
 	}
 	messaging, err := capStat.GetMessaging()
-	if err != nil {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
+	if err != nil || len(messaging) == 0 {
 		ruleError.Comment = "Messaging does not exist. " + baseComment
 		return ruleError
 	}
 	for _, message := range messaging {
 		endpoints, err := capStat.GetMessagingEndpoint(message)
 		if err != nil || len(endpoints) == 0 {
-			ruleError.Valid = false
-			ruleError.Actual = "false"
 			ruleError.Comment = "Endpoint field in Messaging does not exist. " + baseComment
 			return ruleError
 		}
 	}
 
+	ruleError.Valid = true
+	ruleError.Actual = "true"
 	return ruleError
 }
 
@@ -326,7 +308,7 @@ func (v *r4Validation) EndpointFunctionValid(capStat capabilityparser.Capability
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.EndptFunctionRule,
 		Valid:     true,
-		Expected:  "rest OR messaging OR document",
+		Expected:  "rest, messaging, document",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
@@ -364,7 +346,7 @@ func (v *r4Validation) DescribeEndpointValid(capStat capabilityparser.Capability
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.DescribeEndptRule,
 		Valid:     true,
-		Expected:  "description OR software OR implementation",
+		Expected:  "description, software, implementation",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
@@ -399,22 +381,22 @@ func (v *r4Validation) DocumentSetValid(capStat capabilityparser.CapabilityState
 	baseComment := "The set of documents must be unique by the combination of profile and mode."
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.DocumentValidRule,
-		Valid:     true,
+		Valid:     false,
 		Expected:  "true",
-		Actual:    "true",
+		Actual:    "false",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
 	}
 	document, err := capStat.GetDocument()
 	if err != nil {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
 		ruleError.Comment = "Document field is not formatted correctly. Cannot check if the set of documents are unique. " + baseComment
 		return ruleError
 	}
 	if err == nil && len(document) == 0 {
-		ruleError.Comment = "Document field does not exist."
+		ruleError.Valid = true
+		ruleError.Actual = "true"
+		ruleError.Comment = "Document field does not exist, but is not required. " + baseComment
 		return ruleError
 	}
 	var uniqueIDs []string
@@ -442,19 +424,17 @@ func (v *r4Validation) DocumentSetValid(capStat capabilityparser.CapabilityState
 		}
 		id := profileStr + "." + modeStr
 		if stringInList(id, uniqueIDs) {
-			ruleError.Valid = false
-			ruleError.Actual = "false"
 			ruleError.Comment = "The set of documents are not unique. " + baseComment
 			return ruleError
 		}
 		uniqueIDs = append(uniqueIDs, id)
 	}
 	if invalid {
-		ruleError.Valid = false
-		ruleError.Actual = "false"
 		ruleError.Comment = "Document field is not formatted correctly. Cannot check if the set of documents are unique. " + baseComment
 		return ruleError
 	}
+	ruleError.Valid = true
+	ruleError.Actual = "true"
 	return ruleError
 }
 

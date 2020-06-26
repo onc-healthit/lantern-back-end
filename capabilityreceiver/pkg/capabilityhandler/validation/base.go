@@ -55,6 +55,7 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 		Valid:    true,
 		Expected: "true",
 		Actual:   "true",
+		Comment:  "The Capability Statement exists.",
 	}
 
 	if capStat != nil {
@@ -63,6 +64,7 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 
 	ruleError.Valid = false
 	ruleError.Actual = "false"
+	ruleError.Comment = "The Capability Statement does not exist."
 	return ruleError
 }
 
@@ -74,6 +76,13 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 		Expected: "",
 		Actual:   mimeString,
 		Comment:  "",
+	}
+
+	if len(mimeTypes) == 0 {
+		ruleError.Valid = false
+		ruleError.Expected = "N/A"
+		ruleError.Comment = "No mime type given; cannot validate mime type."
+		return ruleError
 	}
 
 	if len(fhirVersion) == 0 {
@@ -126,6 +135,9 @@ func (bv *baseVal) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
 
 	if httpResponse == 0 {
 		ruleError.Comment = "The GET request failed with no returned HTTP response status code."
+	} else {
+		strResp := strconv.Itoa(httpResponse)
+		ruleError.Comment = "The HTTP response code was " + strResp + " instead of 200. "
 	}
 
 	ruleError.Valid = false
@@ -171,11 +183,20 @@ func (bv *baseVal) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule
 }
 
 func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
+	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	ruleError := endpointmanager.Rule{
 		RuleName: endpointmanager.KindRule,
 		Valid:    true,
 		Expected: "instance",
-		Comment:  "Kind value should be set to 'instance' because this is a specific system instance.",
+		Comment:  baseComment,
+	}
+	if capStat == nil {
+		ruleError.Valid = false
+		ruleError.Comment = "Capability Statement does not exist; cannot check kind value. " + baseComment
+		returnVal := []endpointmanager.Rule{
+			ruleError,
+		}
+		return returnVal
 	}
 	kind, err := capStat.GetKind()
 	if err != nil {
