@@ -117,8 +117,9 @@ get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- c(vendor_list, vl)
 }
 
+# iterate over capability statements and extract table of resource types
 get_fhir_resources_tbl <- function(db_tables) {
-  fei <- db_tables$fhir_endpoints_info %>% collect() %>% head(100)
+  fei <- db_tables$fhir_endpoints_info %>% collect() 
   res <- fei %>%
     purrr::pmap_dfr(function(...) {
       current <- tibble(...)
@@ -133,6 +134,7 @@ get_fhir_resources_tbl <- function(db_tables) {
       } else {
         NULL
       }
-    })
+    }) %>%
+    left_join(db_tables$vendors %>% select(id, vendor_name=name) %>% collect(), by = c("vendor_id" = "id"))
 }
 
