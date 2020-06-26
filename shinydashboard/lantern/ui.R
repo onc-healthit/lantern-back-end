@@ -47,6 +47,9 @@ ui <- dashboardPage(
               h1("About Lantern"),
               img(src = "images/lantern-logo@1x.png", width = "300px"),
               p("This is a description of Lantern, the dashboard, the project, etc. "))
+    ),
+    div(class = "footer",
+      includeHTML("disclaimer.html")
     )
   )
 )
