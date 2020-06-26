@@ -47,7 +47,8 @@ ui <- dashboardPage(
               h1("About Lantern"),
               img(src = "images/lantern-logo@1x.png", width = "300px"),
               br(),
-              mainPanel(includeHTML("about-lantern.html"))
+              mainPanel(includeHTML("about-lantern.html"),
+              p("For information about the data sources and algorithms used by Lantern, please see the", a("documentation available here", href= "Lantern_Data_Sources_And_Algorithms.pdf")))
       ),
       div(class = "footer",
       includeHTML("disclaimer.html")
