@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityhandler/validation"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 
