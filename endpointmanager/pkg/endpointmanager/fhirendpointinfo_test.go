@@ -79,6 +79,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			"messaging":                  false,
 			"document":                   false,
 		},
+		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
 		CapabilityStatement: cs}
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                1,
@@ -136,6 +137,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			"messaging":                  false,
 			"document":                   false,
 		},
+		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
 		CapabilityStatement: cs}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
@@ -239,6 +241,20 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields, endpointInfo2.IncludedFields)
 	}
 	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
+
+	endpointInfo2.SupportedResources = []string{"other"}
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedResources should be different. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+	}
+	endpointInfo2.SupportedResources = []string{"AllergyIntolerance", "Binary", "other"}
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedResources should be different. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+	}
+	endpointInfo2.SupportedResources = []string{"Binary", "CarePlan", "AllergyIntolerance"}
+	if !endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. SupportedResources are same but in different order. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+	}
+	endpointInfo2.SupportedResources = endpointInfo1.SupportedResources
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

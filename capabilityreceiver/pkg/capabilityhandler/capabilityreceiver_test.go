@@ -2,6 +2,7 @@ package capabilityhandler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -89,16 +90,46 @@ var testIncludedFields = map[string]bool{
 	"document":                   false,
 }
 
+var testSupportedResources = []string{
+	"Conformance",
+	"AllergyIntolerance",
+	"Appointment",
+	"Binary",
+	"CarePlan",
+	"Condition",
+	"Contract",
+	"Device",
+	"DiagnosticReport",
+	"DocumentReference",
+	"Encounter",
+	"Goal",
+	"Immunization",
+	"MedicationAdministration",
+	"MedicationOrder",
+	"MedicationStatement",
+	"Observation",
+	"OperationDefinition",
+	"Patient",
+	"Person",
+	"Practitioner",
+	"Procedure",
+	"ProcedureRequest",
+	"RelatedPerson",
+	"Schedule",
+	"Slot",
+	"StructureDefinition"}
+
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:               "http://example.com/DTSU2/",
-	MIMETypes:         []string{"application/json+fhir"},
-	TLSVersion:        "TLS 1.2",
-	HTTPResponse:      200,
-	Errors:            "",
-	SMARTHTTPResponse: 0,
-	SMARTResponse:     nil,
-	Validation:        testValidationObj,
-	IncludedFields:    testIncludedFields,
+	URL:                "http://example.com/DTSU2/",
+	MIMETypes:          []string{"application/json+fhir"},
+	TLSVersion:         "TLS 1.2",
+	HTTPResponse:       200,
+	Errors:             "",
+	SMARTHTTPResponse:  0,
+	SMARTResponse:      nil,
+	Validation:         testValidationObj,
+	IncludedFields:     testIncludedFields,
+	SupportedResources: testSupportedResources,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -213,4 +244,14 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields["contact"] == true, "Expected contact in includedFields to be true, was false")
 
+}
+
+func Test_RunSupportedResourcesChecks(t *testing.T) {
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
+	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
+	supportedResources := RunSupportedResourcesChecks(capInt)
+	th.Assert(t, len(supportedResources) == 27, fmt.Sprintf("Expected there to be 27 supported resources in supportedResources array, were %v", len(supportedResources)))
+	th.Assert(t, contains(supportedResources, "ProcedureRequest"), "Expected supportedResources to contain ProcedureRequest resource type")
+	th.Assert(t, contains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
+	th.Assert(t, !contains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
 }
