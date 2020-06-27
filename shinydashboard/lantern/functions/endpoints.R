@@ -135,6 +135,8 @@ get_fhir_resources_tbl <- function(db_tables) {
         NULL
       }
     }) %>%
-    left_join(db_tables$vendors %>% select(id, vendor_name=name) %>% collect(), by = c("vendor_id" = "id"))
+    left_join(db_tables$vendors %>% select(id, vendor_name=name) %>% collect(), by = c("vendor_id" = "id")) %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) 
+    
 }
 
