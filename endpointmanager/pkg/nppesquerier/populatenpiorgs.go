@@ -389,9 +389,8 @@ func buildNPIOrgFromNPICsvLine(data NPICsvLine) (*endpointmanager.NPIOrganizatio
 	return npiOrg, nil
 }
 
-// ReadCsv accepts a file and returns its content as a multi-dimentional type
-// with lines and each column. Only parses to string type.
-func readCsv(ctx context.Context, filename string) (*csv.Reader, *os.File, error) {
+// csvReader accepts a file and returns a csv Reader and the opened file to be closed by the calling function
+func csvReader(ctx context.Context, filename string) (*csv.Reader, *os.File, error) {
 	select {
 	case <-ctx.Done():
 		return nil, nil, errors.Wrap(ctx.Err(), "did not read csv; context ended")
@@ -413,7 +412,7 @@ func readCsv(ctx context.Context, filename string) (*csv.Reader, *os.File, error
 // ParseAndStoreNPIFile parses NPI Org data out of fname, writes it to store and returns the number of organizations processed
 func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.Store) (int, error) {
 	// Provider organization .csv downloaded from http://download.cms.gov/nppes/NPI_Files.html
-	reader, f, err := readCsv(ctx, fname)
+	reader, f, err := csvReader(ctx, fname)
 	if err != nil {
 		return -1, err
 	}
@@ -447,7 +446,7 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		}
 
 		if i%10000 == 0 {
-			log.Infof("Processed %d/%d NPI entities. Added %d organizations.\n", i, len(line), added)
+			log.Infof("Processed %d NPI entities. Added %d organizations.\n", i, added)
 		}
 
 		data := parseNPIdataLine(line)
