@@ -48,10 +48,10 @@ ui <- dashboardPage(
               img(src = "images/lantern-logo@1x.png", width = "300px"),
               br(),
               mainPanel(includeHTML("about-lantern.html"),
-              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the", a("documentation available here.", href= "Lantern_Data_Sources_And_Algorithms.pdf", target="_blank")))
-      ),
-      div(class = "footer",
-      includeHTML("disclaimer.html")
+              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the", a("documentation available here.", href= "Lantern_Data_Sources_And_Algorithms.pdf", target="_blank"))))
+    ),
+    div(class = "footer",
+    includeHTML("disclaimer.html")
     )
   )
 )
