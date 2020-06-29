@@ -238,6 +238,9 @@ func (v *r4Validation) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.
 	return baseRule
 }
 
+// KindValid checks 2 Rules: The first, which is the baseVal rule, is that kind = instance since all of the
+// endpoints we are looking at are for server instances. It then checks the rule: "If kind = instance,
+// implementation should be present."
 func (v *r4Validation) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
 	var rules []endpointmanager.Rule
 	baseRule := v.baseVal.KindValid(capStat)

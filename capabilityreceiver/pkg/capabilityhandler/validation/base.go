@@ -199,7 +199,7 @@ func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []end
 		return returnVal
 	}
 	kind, err := capStat.GetKind()
-	if err != nil {
+	if err != nil || len(kind) == 0 {
 		ruleError.Valid = false
 	}
 	ruleError.Actual = kind
