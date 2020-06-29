@@ -493,11 +493,11 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	// List of endpoint urls that were removed in TestEndpointSources_1.json
 	fhir_urls := []string{"https://eloh-mapilive.primehealthcare.com/v1/argonaut/v1/",
-				"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/", 
-				"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
-				"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
-				"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
-				"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
+		"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
+		"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
 
 	expected_deleted_endpt := 6
 	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")
@@ -520,7 +520,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		var endpoint_id string
 		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
 		err = store.DB.QueryRow(query_str, url).Scan(&endpoint_id)
-		th.Assert(t, err ==  sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
+		th.Assert(t, err == sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
 	}
 }
 func Test_MetricsAvailableInQuerier(t *testing.T) {
