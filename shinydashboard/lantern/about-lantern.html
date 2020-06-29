@@ -3,14 +3,9 @@
     <body>
         <h3>What is Lantern?</h3>
         <p>
-            Lantern is an open source tool for monitoring fielded health IT systems’ certified FHIR API endpoints.
-            It gathers uptime, response time, capability statements, and more from FHIR API endpoints, and provides visualizations to 
-            show FHIR adoption and patient data availability across the nation, as well as details for specific FHIR API endpoints. 
-            Lantern helps to ensure that patients will have digital access to their data by providing visibility into levels of FHIR adoption 
-            and FHIR endpoint availability and usablity. The results will be viewed by the Office of the National Coordinator for Health Information 
-            Technology (ONC), supporting the adoption of health information technology and the promotion of nationwide health information exchange. 
-            The visualizations and data that Lantern provides to the ONC will reduce the ONC’s effort to evaluate the use of the FHIR standard, inform 
-            future ONC program criteria for the FHIR standard, and reduce ONC’s risk of adopting immature standards in future ONC program criteria.  
+            Lantern is an open source tool for monitoring fielded health IT systems’ certified FHIR API endpoints. It gathers availability information and information about 
+            FHIR support from endpoints’ capability statements and provides visualizations to show FHIR adoption and patient data availability across the nation. Lantern helps to ensure 
+            that patients will have digital access to their data by providing visibility into levels of FHIR adoption and FHIR endpoint availability and usability. 
             
         </p>
         <h3>Who developed Lantern?</h3>
@@ -23,12 +18,9 @@
         </p>
         <h3>What data does Lantern collect, and how is it collected?</h3>
         <p>
-            Lantern provides its monitoring service to ONC by collecting all known FHIR API endpoints for health IT systems certified under ONC’s Health IT
-            Certification Program, querying the FHIR APIs to establish their availability, and monitoring changes to the FHIR APIs that may signal noncompliance. 
-            Lantern also gathers information on the certified health IT products, their vendor organizations, and existing health provider organizations, 
-            and links the FHIR APIs to those products and organizations when possible. Lantern gathers and combines data from FHIR API endpoints​, from the Epic, Cerner, 
-            and CareEvolution endpoint lists​, from the Certified Health IT Product List (CHPL) database for product and vendor information, and from the  National Plan & Provider Enumeration System (NPPES) 
-            for provider organization information.
+            Lantern queries FHIR API endpoints that are published in lists made publicly available by  health IT system vendors, querying the FHIR APIs to establish their availability, 
+            and monitoring changes to the FHIR APIs that may signal noncompliance. Lantern gathers and combines data from FHIR API endpoints​, from the Certified Health IT Product List 
+            (CHPL) database for product and vendor information, and from the National Plan & Provider Enumeration System (NPPES) for provider organization information and links the FHIR APIs to those products and organizations when possible.
         </p>
         <h3>Data Sources, Algorithms, and Query Intervals</h3>
         <p>
