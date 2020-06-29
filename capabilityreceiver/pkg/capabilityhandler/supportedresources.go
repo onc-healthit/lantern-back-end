@@ -5,10 +5,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) []string {
 		return nil
 	}
 	var supportedResources []string
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4342bf8... Updated testing for supported resources
 
 	if capInt["rest"] == nil {
 		return nil
@@ -29,11 +25,5 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) []string {
 		supportedResources = append(supportedResources, resourceType)
 	}
 
-<<<<<<< HEAD
-=======
-	supportedResources = append(supportedResources, "testing")
->>>>>>> 2bb54b1... Making supported resources file
-=======
->>>>>>> 4342bf8... Updated testing for supported resources
 	return supportedResources
 }
