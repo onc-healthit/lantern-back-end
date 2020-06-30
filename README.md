@@ -445,6 +445,28 @@ brew install golangci/tap/golangci-lint
 ```
 More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
 
+## Running Shiny Load Test
+To run a load test, install shiny load test and shiny cannon [here](https://rstudio.github.io/shinyloadtest/)
+
+Record a user session in the R console
+```
+shinyloadtest::record_session('http://localhost:3838/', output_file = '/path/to/output/recording.log')
+```
+This will open a browser with the shiny dashboard loaded. Interact with the app and close the tab/browser to end session recording.
+
+Run a load test in the terminal using the recorded session
+```
+shinycannon <path/to/recording.log> http://localhost:3838/ --workers 5 --loaded-duration-minutes 2 --output-dir /Path/for/output/run
+```
+The workers are number of concurrent users to simulate. The loaded duration minutes is how long to run the test for once it warms up (reaches the specified number of workers). A worker will repeat the session as many times as possible within the loaded duration. 
+
+Analyze the results
+```
+df <- shinyloadtest::load_runs("5 workers" = "/path/to/test/run")
+shinyloadtest::shinyloadtest_report(df, "/path/for/output/report.html")
+```
+This will load the results of the test run into a dataframe then generate a report. 
+
 ## GoMod
 If you make changes in one package and would like to use those changes in another package that depends on the first package that you change, commit your code and run `make update_mods branch=<your_working_branch>` This is especially relevant when running your new code in docker images built for the e2e, capabilityquerier and networkstatsquerier branches as the go.mod files are what will be used to determine which versions of the packages should be checked out when the docker images are built. Your final commit in a PR should be the go.mod and go.sum updates that occur as a result of running `make update_mods branch=<your_working_branch>`
 
