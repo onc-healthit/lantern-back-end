@@ -59,10 +59,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: endpoints-to-capability
 
-* **LANTERN_ENDPTINFO_NETSTATS_QNAME**: The name of the queue used by the endpointmanager and the networkstatsquerier.
-
-  Default value: endpoints-to-netstats
-
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:
@@ -78,10 +74,6 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 * **LANTERN_TEST_DBNAME** instead of LANTERN_DBNAME: The name of the database being accessed.
 
   Default value: lantern_test
-
-* **LANTERN_TEST_ENDPTINFO_NETSTATS_QNAME** instead of LANTERN_ENDPTINFO_NETSTATS_QNAME: The name of the queue being accessed.
-
-  Default value: test-endpoints-to-netstats
 
 ## Packages
 
@@ -193,3 +185,22 @@ To run, perform the following commands:
 cd endpointmanager/cmd/nppesorgpopulator
 go run main.go <path to nppes csv file>
 ```
+
+### Expected Endpoint Source Formatting
+
+The Endpoint Manager expects the format of an endpoint source list to be in the below format, unless one of the exceptions noted below.
+
+```
+{
+  "Entries": [
+    {
+      "OrganizationName": <name of the organization>,
+      "FHIRPatientFacingURI": <location of the FHIR endpoint>
+    },
+    ...
+  ]
+}
+```
+
+Exceptions:
+* Cerner

@@ -11,7 +11,6 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
-      menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("Capability", icon=icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
@@ -30,9 +29,6 @@ ui <- dashboardPage(
       tabItem("endpoints_tab",
               endpointsmodule_UI("endpoints_page")
       ),
-      tabItem("performance_tab",
-              performance_UI("performance_page")
-      ),
       tabItem("availability_tab",
               availability_UI("availability_page")
       ),
@@ -47,7 +43,12 @@ ui <- dashboardPage(
       ),
       tabItem("about_tab",
               img(src = "images/lantern-logo@1x.png", width = "300px"),
-              p("This is a description of Lantern, the dashboard, the project, etc. "))
+              br(),
+              includeHTML("about-lantern.html"),
+              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the", a("documentation available here.", href= "Lantern_Data_Sources_And_Algorithms.pdf", target="_blank")))
+    ),
+    div(class = "footer",
+    includeHTML("disclaimer.html")
     )
   )
 )

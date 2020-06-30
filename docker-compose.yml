@@ -1,25 +1,8 @@
 version: '3'
 
 services:
-  endpoint_querier:
-    build: 
-      context: ./networkstatsquerier
-    depends_on:
-        - lantern-mq
-    restart: on-failure
-    environment:
-        - LANTERN_QUSER=${LANTERN_QUSER}
-        - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
-        - LANTERN_QHOST=${LANTERN_QHOST}
-        - LANTERN_QPORT=${LANTERN_QPORT}
-        - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
-        - LANTERN_ENDPTQRY_NUMWORKERS=${LANTERN_ENDPTQRY_NUMWORKERS}
-    volumes:
-        - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
-
-  pg_prometheus:
-    image: timescale/pg_prometheus:latest-pg11
+  postgres:
+    image: postgres:11.8
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./scripts/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
@@ -30,30 +13,6 @@ services:
       - POSTGRES_DB=${LANTERN_DBNAME}
     command:
       -csynchronous_commit=off
-
-  prometheus_postgresql_adapter:
-    image: timescale/prometheus-postgresql-adapter
-    depends_on:
-      - pg_prometheus
-    restart: on-failure
-    volumes:
-      - ./scripts/pause_start_prometheus_postgresql_adapter.sh:/pause_start_prometheus_postgresql_adapter.sh
-    entrypoint: "/pause_start_prometheus_postgresql_adapter.sh"
-    command:
-      -pg-host=pg_prometheus
-      -pg-password=${LANTERN_DBPASSWORD}
-      -pg-database=${LANTERN_DBNAME}
-      -pg-user=${LANTERN_DBUSER}
-      -pg-prometheus-log-samples
-
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - prometheusData:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml 
-    depends_on:
-      - prometheus_postgresql_adapter
-      - pg_prometheus
   
   lantern-mq:
     image: rabbitmq:3-management
@@ -67,7 +26,7 @@ services:
       context: ./endpointmanager
     depends_on:
       - lantern-mq
-      - pg_prometheus
+      - postgres
     restart: on-failure
     environment:
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
@@ -84,12 +43,11 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
-      - LANTERN_ENDPTINFO_NETSTATS_QNAME=${LANTERN_ENDPTINFO_NETSTATS_QNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
       - ./resources/prod_resources/:/etc/lantern/resources
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
   
   capability_querier:
     build: 
@@ -114,7 +72,7 @@ services:
       context: ./capabilityreceiver
     depends_on:
       - lantern-mq
-      - pg_prometheus
+      - postgres
     restart: on-failure
     environment:
       - LANTERN_DBHOST=${LANTERN_DBHOST}
@@ -130,7 +88,7 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   shinydashboard:
     build:
@@ -144,14 +102,13 @@ services:
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
     image: lantern_shinydashboard:current
     depends_on:
-      - pg_prometheus
+      - postgres
     volumes:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server
 
 volumes:
   pgdata:
-  prometheusData:
   rabbitmqdata:
 
 

@@ -18,10 +18,6 @@ function(input, output, session) {
     "availability_page")
 
   callModule(
-    performance,
-    "performance_page") 
-
-  callModule(
     capabilitymodule,
     "capability_page",
     reactive(input$fhir_version),

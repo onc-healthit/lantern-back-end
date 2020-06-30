@@ -5,7 +5,6 @@ package integration_tests
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,7 +12,6 @@ import (
 	"os"
 	"reflect"
 	"strconv"
-	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -31,7 +29,7 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
-	"github.com/onc-healthit/lantern-back-end/networkstatsquerier/fetcher"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 	Assert "github.com/stretchr/testify/assert"
@@ -214,7 +212,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 32 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 36 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to multiple orgs
@@ -380,7 +378,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 		Name:                  "Intuitive Medical Document",
 		Version:               "2.0",
 		VendorID:              vend.ID,
-		CertificationStatus:   "Active",
+		CertificationStatus:   "Retired",
 		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2014",
 		CHPLID:                "CHP-029177",
@@ -493,11 +491,11 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	// List of endpoint urls that were removed in TestEndpointSources_1.json
 	fhir_urls := []string{"https://eloh-mapilive.primehealthcare.com/v1/argonaut/v1/",
-				"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/", 
-				"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
-				"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
-				"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
-				"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
+		"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
+		"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
+		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
+		"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
 
 	expected_deleted_endpt := 6
 	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")
@@ -520,156 +518,6 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		var endpoint_id string
 		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
 		err = store.DB.QueryRow(query_str, url).Scan(&endpoint_id)
-		th.Assert(t, err ==  sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
+		th.Assert(t, err == sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
 	}
-}
-func Test_MetricsAvailableInQuerier(t *testing.T) {
-	var err error
-	netQueue := viper.GetString("endptinfo_netstats_qname")
-	queueIsEmpty(t, netQueue)
-	defer checkCleanQueue(t, netQueue, channel)
-
-	// Set-up the test queue
-	var mq lanternmq.MessageQueue
-	var chID lanternmq.ChannelID
-	mq, chID, err = aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, netQueue)
-	defer mq.Close()
-	th.Assert(t, err == nil, err)
-	th.Assert(t, mq != nil, "expected message queue to be created")
-	th.Assert(t, chID != nil, "expected channel ID to be created")
-
-	ctx := context.Background()
-	sendEndpointsOverQueue(ctx, t, netQueue, mq, chID)
-
-	var client http.Client
-	resp, err := client.Get("http://endpoint_querier:3333/metrics")
-	failOnError(err)
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("Error retrieving metrics from endpoint querier")
-	}
-
-	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
-	// during a run
-	possibleUrls := [5]string{
-		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
-		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
-		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
-		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
-		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
-	}
-
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	failOnError(err)
-
-	bodyString := string(bodyBytes)
-
-	requestCheck := false
-	httpRespCheck := false
-	uptimeCheck := false
-
-	for _, url := range possibleUrls {
-		reqFormat := fmt.Sprintf("AllEndpoints_http_request_responses{url=\"%s\"} 200", url)
-		if strings.Contains(bodyString, reqFormat) {
-			requestCheck = true
-		}
-
-		respFormat := fmt.Sprintf("AllEndpoints_http_response_time{url=\"%s\"}", url)
-		if strings.Contains(bodyString, respFormat) {
-			httpRespCheck = true
-		}
-
-		uptimeFormat := fmt.Sprintf("AllEndpoints_total_uptime_checks{url=\"%s\"}", url)
-		if strings.Contains(bodyString, uptimeFormat) {
-			uptimeCheck = true
-		}
-	}
-
-	th.Assert(t, requestCheck == true, "Endpoint querier missing or incorrect response code metric for all tested URLs")
-	th.Assert(t, httpRespCheck == true, "Endpoint querier missing response time metric for all tested URLs")
-	th.Assert(t, uptimeCheck == true, "Endpoint querier missing uptime checks metric for all tested URLs")
-}
-func Test_QuerierAvailableToPrometheus(t *testing.T) {
-	type PrometheusTargets struct {
-		Status string `json:"status"`
-		Data   struct {
-			ActiveTargets []struct {
-				DiscoveredLabels struct {
-					Address     string `json:"__address__"`
-					MetricsPath string `json:"__metrics_path__"`
-					Scheme      string `json:"__scheme__"`
-					Job         string `json:"job"`
-				} `json:"discoveredLabels"`
-				Labels struct {
-					Instance string `json:"instance"`
-					Job      string `json:"job"`
-				} `json:"labels"`
-				ScrapeURL  string    `json:"scrapeUrl"`
-				LastError  string    `json:"lastError"`
-				LastScrape time.Time `json:"lastScrape"`
-				Health     string    `json:"health"`
-			} `json:"activeTargets"`
-			DroppedTargets []interface{} `json:"droppedTargets"`
-		} `json:"data"`
-	}
-	var client http.Client
-
-	resp, err := client.Get("http://prometheus:9090/api/v1/targets")
-	failOnError(err)
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("Error retrieving active targets from prometheus")
-	}
-
-	var targets = new(PrometheusTargets)
-	err = json.NewDecoder(resp.Body).Decode(targets)
-	failOnError(err)
-
-	if targets.Data.ActiveTargets[0].Health != "up" {
-		t.Fatalf("Prometheus is not reporting the endpoint_querier as being up")
-	}
-}
-
-func Test_MetricsWrittenToPostgresDB(t *testing.T) {
-	var err error
-	ctx := context.Background()
-	response_time_rows, err := store.DB.QueryContext(ctx, "SELECT * FROM metrics_labels WHERE metric_name = 'AllEndpoints_http_response_time';")
-	failOnError(err)
-
-	// Random set of URLs in the TestEndpointSources, unlikely that all 5 of them will have failed
-	// during a run
-	possibleUrls := [5]string{
-		"https://interconnect.lcmchealth.org/FHIR/api/FHIR/DSTU2/",
-		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
-		"https://fhir.healow.com/FHIRServer/fhir/IGCGAD/",
-		"https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
-		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
-	}
-
-	isInDB := false
-	defer response_time_rows.Close()
-	for response_time_rows.Next() {
-		var id, metric_name, result_label string
-		err = response_time_rows.Scan(&id, &metric_name, &result_label)
-		for _, url := range possibleUrls {
-			if strings.Contains(result_label, url) {
-				expectedResultLabel := fmt.Sprintf("{\"job\": \"FHIRQUERY\", \"url\": \"%s\", \"instance\": \"endpoint_querier:3333\"}", url)
-				if result_label == expectedResultLabel {
-					isInDB = true
-					break
-				}
-			}
-		}
-		if isInDB {
-			break
-		}
-	}
-	if !isInDB {
-		t.Fatalf("None of the tested URLs were found in AllEndpoints_http_response_time metric")
-	}
-	// TODO add additional queries for other metrics
 }

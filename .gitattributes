@@ -12,5 +12,3 @@ fhir/vendor/* linguist-generated=true
 fhir/vendor/* -diff -merge
 lanternmq/vendor/* linguist-generated=true
 lanternmq/vendor/* -diff -merge
-networkstatsquerier/vendor/* linguist-generated=true
-networkstatsquerier/vendor/* -diff -merge

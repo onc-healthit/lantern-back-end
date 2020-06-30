@@ -35,18 +35,16 @@ populatedb:
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
-	cd ./networkstatsquerier; golangci-lint run -E gofmt
 	cd ./lanternmq; golangci-lint run -E gofmt
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
 
 csv_export:
-	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_pg_prometheus_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
+	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
 
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
-	cd ./networkstatsquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
 	cd ./lanternmq; go test -covermode=atomic -race -count=1 -p 1 ./...
 	cd ./fhir; go test -covermode=atomic -race -count=1 -p 1 ./...
 	cd ./endpointmanager; go test -covermode=atomic -race -count=1 -p 1 ./...
@@ -54,7 +52,6 @@ test:
 
 test_int:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
-	cd ./networkstatsquerier; go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
 	cd ./lanternmq;	go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
 	cd ./fhir; go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
 	cd ./endpointmanager; go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
@@ -75,8 +72,7 @@ test_all:
 
 update_mods:
 	[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
-	cd ./e2e; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityquerier@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityreceiver@$(branch); go mod tidy;
-	cd ./networkstatsquerier; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
-	cd ./capabilityquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
-	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/networkstatsquerier@$(branch); go mod tidy;
+	cd ./e2e; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityquerier@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityreceiver@$(branch); go mod tidy;
+	cd ./capabilityquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
+	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./capabilityreceiver; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
