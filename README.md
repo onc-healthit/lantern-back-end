@@ -156,7 +156,7 @@ See each internal service's README to see how to run that service as a standalon
   For example:
 
   ```
-  psql -h pg_prometheus -p 5432 -U postgres -d postgres -a -f endpointmanager/dbsetup.sql
+  psql -h postgres -p 5432 -U postgres -d postgres -a -f endpointmanager/dbsetup.sql
   ```
 
 * If you don't have postgres installed locally, you can open the database in docker and then copy past the commands from the dbsetup.sql file in. Open the database in docker:
