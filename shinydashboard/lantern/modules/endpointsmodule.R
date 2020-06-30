@@ -3,9 +3,6 @@ library(purrr)
 
 endpointsmodule_UI <- function(id) {
 
-#  fhir_version_list <- get_fhir_version_list(endpoint_export_tbl)
-#  vendor_list <- get_vendor_list(endpoint_export_tbl)
-
   ns <- NS(id)
 
   tagList(

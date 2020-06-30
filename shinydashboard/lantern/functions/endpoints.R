@@ -117,26 +117,23 @@ get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- c(vendor_list, vl)
 }
 
-# iterate over capability statements and extract table of resource types
-get_fhir_resources_tbl <- function(db_tables) {
-  fei <- db_tables$fhir_endpoints_info %>% collect() 
-  res <- fei %>%
-    purrr::pmap_dfr(function(...) {
-      current <- tibble(...)
-      cs <- jsonlite::fromJSON(fei %>% filter(id==current$id) %>% .$capability_statement) 
-      if (!is.null(cs)) {
-        resources <- purrr::pluck(cs,"rest","resource",1)
-        type_df <- as_tibble(resources$type) %>% rename(type=value)
-        type_df$endpoint_id <- current$id
-        type_df$vendor_id <- current$vendor_id
-        type_df$fhir_version <- cs$fhirVersion
-        type_df
-      } else {
-        NULL
-      }
-    }) %>%
-    left_join(db_tables$vendors %>% select(id, vendor_name=name) %>% collect(), by = c("vendor_id" = "id")) %>%
+# Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
+get_fhir_resource_types <- function(db_connection){
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      ORDER BY type")) %>%
+    collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) 
-    
 }
 
+# Summarize count of resource types by type, fhir_version
+get_fhir_resource_count <- function(fhir_resources_tbl){
+  res <- fhir_resources_tbl %>% 
+    group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
+}
