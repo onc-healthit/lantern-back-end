@@ -378,7 +378,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 		Name:                  "Intuitive Medical Document",
 		Version:               "2.0",
 		VendorID:              vend.ID,
-		CertificationStatus:   "Active",
+		CertificationStatus:   "Retired",
 		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2014",
 		CHPLID:                "CHP-029177",
