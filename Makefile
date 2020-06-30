@@ -34,10 +34,10 @@ populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
 backup_database:
-	docker exec lantern-back-end_pg_prometheus_1 pg_dump -Fc -U lantern -d lantern > lantern_backup_`date +%Y%m%d%H%M%S`.sql
+	docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > lantern_backup_`date +%Y%m%d%H%M%S`.sql
 
 restore_database:
-	docker exec -i lantern-back-end_pg_prometheus_1 pg_restore --clean -U lantern -d lantern < $(file)
+	docker exec -i lantern-back-end_postgres_1 pg_restore --clean -U lantern -d lantern < $(file)
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
