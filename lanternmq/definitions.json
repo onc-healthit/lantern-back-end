@@ -9,12 +9,6 @@
             "tags": ""
         },
         {
-            "name": "networkquerier",
-            "password_hash": "pyC94Yu6ew3lvgI64SJ2xf9oROnEFHBsnEE8YJH4mg7v65Oc",
-            "hashing_algorithm": "rabbit_password_hashing_sha256",
-            "tags": ""
-        },
-        {
             "name": "capabilityquerier",
             "password_hash": "9MBpwY2Vy9dT6d64egHZY7f6mbB+uGWYWD3+rYxOMjQ2olOn",
             "hashing_algorithm": "rabbit_password_hashing_sha256",
@@ -53,13 +47,6 @@
             "configure": "",
             "write": ".*",
             "read": ".*"
-        },
-        {
-            "user": "networkquerier",
-            "vhost": "/",
-            "configure": "",
-            "write": ".*",
-            "read": ".*"
         }
     ],
     "topic_permissions": [],
@@ -72,13 +59,6 @@
     ],
     "policies": [],
     "queues": [
-        {
-            "name": "network-info",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
         {
             "name": "capability-statements",
             "vhost": "/",
@@ -101,21 +81,7 @@
             "arguments": {}
         },
         {
-            "name": "endpoints-to-netstats",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
             "name": "test-endpoints-to-capability",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
-        },
-        {
-            "name": "test-endpoints-to-netstats",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,
