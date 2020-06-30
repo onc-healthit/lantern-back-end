@@ -3,8 +3,8 @@ library(purrr)
 
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
-  vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
-  short_name = c("Allscripts", "CareEvolution", "Cerner", "Epic", "MEDITECH", "Unknown"),
+  vendor_name = c("Allscripts", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
+  short_name = c("Allscripts", "Cerner", "Epic", "MEDITECH", "Unknown"),
   stringsAsFactors = FALSE)
 
 # Get Endpoint Totals

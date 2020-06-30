@@ -14,8 +14,8 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/viper"
@@ -27,12 +27,12 @@ var store *postgresql.Store
 var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationNames:    []string{"Access Community Health Network"},
 	FHIRPatientFacingURI: "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
-	ListSource:           "CareEvolution",
+	ListSource:           "Epic",
 }
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"Access Community Health Network"},
 	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
-	ListSource:        "CareEvolution",
+	ListSource:        "Epic",
 }
 
 func TestMain(m *testing.M) {
@@ -70,7 +70,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "CareEvolution")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "Epic")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -85,14 +85,14 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	//	"url": "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
 	// 	"organization_names": {"A Woman's Place"}
 	// }
-	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "CareEvolution")
+	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/", "Epic")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "URL is not what was expected")
 	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"A Woman's Place, LLC"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 10 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources_1.json", "CareEvolution")
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources_1.json", "")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -102,8 +102,8 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-10, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
 	// This endpoint should be removed from table
-	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "CareEvolution")
-	th.Assert(t, err == sql.ErrNoRows, err)	
+	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "")
+	th.Assert(t, err == sql.ErrNoRows, err)
 }
 
 func Test_saveEndpointData(t *testing.T) {
@@ -264,7 +264,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	endpt1 := testFHIREndpoint
 	endpt2 := testFHIREndpoint
 	endpt3 := testFHIREndpoint2
-	
+
 	ctx := context.Background()
 
 	query_str := "SELECT COUNT(*) FROM fhir_endpoints;"
