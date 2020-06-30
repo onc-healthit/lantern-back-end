@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  pg_prometheus:
+  postgres:
     image: postgres:11.8
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -26,7 +26,7 @@ services:
       context: ./endpointmanager
     depends_on:
       - lantern-mq
-      - pg_prometheus
+      - postgres
     restart: on-failure
     environment:
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
@@ -47,7 +47,7 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
       - ./resources/prod_resources/:/etc/lantern/resources
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
   
   capability_querier:
     build: 
@@ -72,7 +72,7 @@ services:
       context: ./capabilityreceiver
     depends_on:
       - lantern-mq
-      - pg_prometheus
+      - postgres
     restart: on-failure
     environment:
       - LANTERN_DBHOST=${LANTERN_DBHOST}
@@ -88,7 +88,7 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh pg_prometheus:5432 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   shinydashboard:
     build:
@@ -102,7 +102,7 @@ services:
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
     image: lantern_shinydashboard:current
     depends_on:
-      - pg_prometheus
+      - postgres
     volumes:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server

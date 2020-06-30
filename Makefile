@@ -41,7 +41,7 @@ lint:
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
 
 csv_export:
-	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_pg_prometheus_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
+	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
 
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...

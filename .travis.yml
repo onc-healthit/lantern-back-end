@@ -49,7 +49,7 @@ jobs:
       - make test
       # integration tests
       # ensure that necessary services are up before starting the integration tests
-      # localhost:5432: pg_prometheus database
+      # localhost:5432: postgres database
       # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       env: LANTERN_QHOST=localhost
