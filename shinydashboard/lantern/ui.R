@@ -46,10 +46,12 @@ ui <- dashboardPage(
       tabItem("about_tab",
               h1("About Lantern"),
               img(src = "images/lantern-logo@1x.png", width = "300px"),
-              p("This is a description of Lantern, the dashboard, the project, etc. "))
+              br(),
+              includeHTML("about-lantern.html"),
+              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the", a("documentation available here.", href= "Lantern_Data_Sources_And_Algorithms.pdf", target="_blank")))
     ),
     div(class = "footer",
-      includeHTML("disclaimer.html")
+    includeHTML("disclaimer.html")
     )
   )
 )
