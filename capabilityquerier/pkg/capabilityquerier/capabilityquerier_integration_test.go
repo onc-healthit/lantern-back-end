@@ -27,7 +27,7 @@ import (
 
 var mq *lanternmq.MessageQueue
 var chID *lanternmq.ChannelID
-var endpoints *fetcher.ListOfEndpoints
+var endpoints fetcher.ListOfEndpoints
 
 var conn *amqp.Connection
 var channel *amqp.Channel
