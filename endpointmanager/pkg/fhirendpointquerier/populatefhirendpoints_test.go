@@ -9,15 +9,15 @@ import (
 )
 
 var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationNames:    []string{"A Woman's Place"},
-	FHIRPatientFacingURI: "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
-	ListSource:           "Cerner",
+	OrganizationNames:    []string{"AdvantageCare Physicians"},
+	FHIRPatientFacingURI: "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
+	ListSource:           "Epic",
 }
 
 var testFHIREndpoint endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
-	OrganizationNames: []string{"A Woman's Place"},
-	URL:               "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
-	ListSource:        "Cerner",
+	OrganizationNames: []string{"AdvantageCare Physicians"},
+	URL:               "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
+	ListSource:        "Epic",
 }
 
 func Test_formatToFHIREndpt(t *testing.T) {
@@ -31,7 +31,7 @@ func Test_formatToFHIREndpt(t *testing.T) {
 	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not get parsed into a FHIREndpoint as expected")
 
 	// test that a trailing '/' is added to the URL
-	endpt.FHIRPatientFacingURI = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2"
+	endpt.FHIRPatientFacingURI = "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
 	fhirEndpt, err = formatToFHIREndpt(&endpt)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.Equal(&expectedFHIREndpt), "EndpointEntry did not get parsed into a FHIREndpoint as expected")
