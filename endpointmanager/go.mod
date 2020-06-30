@@ -12,12 +12,7 @@ require (
 	github.com/gonum/stat v0.0.0-20181125101827-41a0da705a5b
 	github.com/google/go-cmp v0.4.0
 	github.com/lib/pq v1.3.0
-<<<<<<< HEAD
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200625200839-49f4b6e88503
-	github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200625200839-49f4b6e88503
-=======
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200625183640-8dda8c7fcc8a
->>>>>>> First pass prometheus removal
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200630113743-a0476f474233
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.3
