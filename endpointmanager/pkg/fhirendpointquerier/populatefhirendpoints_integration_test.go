@@ -70,7 +70,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "Epic")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "default")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
