@@ -33,7 +33,8 @@ clean_remote:
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
-BACKUP=lantern_backup_`date +%Y%m%d%H%M%S`.sql
+BACKUP?=lantern_backup_`date +%Y%m%d%H%M%S`.sql
+BACKUP:=$(BACKUP)
 backup_database:
 	@docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > "$(BACKUP)"
 	@echo "Database was backed up to $(BACKUP)"
