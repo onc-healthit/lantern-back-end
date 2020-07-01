@@ -28,6 +28,7 @@ func newR4Val() *r4Validation {
 	}
 }
 
+// RunValidation runs all of the defined validation checks
 func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatement,
 	httpResponse int,
 	mimeTypes []string,
@@ -90,6 +91,8 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	return validations
 }
 
+// CapStatExists checks if the capability statement exists using the base function, and then
+// adds specific R4 reference information
 func (v *r4Validation) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	baseRule := v.baseVal.CapStatExists(capStat)
 	baseRule.Comment = "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
@@ -98,6 +101,8 @@ func (v *r4Validation) CapStatExists(capStat capabilityparser.CapabilityStatemen
 	return baseRule
 }
 
+// MimeTypeValid checks if the given mime types include the correct mime type for the given version
+// using the base function, and then adds specific R4 reference information
 func (v *r4Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
 	baseRule.Reference = "http://hl7.org/fhir/http.html"
@@ -105,6 +110,8 @@ func (v *r4Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) end
 	return baseRule
 }
 
+// HTTPResponseValid checks if the given response code is 200 using the base function, and then
+// adds specific R4 reference information
 func (v *r4Validation) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
 	baseRule := v.baseVal.HTTPResponseValid(httpResponse)
 	baseRule.Reference = "http://hl7.org/fhir/http.html"
@@ -113,6 +120,8 @@ func (v *r4Validation) HTTPResponseValid(httpResponse int) endpointmanager.Rule 
 	return baseRule
 }
 
+// TLSVersion checks if the given TLS version string is version 1.2 or higher, which is a
+// USCore security requirement
 func (v *r4Validation) TLSVersion(tlsVersion string) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.TLSVersion,
@@ -131,6 +140,8 @@ func (v *r4Validation) TLSVersion(tlsVersion string) endpointmanager.Rule {
 	return ruleError
 }
 
+// PatientResourceExists checks to see if the Patient resource is included in the resource list,
+// which is a USCore requirement
 func (v *r4Validation) PatientResourceExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	baseComment := "The US Core Server SHALL support the US Core Patient resource profile."
 	returnVal := checkResourceList(capStat, endpointmanager.PatResourceExists)
@@ -139,14 +150,18 @@ func (v *r4Validation) PatientResourceExists(capStat capabilityparser.Capability
 	return returnVal
 }
 
+// OtherResourceExists checks to see if there is another resource besides Patient included
+// in the resource list, which is a USCore requirement
 func (v *r4Validation) OtherResourceExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	baseComment := "The US Core Server SHALL support at least one additional resource profile (besides Patient) from the list of US Core Profiles. "
+	baseComment := "The US Core Server SHALL support at least one additional resource profile (besides Patient) from the list of US Core Profiles."
 	returnVal := checkResourceList(capStat, endpointmanager.OtherResourceExists)
 	returnVal.Comment = returnVal.Comment + baseComment
 	returnVal.Reference = "https://www.hl7.org/fhir/us/core/CapabilityStatement-us-core-server.html"
 	return returnVal
 }
 
+// checkResourceList gets the resources from the Capability statement, which is used in various validation
+// checks, and then runs the given check based on the rule parameter
 func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpointmanager.RuleOption) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName:  rule,
@@ -162,12 +177,13 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 	}
 
 	rest, err := capStat.GetRest()
-	if err != nil {
+	if err != nil || len(rest) == 0 {
 		ruleError.Comment = "Rest field does not exist. "
 		return ruleError
 	}
 
 	var uniqueRecs []string
+	areParamsValid := true
 	for _, restElem := range rest {
 		resourceList, err := capStat.GetResourceList(restElem)
 		if err != nil || len(resourceList) == 0 {
@@ -206,17 +222,19 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 			} else if rule == endpointmanager.SearchParamsRule {
 				check, err := areSearchParamsValid(resource)
 				if err != nil {
+					areParamsValid = false
 					ruleError.Comment = ruleError.Comment + fmt.Sprintf("The resource type %s is not formatted properly. ", typeStr)
-				} else {
-					if !check {
-						ruleError.Comment = ruleError.Comment + fmt.Sprintf("The resource type %s does not have unique searchParams. ", typeStr)
-					}
+					continue
+				}
+				if !check {
+					areParamsValid = false
+					ruleError.Comment = ruleError.Comment + fmt.Sprintf("The resource type %s does not have unique searchParams. ", typeStr)
 				}
 			}
 		}
 	}
 
-	if rule == endpointmanager.UniqueResourcesRule || rule == endpointmanager.SearchParamsRule {
+	if rule == endpointmanager.UniqueResourcesRule || (rule == endpointmanager.SearchParamsRule && areParamsValid) {
 		ruleError.Valid = true
 		ruleError.Actual = "true"
 		return ruleError
@@ -224,6 +242,8 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 	return ruleError
 }
 
+// SmartHTTPResponseValid checks if the SMART-on-FHIR response code is 200 using the base
+// HTTPResponse function, and then adds specific R4 reference information
 func (v *r4Validation) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule {
 	baseComment := "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL."
 	baseRule := v.baseVal.HTTPResponseValid(smartHTTPRsp)
@@ -233,7 +253,7 @@ func (v *r4Validation) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.
 	baseRule.ImplGuide = "USCore 3.1"
 	if (smartHTTPRsp != 0) && (smartHTTPRsp != 200) {
 		strResp := strconv.Itoa(smartHTTPRsp)
-		baseRule.Comment = "The HTTP response code was " + strResp + " instead of 200. Applications SHALL return a resource that describes the functionality of the server end-point. " + baseComment
+		baseRule.Comment = "The HTTP response code was " + strResp + " instead of 200. " + baseComment
 	}
 	return baseRule
 }
@@ -311,7 +331,7 @@ func (v *r4Validation) EndpointFunctionValid(capStat capabilityparser.Capability
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.EndptFunctionRule,
 		Valid:     true,
-		Expected:  "rest, messaging, document",
+		Expected:  "rest,messaging,document",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
@@ -349,7 +369,7 @@ func (v *r4Validation) DescribeEndpointValid(capStat capabilityparser.Capability
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.DescribeEndptRule,
 		Valid:     true,
-		Expected:  "description, software, implementation",
+		Expected:  "description,software,implementation",
 		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 		ImplGuide: "USCore 3.1",
@@ -425,6 +445,7 @@ func (v *r4Validation) DocumentSetValid(capStat capabilityparser.CapabilityState
 			invalid = true
 			break
 		}
+		// Combine profile & mode to compare against other defined documents
 		id := profileStr + "." + modeStr
 		if stringInList(id, uniqueIDs) {
 			ruleError.Comment = "The set of documents are not unique. " + baseComment
@@ -459,6 +480,8 @@ func (v *r4Validation) SearchParamsUnique(capStat capabilityparser.CapabilitySta
 	return returnVal
 }
 
+// areSearchParamsValid checks each resource's searchParam field and makes sure all of the values
+// are unique. The searchParam field is not required.
 func areSearchParamsValid(resource map[string]interface{}) (bool, error) {
 	var searchParams []string
 	search := resource["searchParam"]

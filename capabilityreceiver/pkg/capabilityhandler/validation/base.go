@@ -17,6 +17,7 @@ var fhir2LessJSONMIMEType = "application/json+fhir"
 type baseVal struct {
 }
 
+// RunValidation runs all of the defined validation checks
 func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	httpResponse int,
 	mimeTypes []string,
@@ -49,6 +50,7 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	return validations
 }
 
+// CapStatExists checks if the capability statement exists
 func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName: endpointmanager.CapStatExistRule,
@@ -68,6 +70,7 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 	return ruleError
 }
 
+// MimeTypeValid checks if the given mime types include the correct mime type for the given version
 func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	mimeString := strings.Join(mimeTypes, ",")
 	ruleError := endpointmanager.Rule{
@@ -119,6 +122,7 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 	return ruleError
 }
 
+// HTTPResponseValid checks if the given response code is 200
 func (bv *baseVal) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
 	strResp := strconv.Itoa(httpResponse)
 	ruleError := endpointmanager.Rule{
@@ -144,6 +148,8 @@ func (bv *baseVal) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
 	return ruleError
 }
 
+// FhirVersion checks if the given verison is 4.0.1, which is the current requirement for all
+// implemented FHIR endpoints
 func (bv *baseVal) FhirVersion(fhirVersion string) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.FHIRVersion,
@@ -182,6 +188,8 @@ func (bv *baseVal) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule
 	return ruleError
 }
 
+// KindValid checks the rule that kind = instance since all of the endpoints we are looking
+// at are for server instances.
 func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
 	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	ruleError := endpointmanager.Rule{

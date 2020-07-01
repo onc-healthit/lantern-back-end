@@ -102,9 +102,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	fhirVersion := ""
 	if capStat != nil {
 		fhirVersion, err = capStat.GetFHIRVersion()
-		if err != nil {
-			fhirVersion = ""
-		}
 	}
 	validator := validation.GetValidationForVersion(fhirVersion)
 
