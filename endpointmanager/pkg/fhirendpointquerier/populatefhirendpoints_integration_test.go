@@ -85,7 +85,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	//	"OrganizationName":"AdvantageCare Physicians",
 	// 	"FHIRPatientFacingURI":"https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
 	// }
-	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "default")
+	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "Epic")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "URL is not what was expected")
 	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
