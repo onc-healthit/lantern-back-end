@@ -127,6 +127,8 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
 |`make test_all` | runs all tests and ends if any of the tests fail| 
+|`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
+|`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 
 
 # Running Lantern Services Individually

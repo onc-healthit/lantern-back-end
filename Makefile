@@ -33,6 +33,15 @@ clean_remote:
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
+backup_database:
+	$(eval BACKUP=lantern_backup_$(shell date +%Y%m%d%H%M%S).sql)
+	@docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > "${BACKUP}"
+	@echo "Database was backed up to ${BACKUP}"
+	
+restore_database:
+	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean -U lantern -d lantern < $(file)
+	@echo "Database was restored from $(file)"
+
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
 	cd ./lanternmq; golangci-lint run -E gofmt
@@ -71,7 +80,7 @@ test_all:
 	make test_e2e || exit $?
 
 update_mods:
-	[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
+	@[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
 	cd ./e2e; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityquerier@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go get github.com/onc-healthit/lantern-back-end/capabilityreceiver@$(branch); go mod tidy;
 	cd ./capabilityquerier; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
