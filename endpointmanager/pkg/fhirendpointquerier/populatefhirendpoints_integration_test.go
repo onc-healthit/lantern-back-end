@@ -27,12 +27,12 @@ var store *postgresql.Store
 var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationNames:    []string{"Access Community Health Network"},
 	FHIRPatientFacingURI: "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
-	ListSource:           "Epic",
+	ListSource:           "epicList",
 }
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"Access Community Health Network"},
 	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
-	ListSource:        "Epic",
+	ListSource:        "epicList",
 }
 
 func TestMain(m *testing.M) {
@@ -70,7 +70,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "epicList")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -85,14 +85,14 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	//	"OrganizationName":"AdvantageCare Physicians",
 	// 	"FHIRPatientFacingURI":"https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
 	// }
-	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "Epic")
+	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "epicList")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "URL is not what was expected")
 	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 10 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "Epic")
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "epicList")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
 	th.Assert(t, err == nil, err)
@@ -101,7 +101,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-10, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
 	// This endpoint should be removed from table
-	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "Epic")
+	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "epicList")
 	th.Assert(t, err == sql.ErrNoRows, err)
 }
 

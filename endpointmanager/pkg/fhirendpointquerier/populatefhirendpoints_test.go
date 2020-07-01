@@ -11,13 +11,13 @@ import (
 var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationNames:    []string{"AdvantageCare Physicians"},
 	FHIRPatientFacingURI: "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
-	ListSource:           "Epic",
+	ListSource:           "epicList",
 }
 
 var testFHIREndpoint endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"AdvantageCare Physicians"},
 	URL:               "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
-	ListSource:        "Epic",
+	ListSource:        "epicList",
 }
 
 func Test_formatToFHIREndpt(t *testing.T) {
