@@ -16,6 +16,7 @@ RUN R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
 
 # Environment variables are passed to R via .Renviron file the container
 RUN env | grep LANTERN > /home/shiny/.Renviron && chown shiny.shiny /home/shiny/.Renviron
+COPY shiny-server.conf  /etc/shiny-server/shiny-server.conf
 
 WORKDIR /.
 COPY renv.lock renv.lock
