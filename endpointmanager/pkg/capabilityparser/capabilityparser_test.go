@@ -418,7 +418,7 @@ func Test_GetResourceList(t *testing.T) {
 	th.Assert(t, expectedMode == rest[0]["mode"], fmt.Sprintf("expected mode %s. received mode %s.", expectedMode, rest[0]["mode"]))
 	th.Assert(t, expectedDocumentation == rest[0]["documentation"], fmt.Sprintf("expected mode %s. received mode %s.", expectedMode, rest[0]["documentation"]))
 
-	actualRecs, err = cs1.GetResourceList(rest[0])
+	_, err = cs1.GetResourceList(rest[0])
 	th.Assert(t, err != nil, "expected error due to bad format")
 
 	// missing field
@@ -576,7 +576,7 @@ func Test_GetMessagingEndpoint(t *testing.T) {
 	messaging, err = cs1.GetMessaging()
 	th.Assert(t, err == nil, err)
 
-	actualEndpts, err = cs1.GetMessagingEndpoint(messaging[0])
+	_, err = cs1.GetMessagingEndpoint(messaging[0])
 	th.Assert(t, err != nil, "expected error due to bad format")
 
 	// missing field
@@ -733,13 +733,13 @@ func getCapFormats(cs CapabilityStatement) (map[string]interface{}, []byte, erro
 }
 
 func getBadFormatCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
 
 	csInt[field] = []int{1, 2, 3} // bad format for given field
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -748,7 +748,7 @@ func getBadFormatCapStat(cs CapabilityStatement, field string) (CapabilityStatem
 }
 
 func getNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field2 string) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
@@ -760,7 +760,7 @@ func getNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field2 str
 	}
 
 	innerFieldMap[field2] = []int{1, 2, 3} // bad format for given field
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -769,7 +769,7 @@ func getNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field2 str
 }
 
 func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field2 string, index int) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
@@ -786,7 +786,7 @@ func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field
 	}
 
 	innerFieldMap[field2] = []int{1, 2, 3} // bad format for given field
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -795,14 +795,14 @@ func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field
 }
 
 func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
 
 	delete(csInt, field)
 
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -811,7 +811,7 @@ func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilitySta
 }
 
 func deleteNestedFieldFromCapStat(cs CapabilityStatement, field1 string, field2 string) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
@@ -824,7 +824,7 @@ func deleteNestedFieldFromCapStat(cs CapabilityStatement, field1 string, field2 
 
 	delete(innerFieldMap, field2)
 
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -833,7 +833,7 @@ func deleteNestedFieldFromCapStat(cs CapabilityStatement, field1 string, field2 
 }
 
 func deleteArrayNestedFieldCapStat(cs CapabilityStatement, field1 string, field2 string, index int) (CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
@@ -851,7 +851,7 @@ func deleteArrayNestedFieldCapStat(cs CapabilityStatement, field1 string, field2
 
 	delete(innerFieldMap, field2)
 
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}

@@ -247,3 +247,12 @@ func Test_RunSupportedResourcesChecks(t *testing.T) {
 	th.Assert(t, contains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
 	th.Assert(t, !contains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
 }
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
+}

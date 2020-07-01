@@ -1064,14 +1064,14 @@ func getValidator(capStat capabilityparser.CapabilityStatement, checkVersions []
 
 // deleteFieldFromCapStat delets the given field from the capability statement
 func deleteFieldFromCapStat(cs capabilityparser.CapabilityStatement, field string) (capabilityparser.CapabilityStatement, error) {
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
 
 	delete(csInt, field)
 
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
@@ -1091,7 +1091,7 @@ func nLevelNestedValueChange(cs capabilityparser.CapabilityStatement,
 	functionToRun func(map[string]interface{}, string, string),
 	functionVar string) (capabilityparser.CapabilityStatement, error) {
 
-	csInt, csJSON, err := getCapFormats(cs)
+	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
 	}
@@ -1111,7 +1111,7 @@ func nLevelNestedValueChange(cs capabilityparser.CapabilityStatement,
 
 	functionToRun(innerFieldMap, fields[loop], functionVar)
 
-	csJSON, err = json.Marshal(csInt)
+	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err
 	}
