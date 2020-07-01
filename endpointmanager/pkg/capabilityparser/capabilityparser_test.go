@@ -376,7 +376,6 @@ func Test_GetRest(t *testing.T) {
 	th.Assert(t, len(actual) == 0, fmt.Sprintf("length of rest array should be 1. instead it is %d", len(actual)))
 }
 
-// @TODO GetResourceList() test
 func Test_GetResourceList(t *testing.T) {
 	field := "rest"
 	var emptyMap []map[string]interface{}

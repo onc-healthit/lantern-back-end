@@ -26,31 +26,11 @@ var testQueueMsg = map[string]interface{}{
 var testValidationObj = endpointmanager.Validation{
 	Results: []endpointmanager.Rule{
 		{
-			RuleName:  endpointmanager.R4MimeTypeRule,
-			Valid:     false,
-			Expected:  "application/fhir+json",
-			Actual:    "application/json+fhir",
-			Comment:   "The formal MIME-type for FHIR resources is application/fhir+json for FHIR version STU3 and above. The correct mime type SHALL be used by clients and servers.",
-			Reference: "http://hl7.org/fhir/http.html",
-			ImplGuide: "USCore 3.1",
-		},
-		{
-			RuleName:  endpointmanager.GeneralMimeTypeRule,
-			Valid:     true,
-			Expected:  "application/json+fhir",
-			Actual:    "application/json+fhir",
-			Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
-			Reference: "http://hl7.org/fhir/http.html",
-			ImplGuide: "USCore 3.1",
-		},
-		{
-			RuleName:  endpointmanager.HTTPResponseRule,
-			Valid:     true,
-			Expected:  "200",
-			Actual:    "200",
-			Comment:   "",
-			Reference: "http://hl7.org/fhir/http.html",
-			ImplGuide: "USCore 3.1",
+			RuleName: endpointmanager.CapStatExistRule,
+			Valid:    true,
+			Expected: "true",
+			Actual:   "true",
+			Comment:  "The Capability Statement exists.",
 		},
 	},
 	Warnings: []endpointmanager.Rule{},
@@ -167,6 +147,8 @@ func Test_formatMessage(t *testing.T) {
 	// basic test
 	endpt, returnErr := formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
+	// Just check that the first validation field is valid
+	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
 	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
 
 	// should not throw error if metadata is not in the URL
