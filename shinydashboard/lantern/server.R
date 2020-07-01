@@ -27,7 +27,6 @@ function(input, output, session) {
                           "endpoints_tab" = "List of Endpoints",
                           "capability_tab" = "Capability Page",
                           "availability_tab" = "Endpoint Server Availability",
-                          "performance_tab" = "Mean Response Time",
                           "location_tab" = "Location Map Page",
                           "about_tab" = "About Lantern"
                         )
