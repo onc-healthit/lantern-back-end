@@ -404,7 +404,7 @@ func Test_GetResourceList(t *testing.T) {
 			check = true
 		}
 	}
-	th.Assert(t, check == true, fmt.Sprintf("expected resource was not in given resource list"))
+	th.Assert(t, check == true, "expected resource was not in given resource list")
 
 	// bad format
 
