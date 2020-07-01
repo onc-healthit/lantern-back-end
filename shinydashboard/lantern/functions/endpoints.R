@@ -14,7 +14,7 @@ vendor_short_names <- data.frame(
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
   all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% count() %>% pull(n)
+  indexed <- db_tables$fhir_endpoints_info %>% distinct(url) %>% count() %>% pull(n)
   fhir_endpoint_totals <- list(
     "all_endpoints"     = all,
     "indexed_endpoints" = indexed,
@@ -51,6 +51,11 @@ get_response_tally_list <- function(db_tables) {
     "http_404" = max((curr_tally %>% filter(http_response == 404)) %>% pull(n), 0),
     "http_503" = max((curr_tally %>% filter(http_response == 503)) %>% pull(n), 0)
   )
+}
+
+# get the date of the most recently updated fhir_endpoint
+get_endpoint_last_updated <- function(db_tables) {
+  as.character.Date(db_tables$fhir_endpoints_info %>% arrange(desc(updated_at)) %>% head(1) %>% pull(updated_at))
 }
 
 # Compute the percentage of each response code for all responses received
@@ -110,4 +115,25 @@ get_vendor_list <- function(endpoint_export_tbl) {
            purrr::map(~ .$vendor_name)
 
   vendor_list <- c(vendor_list, vl)
+}
+
+# Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
+get_fhir_resource_types <- function(db_connection){
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      ORDER BY type")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) 
+}
+
+# Summarize count of resource types by type, fhir_version
+get_fhir_resource_count <- function(fhir_resources_tbl){
+  res <- fhir_resources_tbl %>% 
+    group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
 }
