@@ -146,7 +146,7 @@ func setup() error {
 
 	// grab endpoints
 	// TODO: eventually this method of getting endpoints will change
-	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EndpointSources.json", "")
+	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSources.json", "Epic")
 
 	return err
 }

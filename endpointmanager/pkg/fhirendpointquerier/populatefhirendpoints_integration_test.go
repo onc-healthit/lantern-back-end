@@ -70,7 +70,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	ctx := context.Background()
 	expectedNumEndptsStored := 340
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources.json", "default")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -82,17 +82,17 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 
 	// based on this entry in the DB:
 	// {
-	//	"url": "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/",
-	// 	"organization_names": {"A Woman's Place, LLC"}
+	//	"OrganizationName":"AdvantageCare Physicians",
+	// 	"FHIRPatientFacingURI":"https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
 	// }
-	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "default")
+	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "default")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, fhirEndpt.URL == "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "URL is not what was expected")
-	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"A Woman's Place, LLC"}), "Organization Name is not what was expected.")
+	th.Assert(t, fhirEndpt.URL == "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "URL is not what was expected")
+	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 10 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EndpointSources_1.json", "default")
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "Epic")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -103,7 +103,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-10, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
 	// This endpoint should be removed from table
-	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/", "default")
+	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "Epic")
 	th.Assert(t, err == sql.ErrNoRows, err)
 }
 
