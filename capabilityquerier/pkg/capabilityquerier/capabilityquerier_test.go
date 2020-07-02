@@ -86,13 +86,14 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
 
-	var msgJSON map[string]interface{}
-	err = json.Unmarshal(message, &msgJSON)
+	//Change response time in message to 0 to make the response time match with the expected message
+	var messageStruct Message
+	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when unmarshalling message")
-
-	msgJSON["responseTime"] = 0
-	message, err = json.Marshal(message)
+	messageStruct.ResponseTime = 0
+	message, err = json.Marshal(messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when marshalling message")
+
 	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the capability statement on the queue to be the same as the one sent")
 
 	// context canceled error
@@ -103,7 +104,6 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, "expected GetAndSendCapabilityStatement not to error out due to context ending")
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one messages on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
-	var messageStruct Message
 	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, messageStruct.HTTPResponse == 0, fmt.Sprintf("expected to capture 0 response in message, got %v", messageStruct.HTTPResponse))
