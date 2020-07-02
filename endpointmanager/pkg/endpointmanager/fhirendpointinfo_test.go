@@ -80,6 +80,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			"document":                   false,
 		},
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
+		ResponseTime:        0.123456,
 		CapabilityStatement: cs}
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                1,
@@ -138,6 +139,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			"document":                   false,
 		},
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
+		ResponseTime:        0.123456,
 		CapabilityStatement: cs}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
@@ -255,6 +257,12 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. SupportedResources are same but in different order. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
 	}
 	endpointInfo2.SupportedResources = endpointInfo1.SupportedResources
+
+	endpointInfo2.ResponseTime = 0.234567
+	if endpointInfo2.Equal(endpointInfo1) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %d vs %d", endpointInfo1.HTTPResponse, endpointInfo2.HTTPResponse)
+	}
+	endpointInfo2.ResponseTime = endpointInfo1.ResponseTime
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {
