@@ -329,7 +329,7 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
-	httpCode, tlsVersion, mimeMatch, capStat, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	httpCode, tlsVersion, mimeMatch, capStat, _, err := requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err == nil, err)
 	th.Assert(t, httpCode == 200, "expected 200 response")
 	th.Assert(t, tlsVersion == "TLS 1.0", fmt.Sprintf("expected TLS 1.0. got %s", tlsVersion))
@@ -342,7 +342,7 @@ func Test_requestWithMimeType(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	tc.Close() // makes request fail
 
-	_, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	_, _, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because we closed the connection that we're querying.
@@ -354,7 +354,7 @@ func Test_requestWithMimeType(t *testing.T) {
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
-	httpCode, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
+	httpCode, _, _, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, &(tc.Client))
 	th.Assert(t, err == nil, err)
 	th.Assert(t, httpCode == 404, fmt.Sprintf("expected 404 response code. Got %d", httpCode))
 }
