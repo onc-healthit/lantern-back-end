@@ -4,6 +4,7 @@ set -e
 
 # get endpoint data
 cd cmd/endpointpopulator
+go run main.go /etc/lantern/resources/CareEvolutionEndpointSources.json CareEvolution
 go run main.go /etc/lantern/resources/CernerEndpointSources.json Cerner
 go run main.go /etc/lantern/resources/EpicEndpointSources.json Epic
 cd ..
