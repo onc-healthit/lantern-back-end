@@ -20,7 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":        "TLS 1.2",
 	"smarthttpResponse": 0,
 	"smartResp":         nil,
-	"responseTime":      0.123456,
+	"responseTime":      0.1234,
 }
 
 var testValidationObj = endpointmanager.Validation{
@@ -131,7 +131,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	Validation:         testValidationObj,
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
-	ResponseTime:       0.123456,
+	ResponseTime:       0.1234,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
