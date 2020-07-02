@@ -58,6 +58,7 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 		TLSVersion:        expectedTLSVersion,
 		HTTPResponse:      200,
 		SMARTHTTPResponse: 200,
+		ResponseTime:      0,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
@@ -84,6 +85,14 @@ func Test_GetAndSendCapabilityStatement(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
+
+	var msgJSON map[string]interface{}
+	err = json.Unmarshal(message, &msgJSON)
+	th.Assert(t, err == nil, "expect no error to be thrown when unmarshalling message")
+
+	msgJSON["responseTime"] = 0
+	message, err = json.Marshal(message)
+	th.Assert(t, err == nil, "expect no error to be thrown when marshalling message")
 	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the capability statement on the queue to be the same as the one sent")
 
 	// context canceled error
