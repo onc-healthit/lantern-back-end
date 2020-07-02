@@ -37,8 +37,6 @@ var tls13 = "TLS 1.3"
 var tlsUnknown = "TLS version unknown"
 var tlsNone = "No TLS"
 
-var start time.Time
-
 // Message is the structure that gets sent on the queue with capability statement inforation. It includes the URL of
 // the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
 // statement itself.
@@ -247,7 +245,7 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	req.Header.Set("Accept", mimeType)
 
-	start = time.Now()
+	start := time.Now()
 
 	resp, err := client.Do(req)
 	if err != nil {
