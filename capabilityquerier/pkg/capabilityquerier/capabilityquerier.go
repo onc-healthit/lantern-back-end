@@ -37,10 +37,7 @@ var tls13 = "TLS 1.3"
 var tlsUnknown = "TLS version unknown"
 var tlsNone = "No TLS"
 
-// Need to define timeout or else it is infinite
-var netClient = &http.Client{
-	Timeout: time.Second * 35,
-}
+var start time.Time
 
 // Message is the structure that gets sent on the queue with capability statement inforation. It includes the URL of
 // the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
@@ -250,7 +247,6 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	req.Header.Set("Accept", mimeType)
 
-	var start time.Time
 	start = time.Now()
 
 	resp, err := client.Do(req)
