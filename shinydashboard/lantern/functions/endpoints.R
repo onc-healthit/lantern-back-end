@@ -37,6 +37,21 @@ get_fhir_endpoints_tbl <- function(db_tables) {
     mutate(status = paste(http_response, "-", label))
 }
 
+# create a join to get more detailed table of fhir_endpoint information
+get_download_fhir_endpoints_tbl <- function(db_tables) {
+  db_tables$fhir_endpoints %>%
+    collect() %>%
+    distinct(url, .keep_all=TRUE) %>%
+    left_join(endpoint_export_tbl %>%
+          distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources),
+        by = c("url" = "url")) %>%
+    mutate(updated = as.Date(updated_at)) %>%
+    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
+    left_join(http_response_code_tbl %>% select(code, label),
+              by = c("http_response" = "code")) %>%
+    mutate(status = paste(http_response, "-", label))
+}
+
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
   curr_tally <- db_tables$fhir_endpoints_info %>%
