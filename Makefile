@@ -30,6 +30,17 @@ clean_remote:
 	docker-compose -f docker-compose.yml down --rmi all -v
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
+query_endpoints:
+	$(eval YEAR=$(shell date +%Y))
+	$(eval PASTMONTH=$(shell date -v-1m +%B))
+	$(eval MONTH=$(shell date +%B))	
+	$(eval NPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip)
+	cd ./resources/prod_resources; wget https://open.epic.com/MyApps/EndpointsJson -O EpicEndpointSources.json
+	cd ./resources/prod_resources; wget https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json -O CernerEndpointSources.json
+	cd ./resources/prod_resources; wget https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip -O temp.zip || wget https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip -O temp.zip
+	unzip temp.zip
+	rm temp.zip
+
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
@@ -40,7 +51,7 @@ backup_database:
 	
 restore_database:
 	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean -U lantern -d lantern < $(file)
-	@echo "Database was restored from $(file)"
+	@echo $(file)
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
