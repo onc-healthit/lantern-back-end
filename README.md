@@ -129,7 +129,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make test_all` | runs all tests and ends if any of the tests fail| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
-
+|`make get_endpoint_resources` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
 
 # Running Lantern Services Individually
 
