@@ -1,5 +1,4 @@
 # Define base user interface
-
 ui <- dashboardPage(
   dashboardHeader(
     title = "Lantern Dashboard",
@@ -20,6 +19,7 @@ ui <- dashboardPage(
 
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
+    tags$head(tags$link(rel="shortcut icon", href="images/favicon.ico")),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
     tabItems(
