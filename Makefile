@@ -49,7 +49,7 @@ get_endpoint_resources:
 	@echo "Downloading Epic Endpoint Sources..."
 	@cd ./resources/prod_resources; curl -s -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
 	@echo "done"
-	@echo "Downloading Cerner Endpoint Resources..."
+	@echo "Downloading Cerner Endpoint Sources..."
 	@cd ./resources/prod_resources; curl -s -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
 	@echo "done"
 	@echo "Downloading ${MONTH} NPPES Resources..."
