@@ -45,7 +45,7 @@ get_endpoint_resources:
 	$(eval PASTNPIDATAFILE=npidata_pfile_20050523-${PASTDATE}.csv)
 	
 	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
-	@cd ./resources/prod_resources; rm -f npi_pfile.csv
+	@cd ./resources/prod_resources; rm -f npidata_pfile.csv
 	@echo "Downloading Epic Endpoint Sources..."
 	@cd ./resources/prod_resources; curl -s -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
 	@echo "done"
