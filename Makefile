@@ -34,12 +34,24 @@ query_endpoints:
 	$(eval YEAR=$(shell date +%Y))
 	$(eval PASTMONTH=$(shell date -v-1m +%B))
 	$(eval MONTH=$(shell date +%B))	
+	$(eval DATE=$(shell date +%Y%m%d))
+	$(eval PASTDATE=$(shell date -v-1m +%Y%m%d))
 	$(eval NPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip)
-	cd ./resources/prod_resources; wget https://open.epic.com/MyApps/EndpointsJson -O EpicEndpointSources.json
-	cd ./resources/prod_resources; wget https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json -O CernerEndpointSources.json
-	cd ./resources/prod_resources; wget https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip -O temp.zip || wget https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip -O temp.zip
-	unzip temp.zip
-	rm temp.zip
+	$(eval PASTNPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip)
+
+	$(eval ENDPOINTFILE=endpoint_pfile_20050523-${DATE}.csv)
+	$(eval PASTENDPOINTFILE=endpoint_pfile_20050523-${PASTDATE}.csv)
+	$(eval NPIDATAFILE=npidata_pfile_20050523-${DATE}.csv)
+	$(eval PASTNPIDATAFILE=npidata_pfile_20050523-${PASTDATE}.csv)
+	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
+	@cd ./resources/prod_resources; rm -f npi_pfile.csv
+	@cd ./resources/prod_resources; curl -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
+	@echo "Downloaded Epic Resources"
+	@cd ./resources/prod_resources; curl -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
+	@echo "Downloaded Cerner Resources"
+	@cd ./resources/prod_resources; curl -fO temp.zip ${NPPESFILE} && unzip temp.zip ${ENDPOINTFILE} && unzip temp.zip ${NPIDATAFILE} && mv ${ENDPOINTFILE} endpoint_pfile.csv && mv ${NPIDATAFILE} npidata_pfile.csv || curl -o temp.zip ${PASTNPPESFILE} && unzip temp.zip ${PASTENDPOINTFILE} && unzip temp.zip ${PASTNPIDATAFILE} && mv ${PASTENDPOINTFILE} endpoint_pfile.csv && mv ${PASTNPIDATAFILE} npidata_pfile.csv
+	@echo "Downloaded NPPES Resources"
+	@cd ./resources/prod_resources; rm temp.zip
 
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
