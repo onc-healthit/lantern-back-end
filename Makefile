@@ -36,21 +36,25 @@ query_endpoints:
 	$(eval MONTH=$(shell date +%B))	
 	$(eval DATE=$(shell date +%Y%m%d))
 	$(eval PASTDATE=$(shell date -v-1m +%Y%m%d))
+	
 	$(eval NPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip)
 	$(eval PASTNPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip)
-
 	$(eval ENDPOINTFILE=endpoint_pfile_20050523-${DATE}.csv)
 	$(eval PASTENDPOINTFILE=endpoint_pfile_20050523-${PASTDATE}.csv)
 	$(eval NPIDATAFILE=npidata_pfile_20050523-${DATE}.csv)
 	$(eval PASTNPIDATAFILE=npidata_pfile_20050523-${PASTDATE}.csv)
+	
 	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
 	@cd ./resources/prod_resources; rm -f npi_pfile.csv
-	@cd ./resources/prod_resources; curl -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
-	@echo "Downloaded Epic Resources"
-	@cd ./resources/prod_resources; curl -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
-	@echo "Downloaded Cerner Resources"
-	@cd ./resources/prod_resources; curl -fO temp.zip ${NPPESFILE} && unzip temp.zip ${ENDPOINTFILE} && unzip temp.zip ${NPIDATAFILE} && mv ${ENDPOINTFILE} endpoint_pfile.csv && mv ${NPIDATAFILE} npidata_pfile.csv || curl -o temp.zip ${PASTNPPESFILE} && unzip temp.zip ${PASTENDPOINTFILE} && unzip temp.zip ${PASTNPIDATAFILE} && mv ${PASTENDPOINTFILE} endpoint_pfile.csv && mv ${PASTNPIDATAFILE} npidata_pfile.csv
-	@echo "Downloaded NPPES Resources"
+	@echo "Downloading Epic Endpoint Sources..."
+	@cd ./resources/prod_resources; curl -s -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
+	@echo "done"
+	@echo "Downloading Cerner Endpoint Resources..."
+	@cd ./resources/prod_resources; curl -s -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
+	@echo "done"
+	@echo "Downloading ${MONTH} NPPES Resources..."
+	@cd ./resources/prod_resources; curl -s -f -o temp.zip ${NPPESFILE} && echo "Extracting endpoint and npidata files from NPPES zip file..." && unzip -q temp.zip ${ENDPOINTFILE} && unzip -q temp.zip ${NPIDATAFILE} && mv ${ENDPOINTFILE} endpoint_pfile.csv && mv ${NPIDATAFILE} npidata_pfile.csv || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} && echo "Extracting endpoint and npidata files from NPPES zip file..." && unzip -q temp.zip ${PASTENDPOINTFILE} && unzip -q temp.zip ${PASTNPIDATAFILE} && mv ${PASTENDPOINTFILE} endpoint_pfile.csv && mv ${PASTNPIDATAFILE} npidata_pfile.csv
+	@echo "done"
 	@cd ./resources/prod_resources; rm temp.zip
 
 populatedb:
