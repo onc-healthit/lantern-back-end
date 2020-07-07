@@ -28,10 +28,10 @@ get_fhir_endpoints_tbl <- function(db_tables) {
     collect() %>%
     distinct(url, .keep_all=TRUE) %>%
     left_join(endpoint_export_tbl %>%
-          distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response),
+          distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources),
         by = c("url" = "url")) %>%
     mutate(updated = as.Date(updated_at)) %>%
-    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response) %>%
+    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
     left_join(http_response_code_tbl %>% select(code, label),
               by = c("http_response" = "code")) %>%
     mutate(status = paste(http_response, "-", label))
