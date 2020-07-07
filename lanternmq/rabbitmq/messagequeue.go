@@ -361,7 +361,7 @@ func (mq *MessageQueue) DeclareExchangeReceiveQueue(chID lanternmq.ChannelID, ex
 		qName,
 		durableFalse,
 		deleteWhenUnusedFalse,
-		exclusiveTrue,
+		exclusiveFalse,
 		noWaitFalse,
 		nil, // args
 	)
