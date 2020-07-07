@@ -21,13 +21,14 @@ The default users, their password hashes, and each user's permissions can be fou
 
 A new user can be added by clicking *Add a user* in the *Admin* tab.
   
-**To update users from the command line:**
-1. Access the LanternMQ docker container: `command docker exec -it <container ID> /bin/bash`
-2. Update the user's password: `rabbitmqctl change_password <username> <new password>`
+**To update users from the command line:** <br>
+Run `docker exec -it lantern-back-end_lantern-mq_1 rabbitmqctl change_password <username> <new password>`
 
-A new user can be added by running `rabbitmqctl add_user <username> <password>`
+A new user can be added by replacing `change_password` in the above line to `add_user`.
 
 **The definitions.json file must be updated to persist these changes. To update the definitions.json file:**
 1. Get the updated JSON object by using the RabbitMQ API <br>
-  (e.g. `curl -H "Accept:application/json" -u <username>:<password> "localhost:15672/api/definitions"`)
+  (e.g. `curl -H "Accept:application/json" -u <management_username>:<management_password> "localhost:15672/api/definitions"`)
 2. Replace the current definitions file with the response from Step 1
+
+The two steps can also be combined into one command: `curl -H "Accept:application/json" -u <management_username>:<management_password> "localhost:15672/api/definitions" > lanternmq/definitions.json`
