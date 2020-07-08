@@ -1058,7 +1058,7 @@ func getValidator(capStat capabilityparser.CapabilityStatement, checkVersions []
 	if !contains(checkVersions, fhirVersion) {
 		return nil, fmt.Errorf("capstat's returned version %s is not one of the expected versions %+v", fhirVersion, checkVersions)
 	}
-	validator := GetValidationForVersion(fhirVersion)
+	validator := ValidatorForFHIRVersion(fhirVersion)
 	return validator, nil
 }
 

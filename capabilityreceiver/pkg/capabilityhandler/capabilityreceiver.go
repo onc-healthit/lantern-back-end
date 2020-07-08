@@ -103,7 +103,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	if capStat != nil {
 		fhirVersion, _ = capStat.GetFHIRVersion()
 	}
-	validator := validation.GetValidationForVersion(fhirVersion)
+	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
 	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse)
 	includedFields := RunIncludedFieldsChecks(capInt)

@@ -32,10 +32,10 @@ type Validator interface {
 	SearchParamsUnique(capabilityparser.CapabilityStatement) endpointmanager.Rule
 }
 
-// GetValidationForVersion checks the given fhir version and then runs the validation checks
-// specific to that version
+// ValidatorForFHIRVersion checks the given fhir version and returns the specific validator
+// for that version, which can be used for running the Validation checks.
 // To note: All but the newR4Val() function returns the base validation currently
-func GetValidationForVersion(fhirVersion string) Validator {
+func ValidatorForFHIRVersion(fhirVersion string) Validator {
 	if fhirVersion == "" {
 		return newUnknownVal()
 	}
