@@ -67,7 +67,7 @@ backup_database:
 	
 restore_database:
 	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean -U lantern -d lantern < $(file)
-	@echo $(file)
+	@echo "Database was restored from ${file}"
 
 lint:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
