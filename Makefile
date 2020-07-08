@@ -39,11 +39,7 @@ get_endpoint_resources:
 	
 	$(eval NPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip)
 	$(eval PASTNPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip)
-	$(eval ENDPOINTFILE=endpoint_pfile_20050523-${DATE}.csv)
-	$(eval PASTENDPOINTFILE=endpoint_pfile_20050523-${PASTDATE}.csv)
-	$(eval NPIDATAFILE=npidata_pfile_20050523-${DATE}.csv)
-	$(eval PASTNPIDATAFILE=npidata_pfile_20050523-${PASTDATE}.csv)
-	
+
 	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
 	@cd ./resources/prod_resources; rm -f npidata_pfile.csv
 	@echo "Downloading Epic Endpoint Sources..."
@@ -53,9 +49,15 @@ get_endpoint_resources:
 	@cd ./resources/prod_resources; curl -s -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
 	@echo "done"
 	@echo "Downloading ${MONTH} NPPES Resources..."
-	@cd ./resources/prod_resources; curl -s -f -o temp.zip ${NPPESFILE} && echo "Extracting endpoint and npidata files from NPPES zip file..." && unzip -q temp.zip ${ENDPOINTFILE} && unzip -q temp.zip ${NPIDATAFILE} && mv ${ENDPOINTFILE} endpoint_pfile.csv && mv ${NPIDATAFILE} npidata_pfile.csv || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} && echo "Extracting endpoint and npidata files from NPPES zip file..." && unzip -q temp.zip ${PASTENDPOINTFILE} && unzip -q temp.zip ${PASTNPIDATAFILE} && mv ${PASTENDPOINTFILE} endpoint_pfile.csv && mv ${PASTNPIDATAFILE} npidata_pfile.csv
-	@echo "done"
+	@cd ./resources/prod_resources; curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} 
+	@echo "Extracting endpoint and npidata files from NPPES zip file..."
+	@cd ./resources/prod_resources; unzip -q temp.zip endpoint_pfile\*.csv
+	@cd ./resources/prod_resources; unzip -q temp.zip npidata_pfile\*.csv 
+	@cd ./resources/prod_resources; rm *FileHeader.csv
+	@cd ./resources/prod_resources; mv endpoint_pfile*.csv endpoint_pfile.csv;
+	@cd ./resources/prod_resources; mv npidata_pfile*.csv npidata_pfile.csv
 	@cd ./resources/prod_resources; rm temp.zip
+	@echo "done"
 
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
