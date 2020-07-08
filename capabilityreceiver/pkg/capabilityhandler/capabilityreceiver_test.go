@@ -20,6 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":        "TLS 1.2",
 	"smarthttpResponse": 0,
 	"smartResp":         nil,
+	"responseTime":      0.1234,
 }
 
 var testValidationObj = endpointmanager.Validation{
@@ -130,6 +131,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	Validation:         testValidationObj,
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
+	ResponseTime:       0.1234,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -221,6 +223,14 @@ func Test_formatMessage(t *testing.T) {
 	_, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect smart HTTP response")
 	tmpMessage["smarthttpResponse"] = 200
+
+	// test incorrect response time
+	tmpMessage["responseTime"] = "0.1234"
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect responseTime")
+	tmpMessage["responseTime"] = 0.1234
 }
 
 func Test_RunIncludedFieldsChecks(t *testing.T) {

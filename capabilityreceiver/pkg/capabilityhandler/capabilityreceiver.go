@@ -93,6 +93,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		smartResponse = capabilityparser.NewSMARTRespFromInterface(smartInt)
 	}
 
+	responseTime, ok := msgJSON["responseTime"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("Response time is not a float")
+	}
+
 	validationObj := RunValidationChecks(capStat, httpResponse, mimeTypes)
 	includedFields := RunIncludedFieldsChecks(capInt)
 	supportedResources := RunSupportedResourcesChecks(capInt)
@@ -109,6 +114,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
 		SupportedResources:  supportedResources,
+		ResponseTime:        responseTime,
 	}
 
 	return &fhirEndpoint, nil

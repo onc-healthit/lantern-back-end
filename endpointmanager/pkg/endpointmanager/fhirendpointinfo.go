@@ -29,6 +29,7 @@ type FHIREndpointInfo struct {
 	SMARTResponse       capabilityparser.SMARTResponse
 	IncludedFields      map[string]bool
 	SupportedResources  []string
+	ResponseTime        float64
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -92,6 +93,10 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	}
 
 	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
+		return false
+	}
+
+	if !cmp.Equal(e.ResponseTime, e2.ResponseTime) {
 		return false
 	}
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptrace"
 	"net/url"
 	"strings"
 	"time"
@@ -48,6 +49,7 @@ type Message struct {
 	CapabilityStatement interface{} `json:"capabilityStatement"`
 	SMARTHTTPResponse   int         `json:"smarthttpResponse"`
 	SMARTResp           interface{} `json:"smartResp"`
+	ResponseTime        float64     `json:"responseTime"`
 }
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
@@ -126,21 +128,25 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	var tlsVersion string
 	var capResp []byte
 	var jsonResponse interface{}
+	var responseTime float64
+
 	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
 	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", fhirURL, nil)
 	if err != nil {
 		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL)
 	}
-	req = req.WithContext(ctx)
+
+	trace := &httptrace.ClientTrace{}
+	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
 	if endptType == wellknown && len(message.MIMETypes) > 0 {
-		httpResponseCode, _, _, capResp, err = requestWithMimeType(req, message.MIMETypes[0], client)
+		httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, message.MIMETypes[0], client)
 		if err != nil {
 			return err
 		}
 	} else {
-		httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+		httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 		if err != nil {
 			return err
 		}
@@ -150,13 +156,13 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	if endptType == metadata {
 		if httpResponseCode != http.StatusOK || !supportsFHIR3MIMEType {
 			// replace all values based on fhir 2 mime type if there were any issues with fhir 3 mime type request
-			httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 			if err != nil {
 				return err
 			}
 		} else {
 			// only chech fhir 2 mime type support
-			_, _, supportsFHIR2MIMEType, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			_, _, supportsFHIR2MIMEType, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 			if err != nil {
 				return err
 			}
@@ -181,6 +187,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		message.TLSVersion = tlsVersion
 		message.HTTPResponse = httpResponseCode
 		message.CapabilityStatement = jsonResponse
+		message.ResponseTime = responseTime
 	case wellknown:
 		message.SMARTHTTPResponse = httpResponseCode
 		message.SMARTResp = jsonResponse
@@ -229,7 +236,7 @@ func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 //   mime type match
 //   capability statement
 //   error
-func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (int, string, bool, []byte, error) {
+func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (int, string, bool, []byte, float64, error) {
 	var httpResponseCode int
 	var tlsVersion string
 	var capStat []byte
@@ -238,10 +245,14 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	req.Header.Set("Accept", mimeType)
 
+	start := time.Now()
+
 	resp, err := client.Do(req)
 	if err != nil {
-		return -1, "", false, nil, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
+		return -1, "", false, nil, -1, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
 	}
+
+	var responseTime = float64(time.Since(start).Seconds())
 
 	httpResponseCode = resp.StatusCode
 	if httpResponseCode == http.StatusOK {
@@ -256,12 +267,12 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 			capStat, err = ioutil.ReadAll(resp.Body)
 			if err != nil {
-				return -1, "", false, nil, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
+				return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
 			}
 		}
 	}
 
 	tlsVersion = getTLSVersion(resp)
 
-	return httpResponseCode, tlsVersion, mimeMatches, capStat, nil
+	return httpResponseCode, tlsVersion, mimeMatches, capStat, responseTime, nil
 }
