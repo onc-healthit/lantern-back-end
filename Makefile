@@ -54,7 +54,7 @@ get_endpoint_resources:
 	@cd ./resources/prod_resources; unzip -q temp.zip endpoint_pfile\*.csv
 	@cd ./resources/prod_resources; unzip -q temp.zip npidata_pfile\*.csv 
 	@cd ./resources/prod_resources; rm *FileHeader.csv
-	@cd ./resources/prod_resources; mv endpoint_pfile*.csv endpoint_pfile.csv;
+	@cd ./resources/prod_resources; mv endpoint_pfile*.csv endpoint_pfile.csv
 	@cd ./resources/prod_resources; mv npidata_pfile*.csv npidata_pfile.csv
 	@cd ./resources/prod_resources; rm temp.zip
 	@echo "done"
