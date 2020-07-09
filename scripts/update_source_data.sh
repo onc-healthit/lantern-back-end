@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#extract npidata and endpoint pfiles from NPPES zip
+#update source data from endpoint source list and NPPES
 cd ../resources/prod_resources
 YEAR=$(date +%Y)
 PASTMONTH=$(date -v-1m +%B)
