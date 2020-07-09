@@ -30,7 +30,7 @@ clean_remote:
 	docker-compose -f docker-compose.yml down --rmi all -v
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
-get_endpoint_resources:
+update_source_data:
 	$(eval YEAR=$(shell date +%Y))
 	$(eval PASTMONTH=$(shell date -v-1m +%B))
 	$(eval MONTH=$(shell date +%B))	

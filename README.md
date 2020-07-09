@@ -55,7 +55,7 @@ This removes all docker images, networks, and local volumes.
     1. Run the following command to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and NPPES for their endpoint and npi data files. 
 
      ```bash
-      make get_endpoint_resources
+      make update_source_data
       ```
 
     2. Run the following command to begin populating the database usinig the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
@@ -135,7 +135,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make test_all` | runs all tests and ends if any of the tests fail| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
-|`make get_endpoint_resources` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
+|`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
 
 # Running Lantern Services Individually
 
