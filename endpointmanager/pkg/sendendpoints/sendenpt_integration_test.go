@@ -76,6 +76,7 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
+	broadcastExchange := viper.GetString("broadcast_exchange")
 	queueName := viper.GetString("qname")
 	queueIsEmpty(t, queueName)
 	defer checkCleanQueue(t, queueName, channel)
@@ -92,14 +93,15 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	errs := make(chan error)
-	go GetEnptsAndSend(ctx, &wg, queueName, 1, store, mq, chID, errs)
+	go GetEnptsAndSend(ctx, &wg, queueName, 1, broadcastExchange, store, mq, chID, errs)
 
 	// need to pause to ensure all messages are on the queue before we count them
 	time.Sleep(10 * time.Second)
 	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
-	// Expect 5 messages: start meesage, 3 endpoints, and stop message
-	th.Assert(t, count == 5, fmt.Sprintf("expected there to be 5 messages in the queue, instead got %d", count))
+	// Expect 3 messages: 3 endpoints
+	// Start and stop message published to exchange instead of queue
+	th.Assert(t, count == 3, fmt.Sprintf("expected there to be 3 messages in the queue, instead got %d", count))
 	wg.Done()
 }
 

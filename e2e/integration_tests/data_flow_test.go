@@ -161,11 +161,12 @@ func testQueueSetup() {
 }
 
 func sendEndpointsOverQueue(ctx context.Context, t *testing.T, queueName string, mq lanternmq.MessageQueue, chID lanternmq.ChannelID) {
+	broadcast_exchange := viper.GetString("broadcast_exchange")
 	var wg sync.WaitGroup
 	wg.Add(1)
 	errs := make(chan error)
 
-	go se.GetEnptsAndSend(ctx, &wg, queueName, 10, store, &mq, &chID, errs)
+	go se.GetEnptsAndSend(ctx, &wg, queueName, 10, broadcast_exchange, store, &mq, &chID, errs)
 	time.Sleep(30 * time.Second)
 }
 
