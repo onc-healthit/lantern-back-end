@@ -110,6 +110,11 @@ func main() {
 	failOnError(err)
 
 	defer mq.Close()
+	broadcastExchange := viper.GetString("broadcast_exchange")
+	// Set up queue for receiving start and stop message - unique to each instance
+	broadcastQName := viper.GetString("broadcast_queue")
+	err = mq.DeclareExchangeReceiveQueue(ch, broadcastExchange, broadcastQName, "")
+	failOnError(err)
 
 	client := &http.Client{
 		Timeout: time.Second * 35,
@@ -134,7 +139,13 @@ func main() {
 		qName:       capQName,
 	}
 
-	messages, err := mq.ConsumeFromQueue(ch, endptQName)
+	// Proccess start and stop message
+	messages, err := mq.ConsumeFromQueue(ch, broadcastQName)
+	failOnError(err)
+
+	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)
+
+	messages, err = mq.ConsumeFromQueue(ch, endptQName)
 	failOnError(err)
 
 	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)

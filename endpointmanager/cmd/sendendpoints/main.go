@@ -31,6 +31,7 @@ func main() {
 	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
 	failOnError(err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
+	broadcastExchange := viper.GetString("broadcast_exchange")
 
 	errs := make(chan error)
 
@@ -39,7 +40,7 @@ func main() {
 	ctx := context.Background()
 	wg.Add(1)
 	capInterval := viper.GetInt("capquery_qryintvl")
-	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &channelID, errs)
+	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, broadcastExchange, store, &mq, &channelID, errs)
 
 	for elem := range errs {
 		log.Warn(elem)

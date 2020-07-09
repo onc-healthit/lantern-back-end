@@ -63,6 +63,8 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_BROADCAST_EXCHANGE=${LANTERN_BROADCAST_EXCHANGE}
+      - LANTERN_BROADCAST_QUEUE=${LANTERN_BROADCAST_QUEUE}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main

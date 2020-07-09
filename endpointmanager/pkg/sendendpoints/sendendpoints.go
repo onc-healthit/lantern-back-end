@@ -19,6 +19,7 @@ func GetEnptsAndSend(
 	wg *sync.WaitGroup,
 	qName string,
 	qInterval int,
+	exchangeName string,
 	store *postgresql.Store,
 	mq *lanternmq.MessageQueue,
 	channelID *lanternmq.ChannelID,
@@ -26,13 +27,15 @@ func GetEnptsAndSend(
 
 	defer wg.Done()
 
+	messageQueue := *mq
+
 	for {
 		listOfEndpoints, err := store.GetAllFHIREndpoints(ctx)
 		if err != nil {
 			errs <- err
 		}
 
-		err = accessqueue.SendToQueue(ctx, "start", mq, channelID, qName)
+		err = messageQueue.PublishToExchange(*channelID, exchangeName, "", "start")
 		if err != nil {
 			errs <- err
 		}
@@ -54,7 +57,7 @@ func GetEnptsAndSend(
 			}
 		}
 
-		err = accessqueue.SendToQueue(ctx, "stop", mq, channelID, qName)
+		err = messageQueue.PublishToExchange(*channelID, exchangeName, "", "stop")
 		if err != nil {
 			errs <- err
 		}
