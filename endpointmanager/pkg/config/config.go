@@ -71,6 +71,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("broadcast_exchange")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
@@ -86,6 +90,7 @@ func SetupConfig() error {
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
 	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
+	viper.SetDefault("broadcast_exchange", "broadcast_exchange")
 
 	return nil
 }

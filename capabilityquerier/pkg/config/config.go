@@ -38,6 +38,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("broadcast_exchange")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
@@ -46,6 +50,7 @@ func SetupConfig() error {
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("capquery_numworkers", 10)
 	viper.SetDefault("endptinfo_capquery_qname", "endpoints-to-capability")
+	viper.SetDefault("broadcast_exchange", "broadcast_exchange")
 
 	return nil
 }

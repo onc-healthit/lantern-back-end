@@ -37,7 +37,7 @@
         {
             "user": "capabilityquerier",
             "vhost": "/",
-            "configure": "",
+            "configure": ".*",
             "write": ".*",
             "read": ".*"
         },
@@ -88,6 +88,16 @@
             "arguments": {}
         }
     ],
-    "exchanges": [],
+    "exchanges": [
+        {
+            "name": "broadcast_exchange",
+            "vhost": "/",
+            "type": "fanout",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+          }
+    ],
     "bindings": []
 }
