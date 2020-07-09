@@ -97,4 +97,6 @@ capability_querier_2:
         - LANTERN_BROADCAST_QUEUE=broadcast_queue_2
 ``` 
 
+Edit the docker-compose.override.yml file to also include another capabilityQuerier.  
+
 The value for LANTERN_BROADCAST_QUEUE can either be defined in directly in the docker-compose of separately in your .env file. Each capabilityQuerier must have a unique value for the LANTERN_BROADCAST_QUEUE variable.
