@@ -31,23 +31,7 @@ clean_remote:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
 update_source_data:
-	$(eval YEAR=$(shell date +%Y))
-	$(eval PASTMONTH=$(shell date -v-1m +%B))
-	$(eval MONTH=$(shell date +%B))	
-	$(eval DATE=$(shell date +%Y%m%d))
-	$(eval PASTDATE=$(shell date -v-1m +%Y%m%d))
-	
-	$(eval NPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip)
-	$(eval PASTNPPESFILE=https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip)
-
-	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
-	@cd ./resources/prod_resources; rm -f npidata_pfile.csv
-	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
-	@echo "Downloading ${MONTH} NPPES Resources..."
-	@cd ./resources/prod_resources; curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} 
-	@echo "Extracting endpoint and npidata files from NPPES zip file..."
-	@cd ./scripts; chmod +rx extract-NPPES-files.sh; ./extract-NPPES-files.sh
-	@echo "done"
+	@cd ./scripts; chmod +rx update_source_data.sh; ./update_source_data.sh
 
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
