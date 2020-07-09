@@ -1,7 +1,9 @@
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
-    title = "Lantern Dashboard",
+    string <- readChar('/VERSION', file.info('/VERSION')$size),
+    titleStr <- paste("Lantern Dashboard ", string),
+    title = titleStr,
     titleWidth = 200
   ),
   # Sidebar with menu items for each module
