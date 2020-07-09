@@ -14,10 +14,8 @@ const autoDeleteFalse bool = false
 const contentTypePlainText string = "text/plain"
 const deleteWhenUnusedFalse bool = false
 const deliveryMode = amqp.Persistent
-const durableFalse bool = false
 const durableTrue bool = true
 const exclusiveFalse bool = false
-const exclusiveTrue bool = true
 const globalFalse bool = false
 const immediateFalse bool = false
 const internalFalse bool = false
@@ -339,9 +337,9 @@ func (mq *MessageQueue) PublishToExchange(chID lanternmq.ChannelID, name string,
 // with routing key 'routingKey' over the channel with ID 'chID'. It uses the RabbitMQ method QueueDeclare with
 // the following arguments:
 // name: qName
-// durable: false
+// durable: true
 // autoDelete: false
-// exclusive: true
+// exclusive: false
 // noWait: false
 // args: nil
 //
