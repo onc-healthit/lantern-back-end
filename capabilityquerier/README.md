@@ -35,6 +35,14 @@ The capability querier reads the following environment variables:
 
   Default value: 1440 (24 hours)
 
+* **LANTERN_BROADCAST_EXCHANGE**: The name of the fanout exchange which broadcast the START/STOP message to subscribed queues.
+
+  Default value: broadcast_exchange
+
+* **LANTERN_BROADCAST_QUEUE**: The name of the queue that is ssubscribed to the exchange publishing the start/stop message. For multiple instances of capabilityQuerier, each instance must have a unique name.
+
+  Default value: broadcast_queue
+
 ### Test Configuration
 
 When testing, the capability querier uses the following environment variables:
@@ -78,3 +86,15 @@ go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download
 go run cmd/main.go
 ```
+
+## Scaling
+
+To scale out the capability querier service edit the docker-compose.yml file 
+to include another capabilityQuerier service. Under the environment define another name for the LANTERN_BROADCAST_QUEUE variable
+```
+capability_querier_2:
+    environment:
+        - LANTERN_BROADCAST_QUEUE=broadcast_queue_2
+``` 
+
+The value for LANTERN_BROADCAST_QUEUE can either be defined in directly in the docker-compose of separately in your .env file. Each capabilityQuerier must have a unique value for the LANTERN_BROADCAST_QUEUE variable.

@@ -59,6 +59,10 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: endpoints-to-capability
 
+* **LANTERN_BROADCAST_EXCHANGE**: The name of the fanout exchange which broadcast the START/STOP message to subscribed queues.
+
+  Default value: broadcast_exchange
+
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:
