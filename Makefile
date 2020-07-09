@@ -42,21 +42,11 @@ get_endpoint_resources:
 
 	@cd ./resources/prod_resources; rm -f endpoint_pfile.csv
 	@cd ./resources/prod_resources; rm -f npidata_pfile.csv
-	@echo "Downloading Epic Endpoint Sources..."
-	@cd ./resources/prod_resources; curl -s -o EpicEndpointSources.json https://open.epic.com/MyApps/EndpointsJson
-	@echo "done"
-	@echo "Downloading Cerner Endpoint Sources..."
-	@cd ./resources/prod_resources; curl -s -o CernerEndpointSources.json https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json
-	@echo "done"
+	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 	@echo "Downloading ${MONTH} NPPES Resources..."
 	@cd ./resources/prod_resources; curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} 
 	@echo "Extracting endpoint and npidata files from NPPES zip file..."
-	@cd ./resources/prod_resources; unzip -q temp.zip endpoint_pfile\*.csv
-	@cd ./resources/prod_resources; unzip -q temp.zip npidata_pfile\*.csv 
-	@cd ./resources/prod_resources; rm *FileHeader.csv
-	@cd ./resources/prod_resources; mv endpoint_pfile*.csv endpoint_pfile.csv
-	@cd ./resources/prod_resources; mv npidata_pfile*.csv npidata_pfile.csv
-	@cd ./resources/prod_resources; rm temp.zip
+	@cd ./scripts; chmod +rx extract-NPPES-files.sh; ./extract-NPPES-files.sh
 	@echo "done"
 
 populatedb:

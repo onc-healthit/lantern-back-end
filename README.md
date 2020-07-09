@@ -52,7 +52,13 @@ This removes all docker images, networks, and local volumes.
 
 
 2. **If you have a clean database or want to update the data in your database** 
-    1. Run the following command to begin populating the database usinig the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
+    1. Run the following command to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and NPPES for their endpoint and npi data files. 
+
+     ```bash
+      make get_endpoint_resources
+      ```
+
+    2. Run the following command to begin populating the database usinig the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
       -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
     The populated db scrpt expects the resources directory to contain the following files:
