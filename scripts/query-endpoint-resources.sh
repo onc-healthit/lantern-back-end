@@ -2,7 +2,7 @@
 
 #Iterate through endpoint source list json to query each url and store as properly named file
 cd ../resources/prod_resources
-jq -c '.Entries[]' EndpointResourcesList.json | while read endpoint; do
+jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
    URL=$(echo $endpoint | jq -c -r '.URL')

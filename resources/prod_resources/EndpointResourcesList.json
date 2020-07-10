@@ -1,5 +1,12 @@
-{"Entries":[
-    {"EndpointName":"Epic","FileName":"EpicEndpointSources.json","URL":"https://open.epic.com/MyApps/EndpointsJson"},
-    {"EndpointName":"Cerner","FileName":"CernerEndpointSources.json","URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json"}
-    ]
-}
+[
+    {
+        "EndpointName":"Epic",
+        "FileName":"EpicEndpointSources.json",
+        "URL":"https://open.epic.com/MyApps/EndpointsJson"
+    },
+    {
+        "EndpointName":"Cerner",
+        "FileName":"CernerEndpointSources.json",
+        "URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json"
+    }
+]
