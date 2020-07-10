@@ -31,7 +31,8 @@ clean_remote:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
 update_source_data:
-	@cd ./scripts; chmod +rx update_source_data.sh; ./update_source_data.sh
+	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
+	@cd ./scripts; chmod +rx query-NPPES-resources.sh; ./query-NPPES-resources.sh
 
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
