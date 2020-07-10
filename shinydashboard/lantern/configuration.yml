@@ -27,6 +27,7 @@ module_files:
   - "modules/endpointsmodule.R"
   - "modules/capabilitymodule.R"
   - "modules/performancemodule.R"
+  - "modules/fieldsmodule.R"
 
 refresh_timeout_minutes:
   - 720

@@ -139,11 +139,32 @@ get_fhir_resource_types <- function(db_connection){
     tidyr::replace_na(list(vendor_name = "Unknown")) 
 }
 
+get_capstat_fields <- function(db_connection){
+  # @TODO it seems like the best way to handle this is to get all of the included fields without trying
+  # to do anything fancy with them, and do the fancy stuff later
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+        vendor_id,
+        vendors.name as vendor_name,
+        capability_statement->>'fhirVersion' as fhir_version,
+        included_fields as field
+        from fhir_endpoints_info f
+        LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
+  collect() %>%
+  tidyr::replace_na(list(vendor_name = "Unknown"))
+}
+
 # Summarize count of resource types by type, fhir_version
 get_fhir_resource_count <- function(fhir_resources_tbl){
   res <- fhir_resources_tbl %>% 
     group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
 }
+
+# @TODO Repeat above, first figure out what the fhir_resources_tbl is
+get_capstat_fields_count <- function(capstat_fields_tbl) {
+  # @TODO this is definitely not right
+  res <- capstat_fields_tbl %>%
+    group_by(field, fhir_version) %>% count() %>% rename(Fields = field, Endpoints = n)
 
 get_avg_response_time <- function(db_connection) {
   # get time series of response time metrics for all endpoints
