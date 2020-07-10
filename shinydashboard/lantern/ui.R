@@ -1,10 +1,11 @@
 # Define base user interface
 ui <- dashboardPage(
-  string <- reactiveVal(readr::read_file(file.path("/VERSION"))),
-  titleStr <- reactiveVal(paste("Lantern Dashboard ", string())),
   
+  string <- reactive(readr::read_file(file.path(R.home(), "VERSION"))),
+  titleStr <- reactive(paste("Lantern Dashboard ", string())),
+
   dashboardHeader(
-    title = paste(titleStr()),
+    title = titleStr(),
     titleWidth = 200
   ),
   # Sidebar with menu items for each module
