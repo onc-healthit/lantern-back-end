@@ -37,6 +37,7 @@ function(input, output, session) {
   })
 
   output$page_title <- renderText(page_name())
+  output$version <- renderText(version_number)
 
   observeEvent(input$main_tabs,{print(input$main_tabs)
     print(show_filter())

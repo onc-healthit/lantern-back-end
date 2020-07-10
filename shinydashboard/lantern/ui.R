@@ -1,11 +1,8 @@
 # Define base user interface
 ui <- dashboardPage(
-  
-  string <- reactive(readr::read_file(file.path(R.home(), "VERSION"))),
-  titleStr <- reactive(paste("Lantern Dashboard ", string())),
 
   dashboardHeader(
-    title = titleStr(),
+    title = "Lantern Dashboard",
     titleWidth = 200
   ),
   # Sidebar with menu items for each module
@@ -17,7 +14,8 @@ ui <- dashboardPage(
       menuItem("Capability", icon=icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
-      hr()
+      hr(),
+      textOutput("version")
     )
   ),
 
