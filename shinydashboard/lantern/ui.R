@@ -3,7 +3,16 @@ ui <- dashboardPage(
 
   dashboardHeader(
     title = "Lantern Dashboard",
-    titleWidth = 200
+    titleWidth = 200,
+    tags$li(
+      class = "dropdown",
+        column(
+          width = 12,
+          align = "right",
+          span(textOutput("version"),
+               style="color: white; font-size: 15px; padding:10px")
+        )
+      )
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
@@ -14,8 +23,7 @@ ui <- dashboardPage(
       menuItem("Capability", icon=icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
-      hr(),
-      textOutput("version")
+      hr()
     )
   ),
 
