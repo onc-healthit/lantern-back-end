@@ -3,7 +3,7 @@ module github.com/onc-healthit/lantern-back-end/capabilityreceiver
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200713192919-7c34b318697b
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200713192559-0d1adfc470b9
 	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200713192919-7c34b318697b
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
