@@ -1,8 +1,18 @@
 # Define base user interface
 ui <- dashboardPage(
+
   dashboardHeader(
     title = "Lantern Dashboard",
-    titleWidth = 200
+    titleWidth = 200,
+    tags$li(
+      class = "dropdown",
+        column(
+          width = 12,
+          align = "right",
+          span(textOutput("version"),
+               style="color: white; font-size: 16px; line-height: 45px")
+        )
+      )
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
