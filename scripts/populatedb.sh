@@ -5,7 +5,7 @@ set -e
 # get endpoint data
 cd cmd/endpointpopulator
 
-jq -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpoint; do
+jq -c '.[]' /go/src/app/resources/EndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
 
