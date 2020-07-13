@@ -21,27 +21,21 @@ availability <- function(
   # we want to graph all non-200 results by response code, but they need
   # to be factors so they can be shown as separate categories on the
   # graph, rather than as a scalar value
-  http_pct <- get_http_response_summary_tbl(db_tables)
-
-
-  # we need a table with the code as a factor for use in ggplot
-  http_pctf <- http_pct %>%
-    filter(http_response > 0, http_response != 200) %>%
-    mutate(name = as.factor(as.character(id)), code_f = as.factor(code))
 
   output$non_200 <- renderPlotly({
-    ggplotly(ggplot(http_pctf, aes(x = name, y = Percentage, fill = code_f)) +
+    ggplotly(ggplot(app_data$http_pctf, aes(x = name, y = Percentage, fill = code_f)) +
                geom_bar(stat = "identity") + ggtitle("Endpoints returning non-HTTP 200 responses"))
   })
 
   output$count_200_sub <- renderText({
-    count_200_sub  <- nrow(http_pct %>% filter(http_response == 200, Percentage < 99.8))
-    paste("<br><p>There are", count_200_sub, "endpoints which have returned HTTP 200 (Success) responses less than <strong>99.8%</strong> of the time.</p>")
+    count_200_sub  <- nrow(app_data$http_pct %>% filter(http_response == 200, Percentage < 99.8))
+    paste("<br><p>Top ", min(count_200_sub,50), "endpoints which have returned HTTP 200 (Success) responses less than <strong>99.8%</strong> of the time.</p>")
   })
 
   output$plot_200_sub <- renderPlotly({
-    http_200 <- http_pct %>%
+    http_200 <- app_data$http_pct %>%
       filter(http_response == 200, Percentage < 99.8) %>%
+      head(50) %>%
       arrange(Percentage) %>%
       mutate(name = as.factor(id))
     http_200f <- http_200 %>%

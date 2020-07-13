@@ -1,37 +1,35 @@
 # Capability Module
-library(treemapify)
 
 capabilitymodule_UI <- function(id) {
-  
+
   ns <- NS(id)
-  
+
   tagList(
     h1("FHIR Resource Types"),
     p("This is the list of FHIR resource types reported by the capability statements from the endpoints."),
     fluidRow(
-      column(width=5,
+      column(width = 5,
              tableOutput(ns("resource_type_table"))),
-      column(width=7,
+      column(width = 7,
              h4("Resource Count"),
-             plotOutput(ns("resource_bar_plot"))
+             uiOutput(ns("resource_plot"))
       )
     )
   )
 }
 
 capabilitymodule <- function(
-  input, 
-  output, 
+  input,
+  output,
   session,
   sel_fhir_version,
   sel_vendor
-){
+) {
 
   ns <- session$ns
-  endpoint_resource_types <- get_fhir_resource_types(db_connection)
- 
+
   selected_fhir_endpoints <- reactive({
-    res <- endpoint_resource_types
+    res <- app_data$endpoint_resource_types
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
@@ -41,21 +39,47 @@ capabilitymodule <- function(
     }
     res
   })
-  
-  endpoint_resource_count <- reactive({get_fhir_resource_count(selected_fhir_endpoints())})
- 
-  output$resource_type_table <- renderTable(endpoint_resource_count() %>% rename("FHIR Version"=fhir_version))
-  
-  output$resource_bar_plot <- renderPlot({
-    df <- endpoint_resource_count()
-    ggplot(df,aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
-      geom_col(width = 0.8) +
-      theme(legend.position="top") +
-      theme(text = element_text(size = 14)) +
-      labs(x="",fill="FHIR Version") +
-      coord_flip()
-  },height = function() {
-    max(nrow(endpoint_resource_count()) * 24,100)
+
+  endpoint_resource_count <- reactive({
+    get_fhir_resource_count(selected_fhir_endpoints())
   })
-  
+
+  output$resource_type_table <- renderTable(
+    endpoint_resource_count() %>%
+    rename("FHIR Version" = fhir_version)
+  )
+
+  vendor <- reactive({
+    sel_vendor()
+  })
+
+  # Default plot heights are not good for large number of bars, so base on
+  # number of rows in the result
+  plot_height <- reactive({
+    max(nrow(endpoint_resource_count()) * 25, 400)
+  })
+
+  output$resource_plot <- renderUI({
+    tagList(
+      plotOutput(ns("resource_bar_plot"), height = plot_height())
+    )
+  })
+
+  output$resource_bar_plot <- renderCachedPlot({
+    ggplot(endpoint_resource_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
+      geom_col(width = 0.8) +
+      theme(legend.position = "top") +
+      theme(text = element_text(size = 14)) +
+      labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      coord_flip()
+  },
+    sizePolicy = sizeGrowthRatio(width = 400,
+                                  height = 400,
+                                  growthRate = 1.2),
+    res = 72,
+    cache = "app",
+    cacheKeyExpr = {
+      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+    })
+
 }

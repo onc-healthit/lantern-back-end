@@ -6,11 +6,11 @@ ui <- dashboardPage(
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
-    sidebarMenu(id="side_menu",
+    sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
-      menuItem("Capability", icon=icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       hr()
@@ -19,7 +19,7 @@ ui <- dashboardPage(
 
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
-    tags$head(tags$link(rel="shortcut icon", href="images/favicon.ico")),
+    tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
     tabItems(
@@ -45,10 +45,12 @@ ui <- dashboardPage(
               img(src = "images/lantern-logo@1x.png", width = "300px"),
               br(),
               includeHTML("about-lantern.html"),
-              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the", a("documentation available here.", href= "Lantern_Data_Sources_And_Algorithms.pdf", target="_blank")))
+              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
+                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank"))
+              )
     ),
     div(class = "footer",
-    includeHTML("disclaimer.html")
+      includeHTML("disclaimer.html")
     )
   )
 )
