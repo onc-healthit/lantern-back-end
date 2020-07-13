@@ -191,6 +191,7 @@ go run main.go <path to nppes csv file>
 The Endpoint Manager expects the format of an endpoint source list to be in one of the formats below:
 
 Epic:
+
 ```
 {
   "Entries": [
@@ -204,16 +205,23 @@ Epic:
 ```
 
 Cerner:
+
 ```
 {
   "endpoints": [
     {
       "name": <name of the organization>,
       "baseUrl": <location of the FHIR endpoint>,
-      "type": <location of the FHIR endpoint>
+      "type": <endpoint type>
     },
     ...
   ]
 }
 ```
 
+NPPES:
+
+```
+"NPI","Endpoint Type","Endpoint Type Description","Endpoint","Affiliation","Endpoint Description","Affiliation Legal Business Name","Use Code","Use Description","Other Use Description","Content Type","Content Description","Other Content Description","Affiliation Address Line One","Affiliation Address Line Two","Affiliation Address City","Affiliation Address State","Affiliation Address Country","Affiliation Address Postal Code"
+...
+```
