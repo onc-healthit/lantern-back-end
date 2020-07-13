@@ -187,14 +187,14 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	failOnError(err)
 
-	if link_count != 34 {
-		t.Fatalf("Only 34 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+	if link_count != 30 {
+		t.Fatalf("Only 30 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-	expected_link_count := 32
+	expected_link_count := 30
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -212,7 +212,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	failOnError(err)
 
 	if link_count != expected_link_count {
-		t.Fatalf("Database should only have made 36 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
+		t.Fatalf("Database should only have made 30 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
 	}
 
 	// endpoint maps to multiple orgs
@@ -430,7 +430,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
 	var fhir_version_count int
-	expected_fhir_version_count := 25
+	expected_fhir_version_count := 30
 	err = query_str.Scan(&fhir_version_count)
 	failOnError(err)
 	if fhir_version_count < expected_fhir_version_count {
@@ -459,7 +459,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	populateTestEndpointData(shortEndptList)
 
-	expected_endpt_ct := 28
+	expected_endpt_ct := 26
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var endpt_count int
 	err = endpt_ct_st.Scan(&endpt_count)
@@ -472,7 +472,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
-	expected_link_count := 32
+	expected_link_count := 30
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)

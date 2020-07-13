@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
-	eps "github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/endpoints"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -28,7 +27,7 @@ import (
 
 var mq *lanternmq.MessageQueue
 var chID *lanternmq.ChannelID
-var endpoints *fetcher.ListOfEndpoints
+var endpoints fetcher.ListOfEndpoints
 
 var conn *amqp.Connection
 var channel *amqp.Channel
@@ -147,7 +146,7 @@ func setup() error {
 
 	// grab endpoints
 	// TODO: eventually this method of getting endpoints will change
-	endpoints, err = eps.GetEndpoints("../../../endpointmanager/resources/EndpointSources.json")
+	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSources.json", "Epic")
 
 	return err
 }
