@@ -106,7 +106,7 @@ services:
     volumes:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server
-      - "./VERSION:/home/shiny/VERSION:ro"
+      - "./VERSION:/srv/shiny-server/VERSION:ro"
 
 volumes:
   pgdata:

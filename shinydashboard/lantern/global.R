@@ -16,7 +16,7 @@ purrr::walk(config_yaml$libraries, library, character.only = T)
 purrr::walk(config_yaml$function_files, source)
 purrr::walk(config_yaml$module_files, source)
 
-version_string <- read_file(here("/home/shiny", "VERSION"))
+version_string <- read_file("VERSION")
 version_number <- strsplit(version_string, "=")[[1]][2]
 version_title <- paste("Version ", version_number)
 

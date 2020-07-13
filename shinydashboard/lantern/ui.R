@@ -10,7 +10,7 @@ ui <- dashboardPage(
           width = 12,
           align = "right",
           span(textOutput("version"),
-               style="color: white; font-size: 16px; padding: 0px 0px; line-height: 45px")
+               style="color: white; font-size: 16px; line-height: 45px")
         )
       )
   ),
