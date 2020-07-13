@@ -188,8 +188,9 @@ go run main.go <path to nppes csv file>
 
 ### Expected Endpoint Source Formatting
 
-The Endpoint Manager expects the format of an endpoint source list to be in the below format, unless one of the exceptions noted below.
+The Endpoint Manager expects the format of an endpoint source list to be in one of the formats below:
 
+Epic:
 ```
 {
   "Entries": [
@@ -202,5 +203,17 @@ The Endpoint Manager expects the format of an endpoint source list to be in the 
 }
 ```
 
-Exceptions:
-* Cerner
+Cerner:
+```
+{
+  "endpoints": [
+    {
+      "name": <name of the organization>,
+      "baseUrl": <location of the FHIR endpoint>,
+      "type": <location of the FHIR endpoint>
+    },
+    ...
+  ]
+}
+```
+
