@@ -226,4 +226,6 @@ NPPES:
 ...
 ```
 
-To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above, add a new parser.
+### Adding a New Endpoint List
+
+To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above in the expected endpoint formats, add a new parser.
