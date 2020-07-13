@@ -2,18 +2,20 @@
 
 set -e
 
-# get endpoint data
-cd cmd/endpointpopulator
-
-jq . -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpoint; do
+cd resources
+jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
+
+    # get endpoint data
+    cd cmd/endpointpopulator
 
     # Only use the line below that populates the database with CareEvolution for development 
     # go run main.go /etc/lantern/resources/CareEvolutionEndpointSources.json CareEvolution
     go run main.go /etc/lantern/resources/$FILENAME $NAME
+    cd ../../resources
 done
-cd ..
+cd ../cmd
 
 # get CHPL info into db
 cd chplquerier
