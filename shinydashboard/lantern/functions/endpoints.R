@@ -55,7 +55,7 @@ get_response_tally_list <- function(db_tables) {
 
 # get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(db_tables$fhir_endpoints_info %>% arrange(desc(updated_at)) %>% head(1) %>% pull(updated_at))
+  as.character.Date(app_data$last_updated)
 }
 
 # Compute the percentage of each response code for all responses received
