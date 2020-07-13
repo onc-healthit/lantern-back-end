@@ -225,3 +225,5 @@ NPPES:
 "NPI","Endpoint Type","Endpoint Type Description","Endpoint","Affiliation","Endpoint Description","Affiliation Legal Business Name","Use Code","Use Description","Other Use Description","Content Type","Content Description","Other Content Description","Affiliation Address Line One","Affiliation Address Line Two","Affiliation Address City","Affiliation Address State","Affiliation Address Country","Affiliation Address Postal Code"
 ...
 ```
+
+To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above, add a new parser.
