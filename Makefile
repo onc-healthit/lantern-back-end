@@ -1,4 +1,5 @@
 run:
+	@cd ./scripts; ./get-version.sh
 	docker-compose up --build
 
 run_prod:

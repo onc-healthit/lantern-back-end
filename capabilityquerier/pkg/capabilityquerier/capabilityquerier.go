@@ -17,6 +17,7 @@ import (
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type EndpointType string
@@ -60,6 +61,7 @@ type QuerierArgs struct {
 	MessageQueue *lanternmq.MessageQueue
 	ChannelID    *lanternmq.ChannelID
 	QueueName    string
+	UserAgent    string
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
@@ -73,6 +75,8 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
 	}
 
+	userAgent := viper.GetString("user_agent")
+
 	var err error
 	message := Message{
 		URL: qa.FhirURL,
@@ -85,7 +89,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	}
 	metadataURL := endpointmanager.NormalizeEndpointURL(castURL.String())
 	// Query fhir endpoint
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, userAgent, &message)
 	if err != nil {
 		select {
 		case <-ctx.Done():
@@ -99,7 +103,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(castURL.String())
 	// Query well known endpoint
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, userAgent, &message)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom wellknown URL: %s", err.Error(), wellKnownURL)
 	}
@@ -120,7 +124,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 }
 
 // fills out message with http response code, tls version, capability statement, and supported mime types
-func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, message *Message) error {
+func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, userAgent string, message *Message) error {
 	var err error
 	var httpResponseCode int
 	var supportsFHIR3MIMEType bool
@@ -136,7 +140,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	if err != nil {
 		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL)
 	}
-
+	req.Header.Set("User-Agent", userAgent)
 	trace := &httptrace.ClientTrace{}
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
