@@ -78,3 +78,13 @@ go get ./... # You may have to set environment variable GO111MODULE=on
 go mod download
 go run cmd/main.go
 ```
+
+## Scaling
+
+To scale out the capability querier service edit the docker-compose.yml and docker-compose.override.yml file to include additional capability querier services. 
+```
+capability_querier_2:
+  ...
+``` 
+
+Each instance of the capability querier will query endpoints from the same endpoints-to-capability queue in a round robin style.
