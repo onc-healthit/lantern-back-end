@@ -28,12 +28,10 @@ fieldsmodule <- function(
 ){
 
   ns <- session$ns
-  # @TODO Figure out what this is
   capstat_fields <- get_capstat_fields(db_connection)
 
   #
   selected_fhir_endpoints <- reactive({
-    # @TODO: figure out what endpoint_resource_types are and how to update it
     res <- capstat_fields
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
@@ -48,10 +46,10 @@ fieldsmodule <- function(
     res
   })
   
-  # @TODO: figure out what get_fhir_resource_count does and how to update it
   capstat_field_count <- reactive({get_capstat_fields_count(selected_fhir_endpoints())})
  
-  output$capstat_fields_table <- renderTable(capstat_field_count() %>% rename("FHIR Version"=fhir_version))
+  output$capstat_fields_table <- renderTable(capstat_field_count() %>%
+    rename("FHIR Version"=fhir_version))
   
   output$fields_bar_plot <- renderPlot({
     df <- capstat_field_count()
