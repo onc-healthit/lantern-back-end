@@ -1,11 +1,13 @@
 package capabilityhandler
 
+import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+
 // RunIncludedFieldsChecks stores whether each field in capability statement is populated or not populated
-func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
+func RunIncludedFieldsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
 	if capInt == nil {
 		return nil
 	}
-	includedFields := make(map[string]bool)
+	var includedFields []endpointmanager.IncludedField
 
 	fieldsList := [][]string{
 		{"url"},
@@ -57,8 +59,11 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}) map[string]bool {
 		} else {
 			stringIndex = fieldNames[0]
 		}
-
-		includedFields[stringIndex] = checkField(capInt, fieldNames)
+		fieldObj := endpointmanager.IncludedField{
+			Field:  stringIndex,
+			Exists: checkField(capInt, fieldNames),
+		}
+		includedFields = append(includedFields, fieldObj)
 	}
 
 	return includedFields
