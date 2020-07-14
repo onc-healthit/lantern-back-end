@@ -188,7 +188,9 @@ go run main.go <path to nppes csv file>
 
 ### Expected Endpoint Source Formatting
 
-The Endpoint Manager expects the format of an endpoint source list to be in the below format, unless one of the exceptions noted below.
+The Endpoint Manager expects the format of an endpoint source list to be in one of the formats below:
+
+Epic Endpoint Sources (JSON):
 
 ```
 {
@@ -202,5 +204,28 @@ The Endpoint Manager expects the format of an endpoint source list to be in the 
 }
 ```
 
-Exceptions:
-* Cerner
+Cerner Endpoint Sources (JSON):
+
+```
+{
+  "endpoints": [
+    {
+      "name": <name of the organization>,
+      "baseUrl": <location of the FHIR endpoint>,
+      "type": <endpoint type>
+    },
+    ...
+  ]
+}
+```
+
+NPPES Endpoint pfile (CSV):
+
+```
+"NPI","Endpoint Type","Endpoint Type Description","Endpoint","Affiliation","Endpoint Description","Affiliation Legal Business Name","Use Code","Use Description","Other Use Description","Content Type","Content Description","Other Content Description","Affiliation Address Line One","Affiliation Address Line Two","Affiliation Address City","Affiliation Address State","Affiliation Address Country","Affiliation Address Postal Code"
+...
+```
+
+### Adding a New Endpoint List
+
+To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above in the expected endpoint formats, add a new parser. See lantern-back-end/endpointmanager/pkg/fetcher/cernerlist.go or lantern-back-end/endpointmanager/pkg/fetcher/epiclist.go for examples of the interface which endpoint list parsers need to adhere to.
