@@ -9,10 +9,12 @@ jq -c '.[]' /go/src/app/resources/EndpointResourcesList.json | while read endpoi
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
 
-    # Only use the line below that populates the database with CareEvolution for development 
-    # go run main.go /etc/lantern/resources/CareEvolutionEndpointSources.json CareEvolution
     go run main.go /etc/lantern/resources/$FILENAME $NAME
 done
+
+# Only use the line below that populates the database with CareEvolution for development 
+# go run main.go /etc/lantern/resources/CareEvolutionEndpointSources.json CareEvolution
+
 cd ..
 
 # get CHPL info into db
