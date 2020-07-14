@@ -19,12 +19,14 @@ function_files:
   - "functions/db_connection.R"
   - "functions/endpoints.R"
   - "functions/graphing.R"
+  - "functions/performance.R"
   
 module_files:
   - "modules/dashboardmodule.R"
   - "modules/availabilitymodule.R"
   - "modules/endpointsmodule.R"
   - "modules/capabilitymodule.R"
+  - "modules/performancemodule.R"
 
 refresh_timeout_minutes:
   - 720
