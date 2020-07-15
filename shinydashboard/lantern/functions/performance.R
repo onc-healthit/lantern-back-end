@@ -2,10 +2,10 @@ library(lubridate)
 
 get_avg_response_time <- function() {
   # get time series of response time metrics for all endpoints
-  # groups by 4 minute intervals
+  # groups by 23 hour intervals
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
-        sql("SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/240)*240 AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
+        sql("SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
             FROM fhir_endpoints_info_history
             WHERE fhir_endpoints_info_history.entered_at BETWEEN '2020-01-01T00:00:00Z' AND '2020-08-01T00:00:00Z'
             GROUP BY time
