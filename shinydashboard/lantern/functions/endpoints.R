@@ -26,15 +26,15 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function(db_tables) {
   db_tables$fhir_endpoints %>%
     collect() %>%
-    distinct(url, .keep_all=TRUE) %>%
     left_join(endpoint_export_tbl %>%
           distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources),
         by = c("url" = "url")) %>%
     mutate(updated = as.Date(updated_at)) %>%
     select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
-    left_join(http_response_code_tbl %>% select(code, label),
+    left_join(app$http_response_code_tbl %>% select(code, label),
               by = c("http_response" = "code")) %>%
-    mutate(status = paste(http_response, "-", label))
+    mutate(status = paste(http_response, "-", label)) %>%
+    distinct(url, .keep_all = TRUE)
 }
 
 # get the endpoint tally by http_response received
@@ -55,7 +55,7 @@ get_response_tally_list <- function(db_tables) {
 
 # get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(db_tables$fhir_endpoints_info %>% arrange(desc(updated_at)) %>% head(1) %>% pull(updated_at))
+  as.character.Date(app_data$last_updated)
 }
 
 # Compute the percentage of each response code for all responses received

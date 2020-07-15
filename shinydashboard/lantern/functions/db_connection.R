@@ -1,5 +1,5 @@
 # Database connection functions
-
+library(RPostgres)
 # Read database connection information from .Renviron file
 # If doing local development: you can readRenviron("../.env")
 # and set the db_config$host = "localhost"

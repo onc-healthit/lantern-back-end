@@ -9,15 +9,12 @@ libraries:
   - "plotly"
   - "scales"
   - "forcats"
-  - "dygraphs"
   - "config"
   - "here"
   - "lubridate"
-  - "xts"
   - "knitr"
   - "purrr"
-  - "treemapify"
-  
+
 function_files:
   - "functions/db_connection.R"
   - "functions/endpoints.R"
@@ -28,3 +25,6 @@ module_files:
   - "modules/availabilitymodule.R"
   - "modules/endpointsmodule.R"
   - "modules/capabilitymodule.R"
+
+refresh_timeout_minutes:
+  - 720
