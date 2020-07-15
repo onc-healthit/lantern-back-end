@@ -98,8 +98,8 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
-	// Expect 5 messages: start meesage, 3 endpoints, and stop message
-	th.Assert(t, count == 5, fmt.Sprintf("expected there to be 5 messages in the queue, instead got %d", count))
+	// Expect 3 messages: 3 endpoints
+	th.Assert(t, count == 3, fmt.Sprintf("expected there to be 3 messages in the queue, instead got %d", count))
 	wg.Done()
 }
 

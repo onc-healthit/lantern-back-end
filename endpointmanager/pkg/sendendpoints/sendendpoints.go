@@ -32,11 +32,6 @@ func GetEnptsAndSend(
 			errs <- err
 		}
 
-		err = accessqueue.SendToQueue(ctx, "start", mq, channelID, qName)
-		if err != nil {
-			errs <- err
-		}
-
 		// Shuffle Endpoints So that We Are Not Querying As Rapidly
 		rand.Shuffle(len(listOfEndpoints), func(i, j int) {
 			listOfEndpoints[i], listOfEndpoints[j] = listOfEndpoints[j], listOfEndpoints[i]
@@ -52,11 +47,6 @@ func GetEnptsAndSend(
 			if err != nil {
 				errs <- err
 			}
-		}
-
-		err = accessqueue.SendToQueue(ctx, "stop", mq, channelID, qName)
-		if err != nil {
-			errs <- err
 		}
 
 		log.Infof("Waiting %d minutes", qInterval)

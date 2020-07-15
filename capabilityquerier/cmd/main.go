@@ -22,8 +22,6 @@ import (
 type queryArgs struct {
 	workers     *workers.Workers
 	ctx         context.Context
-	numWorkers  int
-	errs        chan error
 	client      *http.Client
 	jobDuration time.Duration
 	mq          *lanternmq.MessageQueue
@@ -47,22 +45,6 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	qa, ok := (*args)["queryArgs"].(queryArgs)
 	if !ok {
 		return fmt.Errorf("unable to cast queryArgs from arguments")
-	}
-
-	// Handle the start message that is sent before the endpoints and the stop message that is sent at the end
-	if string(message) == "start" {
-		err := qa.workers.Start(qa.ctx, qa.numWorkers, qa.errs)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	if string(message) == "stop" {
-		err := qa.workers.Stop()
-		if err != nil {
-			return fmt.Errorf("error stopping queue workers: %s", err.Error())
-		}
-		return nil
 	}
 
 	urlString := string(message)
@@ -121,12 +103,14 @@ func main() {
 	workers := workers.NewWorkers()
 	ctx := context.Background()
 
+	// Start workers and have then always running
+	err = workers.Start(ctx, numWorkers, errs)
+	failOnError(err)
+
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
 		workers:     workers,
 		ctx:         ctx,
-		numWorkers:  numWorkers,
-		errs:        errs,
 		client:      client,
 		jobDuration: 30 * time.Second,
 		mq:          &mq,
