@@ -7,10 +7,23 @@ fieldsmodule_UI <- function(id) {
   
   tagList(
     h1("FHIR Capability Statement Fields"),
-    p("This is the list of FHIR capability statement fields include in the capability statements from the endpoints."),
+    p("This is the list of fields included in the FHIR capability statements from the endpoints."),
+    # Hides the "exist" column which is necessary for grouping data but not necessary to display
+    tags$style(HTML("
+      #fields table thead tr th:first-child {
+        display: none;
+      }
+      #fields table tbody tr td:first-child {
+        display: none;
+      }
+    ")),
     fluidRow(
+      id = "fields",
       column(width=5,
-             tableOutput(ns("capstat_fields_table"))),
+             h4("Required Fields"),
+             tableOutput(ns("capstat_fields_table_required")),
+             h4("Optional Fields"),
+             tableOutput(ns("capstat_fields_table_optional"))),
       column(width=7,
              h4("Capability Statement Fields Count"),
              plotOutput(ns("fields_bar_plot"))
@@ -30,7 +43,6 @@ fieldsmodule <- function(
   ns <- session$ns
   capstat_fields <- get_capstat_fields(db_connection)
 
-  #
   selected_fhir_endpoints <- reactive({
     res <- capstat_fields
     req(sel_fhir_version(), sel_vendor())
@@ -47,8 +59,20 @@ fieldsmodule <- function(
   })
   
   capstat_field_count <- reactive({get_capstat_fields_count(selected_fhir_endpoints())})
- 
-  output$capstat_fields_table <- renderTable(capstat_field_count() %>%
+
+  # Required Capability Statement fields that we are tracking
+  required_fields <- c("status", "kind", "fhirVersion", "format", "patchFormat")
+
+  # Table of the required fields
+  output$capstat_fields_table_required <- renderTable(capstat_field_count() %>%
+    relocate(exist) %>%
+    filter(Fields %in% required_fields) %>%
+    rename("FHIR Version"=fhir_version))
+
+  # Table of the optional fields
+  output$capstat_fields_table_optional <- renderTable(capstat_field_count() %>%
+    relocate(exist) %>%
+    filter(!(Fields %in% required_fields)) %>%
     rename("FHIR Version"=fhir_version))
   
   output$fields_bar_plot <- renderPlot({

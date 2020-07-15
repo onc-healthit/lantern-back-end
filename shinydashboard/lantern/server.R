@@ -35,7 +35,7 @@ function(input, output, session) {
    page_name_list <- list("dashboard_tab" = "Current Endpoint Metrics",
                           "endpoints_tab" = "List of Endpoints",
                           "capability_tab" = "Capability Page",
-                          "fields_tab" = "Capability Statement Fields Page",
+                          "fields_tab" = "Fields Page",
                           "availability_tab" = "Endpoint Server Availability",
                           "location_tab" = "Location Map Page",
                           "about_tab" = "About Lantern",
