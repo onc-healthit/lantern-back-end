@@ -29,6 +29,7 @@ services:
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
     volumes:
       - ./resources/dev_resources/:/etc/lantern/resources
+      - ./resources/prod_resources/EndpointResourcesList.json:/go/src/app/resources/EndpointResourcesList.json:ro
 
   capability_querier:
     build:
