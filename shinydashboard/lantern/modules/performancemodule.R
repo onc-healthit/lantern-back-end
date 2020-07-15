@@ -7,7 +7,7 @@ performance_UI <- function(id) {
 
   tagList(
     dygraphOutput(ns("mean_response_time_plot")),
-    p("Click and drag on plot to zoom in, double-click to zoom out. Will add more time-series charting features here...")
+    p("Click and drag on plot to zoom in, double-click to zoom out.")
   )
 }
 
