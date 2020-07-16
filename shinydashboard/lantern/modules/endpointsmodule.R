@@ -44,7 +44,8 @@ endpointsmodule <- function(
   output$endpoints_table <- DT::renderDataTable({
     datatable(selected_fhir_endpoints() %>% select(-supported_resources),
               colnames = c("URL", "Organization", "Updated", "Vendor", "FHIR Version", "TLS Version", "MIME Types", "Status"),
-              rownames = FALSE
+              rownames = FALSE,
+              options = list(scrollX = TRUE)
     )
     })
   # Downloadable csv of selected dataset ----
