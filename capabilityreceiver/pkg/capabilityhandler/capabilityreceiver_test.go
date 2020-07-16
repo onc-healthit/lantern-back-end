@@ -36,39 +36,135 @@ var testValidationObj = endpointmanager.Validation{
 	Warnings: []endpointmanager.Rule{},
 }
 
-var testIncludedFields = map[string]bool{
-	"url":                        true,
-	"date":                       true,
-	"kind":                       true,
-	"name":                       true,
-	"title":                      false,
-	"format":                     true,
-	"status":                     true,
-	"contact":                    false,
-	"imports":                    false,
-	"profile":                    false,
-	"purpose":                    false,
-	"version":                    false,
-	"copyright":                  false,
-	"publisher":                  true,
-	"useContext":                 false,
-	"description":                true,
-	"fhirVersion":                true,
-	"patchFormat":                false,
-	"experimental":               false,
-	"instantiates":               false,
-	"jurisdiction":               false,
-	"requirements":               false,
-	"acceptUnknown":              true,
-	"software.name":              false,
-	"software.version":           false,
-	"implementation.url":         false,
-	"implementationGuide":        false,
-	"software.releaseDate":       false,
-	"implementation.custodian":   false,
-	"implementation.description": false,
-	"messaging":                  false,
-	"document":                   false,
+var testIncludedFields = []endpointmanager.IncludedField{
+	{
+		Field:  "url",
+		Exists: true,
+	},
+	{
+		Field:  "version",
+		Exists: false,
+	},
+	{
+		Field:  "name",
+		Exists: true,
+	},
+	{
+		Field:  "title",
+		Exists: false,
+	},
+	{
+		Field:  "status",
+		Exists: true,
+	},
+	{
+		Field:  "experimental",
+		Exists: false,
+	},
+	{
+		Field:  "date",
+		Exists: true,
+	},
+	{
+		Field:  "publisher",
+		Exists: true,
+	},
+	{
+		Field:  "contact",
+		Exists: false,
+	},
+	{
+		Field:  "description",
+		Exists: true,
+	},
+	{
+		Field:  "requirements",
+		Exists: false,
+	},
+	{
+		Field:  "useContext",
+		Exists: false,
+	},
+	{
+		Field:  "jurisdiction",
+		Exists: false,
+	},
+	{
+		Field:  "purpose",
+		Exists: false,
+	},
+	{
+		Field:  "copyright",
+		Exists: false,
+	},
+	{
+		Field:  "kind",
+		Exists: true,
+	},
+	{
+		Field:  "instantiates",
+		Exists: false,
+	},
+	{
+		Field:  "imports",
+		Exists: false,
+	},
+	{
+		Field:  "software.name",
+		Exists: false,
+	},
+	{
+		Field:  "software.version",
+		Exists: false,
+	},
+	{
+		Field:  "software.releaseDate",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.description",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.url",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.custodian",
+		Exists: false,
+	},
+	{
+		Field:  "fhirVersion",
+		Exists: true,
+	},
+	{
+		Field:  "format",
+		Exists: true,
+	},
+	{
+		Field:  "patchFormat",
+		Exists: false,
+	},
+	{
+		Field:  "acceptUnknown",
+		Exists: true,
+	},
+	{
+		Field:  "implementationGuide",
+		Exists: false,
+	},
+	{
+		Field:  "profile",
+		Exists: false,
+	},
+	{
+		Field:  "messaging",
+		Exists: false,
+	},
+	{
+		Field:  "document",
+		Exists: false,
+	},
 }
 
 var testSupportedResources = []string{
@@ -219,23 +315,22 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
 	includedFields := RunIncludedFieldsChecks(capInt)
-	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
-	th.Assert(t, includedFields["name"] == true, "Expected name in includedFields to be true, was false")
-	th.Assert(t, includedFields["software.name"] == false, "Expected software.name in includedFields to be false, was true")
-	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact"] == false, "Expected contact.name in includedFields to be false, was true")
+	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
+	th.Assert(t, includedFields[2].Exists == true, "Expected name in includedFields to be true, was false")
+	th.Assert(t, includedFields[18].Exists == false, "Expected software.name in includedFields to be false, was true")
+	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
+	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
 	includedFields = RunIncludedFieldsChecks(capInt)
 
-	th.Assert(t, includedFields["url"] == true, "Expected url in includedFields to be true, was false")
-	th.Assert(t, includedFields["name"] == false, "Expected name in includedFields to be false, was true")
-	th.Assert(t, includedFields["software.name"] == true, "Expected software.name in includedFields to be true, was false")
-	th.Assert(t, includedFields["software.releaseDate"] == true, "Expected software.name in includedFields to be true, was false")
-	th.Assert(t, includedFields["format"] == true, "Expected format in includedFields to be true, was false")
-	th.Assert(t, includedFields["contact"] == true, "Expected contact in includedFields to be true, was false")
-
+	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
+	th.Assert(t, includedFields[2].Exists == false, "Expected name in includedFields to be false, was true")
+	th.Assert(t, includedFields[18].Exists == true, "Expected software.name in includedFields to be true, was false")
+	th.Assert(t, includedFields[19].Exists == true, "Expected software.version in includedFields to be true, was false")
+	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
+	th.Assert(t, includedFields[8].Exists == true, "Expected contact in includedFields to be true, was false")
 }
 
 func Test_RunSupportedResourcesChecks(t *testing.T) {
