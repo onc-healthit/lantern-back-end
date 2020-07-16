@@ -19,7 +19,6 @@ function_files:
   - "functions/db_connection.R"
   - "functions/endpoints.R"
   - "functions/graphing.R"
-  - "functions/performance.R"
   
 module_files:
   - "modules/dashboardmodule.R"

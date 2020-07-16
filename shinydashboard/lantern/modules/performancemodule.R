@@ -18,7 +18,7 @@ performance <- function(
 ) {
   ns <- session$ns
 
-  response_time_xts <- get_avg_response_time()
+  response_time_xts <- app_data$avg_response_time
 
   output$mean_response_time_plot <- renderDygraph({
     dygraph(response_time_xts,
