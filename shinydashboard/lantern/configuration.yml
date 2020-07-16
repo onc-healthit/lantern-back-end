@@ -20,7 +20,6 @@ function_files:
   - "functions/endpoints.R"
   - "functions/graphing.R"
   - "functions/ui_functions.R"
-  - "functions/performance.R"
   
 module_files:
   - "modules/dashboardmodule.R"
