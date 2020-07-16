@@ -149,7 +149,7 @@ get_avg_response_time <- function(db_connection) {
     tbl(db_connection,
         sql("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
                 FROM fhir_endpoints_info_history, (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date
-                GROUP BY time HAVING date.datetime between(date.datetime+0) AND (date.datetime+2592000)
+                GROUP BY time HAVING date.datetime between(date.datetime) AND (date.datetime+2592000)
                 ORDER BY time")
         )
     ) %>%
