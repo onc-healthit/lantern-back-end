@@ -276,6 +276,10 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var tc *th.TestClient
 	var ctx context.Context
 
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
 	// basic test
 
 	// prep with vendors
@@ -307,6 +311,9 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// test context ended
 	// also checks what happens when an http request fails
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -318,12 +325,16 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	err = GetCHPLProducts(ctx, store, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected an error to be logged")
 
 	// test with malformed json
 
