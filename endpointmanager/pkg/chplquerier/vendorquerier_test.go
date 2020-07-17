@@ -90,6 +90,12 @@ func Test_makeVendorURL(t *testing.T) {
 	actual := actualURL.String()
 	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s to equal %s.", actual, expected))
 
+	// test empty api key
+
+	viper.Set("chplapikey", "")
+	actualURL, err = makeCHPLVendorURL()
+	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
+
 	// test invalid domain and error handling
 
 	chplDomainOrig := chplDomain
@@ -319,6 +325,10 @@ func Test_getVendorJSON(t *testing.T) {
 	var ctx context.Context
 
 	// basic test
+
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
 
 	// mock JSON includes 38 vendor entries
 	expectedVendorsReceived := 38

@@ -58,6 +58,12 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	actual := actualURL.String()
 	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s to equal %s.", actual, expected))
 
+	// test empty api key
+
+	viper.Set("chplapikey", "")
+	actualURL, err = makeCHPLProductURL()
+	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
+
 	// test invalid domain and error handling
 
 	chplDomainOrig := chplDomain
@@ -270,6 +276,10 @@ func Test_getProductJSON(t *testing.T) {
 	var err error
 	var tc *th.TestClient
 	var ctx context.Context
+
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
 
 	// basic test
 
