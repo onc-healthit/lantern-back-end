@@ -2,6 +2,7 @@ package chplquerier
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -23,6 +24,9 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	}
 
 	apiKey := viper.GetString("chplapikey")
+	if apiKey == "" {
+		return nil, fmt.Errorf("the CHPL API Key is not set")
+	}
 	queryArgsToSend.Set("api_key", apiKey)
 	for k, v := range queryArgs {
 		queryArgsToSend.Set(k, v)
