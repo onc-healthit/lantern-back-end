@@ -59,7 +59,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("requesting products from CHPL")
 	prodJSON, err := getProductJSON(ctx, cli)
 	if err != nil {
-		return errors.Wrap(err, "getting health IT product JSON failed")
+		return err
 	}
 	log.Debug("done requesting products from CHPL")
 
@@ -83,7 +83,12 @@ func getProductJSON(ctx context.Context, client *http.Client) ([]byte, error) {
 		return nil, errors.Wrap(err, "error creating CHPL product URL")
 	}
 
-	return getJSON(ctx, client, chplURL)
+	// None of the returned errors should break the system, so print a warning instead
+	jsonBody, err := getJSON(ctx, client, chplURL)
+	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), chplURL.String())
+	}
+	return jsonBody, nil
 }
 
 func makeCHPLProductURL() (*url.URL, error) {
