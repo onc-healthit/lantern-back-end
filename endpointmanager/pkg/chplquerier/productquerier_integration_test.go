@@ -16,8 +16,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
-	logtest "github.com/sirupsen/logrus/hooks/test"
 	log "github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
@@ -338,7 +338,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
-	
+
 	hook = logtest.NewGlobal()
 	expectedErr = "CHPL request responded with status: 404 Not Found"
 
