@@ -23,6 +23,7 @@ purrr::walk(config_yaml$module_files, source)
 version_string <- read_file("VERSION")
 version_number <- strsplit(version_string, "=")[[1]][2]
 version_title <- paste("Version ", version_number)
+devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 
 # Define magic numbers for user interface
 ui_special_values <- list(

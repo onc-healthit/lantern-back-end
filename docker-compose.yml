@@ -99,7 +99,8 @@ services:
         LANTERN_DBPASSWORD: ${LANTERN_DBPASSWORD}
         LANTERN_DBHOST: ${LANTERN_DBHOST}
         LANTERN_DBPORT: ${LANTERN_DBPORT}
-        LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}      
+        LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}
+        LANTERN_BANNER_TEXT: ""     
     image: lantern_shinydashboard:current
     depends_on:
       - postgres

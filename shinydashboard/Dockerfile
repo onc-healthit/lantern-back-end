@@ -6,6 +6,7 @@ ARG LANTERN_DBHOST
 ARG LANTERN_DBUSER
 ARG LANTERN_DBPASSWORD
 ARG LANTERN_DBSSLMODE
+ARG LANTERN_BANNER_TEXT
 
 COPY ${cert_dir}/ /usr/local/share/ca-certificates
 RUN update-ca-certificates

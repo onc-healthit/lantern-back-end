@@ -55,6 +55,7 @@ services:
     build:
       args:
         cert_dir: ./certs
+        LANTERN_BANNER_TEXT: "This system is for demonstration use only."  
     ports:
       - "3838:3838"
 

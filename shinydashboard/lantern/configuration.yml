@@ -19,6 +19,7 @@ function_files:
   - "functions/db_connection.R"
   - "functions/endpoints.R"
   - "functions/graphing.R"
+  - "functions/ui_functions.R"
   
 module_files:
   - "modules/dashboardmodule.R"
