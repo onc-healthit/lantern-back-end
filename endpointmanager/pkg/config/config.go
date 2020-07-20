@@ -85,7 +85,7 @@ func SetupConfig() error {
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
-	viper.SetDefault("capquery_qryintvl", 1440) // 1440 minutes -> 24 hours.
+	viper.SetDefault("capquery_qryintvl", 1380) // 1380 minutes -> 23 hours.
 
 	return nil
 }

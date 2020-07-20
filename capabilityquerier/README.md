@@ -33,7 +33,7 @@ The capability querier reads the following environment variables:
 
 * **LANTERN_CAPQUERY_QRYINTVL**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
 
-  Default value: 1440 (24 hours)
+  Default value: 1380 (23 hours)
 
 ### Test Configuration
 
