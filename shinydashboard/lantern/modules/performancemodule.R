@@ -20,10 +20,14 @@ performance <- function(
 
   response_time_xts <- app_data$avg_response_time
 
-  output$mean_response_time_plot <- renderDygraph({
-    dygraph(response_time_xts,
-            main = "Endpoint Mean Response Time",
-            ylab = "seconds",
-            xlab = "Date")
-  })
+  if(nrow(response_time_xts) == 0){}
+  
+  else{
+    output$mean_response_time_plot <- renderDygraph({
+      dygraph(response_time_xts,
+              main = "Endpoint Mean Response Time",
+              ylab = "seconds",
+              xlab = "Date")
+    })
+  }
 }
