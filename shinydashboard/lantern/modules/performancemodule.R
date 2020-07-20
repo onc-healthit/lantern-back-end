@@ -20,23 +20,24 @@ performance <- function(
   ns <- session$ns
 
   response_time_xts <- reactive({
-    if (all(sel_date() == "Past 7 days")){
-      range <- "604800"
-    }
-    else if (all(sel_date() == "Past 14 days")){
-      range <- "1209600"
-    }
-    else{
-      range <- "2592000"
-    }
-    res <- get_avg_response_time(db_connection, range)
-    res
-  })
+      if (all(sel_date() == "Past 7 days")){
+        range <- "604800"
+      }
+      else if (all(sel_date() == "Past 14 days")){
+        range <- "1209600"
+      }
+      else{
+        range <- "2592000"
+      }
+      app_data$avg_response_time <- get_avg_response_time(db_connection, range)
+      app_data$avg_response_time
+    })
+  
+  if (nrow(app_data$avg_response_time)== 0){}
 
-  if (nrow(response_time_xts) == 0) {}
   else{
     output$mean_response_time_plot <- renderDygraph({
-      dygraph(response_time_xts,
+      dygraph(response_time_xts(),
               main = "Endpoint Mean Response Time",
               ylab = "seconds",
               xlab = "Date")
