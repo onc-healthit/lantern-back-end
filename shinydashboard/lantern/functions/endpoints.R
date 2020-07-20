@@ -186,8 +186,8 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
-                    FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT min(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS minimum FROM fhir_endpoints_info_history) as mindate
-                    WHERE fhir_endpoints_info_history.id = date.id and date.datetime between mindate.minimum AND (mindate.minimum+", date, ")
+                    FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
+                    WHERE fhir_endpoints_info_history.id = date.id and date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time
                     ORDER BY time"))
         )
