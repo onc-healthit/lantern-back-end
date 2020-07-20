@@ -30,7 +30,8 @@ function(input, output, session) {
                           "capability_tab" = "Capability Page",
                           "availability_tab" = "Endpoint Server Availability",
                           "location_tab" = "Location Map Page",
-                          "about_tab" = "About Lantern"
+                          "about_tab" = "About Lantern",
+                          "performance_tab" = "Response Time Performance"
                         )
   show_filter <- reactive(input$side_menu %in% c("endpoints_tab", "capability_tab"))
 
