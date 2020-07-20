@@ -79,14 +79,10 @@ This removes all docker images, networks, and local volumes.
       * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
         * this is item will take an hour to load if you use the full npidata_pfile
 
-1. **If you want to requery and rereceive capability statements**, open a new tab and run the following:
-
-    In the new tab (this runs forever), run:
+1. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
     ```bash
-    cd capabilityquerier/cmd
-    go run main.go
-    cd ../..
+    docker restart lantern-back-end_endpoint_manager_1
     ```
 
 ## Stop Lantern

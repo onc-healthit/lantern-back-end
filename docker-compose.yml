@@ -108,6 +108,8 @@ services:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server
       - "./VERSION:/srv/shiny-server/VERSION:ro"
+    ports:
+      - "8090:3838"
 
 volumes:
   pgdata:
