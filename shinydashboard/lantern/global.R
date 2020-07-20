@@ -48,7 +48,7 @@ app_data <<- list(
   endpoint_resource_types = get_fhir_resource_types(db_connection),
   capstat_fields          = get_capstat_fields(db_connection),
   last_updated            = now(),
-  avg_response_time       = get_avg_response_time(db_connection)
+  avg_response_time       = get_avg_response_time(db_connection, "2592000")
 )
 
 # we need a table with the code as a factor for use in ggplot
@@ -104,7 +104,7 @@ updater <- observe({
 
   app_data$last_updated <<- now()
 
-  app_data$avg_response_time <<- get_avg_response_time(db_connection)
+  app_data$avg_response_time <<- get_avg_response_time(db_connection, "2592000")
 
 })
 

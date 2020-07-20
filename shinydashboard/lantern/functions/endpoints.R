@@ -180,16 +180,16 @@ get_capstat_fields_list <- function(capstat_fields_tbl) {
     select(field)
 }
 
-get_avg_response_time <- function(db_connection) {
+get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
-        sql("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
-              FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
-              WHERE fhir_endpoints_info_history.id = date.id and date.datetime between maxdate.maximum-2592000 AND maxdate.maximum
-              GROUP BY time
-              ORDER BY time")
+        sql(paste0("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
+                    FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT min(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS minimum FROM fhir_endpoints_info_history) as mindate
+                    WHERE fhir_endpoints_info_history.id = date.id and date.datetime between mindate.minimum AND (mindate.minimum+", date, ")
+                    GROUP BY time
+                    ORDER BY time"))
         )
     ) %>%
     mutate(date = as_datetime(time)) %>%
