@@ -76,14 +76,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	var err error
 
-	// Read version file that is mounted
-	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
-	if err != nil {
-		return err
-	}
-	versionString := string(version)
-	userAgent := "LANTERN/" + versionString
-
+	userAgent := qa.UserAgent
 	message := Message{
 		URL: qa.FhirURL,
 	}
