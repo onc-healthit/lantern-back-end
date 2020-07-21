@@ -65,15 +65,18 @@ get_endpoint_last_updated <- function(db_tables) {
 # Compute the percentage of each response code for all responses received
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info_history %>%
-    select(id, http_response) %>%
+    collect() %>%
+    left_join(endpoint_export_tbl %>% select(url, vendor_name), by = c("url" = "url")) %>%
+    select(id, http_response, vendor_name) %>%
     mutate(code = as.character(http_response)) %>%
-    group_by(id, code, http_response) %>%
+    group_by(id, code, http_response, vendor_name) %>%
     summarise(Percentage = n()) %>%
     ungroup() %>%
     group_by(id) %>%
     mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
     ungroup() %>%
-    collect()
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) 
 }
 
 # Get the count of endpoints by vendor
