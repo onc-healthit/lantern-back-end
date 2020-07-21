@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
@@ -100,7 +101,8 @@ func main() {
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
 	failOnError(err)
 	versionString := string(version)
-	userAgent := "LANTERN/" + versionString
+	versionNum := strings.Split(versionString, "=")
+	userAgent := "LANTERN/" + versionNum[1]
 
 	client := &http.Client{
 		Timeout: time.Second * 35,
