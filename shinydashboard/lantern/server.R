@@ -102,8 +102,8 @@ function(input, output, session) {
           selectInput(
             inputId = "date",
             label = "Date range",
-            choices = list("Past 7 days", "Past 14 days", "Past 30 days"),
-            selected = "Past 30 days",
+            choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+            selected = "All time",
             size = 1,
             selectize = FALSE)
         )

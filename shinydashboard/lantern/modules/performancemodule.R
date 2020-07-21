@@ -26,8 +26,11 @@ performance <- function(
       else if (all(sel_date() == "Past 14 days")){
         range <- "1209600"
       }
-      else{
+      else if (all(sel_date() == "Past 30 days")){
         range <- "2592000"
+      }
+      else{
+        range <- "maxdate.maximum"
       }
       app_data$avg_response_time <- get_avg_response_time(db_connection, range)
       app_data$avg_response_time
