@@ -233,6 +233,13 @@
       "Repository": "CRAN",
       "Hash": "4011f62581a34080e44105d4aa05a97f"
     },
+    "dygraphs": {
+      "Package": "dygraphs",
+      "Version": "1.1.1.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "716869fffc16e282c118f8894e082a7d"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.1",

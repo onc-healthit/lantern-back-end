@@ -1,6 +1,10 @@
 # Functions to compute metrics on endpoints
 library(purrr)
 
+# Package that makes it easier to work with dates and times for getting avg response times
+library(lubridate)
+
+
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
   vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
@@ -136,4 +140,25 @@ get_fhir_resource_types <- function(db_connection){
 get_fhir_resource_count <- function(fhir_resources_tbl){
   res <- fhir_resources_tbl %>% 
     group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
+}
+
+get_avg_response_time <- function(db_connection) {
+  # get time series of response time metrics for all endpoints
+  # groups response time averages by 23 hour intervals and shows data for a range of 30 days
+  all_endpoints_response_time <- as_tibble(
+    tbl(db_connection,
+        sql("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
+              FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
+              WHERE fhir_endpoints_info_history.id = date.id and date.datetime between maxdate.maximum-2592000 AND maxdate.maximum
+              GROUP BY time
+              ORDER BY time")
+        )
+    ) %>%
+    mutate(date = as_datetime(time)) %>%
+    select(date, avg)
+
+  # convert to xts format for use in dygraph
+  xts(x = all_endpoints_response_time$avg,
+      order.by = all_endpoints_response_time$date
+  )
 }
