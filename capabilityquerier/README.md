@@ -35,7 +35,6 @@ The capability querier reads the following environment variables:
 
   Default value: 1380 (23 hours)
 
-* **LANTERN_USER_AGENT**: The user-agent that is set on the http request. This env variable will be set on the first run by get-version.sh in the scripts directory
 
 ### Test Configuration
 

@@ -17,7 +17,6 @@ import (
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 type EndpointType string
@@ -75,9 +74,16 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
 	}
 
-	userAgent := viper.GetString("user_agent")
-
 	var err error
+
+	// Read version file that is mounted
+	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	if err != nil {
+		return err
+	}
+	versionString := string(version)
+	userAgent := "LANTERN/" + versionString
+
 	message := Message{
 		URL: qa.FhirURL,
 	}
