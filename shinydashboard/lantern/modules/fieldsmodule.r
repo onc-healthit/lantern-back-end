@@ -7,24 +7,14 @@ fieldsmodule_UI <- function(id) {
   tagList(
     h1("FHIR Capability Statement Fields"),
     p("This is the list of fields included in the FHIR capability statements from the endpoints."),
-    # Hides the "exist" column which is necessary for grouping data but not necessary to display
-    tags$style(HTML("
-      #fields table thead tr th:first-child {
-        display: none;
-      }
-      #fields table tbody tr td:first-child {
-        display: none;
-      }
-    ")),
     fluidRow(
-      id = "fields",
       column(width=5,
              h4("Required Fields"),
              tableOutput(ns("capstat_fields_table_required")),
              h4("Optional Fields"),
              tableOutput(ns("capstat_fields_table_optional"))),
       column(width=7,
-             h4("Capability Statement Fields Count"),
+             h4("Supported Capability Statement Fields"),
              uiOutput(ns("fields_plot"))
       )
     )
@@ -67,7 +57,6 @@ fieldsmodule <- function(
   # Table of the required fields
   output$capstat_fields_table_required <- renderTable(
     capstat_field_count() %>%
-    relocate(exist) %>%
     filter(Fields %in% required_fields) %>%
     rename("FHIR Version" = fhir_version)
   )
@@ -75,7 +64,6 @@ fieldsmodule <- function(
   # Table of the optional fields
   output$capstat_fields_table_optional <- renderTable(
     capstat_field_count() %>%
-    relocate(exist) %>%
     filter(!(Fields %in% required_fields)) %>%
     rename("FHIR Version"=fhir_version)
   )
