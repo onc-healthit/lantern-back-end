@@ -131,6 +131,18 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
 
+	// Convert the string of criteria IDs into an array of int criteria IDs
+	criteriaMet := strings.Split(prod.CriteriaMet, delimiter1)
+	var criteriaIDs []int
+	for _, criteria := range criteriaMet {
+		retID, err := strconv.Atoi(criteria)
+		if err != nil {
+			log.Warnf("error in CHPL data: non ID value in Certification Criteria")
+			continue
+		}
+		criteriaIDs = append(criteriaIDs, retID)
+	}
+
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
 		Version:               prod.Version,
@@ -139,7 +151,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
 		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: strings.Split(prod.CriteriaMet, delimiter1),
+		CertificationCriteria: criteriaIDs,
 	}
 
 	apiURL, err := getAPIURL(prod.APIDocumentation)
