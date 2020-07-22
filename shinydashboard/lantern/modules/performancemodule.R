@@ -32,8 +32,8 @@ performance <- function(
       else{
         range <- "maxdate.maximum"
       }
-      app_data$avg_response_time <- get_avg_response_time(db_connection, range)
-      app_data$avg_response_time
+      res <- get_avg_response_time(db_connection, range)
+      res
     })
   
   if (nrow(app_data$avg_response_time)== 0){}
