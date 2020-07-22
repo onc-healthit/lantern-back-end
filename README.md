@@ -93,6 +93,49 @@ Run
 make stop
 ```
 
+## Start Lantern Automatically
+
+To start Lantern automatically on linux system reboot create a systemd service file named Lantern-app.service in /etc/systemd/system directory
+
+`sudo vi /etc/systemd/system/lantern-app.service`
+
+Contents of the lantern-app.service file:
+```
+[Unit]
+Description=Lantern Application Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+Type=forking
+TimeoutStartSec=0
+WorkingDirectory=/home/centos/lantern-back-end
+ExecStart=/bin/bash -c 'make run_prod'
+ExecStop=/bin/bash -c 'make stop'
+
+[Install]
+WantedBy=multi-user.target
+```  
+
+Enable the Lantern-App service on start up
+`sudo systemctl enable lantern-app`
+
+Start the Lantern service
+`sudo systemctl start lantern-app`
+
+To stop the service 
+`sudo systemctl stop lantern-app`
+
+To view the status
+`systemctl status lantern-app`
+
+Changes made to the lantern-app.service file will need to be reloaded and restarted 
+```
+sudo systemctl daemon-reload
+sudo systemctl restart lantern-app
+```
+
 ## Starting Services Behind SSL-Inspecting Proxy
 
 If you are operating behind a proxy that does SSL-Inspection you will have to copy the certificates that are used by the proxy into the following directories:
