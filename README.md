@@ -150,8 +150,6 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `cron -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#`
 
-
-
 # Running Lantern Services Individually
 
 ## Internal Services
