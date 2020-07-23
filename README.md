@@ -132,6 +132,26 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
 
+# Configure Data Collection Failure System
+
+You can configure a data collection failure system using cron and the data_collection_check.sh script located in the scripts directory to send an email notification if the lantern data collection goes down for any reason. 
+
+The data_collection_check.sh script runs outside of Lantern and periodically checks to see if data has been written to the fhir_endpoints_info within the last N many seconds, where N is the Lantern query interval. If data has not been written within said interval, or the database is down, then the script sends an alert to the set email address.
+
+To set up the script for this data collection failure system, you must insert the following information into the variables locaed at the beginning of the data_collection_check script:
+  * Set the EMAIL variable to the email you want the failure system to send alerts to
+  * Set the DB_NAME variable to name of your database
+  * Set the DB_USER variable to the name of the database user 
+  * Set the QUERY_INTERVAL variable to the capability querier query interval (in seconds)
+
+To configure this script to run using cron, do:
+ * Use `cron -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `0 */23 * * * <Full Path to data_collection_checks.sh>` to the crontab file to make the script run every 23 hours, then save and exit the file
+ * To display all scheduled cron jobs for the current user, you can use `cron -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#`
+
+
+
 # Running Lantern Services Individually
 
 ## Internal Services
