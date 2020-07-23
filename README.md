@@ -138,7 +138,7 @@ You can configure a data collection failure system using cron and the data_colle
 
 The data_collection_check.sh script runs outside of Lantern and periodically checks to see if data has been written to the fhir_endpoints_info within the last N many seconds, where N is the Lantern query interval. If data has not been written within said interval, or the database is down, then the script sends an alert to the set email address.
 
-To set up the script for this data collection failure system, you must insert the following information into the variables locaed at the beginning of the data_collection_check script:
+To set up the script for this data collection failure system, you must insert the following information into the variables located at the beginning of the data_collection_check script:
   * Set the EMAIL variable to the email you want the failure system to send alerts to
   * Set the DB_NAME variable to name of your database
   * Set the DB_USER variable to the name of the database user 
