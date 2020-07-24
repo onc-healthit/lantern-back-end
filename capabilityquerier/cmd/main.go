@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
@@ -27,6 +29,7 @@ type queryArgs struct {
 	mq          *lanternmq.MessageQueue
 	ch          *lanternmq.ChannelID
 	qName       string
+	userAgent   string
 }
 
 func failOnError(err error) {
@@ -57,6 +60,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		MessageQueue: qa.mq,
 		ChannelID:    qa.ch,
 		QueueName:    qa.qName,
+		UserAgent:    qa.userAgent,
 	}
 
 	job := workers.Job{
@@ -93,6 +97,13 @@ func main() {
 
 	defer mq.Close()
 
+	// Read version file that is mounted
+	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	failOnError(err)
+	versionString := string(version)
+	versionNum := strings.Split(versionString, "=")
+	userAgent := "LANTERN/" + versionNum[1]
+
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
@@ -116,6 +127,7 @@ func main() {
 		mq:          &mq,
 		ch:          &ch,
 		qName:       capQName,
+		userAgent:   userAgent,
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)

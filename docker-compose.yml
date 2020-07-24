@@ -65,6 +65,7 @@ services:
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
+      - "./VERSION:/etc/lantern/VERSION:ro"
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
 
   capability_receiver:

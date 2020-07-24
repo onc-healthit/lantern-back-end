@@ -35,6 +35,7 @@ The capability querier reads the following environment variables:
 
   Default value: 1380 (23 hours)
 
+
 ### Test Configuration
 
 When testing, the capability querier uses the following environment variables:
