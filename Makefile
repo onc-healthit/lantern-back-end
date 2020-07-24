@@ -52,6 +52,7 @@ lint:
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
+	cd ./shinydashboard/lantern; Rscript -e 'lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL))'
 
 csv_export:
 	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv

@@ -32,9 +32,7 @@ dashboard_UI <- function(id) {
       )
     ),
     h3("All Endpoint Responses"),
-    
     uiOutput("show_http_vendor_filters"),
-    
     fluidRow(
       column(width = 4,
              tableOutput(ns("http_code_table")),
@@ -58,15 +56,16 @@ dashboard <- function(
   selected_http_summary <- reactive({
     res <- app_data$http_pct
     req(sel_vendor())
-    if(sel_vendor() != ui_special_values$ALL_VENDORS) {
-      res <- res %>% filter(vendor_name == sel_vendor()) %>%
+    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+      res <- res %>%
+        filter(vendor_name == sel_vendor()) %>%
         left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
         summarise(count = n())
     }
     else{
-      res <- res %>% 
+      res <- res %>%
         left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
@@ -150,8 +149,8 @@ dashboard <- function(
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 400,
                                   growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated })
-  
+    res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated }
+  )
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
     geom_bar(stat = "identity") +

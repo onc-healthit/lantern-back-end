@@ -20,8 +20,7 @@ performance <- function(
 
   response_time_xts <- app_data$avg_response_time
 
-  if(nrow(response_time_xts) == 0){}
-  
+  if (nrow(response_time_xts) == 0) {}
   else{
     output$mean_response_time_plot <- renderDygraph({
       dygraph(response_time_xts,
