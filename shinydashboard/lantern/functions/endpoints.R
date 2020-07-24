@@ -170,6 +170,14 @@ get_capstat_fields_count <- function(capstat_fields_tbl) {
     select(-exist) %>%
     rename(Fields = field, Endpoints = n)
 }
+
+get_capstat_fields_list <- function(capstat_fields_tbl) {
+  res <- capstat_fields_tbl %>%
+    group_by(field) %>%
+    count() %>%
+    select(field)
+}
+
 get_avg_response_time <- function(db_connection) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
