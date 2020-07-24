@@ -3,7 +3,8 @@ function(input, output, session) {
 
   callModule(
     dashboard,
-    "dashboard_page")
+    "dashboard_page",
+    reactive(input$httpvendor))
 
   callModule(
     endpointsmodule,
@@ -34,6 +35,7 @@ function(input, output, session) {
                           "performance_tab" = "Response Time Performance"
                         )
   show_filter <- reactive(input$side_menu %in% c("endpoints_tab", "capability_tab"))
+  show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -57,6 +59,22 @@ function(input, output, session) {
         column(width = 4,
           selectInput(
             inputId = "vendor",
+            label = "Vendor:",
+            choices = app$vendor_list,
+            selected = ui_special_values$ALL_VENDORS,
+            size = 1,
+            selectize = FALSE)
+        )
+      )
+    }
+  })
+
+  output$show_http_vendor_filters <- renderUI({
+    if (show_http_vendor_filter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "httpvendor",
             label = "Vendor:",
             choices = app$vendor_list,
             selected = ui_special_values$ALL_VENDORS,
