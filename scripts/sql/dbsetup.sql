@@ -93,6 +93,19 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE certification_criteria (
+    id                        SERIAL PRIMARY KEY,
+    certification_id          INTEGER,
+	cerification_number       VARCHAR(500),
+	title                     VARCHAR(500),
+	certification_edition_id  INTEGER,
+	certification_edition     VARCHAR(500),
+	description               VARCHAR(500),
+	removed                   BOOLEAN,
+    created_at                TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
