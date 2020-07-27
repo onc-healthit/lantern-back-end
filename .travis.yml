@@ -3,8 +3,6 @@ go:
 - 1.14.x
 git:
   depth: 1
-notifications:
-  email: false
 
 install:
   - sudo apt-get update
@@ -62,3 +60,6 @@ jobs:
     - stage: test e2e
       script: make test_e2e
       env: LANTERN_QHOST=lantern-mq
+
+notifications:
+  email: false
