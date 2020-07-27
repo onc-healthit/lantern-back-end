@@ -10,6 +10,7 @@ install:
   - sudo apt-get update
   - sudo apt-get install r-base
   - sudo apt-get install r-base-dev
+  - Rscript -e 'install.packages(c("lintr"), lib = "/lintr/working")'
   
 env:
   global:
@@ -40,10 +41,9 @@ env:
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
 
 before_script:
+- Rscript -e 'library(lintr, lib = "/lintr/working")'
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-- wget https://github.com/jimhester/lintr/lintr_2.0.1.tar.gz
-- sudo R CMD INSTALL lintr_2.0.1.tar.gz
 # start preparing services for integration test
 - docker-compose up -d --build
 
