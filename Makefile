@@ -52,7 +52,7 @@ lint:
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
-	cd ./shinydashboard/lantern; Rscript -e 'lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL))' || echo "Error: make sure R is installed along with the lintr package"
+	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh
 	
 
 csv_export:
