@@ -52,8 +52,17 @@ lint:
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
-	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh
-	
+	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1
+
+lint_go:
+	cd ./capabilityquerier; golangci-lint run -E gofmt
+	cd ./lanternmq; golangci-lint run -E gofmt
+	cd ./fhir; golangci-lint run -E gofmt
+	cd ./endpointmanager; golangci-lint run -E gofmt
+	cd ./capabilityreceiver; golangci-lint run -E gofmt
+
+lint_R:
+	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1
 
 csv_export:
 	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
