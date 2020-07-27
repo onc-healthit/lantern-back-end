@@ -56,7 +56,7 @@ func (s *Store) GetCriteria(ctx context.Context, id int) (*endpointmanager.Certi
 	return &criteria, err
 }
 
-func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certNum int) (*endpointmanager.CertificationCriteria, error) {
+func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certID int) (*endpointmanager.CertificationCriteria, error) {
 	var criteria endpointmanager.CertificationCriteria
 	// var vendorIDNullable sql.NullInt64
 
@@ -73,7 +73,7 @@ func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certNum int) (
 		created_at,
 		updated_at
 	FROM certification_criteria WHERE certification_id=$1`
-	row := s.DB.QueryRowContext(ctx, sqlStatement, certNum)
+	row := s.DB.QueryRowContext(ctx, sqlStatement, certID)
 
 	err := row.Scan(
 		&criteria.ID,

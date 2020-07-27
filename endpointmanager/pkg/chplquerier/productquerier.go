@@ -244,6 +244,10 @@ func persistProduct(ctx context.Context,
 		if err != nil {
 			return errors.Wrap(err, "adding health IT product to store failed")
 		}
+		existingDbProd, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
+		if err != nil {
+			return errors.Wrap(err, "could not get health IT product that was just saved")
+		}
 	} else if err != nil {
 		return errors.Wrap(err, "getting health IT product from store failed")
 	} else {
@@ -263,6 +267,13 @@ func persistProduct(ctx context.Context,
 			}
 		}
 	}
+
+	// @TODO Link to ID
+	productID := existingDbProd.ID
+	for _, critID := range existingDbProd.CertificationCriteria {
+		linkProductToCriteria(ctx, store, critID, productID)
+	}
+
 	return nil
 }
 
@@ -310,4 +321,26 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// cert dates are the same. unknown update precedence. throw error and don't perform update.
 	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+}
+
+func linkProductToCriteria(ctx context.Context,
+	store *postgresql.Store,
+	critID int,
+	prodID int) error {
+	_, _, _, err := store.GetProductCriteriaLink(ctx, critID, prodID)
+	// Only care about whether it's not there, if it's already saved it shouldn't need
+	// to be updated
+	if err == sql.ErrNoRows {
+		certCrit, err := store.GetCriteriaByCertificationID(ctx, critID)
+		if err != nil {
+			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+		}
+		err = store.LinkProductToCriteria(ctx, critID, prodID, certCrit.CertificationNumber)
+		if err != nil {
+			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+		}
+	} else if err != nil {
+		return err
+	}
+	return nil
 }
