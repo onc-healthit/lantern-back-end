@@ -5,7 +5,7 @@ LINTR=$(Rscript -e "lintr::lint_dir(linters = lintr::with_defaults(object_usage_
 if [[ ! -z "${LINTR[0]}" ]]; then
     for i in "${LINTR[@]}"
     do
-        echo "$i\n"
+        echo "$i"
     done
     exit 1
 fi
