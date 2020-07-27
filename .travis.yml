@@ -10,7 +10,6 @@ install:
   - sudo apt-get update
   - sudo apt-get install r-base
   - sudo apt-get install r-base-dev
-  - sudo apt install build-essential libcurl4-openssl-dev libssl-dev libxml2-dev
   - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
   
 env:
