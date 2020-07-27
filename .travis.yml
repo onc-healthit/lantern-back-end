@@ -8,7 +8,7 @@ notifications:
 
 install:
   - sudo apt-get install -y r-base
-  - Rscript -e 'install.packages("lintr")'
+  - Rscript -e 'install.packages(c("lintr"))'
   
 env:
   global:
