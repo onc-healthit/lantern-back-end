@@ -145,12 +145,12 @@ To set up the script for this data collection failure system, you must insert th
   * Set the QUERY_INTERVAL variable to the capability querier query interval (in seconds)
 
 To configure this script to run using cron, do:
- * Use `cron -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
  * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) <Full Path to data_collection_checks.sh>` to the crontab file
   * A `*` can be added to any field in the crontab expression to mean always
   * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
   * Example: Add `0 */23 * * * <Full Path to data_collection_checks.sh>` to run the script at minute 0 of every 23rd hour
- * To display all scheduled cron jobs for the current user, you can use `cron -l`
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
 # Running Lantern Services Individually
