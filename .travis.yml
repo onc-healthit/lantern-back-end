@@ -6,6 +6,10 @@ git:
 notifications:
   email: false
 
+install:
+  - sudo apt-get install -y r-base
+  - Rscript -e 'install.packages("lintr")'
+  
 env:
   global:
   - LANTERN_DBHOST=localhost
