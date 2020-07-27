@@ -31,7 +31,7 @@ endpointsmodule <- function(
 
   selected_fhir_endpoints <- reactive({
     res <- get_fhir_endpoints_tbl(db_tables) %>% select(-http_response, -label)
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(),sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
