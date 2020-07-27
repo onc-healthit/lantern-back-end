@@ -10,7 +10,8 @@ install:
   - sudo apt-get update
   - sudo apt-get install r-base
   - sudo apt-get install r-base-dev
-  - R> install.packages("lintr")
+  - sudo apt install build-essential libcurl4-openssl-dev libssl-dev libxml2-dev
+  - Rscript -e 'install.packages("lintr")'
   
 env:
   global:
@@ -41,7 +42,6 @@ env:
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
 
 before_script:
-- R> library(lintr)
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
 # start preparing services for integration test
