@@ -27,7 +27,7 @@ type FHIREndpointInfo struct {
 	UpdatedAt           time.Time
 	SMARTHTTPResponse   int
 	SMARTResponse       capabilityparser.SMARTResponse
-	IncludedFields      map[string]bool
+	IncludedFields      []IncludedField
 	SupportedResources  []string
 	ResponseTime        float64
 }
@@ -101,6 +101,12 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	}
 
 	return true
+}
+
+// IncludedField is a struct used to keep track of all of the fields in the capability statement
+type IncludedField struct {
+	Field  string
+	Exists bool
 }
 
 // Validation holds all of the errors and warnings from running the validation checks

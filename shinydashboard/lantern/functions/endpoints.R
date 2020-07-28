@@ -139,10 +139,43 @@ get_fhir_resource_types <- function(db_connection){
     tidyr::replace_na(list(vendor_name = "Unknown")) 
 }
 
+get_capstat_fields <- function(db_connection){
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      json_array_elements(included_fields::json) ->> 'Field' as field,
+      json_array_elements(included_fields::json) ->> 'Exists' as exist
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE included_fields != 'null'
+      ORDER BY field")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown"))
+}
+
 # Summarize count of resource types by type, fhir_version
 get_fhir_resource_count <- function(fhir_resources_tbl){
   res <- fhir_resources_tbl %>% 
     group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
+}
+
+get_capstat_fields_count <- function(capstat_fields_tbl) {
+  res <- capstat_fields_tbl %>%
+    group_by(field, exist, fhir_version) %>%
+    count() %>%
+    filter(exist == "true") %>%
+    ungroup() %>%
+    select(-exist) %>%
+    rename(Fields = field, Endpoints = n)
+}
+
+get_capstat_fields_list <- function(capstat_fields_tbl) {
+  res <- capstat_fields_tbl %>%
+    group_by(field) %>%
+    count() %>%
+    select(field)
 }
 
 get_avg_response_time <- function(db_connection) {

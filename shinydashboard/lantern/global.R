@@ -46,6 +46,7 @@ app_data <<- list(
   response_tally          = get_response_tally_list(db_tables),
   http_pct                = get_http_response_summary_tbl(db_tables),
   endpoint_resource_types = get_fhir_resource_types(db_connection),
+  capstat_fields          = get_capstat_fields(db_connection),
   last_updated            = now(),
   avg_response_time       = get_avg_response_time(db_connection)
 )
@@ -98,6 +99,8 @@ updater <- observe({
   app_data$vendor_count_tbl <<- get_fhir_version_vendor_count(endpoint_export_tbl)
 
   app_data$endpoint_resource_types <<- get_fhir_resource_types(db_connection)
+
+  app_data$capstat_fields <<- get_capstat_fields(db_connection)
 
   app_data$last_updated <<- now()
 

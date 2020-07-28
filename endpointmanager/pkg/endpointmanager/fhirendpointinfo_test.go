@@ -9,6 +9,137 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 )
 
+var testIncludedFields = []IncludedField{
+	{
+		Field:  "url",
+		Exists: true,
+	},
+	{
+		Field:  "date",
+		Exists: true,
+	},
+	{
+		Field:  "kind",
+		Exists: true,
+	},
+	{
+		Field:  "name",
+		Exists: true,
+	},
+	{
+		Field:  "title",
+		Exists: false,
+	},
+	{
+		Field:  "format",
+		Exists: true,
+	},
+	{
+		Field:  "status",
+		Exists: true,
+	},
+	{
+		Field:  "contact",
+		Exists: false,
+	},
+	{
+		Field:  "imports",
+		Exists: false,
+	},
+	{
+		Field:  "profile",
+		Exists: false,
+	},
+	{
+		Field:  "purpose",
+		Exists: false,
+	},
+	{
+		Field:  "version",
+		Exists: false,
+	},
+	{
+		Field:  "copyright",
+		Exists: false,
+	},
+	{
+		Field:  "publisher",
+		Exists: true,
+	},
+	{
+		Field:  "useContext",
+		Exists: false,
+	},
+	{
+		Field:  "description",
+		Exists: true,
+	},
+	{
+		Field:  "fhirVersion",
+		Exists: true,
+	},
+	{
+		Field:  "patchFormat",
+		Exists: false,
+	},
+	{
+		Field:  "experimental",
+		Exists: false,
+	},
+	{
+		Field:  "instantiates",
+		Exists: false,
+	},
+	{
+		Field:  "jurisdiction",
+		Exists: false,
+	},
+	{
+		Field:  "requirements",
+		Exists: false,
+	},
+	{
+		Field:  "acceptUnknown",
+		Exists: true,
+	},
+	{
+		Field:  "software.name",
+		Exists: false,
+	},
+	{
+		Field:  "software.version",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.url",
+		Exists: false,
+	},
+	{
+		Field:  "implementationGuide",
+		Exists: false,
+	},
+	{
+		Field:  "software.releaseDate",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.custodian",
+		Exists: false,
+	},
+	{
+		Field:  "implementation.description",
+		Exists: false,
+	},
+	{
+		Field:  "messaging",
+		Exists: false,
+	},
+	{
+		Field:  "document",
+		Exists: false,
+	},
+}
+
 func Test_FHIREndpointInfoEqual(t *testing.T) {
 
 	// capability statement
@@ -45,43 +176,12 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 				},
 			},
 		},
-		IncludedFields: map[string]bool{
-			"url":                        true,
-			"date":                       true,
-			"kind":                       true,
-			"name":                       true,
-			"title":                      false,
-			"format":                     true,
-			"status":                     true,
-			"contact":                    false,
-			"imports":                    false,
-			"profile":                    false,
-			"purpose":                    false,
-			"version":                    false,
-			"copyright":                  false,
-			"publisher":                  true,
-			"useContext":                 false,
-			"description":                true,
-			"fhirVersion":                true,
-			"patchFormat":                false,
-			"experimental":               false,
-			"instantiates":               false,
-			"jurisdiction":               false,
-			"requirements":               false,
-			"acceptUnknown":              true,
-			"software.name":              false,
-			"software.version":           false,
-			"implementation.url":         false,
-			"implementationGuide":        false,
-			"software.releaseDate":       false,
-			"implementation.custodian":   false,
-			"implementation.description": false,
-			"messaging":                  false,
-			"document":                   false,
-		},
+		IncludedFields:      testIncludedFields,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
 		ResponseTime:        0.123456,
 		CapabilityStatement: cs}
+	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
+	copy(includedFieldsCopy, testIncludedFields)
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                1,
 		URL:               "http://www.example.com",
@@ -104,40 +204,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 				},
 			},
 		},
-		IncludedFields: map[string]bool{
-			"url":                        true,
-			"date":                       true,
-			"kind":                       true,
-			"name":                       true,
-			"title":                      false,
-			"format":                     true,
-			"status":                     true,
-			"contact":                    false,
-			"imports":                    false,
-			"profile":                    false,
-			"purpose":                    false,
-			"version":                    false,
-			"copyright":                  false,
-			"publisher":                  true,
-			"useContext":                 false,
-			"description":                true,
-			"fhirVersion":                true,
-			"patchFormat":                false,
-			"experimental":               false,
-			"instantiates":               false,
-			"jurisdiction":               false,
-			"requirements":               false,
-			"acceptUnknown":              true,
-			"software.name":              false,
-			"software.version":           false,
-			"implementation.url":         false,
-			"implementationGuide":        false,
-			"software.releaseDate":       false,
-			"implementation.custodian":   false,
-			"implementation.description": false,
-			"messaging":                  false,
-			"document":                   false,
-		},
+		IncludedFields:      includedFieldsCopy,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
 		ResponseTime:        0.123456,
 		CapabilityStatement: cs}
@@ -226,19 +293,22 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo1.Validation = endpointInfo2.Validation
 
-	endpointInfo1.IncludedFields["url"] = false
+	endpointInfo1.IncludedFields[0] = IncludedField{
+		Field:  "url",
+		Exists: false,
+	}
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields["url"], endpointInfo2.IncludedFields["url"])
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields[0], endpointInfo2.IncludedFields[0])
 	}
 	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
 
-	endpointInfo2.IncludedFields = make(map[string]bool)
+	endpointInfo2.IncludedFields = make([]IncludedField, 0)
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields, endpointInfo2.IncludedFields)
 	}
 	endpointInfo2.IncludedFields = endpointInfo1.IncludedFields
 
-	endpointInfo1.IncludedFields = make(map[string]bool)
+	endpointInfo1.IncludedFields = make([]IncludedField, 0)
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. IncludedFields should be different. %+v vs %+v", endpointInfo1.IncludedFields, endpointInfo2.IncludedFields)
 	}
