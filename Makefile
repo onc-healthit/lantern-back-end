@@ -47,12 +47,8 @@ restore_database:
 	@echo "Database was restored from $(file)"
 
 lint:
-	cd ./capabilityquerier; golangci-lint run -E gofmt
-	cd ./lanternmq; golangci-lint run -E gofmt
-	cd ./fhir; golangci-lint run -E gofmt
-	cd ./endpointmanager; golangci-lint run -E gofmt
-	cd ./capabilityreceiver; golangci-lint run -E gofmt
-	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1
+	make lint_go || exit $?
+	make lint_R || exit $?
 
 lint_go:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
@@ -89,6 +85,12 @@ test_e2e:
 test_all:
 	make stop
 	docker-compose up -d --build
+	make test || exit $?
+	make test_int || exit $?
+	make stop
+	make test_e2e || exit $?
+
+test_e2e_CI:
 	make test || exit $?
 	make test_int || exit $?
 	make stop
