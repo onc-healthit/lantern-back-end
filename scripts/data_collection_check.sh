@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# This script assumes that you are using the postgres service defined in the docker-compose.yml for the database 
+# If you use your own database solution, this script will need to query the database you chose to use instead of querying the postgres docker container
+
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
