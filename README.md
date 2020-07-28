@@ -142,7 +142,7 @@ To set up the script for this data collection failure system, you must insert th
   * Set the EMAIL variable to the email you want the failure system to send alerts to
   * Set the DB_NAME variable to name of your database
   * Set the DB_USER variable to the name of the database user 
-  * Set the QUERY_INTERVAL variable to the capability querier query interval (in seconds)
+  * Set the QUERY_INTERVAL variable to the capability querier query interval (in minutes)
 
 To configure this script to run using cron, do:
  * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
