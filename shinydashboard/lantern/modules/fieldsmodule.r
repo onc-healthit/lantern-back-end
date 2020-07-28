@@ -7,7 +7,15 @@ fieldsmodule_UI <- function(id) {
   tagList(
     h1("FHIR Capability Statement Fields"),
     p("This is the list of fields included in the FHIR capability statements from the endpoints."),
-    textOutput(ns("capstat_fields_text")),
+    tags$style(HTML("
+      .field-list {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(191px, auto));
+        overflow-x: scroll;
+        padding-bottom: 15px;
+      }
+    ")),
+    htmlOutput(ns("capstat_fields_text")),
     fluidRow(
       column(width=5,
              h4("Required Fields"),
@@ -34,10 +42,12 @@ fieldsmodule <- function(
 
   capstat_fields_list <- get_capstat_fields_list(app_data$capstat_fields)
 
-  output$capstat_fields_text <- renderText({
+  output$capstat_fields_text <- renderUI({
     col <- capstat_fields_list %>% pull(1)
-    res <- paste(col, collapse=", ")
-    res2 <- paste("Lantern checks for the following fields: ", res)
+    liElem <- paste("<li>", col, "</li>", collapse=" ")
+    divElem <- paste("<div class='field-list'>", liElem, "</div>")
+    fullHtml <- paste("Lantern checks for the following fields: ", divElem)
+    HTML(fullHtml)
   })
 
   selected_fhir_endpoints <- reactive({
