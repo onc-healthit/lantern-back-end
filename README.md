@@ -136,7 +136,7 @@ There are three types of tests for Lantern and three corresponding commands:
 
 You can configure a data collection failure system using cron and the data_collection_check.sh script located in the scripts directory to send an email notification if the lantern data collection goes down for any reason. 
 
-The data_collection_check.sh script runs outside of Lantern and periodically checks to see if data has been written to the fhir_endpoints_info within the last N many seconds, where N is the Lantern query interval. If data has not been written within said interval, or the database is down, then the script sends an alert to the set email address.
+The data_collection_check.sh script runs outside of Lantern and periodically checks to see if data has been written to the fhir_endpoints_info within the last N many minutes, where N is the Lantern query interval. If data has not been written within said interval, or the database is down, then the script sends an alert to the set email address.
 
 To set up the script for this data collection failure system, you must insert the correct information into the following variables located at the beginning of the data_collection_check script. The DB_NAME, DB_USER, and QUERY_INTERVAL variables used in the script should match their corresponding environmental variable (shown in parentheses below) defined in the .env file:
   * Set the EMAIL variable to the email you want the failure system to send alerts to
