@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -16,22 +15,6 @@ import (
 )
 
 var chplAPICertCriteriaPath string = "/data/certification-criteria"
-
-// var delimiter1 string = "☺"
-// var delimiter2 string = "☹"
-
-// var fields [11]string = [11]string{
-// 	"id",
-// 	"edition",
-// 	"developer",
-// 	"product",
-// 	"version",
-// 	"chplProductNumber",
-// 	"certificationStatus",
-// 	"criteriaMet",
-// 	"apiDocumentation",
-// 	"certificationDate",
-// 	"practiceType"}
 
 type chplCertifiedCriteriaList struct {
 	Results []chplCertCriteria `json:"criteria"`
@@ -47,7 +30,8 @@ type chplCertCriteria struct {
 	Removed                bool   `json:"removed"`
 }
 
-// @TODO Change all of the comments
+// GetCHPLCriteria queries CHPL for its certification criteria using 'cli' and stores the criteria in 'store'
+// within the given context 'ctx'.
 func GetCHPLCriteria(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
 	log.Debug("requesting certification criteria from CHPL")
 	critJSON, err := getCriteriaJSON(ctx, cli, userAgent)
@@ -59,21 +43,21 @@ func GetCHPLCriteria(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("converting chpl json into certification criteria objects")
 	critList, err := convertCriteriaJSONToObj(ctx, critJSON)
 	if err != nil {
-		return errors.Wrap(err, "converting health IT product JSON into a 'chplCriteriaList' object failed")
+		return errors.Wrap(err, "converting certification criteria JSON into a 'chplCriteriaList' object failed")
 	}
-	log.Debug("done converting chpl json into product objects")
+	log.Debug("done converting chpl json into certification criteria objects")
 
-	log.Debug("persisting chpl products")
+	log.Debug("persisting certification criteria")
 	err = persistCriterias(ctx, store, critList)
-	log.Debug("done persisting chpl products")
-	return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+	log.Debug("done persisting certification criteria")
+	return errors.Wrap(err, "persisting the list of retrieved certification criteria failed")
 }
 
 // makes the request to CHPL and returns the byte string
 func getCriteriaJSON(ctx context.Context, client *http.Client, userAgent string) ([]byte, error) {
 	chplURL, err := makeCHPLCriteriaURL()
 	if err != nil {
-		return nil, errors.Wrap(err, "error creating CHPL product URL")
+		return nil, errors.Wrap(err, "error creating CHPL certification criteria URL")
 	}
 
 	// None of the returned errors should break the system, so print a warning instead
@@ -84,10 +68,9 @@ func getCriteriaJSON(ctx context.Context, client *http.Client, userAgent string)
 	return jsonBody, nil
 }
 
+// builds the CHPL Certification Criteria URL
 func makeCHPLCriteriaURL() (*url.URL, error) {
 	queryArgs := make(map[string]string)
-	// fieldStr := strings.Join(fields[:], ",")
-	// queryArgs["fields"] = fieldStr
 
 	chplURL, err := makeCHPLURL(chplAPICertCriteriaPath, queryArgs)
 	if err != nil {
@@ -109,8 +92,6 @@ func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) (*chplCertif
 		// ok
 	}
 
-	fmt.Printf("%s", string(critJSON))
-
 	err := json.Unmarshal(critJSON, &critList)
 	if err != nil {
 		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertifiedCriteriaList object failed.")
@@ -119,7 +100,7 @@ func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) (*chplCertif
 	return &critList, nil
 }
 
-// takes the JSON model and converts it into an endpointmanager.HealthITProduct
+// takes the JSON model and converts it into an endpointmanager.CertificationCriteria
 func parseHITCriteria(ctx context.Context, criteria *chplCertCriteria, store *postgresql.Store) (*endpointmanager.CertificationCriteria, error) {
 
 	dbCrit := endpointmanager.CertificationCriteria{
@@ -135,9 +116,7 @@ func parseHITCriteria(ctx context.Context, criteria *chplCertCriteria, store *po
 	return &dbCrit, nil
 }
 
-// persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
-// associated with the most recent certifition edition, most recent certification date, or most criteria is the
-// one that is stored.
+// persists the criteria parsed from CHPL
 func persistCriterias(ctx context.Context, store *postgresql.Store, critList *chplCertifiedCriteriaList) error {
 	for i, criteria := range critList.Results {
 
@@ -161,9 +140,8 @@ func persistCriterias(ctx context.Context, store *postgresql.Store, critList *ch
 	return nil
 }
 
-// adds a product to the store if that product's name/version don't exist already. If the name/version do
-// exist, determine if it makes sense to update the product (certified to more recent edition, certified at a
-// later date, has more certification criteria), or not.
+// adds a certification criteria to the store if that criteria's ID does not already exist.
+// if it does, update the entry
 func persistCriteria(ctx context.Context,
 	store *postgresql.Store,
 	criteria *chplCertCriteria) error {
@@ -182,12 +160,6 @@ func persistCriteria(ctx context.Context,
 	} else if err != nil {
 		return errors.Wrap(err, "getting certification criteria from store failed")
 	} else {
-		// needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
-		// if err != nil {
-		// 	return errors.Wrap(err, "determining if a health IT product needs updating within the store failed")
-		// }
-
-		// if needsUpdate {
 		err = existingDbCrit.Update(newDbCrit)
 		if err != nil {
 			return errors.Wrap(err, "updating certification criteria object failed")
@@ -196,7 +168,6 @@ func persistCriteria(ctx context.Context,
 		if err != nil {
 			return errors.Wrap(err, "updating certification criteria to store failed")
 		}
-		// }
 	}
 	return nil
 }

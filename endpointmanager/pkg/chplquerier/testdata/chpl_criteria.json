@@ -1,0 +1,328 @@
+{
+    "criteria": [
+        {
+            "id": 44,
+            "number": "170.315 (f)(2)",
+            "title": "Transmission to Public Health Agencies - Syndromic Surveillance",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 64,
+            "number": "170.314 (a)(4)",
+            "title": "Vital signs, body mass index, and growth Charts",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 179,
+            "number": "170.315 (f)(5)",
+            "title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 14,
+            "number": "170.315 (a)(14)",
+            "title": "Implantable Device List",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 26,
+            "number": "170.315 (c)(2)",
+            "title": "Clinical Quality Measures - Import and Calculate",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 94,
+            "number": "170.314 (d)(1)",
+            "title": "Authentication, access, control, and authorization",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 164,
+            "number": "170.306 (i)",
+            "title": "Calculate and submit clinical quality measures",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 143,
+            "number": "170.302 (v)",
+            "title": "Encryption when exchanging electronic health information",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 103,
+            "number": "170.314 (e)(1)",
+            "title": "View, download, and transmit to a 3rd party with edge protocol testing",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 35,
+            "number": "170.315 (d)(7)",
+            "title": "End-User Device Encryption",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 70,
+            "number": "170.314 (a)(10)",
+            "title": "Drug formulary checks",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 119,
+            "number": "170.314 (h)(3)",
+            "title": "Optional - Transmit - SOAP Transport and Security Specification and XDR/XDM for Direct Messaging",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 148,
+            "number": "170.304 (d)",
+            "title": "Patient reminders",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 66,
+            "number": "170.314 (a)(6)",
+            "title": "Medication list",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 154,
+            "number": "170.304 (j)",
+            "title": "Calculate and submit clinical quality measures",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 60,
+            "number": "170.315 (h)(2)",
+            "title": "Direct Project, Edge Protocol, and XDR/XDM",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 99,
+            "number": "170.314 (d)(6)",
+            "title": "Emergency access",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 5,
+            "number": "170.315 (a)(5)",
+            "title": "Demographics",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 43,
+            "number": "170.315 (f)(1)",
+            "title": "Transmission to Immunization Registries",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 77,
+            "number": "170.314 (a)(17)",
+            "title": "Advance directives",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 85,
+            "number": "170.314 (b)(5)(A)",
+            "title": "Incorporate laboratory tests and values/results",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 178,
+            "number": "170.315 (e)(1)",
+            "title": "View, Download, and Transmit to 3rd Party (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 121,
+            "number": "170.302 (b)",
+            "title": "Drug formulary checks",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 16,
+            "number": "170.315 (b)(1)",
+            "title": "Transitions of Care",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 102,
+            "number": "170.314 (d)(9)",
+            "title": "Optional - accounting of disclosures",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 111,
+            "number": "170.314 (f)(6)",
+            "title": "Optional - ambulatory setting only - transmission to cancer registries",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 146,
+            "number": "170.304 (b)",
+            "title": "Electronic Prescribing",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 112,
+            "number": "170.314 (f)(7)",
+            "title": "Optional - ambulatory setting only - transmission to public health agencies - syndromic surveillance",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 21,
+            "number": "170.315 (b)(6)",
+            "title": "Data Export",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 114,
+            "number": "170.314 (g)(2)",
+            "title": "Automated measure calculation",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 22,
+            "number": "170.315 (b)(7)",
+            "title": "Data Segmentation for Privacy - Send",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 80,
+            "number": "170.314 (a)(20)",
+            "title": "Optional - computerized provider order entry - diagnostic imaging",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 58,
+            "number": "170.315 (g)(9)",
+            "title": "Application Access - All Data Request",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 11,
+            "number": "170.315 (a)(11)",
+            "title": "Smoking Status",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 46,
+            "number": "170.315 (f)(4)",
+            "title": "Transmission to Cancer Registries",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 104,
+            "number": "170.314 (e)(2)",
+            "title": "Ambulatory setting only -clinical summary",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        }
+    ]
+}
