@@ -139,7 +139,7 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-get_capstat_fields <- function(db_connection){
+get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
