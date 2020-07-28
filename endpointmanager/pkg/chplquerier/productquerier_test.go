@@ -27,7 +27,7 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	Version:             "1",
 	CertificationDate:   1467331200000,
 	CertificationStatus: "Active",
-	CriteriaMet:         "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
+	CriteriaMet:         "30☺31☺32☺33☺34☺35☺36☺37☺38",
 	APIDocumentation:    "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 }
 
@@ -38,7 +38,7 @@ var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	CertificationDate:     time.Date(2016, 7, 1, 0, 0, 0, 0, time.UTC),
 	CertificationEdition:  "2014",
 	CHPLID:                "15.04.04.2657.Care.01.00.0.160701",
-	CertificationCriteria: []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"},
+	CertificationCriteria: []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
 	APIURL:                "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 }
 
@@ -96,7 +96,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": "1",
 			"certificationDate": 1467331200000,
 			"certificationStatus": "Active",
-			"criteriaMet": "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
+			"criteriaMet": "30☺31☺32☺33☺34☺35☺36☺37☺38",
 			"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 		},
 		{
@@ -108,7 +108,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": "0.3",
 			"certificationDate": 1467320000000,
 			"certificationStatus": "Active",
-			"criteriaMet": "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
+			"criteriaMet": "30☺31☺32☺33☺34☺35☺36☺37☺38",
 			"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 		}]}
 		`
@@ -124,7 +124,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 		Version:             "0.3",
 		CertificationDate:   1467320000000,
 		CertificationStatus: "Active",
-		CriteriaMet:         "170.315 (d)(1)☺170.315 (d)(10)☺170.315 (d)(9)☺170.315 (g)(4)☺170.315 (g)(5)☺170.315 (g)(6)☺170.315 (g)(7)☺170.315 (g)(8)☺170.315 (g)(9)",
+		CriteriaMet:         "30☺31☺32☺33☺34☺35☺36☺37☺38",
 		APIDocumentation:    "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 	}
 
@@ -231,7 +231,7 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	expectedResults = append(expectedResults, expectedResult{name: "dateBefore", hitProd: dateBefore, needsUpdate: false, err: nil})
 
 	critListShorter := testHITP
-	critListShorter.CertificationCriteria = []string{"170.315 (d)(1)", "170.315 (d)(10)", "170.315 (d)(9)", "170.315 (g)(4)", "170.315 (g)(5)", "170.315 (g)(6)", "170.315 (g)(7)", "170.315 (g)(8)"}
+	critListShorter.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37}
 	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
 	chplID := testHITP
