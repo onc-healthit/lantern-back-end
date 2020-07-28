@@ -26,7 +26,7 @@ endpointsmodule <- function(
   ns <- session$ns
 
   output$endpoint_count <- renderText({
-    paste("Matching Endpoints:",nrow(selected_fhir_endpoints()))
+    paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
   })
 
   selected_fhir_endpoints <- reactive({
