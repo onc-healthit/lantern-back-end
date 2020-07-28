@@ -91,10 +91,9 @@ test_all:
 	make test_e2e || exit $?
 
 test_e2e_CI:
-	make test || exit $?
-	make test_int || exit $?
-	make stop
-	make test_e2e || exit $?
+	docker-compose down
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 update_mods:
 	@[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
