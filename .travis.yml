@@ -53,6 +53,5 @@ jobs:
       script:
       - make lint
       # unit tests
-      - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672
       - make test_e2e_CI
       env: LANTERN_QHOST=lantern-mq
