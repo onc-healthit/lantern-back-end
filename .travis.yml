@@ -3,6 +3,8 @@ go:
 - 1.14.x
 git:
   depth: 1
+notifications:
+  email: false
 
 install:
   - sudo apt-get update
@@ -37,6 +39,7 @@ env:
   - LANTERN_TEST_QPASSWORD=capabilityquerier
   - LANTERN_TEST_QNAME=test-queue
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
+  - LINTR_COMMENT_BOT=false
 
 before_script:
 - go get ./...
@@ -60,6 +63,3 @@ jobs:
     - stage: test e2e
       script: make test_e2e
       env: LANTERN_QHOST=lantern-mq
-
-notifications:
-  email: false
