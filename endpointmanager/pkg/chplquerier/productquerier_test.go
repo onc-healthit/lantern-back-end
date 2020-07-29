@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/spf13/viper"
 )
@@ -304,6 +306,9 @@ func Test_getProductJSON(t *testing.T) {
 	// test context ended.
 	// also checks what happens when an http request fails
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -312,14 +317,19 @@ func Test_getProductJSON(t *testing.T) {
 	cancel()
 
 	_, err = getProductJSON(ctx, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
+
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
@@ -327,7 +337,15 @@ func Test_getProductJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getProductJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected 404 error to be logged")
 
 	// test error on URL creation
 
