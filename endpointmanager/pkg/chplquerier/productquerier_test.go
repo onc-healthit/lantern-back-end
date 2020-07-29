@@ -307,6 +307,9 @@ func Test_getProductJSON(t *testing.T) {
 	hook := logtest.NewGlobal()
 	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -315,8 +318,6 @@ func Test_getProductJSON(t *testing.T) {
 	cancel()
 
 	_, err = getProductJSON(ctx, &(tc.Client), "")
-	th.Assert(t, err == nil, err)
-
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -325,12 +326,11 @@ func Test_getProductJSON(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected a context canceled error to be logged")
+	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
 
-	hook = logtest.NewGlobal()
-	expectedErr = "CHPL request responded with status: 404 Not Found"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
@@ -338,8 +338,6 @@ func Test_getProductJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getProductJSON(ctx, &(tc.Client), "")
-	th.Assert(t, err == nil, err)
-
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
@@ -348,7 +346,7 @@ func Test_getProductJSON(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected response error specifying response code")
+	th.Assert(t, found, "expected 404 error to be logged")
 
 	// test error on URL creation
 

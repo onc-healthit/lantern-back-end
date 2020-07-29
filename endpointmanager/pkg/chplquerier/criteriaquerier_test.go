@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/pkg/errors"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -184,6 +186,9 @@ func Test_getCriteriaJSON(t *testing.T) {
 	// test context ended.
 	// also checks what happens when an http request fails
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key\": context canceled"
+
 	tc, err = basicTestCriteriaClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -192,14 +197,19 @@ func Test_getCriteriaJSON(t *testing.T) {
 	cancel()
 
 	_, err = getCriteriaJSON(ctx, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
+
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
@@ -207,8 +217,15 @@ func Test_getCriteriaJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getCriteriaJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
-
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected 404 error to be logged")
 	// test error on URL creation
 
 	chplDomainOrig := chplDomain
