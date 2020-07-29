@@ -49,9 +49,9 @@ type chplVendor struct {
 
 // GetCHPLVendors queries CHPL for its vendor list using 'cli' and stores the vendors in 'store'
 // within the given context 'ctx'.
-func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Client) error {
+func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
 	log.Debug("requesting vendors from CHPL")
-	prodJSON, err := getVendorJSON(ctx, cli)
+	prodJSON, err := getVendorJSON(ctx, cli, userAgent)
 	// None of the returned errors should break the system, so just return nil
 	if err != nil {
 		return nil
@@ -72,14 +72,14 @@ func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Clie
 }
 
 // makes the request to CHPL and returns the byte string
-func getVendorJSON(ctx context.Context, client *http.Client) ([]byte, error) {
+func getVendorJSON(ctx context.Context, client *http.Client, userAgent string) ([]byte, error) {
 	chplURL, err := makeCHPLVendorURL()
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating CHPL vendor URL")
 	}
 
 	// None of the returned errors should break the system, so print a warning instead
-	jsonBody, err := getJSON(ctx, client, chplURL)
+	jsonBody, err := getJSON(ctx, client, chplURL, userAgent)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), chplURL.String())
 	}

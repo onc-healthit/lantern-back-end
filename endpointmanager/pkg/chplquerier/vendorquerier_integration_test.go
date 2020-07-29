@@ -192,7 +192,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -215,7 +215,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM vendors;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	found := false
 	for i := range hook.Entries {
 		if strings.Contains(hook.Entries[i].Message, expectedErr) {
@@ -239,7 +239,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok

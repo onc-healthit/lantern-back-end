@@ -289,7 +289,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
@@ -301,7 +301,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -324,7 +324,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
 
 	// expect presence of a log message
 	found := false
@@ -350,7 +350,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok

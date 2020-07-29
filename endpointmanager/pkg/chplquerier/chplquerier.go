@@ -6,9 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -41,20 +38,12 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	return chplURL, nil
 }
 
-func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL) ([]byte, error) {
+func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAgent string) ([]byte, error) {
 	// request ceritified products list
 	req, err := http.NewRequest("GET", chplURL.String(), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating http request failed")
 	}
-	// Read version file that is mounted to make user agent
-	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
-	if err != nil {
-		log.Warnf("Cannot read VERSION file")
-	}
-	versionString := string(version)
-	versionNum := strings.Split(versionString, "=")
-	userAgent := "LANTERN/" + versionNum[1]
 	req.Header.Set("User-Agent", userAgent)
 	req = req.WithContext(ctx)
 

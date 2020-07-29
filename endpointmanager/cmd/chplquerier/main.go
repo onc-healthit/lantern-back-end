@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"net/http"
 	"time"
+	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -35,8 +37,18 @@ func main() {
 		Timeout: time.Second * 35,
 	}
 
-	err = chplquerier.GetCHPLVendors(ctx, store, client)
+	// Read version file that is mounted to make user agent
+	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	if err != nil {
+		log.Warnf("Cannot read VERSION file")
+	}
+	versionString := string(version)
+	versionNum := strings.Split(versionString, "=")
+	userAgent := "LANTERN/" + versionNum[1]
+	log.Infof("user agent is %s", userAgent)
+
+	err = chplquerier.GetCHPLVendors(ctx, store, client, userAgent)
 	failOnError(err)
-	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)
 	failOnError(err)
 }
