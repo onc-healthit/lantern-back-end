@@ -18,7 +18,6 @@ var deleteCriteriaStatement *sql.Stmt
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetCriteria(ctx context.Context, id int) (*endpointmanager.CertificationCriteria, error) {
 	var criteria endpointmanager.CertificationCriteria
-	// var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
@@ -50,15 +49,11 @@ func (s *Store) GetCriteria(ctx context.Context, id int) (*endpointmanager.Certi
 		return nil, err
 	}
 
-	// ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
-	// hitp.VendorID = ints[0]
-
 	return &criteria, err
 }
 
 func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certID int) (*endpointmanager.CertificationCriteria, error) {
 	var criteria endpointmanager.CertificationCriteria
-	// var vendorIDNullable sql.NullInt64
 
 	sqlStatement := `
 	SELECT
@@ -90,16 +85,11 @@ func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certID int) (*
 		return nil, err
 	}
 
-	// ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
-	// hitp.VendorID = ints[0]
-
 	return &criteria, err
 }
 
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddCriteria(ctx context.Context, criteria *endpointmanager.CertificationCriteria) error {
-	// nullableInts := getNullableInts([]int{hitp.VendorID})
-
 	row := addCriteriaStatement.QueryRowContext(ctx,
 		criteria.CertificationID,
 		criteria.CertificationNumber,
@@ -116,8 +106,6 @@ func (s *Store) AddCriteria(ctx context.Context, criteria *endpointmanager.Certi
 
 // UpdateHealthITProduct updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
 func (s *Store) UpdateCriteria(ctx context.Context, criteria *endpointmanager.CertificationCriteria) error {
-
-	// nullableInts := getNullableInts([]int{hitp.VendorID})
 
 	_, err := updateCriteriaStatement.ExecContext(ctx,
 		criteria.CertificationID,
