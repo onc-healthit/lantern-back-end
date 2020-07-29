@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -40,6 +41,8 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 
 func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAgent string) ([]byte, error) {
 	// request ceritified products list
+	// Adds a short delay between request
+	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", chplURL.String(), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating http request failed")
