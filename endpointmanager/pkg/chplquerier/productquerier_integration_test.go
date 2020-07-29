@@ -17,6 +17,7 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -312,8 +313,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
-
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType: context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -329,12 +329,35 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
+		log.Info(hook.Entries[i].Message)
 		if strings.Contains(hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}
 	}
 	th.Assert(t, found, "expected an error to be logged")
+
+	// test http status != 200
+	
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test with malformed json
 

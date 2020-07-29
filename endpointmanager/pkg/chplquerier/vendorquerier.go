@@ -83,7 +83,7 @@ func getVendorJSON(ctx context.Context, client *http.Client, userAgent string) (
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), chplURL.String())
 	}
-	return jsonBody, err
+	return jsonBody, nil
 }
 
 func makeCHPLVendorURL() (*url.URL, error) {

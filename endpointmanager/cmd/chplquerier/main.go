@@ -4,8 +4,8 @@ import (
 	"context"
 	"io/ioutil"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"

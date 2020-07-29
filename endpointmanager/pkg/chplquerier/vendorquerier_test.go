@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/spf13/viper"
 )
@@ -95,6 +97,7 @@ func Test_makeVendorURL(t *testing.T) {
 	viper.Set("chplapikey", "")
 	actualURL, err = makeCHPLVendorURL()
 	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
+	th.Assert(t, actualURL == nil, fmt.Sprintf("Expected chpl vendor URL to be nil due to api key not being set"))
 
 	// test invalid domain and error handling
 
@@ -339,7 +342,7 @@ func Test_getVendorJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	vendorJSON, err := getVendorJSON(ctx, &(tc.Client))
+	vendorJSON, err := getVendorJSON(ctx, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
@@ -349,32 +352,52 @@ func Test_getVendorJSON(t *testing.T) {
 	th.Assert(t, actualVendorsReceived == expectedVendorsReceived, fmt.Sprintf("Expected to receive %d vendors Actually received %d vendors.", expectedVendorsReceived, actualVendorsReceived))
 
 	// test context ended.
-	// also checks what happens when an http request fails
 
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key: context canceled"
+
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err = getVendorJSON(ctx, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	_, err = getVendorJSON(ctx, &(tc.Client), "")
+	th.Assert(t, err == nil, err)
+
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected a context canceled error to be logged")
 
 	// test http status != 200
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
+
 	ctx = context.Background()
 
-	_, err = getVendorJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
+	_, err = getVendorJSON(ctx, &(tc.Client), "")
+	th.Assert(t, err == nil, err)
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test error on URL creation
 
@@ -388,7 +411,7 @@ func Test_getVendorJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getVendorJSON(ctx, &(tc.Client))
+	_, err = getVendorJSON(ctx, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// ok

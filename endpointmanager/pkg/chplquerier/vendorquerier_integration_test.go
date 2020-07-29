@@ -203,7 +203,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled\n\nfrom URL: https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key: context canceled\n\nfrom URL: https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key"
 
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
@@ -224,6 +224,28 @@ func Test_GetCHPLVendors(t *testing.T) {
 		}
 	}
 	th.Assert(t, found, "expected an error to be logged")
+
+	// test http status != 200
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
+
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	ctx = context.Background()
+
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test with malformed json
 
