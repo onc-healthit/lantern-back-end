@@ -33,9 +33,6 @@ func (certCri *CertificationCriteria) Equal(certCri2 *CertificationCriteria) boo
 		return false
 	}
 
-	if certCri.ID != certCri2.ID {
-		return false
-	}
 	if certCri.CertificationID != certCri2.CertificationID {
 		return false
 	}

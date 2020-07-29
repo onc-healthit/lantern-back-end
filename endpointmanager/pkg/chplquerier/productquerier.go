@@ -239,18 +239,16 @@ func persistProduct(ctx context.Context,
 	}
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
 
+	newElement := true
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
 			return errors.Wrap(err, "adding health IT product to store failed")
 		}
-		existingDbProd, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
-		if err != nil {
-			return errors.Wrap(err, "could not get health IT product that was just saved")
-		}
 	} else if err != nil {
 		return errors.Wrap(err, "getting health IT product from store failed")
 	} else {
+		newElement = false
 		needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
 		if err != nil {
 			return errors.Wrap(err, "determining if a health IT product needs updating within the store failed")
@@ -268,8 +266,12 @@ func persistProduct(ctx context.Context,
 		}
 	}
 
-	// @TODO Link to ID
-	productID := existingDbProd.ID
+	var productID int
+	if newElement {
+		productID = newDbProd.ID
+	} else {
+		productID = existingDbProd.ID
+	}
 	for _, critID := range existingDbProd.CertificationCriteria {
 		linkProductToCriteria(ctx, store, critID, productID)
 	}
