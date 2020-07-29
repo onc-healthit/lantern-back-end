@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -44,6 +47,15 @@ func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL) ([]byte
 	if err != nil {
 		return nil, errors.Wrap(err, "creating http request failed")
 	}
+	// Read version file that is mounted to make user agent
+	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	if err != nil {
+		log.Warnf("Cannot read VERSION file")
+	}
+	versionString := string(version)
+	versionNum := strings.Split(versionString, "=")
+	userAgent := "LANTERN/" + versionNum[1]
+	req.Header.Set("User-Agent", userAgent)
 	req = req.WithContext(ctx)
 
 	resp, err := client.Do(req)
