@@ -66,7 +66,7 @@ app_data <<- list(
   "well_known_endpoints_no_doc", # well known endpoints reached, but no JSON doc returned
   "well_known_endpoint_counts"   # summary table of well known URI endpoints
 )
-app_data$fhir_endpoint_totals = get_endpoint_totals_list(db_tables)
+
 # Define observer based on a refresh_timeout to refetch data from the database
 updater <- observe({
 
@@ -124,7 +124,9 @@ updater <- observe({
   app_data$smart_response_capabilities <<- get_smart_response_capabilities(db_connection)
 
   app_data$well_known_endpoints_tbl    <<- get_well_known_endpoints_tbl(db_connection)
+
   app_data$well_known_endpoints_no_doc <<- get_well_known_endpoints_no_doc(db_connection)
+
   app_data$well_known_endpoint_counts  <<- get_well_known_endpoint_counts(db_connection)
 })
 
