@@ -289,6 +289,10 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
+func Test_GetCHPLCriteria(t *testing.T) {
+	// @TODO write CHPL Criteria test
+}
+
 func Test_GetCHPLVendors(t *testing.T) {
 	var err error
 	var actualVendsStored int
