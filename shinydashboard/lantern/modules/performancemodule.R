@@ -11,7 +11,7 @@ performance_UI <- function(id) {
   )
 }
 
-performance <- function(
+performancemodule <- function(
     input,
     output,
     session
@@ -20,9 +20,7 @@ performance <- function(
 
   response_time_xts <- app_data$avg_response_time
 
-  if(nrow(response_time_xts) == 0){}
-  
-  else{
+  if (nrow(response_time_xts) > 0) {
     output$mean_response_time_plot <- renderDygraph({
       dygraph(response_time_xts,
               main = "Endpoint Mean Response Time",

@@ -52,6 +52,7 @@ get_response_tally_list <- function(db_tables) {
   # fhir_endpoints
   list(
     "http_200" = max((curr_tally %>% filter(http_response == 200)) %>% pull(n), 0),
+    "http_non200" = max((curr_tally %>% filter(http_response != 200)) %>% pull(n), 0),
     "http_404" = max((curr_tally %>% filter(http_response == 404)) %>% pull(n), 0),
     "http_503" = max((curr_tally %>% filter(http_response == 503)) %>% pull(n), 0)
   )
@@ -98,11 +99,11 @@ get_fhir_version_factors <- function(endpoint_tbl) {
 }
 
 # Get the list of distinct fhir versions for use in filtering
-get_fhir_version_list <- function(endpoint_tbl) {
+get_fhir_version_list <- function(endpoint_export_tbl) {
   fhir_version_list <- list(
     "All Versions" = ui_special_values$ALL_FHIR_VERSIONS
   )
-  fh <- endpoint_tbl %>%
+  fh <- endpoint_export_tbl %>%
     distinct(fhir_version) %>%
     split(.$fhir_version) %>%
     purrr::map(~ .$fhir_version)
@@ -125,7 +126,7 @@ get_vendor_list <- function(endpoint_export_tbl) {
 }
 
 # Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
-get_fhir_resource_types <- function(db_connection){
+get_fhir_resource_types <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
@@ -136,7 +137,7 @@ get_fhir_resource_types <- function(db_connection){
       LEFT JOIN vendors on f.vendor_id = vendors.id
       ORDER BY type")) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) 
+    tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 get_capstat_fields <- function(db_connection){
@@ -156,9 +157,11 @@ get_capstat_fields <- function(db_connection){
 }
 
 # Summarize count of resource types by type, fhir_version
-get_fhir_resource_count <- function(fhir_resources_tbl){
-  res <- fhir_resources_tbl %>% 
-    group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
+get_fhir_resource_count <- function(fhir_resources_tbl) {
+  res <- fhir_resources_tbl %>%
+    group_by(type, fhir_version) %>%
+    count() %>%
+    rename(Resource = type, Endpoints = n)
 }
 
 get_capstat_fields_count <- function(capstat_fields_tbl) {
@@ -196,5 +199,160 @@ get_avg_response_time <- function(db_connection) {
   # convert to xts format for use in dygraph
   xts(x = all_endpoints_response_time$avg,
       order.by = all_endpoints_response_time$date
+  )
+}
+
+# get tibble of endpoints which include a security service attribute
+# in their capability statement, each service coding as a row
+get_security_endpoints <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT
+          f.id,
+          f.vendor_id,
+          v.name,
+          capability_statement->>'fhirVersion' as fhir_version,
+          json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code,
+          json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' as text
+        FROM fhir_endpoints_info f, vendors v
+        WHERE f.vendor_id = v.id")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+# get tibble of endpoints which include a security service attribute
+# in their capability statement, each service coding as a row
+# for display in table of endpoints, with organization name and URL
+get_security_endpoints_tbl <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT
+          e.url,
+          e.organization_names,
+          v.name as vendor_name,
+          capability_statement->>'fhirVersion' as fhir_version,
+          f.tls_version,
+          json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
+        FROM fhir_endpoints_info f, vendors v, fhir_endpoints e
+        WHERE f.vendor_id = v.id
+        AND e.id = f.id")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+# Get list of SMART Core Capabilities supported by endpoints returning http 200
+get_smart_response_capabilities <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT 
+      f.id,
+      f.smart_http_response,
+      v.name as vendor_name,
+      f.capability_statement->>'fhirVersion' as fhir_version,
+      json_array_elements_text((smart_response->'capabilities')::json) as capability
+    FROM fhir_endpoints_info f, vendors v
+    WHERE vendor_id = v.id
+    AND smart_http_response=200")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+# Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
+get_smart_response_capability_count <- function(endpoints_tbl) {
+  res <- endpoints_tbl %>% 
+    group_by(fhir_version,capability) %>%
+    count() %>%
+    rename("FHIR Version" = fhir_version, Capability = capability, Endpoints = n)
+  res
+}
+
+# Query fhir endpoints and return list of endpoints that have 
+# returned a valid JSON document at /.well-known/smart-configuration
+# This implies a smart_http_response of 200.
+# 
+get_well_known_endpoints_tbl <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT e.url, e.organization_names, v.name as vendor_name,
+      f.capability_statement->>'fhirVersion' as fhir_version
+    FROM fhir_endpoints_info f 
+    LEFT JOIN vendors v on f.vendor_id = v.id
+    LEFT JOIN fhir_endpoints e
+    ON f.id = e.id
+    WHERE f.smart_http_response = 200
+    AND jsonb_typeof(f.smart_response) = 'object'")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+# get count of well known endpoints returning http 200 (but not
+# checking if valid SMART core capability doc returned)
+get_well_known_endpoints_count <- function(db_connection) {
+  res <- tbl(db_connection,
+      sql("SELECT count(*) from fhir_endpoints_info
+          WHERE smart_http_response = 200")) %>% collect() %>% pull(count)
+  as.integer(res)
+}
+
+# Find any endpoints which have returned a smart_http_response of 200
+# at the well known endpoint url /.well-known/smart-configuration
+# but did NOT return a valid JSON document when queried
+get_well_known_endpoints_no_doc <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT f.id, e.url, f.vendor_id, e.organization_names, v.name as vendor_name,
+      f.capability_statement->>'fhirVersion' as fhir_version,
+	    f.smart_http_response,
+	    f.smart_response
+    FROM fhir_endpoints_info f 
+    LEFT JOIN vendors v on f.vendor_id = v.id
+    LEFT JOIN fhir_endpoints e
+    ON f.id = e.id
+    WHERE f.smart_http_response = 200
+    AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+# Return a summary table of information about endpoint security statements
+get_well_known_endpoint_counts <- function(db_connection) {
+  res <- tribble(
+    ~Status, ~Endpoints,
+    "Total Indexed Endpoints", as.integer(app_data$fhir_endpoint_totals$all_endpoints),
+    "Endpoints with successful response (HTTP 200)", as.integer(app_data$response_tally$http_200),
+    "Well Known URI Endpoints with succesful response", get_well_known_endpoints_count(db_connection),
+    "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_tbl)),
+    "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_no_doc))
+  )
+}
+
+# Get counts of authorization types supported by FHIR Version
+get_auth_type_count <- function(security_endpoints) {
+  security_endpoints %>%
+    group_by(fhir_version) %>%
+    mutate(tc=n_distinct(id)) %>%
+    group_by(fhir_version,code,tc) %>%
+    count(name="Endpoints") %>%
+    mutate(Percent=percent(Endpoints/tc))  %>% 
+    ungroup() %>%
+    select("Code"=code,"FHIR Version"=fhir_version,Endpoints,Percent)
+}
+
+# Get count of endpoints which have NOT returned a valid capability statement
+get_no_cap_statement_count <- function(db_connection){
+  res <- tbl(db_connection,
+             sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement) <> 'object'")
+  ) %>% pull(count)
+}
+
+# Return a summary table of information about endpoint security statements
+get_endpoint_security_counts <- function(db_connection) {
+  res <- tribble(
+    ~Status, ~Endpoints,
+    "Total Indexed Endpoints",as.integer(app_data$fhir_endpoint_totals$all_endpoints),
+    "Endpoints with successful response (HTTP 200)",as.integer(app_data$response_tally$http_200),
+    "Endpoints with unsuccesful response",as.integer(app_data$response_tally$http_non200),
+    "Endpoints without valid capability statement",as.integer(get_no_cap_statement_count(db_connection)),
+    "Endpoints with valid security resource",as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
   )
 }

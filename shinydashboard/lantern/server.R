@@ -13,12 +13,24 @@ function(input, output, session) {
     reactive(input$vendor))
 
   callModule(
-    availability,
+    availabilitymodule,
     "availability_page")
 
   callModule(
-    performance,
-    "performance_page") 
+    performancemodule,
+    "performance_page")
+
+  callModule(
+    securitymodule,
+    "security_page",
+    reactive(input$fhir_version),
+    reactive(input$vendor))
+
+  callModule(
+    smartresponsemodule,
+    "smartresponse_page",
+    reactive(input$fhir_version),
+    reactive(input$vendor))
 
   callModule(
     capabilitymodule,
@@ -32,19 +44,24 @@ function(input, output, session) {
     reactive(input$fhir_version),
     reactive(input$vendor))
 
-   page_name_list <- list("dashboard_tab" = "Current Endpoint Metrics",
-                          "endpoints_tab" = "List of Endpoints",
-                          "capability_tab" = "Capability Page",
-                          "fields_tab" = "Fields Page",
-                          "availability_tab" = "Endpoint Server Availability",
-                          "location_tab" = "Location Map Page",
-                          "about_tab" = "About Lantern",
-                          "performance_tab" = "Response Time Performance"
-                        )
-
-  show_filter <- reactive(input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab"))
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
+
+   page_name_list <- list(
+     "dashboard_tab" = "Current Endpoint Metrics",
+     "endpoints_tab" = "List of Endpoints",
+     "capability_tab" = "Capability Page",
+     "availability_tab" = "Endpoint Server Availability",
+     "location_tab" = "Location Map Page",
+     "about_tab" = "About Lantern",
+     "security_tab" = "Security Authorization Types",
+     "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
+     "performance_tab" = "Response Time Performance"
+  )
+
+  show_filter <- reactive(
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab")
+  )
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]

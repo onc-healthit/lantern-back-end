@@ -11,7 +11,7 @@ availability_UI <- function(id) {
   )
 }
 
-availability <- function(
+availabilitymodule <- function(
     input,
     output,
     session
@@ -29,7 +29,7 @@ availability <- function(
 
   output$count_200_sub <- renderText({
     count_200_sub  <- nrow(app_data$http_pct %>% filter(http_response == 200, Percentage < 99.8))
-    paste("<br><p>Top ", min(count_200_sub,50), "endpoints which have returned HTTP 200 (Success) responses less than <strong>99.8%</strong> of the time.</p>")
+    paste("<br><p>Top ", min(count_200_sub, 50), "endpoints which have returned HTTP 200 (Success) responses less than <strong>99.8%</strong> of the time.</p>")
   })
 
   output$plot_200_sub <- renderPlotly({

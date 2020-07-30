@@ -14,6 +14,7 @@ libraries:
   - "lubridate"
   - "knitr"
   - "purrr"
+  - "xts"
 
 function_files:
   - "functions/db_connection.R"
@@ -28,6 +29,8 @@ module_files:
   - "modules/capabilitymodule.R"
   - "modules/performancemodule.R"
   - "modules/fieldsmodule.R"
+  - "modules/securitymodule.R"
+  - "modules/smartresponsemodule.R"
 
 refresh_timeout_minutes:
   - 720

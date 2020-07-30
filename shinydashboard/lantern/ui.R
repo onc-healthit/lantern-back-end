@@ -4,14 +4,14 @@ ui <- dashboardPage(
   dashboardHeader(
     title = "Lantern Dashboard",
     titleWidth = 200,
-    
+
     tags$li(
       class = "dropdown",
         column(
           width = 12,
           align = "right",
           span(textOutput("version"),
-               style="color: white; font-size: 16px; line-height: 45px")
+               style = "color: white; font-size: 16px; line-height: 45px")
         )
       )
   ),
@@ -21,9 +21,11 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
-      menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
-      menuItem("Performance", icon = icon("bar-chart-o"),tabName = "performance_tab"),
+      menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
+      menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       hr()
@@ -54,6 +56,12 @@ ui <- dashboardPage(
       ),
       tabItem("fields_tab",
               fieldsmodule_UI("fields_page")
+      ),
+      tabItem("security_tab",
+              securitymodule_UI("security_page")
+      ),
+      tabItem("smartresponse_tab",
+              smartresponsemodule_UI("smartresponse_page")
       ),
       tabItem("location_tab",
               h3("Map of Zip Codes with identified endpoint/organization"),
