@@ -266,14 +266,14 @@ func persistProduct(ctx context.Context,
 		}
 	}
 
-	var productID int
 	if newElement {
-		productID = newDbProd.ID
+		for _, critID := range newDbProd.CertificationCriteria {
+			linkProductToCriteria(ctx, store, critID, newDbProd.ID)
+		}
 	} else {
-		productID = existingDbProd.ID
-	}
-	for _, critID := range existingDbProd.CertificationCriteria {
-		linkProductToCriteria(ctx, store, critID, productID)
+		for _, critID := range existingDbProd.CertificationCriteria {
+			linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
+		}
 	}
 
 	return nil
@@ -325,6 +325,8 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
 }
 
+// linkProductToCriteria checks whether the product and certification have been linked before, and if not
+// links them
 func linkProductToCriteria(ctx context.Context,
 	store *postgresql.Store,
 	critID int,

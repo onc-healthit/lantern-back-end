@@ -53,7 +53,7 @@ func Test_persistCriteria(t *testing.T) {
 	th.Assert(t, ct == 1, "did not store data as expected")
 	storedCrit, err := store.GetCriteriaByCertificationID(ctx, 44)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, crit.Equal(storedCrit), "stored data does not equal expected store data")
+	th.Assert(t, crit.Equal(storedCrit), fmt.Errorf("stored data does not equal expected store data,stored: %+v,expected: %+v", storedCrit, crit))
 
 	// check value is updated in db
 	criteria = testCHPLCrit
@@ -61,12 +61,14 @@ func Test_persistCriteria(t *testing.T) {
 	err = persistCriteria(ctx, store, &criteria)
 	th.Assert(t, err == nil, "did not expect error adding criteria")
 
+	expectedCrit := testCrit
+	expectedCrit.Title = "new title"
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not update already stored data")
 	storedCrit, err = store.GetCriteriaByCertificationID(ctx, 44)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, crit.Equal(storedCrit), "stored data does not equal expected store data")
+	th.Assert(t, expectedCrit.Equal(storedCrit), fmt.Errorf("stored data does not equal expected store data,stored: %+v,expected: %+v", storedCrit, expectedCrit))
 
 	// check that error adding to store throws error
 	criteria = testCHPLCrit
@@ -185,7 +187,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key\""
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key\": context canceled"
 
 	tc, err = basicTestCriteriaClient()
 	th.Assert(t, err == nil, err)
@@ -207,7 +209,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected an error to be logged")
+	th.Assert(t, found, "expected an error to be logged from context")
 
 	// test with malformed json
 

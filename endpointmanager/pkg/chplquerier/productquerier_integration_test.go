@@ -28,6 +28,16 @@ var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
 	CHPLID:        4,
 }
 
+var testCriteria = &endpointmanager.CertificationCriteria{
+	CertificationID:        30,
+	CertificationNumber:    "170.315 (f)(2)",
+	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
+	CertificationEditionID: 3,
+	CertificationEdition:   "2015",
+	Description:            "Syndromic Surveillance",
+	Removed:                false,
+}
+
 func TestMain(m *testing.M) {
 	var err error
 
@@ -71,20 +81,10 @@ func Test_persistProduct(t *testing.T) {
 	defer ctStmt.Close()
 
 	// check that ended context when no element in store fails as expected
-	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
-
 	ctx, cancel = context.WithCancel(context.Background())
 	cancel()
 	err = persistProduct(ctx, store, &prod)
-	found := false
-	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
-			found = true
-			break
-		}
-	}
-	th.Assert(t, found, "expected an error to be logged")
+	th.Assert(t, errors.Cause(err) == context.Canceled, "should have errored out with root cause that the context was canceled")
 
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
@@ -159,6 +159,28 @@ func Test_persistProduct(t *testing.T) {
 	prod.CertificationStatus = strings.Repeat("a", 510) // name too long. throw db error.
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error updating product")
+
+	// test criteria linking
+	tmpCrit := testCriteria
+	err = store.AddCriteria(ctx, tmpCrit)
+	th.Assert(t, err == nil, "did not expect error adding criteria")
+
+	prod = testCHPLProd
+	prod.Product = "A new product for criteria testing"
+	err = persistProduct(ctx, store, &prod)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not add a new element to healthit_product store")
+
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "A new product for criteria testing", "1")
+	th.Assert(t, err == nil, "error getting stored hitp from database")
+	retProd, retCritID, retCritNum, err := store.GetProductCriteriaLink(ctx, tmpCrit.CertificationID, storedHitp.ID)
+	th.Assert(t, err == nil, fmt.Errorf("link did not occur, %s", err))
+	th.Assert(t, retProd == storedHitp.ID, "returned product ID is not expected value")
+	th.Assert(t, retCritID == tmpCrit.CertificationID, "returned criteria ID is not expected value")
+	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
 }
 
 func Test_persistProducts(t *testing.T) {
@@ -226,11 +248,9 @@ func Test_persistProducts(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected an error to be logged")
+	th.Assert(t, found, "expected an api error to be logged")
 
 	// persist when context has ended
-
-	// expectedErr = "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
 
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
@@ -242,14 +262,6 @@ func Test_persistProducts(t *testing.T) {
 	prod2.Product = "another prod"
 
 	err = persistProducts(ctx, store, &prodList)
-	// found = false
-	// for i := range hook.Entries {
-	// 	if hook.Entries[i].Message == expectedErr {
-	// 		found = true
-	// 		break
-	// 	}
-	// }
-	// th.Assert(t, found, "expected an error to be logged")
 }
 
 func Test_parseHITProd(t *testing.T) {
