@@ -18,6 +18,7 @@ var deleteNPIOrganizationStatement *sql.Stmt
 var linkNPIOrganizationToFHIREndpointStatement *sql.Stmt
 var getNPIOrganizationFHIREndpointLinkStatement *sql.Stmt
 var updateNPIOrganizationFHIREndpointLinkLink *sql.Stmt
+var deleteNPIOrganizationFHIREndpointLinkLink *sql.Stmt
 
 // GetNPIOrganizationByNPIID gets a NPIOrganization from the database using the NPI id as a key.
 // If the NPIOrganization does not exist in the database, sql.ErrNoRows will be returned.
@@ -245,6 +246,14 @@ func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID
 	return err
 }
 
+// DeleteNPIOrganizationFHIREndpointLink deletes the link between the organization id and the endpoint url.
+func (s *Store) DeleteNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) error {
+	_, err := deleteNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
+		orgID,
+		endpointURL)
+	return err
+}
+
 func prepareNPIOrganizationStatements(s *Store) error {
 	var err error
 	addNPIOrganizationStatement, err = s.DB.Prepare(`
@@ -315,6 +324,12 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	updateNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
 		UPDATE endpoint_organization
 		SET confidence = $3
+		WHERE organization_npi_id = $1 AND url = $2`)
+	if err != nil {
+		return err
+	}
+	deleteNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
+		DELETE FROM endpoint_organization
 		WHERE organization_npi_id = $1 AND url = $2`)
 	if err != nil {
 		return err
