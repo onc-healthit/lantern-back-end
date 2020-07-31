@@ -126,8 +126,8 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 	th.Assert(t, critList.Results != nil, "Expected results field to be filled out for criteria list.")
 	th.Assert(t, len(critList.Results) == len(expectedCritList.Results), fmt.Sprintf("Number of criteria is %d. Should be %d.", len(critList.Results), len(expectedCritList.Results)))
 
-	for i, prod := range critList.Results {
-		th.Assert(t, prod == expectedCritList.Results[i], "Expected parsed criteria to equal expected criteria.")
+	for i, crit := range critList.Results {
+		th.Assert(t, crit == expectedCritList.Results[i], "Expected parsed criteria to equal expected criteria.")
 	}
 
 	// test with canceled context

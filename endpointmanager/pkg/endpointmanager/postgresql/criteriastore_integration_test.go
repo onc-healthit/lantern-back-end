@@ -55,7 +55,7 @@ func Test_PersistCriteria(t *testing.T) {
 	c2, err := store.GetCriteriaByCertificationID(ctx, crit2.CertificationID)
 	t.Logf("HERE 2 %d", crit2.ID)
 	th.Assert(t, err == nil, fmt.Errorf("Error getting criteria: %s", err))
-	th.Assert(t, c2.Equal(crit2), "retrieved product is not equal to saved product.")
+	th.Assert(t, c2.Equal(crit2), "retrieved criteria is not equal to saved criteria.")
 
 	// update criteria
 
