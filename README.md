@@ -408,10 +408,12 @@ You may have to install R and the R lintr package first. To do this on a Mac, yo
 ```bash
 R
 ```
-Which will open up an R session, which you then can run:
+This will open up an R session, which you then can run:
 ```bash
 install.packages("lintr")
 ```
+This will prompt you to choose a CRAN mirror in a pop up window, you can choose any one of these
+(If a pop up window does not appear, paste one from the list [here](https://cran.r-project.org/mirrors.html))
 
 More information about the R lintr can be found [here](https://github.com/jimhester/lintr)
 
