@@ -6,10 +6,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// @TODO Update all comments
-// HealthITProduct represents a health IT vendor product such as an
-// EHR. This information is gathered from the Certified Health IT Products List
-// (CHPL).
+// CertificationCriteria represents a certification criteria's metadata. This
+// information is gathered from the Certified Health IT Products List (CHPL).
 type CertificationCriteria struct {
 	ID                     int
 	CertificationID        int
@@ -23,7 +21,8 @@ type CertificationCriteria struct {
 	UpdatedAt              time.Time
 }
 
-// Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two CertificationCriteria except for the
+// database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (certCri *CertificationCriteria) Equal(certCri2 *CertificationCriteria) bool {
 	if certCri == nil && certCri2 == nil {
 		return true
@@ -58,7 +57,7 @@ func (certCri *CertificationCriteria) Equal(certCri2 *CertificationCriteria) boo
 	return true
 }
 
-// Update updates the receiver HealthITIProduct with entries from the provided HealthITProduct.
+// Update updates the received CertificationCriteria with entries from the provided CertificationCriteria.
 func (certCri *CertificationCriteria) Update(certCri2 *CertificationCriteria) error {
 	if certCri == nil || certCri2 == nil {
 		return errors.New("CertificationCriteria.Update: a given health IT certification criteria is nil")

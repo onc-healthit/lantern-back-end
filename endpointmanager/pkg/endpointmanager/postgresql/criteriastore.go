@@ -7,15 +7,14 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
-// @TODO Update comments
 // prepared statements are left open to be used throughout the execution of the application
 // TODO: figure out if there's a better way to manage this for bulk calls
 var addCriteriaStatement *sql.Stmt
 var updateCriteriaStatement *sql.Stmt
 var deleteCriteriaStatement *sql.Stmt
 
-// GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
-// If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
+// GetCriteria gets a CertificationCriteria from the database using the database ID as a key.
+// If the CertificationCriteria does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetCriteria(ctx context.Context, id int) (*endpointmanager.CertificationCriteria, error) {
 	var criteria endpointmanager.CertificationCriteria
 
@@ -52,6 +51,9 @@ func (s *Store) GetCriteria(ctx context.Context, id int) (*endpointmanager.Certi
 	return &criteria, err
 }
 
+// GetCriteriaByCertificationID gets a CertificationCriteria from the database using the certification's
+// id value as key. If the CertificationCriteria does not exist in the database, sql.ErrNoRows
+// will be returned.
 func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certID int) (*endpointmanager.CertificationCriteria, error) {
 	var criteria endpointmanager.CertificationCriteria
 
@@ -88,7 +90,7 @@ func (s *Store) GetCriteriaByCertificationID(ctx context.Context, certID int) (*
 	return &criteria, err
 }
 
-// AddHealthITProduct adds the HealthITProduct to the database.
+// AddCriteria adds the CertificationCriteria to the database.
 func (s *Store) AddCriteria(ctx context.Context, criteria *endpointmanager.CertificationCriteria) error {
 	row := addCriteriaStatement.QueryRowContext(ctx,
 		criteria.CertificationID,
@@ -104,7 +106,7 @@ func (s *Store) AddCriteria(ctx context.Context, criteria *endpointmanager.Certi
 	return err
 }
 
-// UpdateHealthITProduct updates the HealthITProduct in the database using the HealthITProduct's database ID as the key.
+// UpdateCriteria updates the CertificationCriteria in the database using the CertificationCriteria's database ID as the key.
 func (s *Store) UpdateCriteria(ctx context.Context, criteria *endpointmanager.CertificationCriteria) error {
 
 	_, err := updateCriteriaStatement.ExecContext(ctx,
@@ -120,7 +122,7 @@ func (s *Store) UpdateCriteria(ctx context.Context, criteria *endpointmanager.Ce
 	return err
 }
 
-// DeleteHealthITProduct deletes the HealthITProduct from the database using the HealthITProduct's database ID as the key.
+// DeleteCriteria deletes the CertificationCriteria from the database using the CertificationCriteria's database ID as the key.
 func (s *Store) DeleteCriteria(ctx context.Context, criteria *endpointmanager.CertificationCriteria) error {
 	_, err := deleteCriteriaStatement.ExecContext(ctx, criteria.ID)
 

@@ -20,6 +20,7 @@ type chplCertifiedCriteriaList struct {
 	Results []chplCertCriteria `json:"criteria"`
 }
 
+// chplCertCriteria is the format of the individual criteria we get from the CHPL endpoint
 type chplCertCriteria struct {
 	ID                     int    `json:"id"`
 	Number                 string `json:"number"`

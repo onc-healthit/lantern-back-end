@@ -290,9 +290,8 @@ func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager
 	return err
 }
 
-// @TODO Update comments
-// GetNPIOrganizationFHIREndpointLink retrieves the organization id, endpoint url, and confidence for the requested organization id and
-// endpoint url. If the link doesn't exist, returns a SQL no rows error.
+// GetProductCriteriaLink retrieves the product database id, criteria id, and criteria number for the requested
+// product db id and criteria id. If the link doesn't exist, returns a SQL no rows error.
 func (s *Store) GetProductCriteriaLink(ctx context.Context, criteriaID int, productID int) (int, int, string, error) {
 	var retProductID int
 	var retCriteriaID int
@@ -311,7 +310,7 @@ func (s *Store) GetProductCriteriaLink(ctx context.Context, criteriaID int, prod
 	return retProductID, retCriteriaID, retCriteriaNumber, err
 }
 
-// LinkNPIOrganizationToFHIREndpoint links an npi organization database id to a FHIR endpoint database id
+// LinkProductToCriteria links a product database id to a certification criteria id
 func (s *Store) LinkProductToCriteria(ctx context.Context, criteriaID int, productID int, productNumber string) error {
 	_, err := linkProductToCriteriaStatement.ExecContext(ctx,
 		productID,
