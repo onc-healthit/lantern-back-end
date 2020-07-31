@@ -387,16 +387,10 @@ func Test_GetCHPLProducts(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	// ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(60*time.Second))
-	// defer cancel()
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
 	err = chplquerier.GetCHPLProducts(ctx, store, client)
-	// if ctx.Err() != nil {
-	// 	log.Println(ctx.Err())
-	// }
-	// th.Assert(t, err != nil, fmt.Errorf("Expected a context closed error, %s", err))
 	failOnError(err)
 
 	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
