@@ -397,8 +397,6 @@ func Test_GetCHPLProducts(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	// ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(60*time.Second))
-	// defer cancel()
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
