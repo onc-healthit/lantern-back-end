@@ -319,6 +319,13 @@ func (s *Store) LinkProductToCriteria(ctx context.Context, criteriaID int, produ
 	return err
 }
 
+// DeleteLinksByProduct deletes all of the links in product_criteria with the given health it product database id
+func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
+	sqlStatement := `DELETE FROM product_criteria WHERE healthit_product_id=$1`
+	_, err := s.DB.ExecContext(ctx, sqlStatement, productID)
+	return err
+}
+
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
 	addHealthITProductStatement, err = s.DB.Prepare(`
