@@ -64,8 +64,8 @@ func Test_makeCHPLProductURL(t *testing.T) {
 
 	viper.Set("chplapikey", "")
 	actualURL, err = makeCHPLProductURL()
-	th.Assert(t, err != nil, fmt.Sprint("Expected to return an error due to the api key not being set"))
-	th.Assert(t, actualURL == nil, fmt.Sprint("Expected chpl product URL to be nil due to api key not being set"))
+	th.Assert(t, err != nil, "Expected to return an error due to the api key not being set")
+	th.Assert(t, actualURL == nil, "Expected chpl product URL to be nil due to api key not being set")
 
 	// test invalid domain and error handling
 
