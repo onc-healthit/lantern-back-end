@@ -182,6 +182,21 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, retProd == storedHitp.ID, "returned product ID is not expected value")
 	th.Assert(t, retCritID == tmpCrit.CertificationID, "returned criteria ID is not expected value")
 	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
+
+	// test critera linking update
+	prod.CriteriaMet = "31☺32☺33☺34☺35☺36☺37☺38"
+	prod.Edition = "2020"
+	err = persistProduct(ctx, store, &prod)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not add a new element to healthit_product store")
+
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "A new product for criteria testing", "1")
+	th.Assert(t, err == nil, "error getting stored hitp from database")
+	_, _, _, err = store.GetProductCriteriaLink(ctx, tmpCrit.CertificationID, storedHitp.ID)
+	th.Assert(t, err != nil, fmt.Errorf("Should have returned nothing since the criteria no longer exists in the product"))
 }
 
 func Test_persistProducts(t *testing.T) {

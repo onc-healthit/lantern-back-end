@@ -272,6 +272,10 @@ func persistProduct(ctx context.Context,
 		}
 	} else {
 		for _, critID := range existingDbProd.CertificationCriteria {
+			err = store.DeleteLinksByProduct(ctx, existingDbProd.ID)
+			if err != nil {
+				return errors.Wrap(err, "removing old product from links store failed")
+			}
 			linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
 		}
 	}
