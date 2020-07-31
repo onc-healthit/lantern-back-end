@@ -402,18 +402,12 @@ Code should also run the R lintr without receiving any lintr warning messages, i
 Rscript -e lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL))
 ```
 
-Or you may run the lintr.sh script in the ./scripts directory which will print out and throw an error if the lintr recommends any changes to the R code
-
 You may have to install R and the R lintr package first. To do this on a Mac, you can install R from the internet, and then you can run:
 ```bash
-R
+echo 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")' | R --save
 ```
-This will open up an R session, which you then can run:
-```bash
-install.packages("lintr")
-```
-This will prompt you to choose a CRAN mirror in a pop up window, you can choose any one of these
-(If a pop up window does not appear, paste one from the list [here](https://cran.r-project.org/mirrors.html))
+
+Or you may run the lintr.sh script in the ./scripts directory which will install the lintr package if not already installed, then print out and throw an error if the lintr recommends any changes to the R code
 
 More information about the R lintr can be found [here](https://github.com/jimhester/lintr)
 
