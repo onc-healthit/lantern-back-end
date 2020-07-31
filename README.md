@@ -132,8 +132,8 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
 |  `make lint` | Runs the R and golang linters |
-|  `make lint_go` | Runs the golang linter |
-|  `make lint_R` | Runs the R linter |
+|  `make lint_go` | Runs the golang lintr |
+|  `make lint_R` | Runs the R lintr |
 
 # Configure Data Collection Failure System
 
