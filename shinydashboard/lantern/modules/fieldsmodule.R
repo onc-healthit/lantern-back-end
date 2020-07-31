@@ -1,9 +1,7 @@
 # Fields Module
 
 fieldsmodule_UI <- function(id) {
-  
   ns <- NS(id)
-  
   tagList(
     h1("FHIR Capability Statement Fields"),
     p("This is the list of fields included in the FHIR capability statements from the endpoints."),
@@ -17,12 +15,12 @@ fieldsmodule_UI <- function(id) {
     ")),
     htmlOutput(ns("capstat_fields_text")),
     fluidRow(
-      column(width=5,
+      column(width = 5,
              h4("Required Fields"),
              tableOutput(ns("capstat_fields_table_required")),
              h4("Optional Fields"),
              tableOutput(ns("capstat_fields_table_optional"))),
-      column(width=7,
+      column(width = 7,
              h4("Supported Capability Statement Fields"),
              uiOutput(ns("fields_plot"))
       )
@@ -31,12 +29,12 @@ fieldsmodule_UI <- function(id) {
 }
 
 fieldsmodule <- function(
-  input, 
-  output, 
+  input,
+  output,
   session,
   sel_fhir_version,
   sel_vendor
-){
+) {
 
   ns <- session$ns
 
@@ -44,7 +42,7 @@ fieldsmodule <- function(
 
   output$capstat_fields_text <- renderUI({
     col <- capstat_fields_list %>% pull(1)
-    liElem <- paste("<li>", col, "</li>", collapse=" ")
+    liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='field-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following fields: ", divElem)
     HTML(fullHtml)
@@ -64,7 +62,6 @@ fieldsmodule <- function(
     }
     res
   })
-  
   capstat_field_count <- reactive({
     get_capstat_fields_count(selected_fhir_endpoints())
   })
@@ -83,7 +80,7 @@ fieldsmodule <- function(
   output$capstat_fields_table_optional <- renderTable(
     capstat_field_count() %>%
     filter(!(Fields %in% required_fields)) %>%
-    rename("FHIR Version"=fhir_version)
+    rename("FHIR Version" = fhir_version)
   )
 
   vendor <- reactive({
@@ -99,13 +96,12 @@ fieldsmodule <- function(
       plotOutput(ns("fields_bar_plot"), height = plot_height())
     )
   })
-  
   output$fields_bar_plot <- renderCachedPlot({
     ggplot(capstat_field_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 14)) +
-      labs(x="", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
       coord_flip()
   },
     sizePolicy = sizeGrowthRatio(width = 400,
@@ -117,5 +113,4 @@ fieldsmodule <- function(
       list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
     }
   )
-  
 }

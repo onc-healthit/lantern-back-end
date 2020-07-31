@@ -31,14 +31,13 @@ get_fhir_endpoints_tbl <- function(db_tables) {
   db_tables$fhir_endpoints %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-          distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources),
-        by = c("url" = "url")) %>%
-    mutate(updated = as.Date(updated_at)) %>%
-    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
-    left_join(app$http_response_code_tbl %>% select(code, label),
-              by = c("http_response" = "code")) %>%
-    mutate(status = paste(http_response, "-", label)) %>%
-    distinct(url, .keep_all = TRUE)
+        distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources), by = c("url" = "url")) %>%
+        mutate(updated = as.Date(updated_at)) %>%
+        select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
+        left_join(app$http_response_code_tbl %>% select(code, label),
+          by = c("http_response" = "code")) %>%
+          mutate(status = paste(http_response, "-", label)) %>%
+          distinct(url, .keep_all = TRUE)
 }
 
 # get the endpoint tally by http_response received
@@ -66,17 +65,18 @@ get_endpoint_last_updated <- function(db_tables) {
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info_history %>%
     collect() %>%
-    left_join(endpoint_export_tbl %>% select(url, vendor_name), by = c("url" = "url")) %>%
-    select(id, http_response, vendor_name) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, code, http_response, vendor_name) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) 
+    left_join(endpoint_export_tbl %>%
+      select(url, vendor_name), by = c("url" = "url")) %>%
+      select(id, http_response, vendor_name) %>%
+      mutate(code = as.character(http_response)) %>%
+      group_by(id, code, http_response, vendor_name) %>%
+      summarise(Percentage = n()) %>%
+      ungroup() %>%
+      group_by(id) %>%
+      mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
+      ungroup() %>%
+      collect() %>%
+      tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 # Get the count of endpoints by vendor
@@ -125,7 +125,7 @@ get_vendor_list <- function(endpoint_export_tbl) {
 }
 
 # Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
-get_fhir_resource_types <- function(db_connection){
+get_fhir_resource_types <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
@@ -136,10 +136,10 @@ get_fhir_resource_types <- function(db_connection){
       LEFT JOIN vendors on f.vendor_id = vendors.id
       ORDER BY type")) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) 
+    tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-get_capstat_fields <- function(db_connection){
+get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
@@ -156,9 +156,11 @@ get_capstat_fields <- function(db_connection){
 }
 
 # Summarize count of resource types by type, fhir_version
-get_fhir_resource_count <- function(fhir_resources_tbl){
-  res <- fhir_resources_tbl %>% 
-    group_by(type, fhir_version) %>% count() %>% rename(Resource = type, Endpoints = n)
+get_fhir_resource_count <- function(fhir_resources_tbl) {
+  res <- fhir_resources_tbl %>%
+    group_by(type, fhir_version) %>%
+    count() %>%
+    rename(Resource = type, Endpoints = n)
 }
 
 get_capstat_fields_count <- function(capstat_fields_tbl) {

@@ -47,11 +47,18 @@ restore_database:
 	@echo "Database was restored from $(file)"
 
 lint:
+	make lint_go || exit $?
+	make lint_R || exit $?
+
+lint_go:
 	cd ./capabilityquerier; golangci-lint run -E gofmt
 	cd ./lanternmq; golangci-lint run -E gofmt
 	cd ./fhir; golangci-lint run -E gofmt
 	cd ./endpointmanager; golangci-lint run -E gofmt
 	cd ./capabilityreceiver; golangci-lint run -E gofmt
+
+lint_R:
+	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1
 
 csv_export:
 	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
@@ -82,6 +89,11 @@ test_all:
 	make test_int || exit $?
 	make stop
 	make test_e2e || exit $?
+
+test_e2e_CI:
+	docker-compose down
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 update_mods:
 	@[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"

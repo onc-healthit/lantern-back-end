@@ -6,6 +6,12 @@ git:
 notifications:
   email: false
 
+install:
+  - sudo apt-get update
+  - sudo apt-get install r-base
+  - sudo apt-get install r-base-dev
+  - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
+  
 env:
   global:
   - LANTERN_DBHOST=localhost
@@ -33,6 +39,7 @@ env:
   - LANTERN_TEST_QPASSWORD=capabilityquerier
   - LANTERN_TEST_QNAME=test-queue
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
+  - LINTR_COMMENT_BOT=false
 
 before_script:
 - go get ./...
@@ -52,7 +59,6 @@ jobs:
       # localhost:5432: postgres database
       # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
+      - make stop
+      - make test_e2e_CI
       env: LANTERN_QHOST=localhost
-    - stage: test e2e
-      script: make test_e2e
-      env: LANTERN_QHOST=lantern-mq
