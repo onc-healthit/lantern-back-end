@@ -3,8 +3,11 @@ package endpointlinker
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -355,11 +358,11 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		}
 	}
 
-	/*matchEndpointOrganization, err := openMatchingCorrections("matchingEndpoints.json")
+	matchEndpointOrganization, err := openMatchingCorrections("/go/src/app/pkg/endpointlinker/matchingEndpoints.json")
 	if err != nil {
 		return errors.Wrap(err, "Error opening matching correction json file")
 	}
-	unmatchEndpointOrganization, err := openMatchingCorrections("mismatchedEndpoints.json")
+	unmatchEndpointOrganization, err := openMatchingCorrections("/go/src/app/pkg/endpointlinker/mismatchedEndpoints.json")
 	if err != nil {
 		return errors.Wrap(err, "Error opening matching correction json file")
 	}
@@ -371,7 +374,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	err = unmatchFix(ctx, store, unmatchEndpointOrganization)
 	if err != nil {
 		return errors.Wrap(err, "Error fixing org to FHIR endpoint mismatches")
-	} */
+	}
 
 	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpoints)), verbose)
 
@@ -385,9 +388,8 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 	return nil
 }
 
-/*
 // Open whitelist and blacklist for fixing matching algorithm
-func openMatchingCorrections(filepath string) (map[string]string, error) {
+func openMatchingCorrections(filepath string) ([]map[string]string, error) {
 	jsonFile, err := os.Open(filepath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
@@ -396,18 +398,22 @@ func openMatchingCorrections(filepath string) (map[string]string, error) {
 	// Defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
-	var matchingCorrections map[string]string
+	var matchingCorrections []map[string]string
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &matchingCorrections)
 	return matchingCorrections, nil
 }
 
-func matchFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization map[string]string) error {
+func matchFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string) error {
 	for _, matchesMap := range matchEndpointOrganization {
 		orgID := matchesMap["organizationID"]
 		endpointURL := matchesMap["endpointURL"]
-		confidence := 100.0
-		err := store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL, confidence)
+		confidence := 1.0
+		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, endpointURL)
+		if err != nil {
+			return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
+		}
+		err = store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
 		if err != nil {
 			return errors.Wrap(err, "Error linking org to FHIR endpoint")
 		}
@@ -417,13 +423,11 @@ func matchFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganiz
 
 func unmatchFix(ctx context.Context, store *postgresql.Store, unmatchEndpointsOrganization []map[string]string) error {
 	for _, matchesMap := range unmatchEndpointsOrganization {
-		orgID := matchesMap["organizationID"]
 		endpointURL := matchesMap["endpointURL"]
-		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, endpointURL)
 		if err != nil {
 			return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
 		}
 	}
 	return nil
 }
-*/

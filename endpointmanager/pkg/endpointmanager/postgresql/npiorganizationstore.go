@@ -247,9 +247,8 @@ func (s *Store) UpdateNPIOrganizationFHIREndpointLink(ctx context.Context, orgID
 }
 
 // DeleteNPIOrganizationFHIREndpointLink deletes the link between the organization id and the endpoint url.
-func (s *Store) DeleteNPIOrganizationFHIREndpointLink(ctx context.Context, orgID string, endpointURL string) error {
+func (s *Store) DeleteNPIOrganizationFHIREndpointLink(ctx context.Context, endpointURL string) error {
 	_, err := deleteNPIOrganizationFHIREndpointLinkLink.ExecContext(ctx,
-		orgID,
 		endpointURL)
 	return err
 }
@@ -330,7 +329,7 @@ func prepareNPIOrganizationStatements(s *Store) error {
 	}
 	deleteNPIOrganizationFHIREndpointLinkLink, err = s.DB.Prepare(`
 		DELETE FROM endpoint_organization
-		WHERE organization_npi_id = $1 AND url = $2`)
+		WHERE url = $1`)
 	if err != nil {
 		return err
 	}
