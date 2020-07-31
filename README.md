@@ -402,7 +402,7 @@ Code should also run the R lintr without receiving any lintr warning messages, i
 Rscript -e lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL))
 ```
 
-Or you may run the lintr.sh script in the ./scripts directory which will print out and throw an error if the lintr recommends any changes to the R code:
+Or you may run the lintr.sh script in the ./scripts directory which will print out and throw an error if the lintr recommends any changes to the R code
 
 You may have to install R and the R lintr package first. To do this on a Mac, you can install R from the internet, and then you can run:
 ```bash
