@@ -13,7 +13,6 @@ import (
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 
 	"github.com/spf13/viper"
@@ -22,16 +21,6 @@ import (
 var testCHPLCrit = chplCertCriteria{
 	ID:                     44,
 	Number:                 "170.315 (f)(2)",
-	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
-	CertificationEditionID: 3,
-	CertificationEdition:   "2015",
-	Description:            "Syndromic Surveillance",
-	Removed:                false,
-}
-
-var testCrit = endpointmanager.CertificationCriteria{
-	CertificationID:        44,
-	CertificationNumber:    "170.315 (f)(2)",
 	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
 	CertificationEditionID: 3,
 	CertificationEdition:   "2015",
@@ -58,7 +47,7 @@ func Test_makeCHPLCriteriaURL(t *testing.T) {
 	// test empty api key
 
 	viper.Set("chplapikey", "")
-	actualURL, err = makeCHPLCriteriaURL()
+	_, err = makeCHPLCriteriaURL()
 	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
 
 	// test invalid domain and error handling
@@ -196,7 +185,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err = getCriteriaJSON(ctx, &(tc.Client))
+	_, _ = getCriteriaJSON(ctx, &(tc.Client))
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -216,7 +205,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getCriteriaJSON(ctx, &(tc.Client))
+	_, _ = getCriteriaJSON(ctx, &(tc.Client))
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {

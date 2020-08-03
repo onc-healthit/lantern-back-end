@@ -9,11 +9,22 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
+
+var testCrit = endpointmanager.CertificationCriteria{
+	CertificationID:        44,
+	CertificationNumber:    "170.315 (f)(2)",
+	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
+	CertificationEditionID: 3,
+	CertificationEdition:   "2015",
+	Description:            "Syndromic Surveillance",
+	Removed:                false,
+}
 
 func Test_persistCriteria(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)

@@ -268,7 +268,10 @@ func persistProduct(ctx context.Context,
 
 	if newElement {
 		for _, critID := range newDbProd.CertificationCriteria {
-			linkProductToCriteria(ctx, store, critID, newDbProd.ID)
+			err = linkProductToCriteria(ctx, store, critID, newDbProd.ID)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		for _, critID := range existingDbProd.CertificationCriteria {
@@ -276,7 +279,10 @@ func persistProduct(ctx context.Context,
 			if err != nil {
 				return errors.Wrap(err, "removing old product from links store failed")
 			}
-			linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
+			err = linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
