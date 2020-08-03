@@ -358,7 +358,7 @@ func Test_getVendorJSON(t *testing.T) {
 	defer tc.Close()
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key: context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled"
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
