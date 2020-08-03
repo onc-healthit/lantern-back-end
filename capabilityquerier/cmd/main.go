@@ -103,6 +103,7 @@ func main() {
 	versionString := string(version)
 	versionNum := strings.Split(versionString, "=")
 	userAgent := "LANTERN/" + versionNum[1]
+	userAgent = strings.TrimSuffix(userAgent, "\n")
 
 	client := &http.Client{
 		Timeout: time.Second * 35,
