@@ -409,11 +409,7 @@ func matchFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganiz
 		orgID := matchesMap["organizationID"]
 		endpointURL := matchesMap["endpointURL"]
 		confidence := 1.0
-		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, endpointURL)
-		if err != nil {
-			return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
-		}
-		err = store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
+		err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
 		if err != nil {
 			return errors.Wrap(err, "Error linking org to FHIR endpoint")
 		}
