@@ -7,17 +7,15 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
-
 	"github.com/spf13/viper"
+	assert "github.com/stretchr/testify/assert"
 )
 
 var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
@@ -307,7 +305,7 @@ func Test_getProductJSON(t *testing.T) {
 	// test context ended.
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType: context canceled"
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
@@ -322,8 +320,7 @@ func Test_getProductJSON(t *testing.T) {
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
-			log.Info(hook.Entries[i].Message)
+		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}
@@ -346,7 +343,7 @@ func Test_getProductJSON(t *testing.T) {
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}

@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
@@ -16,8 +15,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	logtest "github.com/sirupsen/logrus/hooks/test"
-
 	"github.com/spf13/viper"
+	assert "github.com/stretchr/testify/assert"
 )
 
 var testCHPLVendor1 chplVendor = chplVendor{
@@ -358,7 +357,7 @@ func Test_getVendorJSON(t *testing.T) {
 	defer tc.Close()
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key: context canceled"
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -369,7 +368,7 @@ func Test_getVendorJSON(t *testing.T) {
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}
@@ -392,7 +391,7 @@ func Test_getVendorJSON(t *testing.T) {
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}
