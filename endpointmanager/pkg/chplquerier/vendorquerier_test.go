@@ -93,7 +93,7 @@ func Test_makeVendorURL(t *testing.T) {
 	// test empty api key
 
 	viper.Set("chplapikey", "")
-	actualURL, err = makeCHPLVendorURL()
+	_, err = makeCHPLVendorURL()
 	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
 
 	// test invalid domain and error handling

@@ -63,7 +63,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	// test empty api key
 
 	viper.Set("chplapikey", "")
-	actualURL, err = makeCHPLProductURL()
+	_, err = makeCHPLProductURL()
 	th.Assert(t, err != nil, fmt.Sprintf("Expected to return an error due to the api key not being set"))
 
 	// test invalid domain and error handling
@@ -316,7 +316,7 @@ func Test_getProductJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err = getProductJSON(ctx, &(tc.Client))
+	_, _ = getProductJSON(ctx, &(tc.Client))
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -336,7 +336,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getProductJSON(ctx, &(tc.Client))
+	_, _ = getProductJSON(ctx, &(tc.Client))
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
