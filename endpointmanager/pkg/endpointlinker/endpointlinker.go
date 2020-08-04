@@ -366,7 +366,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 
 		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
 		if err != nil {
-			return errors.Wrap(err, "Error fixing org to FHIR endpoint matches")
+			return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
 		}
 	}
 
@@ -382,7 +382,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 	return nil
 }
 
-// Open whitelist and blacklist for fixing matching algorithm
+// Open whitelist and blacklist files for manually correcting matching algorithm
 func openLinkerCorrectionFiles(whitelist string, blacklist string) ([]map[string]string, []map[string]string, error) {
 	jsonWhitelist, err := os.Open(whitelist)
 	if err != nil {
@@ -419,7 +419,7 @@ func openLinkerCorrectionFiles(whitelist string, blacklist string) ([]map[string
 	return matchingCorrections, unmatchingCorrections, nil
 }
 
-// If match is true add new links from whitelist to db, if match is false delete links from blacklist from db
+// Add/update endpoint to npi organization links found in whitelist file from database, and remove endpoint to npi organization links found in blacklist file from database
 func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string, unmatchEndpointOrganization []map[string]string) error {
 	if len(matchEndpointOrganization) != 0 {
 		for _, matchesMap := range matchEndpointOrganization {
