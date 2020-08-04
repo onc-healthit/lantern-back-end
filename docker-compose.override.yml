@@ -30,6 +30,8 @@ services:
     volumes:
       - ./resources/dev_resources/:/etc/lantern/resources
       - ./resources/prod_resources/EndpointResourcesList.json:/go/src/app/resources/EndpointResourcesList.json:ro
+      - ./resources/prod_resources/linkerMatchesWhitelist.json:/go/src/app/resources/linkerMatchesWhitelist.json:ro
+      - ./resources/prod_resources/linkerMatchesBlacklist.json:/go/src/app/resources/linkerMatchesBlacklist.json:ro
 
   capability_querier:
     build:
