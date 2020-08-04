@@ -14,19 +14,19 @@ performance_UI <- function(id) {
 performance <- function(
     input,
     output,
-    session, 
+    session,
     sel_date
 ) {
   ns <- session$ns
 
   response_time_xts <- reactive({
-      if (all(sel_date() == "Past 7 days")){
+      if (all(sel_date() == "Past 7 days")) {
         range <- "604800"
       }
-      else if (all(sel_date() == "Past 14 days")){
+      else if (all(sel_date() == "Past 14 days")) {
         range <- "1209600"
       }
-      else if (all(sel_date() == "Past 30 days")){
+      else if (all(sel_date() == "Past 30 days")) {
         range <- "2592000"
       }
       else{
@@ -35,8 +35,7 @@ performance <- function(
       res <- get_avg_response_time(db_connection, range)
       res
     })
-  
-  if (nrow(app_data$avg_response_time)== 0){}
+  if (nrow(app_data$avg_response_time) == 0) {}
 
   else{
     output$mean_response_time_plot <- renderDygraph({

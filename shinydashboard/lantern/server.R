@@ -19,7 +19,7 @@ function(input, output, session) {
   callModule(
     performance,
     "performance_page",
-    reactive(input$date)) 
+    reactive(input$date))
 
   callModule(
     capabilitymodule,
@@ -94,7 +94,7 @@ function(input, output, session) {
       )
     }
   })
-  
+
   output$show_date_filters <- renderUI({
     if (show_datefilter()) {
       fluidRow(
