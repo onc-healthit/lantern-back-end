@@ -358,20 +358,20 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		}
 	}
 
-	matchEndpointOrganization, err := openMatchingCorrections("/go/src/app/pkg/endpointlinker/matchingEndpoints.json")
+	matchEndpointOrganization, err := openMatchingCorrections("/go/src/app/resources/linkerMatchesWhitelist.json")
 	if err != nil {
 		return errors.Wrap(err, "Error opening matching correction json file")
 	}
-	unmatchEndpointOrganization, err := openMatchingCorrections("/go/src/app/pkg/endpointlinker/mismatchedEndpoints.json")
+	unmatchEndpointOrganization, err := openMatchingCorrections("/go/src/app/resources/linkerMatchesBlacklist.json")
 	if err != nil {
 		return errors.Wrap(err, "Error opening matching correction json file")
 	}
 
-	err = matchFix(ctx, store, matchEndpointOrganization)
+	err = linkerFix(ctx, store, matchEndpointOrganization, true)
 	if err != nil {
 		return errors.Wrap(err, "Error fixing org to FHIR endpoint matches")
 	}
-	err = unmatchFix(ctx, store, unmatchEndpointOrganization)
+	err = linkerFix(ctx, store, unmatchEndpointOrganization, false)
 	if err != nil {
 		return errors.Wrap(err, "Error fixing org to FHIR endpoint mismatches")
 	}
@@ -404,25 +404,21 @@ func openMatchingCorrections(filepath string) ([]map[string]string, error) {
 	return matchingCorrections, nil
 }
 
-func matchFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string) error {
+func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string, match bool) error {
 	for _, matchesMap := range matchEndpointOrganization {
 		orgID := matchesMap["organizationID"]
 		endpointURL := matchesMap["endpointURL"]
 		confidence := 1.0
-		err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
-		if err != nil {
-			return errors.Wrap(err, "Error linking org to FHIR endpoint")
-		}
-	}
-	return nil
-}
-
-func unmatchFix(ctx context.Context, store *postgresql.Store, unmatchEndpointsOrganization []map[string]string) error {
-	for _, matchesMap := range unmatchEndpointsOrganization {
-		endpointURL := matchesMap["endpointURL"]
-		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, endpointURL)
-		if err != nil {
-			return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
+		if (match){
+			err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
+			if err != nil {
+				return errors.Wrap(err, "Error linking org to FHIR endpoint")
+			}
+		}else {
+			err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, endpointURL)
+			if err != nil {
+				return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
+			}
 		}
 	}
 	return nil
