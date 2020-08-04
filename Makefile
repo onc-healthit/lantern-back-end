@@ -91,6 +91,7 @@ test_all:
 	make test_e2e || exit $?
 
 test_e2e_CI:
+	docker run -it lantern-back-end_capability_querier_1 export LANTERN_QHOST=lantern-mq
 	docker-compose down
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
