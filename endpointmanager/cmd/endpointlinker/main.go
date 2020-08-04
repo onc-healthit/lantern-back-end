@@ -30,7 +30,7 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError("Error creating store", err)
 
-	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, verbose)
+	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, true, verbose)
 	failOnError("Error linking all orgs and enpoints", err)
 
 }
