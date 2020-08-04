@@ -310,7 +310,7 @@ func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*en
 	return tokenVal
 }
 
-func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, fixLinkerMatches bool, verbose bool) error {
+func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, whitelistFile string, blacklistFile string, verbose bool) error {
 	jaccardThreshold := .85
 	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
@@ -358,8 +358,8 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, fixLi
 		}
 	}
 
-	if fixLinkerMatches {
-		matchEndpointOrganization, unmatchEndpointOrganization, err := openLinkerCorrectionFiles("/go/src/app/resources/linkerMatchesWhitelist.json", "/go/src/app/resources/linkerMatchesBlacklist.json")
+	if whitelistFile != "" && blacklistFile != "" {
+		matchEndpointOrganization, unmatchEndpointOrganization, err := openLinkerCorrectionFiles(whitelistFile, blacklistFile)
 		if err != nil {
 			return errors.Wrap(err, "Error opening linker correction json files")
 		}
@@ -391,8 +391,14 @@ func openLinkerCorrectionFiles(whitelist string, blacklist string) ([]map[string
 	defer jsonWhitelist.Close()
 
 	var matchingCorrections []map[string]string
-	byteValueWhitelist, _ := ioutil.ReadAll(jsonWhitelist)
-	json.Unmarshal(byteValueWhitelist, &matchingCorrections)
+	byteValueWhitelist, err := ioutil.ReadAll(jsonWhitelist)
+	if err != nil {
+		return nil, nil, err
+	}
+	err = json.Unmarshal(byteValueWhitelist, &matchingCorrections)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	jsonBlacklist, err := os.Open(blacklist)
 	if err != nil {
@@ -401,29 +407,49 @@ func openLinkerCorrectionFiles(whitelist string, blacklist string) ([]map[string
 	defer jsonBlacklist.Close()
 
 	var unmatchingCorrections []map[string]string
-	byteValueBlacklist, _ := ioutil.ReadAll(jsonBlacklist)
-	json.Unmarshal(byteValueBlacklist, &unmatchingCorrections)
+	byteValueBlacklist, err := ioutil.ReadAll(jsonBlacklist)
+	if err != nil {
+		return nil, nil, err
+	}
+	err = json.Unmarshal(byteValueBlacklist, &unmatchingCorrections)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	return matchingCorrections, unmatchingCorrections, nil
 }
 
 // If match is true add new links from whitelist to db, if match is false delete links from blacklist from db
 func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string, unmatchEndpointOrganization []map[string]string) error {
-	for _, matchesMap := range matchEndpointOrganization {
-		orgID := matchesMap["organizationID"]
-		endpointURL := matchesMap["endpointURL"]
-		confidence := 1.0
-		err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
-		if err != nil {
-			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+	if len(matchEndpointOrganization) != 0 {
+		for _, matchesMap := range matchEndpointOrganization {
+			orgID := matchesMap["organizationID"]
+			endpointURL := matchesMap["endpointURL"]
+			confidence := 1.0
+			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+			if err == sql.ErrNoRows {
+				err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
+				if err != nil {
+					return errors.Wrap(err, "Error manually linking org to FHIR endpoint")
+				}
+			} else if err == nil {
+				err := store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL, confidence)
+				if err != nil {
+					return errors.Wrap(err, "Error manually updating org to FHIR endpoint link confidence")
+				}
+			} else {
+				return errors.Wrap(err, "Error checking if org to FHIR endpoint link exists")
+			}
 		}
 	}
-	for _, unmatchMap := range unmatchEndpointOrganization {
-		orgID := unmatchMap["organizationID"]
-		endpointURL := unmatchMap["endpointURL"]
-		err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
-		if err != nil {
-			return errors.Wrap(err, "Error unlinking org to FHIR endpoint")
+	if len(unmatchEndpointOrganization) != 0 {
+		for _, unmatchMap := range unmatchEndpointOrganization {
+			orgID := unmatchMap["organizationID"]
+			endpointURL := unmatchMap["endpointURL"]
+			err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+			if err != nil {
+				return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
+			}
 		}
 	}
 	return nil
