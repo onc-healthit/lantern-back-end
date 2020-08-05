@@ -70,7 +70,7 @@ func GetEndpointsFromFilepath(filePath string, source string) (ListOfEndpoints, 
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	if (len(byteValue) == 0) {
+	if len(byteValue) == 0 {
 		return ListOfEndpoints{}, nil
 	}
 
