@@ -6,8 +6,11 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
    URL=$(echo $endpoint | jq -c -r '.URL')
-   
-   echo "Downloading $NAME Endpoint Sources..."
-   curl -s -o $FILENAME $URL
-   echo "done"
+
+   if [ -n "$URL" ];
+   then
+      echo "Downloading $NAME Endpoint Sources..."
+      curl -s -o $FILENAME $URL
+      echo "done"
+   fi
 done

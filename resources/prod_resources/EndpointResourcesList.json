@@ -7,6 +7,11 @@
     {
         "EndpointName":"Cerner",
         "FileName":"CernerEndpointSources.json",
-        "URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/master/dstu2-patient-endpoints.json"
+        "URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/main/dstu2-patient-endpoints.json"
+    },
+    {
+        "EndpointName":"Lantern",
+        "FileName":"LanternEndpointSources.json",
+        "URL": ""
     }
 ]
