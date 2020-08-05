@@ -219,6 +219,21 @@ Cerner Endpoint Sources (JSON):
 }
 ```
 
+Lantern Endpoint Sources (JSON):
+
+```
+{
+  "Endpoints": [
+    {
+      "URL": <location of the FHIR endpoint>,
+      "OrganizationName": <name of the organization>,
+      "NPIID": <organization npi id>
+    },
+    ...
+  ]
+}
+```
+
 NPPES Endpoint pfile (CSV):
 
 ```
@@ -228,4 +243,4 @@ NPPES Endpoint pfile (CSV):
 
 ### Adding a New Endpoint List
 
-To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above in the expected endpoint formats, add a new parser. See lantern-back-end/endpointmanager/pkg/fetcher/cernerlist.go or lantern-back-end/endpointmanager/pkg/fetcher/epiclist.go for examples of the interface which endpoint list parsers need to adhere to.
+To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above in the expected endpoint formats, add a new parser. See lantern-back-end/endpointmanager/pkg/fetcher/cernerlist.go, lantern-back-end/endpointmanager/pkg/fetcher/epiclist.go, or lantern-back-end/endpointmanager/pkg/fetcher/lanternlist.go for examples of the interface which endpoint list parsers need to adhere to.

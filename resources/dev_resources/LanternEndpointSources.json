@@ -1,0 +1,14 @@
+{
+    "Endpoints": [
+      {
+        "URL": "https://example.com/dstu2/",
+        "OrganizationName": "fakeOrganization",
+        "NPIID": "0000001111"
+      },
+      {
+        "URL": "https://example2.com/dstu2/",
+        "OrganizationName": "fakeOrganization2",
+        "NPIID": "0000001111222"
+      }
+    ]
+  }
