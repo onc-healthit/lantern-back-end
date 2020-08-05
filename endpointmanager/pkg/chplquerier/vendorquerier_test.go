@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -16,7 +17,6 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
-	assert "github.com/stretchr/testify/assert"
 )
 
 var testCHPLVendor1 chplVendor = chplVendor{
@@ -368,7 +368,7 @@ func Test_getVendorJSON(t *testing.T) {
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
-		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
+		if strings.Contains(strings.Trim(hook.Entries[i].Message, "\""), expectedErr) {
 			found = true
 			break
 		}
@@ -391,7 +391,7 @@ func Test_getVendorJSON(t *testing.T) {
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
-		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}

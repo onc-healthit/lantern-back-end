@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
-	assert "github.com/stretchr/testify/assert"
 )
 
 var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
@@ -320,7 +320,7 @@ func Test_getProductJSON(t *testing.T) {
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
-		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
+		if strings.Contains(strings.Trim(hook.Entries[i].Message, "\""), expectedErr) {
 			found = true
 			break
 		}
@@ -343,7 +343,7 @@ func Test_getProductJSON(t *testing.T) {
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
-		if assert.Contains(t, hook.Entries[i].Message, expectedErr) {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
 			found = true
 			break
 		}
