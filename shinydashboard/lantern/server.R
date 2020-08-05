@@ -18,7 +18,8 @@ function(input, output, session) {
 
   callModule(
     performance,
-    "performance_page")
+    "performance_page",
+    reactive(input$date))
 
   callModule(
     capabilitymodule,
@@ -45,6 +46,7 @@ function(input, output, session) {
   show_filter <- reactive(input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab"))
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
+  show_datefilter <- reactive(input$side_menu %in% c("performance_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -87,11 +89,25 @@ function(input, output, session) {
             label = "Vendor:",
             choices = app$vendor_list,
             selected = ui_special_values$ALL_VENDORS,
+          )
+        )
+      )
+    }
+  })
+
+  output$show_date_filters <- renderUI({
+    if (show_datefilter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "date",
+            label = "Date range",
+            choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+            selected = "All time",
             size = 1,
             selectize = FALSE)
         )
       )
     }
   })
-
 }
