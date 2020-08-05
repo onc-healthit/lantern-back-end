@@ -20,6 +20,13 @@ var testEpic = []byte(`{"Entries":[
 		"FHIRPatientFacingURI":"https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
 	}]}`)
 
+var testLantern = []byte(`{"Endpoints": [
+    {
+		"URL": "http://example.com/DTSU2/",
+        "OrganizationName": "fakeOrganization",
+        "NPIID": "1"
+	}]}`)
+
 var testDefault = []byte(`{"Entries":[
 	{
 		"OrganizationName":"Test Default",
@@ -42,6 +49,12 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
+	// test lantern list
+
+	expectedEndpoints = 4
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/LanternEndpointSources.json", "Lantern")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from lantern file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 }
 
 func Test_GetListOfEndpointsKnownSource(t *testing.T) {
@@ -57,6 +70,12 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	epicResult, err := GetListOfEndpointsKnownSource(testEpic, Epic)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epicResult.Entries[0].ListSource == string(Epic), fmt.Sprintf("The list source should have been %s, it instead returned %s", Epic, epicResult.Entries[0].ListSource))
+
+	// test lantern list
+
+	lanternResult, err := GetListOfEndpointsKnownSource(testLantern, Lantern)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, lanternResult.Entries[0].ListSource == string(Lantern), fmt.Sprintf("The list source should have been %s, it instead returned %s", Lantern, lanternResult.Entries[0].ListSource))
 
 	// test empty values
 

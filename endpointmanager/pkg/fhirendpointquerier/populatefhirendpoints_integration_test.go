@@ -29,10 +29,22 @@ var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	FHIRPatientFacingURI: "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
 	ListSource:           "epicList",
 }
+var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
+	OrganizationNames:    []string{"fakeOrganization"},
+	FHIRPatientFacingURI: "http://example.com/DTSU2/",
+	ListSource:           "Lantern",
+	NPIIDs:               []string{"1"},
+}
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"Access Community Health Network"},
 	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
 	ListSource:        "epicList",
+}
+var testFHIREndpoint3 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
+	OrganizationNames: []string{"fakeOrganization"},
+	URL:               "http://example.com/DTSU2/",
+	ListSource:        "Lantern",
+	NPIIDs:            []string{"1"},
 }
 
 func TestMain(m *testing.M) {
@@ -113,6 +125,8 @@ func Test_saveEndpointData(t *testing.T) {
 
 	endpt := testEndpointEntry
 	fhirEndpt := testFHIREndpoint
+	endptLantern := testEndpointEntry3
+	fhirEndptLantern := testFHIREndpoint3
 	var savedEndpt *endpointmanager.FHIREndpoint
 
 	var ct int
@@ -164,6 +178,27 @@ func Test_saveEndpointData(t *testing.T) {
 
 	th.Assert(t, helpers.StringArraysEqual(savedEndpt.OrganizationNames, []string{"AdvantageCare Physicians", "AdvantageCare Physicians 2"}),
 		fmt.Sprintf("stored data %v does not equal expected store data [AdvantageCare Physicians, AdvantageCare Physicians 2]", savedEndpt.OrganizationNames))
+
+	// reset context
+	ctx = context.Background()
+
+	// reset values
+	_, err = store.DB.Exec("DELETE FROM fhir_endpoints;")
+	th.Assert(t, err == nil, err)
+
+	// check that new item is stored
+	err = saveEndpointData(ctx, store, &endptLantern)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 1, "did not store data as expected")
+
+	err = store.DB.QueryRow("SELECT id FROM fhir_endpoints LIMIT 1;").Scan(&endptID)
+	th.Assert(t, err == nil, err)
+	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, fhirEndptLantern.Equal(savedEndpt), "stored data does not equal expected store data")
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
