@@ -359,9 +359,13 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 	}
 
 	if whitelistFile != "" && blacklistFile != "" {
-		matchEndpointOrganization, unmatchEndpointOrganization, err := openLinkerCorrectionFiles(whitelistFile, blacklistFile)
+		matchEndpointOrganization, err := openLinkerCorrectionFiles(whitelistFile)
 		if err != nil {
-			return errors.Wrap(err, "Error opening linker correction json files")
+			return errors.Wrap(err, "Error opening linker correction whitelist file")
+		}
+		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blacklistFile)
+		if err != nil {
+			return errors.Wrap(err, "Error opening linker correction blacklist file")
 		}
 
 		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
@@ -383,40 +387,24 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 }
 
 // Open whitelist and blacklist files for manually correcting matching algorithm
-func openLinkerCorrectionFiles(whitelist string, blacklist string) ([]map[string]string, []map[string]string, error) {
-	jsonWhitelist, err := os.Open(whitelist)
+func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
+	jsonFile, err := os.Open(filepath)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	defer jsonWhitelist.Close()
+	defer jsonFile.Close()
 
-	var matchingCorrections []map[string]string
-	byteValueWhitelist, err := ioutil.ReadAll(jsonWhitelist)
+	var linkerCorrections []map[string]string
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	err = json.Unmarshal(byteValueWhitelist, &matchingCorrections)
+	err = json.Unmarshal(byteValueFile, &linkerCorrections)
 	if err != nil {
-		return nil, nil, err
-	}
-
-	jsonBlacklist, err := os.Open(blacklist)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer jsonBlacklist.Close()
-
-	var unmatchingCorrections []map[string]string
-	byteValueBlacklist, err := ioutil.ReadAll(jsonBlacklist)
-	if err != nil {
-		return nil, nil, err
-	}
-	err = json.Unmarshal(byteValueBlacklist, &unmatchingCorrections)
-	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return matchingCorrections, unmatchingCorrections, nil
+	return linkerCorrections, nil
 }
 
 // Add/update endpoint to npi organization links found in whitelist file from database, and remove endpoint to npi organization links found in blacklist file from database

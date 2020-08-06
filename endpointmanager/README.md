@@ -245,7 +245,7 @@ NPPES Endpoint pfile (CSV):
 
 To add a new endpoint list, add an entry to the EndpointResourcesList.json file located in the resources/prod_resources directory with the endpoint name, the name the endpoint source file will be saved as, and the endpoint URL. If the format does not match any of those listed above in the expected endpoint formats, add a new parser. See lantern-back-end/endpointmanager/pkg/fetcher/cernerlist.go, lantern-back-end/endpointmanager/pkg/fetcher/epiclist.go, or lantern-back-end/endpointmanager/pkg/fetcher/lanternlist.go for examples of the interface which endpoint list parsers need to adhere to.
 
-## Manual Endpoint Linker Algorithim Manual Corrections
+## Endpoint Linker Algorithm Manual Corrections
 
 To manually add a link between an endpoint and npi organization after the linker algorithm has been run, add the endpoint url and the npi id of the organization you want to link to the linkerMatchesWhitelist.json file. To manually remove a link between an endpoint and npi organization, add the linked endpoint url and the npi id of the organization you want to remove from the database to the linkerMatchesBlacklist.json file. Both files are found in the resources/prod_resources directory, and expect the following format:
 

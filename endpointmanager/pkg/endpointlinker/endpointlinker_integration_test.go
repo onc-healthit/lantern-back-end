@@ -191,7 +191,9 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// open fake whitelist and blacklist files
-	whitelistMap, blacklistMap, err := openLinkerCorrectionFiles("../testdata/fakeWhitelist.json", "../testdata/fakeBlacklist.json")
+	whitelistMap, err := openLinkerCorrectionFiles("../testdata/fakeWhitelist.json")
+	th.Assert(t, err == nil, err)
+	blacklistMap, err := openLinkerCorrectionFiles("../testdata/fakeBlacklist.json")
 	th.Assert(t, err == nil, err)
 
 	// run linkerFix manual linker algorithm correction function

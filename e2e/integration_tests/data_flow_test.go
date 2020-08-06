@@ -532,7 +532,8 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
 	}
 
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "", "", false)
+	//Fake whitelist contains a fake link that should be added to the database, and blacklist contains the same link which will then remove the link
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
