@@ -178,8 +178,8 @@ func Test_GetCHPLCriteria(t *testing.T) {
 
 	// basic test
 
-	// mock JSON includes 36 criteria entries
-	expectedCriteriaStored := 36
+	// mock JSON includes 182 criteria entries
+	expectedCriteriaStored := 182
 
 	tc, err = basicTestCriteriaClient()
 	th.Assert(t, err == nil, err)
