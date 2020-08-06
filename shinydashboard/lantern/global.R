@@ -54,7 +54,7 @@ app_data <<- list(
 # we need a table with the code as a factor for use in ggplot
 app_data$http_pctf <- app_data$http_pct %>%
     filter(http_response > 0, http_response != 200) %>%
-    mutate(name = as.factor(as.character(id)), Code = as.factor(code))
+    mutate(name = url, Code = as.factor(code))
 
 app_data$http_summary <- app_data$http_pct %>%
     left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
@@ -84,7 +84,7 @@ updater <- observe({
 
   app_data$http_pctf <<- app_data$http_pct %>%
     filter(http_response > 0, http_response != 200) %>%
-    mutate(name = as.factor(as.character(id)), Code = as.factor(code))
+    mutate(name = url, Code = as.factor(code))
 
   app_data$http_summary <<- app_data$http_pct %>%
     left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
