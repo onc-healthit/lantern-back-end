@@ -347,11 +347,11 @@ func linkProductToCriteria(ctx context.Context,
 	if err == sql.ErrNoRows {
 		certCrit, err := store.GetCriteriaByCertificationID(ctx, critID)
 		if err != nil {
-			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+			return errors.Wrap(err, "Error linking criteria to FHIR endpoint")
 		}
 		err = store.LinkProductToCriteria(ctx, critID, prodID, certCrit.CertificationNumber)
 		if err != nil {
-			return errors.Wrap(err, "Error linking org to FHIR endpoint")
+			return errors.Wrap(err, "Error linking criteria to FHIR endpoint")
 		}
 	} else if err != nil {
 		return err

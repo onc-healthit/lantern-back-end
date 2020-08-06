@@ -154,8 +154,8 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	// basic test
 
-	// mock JSON includes 36 criteria entries
-	expectedCriteriaReceived := 36
+	// mock JSON includes 182 criteria entries
+	expectedCriteriaReceived := 182
 
 	tc, err = basicTestCriteriaClient()
 	th.Assert(t, err == nil, err)

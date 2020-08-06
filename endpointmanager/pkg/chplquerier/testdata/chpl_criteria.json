@@ -323,6 +323,1320 @@
             "certificationEdition": "2014",
             "description": null,
             "removed": false
+        },
+        {
+            "id": 69,
+            "number": "170.314 (a)(9)",
+            "title": "Electronic notes",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 50,
+            "number": "170.315 (g)(1)",
+            "title": "Automated Numerator Recording",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 152,
+            "number": "170.304 (h)",
+            "title": "Clinical summaries",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 149,
+            "number": "170.304 (e)",
+            "title": "Clinical decision support",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 87,
+            "number": "170.314 (b)(6)",
+            "title": "Inpatient setting only - transmission of electronic laboratory tests and values/results to ambulatory providers",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 131,
+            "number": "170.302 (j)",
+            "title": "Medication reconciliation",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 42,
+            "number": "170.315 (e)(3)",
+            "title": "Patient Health Information Capture",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 3,
+            "number": "170.315 (a)(3)",
+            "title": "CPOE - Diagnostic Imaging",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 28,
+            "number": "170.315 (c)(4)",
+            "title": "Clinical Quality Measures - Filter",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 38,
+            "number": "170.315 (d)(10)",
+            "title": "Auditing Actions on Health Information",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 157,
+            "number": "170.306 (c)",
+            "title": "Clinical decision support",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 29,
+            "number": "170.315 (d)(1)",
+            "title": "Authentication, Access Control, Authorization",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 144,
+            "number": "170.302 (w)",
+            "title": "Accounting of disclosures (optional)",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 135,
+            "number": "170.302 (n)",
+            "title": "Automated measure calculation",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 97,
+            "number": "170.314 (d)(4)",
+            "title": "Amendments",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 170,
+            "number": "170.315 (b)(9)",
+            "title": "Care Plan (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 4,
+            "number": "170.315 (a)(4)",
+            "title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 8,
+            "number": "170.315 (a)(8)",
+            "title": "Medication Allergy List",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 110,
+            "number": "170.314 (f)(5)",
+            "title": "Optional - ambulatory setting only - cancer case information",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 96,
+            "number": "170.314 (d)(3)",
+            "title": "Audit report(s)",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 155,
+            "number": "170.306 (a)",
+            "title": "Computerized provider order entry",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 39,
+            "number": "170.315 (d)(11)",
+            "title": "Accounting of Disclosures",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 65,
+            "number": "170.314 (a)(5)",
+            "title": "Problem list",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 139,
+            "number": "170.302 (r)",
+            "title": "Audit log",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 136,
+            "number": "170.302 (o)",
+            "title": "Access control",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 9,
+            "number": "170.315 (a)(9)",
+            "title": "Clinical Decision Support",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 41,
+            "number": "170.315 (e)(2)",
+            "title": "Secure Messaging",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 115,
+            "number": "170.314 (g)(3)",
+            "title": "Safety-enhanced design",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 118,
+            "number": "170.314 (h)(2)",
+            "title": "Optional - Transmit - Applicability Statement for Secure Health Transport and XDR/XDM for Direct Messaging",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 120,
+            "number": "170.302 (a)",
+            "title": "Drug-drug, drug-allergy interaction checks",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 86,
+            "number": "170.314 (b)(5)(B)",
+            "title": "Incorporate laboratory tests and values/results",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 100,
+            "number": "170.314 (d)(7)",
+            "title": "End-user device encryption",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 182,
+            "number": "170.315 (g)(10)",
+            "title": "Standardized API for Patient and Population Services",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 1,
+            "number": "170.315 (a)(1)",
+            "title": "Computerized Provider Order Entry (CPOE) - Medications",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 25,
+            "number": "170.315 (c)(1)",
+            "title": "Clinical Quality Measures - Record and Export",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 36,
+            "number": "170.315 (d)(8)",
+            "title": "Integrity",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 145,
+            "number": "170.304 (a)",
+            "title": "Computerized provider order entry",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 150,
+            "number": "170.304 (f)",
+            "title": "Electronic copy of health information",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 93,
+            "number": "170.314 (c)(3)",
+            "title": "Clinical quality measures - electronic submission",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 116,
+            "number": "170.314 (g)(4)",
+            "title": "Quality management system",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 45,
+            "number": "170.315 (f)(3)",
+            "title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 84,
+            "number": "170.314 (b)(4)",
+            "title": "Clinical information reconciliation",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 151,
+            "number": "170.304 (g)",
+            "title": "Timely access",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 141,
+            "number": "170.302 (t)",
+            "title": "Authentication",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 156,
+            "number": "170.306 (b)",
+            "title": "Record demographics",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 23,
+            "number": "170.315 (b)(8)",
+            "title": "Data Segmentation for Privacy - Receive",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 27,
+            "number": "170.315 (c)(3)",
+            "title": "Clinical Quality Measures - Report",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 61,
+            "number": "170.314 (a)(1)",
+            "title": "Computerized provider order entry",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 122,
+            "number": "170.302 (c)",
+            "title": "Maintain up-to-date problem list",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 10,
+            "number": "170.315 (a)(10)",
+            "title": "Drug-Formulary and Preferred Drug List Checks",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 105,
+            "number": "170.314 (e)(3)",
+            "title": "Ambulatory setting only - secure messaging",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 175,
+            "number": "170.315 (d)(10)",
+            "title": "Auditing Actions on Health Information (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 72,
+            "number": "170.314 (a)(12)",
+            "title": "Image results",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 74,
+            "number": "170.314 (a)(14)",
+            "title": "Patient list creation",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 159,
+            "number": "170.306 (d)(2)",
+            "title": "Electronic copy of health information",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 128,
+            "number": "170.302 (g)",
+            "title": "Smoking status",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 160,
+            "number": "170.306 (e)",
+            "title": "Electronic copy of discharge instructions",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 163,
+            "number": "170.306 (h)",
+            "title": "Advance directives",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 81,
+            "number": "170.314 (b)(1)",
+            "title": "Transitions of care - receive, display and incorporate transition of care/referral summaries",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 37,
+            "number": "170.315 (d)(9)",
+            "title": "Trusted Connection",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 88,
+            "number": "170.314 (b)(7)",
+            "title": "Data portability",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 137,
+            "number": "170.302 (p)",
+            "title": "Emergency access",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 117,
+            "number": "170.314 (h)(1)",
+            "title": "Optional - Transmit - Applicability Statement for Secure Health",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 123,
+            "number": "170.302 (d)",
+            "title": "Maintain active medication list",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 169,
+            "number": "170.315 (b)(8)",
+            "title": "Security Tags - Summary of Care - Receive (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 40,
+            "number": "170.315 (e)(1)",
+            "title": "View, Download, and Transmit to 3rd Party",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 62,
+            "number": "170.314 (a)(2)",
+            "title": "Drug-drug, drug-allergy interactions checks",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 15,
+            "number": "170.315 (a)(15)",
+            "title": "Social, Psychological, and Behavioral Determinants Data",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 90,
+            "number": "170.314 (b)(9)",
+            "title": "Optional - clinical information reconciliation and incorporation (CIRI)",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 92,
+            "number": "170.314 (c)(2)",
+            "title": "Clinical quality measures - import and calculate",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 49,
+            "number": "170.315 (f)(7)",
+            "title": "Transmission to Public Health Agencies - Health Care Surveys",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 12,
+            "number": "170.315 (a)(12)",
+            "title": "Family Health History",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 47,
+            "number": "170.315 (f)(5)",
+            "title": "Transmission to Public Health Agencies - Electronic Case Reporting",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 20,
+            "number": "170.315 (b)(5)",
+            "title": "Common Clinical Data Set Summary Record - Receive",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 89,
+            "number": "170.314 (b)(8)",
+            "title": "Optional - transitions of care",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 13,
+            "number": "170.315 (a)(13)",
+            "title": "Patient-Specific Education Resources",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 56,
+            "number": "170.315 (g)(7)",
+            "title": "Application Access - Patient Selection",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 83,
+            "number": "170.314 (b)(3)",
+            "title": "Electronic prescribing",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 167,
+            "number": "170.315 (b)(3)",
+            "title": "Electronic Prescribing (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 51,
+            "number": "170.315 (g)(2)",
+            "title": "Automated Measure Calculation",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 63,
+            "number": "170.314 (a)(3)",
+            "title": "Demographics",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 82,
+            "number": "170.314 (b)(2)",
+            "title": "Transitions of care - create and transmit transition of care/referral summaries",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 113,
+            "number": "170.314 (g)(1)",
+            "title": "Automated numerator recording",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 124,
+            "number": "170.302 (e)",
+            "title": "Maintain active medication allergy list",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 101,
+            "number": "170.314 (d)(8)",
+            "title": "Integrity",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 6,
+            "number": "170.315 (a)(6)",
+            "title": "Problem List",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 79,
+            "number": "170.314 (a)(19)",
+            "title": "Optional - computerized provider order entry - laboratory",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 31,
+            "number": "170.315 (d)(3)",
+            "title": "Audit Report(s)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 67,
+            "number": "170.314 (a)(7)",
+            "title": "Medication allergy list",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 106,
+            "number": "170.314 (f)(1)",
+            "title": "Immunization information",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 130,
+            "number": "170.302 (i)",
+            "title": "Generate patient lists",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 158,
+            "number": "170.306 (d)(1)",
+            "title": "Electronic copy of health information",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 125,
+            "number": "170.302 (f)(1)",
+            "title": "Vital signs",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 2,
+            "number": "170.315 (a)(2)",
+            "title": "CPOE - Laboratory",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 129,
+            "number": "170.302 (h)",
+            "title": "Incorporate laboratory test results",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 24,
+            "number": "170.315 (b)(9)",
+            "title": "Care Plan",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 107,
+            "number": "170.314 (f)(2)",
+            "title": "Transmission to immunization registries",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 76,
+            "number": "170.314 (a)(16)",
+            "title": "Inpatient setting only - electronic medication administration record",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 48,
+            "number": "170.315 (f)(6)",
+            "title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 17,
+            "number": "170.315 (b)(2)",
+            "title": "Clinical Information Reconciliation and Incorporation",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 54,
+            "number": "170.315 (g)(5)",
+            "title": "Accessibility-Centered Design",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 133,
+            "number": "170.302 (l)",
+            "title": "Public health surveillance",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 59,
+            "number": "170.315 (h)(1)",
+            "title": "Direct Project",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 176,
+            "number": "170.315 (d)(12)",
+            "title": "Encrypt Authentication Credentials",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 173,
+            "number": "170.315 (d)(2)",
+            "title": "Auditable Events and Tamper-Resistance (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 161,
+            "number": "170.306 (f)",
+            "title": "Exchange clinical information and patient summary record",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 166,
+            "number": "170.315 (b)(2)",
+            "title": "Clinical Information Reconciliation and Incorporation (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 171,
+            "number": "170.315 (b)(10)",
+            "title": "Electronic Health Information Export",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 33,
+            "number": "170.315 (d)(5)",
+            "title": "Automatic Access Time-out",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 91,
+            "number": "170.314 (c)(1)",
+            "title": "Clinical quality measures - capture and export",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 147,
+            "number": "170.304 (c)",
+            "title": "Record demographics",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 55,
+            "number": "170.315 (g)(6)",
+            "title": "Consolidated CDA Creation",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 98,
+            "number": "170.314 (d)(5)",
+            "title": "Automatic log-off",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 53,
+            "number": "170.315 (g)(4)",
+            "title": "Quality Management System",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 180,
+            "number": "170.315 (g)(6)",
+            "title": "Consolidated CDA Creation Performance (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 30,
+            "number": "170.315 (d)(2)",
+            "title": "Auditable Events and Tamper-Resistance",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 78,
+            "number": "170.314 (a)(18)",
+            "title": "Optional - computerized provider order entry - medications",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 132,
+            "number": "170.302 (k)",
+            "title": "Submission to immunization registries",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 181,
+            "number": "170.315 (g)(9)",
+            "title": "Application Access - All Data Request (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 32,
+            "number": "170.315 (d)(4)",
+            "title": "Amendments",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 7,
+            "number": "170.315 (a)(7)",
+            "title": "Medication List",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 71,
+            "number": "170.314 (a)(11)",
+            "title": "Smoking status",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 73,
+            "number": "170.314 (a)(13)",
+            "title": "Family health history",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 109,
+            "number": "170.314 (f)(4)",
+            "title": "Inpatient setting only - transmission of reportable laboratory tests and values/results",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 168,
+            "number": "170.315 (b)(7)",
+            "title": "Security Tags - Summary of Care - Send (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 126,
+            "number": "170.302 (f)(2)",
+            "title": "Calculate body mass index",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 134,
+            "number": "170.302 (m)",
+            "title": "Patient specific education resources",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 140,
+            "number": "170.302 (s)",
+            "title": "Integrity",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 177,
+            "number": "170.315 (d)(13)",
+            "title": "Multi-Factor Authentication",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 108,
+            "number": "170.314 (f)(3)",
+            "title": "Transmission to public health agencies - syndromic surveillance",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 34,
+            "number": "170.315 (d)(6)",
+            "title": "Emergency Access",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 138,
+            "number": "170.302 (q)",
+            "title": "Automatic log-off",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 68,
+            "number": "170.314 (a)(8)",
+            "title": "Clinical decision support",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 172,
+            "number": "170.315 (c)(3)",
+            "title": "Clinical Quality Measures - Report (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 18,
+            "number": "170.315 (b)(3)",
+            "title": "Electronic Prescribing",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 95,
+            "number": "170.314 (d)(2)",
+            "title": "Auditable events and tamper-resistance",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 153,
+            "number": "170.304 (i)",
+            "title": "Exchange clinical information and patient summary record",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 75,
+            "number": "170.314 (a)(15)",
+            "title": "Patient-specific education resources",
+            "certificationEditionId": 2,
+            "certificationEdition": "2014",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 174,
+            "number": "170.315 (d)(3)",
+            "title": "Audit Report(s) (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 165,
+            "number": "170.315 (b)(1)",
+            "title": "Transitions of Care (Cures Update)",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 52,
+            "number": "170.315 (g)(3)",
+            "title": "Safety-Enhanced Design",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 142,
+            "number": "170.302 (u)",
+            "title": "General encryption",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 162,
+            "number": "170.306 (g)",
+            "title": "Reportable lab results",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 57,
+            "number": "170.315 (g)(8)",
+            "title": "Application Access - Data Category Request",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": false
+        },
+        {
+            "id": 19,
+            "number": "170.315 (b)(4)",
+            "title": "Common Clinical Data Set Summary Record - Create",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
+            "id": 127,
+            "number": "170.302 (f)(3)",
+            "title": "Plot and display growth charts",
+            "certificationEditionId": 1,
+            "certificationEdition": "2011",
+            "description": null,
+            "removed": false
         }
     ]
 }

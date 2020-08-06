@@ -31,7 +31,7 @@ var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
 
 var testCriteria = &endpointmanager.CertificationCriteria{
 	CertificationID:        30,
-	CertificationNumber:    "170.315 (f)(2)",
+	CertificationNumber:    "170.315 (d)(2)",
 	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
 	CertificationEditionID: 3,
 	CertificationEdition:   "2015",
@@ -98,6 +98,20 @@ func Test_persistProduct(t *testing.T) {
 	store.AddVendor(ctx, testVendorCHPLProd) // add vendor product so we can link to it
 	hitp.VendorID = testVendorCHPLProd.ID
 
+	// add all criteria
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
+	criteriaClient, err := basicTestCriteriaClient()
+	th.Assert(t, err == nil, err)
+	defer criteriaClient.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLCriteria(ctx, store, &(criteriaClient.Client))
+	th.Assert(t, err == nil, err)
+
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
 
@@ -162,6 +176,8 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, err != nil, "expected error updating product")
 
 	// test criteria linking
+
+	// add criteria so we can link to it
 	tmpCrit := testCriteria
 	err = store.AddCriteria(ctx, tmpCrit)
 	th.Assert(t, err == nil, "did not expect error adding criteria")
