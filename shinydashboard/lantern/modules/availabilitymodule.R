@@ -24,7 +24,7 @@ availability <- function(
 
   plot <- ggplotly(ggplot(app_data$http_pctf, aes(x = name, y = Percentage, fill = Code, label = url)) +
                geom_bar(stat = "identity") + ggtitle("Endpoints returning non-HTTP 200 responses") +
-               theme(legend.title = element_blank()))
+               theme(legend.title = element_blank(), axis.text.x = element_blank()))
   formatted_plot <- plot %>% layout(legend = list(title=list(text='HTTP <br>Status <br>Code'), x = 1, y = 0.5))
 
   output$non_200 <- renderPlotly({
