@@ -399,9 +399,11 @@ func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(byteValueFile, &linkerCorrections)
-	if err != nil {
-		return nil, err
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &linkerCorrections)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return linkerCorrections, nil
