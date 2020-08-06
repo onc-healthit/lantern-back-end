@@ -352,12 +352,12 @@ func Test_getVendorJSON(t *testing.T) {
 
 	// test context ended.
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
+
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
-
-	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -377,11 +377,11 @@ func Test_getVendorJSON(t *testing.T) {
 
 	// test http status != 200
 
-	tc = th.NewTestClientWith404()
-	defer tc.Close()
-
 	hook = logtest.NewGlobal()
 	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
 
 	ctx = context.Background()
 

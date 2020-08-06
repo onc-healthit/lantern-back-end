@@ -227,11 +227,11 @@ func Test_GetCHPLVendors(t *testing.T) {
 
 	// test http status != 200
 
-	tc = th.NewTestClientWith404()
-	defer tc.Close()
-
 	hook = logtest.NewGlobal()
 	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
 
 	ctx = context.Background()
 
