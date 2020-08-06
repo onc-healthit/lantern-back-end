@@ -147,13 +147,12 @@ func Test_parseHITCriteria(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
-	ctx := context.Background()
 	crit := testCHPLCrit
 	expectedCrit := testCrit
 
 	// basic test
 
-	hitCrit, err := parseHITCriteria(ctx, &crit, store)
+	hitCrit, err := parseHITCriteria(&crit, store)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, hitCrit.Equal(&expectedCrit), "CHPL Criteria did not parse into CertifcationCriteria as expected.")
 }

@@ -102,7 +102,7 @@ func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) (*chplCertif
 }
 
 // takes the JSON model and converts it into an endpointmanager.CertificationCriteria
-func parseHITCriteria(ctx context.Context, criteria *chplCertCriteria, store *postgresql.Store) (*endpointmanager.CertificationCriteria, error) {
+func parseHITCriteria(criteria *chplCertCriteria, store *postgresql.Store) (*endpointmanager.CertificationCriteria, error) {
 
 	dbCrit := endpointmanager.CertificationCriteria{
 		CertificationID:        criteria.ID,
@@ -147,7 +147,7 @@ func persistCriteria(ctx context.Context,
 	store *postgresql.Store,
 	criteria *chplCertCriteria) error {
 
-	newDbCrit, err := parseHITCriteria(ctx, criteria, store)
+	newDbCrit, err := parseHITCriteria(criteria, store)
 	if err != nil {
 		return err
 	}
