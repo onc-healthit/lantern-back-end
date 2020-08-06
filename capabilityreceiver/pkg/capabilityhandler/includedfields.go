@@ -62,6 +62,7 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}) []endpointmanager.In
 		fieldObj := endpointmanager.IncludedField{
 			Field:  stringIndex,
 			Exists: checkField(capInt, fieldNames),
+			Extension: false
 		}
 		includedFields = append(includedFields, fieldObj)
 	}
@@ -88,3 +89,41 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 
 	return false
 }
+
+func RunIncludedExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
+	if capInt == nil {
+		return nil
+	}
+	var includedFields []endpointmanager.IncludedField
+
+	fieldsList := [][]string{
+		{"rest", "security", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities"},
+		{"rest", "resource", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination"},
+		
+	}
+
+	for _, fieldNames := range fieldsList {
+		var stringIndex string
+		if len(fieldNames) != 1 {
+			for index, name := range fieldNames {
+				if index == (len(fieldNames) - 1) {
+					stringIndex = stringIndex + name
+				} else if index == 0 {
+					stringIndex = name + "."
+				} else {
+					stringIndex = stringIndex + "." + name
+				}
+			}
+		} else {
+			stringIndex = fieldNames[0]
+		}
+		fieldObj := endpointmanager.IncludedField{
+			Field:  stringIndex,
+			Exists: checkField(capInt, fieldNames),
+			Extension: false
+		}
+		includedFields = append(includedFields, fieldObj)
+	}
+
+	return includedFields
+}	

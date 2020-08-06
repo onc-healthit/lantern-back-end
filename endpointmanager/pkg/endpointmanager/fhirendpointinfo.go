@@ -105,8 +105,9 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 
 // IncludedField is a struct used to keep track of all of the fields in the capability statement
 type IncludedField struct {
-	Field  string
-	Exists bool
+	Field     string
+	Exists    bool
+	Extension bool
 }
 
 // Validation holds all of the errors and warnings from running the validation checks
