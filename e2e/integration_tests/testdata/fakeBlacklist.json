@@ -1,7 +1,7 @@
 [
     {
-        "endpointURL": "example.com/FHIR/DSTU2",
-        "organizationID": "1"
+        "endpointURL": "example2.com/FHIR/DSTU2",
+        "organizationID": "2"
     }
 
 ]
