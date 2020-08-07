@@ -38,132 +38,219 @@ var testValidationObj = endpointmanager.Validation{
 
 var testIncludedFields = []endpointmanager.IncludedField{
 	{
-		Field:  "url",
-		Exists: true,
+		Field:     "url",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "version",
-		Exists: false,
+		Field:     "version",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "name",
-		Exists: true,
+		Field:     "name",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "title",
-		Exists: false,
+		Field:     "title",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "status",
-		Exists: true,
+		Field:     "status",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "experimental",
-		Exists: false,
+		Field:     "experimental",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "date",
-		Exists: true,
+		Field:     "date",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "publisher",
-		Exists: true,
+		Field:     "publisher",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "contact",
-		Exists: false,
+		Field:     "contact",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "description",
-		Exists: true,
+		Field:     "description",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "requirements",
-		Exists: false,
+		Field:     "requirements",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "useContext",
-		Exists: false,
+		Field:     "useContext",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "jurisdiction",
-		Exists: false,
+		Field:     "jurisdiction",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "purpose",
-		Exists: false,
+		Field:     "purpose",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "copyright",
-		Exists: false,
+		Field:     "copyright",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "kind",
-		Exists: true,
+		Field:     "kind",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "instantiates",
-		Exists: false,
+		Field:     "instantiates",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "imports",
-		Exists: false,
+		Field:     "imports",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.name",
-		Exists: false,
+		Field:     "software.name",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.version",
-		Exists: false,
+		Field:     "software.version",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.releaseDate",
-		Exists: false,
+		Field:     "software.releaseDate",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.description",
-		Exists: false,
+		Field:     "implementation.description",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.url",
-		Exists: false,
+		Field:     "implementation.url",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.custodian",
-		Exists: false,
+		Field:     "implementation.custodian",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "fhirVersion",
-		Exists: true,
+		Field:     "fhirVersion",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "format",
-		Exists: true,
+		Field:     "format",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "patchFormat",
-		Exists: false,
+		Field:     "patchFormat",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "acceptUnknown",
-		Exists: true,
+		Field:     "acceptUnknown",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "implementationGuide",
-		Exists: false,
+		Field:     "implementationGuide",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "profile",
-		Exists: false,
+		Field:     "profile",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "messaging",
-		Exists: false,
+		Field:     "messaging",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "document",
-		Exists: false,
+		Field:     "document",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "capabilities",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-search-parameter-combination",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-supported-system",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-websocket",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "oauth-uris",
+		Exists:    true,
+		Extension: true,
+	},
+	{
+		Field:     "replaces",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-approvalDate",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-effectivePeriod",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-lastReviewDate",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-expectation",
+		Exists:    true,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-prohibited",
+		Exists:    false,
+		Extension: true,
 	},
 }
 
@@ -311,19 +398,21 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["responseTime"] = 0.1234
 }
 
-func Test_RunIncludedFieldsChecks(t *testing.T) {
+func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields := RunIncludedFieldsChecks(capInt)
+	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == true, "Expected name in includedFields to be true, was false")
 	th.Assert(t, includedFields[18].Exists == false, "Expected software.name in includedFields to be false, was true")
 	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
+	th.Assert(t, includedFields[41].Exists == true, "Expected expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields = RunIncludedFieldsChecks(capInt)
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
 
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == false, "Expected name in includedFields to be false, was true")

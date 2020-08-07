@@ -82,7 +82,26 @@
                         {
                             "name": "patient",
                             "type": "reference",
-                            "documentation": "Who the sensitivity is for. It is a required field if the _id field is not given"
+                            "documentation": "Who the sensitivity is for. It is a required field if the _id field is not given",
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation",
+                                    "extension": [
+                                        {
+                                            "url": "token",
+                                            "valueUri": "https://authorization.cerner.com/tenants/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/protocols/oauth2/profiles/smart-v1/token"
+                                        },
+                                        {
+                                            "url": "authorize",
+                                            "valueUri": "https://authorization.cerner.com/tenants/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/protocols/oauth2/profiles/smart-v1/personas/patient/authorize"
+                                        },
+                                        {
+                                            "url": "manage",
+                                            "valueUri": "https://authorization.cerner.com/tenants/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/personas/patient/my-authorizations"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "name": "status",
