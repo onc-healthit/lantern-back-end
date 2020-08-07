@@ -51,7 +51,8 @@ type chplVendor struct {
 // within the given context 'ctx'.
 func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
 	log.Debug("requesting vendors from CHPL")
-	prodJSON, err := getVendorJSON(ctx, cli, userAgent)
+	vendorJSON, err := getVendorJSON(ctx, cli, userAgent)
+
 	// None of the returned errors should break the system, so just return nil
 	if err != nil {
 		return nil
@@ -59,16 +60,16 @@ func GetCHPLVendors(ctx context.Context, store *postgresql.Store, cli *http.Clie
 	log.Debug("done requesting vendors from CHPL")
 
 	log.Debug("converting chpl json into vendor objects")
-	prodList, err := convertVendorJSONToObj(ctx, prodJSON)
+	vendorList, err := convertVendorJSONToObj(ctx, vendorJSON)
 	if err != nil {
 		return errors.Wrap(err, "converting vendor JSON into a 'chplVendorList' object failed")
 	}
-	log.Debug("done converting chpl json into evndor objects")
+	log.Debug("done converting chpl json into vendor objects")
 
 	log.Debug("persisting vendors")
-	err = persistVendors(ctx, store, prodList)
+	err = persistVendors(ctx, store, vendorList)
 	log.Debug("done persisting vendors")
-	return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+	return errors.Wrap(err, "persisting the list of retrieved health IT vendors failed")
 }
 
 // makes the request to CHPL and returns the byte string
@@ -102,20 +103,20 @@ func convertVendorJSONToObj(ctx context.Context, vendorJSON []byte) (*chplVendor
 	// don't unmarshal the JSON if the context has ended
 	select {
 	case <-ctx.Done():
-		return nil, errors.Wrap(ctx.Err(), "Unable to convert product JSON to objects - context ended")
+		return nil, errors.Wrap(ctx.Err(), "Unable to convert vendor JSON to objects - context ended")
 	default:
 		// ok
 	}
 
 	err := json.Unmarshal(vendorJSON, &vendorList)
 	if err != nil {
-		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertifiedProductList object failed.")
+		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplVendorList object failed.")
 	}
 
 	return &vendorList, nil
 }
 
-// takes the JSON model and converts it into an endpointmanager.HealthITProduct
+// takes the JSON model and converts it into an endpointmanager.Vendor
 func parseVendor(vendor *chplVendor) (*endpointmanager.Vendor, error) {
 	var loc endpointmanager.Location
 

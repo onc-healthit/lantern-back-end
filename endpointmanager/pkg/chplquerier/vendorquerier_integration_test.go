@@ -109,12 +109,12 @@ func Test_persistVendors(t *testing.T) {
 
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == 2, "did not persist two products as expected")
+	th.Assert(t, ct == 2, "did not persist two vendors as expected")
 
 	_, err = store.GetVendorUsingName(ctx, chplVend1.Name)
-	th.Assert(t, err == nil, "Did not store first product as expected")
+	th.Assert(t, err == nil, "Did not store first vendor as expected")
 	_, err = store.GetVendorUsingName(ctx, chplVend2.Name)
-	th.Assert(t, err == nil, "Did not store second product as expected")
+	th.Assert(t, err == nil, "Did not store second vendor as expected")
 
 	// persist with errors
 
@@ -133,10 +133,10 @@ func Test_persistVendors(t *testing.T) {
 	// only expect one item to be stored
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, ct == 1, "did not persist one product as expected")
+	th.Assert(t, ct == 1, "did not persist one vendor as expected")
 
 	_, err = store.GetVendorUsingName(ctx, chplVend1.Name)
-	th.Assert(t, err == nil, "Did not store first product as expected")
+	th.Assert(t, err == nil, "Did not store first vendor as expected")
 
 	// expect presence of a log message
 	found := false
@@ -160,7 +160,7 @@ func Test_persistVendors(t *testing.T) {
 	vendList = chplVendorList{Developers: []chplVendor{chplVend1, chplVend2}}
 
 	err = persistVendors(ctx, store, &vendList)
-	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
+	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistVendors to error out due to context ending")
 }
 
 func Test_GetCHPLVendors(t *testing.T) {
