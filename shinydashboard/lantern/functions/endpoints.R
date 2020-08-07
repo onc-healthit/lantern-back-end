@@ -157,7 +157,8 @@ get_capstat_fields <- function(db_connection) {
       vendors.name as vendor_name,
       capability_statement->>'fhirVersion' as fhir_version,
       json_array_elements(included_fields::json) ->> 'Field' as field,
-      json_array_elements(included_fields::json) ->> 'Exists' as exist
+      json_array_elements(included_fields::json) ->> 'Exists' as exist,
+      json_array_elements(included_fields::json) ->> 'Extension' as extension
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
       WHERE included_fields != 'null'
@@ -176,9 +177,21 @@ get_fhir_resource_count <- function(fhir_resources_tbl) {
 
 get_capstat_fields_count <- function(capstat_fields_tbl) {
   res <- capstat_fields_tbl %>%
-    group_by(field, exist, fhir_version) %>%
+    group_by(field, exist, fhir_version, extension) %>%
     count() %>%
     filter(exist == "true") %>%
+    filter(extension == "false") %>%
+    ungroup() %>%
+    select(-exist) %>%
+    rename(Fields = field, Endpoints = n)
+}
+
+get_capstat_extensions_count <- function(capstat_fields_tbl) {
+  res <- capstat_fields_tbl %>%
+    group_by(field, exist, fhir_version, extension) %>%
+    count() %>%
+    filter(exist == "true") %>%
+    filter(extension == "true") %>%
     ungroup() %>%
     select(-exist) %>%
     rename(Fields = field, Endpoints = n)
@@ -187,6 +200,15 @@ get_capstat_fields_count <- function(capstat_fields_tbl) {
 get_capstat_fields_list <- function(capstat_fields_tbl) {
   res <- capstat_fields_tbl %>%
     group_by(field) %>%
+    filter(extension == "false") %>%
+    count() %>%
+    select(field)
+}
+
+get_capstat_extensions_list <- function(capstat_fields_tbl) {
+  res <- capstat_fields_tbl %>%
+    group_by(field) %>%
+    filter(extension == "true") %>%
     count() %>%
     select(field)
 }
