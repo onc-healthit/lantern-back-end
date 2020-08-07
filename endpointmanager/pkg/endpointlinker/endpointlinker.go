@@ -417,6 +417,7 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			endpointURL := matchesMap["endpointURL"]
 			confidence := 1.0
 			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+
 			if err == sql.ErrNoRows {
 				err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
 				if err != nil {
@@ -436,9 +437,15 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 		for _, unmatchMap := range unmatchEndpointOrganization {
 			orgID := unmatchMap["organizationID"]
 			endpointURL := unmatchMap["endpointURL"]
-			err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
-			if err != nil {
-				return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
+			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+
+			if err == sql.ErrNoRows {
+				return nil
+			} else {
+				err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+				if err != nil {
+					return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
+				}
 			}
 		}
 	}
