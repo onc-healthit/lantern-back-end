@@ -100,19 +100,19 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField) []endpointmanager.IncludedField {
 	extensionList := [][]string{
 		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
-		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "search-parameter-combination"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "supported-system"},
-		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "websocket"},
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "capabilitystatement-search-parameter-combination"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "capabilitystatement-supported-system"},
+		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "capabilitystatement-websocket"},
 		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "oauth-uris"},
 		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces", "replaces"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "approvalDate"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "effectivePeriod"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "lastReviewDate"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "resource-approvalDate"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "resource-effectivePeriod"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "resource-lastReviewDate"},
 	}
 
 	multipleFieldsExtensionList := [][]string{
-		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "expectation"},
-		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "prohibited"},
+		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
 	}
 
 	for _, extensionPath := range extensionList {
