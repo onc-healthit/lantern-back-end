@@ -2,7 +2,7 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
-var arrayFields = []string{"resource", "interaction", "searchParam", "operation", "document"}
+var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document"}
 
 func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
 	if capInt == nil {
@@ -156,9 +156,6 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 			nextIndex := index + 1
 			length := len(fieldNames)
 			return checkArrFieldExtension(fieldNames[nextIndex:length], fieldArr, url, false)
-		} else if name == "rest" {
-			restArr := field.([]interface{})
-			capInt = restArr[0].(map[string]interface{})
 		} else {
 			capInt = field.(map[string]interface{})
 		}
@@ -174,10 +171,17 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 		extensionField := resourceMap[name]
 		if extensionField == nil {
 			continue
-		} else if name != "extension" {
-			extensionArr := extensionField.([]interface{})
+		} else if name != "extension" && arrContains(arrayFields, name) {
+			fieldArr := extensionField.([]interface{})
 			length := len(fieldNames)
-			found = checkArrFieldExtension(fieldNames[1:length], extensionArr, url, found)
+			found = checkArrFieldExtension(fieldNames[1:length], fieldArr, url, found)
+			if found {
+				return found
+			}
+		} else if name != "extension" && !arrContains(arrayFields, name) {
+			extensionField := extensionField.(map[string]interface{})
+			length := len(fieldNames)
+			found = checkExtension(extensionField, fieldNames[1:length], url)
 			if found {
 				return found
 			}
@@ -215,7 +219,7 @@ func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, ext
 		{"rest", "interaction", "extension"},
 	}
 	/*if extensionString == "expectation" {
-		row1 := []string{"resource", "searchInclude", "extension"}
+		row1 := []string{"rest", "resource", "searchInclude", "extension"}
 		row2 := []string{"rest", "resource", "searchRevInclude", "extension"}
 		extensionList = append(extensionList, row1, row2)
 	}*/
