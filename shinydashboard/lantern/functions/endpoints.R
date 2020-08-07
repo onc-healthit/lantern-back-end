@@ -183,6 +183,7 @@ get_capstat_fields_count <- function(capstat_fields_tbl) {
     filter(extension == "false") %>%
     ungroup() %>%
     select(-exist) %>%
+    select(-extension) %>%
     rename(Fields = field, Endpoints = n)
 }
 
@@ -194,6 +195,7 @@ get_capstat_extensions_count <- function(capstat_fields_tbl) {
     filter(extension == "true") %>%
     ungroup() %>%
     select(-exist) %>%
+    select(-extension) %>%
     rename(Fields = field, Endpoints = n)
 }
 

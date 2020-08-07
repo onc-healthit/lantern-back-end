@@ -37,6 +37,9 @@ fieldsmodule_UI <- function(id) {
     ")),
     htmlOutput(ns("capstat_extension_text")),
     fluidRow(
+      column(width = 5,
+             h4("Supported Extensions:"),
+             tableOutput(ns("capstat_extensions_table"))),
       column(width = 7,
              h4("Supported Capability Statement Extensions"),
              uiOutput(ns("extensions_plot"))
@@ -111,6 +114,12 @@ fieldsmodule <- function(
   output$capstat_fields_table_optional <- renderTable(
     capstat_field_count() %>%
     filter(!(Fields %in% required_fields)) %>%
+    rename("FHIR Version" = fhir_version)
+  )
+
+  # Table of the extension counts
+  output$capstat_extensions_table <- renderTable(
+    capstat_extension_count() %>%
     rename("FHIR Version" = fhir_version)
   )
 
