@@ -2,7 +2,7 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
-var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document"}
+var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document", "_searchInclude", "_searchRevInclude"}
 
 // RunIncludedFieldsAndExtensionsChecks returns an interface that contains information about whether fields and extensions are supported or not
 func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
@@ -229,11 +229,11 @@ func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, ext
 		{"document", "extension"},
 		{"rest", "interaction", "extension"},
 	}
-	/*if extensionString == "expectation" {
-		row1 := []string{"rest", "resource", "searchInclude", "extension"}
-		row2 := []string{"rest", "resource", "searchRevInclude", "extension"}
+	if extensionString == "capabilitystatement-expectation" {
+		row1 := []string{"rest", "resource", "_searchInclude", "extension"}
+		row2 := []string{"rest", "resource", "_searchRevInclude", "extension"}
 		extensionList = append(extensionList, row1, row2)
-	}*/
+	}
 
 	found := false
 	for _, extensionPath := range extensionList {

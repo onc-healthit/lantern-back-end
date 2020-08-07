@@ -429,16 +429,27 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
 
 	th.Assert(t, includedFields[32].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[32].Field == "capabilities", fmt.Sprintf("Expected field to be capabilities, was %s", includedFields[32].Field))
 	th.Assert(t, includedFields[33].Exists == true, "Expected capabilitystatement-search-parameter-combination extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[33].Field == "capabilitystatement-search-parameter-combination", fmt.Sprintf("Expected field to be capabilitystatement-search-parameter-combination, was %s", includedFields[33].Field))
 	th.Assert(t, includedFields[34].Exists == true, "Expected capabilitystatement-supported-system extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[34].Field == "capabilitystatement-supported-system", fmt.Sprintf("Expected field to be capabilitystatement-supported-system, was %s", includedFields[34].Field))
 	th.Assert(t, includedFields[35].Exists == true, "Expected capabilitystatement-websocket extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Field == "capabilitystatement-websocket", fmt.Sprintf("Expected field to be capabilitystatement-websocket extension, was %s", includedFields[35].Field))
 	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[36].Field == "oauth-uris", fmt.Sprintf("Expected field to be oauth-uris, was %s", includedFields[36].Field))
 	th.Assert(t, includedFields[37].Exists == true, "Expected replaces extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[37].Field == "replaces", fmt.Sprintf("Expected field to be replaces, was %s", includedFields[37].Field))
 	th.Assert(t, includedFields[38].Exists == true, "Expected resource-approvalDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[38].Field == "resource-approvalDate", fmt.Sprintf("Expected field to be resource-approvalDate, was %s", includedFields[38].Field))
 	th.Assert(t, includedFields[39].Exists == true, "Expected resource-effectivePeriod extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[39].Field == "resource-effectivePeriod", fmt.Sprintf("Expected field to be resource-effectivePeriod, was %s", includedFields[39].Field))
 	th.Assert(t, includedFields[40].Exists == true, "Expected resource-lastReviewDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[40].Field == "resource-lastReviewDate", fmt.Sprintf("Expected field to be resource-lastReviewDate, was %s", includedFields[40].Field))
 	th.Assert(t, includedFields[41].Exists == true, "Expected capabilitystatement-expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Field == "capabilitystatement-expectation", fmt.Sprintf("Expected field to be capabilitystatement-expectation, was %s", includedFields[41].Field))
 	th.Assert(t, includedFields[42].Exists == true, "Expected capabilitystatement-prohibited extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[42].Field == "capabilitystatement-prohibited", fmt.Sprintf("Expected field to be capabilitystatement-prohibited, was %s", includedFields[42].Field))
 }
 
 func Test_RunSupportedResourcesChecks(t *testing.T) {

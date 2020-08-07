@@ -74,9 +74,11 @@
                 ],
                 "description": "OAuth2 plus SMART extensions"
             },
-            "extension" : [{
-                "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket"
-            }],
+            "extension" : [
+                {
+                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket"
+                }
+            ],
             "resource": [
                 {
                     "type": "Conformance",
@@ -105,12 +107,7 @@
                         {
                             "name": "patient",
                             "type": "reference",
-                            "documentation": "Who the sensitivity is for. It is a required field if the _id field is not given",
-                            "extension": [
-                                {
-                                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation"
-                                }
-                            ]
+                            "documentation": "Who the sensitivity is for. It is a required field if the _id field is not given"
                         },
                         {
                             "name": "status",
@@ -121,10 +118,11 @@
                 },
                 {
                     "type": "Appointment",
-                    "extension" : [{
-                        "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination",
-                        "valueString" : "Easter 1970"
-                    }],
+                    "extension" : [
+                        {
+                            "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination"
+                        }
+                    ],
                     "interaction": [
                         {
                             "code": "read"
@@ -278,6 +276,16 @@
                     "searchInclude": [
                         "Contract:actor",
                         "Contract:patient"
+                    ],
+                    "_searchInclude": [
+                        {
+                           "extension" : [
+                                {
+                                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation"
+                                }
+                            ]
+                        },
+                        null
                     ],
                     "searchParam": [
                         {
