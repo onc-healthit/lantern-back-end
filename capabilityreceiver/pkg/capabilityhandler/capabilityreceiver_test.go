@@ -423,7 +423,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[32].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
 	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
 
-	//Testing for extensions
+	//Testing for extensions where all extensions present
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_cerner_capability_dstu2_extensionsAdded.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
 	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)

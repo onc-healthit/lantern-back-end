@@ -4,6 +4,7 @@ import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointman
 
 var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document"}
 
+// RunIncludedFieldsAndExtensionsChecks returns an interface that contains information about whether fields and extensions are supported or not
 func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
 	if capInt == nil {
 		return nil
@@ -51,6 +52,7 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 		{"document"},
 	}
 
+	// Get name of field
 	for _, fieldNames := range fieldsList {
 		var stringIndex string
 		if len(fieldNames) != 1 {
@@ -66,6 +68,8 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 		} else {
 			stringIndex = fieldNames[0]
 		}
+
+		// Create fieldObj with field name, if the field exists, and if it is an extension
 		fieldObj := endpointmanager.IncludedField{
 			Field:     stringIndex,
 			Exists:    checkField(capInt, fieldNames),
@@ -97,6 +101,7 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 	return false
 }
 
+// RunIncludedExtensionsChecks stores whether each extension in capability statement is populated or not populated
 func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField) []endpointmanager.IncludedField {
 	extensionList := [][]string{
 		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
@@ -115,6 +120,7 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
 	}
 
+	// Get name of extension and create extensionObj with extension name, if the extension exists, and if it is an extension
 	for _, extensionPath := range extensionList {
 		extensionName := extensionPath[len(extensionPath)-1]
 		extensionURL := extensionPath[len(extensionPath)-2]
@@ -126,6 +132,7 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 		includedFields = append(includedFields, extensionObj)
 	}
 
+	// Get name of extension with multiple possible locations and create extensionObj with extension name, if the extension exists, and if it is an extension
 	for _, multipleExtensionPath := range multipleFieldsExtensionList {
 		extensionName := multipleExtensionPath[1]
 		extensionURL := multipleExtensionPath[0]
@@ -140,6 +147,7 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 	return includedFields
 }
 
+// Checks whether the extension is populated in the capability statement given a path of fieldNames
 func checkExtension(capInt map[string]interface{}, fieldNames []string, url string) bool {
 	for index, name := range fieldNames {
 		if capInt[name] == nil {
@@ -164,6 +172,7 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 	return false
 }
 
+// Given an array of interface objects, loops through each object to check whether the extension is populated following the path of fieldNames
 func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url string, found bool) bool {
 	for _, resource := range fieldArr {
 		name := fieldNames[0]
@@ -196,6 +205,7 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 	return found
 }
 
+// Checks whether the given extension array contains the correct extension url
 func checkExtensionURL(extensionArr []interface{}, url string) bool {
 	found := false
 	for _, extension := range extensionArr {
@@ -209,6 +219,7 @@ func checkExtensionURL(extensionArr []interface{}, url string) bool {
 	return found
 }
 
+// checkMultipleFieldsExtension loops through all the possible locations of the extension to see if it exists
 func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, extensionString string) bool {
 	extensionList := [][]string{
 		{"rest", "resource", "interaction", "extension"},
