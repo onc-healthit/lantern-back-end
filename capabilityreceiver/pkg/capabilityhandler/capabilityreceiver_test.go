@@ -244,7 +244,7 @@ var testIncludedFields = []endpointmanager.IncludedField{
 	},
 	{
 		Field:     "capabilitystatement-expectation",
-		Exists:    true,
+		Exists:    false,
 		Extension: true,
 	},
 	{
@@ -407,7 +407,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[18].Exists == false, "Expected software.name in includedFields to be false, was true")
 	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
-	th.Assert(t, includedFields[41].Exists == true, "Expected expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Exists == false, "Expected expectation extension in includedFields to be false, was true")
 	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
@@ -420,6 +420,25 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[19].Exists == true, "Expected software.version in includedFields to be true, was false")
 	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == true, "Expected contact in includedFields to be true, was false")
+	th.Assert(t, includedFields[32].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+
+	//Testing for extensions
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_cerner_capability_dstu2_extensionsAdded.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+
+	th.Assert(t, includedFields[32].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[33].Exists == true, "Expected capabilitystatement-search-parameter-combination extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[34].Exists == true, "Expected capabilitystatement-supported-system extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Exists == true, "Expected capabilitystatement-websocket extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[36].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[37].Exists == true, "Expected replaces extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[38].Exists == true, "Expected resource-approvalDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[39].Exists == true, "Expected resource-effectivePeriod extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[40].Exists == true, "Expected resource-lastReviewDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Exists == true, "Expected capabilitystatement-expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[42].Exists == true, "Expected capabilitystatement-prohibited extension in includedFields to be true, was false")
 }
 
 func Test_RunSupportedResourcesChecks(t *testing.T) {
