@@ -2,6 +2,8 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
+var arrayFields = []string{"resource", "interaction", "searchParam", "operation", "document"}
+
 func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
 	if capInt == nil {
 		return nil
@@ -108,11 +110,27 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate"},
 	}
 
+	multipleFieldsExtensionList := [][]string{
+		{"expectation", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation"},
+		{"prohibited", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited"},
+	}
+
 	for _, extensionPath := range extensionList {
 		extensionURL := extensionPath[len(extensionPath)-1]
 		extensionObj := endpointmanager.IncludedField{
 			Field:     extensionURL,
-			Exists:    checkExtension(capInt, extensionPath),
+			Exists:    checkExtension(capInt, extensionPath, extensionURL),
+			Extension: true,
+		}
+		includedFields = append(includedFields, extensionObj)
+	}
+
+	for _, multipleExtensionPath := range multipleFieldsExtensionList {
+		extensionName := multipleExtensionPath[0]
+		extensionURL := multipleExtensionPath[1]
+		extensionObj := endpointmanager.IncludedField{
+			Field:     extensionURL,
+			Exists:    checkMultipleFieldsExtension(capInt, extensionURL, extensionName),
 			Extension: true,
 		}
 		includedFields = append(includedFields, extensionObj)
@@ -121,8 +139,7 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 	return includedFields
 }
 
-func checkExtension(capInt map[string]interface{}, fieldNames []string) bool {
-	url := fieldNames[len(fieldNames)-1]
+func checkExtension(capInt map[string]interface{}, fieldNames []string, url string) bool {
 	for index, name := range fieldNames {
 		if capInt[name] == nil {
 			return false
@@ -133,9 +150,9 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string) bool {
 		if name == "extension" {
 			extensionArr := field.([]interface{})
 			return checkExtensionURL(extensionArr, url)
-		} else if name == "resource" {
-			resourceArr := field.([]interface{})
-			return checkResourceExtension(resourceArr, url)
+		} else if arrContains(arrayFields, name) {
+			fieldArr := field.([]interface{})
+			return checkArrFieldExtension(fieldNames[index+1:len(fieldNames)], fieldArr, url, false)
 		} else if name == "rest" {
 			restArr := field.([]interface{})
 			capInt = restArr[0].(map[string]interface{})
@@ -147,16 +164,24 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string) bool {
 	return false
 }
 
-func checkResourceExtension(resourceArr []interface{}, url string) bool {
-	found := false
-	for _, resource := range resourceArr {
+func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url string, found bool) bool {
+	for _, resource := range fieldArr {
+		name := fieldNames[0]
 		resourceMap := resource.(map[string]interface{})
-		extensionField := resourceMap["extension"]
-		if extensionField != nil {
+		extensionField := resourceMap[name]
+		if extensionField == nil {
+			continue
+		} else if name != "extension" {
+			extensionArr := extensionField.([]interface{})
+			found = checkArrFieldExtension(fieldNames[1:len(fieldNames)], extensionArr, url, found)
+			if found {
+				return found
+			}
+		} else {
 			extensionArr := extensionField.([]interface{})
 			found = checkExtensionURL(extensionArr, url)
 			if found {
-				break
+				return found
 			}
 		}
 	}
@@ -174,4 +199,39 @@ func checkExtensionURL(extensionArr []interface{}, url string) bool {
 		}
 	}
 	return found
+}
+
+func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, extensionString string) bool {
+	extensionList := [][]string{
+		{"rest", "resource", "interaction", "extension"},
+		{"rest", "resource", "searchParam", "extension"},
+		{"rest", "searchParam", "extension"},
+		{"rest", "operation", "extension"},
+		{"document", "extension"},
+		{"rest", "interaction", "extension"},
+	}
+	/*if extensionString == "expectation" {
+		row1 := []string{"resource", "searchInclude", "extension"}
+		row2 := []string{"rest", "resource", "searchRevInclude", "extension"}
+		extensionList = append(extensionList, row1, row2)
+	}*/
+
+	found := false
+	for _, extensionPath := range extensionList {
+		found = checkExtension(capInt, extensionPath, url)
+		if found {
+			break
+		}
+	}
+
+	return found
+}
+
+func arrContains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }
