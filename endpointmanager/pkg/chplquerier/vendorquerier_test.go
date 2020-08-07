@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -355,6 +356,9 @@ func Test_getVendorJSON(t *testing.T) {
 	hook := logtest.NewGlobal()
 	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled"
+
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -363,8 +367,6 @@ func Test_getVendorJSON(t *testing.T) {
 	cancel()
 
 	_, err = getVendorJSON(ctx, &(tc.Client), "")
-	th.Assert(t, err == nil, err)
-
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -373,12 +375,11 @@ func Test_getVendorJSON(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected a context canceled error to be logged")
+	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
 
-	hook = logtest.NewGlobal()
-	expectedErr = "CHPL request responded with status: 404 Not Found"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
@@ -386,7 +387,6 @@ func Test_getVendorJSON(t *testing.T) {
 	ctx = context.Background()
 
 	_, err = getVendorJSON(ctx, &(tc.Client), "")
-	th.Assert(t, err == nil, err)
 
 	// expect presence of a log message
 	found = false
@@ -396,7 +396,7 @@ func Test_getVendorJSON(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected response error specifying response code")
+	th.Assert(t, found, "expected 404 error to be logged")
 
 	// test error on URL creation
 

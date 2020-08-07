@@ -59,7 +59,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("requesting products from CHPL")
 	prodJSON, err := getProductJSON(ctx, cli, userAgent)
 	if err != nil {
-		return err
+		return nil
 	}
 	log.Debug("done requesting products from CHPL")
 
