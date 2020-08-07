@@ -99,26 +99,27 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 
 func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField) []endpointmanager.IncludedField {
 	extensionList := [][]string{
-		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities"},
-		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system"},
-		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket"},
-		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate"},
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "search-parameter-combination"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "supported-system"},
+		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "websocket"},
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "oauth-uris"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces", "replaces"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "approvalDate"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "effectivePeriod"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "lastReviewDate"},
 	}
 
 	multipleFieldsExtensionList := [][]string{
-		{"expectation", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation"},
-		{"prohibited", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited"},
+		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "expectation"},
+		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "prohibited"},
 	}
 
 	for _, extensionPath := range extensionList {
-		extensionURL := extensionPath[len(extensionPath)-1]
+		extensionName := extensionPath[len(extensionPath)-1]
+		extensionURL := extensionPath[len(extensionPath)-2]
 		extensionObj := endpointmanager.IncludedField{
-			Field:     extensionURL,
+			Field:     extensionName,
 			Exists:    checkExtension(capInt, extensionPath, extensionURL),
 			Extension: true,
 		}
@@ -126,10 +127,10 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 	}
 
 	for _, multipleExtensionPath := range multipleFieldsExtensionList {
-		extensionName := multipleExtensionPath[0]
-		extensionURL := multipleExtensionPath[1]
+		extensionName := multipleExtensionPath[1]
+		extensionURL := multipleExtensionPath[0]
 		extensionObj := endpointmanager.IncludedField{
-			Field:     extensionURL,
+			Field:     extensionName,
 			Exists:    checkMultipleFieldsExtension(capInt, extensionURL, extensionName),
 			Extension: true,
 		}
@@ -152,7 +153,9 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 			return checkExtensionURL(extensionArr, url)
 		} else if arrContains(arrayFields, name) {
 			fieldArr := field.([]interface{})
-			return checkArrFieldExtension(fieldNames[index+1:len(fieldNames)], fieldArr, url, false)
+			nextIndex := index + 1
+			length := len(fieldNames)
+			return checkArrFieldExtension(fieldNames[nextIndex:length], fieldArr, url, false)
 		} else if name == "rest" {
 			restArr := field.([]interface{})
 			capInt = restArr[0].(map[string]interface{})
@@ -173,7 +176,8 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 			continue
 		} else if name != "extension" {
 			extensionArr := extensionField.([]interface{})
-			found = checkArrFieldExtension(fieldNames[1:len(fieldNames)], extensionArr, url, found)
+			length := len(fieldNames)
+			found = checkArrFieldExtension(fieldNames[1:length], extensionArr, url, found)
 			if found {
 				return found
 			}
