@@ -67,9 +67,9 @@ get_http_response_summary_tbl <- function(db_tables) {
     collect() %>%
     left_join(endpoint_export_tbl %>%
       select(url, vendor_name), by = c("url" = "url")) %>%
-      select(id, http_response, vendor_name) %>%
+      select(url, id, http_response, vendor_name) %>%
       mutate(code = as.character(http_response)) %>%
-      group_by(id, code, http_response, vendor_name) %>%
+      group_by(id, url, code, http_response, vendor_name) %>%
       summarise(Percentage = n()) %>%
       ungroup() %>%
       group_by(id) %>%
