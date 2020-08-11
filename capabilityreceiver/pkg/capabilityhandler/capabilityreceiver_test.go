@@ -434,6 +434,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
 	th.Assert(t, includedFields[41].Exists == false, "Expected expectation extension in includedFields to be false, was true")
 	th.Assert(t, includedFields[39].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
@@ -447,6 +448,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[8].Exists == true, "Expected contact in includedFields to be true, was false")
 	th.Assert(t, includedFields[32].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
 	th.Assert(t, includedFields[39].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Exists == false, "Expected resource-approvalDate extension in includedFields to be false, was true")
 
 	//Testing for R4 Capability Statement extensions where all extensions present
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_r4_capability_statement_extensions.json"))
