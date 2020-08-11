@@ -38,11 +38,11 @@ performancemodule <- function(
     })
 
     output$no_graph <- renderText({
-      if (nrow(response_time_xts())==0) {
+      if (nrow(response_time_xts()) == 0) {
         "Sorry, there isn't enough data to show response times!"
       }
     })
-    
+
     output$mean_response_time_plot <- renderDygraph({
       if (nrow(response_time_xts()) > 0) {
         dygraph(response_time_xts(),
@@ -51,5 +51,5 @@ performancemodule <- function(
               xlab = "Date")
       }
     })
-  
+
 }

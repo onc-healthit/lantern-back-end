@@ -102,7 +102,7 @@ fieldsmodule <- function(
       geom_text(aes(label = stat(y)), vjust = 0.5, hjust = -.5) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 14)) +
-      labs(x="", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
       scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip()
   },

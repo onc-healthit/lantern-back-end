@@ -244,7 +244,7 @@ get_security_endpoints_tbl <- function(db_connection) {
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
 get_smart_response_capabilities <- function(db_connection) {
   res <- tbl(db_connection,
-    sql("SELECT 
+    sql("SELECT
       f.id,
       f.smart_http_response,
       v.name as vendor_name,
@@ -260,22 +260,22 @@ get_smart_response_capabilities <- function(db_connection) {
 
 # Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
 get_smart_response_capability_count <- function(endpoints_tbl) {
-  res <- endpoints_tbl %>% 
-    group_by(fhir_version,capability) %>%
+  res <- endpoints_tbl %>%
+    group_by(fhir_version, capability) %>%
     count() %>%
     rename("FHIR Version" = fhir_version, Capability = capability, Endpoints = n)
   res
 }
 
-# Query fhir endpoints and return list of endpoints that have 
+# Query fhir endpoints and return list of endpoints that have
 # returned a valid JSON document at /.well-known/smart-configuration
 # This implies a smart_http_response of 200.
-# 
+#
 get_well_known_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version
-    FROM fhir_endpoints_info f 
+    FROM fhir_endpoints_info f
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
@@ -291,7 +291,9 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 get_well_known_endpoints_count <- function(db_connection) {
   res <- tbl(db_connection,
       sql("SELECT count(*) from fhir_endpoints_info
-          WHERE smart_http_response = 200")) %>% collect() %>% pull(count)
+          WHERE smart_http_response = 200")) %>%
+      collect() %>%
+      pull(count)
   as.integer(res)
 }
 
@@ -302,9 +304,9 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id, e.url, f.vendor_id, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
-	    f.smart_http_response,
-	    f.smart_response
-    FROM fhir_endpoints_info f 
+      f.smart_http_response,
+      f.smart_response
+    FROM fhir_endpoints_info f
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
@@ -331,16 +333,16 @@ get_well_known_endpoint_counts <- function(db_connection) {
 get_auth_type_count <- function(security_endpoints) {
   security_endpoints %>%
     group_by(fhir_version) %>%
-    mutate(tc=n_distinct(id)) %>%
-    group_by(fhir_version,code,tc) %>%
-    count(name="Endpoints") %>%
-    mutate(Percent=percent(Endpoints/tc))  %>% 
+    mutate(tc = n_distinct(id)) %>%
+    group_by(fhir_version, code, tc) %>%
+    count(name = "Endpoints") %>%
+    mutate(Percent = percent(Endpoints / tc))  %>%
     ungroup() %>%
-    select("Code"=code,"FHIR Version"=fhir_version,Endpoints,Percent)
+    select("Code" = code, "FHIR Version" = fhir_version, Endpoints, Percent)
 }
 
 # Get count of endpoints which have NOT returned a valid capability statement
-get_no_cap_statement_count <- function(db_connection){
+get_no_cap_statement_count <- function(db_connection) {
   res <- tbl(db_connection,
              sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement) <> 'object'")
   ) %>% pull(count)
@@ -350,10 +352,10 @@ get_no_cap_statement_count <- function(db_connection){
 get_endpoint_security_counts <- function(db_connection) {
   res <- tribble(
     ~Status, ~Endpoints,
-    "Total Indexed Endpoints",as.integer(app_data$fhir_endpoint_totals$all_endpoints),
-    "Endpoints with successful response (HTTP 200)",as.integer(app_data$response_tally$http_200),
-    "Endpoints with unsuccessful response",as.integer(app_data$response_tally$http_non200),
-    "Endpoints without valid capability statement",as.integer(get_no_cap_statement_count(db_connection)),
-    "Endpoints with valid security resource",as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
+    "Total Indexed Endpoints", as.integer(app_data$fhir_endpoint_totals$all_endpoints),
+    "Endpoints with successful response (HTTP 200)", as.integer(app_data$response_tally$http_200),
+    "Endpoints with unsuccessful response", as.integer(app_data$response_tally$http_non200),
+    "Endpoints without valid capability statement", as.integer(get_no_cap_statement_count(db_connection)),
+    "Endpoints with valid security resource", as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
   )
 }

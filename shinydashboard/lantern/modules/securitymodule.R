@@ -1,9 +1,9 @@
 # Security Module
 
 securitymodule_UI <- function(id) {
-  
+
   ns <- NS(id)
-  
+
   tagList(
     p("This is the list of security authorization types reported by the capability statements from the endpoints."),
     fluidRow(
@@ -40,12 +40,12 @@ securitymodule <- function(
   sel_fhir_version,
   sel_vendor
 ) {
-  
+
   ns <- session$ns
-  
+
   output$auth_type_count_table <- renderTable(
     app_data$auth_type_counts,
-    align="llrr"
+    align = "llrr"
   )
   output$endpoint_summary_table <- renderTable(
     app_data$endpoint_security_counts
@@ -63,13 +63,13 @@ securitymodule <- function(
     res <- res %>% filter(code == input$auth_type_code)
     res
   })
-  
+
   output$security_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
-              colnames = c("URL", "Organization", "Vendor", "FHIR Version", "TLS Version","Authorization"),
+              colnames = c("URL", "Organization", "Vendor", "FHIR Version", "TLS Version", "Authorization"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
   })
-  
+
 }
