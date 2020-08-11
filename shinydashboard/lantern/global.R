@@ -41,30 +41,30 @@ app <<- list(
     mutate(code_chr = as.character(code))
 )
 
-# define global app_data which is computed at application startup, and 
+# define global app_data which is computed at application startup, and
 # refreshed at interval specified by refresh_timeout_minutes in configuration.yml
 app_data <<- list(
-  "fhir_version_list",           # list of fhir_versions reported by endpoints
-  "fhir_endpoint_totals",        # count of endpoints, indexed and nonindexed
-  "response_tally",              # counts of http responses
-  "http_pct",                    # percentage of http responses for each endpoint
-  "http_pctf",                   # http percentages with status as factors for graphing
-  "http_summary",                # counts of all http_responses ever
-  "vendor_count_tbl",            # endpoint counts by vendor
-  "endpoint_resource_types",     # Resource types from capability statement by endpoint
-  "capstat_fields",              # fields from the capability statement
-  "last_updated",                # time app_data was last updated
-  "avg_response_time",           # mean response time for endpoints by refresh period
-  "vc_totals",                   # counts of endpoints by vendor
-  "security_endpoints",          # security auth types supported by each endpoint
-  "security_endpoints_tbl",      # list of endpoints filterable by auth type
-  "auth_type_counts",            # count and pct of endpoints by auth type and fhir_version
-  "endpoint_security_counts",    # summary table of endpoint counts with security resource in cap statement
-  "security_code_list",          # list of supported auth types for UI dropdown
-  "smart_response_capabilities", # smart core capabilities by endpoint, vendor, fhir_version
-  "well_known_endpoints_tbl",    # endpoints returning smart core capabilities JSON doc
-  "well_known_endpoints_no_doc", # well known endpoints reached, but no JSON doc returned
-  "well_known_endpoint_counts"   # summary table of well known URI endpoints
+  fhir_version_list = NULL,           # list of fhir_versions reported by endpoints
+  fhir_endpoint_totals = NULL,        # count of endpoints, indexed and nonindexed
+  response_tally = NULL,              # counts of http responses
+  http_pct = NULL,                    # percentage of http responses for each endpoint
+  http_pctf = NULL,                   # http percentages with status as factors for graphing
+  http_summary = NULL,                # counts of all http_responses ever
+  vendor_count_tbl = NULL,            # endpoint counts by vendor
+  endpoint_resource_types = NULL,     # Resource types from capability statement by endpoint
+  capstat_fields = NULL,              # fields from the capability statement
+  last_updated = NULL,                # time app_data was last updated
+  avg_response_time = NULL,           # mean response time for endpoints by refresh period
+  vc_totals = NULL,                   # counts of endpoints by vendor
+  security_endpoints = NULL,          # security auth types supported by each endpoint
+  security_endpoints_tbl = NULL,      # list of endpoints filterable by auth type
+  auth_type_counts = NULL,            # count and pct of endpoints by auth type and fhir_version
+  endpoint_security_counts = NULL,    # summary table of endpoint counts with security resource in cap statement
+  security_code_list = NULL,          # list of supported auth types for UI dropdown
+  smart_response_capabilities = NULL, # smart core capabilities by endpoint, vendor, fhir_version
+  well_known_endpoints_tbl = NULL,    # endpoints returning smart core capabilities JSON doc
+  well_known_endpoints_no_doc = NULL, # well known endpoints reached, but no JSON doc returned
+  well_known_endpoint_counts = NULL   # summary table of well known URI endpoints
 )
 
 # Define observer based on a refresh_timeout to refetch data from the database
@@ -79,10 +79,6 @@ updater <- observe({
   app_data$response_tally <<- get_response_tally_list(db_tables)
 
   app_data$http_pct <<- get_http_response_summary_tbl(db_tables)
-
-  app_data$http_pctf <<- app_data$http_pct %>%
-    filter(http_response > 0, http_response != 200) %>%
-    mutate(name = as.factor(as.character(id)), code_f = as.factor(code))
 
   app_data$http_pctf <<- app_data$http_pct %>%
     filter(http_response > 0, http_response != 200) %>%
@@ -115,12 +111,10 @@ updater <- observe({
 
   app_data$auth_type_counts <<- get_auth_type_count(app_data$security_endpoints)
 
-  app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
-
   app_data$security_code_list <<- app_data$security_endpoints %>%
     distinct(code) %>%
     pull(code)
-  
+
   app_data$smart_response_capabilities <<- get_smart_response_capabilities(db_connection)
 
   app_data$well_known_endpoints_tbl    <<- get_well_known_endpoints_tbl(db_connection)
@@ -128,6 +122,9 @@ updater <- observe({
   app_data$well_known_endpoints_no_doc <<- get_well_known_endpoints_no_doc(db_connection)
 
   app_data$well_known_endpoint_counts  <<- get_well_known_endpoint_counts(db_connection)
+
+  app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
+
 })
 
 onStop(function() {

@@ -320,7 +320,7 @@ get_well_known_endpoint_counts <- function(db_connection) {
     ~Status, ~Endpoints,
     "Total Indexed Endpoints", as.integer(app_data$fhir_endpoint_totals$all_endpoints),
     "Endpoints with successful response (HTTP 200)", as.integer(app_data$response_tally$http_200),
-    "Well Known URI Endpoints with succesful response", get_well_known_endpoints_count(db_connection),
+    "Well Known URI Endpoints with successful response (HTTP 200)", get_well_known_endpoints_count(db_connection),
     "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_tbl)),
     "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_no_doc))
   )
@@ -351,7 +351,7 @@ get_endpoint_security_counts <- function(db_connection) {
     ~Status, ~Endpoints,
     "Total Indexed Endpoints",as.integer(app_data$fhir_endpoint_totals$all_endpoints),
     "Endpoints with successful response (HTTP 200)",as.integer(app_data$response_tally$http_200),
-    "Endpoints with unsuccesful response",as.integer(app_data$response_tally$http_non200),
+    "Endpoints with unsuccessful response",as.integer(app_data$response_tally$http_non200),
     "Endpoints without valid capability statement",as.integer(get_no_cap_statement_count(db_connection)),
     "Endpoints with valid security resource",as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
   )

@@ -103,9 +103,11 @@ fieldsmodule <- function(
   output$fields_bar_plot <- renderCachedPlot({
     ggplot(capstat_field_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
+      geom_text(aes(label = stat(y)), vjust = 0.5, hjust = -.5) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 14)) +
       labs(x="", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip()
   },
     sizePolicy = sizeGrowthRatio(width = 400,
