@@ -104,6 +104,9 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 // RunIncludedExtensionsChecks stores whether each extension in capability statement is populated or not populated
 func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField) []endpointmanager.IncludedField {
 	extensionList := [][]string{
+		{"extension", "http://hl7.org/fhir/StructureDefinition/conformance-supported-system", "conformance-supported-system"},
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-search-parameter-combination", "conformance-search-parameter-combination"},
+		{"rest", "security", "extension", "http://DSTU2/fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "DSTU2-oauth-uris"},
 		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
 		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "capabilitystatement-search-parameter-combination"},
 		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "capabilitystatement-supported-system"},
@@ -116,6 +119,8 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 	}
 
 	multipleFieldsExtensionList := [][]string{
+		{"http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
 		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
 		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
 	}
@@ -156,7 +161,7 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 
 		field := capInt[name]
 
-		if name == "extension" {
+		if name == "extension" || name == "modifierExtension" {
 			extensionArr := field.([]interface{})
 			return checkExtensionURL(extensionArr, url)
 		} else if arrContains(arrayFields, name) {
@@ -180,14 +185,14 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 		extensionField := resourceMap[name]
 		if extensionField == nil {
 			continue
-		} else if name != "extension" && arrContains(arrayFields, name) {
+		} else if name != "extension" && name != "modifierExtension" && arrContains(arrayFields, name) {
 			fieldArr := extensionField.([]interface{})
 			length := len(fieldNames)
 			found = checkArrFieldExtension(fieldNames[1:length], fieldArr, url, found)
 			if found {
 				return found
 			}
-		} else if name != "extension" && !arrContains(arrayFields, name) {
+		} else if name != "extension" && name != "modifierExtension" && !arrContains(arrayFields, name) {
 			extensionField := extensionField.(map[string]interface{})
 			length := len(fieldNames)
 			found = checkExtension(extensionField, fieldNames[1:length], url)
@@ -221,14 +226,29 @@ func checkExtensionURL(extensionArr []interface{}, url string) bool {
 
 // checkMultipleFieldsExtension loops through all the possible locations of the extension to see if it exists
 func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, extensionString string) bool {
-	extensionList := [][]string{
-		{"rest", "resource", "interaction", "extension"},
-		{"rest", "resource", "searchParam", "extension"},
-		{"rest", "searchParam", "extension"},
-		{"rest", "operation", "extension"},
-		{"document", "extension"},
-		{"rest", "interaction", "extension"},
+	var extensionList [][]string
+	if extensionString == "capabilitystatement-prohibited" || extensionString == "conformance-prohibited" {
+		extensionList = [][]string{
+			{"rest", "resource", "interaction", "modifierExtension"},
+			{"rest", "resource", "searchParam", "modifierExtension"},
+			{"rest", "searchParam", "modifierExtension"},
+			{"rest", "operation", "modifierExtension"},
+			{"document", "modifierExtension"},
+			{"rest", "interaction", "modifierExtension"},
+		}
 	}
+
+	if extensionString == "capabilitystatement-expectation" || extensionString == "conformance-expectation" {
+		extensionList = [][]string{
+			{"rest", "resource", "interaction", "extension"},
+			{"rest", "resource", "searchParam", "extension"},
+			{"rest", "searchParam", "extension"},
+			{"rest", "operation", "extension"},
+			{"document", "extension"},
+			{"rest", "interaction", "extension"},
+		}
+	}
+
 	if extensionString == "capabilitystatement-expectation" {
 		row1 := []string{"rest", "resource", "_searchInclude", "extension"}
 		row2 := []string{"rest", "resource", "_searchRevInclude", "extension"}

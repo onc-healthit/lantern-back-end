@@ -18,19 +18,8 @@
     ],
     "extension" : [
         {
-            "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system"
-        },
-        {
-            "url" : "http://hl7.org/fhir/StructureDefinition/replaces"
-        },
-        {
-            "url" : "http://hl7.org/fhir/StructureDefinition/resource-approvalDate"
-        },
-        {
-            "url" : "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod"
-        },
-        {
-            "url" : "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate"
+            "url" : "http://hl7.org/fhir/StructureDefinition/conformance-supported-system",
+            "valueUri": "http://example/example"
         }
     ],
     "rest": [
@@ -40,7 +29,7 @@
             "security": {
                 "extension": [
                     {
-                        "url": "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris",
+                        "url": "http://DSTU2/fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris",
                         "extension": [
                             {
                                 "url": "token",
@@ -55,9 +44,6 @@
                                 "valueUri": "https://authorization.cerner.com/tenants/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/personas/patient/my-authorizations"
                             }
                         ]
-                    },
-                    {
-                        "url": "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities"
                     }
                 ],
                 "cors": true,
@@ -74,11 +60,6 @@
                 ],
                 "description": "OAuth2 plus SMART extensions"
             },
-            "extension" : [
-                {
-                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket"
-                }
-            ],
             "resource": [
                 {
                     "type": "Conformance",
@@ -118,22 +99,12 @@
                 },
                 {
                     "type": "Appointment",
-                    "extension" : [
-                        {
-                            "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination"
-                        }
-                    ],
                     "interaction": [
                         {
                             "code": "read"
                         },
                         {
-                            "code": "search-type",
-                            "extension": [
-                                {
-                                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited"
-                                }
-                            ]
+                            "code": "search-type"
                         }
                     ],
                     "searchParam": [
@@ -179,6 +150,17 @@
                     "interaction": [
                         {
                             "code": "read"
+                        }
+                    ],
+                    "extension": [
+                        {
+                            "url" : "http://hl7.org/fhir/StructureDefinition/conformance-search-parameter-combination",
+                            "extension": [
+                                {
+                                    "url": "required",
+                                    "valueString": "example"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -276,16 +258,6 @@
                     "searchInclude": [
                         "Contract:actor",
                         "Contract:patient"
-                    ],
-                    "_searchInclude": [
-                        {
-                           "extension" : [
-                                {
-                                    "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation"
-                                }
-                            ]
-                        },
-                        null
                     ],
                     "searchParam": [
                         {
@@ -828,7 +800,14 @@
                         {
                             "name": "patient",
                             "type": "reference",
-                            "documentation": "The patient whose procedure requests are to be returned. It is a required field if the _id or subject fields are not given."
+                            "documentation": "The patient whose procedure requests are to be returned. It is a required field if the _id or subject fields are not given.",
+                            "extension" : [
+                                {
+                                    "url" : "http://hl7.org/fhir/StructureDefinition/conformance-expectation",
+                                    "valueCode": "SHALL"
+                                }
+                            ]
+                            
                         },
                         {
                             "name": "subject",
@@ -946,7 +925,13 @@
                     "definition": {
                         "reference": "https://fhir-ehr.cerner.com/dstu2/OperationDefinition/binary-autogen-ccd-if",
                         "display": "Generate Continuity of Care Document (CCD)"
-                    }
+                    },
+                    "modifierExtension": [
+                        {
+                            "url" : "http://hl7.org/fhir/StructureDefinition/conformance-prohibited",
+                            "valueBoolean": true
+                        }
+                    ]
                 },
                 {
                     "name": "docref",
