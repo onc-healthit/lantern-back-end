@@ -82,7 +82,7 @@ updater <- observe({
 
   app_data$http_pctf <<- app_data$http_pct %>%
     filter(http_response > 0, http_response != 200) %>%
-    mutate(name = as.factor(as.character(id)), code_f = as.factor(code))
+    mutate(name = url, Code = as.factor(code))
 
   app_data$http_summary <<- app_data$http_pct %>%
     left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
@@ -98,7 +98,7 @@ updater <- observe({
 
   app_data$last_updated <<- now()
 
-  app_data$avg_response_time <<- get_avg_response_time(db_connection)
+  app_data$avg_response_time <<- get_avg_response_time(db_connection, "maxdate.maximum")
 
   app_data$vc_totals <<- app_data$vendor_count_tbl %>%
     filter(!(vendor_name == "Unknown")) %>%

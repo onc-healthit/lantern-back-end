@@ -31,14 +31,13 @@ get_fhir_endpoints_tbl <- function(db_tables) {
   db_tables$fhir_endpoints %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-          distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources),
-        by = c("url" = "url")) %>%
-    mutate(updated = as.Date(updated_at)) %>%
-    select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
-    left_join(app$http_response_code_tbl %>% select(code, label),
-              by = c("http_response" = "code")) %>%
-    mutate(status = paste(http_response, "-", label)) %>%
-    distinct(url, .keep_all = TRUE)
+        distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources), by = c("url" = "url")) %>%
+        mutate(updated = as.Date(updated_at)) %>%
+        select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
+        left_join(app$http_response_code_tbl %>% select(code, label),
+          by = c("http_response" = "code")) %>%
+          mutate(status = paste(http_response, "-", label)) %>%
+          distinct(url, .keep_all = TRUE)
 }
 
 # get the endpoint tally by http_response received
@@ -67,17 +66,18 @@ get_endpoint_last_updated <- function(db_tables) {
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info_history %>%
     collect() %>%
-    left_join(endpoint_export_tbl %>% select(url, vendor_name), by = c("url" = "url")) %>%
-    select(id, http_response, vendor_name) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, code, http_response, vendor_name) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) 
+    left_join(endpoint_export_tbl %>%
+      select(url, vendor_name), by = c("url" = "url")) %>%
+      select(url, id, http_response, vendor_name) %>%
+      mutate(code = as.character(http_response)) %>%
+      group_by(id, url, code, http_response, vendor_name) %>%
+      summarise(Percentage = n()) %>%
+      ungroup() %>%
+      group_by(id) %>%
+      mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
+      ungroup() %>%
+      collect() %>%
+      tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 # Get the count of endpoints by vendor
@@ -140,7 +140,7 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-get_capstat_fields <- function(db_connection){
+get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
@@ -181,16 +181,17 @@ get_capstat_fields_list <- function(capstat_fields_tbl) {
     select(field)
 }
 
-get_avg_response_time <- function(db_connection) {
+get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
-        sql("SELECT date.datetime AS time, AVG(fhir_endpoints_info_history.response_time_seconds)
-              FROM fhir_endpoints_info_history, (SELECT id, floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime FROM fhir_endpoints_info_history) as date, (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
-              WHERE fhir_endpoints_info_history.id = date.id and date.datetime between maxdate.maximum-2592000 AND maxdate.maximum
-              GROUP BY time
-              ORDER BY time")
+        sql(paste0("SELECT date.datetime AS time, date.average AS avg
+                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_info_history.response_time_seconds) as average FROM fhir_endpoints_info_history GROUP BY datetime) as date,
+                    (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
+                    WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
+                    GROUP BY time, average
+                    ORDER BY time"))
         )
     ) %>%
     mutate(date = as_datetime(time)) %>%

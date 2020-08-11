@@ -18,7 +18,8 @@ function(input, output, session) {
 
   callModule(
     performancemodule,
-    "performance_page")
+    "performance_page",
+    reactive(input$date))
 
   callModule(
     securitymodule,
@@ -44,13 +45,15 @@ function(input, output, session) {
     reactive(input$fhir_version),
     reactive(input$vendor))
 
-
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
+
+  show_datefilter <- reactive(input$side_menu %in% c("performance_tab"))
 
    page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "capability_tab" = "Capability Page",
+     "fields_tab" = "Fields Page",
      "availability_tab" = "Endpoint Server Availability",
      "location_tab" = "Location Map Page",
      "about_tab" = "About Lantern",
@@ -62,6 +65,10 @@ function(input, output, session) {
   show_filter <- reactive(
     input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab")
   )
+
+  show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
+
+  show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -104,11 +111,25 @@ function(input, output, session) {
             label = "Vendor:",
             choices = app$vendor_list,
             selected = ui_special_values$ALL_VENDORS,
+          )
+        )
+      )
+    }
+  })
+
+  output$show_date_filters <- renderUI({
+    if (show_date_filter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "date",
+            label = "Date range",
+            choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+            selected = "All time",
             size = 1,
             selectize = FALSE)
         )
       )
     }
   })
-
 }

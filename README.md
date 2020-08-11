@@ -131,6 +131,9 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
+|  `make lint` | Runs the R and golang linters |
+|  `make lint_go` | Runs the golang lintr |
+|  `make lint_R` | Runs the R lintr |
 
 # Configure Data Collection Failure System
 
@@ -384,7 +387,7 @@ lantern-e2e exited with code 0
 
 # Contributing
 ## Lintr
-Code going through PR should pass the lintr invoked by running:
+Code going through PR should pass the golang lintr invoked by running:
 ```bash
 golangci-lint run -E gofmt
 ```
@@ -393,6 +396,21 @@ You may have to install golangci-lint first. To do this on a Mac you can run:
 brew install golangci/tap/golangci-lint
 ```
 More information about golangci-lint can be found [here](https://github.com/golangci/golangci-lint)
+
+Code should also run the R lintr without receiving any lintr warning messages, invoked by running:
+```bash
+Rscript -e lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL))
+```
+
+You may have to install R and the R lintr package first. To do this on a Mac, you can install R from the internet, and then you can run:
+```bash
+echo 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")' | R --save
+```
+
+Or you may run the lintr.sh script in the ./scripts directory which will install the lintr package if not already installed, then print out and throw an error if the lintr recommends any changes to the R code
+
+More information about the R lintr can be found [here](https://github.com/jimhester/lintr)
+
 
 ## Running Shiny Load Test
 To run a load test, install shiny load test and shiny cannon [here](https://rstudio.github.io/shinyloadtest/)

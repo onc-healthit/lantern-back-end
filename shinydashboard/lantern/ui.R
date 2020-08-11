@@ -4,7 +4,6 @@ ui <- dashboardPage(
   dashboardHeader(
     title = "Lantern Dashboard",
     titleWidth = 200,
-
     tags$li(
       class = "dropdown",
         column(
@@ -38,6 +37,7 @@ ui <- dashboardPage(
     development_banner(devbanner),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
+    uiOutput("show_date_filters"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")
