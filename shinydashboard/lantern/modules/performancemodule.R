@@ -6,12 +6,13 @@ performance_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+    textOutput(ns("no_graph")),
     dygraphOutput(ns("mean_response_time_plot")),
     p("Click and drag on plot to zoom in, double-click to zoom out.")
   )
 }
 
-performance <- function(
+performancemodule <- function(
     input,
     output,
     session,
@@ -35,14 +36,20 @@ performance <- function(
       res <- get_avg_response_time(db_connection, range)
       res
     })
-  if (nrow(app_data$avg_response_time) == 0) {}
 
-  else{
+    output$no_graph <- renderText({
+      if (nrow(response_time_xts()) == 0) {
+        "Sorry, there isn't enough data to show response times!"
+      }
+    })
+
     output$mean_response_time_plot <- renderDygraph({
-      dygraph(response_time_xts(),
+      if (nrow(response_time_xts()) > 0) {
+        dygraph(response_time_xts(),
               main = "Endpoint Mean Response Time",
               ylab = "seconds",
               xlab = "Date")
+      }
     })
-  }
+
 }

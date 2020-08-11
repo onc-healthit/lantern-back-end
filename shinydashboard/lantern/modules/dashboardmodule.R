@@ -3,12 +3,12 @@ library(shinydashboard)
 library(readr)
 library(scales)
 
-
 dashboard_UI <- function(id) {
 
   ns <- NS(id)
 
   tagList(
+    actionButton(ns("show_info"), "Info", icon = icon("question-circle"), class = "pull-right"),
     textOutput(ns("last_updated")),
     br(),
     fluidRow(
@@ -165,5 +165,17 @@ dashboard <- function(
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 400,
                                   growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = {list(app_data$last_updated, sel_vendor())})
+  res = 72, cache = "app", cacheKeyExpr = {list(app_data$last_updated, sel_vendor())
+  })
+
+  observeEvent(input$show_info, {
+    showModal(modalDialog(
+      title = "Information About Lantern",
+      "Lantern takes a strict approach to showing FHIR Version and Vendor information. If a given FHIR 
+      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Vendor information as 'Unknown'.
+      Other endpoints may fail to properly indicate FHIR Version or Vendor information in their capability statement.",
+      easyClose = TRUE
+    ))
+  })
+
 }
