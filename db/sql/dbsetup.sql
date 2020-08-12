@@ -33,14 +33,14 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
         -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
         -- endpoint availability precentage
         SELECT http_200_count, http_all_count FROM fhir_endpoint_availability WHERE url = NEW.url;
-        IF NOT FOUND THEN
+        IF  NOT FOUND THEN
             IF NEW.http_response == 200 THEN
                 INSERT INTO fhir_endpoint_availability VALUES (NEW.url, 1, 1);
-                NEW.availability := 1.00
+                NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
                 INSERT INTO fhir_endpoint_availability VALUES (NEW.url, 0, 1);
-                NEW.availability := 0.00
+                NEW.availability = 0.00;
                 RETURN NEW;
             END IF;
         ELSE
@@ -181,6 +181,7 @@ CREATE TABLE fhir_endpoints_info_history (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
+    availability            DECIMAL(64,4),
     errors                  VARCHAR(500),
     capability_statement    JSONB,
     validation              JSONB,
@@ -267,7 +268,7 @@ EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 -- increments total number of times http status returned for endpoint 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger
-BEFORE INSERT OR UPDATE on fhir_endpoint_info
+BEFORE INSERT OR UPDATE on fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 

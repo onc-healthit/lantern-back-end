@@ -45,7 +45,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		smart_response,
 		included_fields,
 		supported_resources,
-		response_time_seconds
+		response_time_seconds,
+		availability
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
 
@@ -66,7 +67,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
-		&endpointInfo.ResponseTime)
+		&endpointInfo.ResponseTime,
+		&endpointInfo.Availability)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +133,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		smart_response,
 		included_fields,
 		supported_resources,
-		response_time_seconds
+		response_time_seconds,
+		availability
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
@@ -153,7 +156,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
-		&endpointInfo.ResponseTime)
+		&endpointInfo.ResponseTime,
+		&endpointInfo.Availability)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +242,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
-		e.ResponseTime)
+		e.ResponseTime,
+		e.Availability)
 
 	err = row.Scan(&e.ID)
 
@@ -295,6 +300,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
 		e.ResponseTime,
+		e.Availability,
 		e.ID)
 
 	return err
@@ -324,8 +330,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response,
 			included_fields,
 			supported_resources,
-			response_time_seconds)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			response_time_seconds,
+			availability)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -346,9 +353,10 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response = $11,
 			included_fields = $12,
 			supported_resources = $13,
-			response_time_seconds = $14
+			response_time_seconds = $14,
+			availability = $15
 			
-		WHERE id = $15`)
+		WHERE id = $16`)
 	if err != nil {
 		return err
 	}
