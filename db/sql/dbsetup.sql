@@ -26,37 +26,39 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
     END;
 $fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoint_availability$
+CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
+    DECLARE
+        okay_count       bigint;
+        all_count        bigint;
     BEGIN
         --
         -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
         -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
         -- endpoint availability precentage
-        SELECT http_200_count, http_all_count FROM fhir_endpoint_availability WHERE url = NEW.url;
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url;
         IF  NOT FOUND THEN
-            IF NEW.http_response == 200 THEN
-                INSERT INTO fhir_endpoint_availability VALUES (NEW.url, 1, 1);
+            IF NEW.http_response = 200 THEN
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1);
                 NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
-                INSERT INTO fhir_endpoint_availability VALUES (NEW.url, 0, 1);
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1);
                 NEW.availability = 0.00;
                 RETURN NEW;
             END IF;
         ELSE
-            IF NEW.http_response == 200 THEN
-                UPDATE fhir_endpoint_availability SET http_200_count = http_200_count + 1, http_all_count = http_all_count + 1 WHERE url = NEW.url;
-                NEW.availability := http_200_count + 1 / http_all_count + 1;
+            IF NEW.http_response = 200 THEN
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1, http_all_count = all_count + 1 WHERE url = NEW.url;
+                NEW.availability := (okay_count + 1.0) / (all_count + 1);
                 RETURN NEW;
             ELSE
-                UPDATE fhir_endpoint_availability SET http_200_count = http_200_count, http_all_count = http_all_count + 1 WHERE url = NEW.url;
-                NEW.availability := http_200_count / http_all_count + 1;
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count, http_all_count = all_count + 1 WHERE url = NEW.url;
+                NEW.availability := (okay_count) / (all_count + 1.0);
                 RETURN NEW;
             END IF;
         END IF;
-        RETURN NULL;
     END;
-$fhir_endpoint_availability$ LANGUAGE plpgsql;
+$fhir_endpoints_availability$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,

@@ -30,7 +30,7 @@ type FHIREndpointInfo struct {
 	IncludedFields      []IncludedField
 	SupportedResources  []string
 	ResponseTime        float64
-	Availability		float64
+	Availability        float64
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.

@@ -20,7 +20,7 @@ func (s *Store) GetFHIREndpointAvailabilityUsingURL(ctx context.Context, url str
 		url,
 		http_200_count,
 		http_all_count
-	FROM fhir_endpoint_availability WHERE fhir_endpoint_availability.url = $1`
+	FROM fhir_endpoints_availability WHERE fhir_endpoints_availability.url = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
 
@@ -68,7 +68,7 @@ func (s *Store) DeleteFHIREndpointAvailability(ctx context.Context, e *endpointm
 func prepareFHIREndpointAvailabilityStatements(s *Store) error {
 	var err error
 	addFHIREndpointAvailabilityStatement, err = s.DB.Prepare(`
-		INSERT INTO fhir_endpoint_availability (
+		INSERT INTO fhir_endpoints_availability (
 			url,
 			http_200_count,
 			http_all_count)
@@ -77,7 +77,7 @@ func prepareFHIREndpointAvailabilityStatements(s *Store) error {
 		return err
 	}
 	updateFHIREndpointAvailabilityStatement, err = s.DB.Prepare(`
-		UPDATE fhir_endpoint_availability
+		UPDATE fhir_endpoints_availability
 		SET 
 		    http_200_count = $2,
 			http_all_count = $3
@@ -86,7 +86,7 @@ func prepareFHIREndpointAvailabilityStatements(s *Store) error {
 		return err
 	}
 	deleteFHIREndpointAvailabilityStatement, err = s.DB.Prepare(`
-        DELETE FROM fhir_endpoint_availability
+        DELETE FROM fhir_endpoints_availability
         WHERE url = $1`)
 	if err != nil {
 		return err
