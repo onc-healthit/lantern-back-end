@@ -573,7 +573,7 @@ func Test_LanternSource(t *testing.T) {
 
 	expected_link_count = 2
 
-	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization WHERE url = 'example.com/';")
+	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization WHERE url = 'example.com/';")
 	err = endpoint_orgs_row.Scan(&link_count)
 	failOnError(err)
 	if link_count != expected_link_count {
