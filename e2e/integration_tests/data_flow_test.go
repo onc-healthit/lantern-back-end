@@ -284,7 +284,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	var actualVendsStored int
 
 	if viper.GetString("chplapikey") == "" {
-		t.Skip("Skipping Test_GetCHPLProducts because the CHPL API key is not set.")
+		t.Skip("Skipping Test_GetCHPLVendors because the CHPL API key is not set.")
 	}
 
 	ctx := context.Background()
@@ -295,7 +295,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	// as of 5/11/20, at least 1440 entries are expected to be added to the database
 	minNumExpVendsStored := 1440
 
-	err = chplquerier.GetCHPLVendors(ctx, store, client)
+	err = chplquerier.GetCHPLVendors(ctx, store, client, "")
 	assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM vendors;")
 	err = rows.Scan(&actualVendsStored)
@@ -347,7 +347,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
-	err = chplquerier.GetCHPLProducts(ctx, store, client)
+	err = chplquerier.GetCHPLProducts(ctx, store, client, "")
 	failOnError(err)
 
 	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")

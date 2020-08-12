@@ -2,9 +2,11 @@ package chplquerier
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -23,6 +25,9 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	}
 
 	apiKey := viper.GetString("chplapikey")
+	if apiKey == "" {
+		return nil, fmt.Errorf("the CHPL API Key is not set")
+	}
 	queryArgsToSend.Set("api_key", apiKey)
 	for k, v := range queryArgs {
 		queryArgsToSend.Set(k, v)
@@ -34,12 +39,15 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	return chplURL, nil
 }
 
-func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL) ([]byte, error) {
+func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAgent string) ([]byte, error) {
 	// request ceritified products list
+	// Adds a short delay between request
+	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", chplURL.String(), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating http request failed")
 	}
+	req.Header.Set("User-Agent", userAgent)
 	req = req.WithContext(ctx)
 
 	resp, err := client.Do(req)

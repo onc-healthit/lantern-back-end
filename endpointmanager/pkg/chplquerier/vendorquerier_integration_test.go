@@ -6,13 +6,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strings"
 	"testing"
 
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
+	"github.com/spf13/viper"
 )
 
 func Test_persistVendor(t *testing.T) {
@@ -177,6 +177,10 @@ func Test_GetCHPLVendors(t *testing.T) {
 	var tc *th.TestClient
 	var ctx context.Context
 
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
 	// basic test
 
 	// mock JSON includes 38 vendor entries.
@@ -188,7 +192,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -197,6 +201,9 @@ func Test_GetCHPLVendors(t *testing.T) {
 
 	// test context ended
 	// also checks what happens when an http request fails
+
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled\n\nfrom URL: https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key"
 
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
@@ -208,13 +215,37 @@ func Test_GetCHPLVendors(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM vendors;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected an error to be logged")
+
+	// test http status != 200
+
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test with malformed json
 
@@ -230,7 +261,7 @@ func Test_GetCHPLVendors(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok

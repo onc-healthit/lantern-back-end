@@ -55,11 +55,11 @@ type chplCertifiedProduct struct {
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
 // within the given context 'ctx'.
-func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Client) error {
+func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
 	log.Debug("requesting products from CHPL")
-	prodJSON, err := getProductJSON(ctx, cli)
+	prodJSON, err := getProductJSON(ctx, cli, userAgent)
 	if err != nil {
-		return errors.Wrap(err, "getting health IT product JSON failed")
+		return err
 	}
 	log.Debug("done requesting products from CHPL")
 
@@ -77,13 +77,18 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 }
 
 // makes the request to CHPL and returns the byte string
-func getProductJSON(ctx context.Context, client *http.Client) ([]byte, error) {
+func getProductJSON(ctx context.Context, client *http.Client, userAgent string) ([]byte, error) {
 	chplURL, err := makeCHPLProductURL()
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating CHPL product URL")
 	}
 
-	return getJSON(ctx, client, chplURL)
+	// None of the returned errors should break the system, so print a warning instead
+	jsonBody, err := getJSON(ctx, client, chplURL, userAgent)
+	if err != nil {
+		log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), chplURL.String())
+	}
+	return jsonBody, nil
 }
 
 func makeCHPLProductURL() (*url.URL, error) {

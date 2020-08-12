@@ -7,14 +7,14 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-
+	"github.com/pkg/errors"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
@@ -57,6 +57,13 @@ func Test_makeCHPLProductURL(t *testing.T) {
 
 	actual := actualURL.String()
 	th.Assert(t, expected == actual, fmt.Sprintf("Expected %s to equal %s.", actual, expected))
+
+	// test empty api key
+
+	viper.Set("chplapikey", "")
+	actualURL, err = makeCHPLProductURL()
+	th.Assert(t, err != nil, "Expected to return an error due to the api key not being set")
+	th.Assert(t, actualURL == nil, "Expected chpl product URL to be nil due to api key not being set")
 
 	// test invalid domain and error handling
 
@@ -271,6 +278,10 @@ func Test_getProductJSON(t *testing.T) {
 	var tc *th.TestClient
 	var ctx context.Context
 
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
 	// basic test
 
 	// mock JSON includes 201 product entries
@@ -282,7 +293,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	prodJSON, err := getProductJSON(ctx, &(tc.Client))
+	prodJSON, err := getProductJSON(ctx, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
@@ -292,7 +303,9 @@ func Test_getProductJSON(t *testing.T) {
 	th.Assert(t, actualProdsReceived == expectedProdsReceived, fmt.Sprintf("Expected to receive %d products Actually received %d products.", expectedProdsReceived, actualProdsReceived))
 
 	// test context ended.
-	// also checks what happens when an http request fails
+
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
@@ -301,23 +314,41 @@ func Test_getProductJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err = getProductJSON(ctx, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	_, err = getProductJSON(ctx, &(tc.Client), "")
+	th.Assert(t, err == nil, err)
+
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected a context canceled error to be logged")
 
 	// test http status != 200
+
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
 	ctx = context.Background()
 
-	_, err = getProductJSON(ctx, &(tc.Client))
-	th.Assert(t, err.Error() == "CHPL request responded with status: 404 Not Found", "expected response error specifying response code")
+	_, err = getProductJSON(ctx, &(tc.Client), "")
+	th.Assert(t, err == nil, err)
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test error on URL creation
 
@@ -331,7 +362,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getProductJSON(ctx, &(tc.Client))
+	_, err = getProductJSON(ctx, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// ok

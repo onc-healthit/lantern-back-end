@@ -17,6 +17,7 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
 	logtest "github.com/sirupsen/logrus/hooks/test"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -276,6 +277,10 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var tc *th.TestClient
 	var ctx context.Context
 
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
 	// basic test
 
 	// prep with vendors
@@ -285,7 +290,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLVendors(ctx, store, &(tc.Client))
+	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
@@ -297,7 +302,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -307,6 +312,8 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// test context ended
 	// also checks what happens when an http request fails
 
+	hook := logtest.NewGlobal()
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
@@ -317,13 +324,40 @@ func Test_GetCHPLProducts(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
-	switch reqErr := errors.Cause(err).(type) {
-	case *url.Error:
-		th.Assert(t, reqErr.Err == context.Canceled, "Expected error stating that context was canceled")
-	default:
-		t.Fatal("Expected context canceled error")
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
+
+	// expect presence of a log message
+	found := false
+	for i := range hook.Entries {
+		log.Info(hook.Entries[i].Message)
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
 	}
+	th.Assert(t, found, "expected an error to be logged")
+
+	// test http status != 200
+	
+	hook = logtest.NewGlobal()
+	expectedErr = "CHPL request responded with status: 404 Not Found"
+
+	tc = th.NewTestClientWith404()
+	defer tc.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
+
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected response error specifying response code")
 
 	// test with malformed json
 
@@ -339,7 +373,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLProducts(ctx, store, &(tc.Client))
+	err = GetCHPLProducts(ctx, store, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok
