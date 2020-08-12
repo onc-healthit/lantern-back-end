@@ -35,6 +35,12 @@ var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	ListSource:           "Lantern",
 	NPIIDs:               []string{"1"},
 }
+var testEndpointEntry4 fetcher.EndpointEntry = fetcher.EndpointEntry{
+	OrganizationNames:    []string{"fakeOrganization2"},
+	FHIRPatientFacingURI: "http://example.com/DTSU2/",
+	ListSource:           "Lantern",
+	NPIIDs:               []string{"2"},
+}
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"Access Community Health Network"},
 	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
@@ -126,6 +132,7 @@ func Test_saveEndpointData(t *testing.T) {
 	endpt := testEndpointEntry
 	fhirEndpt := testFHIREndpoint
 	endptLantern := testEndpointEntry3
+	endptLantern2 := testEndpointEntry4
 	fhirEndptLantern := testFHIREndpoint3
 	var savedEndpt *endpointmanager.FHIREndpoint
 
@@ -199,6 +206,25 @@ func Test_saveEndpointData(t *testing.T) {
 	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndptLantern.Equal(savedEndpt), "stored data does not equal expected store data")
+
+	// check that an lantern source endpoint with the same URL replaces item and merges the organization names lists and npi lists
+	err = saveEndpointData(ctx, store, &endptLantern2)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 1, "did not store data as expected")
+
+	err = store.DB.QueryRow("SELECT id FROM fhir_endpoints LIMIT 1;").Scan(&endptID)
+	th.Assert(t, err == nil, err)
+	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
+	th.Assert(t, err == nil, err)
+
+	th.Assert(t, helpers.StringArraysEqual(savedEndpt.OrganizationNames, []string{"fakeOrganization", "fakeOrganization2"}),
+		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndpt.OrganizationNames))
+
+	th.Assert(t, helpers.StringArraysEqual(savedEndpt.NPIIDs, []string{"1", "2"}),
+		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndpt.OrganizationNames))
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
