@@ -5,6 +5,21 @@ capabilitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+    tags$head(
+      tags$style(
+        HTML(
+          ".checkbox-inline { 
+                      margin-left: 0px;
+                      margin-right: 10px;
+            }
+          .checkbox-inline+.checkbox-inline {
+                      margin-left: 0px;
+                      margin-right: 10px;
+            }
+          "
+        )
+      ) 
+    ),
     h1("FHIR Resource Types"),
     p("This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list."),
     fluidRow(
@@ -23,20 +38,26 @@ capabilitymodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  sel_resources
 ) {
 
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
     res <- app_data$endpoint_resource_types
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), sel_resources())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     if (sel_vendor() != ui_special_values$ALL_VENDORS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+
+    if (!is.null(sel_resources())){
+      res <- res %>% filter(type %in% sel_resources())
+    }
+
     res
   })
 
@@ -81,7 +102,7 @@ capabilitymodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), app_data$last_updated)
     })
 
 }

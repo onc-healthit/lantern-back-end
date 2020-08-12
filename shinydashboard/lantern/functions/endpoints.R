@@ -140,6 +140,15 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
+# Return list of FHIR Resources
+get_resource_list <- function() {
+  rl <- app_data$endpoint_resource_types %>%
+           distinct(type) %>%
+           arrange(type) %>%
+           split(.$type) %>%
+           purrr::map(~ .$type)
+}
+
 get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,

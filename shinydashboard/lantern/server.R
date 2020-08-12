@@ -37,7 +37,8 @@ function(input, output, session) {
     capabilitymodule,
     "capability_page",
     reactive(input$fhir_version),
-    reactive(input$vendor))
+    reactive(input$vendor),
+    reactive(input$resources))
 
   callModule(
     fieldsmodule,
@@ -69,6 +70,8 @@ function(input, output, session) {
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
+  
+  show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -129,6 +132,14 @@ function(input, output, session) {
             size = 1,
             selectize = FALSE)
         )
+      )
+    }
+  })
+
+  output$show_resource_checkboxes <- renderUI({
+    if (show_resource_checkbox()) {
+      fluidPage(
+        checkboxGroupInput("resources", "Choose Resources:", choices = get_resource_list(), selected = NULL, inline = TRUE)
       )
     }
   })
