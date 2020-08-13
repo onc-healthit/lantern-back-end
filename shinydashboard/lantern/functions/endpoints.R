@@ -141,12 +141,18 @@ get_fhir_resource_types <- function(db_connection) {
 }
 
 # Return list of FHIR Resources
-get_resource_list <- function() {
-  rl <- app_data$endpoint_resource_types %>%
+get_resource_list <- function(endpoint_tbl) {
+   resource_list <- list(
+    "All Resources" = ui_special_values$ALL_RESOURCES
+  )
+
+  rl <- endpoint_tbl %>%
            distinct(type) %>%
            arrange(type) %>%
            split(.$type) %>%
            purrr::map(~ .$type)
+  
+  resource_list <- c(resource_list, rl)
 }
 
 get_capstat_fields <- function(db_connection) {

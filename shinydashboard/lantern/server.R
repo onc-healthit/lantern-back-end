@@ -139,7 +139,7 @@ function(input, output, session) {
   output$show_resource_checkboxes <- renderUI({
     if (show_resource_checkbox()) {
       fluidPage(
-        checkboxGroupInput("resources", "Choose Resources:", choices = get_resource_list(), selected = NULL, inline = TRUE)
+        checkboxGroupInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = ui_special_values$ALL_RESOURCES, inline = TRUE)
       )
     }
   })

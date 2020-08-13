@@ -5,21 +5,6 @@ capabilitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    tags$head(
-      tags$style(
-        HTML(
-          ".checkbox-inline { 
-                      margin-left: 0px;
-                      margin-right: 10px;
-            }
-          .checkbox-inline+.checkbox-inline {
-                      margin-left: 0px;
-                      margin-right: 10px;
-            }
-          "
-        )
-      ) 
-    ),
     h1("FHIR Resource Types"),
     p("This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list."),
     fluidRow(
@@ -54,7 +39,10 @@ capabilitymodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
 
-    if (!is.null(sel_resources())){
+    list <- get_resource_list(res)
+    req(sel_resources() %in% list)
+
+    if (sel_resources() != ui_special_values$ALL_RESOURCES) {
       res <- res %>% filter(type %in% sel_resources())
     }
 
