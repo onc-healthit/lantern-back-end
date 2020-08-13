@@ -175,24 +175,12 @@ get_fhir_resource_count <- function(fhir_resources_tbl) {
     rename(Resource = type, Endpoints = n)
 }
 
-get_capstat_fields_count <- function(capstat_fields_tbl) {
+get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
   res <- capstat_fields_tbl %>%
     group_by(field, exist, fhir_version, extension) %>%
     count() %>%
     filter(exist == "true") %>%
-    filter(extension == "false") %>%
-    ungroup() %>%
-    select(-exist) %>%
-    select(-extension) %>%
-    rename(Fields = field, Endpoints = n)
-}
-
-get_capstat_extensions_count <- function(capstat_fields_tbl) {
-  res <- capstat_fields_tbl %>%
-    group_by(field, exist, fhir_version, extension) %>%
-    count() %>%
-    filter(exist == "true") %>%
-    filter(extension == "true") %>%
+    filter(extension == extensionBool) %>%
     ungroup() %>%
     select(-exist) %>%
     select(-extension) %>%

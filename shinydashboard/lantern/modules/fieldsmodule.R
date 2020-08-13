@@ -93,11 +93,11 @@ fieldsmodule <- function(
   })
 
   capstat_field_count <- reactive({
-    get_capstat_fields_count(selected_fhir_endpoints())
+    get_capstat_fields_count(selected_fhir_endpoints(), "false")
   })
 
   capstat_extension_count <- reactive({
-    get_capstat_extensions_count(selected_fhir_endpoints())
+    get_capstat_fields_count(selected_fhir_endpoints(), "true")
   })
 
   # Required Capability Statement fields that we are tracking
