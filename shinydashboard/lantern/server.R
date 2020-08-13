@@ -70,7 +70,7 @@ function(input, output, session) {
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
-  
+
   show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
 
   page_name <- reactive({
@@ -135,15 +135,15 @@ function(input, output, session) {
       )
     }
   })
-  
+
   output$show_resource_checkboxes <- renderUI({
     if (show_resource_checkbox()) {
       fluidPage(
         fluidRow(
-          actionButton("selectall","Select All Resources"),
-          actionButton("removeall","Clear All Resources")
+          actionButton("selectall", "Select All Resources"),
+          actionButton("removeall", "Clear All Resources")
         ),
-        selectInput("resources", "Choose or type in any resource from the list below. You can backspace to remove any selections you have made:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE, width = '100%')
+        selectInput("resources", "Choose or type in any resource from the list below. You can backspace to remove any selections you have made:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE, width = "100%")
       )
     }
   })
