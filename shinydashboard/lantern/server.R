@@ -135,12 +135,24 @@ function(input, output, session) {
       )
     }
   })
-
+  
   output$show_resource_checkboxes <- renderUI({
     if (show_resource_checkbox()) {
       fluidPage(
-        checkboxGroupInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = ui_special_values$ALL_RESOURCES, inline = TRUE)
+        actionButton("selectall","Select All Resources"),
+        selectInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE)
       )
+    }
+  })
+
+  observeEvent(input$selectall, {
+    if (input$selectall == 0) {
+      return(NULL)
+    }
+    else if (input$selectall %% 2 == 0) {
+      updateSelectInput(session, "resources", label = "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = NULL)
+    } else{
+      updateSelectInput(session, "resources", label = "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types))
     }
   })
 }
