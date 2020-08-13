@@ -39,7 +39,9 @@ app <<- list(
   vendor_list            = get_vendor_list(endpoint_export_tbl),
   http_response_code_tbl =
     read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
-    mutate(code_chr = as.character(code))
+    mutate(code_chr = as.character(code)),
+  zip_to_zcta = 
+    read_csv(here(root,"zipcode_zcta.csv"), col_types = cols(zipcode="c",zcta="c"))
 )
 
 # define global app_data which is computed at application startup, and
@@ -65,7 +67,9 @@ app_data <<- list(
   smart_response_capabilities = NULL, # smart core capabilities by endpoint, vendor, fhir_version
   well_known_endpoints_tbl = NULL,    # endpoints returning smart core capabilities JSON doc
   well_known_endpoints_no_doc = NULL, # well known endpoints reached, but no JSON doc returned
-  well_known_endpoint_counts = NULL   # summary table of well known URI endpoints
+  well_known_endpoint_counts = NULL,  # summary table of well known URI endpoints
+  org_locations = NULL,               # org-zcta mappings
+  endpoint_locations = NULL           # endpoints with location information mappings
 )
 
 # Define observer based on a refresh_timeout to refetch data from the database

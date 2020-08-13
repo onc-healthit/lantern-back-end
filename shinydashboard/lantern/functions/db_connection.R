@@ -31,6 +31,7 @@ db_tables <- list(
   fhir_endpoints_info_history = tbl(db_connection, "fhir_endpoints_info_history"),
   end_org                     = tbl(db_connection, "endpoint_organization"),
   hit_prod                    = tbl(db_connection, "healthit_products"),
+  npi_organizations           = tbl(db_connection, "npi_organizations"),
   endpoint_export             = tbl(db_connection, "endpoint_export"),
   vendors                     = tbl(db_connection, "vendors")
 )

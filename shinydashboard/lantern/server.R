@@ -17,6 +17,10 @@ function(input, output, session) {
     "availability_page")
 
   callModule(
+    locationmodule,
+    "location_page")
+  
+  callModule(
     performancemodule,
     "performance_page",
     reactive(input$date))

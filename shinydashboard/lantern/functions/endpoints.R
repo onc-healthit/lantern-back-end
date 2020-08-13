@@ -381,3 +381,32 @@ get_endpoint_security_counts <- function(db_connection) {
     "Endpoints with valid security resource", as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
   )
 }
+
+get_organization_locations <- function(db_connection) {
+  res <- tbl(db_connection,
+      sql("SELECT id, name, left(location->>'zipcode',5) as zipcode from npi_organizations")
+  ) %>%
+    collect() %>%
+    left_join(app$zip_to_zcta, by=c("zipcode" = "zipcode")) %>%
+    filter(!is.na(lng),!is.na(lat))
+  res
+}
+
+get_endpoint_locations <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT 
+          distinct(url),
+          endpoint_names[1] as endpoint_name,
+          organization_name,
+          fhir_version,
+          vendor_name,
+          left(zipcode,5) as zipcode
+        FROM endpoint_export where zipcode is NOT NULL") 
+    ) %>%
+    collect() %>%
+    left_join(app$zip_to_zcta, by=c("zipcode" = "zipcode")) %>%
+    filter(!is.na(lng),!is.na(lat)) %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+  res
+}
