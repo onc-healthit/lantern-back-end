@@ -139,8 +139,11 @@ function(input, output, session) {
   output$show_resource_checkboxes <- renderUI({
     if (show_resource_checkbox()) {
       fluidPage(
-        actionButton("selectall","Select All Resources"),
-        selectInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE, width = '100%')
+        fluidRow(
+          actionButton("selectall","Select All Resources"),
+          actionButton("removeall","Clear All Resources")
+        ),
+        selectInput("resources", "Choose or type in any resource from the list below. You can backspace to remove any selections you have made:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE, width = '100%')
       )
     }
   })
@@ -149,10 +152,17 @@ function(input, output, session) {
     if (input$selectall == 0) {
       return(NULL)
     }
-    else if (input$selectall %% 2 == 0) {
-      updateSelectInput(session, "resources", label = "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = NULL)
-    } else{
-      updateSelectInput(session, "resources", label = "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types))
+    else{
+      updateSelectInput(session, "resources", label = "Choose or type in any resource from the list below. You can backspace to remove any selections you have made:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types))
+    }
+  })
+
+    observeEvent(input$removeall, {
+    if (input$selectall == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectInput(session, "resources", label = "Choose or type in any resource from the list below. You can backspace to remove any selections you have made:", choices = get_resource_list(app_data$endpoint_resource_types))
     }
   })
 }
