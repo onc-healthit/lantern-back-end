@@ -16,7 +16,6 @@ libraries:
   - "purrr"
   - "xts"
   - "leaflet"
-  - "sf"
 
 function_files:
   - "functions/db_connection.R"
