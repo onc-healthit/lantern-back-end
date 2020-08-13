@@ -33,8 +33,9 @@ type Source string
 
 // Cerner is a field in the Source enum for the cerner endpoint url
 const (
-	Cerner Source = "https://github.com/cerner/ignite-endpoints"
-	Epic   Source = "https://open.epic.com/MyApps/EndpointsJson"
+	Cerner  Source = "https://github.com/cerner/ignite-endpoints"
+	Epic    Source = "https://open.epic.com/MyApps/EndpointsJson"
+	Lantern Source = "LanternEndpointSourcesJson"
 )
 
 // Converts the string version of the endpoint source to the fetcher.Source enum
@@ -46,6 +47,8 @@ func checkSource(source string) Source {
 		return Cerner
 	case "Epic":
 		return Epic
+	case "Lantern":
+		return Lantern
 	}
 	return ""
 }
@@ -67,6 +70,9 @@ func GetEndpointsFromFilepath(filePath string, source string) (ListOfEndpoints, 
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
+	if len(byteValue) == 0 {
+		return ListOfEndpoints{}, nil
+	}
 
 	validSource := checkSource(source)
 	if validSource != "" {
@@ -103,6 +109,12 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpo
 			return result, fmt.Errorf("epic list not given in Epic format")
 		}
 		result = EpicList{}.GetEndpoints(epicList)
+	} else if source == Lantern {
+		lanternList := initialList["Endpoints"]
+		if lanternList == nil {
+			return result, fmt.Errorf("lantern list not given in Lantern format")
+		}
+		result = LanternList{}.GetEndpoints(lanternList)
 	} else {
 		return result, fmt.Errorf("no endpoint list parser implemented for the given source")
 	}

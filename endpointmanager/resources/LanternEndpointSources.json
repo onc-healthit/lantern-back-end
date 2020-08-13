@@ -1,0 +1,24 @@
+{
+    "Endpoints": [
+      {
+        "URL": "http://example.com/DTSU2/",
+        "OrganizationName": "fakeOrganization",
+        "NPIID": "1"
+      },
+      {
+        "URL": "http://example2.com/DTSU2/",
+        "OrganizationName": "fakeOrganization2",
+        "NPIID": "2"
+      },
+      {
+        "URL": "http://example3.com/DTSU2/",
+        "OrganizationName": "fakeOrganization3",
+        "NPIID": "3"
+      },
+      {
+        "URL": "http://example4.com/DTSU2/",
+        "OrganizationName": "fakeOrganization4",
+        "NPIID": "4"
+      }
+    ]
+  }

@@ -1,0 +1,19 @@
+{
+  "Endpoints": [
+    {
+      "URL": "example.com",
+      "OrganizationName": "RIVER OAKS HOME HEALTH CARE LLC",
+      "NPIID": "1114920147"
+    },
+    {
+      "URL": "example.com",
+      "OrganizationName": "ADVANTAGE HOME HEALTH CARE, INC",
+      "NPIID": "1023011079"
+    },
+    {
+      "URL": "example2.com",
+      "OrganizationName": "ADVANTAGE HOME HEALTH CARE, INC",
+      "NPIID": "1023011079"
+    }
+  ]
+}

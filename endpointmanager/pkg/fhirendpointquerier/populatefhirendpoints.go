@@ -80,6 +80,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 		URL:               uri,
 		OrganizationNames: endpoint.OrganizationNames,
 		ListSource:        endpoint.ListSource,
+		NPIIDs:            endpoint.NPIIDs,
 	}
 
 	// @TODO Get Location

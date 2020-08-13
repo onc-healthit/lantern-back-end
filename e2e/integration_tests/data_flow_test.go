@@ -45,6 +45,7 @@ var store *postgresql.Store
 var qUser, qPassword, qHost, qPort, testQName string
 var endptList = "./testdata/TestEndpointSources.json"
 var shortEndptList = "./testdata/TestEndpointSources_1.json"
+var LanternEndptList = "./testdata/TestLanternEndpointSources.json"
 
 var conn *amqp.Connection
 var channel *amqp.Channel
@@ -61,7 +62,7 @@ func TestMain(m *testing.M) {
 	testQueueSetup()
 
 	populateTestNPIData()
-	populateTestEndpointData(endptList)
+	populateTestEndpointData(endptList, "Test")
 	go setupTestServer()
 	// Give time for the querier to query the test server we just setup
 	time.Sleep(30 * time.Second)
@@ -96,11 +97,20 @@ func populateTestNPIData() {
 	failOnError(err)
 }
 
-func populateTestEndpointData(testEndpointList string) {
+func populateTestEndpointData(testEndpointList string, source string) {
+	var listOfEndpoints fetcher.ListOfEndpoints
+	var knownSource fetcher.Source
 	content, err := ioutil.ReadFile(testEndpointList)
 	failOnError(err)
-	listOfEndpoints, err := fetcher.GetListOfEndpoints(content, "Test")
-	failOnError(err)
+
+	if source == "Test" {
+		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source)
+		failOnError(err)
+	} else {
+		knownSource = "LanternEndpointSourcesJson"
+		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource)
+		failOnError(err)
+	}
 
 	ctx := context.Background()
 
@@ -457,7 +467,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
 	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
 
-	populateTestEndpointData(shortEndptList)
+	populateTestEndpointData(shortEndptList, "Test")
 
 	expected_endpt_ct := 26
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
@@ -519,5 +529,54 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
 		err = store.DB.QueryRow(query_str, url).Scan(&endpoint_id)
 		th.Assert(t, err == sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
+	}
+}
+
+func Test_LanternSource(t *testing.T) {
+	// reset values
+	_, err := store.DB.Exec("DELETE FROM fhir_endpoints;")
+	th.Assert(t, err == nil, err)
+
+	// reset values
+	_, err = store.DB.Exec("DELETE FROM endpoint_organization;")
+	th.Assert(t, err == nil, err)
+
+	// reset values
+	_, err = store.DB.Exec("DELETE FROM fhir_endpoints_info;")
+	th.Assert(t, err == nil, err)
+
+	populateTestEndpointData(LanternEndptList, "Lantern")
+
+	var endpt_count int
+	expected_endpt_ct := 2
+	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
+	err = endpt_ct_st.Scan(&endpt_count)
+	failOnError(err)
+	if endpt_count != expected_endpt_ct {
+		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, LanternEndptList, endpt_count)
+	}
+
+	ctx := context.Background()
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+
+	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
+	// to organizations
+	expected_link_count := 3
+	var link_count int
+
+	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
+	err = endpoint_orgs_row.Scan(&link_count)
+	failOnError(err)
+	if link_count != expected_link_count {
+		t.Fatalf("endpoint_organization should have %d links, had %d", expected_link_count, link_count)
+	}
+
+	expected_link_count = 2
+
+	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization WHERE url = 'example.com/';")
+	err = endpoint_orgs_row.Scan(&link_count)
+	failOnError(err)
+	if link_count != expected_link_count {
+		t.Fatalf("example.com should have %d links in endpoint_organization, had %d", expected_link_count, link_count)
 	}
 }
