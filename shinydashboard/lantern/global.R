@@ -40,8 +40,8 @@ app <<- list(
   http_response_code_tbl =
     read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
     mutate(code_chr = as.character(code)),
-  zip_to_zcta = 
-    read_csv(here(root,"zipcode_zcta.csv"), col_types = cols(zipcode="c",zcta="c"))
+  zip_to_zcta =
+    read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c"))
 )
 
 # define global app_data which is computed at application startup, and
@@ -130,31 +130,9 @@ updater <- observe({
 
   app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
 
-  app_data$vc_totals <<- app_data$vendor_count_tbl %>%
-    filter(!(vendor_name == "Unknown")) %>%
-    group_by(vendor_name) %>%
-    summarise(total = sum(n))
+  app_data$org_locations <<- get_organization_locations(db_connection)
 
-  app_data$security_endpoints <<- get_security_endpoints(db_connection)
-
-  app_data$security_endpoints_tbl <<- get_security_endpoints_tbl(db_connection)
-
-  app_data$auth_type_counts <<- get_auth_type_count(app_data$security_endpoints)
-
-  app_data$security_code_list <<- app_data$security_endpoints %>%
-    distinct(code) %>%
-    pull(code)
-
-  app_data$smart_response_capabilities <<- get_smart_response_capabilities(db_connection)
-
-  app_data$well_known_endpoints_tbl    <<- get_well_known_endpoints_tbl(db_connection)
-
-  app_data$well_known_endpoints_no_doc <<- get_well_known_endpoints_no_doc(db_connection)
-
-  app_data$well_known_endpoint_counts  <<- get_well_known_endpoint_counts(db_connection)
-
-  app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
-
+  app_data$endpoint_locations <<- get_endpoint_locations(db_connection)
 })
 
 onStop(function() {

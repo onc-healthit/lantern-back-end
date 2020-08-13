@@ -19,7 +19,7 @@ function(input, output, session) {
   callModule(
     locationmodule,
     "location_page")
-  
+
   callModule(
     performancemodule,
     "performance_page",
@@ -60,7 +60,7 @@ function(input, output, session) {
      "capability_tab" = "Capability Page",
      "fields_tab" = "Fields Page",
      "availability_tab" = "Endpoint Server Availability",
-     "location_tab" = "Location Map Page",
+     "location_tab" = "Location Map",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
