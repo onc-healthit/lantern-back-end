@@ -2,6 +2,7 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
+// List of capability statement fields that are arrays of interfaces
 var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document", "_searchInclude", "_searchRevInclude"}
 
 // RunIncludedFieldsAndExtensionsChecks returns an interface that contains information about whether fields and extensions are supported or not
@@ -168,7 +169,7 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 			fieldArr := field.([]interface{})
 			nextIndex := index + 1
 			length := len(fieldNames)
-			return checkArrFieldExtension(fieldNames[nextIndex:length], fieldArr, url, false)
+			return checkArrFieldExtension(fieldNames[nextIndex:length], fieldArr, url)
 		} else {
 			capInt = field.(map[string]interface{})
 		}
@@ -178,21 +179,27 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 }
 
 // Given an array of interface objects, loops through each object to check whether the extension is populated following the path of fieldNames
-func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url string, found bool) bool {
-	for _, resource := range fieldArr {
+func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url string) bool {
+	var found bool
+	// Loop through the array of interface objects
+	for _, obj := range fieldArr {
+		// For each object in interface array, get desired field using name in fieldNames
 		name := fieldNames[0]
-		resourceMap := resource.(map[string]interface{})
-		extensionField := resourceMap[name]
+		objMap := obj.(map[string]interface{})
+		extensionField := objMap[name]
 		if extensionField == nil {
+			// If the desired field does not exist in that object, continue to the next object within the array of interface objects
 			continue
 		} else if name != "extension" && name != "modifierExtension" && arrContains(arrayFields, name) {
+			// If the desired field is not extension or modifierExtension and it is also an array of interface objects, call checkArrFieldExtension with this new array
 			fieldArr := extensionField.([]interface{})
 			length := len(fieldNames)
-			found = checkArrFieldExtension(fieldNames[1:length], fieldArr, url, found)
+			found = checkArrFieldExtension(fieldNames[1:length], fieldArr, url)
 			if found {
 				return found
 			}
 		} else if name != "extension" && name != "modifierExtension" && !arrContains(arrayFields, name) {
+			// If the desired field is not extension or modifierExtension and it is not an array of interface objects, call checkExtension with this field map[string]interface
 			extensionField := extensionField.(map[string]interface{})
 			length := len(fieldNames)
 			found = checkExtension(extensionField, fieldNames[1:length], url)
@@ -200,6 +207,7 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 				return found
 			}
 		} else {
+			// If the desired field is extension or modifierExtension, check array of extension interface objects for correct url
 			extensionArr := extensionField.([]interface{})
 			found = checkExtensionURL(extensionArr, url)
 			if found {
