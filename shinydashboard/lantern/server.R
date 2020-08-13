@@ -140,7 +140,7 @@ function(input, output, session) {
     if (show_resource_checkbox()) {
       fluidPage(
         actionButton("selectall","Select All Resources"),
-        selectInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE)
+        selectInput("resources", "Choose Resources:", choices = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, selectize = TRUE, width = '100%')
       )
     }
   })
