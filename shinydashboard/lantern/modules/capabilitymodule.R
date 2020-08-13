@@ -39,10 +39,9 @@ capabilitymodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
 
-    list <- get_resource_list(res)
-    req(sel_resources() %in% list)
-
-    if (sel_resources() != ui_special_values$ALL_RESOURCES) {
+    if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
+      list <- get_resource_list(res)
+      req(sel_resources() %in% list)
       res <- res %>% filter(type %in% sel_resources())
     }
 
