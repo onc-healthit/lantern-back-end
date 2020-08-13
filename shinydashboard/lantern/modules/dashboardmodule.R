@@ -171,7 +171,7 @@ dashboard <- function(
   observeEvent(input$show_info, {
     showModal(modalDialog(
       title = "Information About Lantern",
-      "Lantern takes a strict approach to showing FHIR Version and Vendor information. If a given FHIR 
+      "Lantern takes a strict approach to showing FHIR Version and Vendor information. If a given FHIR
       endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Vendor information as 'Unknown'.
       Other endpoints may fail to properly indicate FHIR Version or Vendor information in their capability statement.",
       easyClose = TRUE
