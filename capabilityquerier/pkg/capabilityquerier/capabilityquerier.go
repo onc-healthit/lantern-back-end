@@ -3,9 +3,11 @@ package capabilityquerier
 import (
 	"context"
 	"crypto/tls"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
@@ -13,6 +15,7 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
@@ -61,6 +64,7 @@ type QuerierArgs struct {
 	ChannelID    *lanternmq.ChannelID
 	QueueName    string
 	UserAgent    string
+	Store        *postgresql.Store
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
@@ -75,6 +79,16 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	}
 
 	var err error
+
+	endpt, err := qa.Store.GetFHIREndpointInfoUsingURL(ctx, qa.FhirURL)
+	var mimeTypes []string
+	if err == sql.ErrNoRows {
+		mimeTypes = []string{}
+	} else if err != nil {
+		return err
+	} else {
+		mimeTypes = endpt.MIMETypes
+	}
 
 	userAgent := qa.UserAgent
 	message := Message{
