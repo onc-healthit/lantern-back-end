@@ -92,12 +92,12 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	userAgent := qa.UserAgent
 	message := Message{
-		URL: qa.FhirURL,
+		URL:       qa.FhirURL,
+		MIMETypes: mimeTypes,
 	}
 	// Cast string url to type url then cast back to string to ensure url string in correct url format
 	castURL, err := url.Parse(qa.FhirURL)
 	if err != nil {
-		log.Warnf("Error parsing URL string %s\n", qa.FhirURL)
 		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
 	}
 	metadataURL := endpointmanager.NormalizeEndpointURL(castURL.String())
@@ -140,7 +140,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, userAgent string, message *Message) error {
 	var err error
 	var httpResponseCode int
-	var supportsFHIR3MIMEType bool
+	var mimeTypeWorked bool
 	var supportsFHIR2MIMEType bool
 	var tlsVersion string
 	var capResp []byte
@@ -157,33 +157,60 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	trace := &httptrace.ClientTrace{}
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-	if endptType == wellknown && len(message.MIMETypes) > 0 {
+	randomMimeIdx := 0
+
+	if endptType == metadata && len(message.MIMETypes) > 0 {
+		// Choose a random mime type in the list if there's more than one
+		if len(message.MIMETypes) == 2 {
+			randomMimeIdx = rand.Intn(2)
+			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, message.MIMETypes[randomMimeIdx], client)
+		} else {
+			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, message.MIMETypes[randomMimeIdx], client)
+		}
+		if err != nil {
+			return err
+		}
+	} else if endptType == wellknown && len(message.MIMETypes) > 0 {
 		httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, message.MIMETypes[0], client)
 		if err != nil {
 			return err
 		}
 	} else {
-		httpResponseCode, tlsVersion, supportsFHIR3MIMEType, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 		if err != nil {
 			return err
 		}
-
 	}
 
 	if endptType == metadata {
-		if httpResponseCode != http.StatusOK || !supportsFHIR3MIMEType {
-			// replace all values based on fhir 2 mime type if there were any issues with fhir 3 mime type request
+		if httpResponseCode != http.StatusOK || !mimeTypeWorked {
+			otherMime := fhir2LessJSONMIMEType
+			// Try the other mime type and remove the mime type that was initially saved
+			// but no longer works
+			if len(message.MIMETypes) == 2 {
+				otherMimeIdx := (randomMimeIdx + 1) % 2
+				otherMime = message.MIMETypes[otherMimeIdx]
+				message.MIMETypes = []string{otherMime}
+			} else if len(message.MIMETypes) == 1 {
+				if message.MIMETypes[0] == otherMime {
+					otherMime = fhir3PlusJSONMIMEType
+				}
+				message.MIMETypes = []string{}
+			}
+			// replace all values based on the other mime type if there were any issues with the first mime type request
 			httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 			if err != nil {
 				return err
 			}
-		} else {
-			// only chech fhir 2 mime type support
+		} else if len(message.MIMETypes) == 0 {
+			// only check fhir 2 mime type support if the first request worked and there were no
+			// mimeTypes saved in the database
 			_, _, supportsFHIR2MIMEType, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 			if err != nil {
 				return err
 			}
 		}
+		// @TODO This will need to be fixed
 		if supportsFHIR2MIMEType {
 			message.MIMETypes = append(message.MIMETypes, fhir2LessJSONMIMEType)
 		}
