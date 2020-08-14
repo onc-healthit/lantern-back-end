@@ -41,6 +41,7 @@ func TestMain(m *testing.M) {
 	}
 
 	hap := th.HostAndPort{Host: viper.GetString("qhost"), Port: viper.GetString("qport")}
+	// @TODO Add test database to the integration test
 	err = th.CheckResources(hap)
 	if err != nil {
 		panic(err)
