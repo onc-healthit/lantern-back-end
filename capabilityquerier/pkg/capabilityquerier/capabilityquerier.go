@@ -141,7 +141,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	var err error
 	var httpResponseCode int
 	var mimeTypeWorked bool
-	var supportsFHIR2MIMEType bool
+	var otherMimeWorked bool
 	var tlsVersion string
 	var capResp []byte
 	var jsonResponse interface{}
@@ -159,6 +159,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 
 	randomMimeIdx := 0
 
+	// If there are mime types saved in the database for this URL
 	if endptType == metadata && len(message.MIMETypes) > 0 {
 		// Choose a random mime type in the list if there's more than one
 		if len(message.MIMETypes) == 2 {
@@ -182,9 +183,9 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		}
 	}
 
+	otherMime := fhir2LessJSONMIMEType
 	if endptType == metadata {
 		if httpResponseCode != http.StatusOK || !mimeTypeWorked {
-			otherMime := fhir2LessJSONMIMEType
 			// Try the other mime type and remove the mime type that was initially saved
 			// but no longer works
 			if len(message.MIMETypes) == 2 {
@@ -198,24 +199,34 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 				message.MIMETypes = []string{}
 			}
 			// replace all values based on the other mime type if there were any issues with the first mime type request
-			httpResponseCode, tlsVersion, supportsFHIR2MIMEType, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			httpResponseCode, tlsVersion, otherMimeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
 			if err != nil {
 				return err
 			}
 		} else if len(message.MIMETypes) == 0 {
 			// only check fhir 2 mime type support if the first request worked and there were no
 			// mimeTypes saved in the database
-			_, _, supportsFHIR2MIMEType, _, _, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			_, _, otherMimeWorked, _, _, err = requestWithMimeType(req, otherMime, client)
 			if err != nil {
 				return err
 			}
 		}
-		// @TODO This will need to be fixed
-		if supportsFHIR2MIMEType {
-			message.MIMETypes = append(message.MIMETypes, fhir2LessJSONMIMEType)
+
+		finalMimeList := []string{}
+		// If there was a 2nd saved mime type and it also did not work, remove it from the MIMETypes array
+		if len(message.MIMETypes) == 1 && (httpResponseCode != http.StatusOK || !otherMimeWorked) {
+			message.MIMETypes = []string{}
+		} else if otherMimeWorked {
+			// If the 2nd tried mime type did work, add it to the MIMETypes array
+			finalMimeList = append(finalMimeList, otherMime)
 		}
-		if supportsFHIR3MIMEType {
-			message.MIMETypes = append(message.MIMETypes, fhir3PlusJSONMIMEType)
+		// If the first mimeType worked and it wasn't save in the database, add it to MIMETypes array
+		if mimeTypeWorked && len(message.MIMETypes) == 0 {
+			finalMimeList = append(finalMimeList, fhir3PlusJSONMIMEType)
+		}
+		// Update the message.MIMETypes as long as nothing was already saved there
+		if len(message.MIMETypes) == 0 {
+			message.MIMETypes = finalMimeList
 		}
 	}
 
