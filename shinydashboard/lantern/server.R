@@ -143,7 +143,7 @@ function(input, output, session) {
           actionButton("selectall", "Select All Resources"),
           actionButton("removeall", "Clear All Resources")
         ),
-        selectizeInput("resources", "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, options = list('plugins' = list('remove_button'), 'create' = TRUE, 'persist' = FALSE), width = "100%")
+        selectizeInput("resources", "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%")
       )
     }
   })
@@ -153,7 +153,7 @@ function(input, output, session) {
       return(NULL)
     }
     else{
-      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types), options = list('plugins' = list('remove_button'), 'create' = TRUE, 'persist' = FALSE))
+      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), selected = get_resource_list(app_data$endpoint_resource_types), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 
@@ -162,7 +162,7 @@ function(input, output, session) {
       return(NULL)
     }
     else{
-      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), options = list('plugins' = list('remove_button'), 'create' = TRUE, 'persist' = FALSE))
+      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = get_resource_list(app_data$endpoint_resource_types), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 }
