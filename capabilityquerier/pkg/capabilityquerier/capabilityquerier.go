@@ -158,21 +158,26 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
 	randomMimeIdx := 0
+	firstMIME := fhir3PlusJSONMIMEType
 
 	// If there are mime types saved in the database for this URL
 	if endptType == metadata && len(message.MIMETypes) > 0 {
 		// Choose a random mime type in the list if there's more than one
 		if len(message.MIMETypes) == 2 {
+			rand.Seed(time.Now().UnixNano())
 			randomMimeIdx = rand.Intn(2)
-			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, message.MIMETypes[randomMimeIdx], client)
+			firstMIME = message.MIMETypes[randomMimeIdx]
+			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
 		} else {
-			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, message.MIMETypes[randomMimeIdx], client)
+			firstMIME = message.MIMETypes[randomMimeIdx]
+			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
 		}
 		if err != nil {
 			return err
 		}
 	} else if endptType == wellknown && len(message.MIMETypes) > 0 {
-		httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, message.MIMETypes[0], client)
+		firstMIME = message.MIMETypes[0]
+		httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, firstMIME, client)
 		if err != nil {
 			return err
 		}
@@ -199,7 +204,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 				message.MIMETypes = []string{}
 			}
 			// replace all values based on the other mime type if there were any issues with the first mime type request
-			httpResponseCode, tlsVersion, otherMimeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+			httpResponseCode, tlsVersion, otherMimeWorked, capResp, responseTime, err = requestWithMimeType(req, otherMime, client)
 			if err != nil {
 				return err
 			}
@@ -220,9 +225,9 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 			// If the 2nd tried mime type did work, add it to the MIMETypes array
 			finalMimeList = append(finalMimeList, otherMime)
 		}
-		// If the first mimeType worked and it wasn't save in the database, add it to MIMETypes array
+		// If the first mimeType worked and it wasn't saved in the database, add it to MIMETypes array
 		if mimeTypeWorked && len(message.MIMETypes) == 0 {
-			finalMimeList = append(finalMimeList, fhir3PlusJSONMIMEType)
+			finalMimeList = append(finalMimeList, firstMIME)
 		}
 		// Update the message.MIMETypes as long as nothing was already saved there
 		if len(message.MIMETypes) == 0 {
@@ -311,13 +316,14 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	httpResponseCode = resp.StatusCode
 	if httpResponseCode == http.StatusOK {
-		defer resp.Body.Close()
 		respMimeType := resp.Header.Get("Content-Type")
 		// endpoints generally return an xml mime type by default.
 		// checking that it's a json mime type confirms that it processes the JSON type request.
 		// however, it doesn't necessarily match the request type exactly and seems to cache the
 		// first JSON request type it receives and continues to respond with that.
 		if isJSONMIMEType(respMimeType) {
+			defer resp.Body.Close()
+			//println("URL: " + req.URL.String() + " MIME Type: " + req.Header.Get("Accept") + " HTTP Response Code: " + strconv.Itoa(resp.StatusCode) + " HTTP OK: " + strconv.Itoa(http.StatusOK) + " Encode: " + req.Form.Encode())
 			mimeMatches = true
 
 			capStat, err = ioutil.ReadAll(resp.Body)
