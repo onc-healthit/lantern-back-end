@@ -6,7 +6,7 @@ require (
 	github.com/gonum/stat v0.0.0-20181125101827-41a0da705a5b
 	github.com/google/go-cmp v0.4.0
 	github.com/lib/pq v1.3.0
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200904174909-7d8168a63f37
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20200814204726-fce7ffed1140
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
