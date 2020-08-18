@@ -262,6 +262,11 @@ BEFORE UPDATE ON product_criteria
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_fhir_endpoint_availability
+BEFORE UPDATE ON fhir_endpoints_availability
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info

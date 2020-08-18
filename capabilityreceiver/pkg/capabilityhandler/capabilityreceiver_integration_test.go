@@ -132,6 +132,22 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
+	// check that endpoint availability was updated
+	var http_200_ct int
+	var http_all_ct int
+	query_str := "SELECT http_200_count, http_all_count from fhir_endpoints_availability WHERE url=$1;"
+	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, http_all_ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, http_all_ct == 1, "endpoint should have been added to availability table once")
+	if (storedEndpt.HTTPResponse == 200) {
+		th.Assert(t, http_200_ct == 1, "availability table should have updated num of 200 response to 1")
+		th.Assert(t, storedEndpt.Availability == 1.0, "availability for endpoint should be 100%")
+	}
+	else {
+		th.Assert(t, http_200_ct == 0, "availability table should have updated num of 200 response to 0")
+		th.Assert(t, storedEndpt.Availability == 0, "availability for endpoint should be 0%")
+	}
+
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
 	expectedEndpt.URL = testFhirEndpoint2.URL
@@ -151,6 +167,19 @@ func Test_saveMsgInDB(t *testing.T) {
 	expectedEndpt = testFhirEndpointInfo
 	queueTmp["url"] = "http://example.com/DTSU2/"
 
+	// check that a second endpoint also added to availability table
+	err = store.DB.QueryRow(query_str, testFhirEndpoint2.URL).Scan(&http_200_ct, http_all_ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, http_all_ct == 1, "endpoint should have been added to availability table once")
+	if (storedEndpt.HTTPResponse == 200) {
+		th.Assert(t, http_200_ct == 1, "availability table should have updated num of 200 response to 1")
+		th.Assert(t, storedEndpt.Availability == 1.0, "availability for endpoint should be 100%")
+	}
+	else {
+		th.Assert(t, http_200_ct == 0, "availability table should have updated num of 200 response to 0")
+		th.Assert(t, storedEndpt.Availability == 0, "availability for endpoint should be 0%")
+	}
+
 	// check that an item with the same URL updates the endpoint in the database
 	queueTmp["tlsVersion"] = "TLS 1.3"
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
@@ -165,6 +194,11 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
+
+	// check that if same URL is queried again http_all_count is incremented
+	err = store.DB.QueryRow(query_str, testFhirEndpoint2.URL).Scan(&http_200_ct, http_all_ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, http_all_count == 2, "http all count should have been incremented to 2")
 
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
 
