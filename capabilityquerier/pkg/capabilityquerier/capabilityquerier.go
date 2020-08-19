@@ -85,7 +85,14 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	if err == sql.ErrNoRows {
 		mimeTypes = []string{}
 	} else if err != nil {
-		return err
+		select {
+		case <-ctx.Done():
+			log.Warnf("Got error: could not connect to database: %s", qa.FhirURL)
+			mimeTypes = []string{}
+		default:
+			log.Warnf("Got error:\n%s\n\nfrom URL: %s", err.Error(), qa.FhirURL)
+			return err
+		}
 	} else {
 		mimeTypes = endpt.MIMETypes
 	}
