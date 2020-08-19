@@ -3,7 +3,7 @@
 #update source data from endpoint source list and NPPES
 cd ../resources/prod_resources
 YEAR=$(date +%Y)
-PASTMONTH=$(date -v-1m +%B 2> /dev/null) || PASTMONTH=$(date -d '1 months ago' +%B 2> /dev/null)
+PASTMONTH=$(date -v-1m +%B 2> /dev/null) || PASTMONTH=$(date -d '1 months ago' +%B)
 MONTH=$(date +%B)	
 DATE=$(date +%Y%m%d)
 NPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip"
