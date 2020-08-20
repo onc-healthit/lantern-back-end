@@ -135,18 +135,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that endpoint availability was updated
 	var http_200_ct int
 	var http_all_ct int
+	var endpt_availability_ct int
 	query_str := "SELECT http_200_count, http_all_count from fhir_endpoints_availability WHERE url=$1;"
-	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, http_all_ct)
+	ct_availability_str := "SELECT COUNT(*) from fhir_endpoints_availability;"
+
+	err = store.DB.QueryRow(ct_availability_str).Scan(&endpt_availability_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 1, "endpoint should have been added to availability table once")
-	if (storedEndpt.HTTPResponse == 200) {
-		th.Assert(t, http_200_ct == 1, "availability table should have updated num of 200 response to 1")
-		th.Assert(t, storedEndpt.Availability == 1.0, "availability for endpoint should be 100%")
-	}
-	else {
-		th.Assert(t, http_200_ct == 0, "availability table should have updated num of 200 response to 0")
-		th.Assert(t, storedEndpt.Availability == 0, "availability for endpoint should be 0%")
-	}
+	th.Assert(t, endpt_availability_ct == 1, "endpoint availability should have 1 endpoint")
+	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, &http_all_ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, http_all_ct == 1, "endpoint should have http return count of 1")
+	th.Assert(t, http_200_ct == 1, "endpoint should have http 200 return count of 1")
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
@@ -168,20 +167,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	queueTmp["url"] = "http://example.com/DTSU2/"
 
 	// check that a second endpoint also added to availability table
-	err = store.DB.QueryRow(query_str, testFhirEndpoint2.URL).Scan(&http_200_ct, http_all_ct)
+	err = store.DB.QueryRow(ct_availability_str).Scan(&endpt_availability_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 1, "endpoint should have been added to availability table once")
-	if (storedEndpt.HTTPResponse == 200) {
-		th.Assert(t, http_200_ct == 1, "availability table should have updated num of 200 response to 1")
-		th.Assert(t, storedEndpt.Availability == 1.0, "availability for endpoint should be 100%")
-	}
-	else {
-		th.Assert(t, http_200_ct == 0, "availability table should have updated num of 200 response to 0")
-		th.Assert(t, storedEndpt.Availability == 0, "availability for endpoint should be 0%")
-	}
+	th.Assert(t, endpt_availability_ct == 2, "endpoint availability should have 2 endpoints")
+	err = store.DB.QueryRow(query_str, testFhirEndpoint2.URL).Scan(&http_200_ct, &http_all_ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, http_all_ct == 1, "endpoint should http return count of 1")
+	th.Assert(t, http_200_ct == 1, "endpoint should have http 200 return count of 1")
 
 	// check that an item with the same URL updates the endpoint in the database
 	queueTmp["tlsVersion"] = "TLS 1.3"
+	queueTmp["httpResponse"] = 404
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -194,11 +190,13 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
+	th.Assert(t, storedEndpt.HTTPResponse == 404, "The http response was not updated")
 
-	// check that if same URL is queried again http_all_count is incremented
-	err = store.DB.QueryRow(query_str, testFhirEndpoint2.URL).Scan(&http_200_ct, http_all_ct)
+	// check that availability is updated
+	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, &http_all_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_count == 2, "http all count should have been incremented to 2")
+	th.Assert(t, http_all_ct == 2, "http all count should have been incremented to 2")
+	th.Assert(t, storedEndpt.Availability == 0.5, "endpoint availability should have been updated to 0.5")
 
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
 

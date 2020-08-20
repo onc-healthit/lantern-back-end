@@ -21,6 +21,7 @@ var testQueueMsg = map[string]interface{}{
 	"smarthttpResponse": 0,
 	"smartResp":         nil,
 	"responseTime":      0.1234,
+	"availability":      1.0,
 }
 
 var testValidationObj = endpointmanager.Validation{
@@ -320,6 +321,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
 	ResponseTime:       0.1234,
+	Availability:       1.0,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
