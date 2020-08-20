@@ -499,7 +499,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	err = query_str.Scan(&fhir_version_count)
 	failOnError(err)
 	if fhir_version_count < expected_fhir_version_count {
-		t.Fatalf("There should be at least 25 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
+		t.Fatalf("There should be at least 30 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
 	}
 
 	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
@@ -522,7 +522,18 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	Assert.Contains(t, test_vendor_list, common_vendor_list[0], "List of distinct vendors should include Epic")
 	Assert.Contains(t, test_vendor_list, common_vendor_list[1], "List of distinct vendors should include Cerner")
 
-	populateTestEndpointData(shortEndptList, "Test")
+	// Test that availability is populated
+	availability_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_availability;")
+	expected_availability_ct := 30
+	var availability_count int
+	err = availability_ct_st.Scan(&availability_count)
+	failOnError(err)
+	if availability_count !=  expected_availability_ct{
+		t.Fatalf("There should be same number of endpoints in availability table as fhir_endpoints_info, Got: %d", availability_count)
+	}
+
+	// Test that old endpoints are removed if not in list on update
+	populateTestEndpointData(shortEndptList)
 
 	expected_endpt_ct := 26
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
@@ -545,6 +556,13 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	failOnError(err)
 	if link_count != expected_link_count {
 		t.Fatalf("endpoint_organization should still have %d links after update", expected_link_count)
+	}
+
+	// Check that endpoints were not deleted from availability table
+	err = availability_ct_st.Scan(&availability_count)
+	failOnError(err)
+	if availability_count != expected_availability_ct {
+		t.Fatalf("fhir_endpoints_availability should still have %d endpoints after update, Got: %d", expected_availability_ct, availability_count)
 	}
 
 	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
@@ -585,6 +603,18 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		query_str := "SELECT id FROM fhir_endpoints WHERE url=$1;"
 		err = store.DB.QueryRow(query_str, url).Scan(&endpoint_id)
 		th.Assert(t, err == sql.ErrNoRows, fmt.Sprintf("expected %s to be deleted", url))
+
+		// check that endpoint availability is correct
+		var http_response int
+		var availability float64
+		get_availability_str := "SELECT http_response, availability FROM fhir_endpoints_info WHERE url=$1;"
+		err = store.DB.QueryRow(get_availability_str, url).Scan(&http_response, &availability)
+		failOnError(err)
+		if http_response == 200 {
+			th.Assert(t, availability == 1.0, fmt.Sprintf("expected availability for %s to be %f", url, availability))
+		} else {
+			th.Assert(t, availability == 0, fmt.Sprintf("expected availability for %s to be %f", url, availability))
+		}
 	}
 }
 

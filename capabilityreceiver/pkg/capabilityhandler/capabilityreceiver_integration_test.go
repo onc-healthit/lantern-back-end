@@ -199,6 +199,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, storedEndpt.Availability == 0.5, "endpoint availability should have been updated to 0.5")
 
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
+	queueTmp["httpResponse"] = 200
 
 	// check that error adding to store throws error
 	queueTmp["url"] = "https://a-new-url.com"
