@@ -127,6 +127,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	message = Message{}
 	message.MIMETypes = []string{fhir3PlusJSONMIMEType}
 	expectedCapStat, err = capabilityStatement()
+	th.Assert(t, err == nil, err)
 	expectedMimeType = fhir3PlusJSONMIMEType
 	expectedTLSVersion = "TLS 1.0"
 
