@@ -17,18 +17,17 @@ FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_availability_info() RETURNS VOID as $$
-    DECLARE
+    DECLARE 
+        i             record;
         okay_count      bigint;
         all_count       bigint;
     BEGIN
-        FOR url IN
-            SELECT DISTINCT url FROM fhir_endpoint_info_history;
+        FOR i IN SELECT DISTINCT fhir_endpoints_info_history.url FROM fhir_endpoints_info_history
         LOOP
-            SELECT COUNT(*) INTO all_count FROM fhir_endpoints_info_history WHERE url = url AND (operation = 'I' OR operation = 'U');
-            SELECT COUNT(*) INTO okay_count FROM fhir_endpoint_info_history WHERE url = url AND http_response = 200 AND (operation = 'I' OR operation = 'U');
-            INSERT INTO fhir_endpoint_availabilty VALUES (url, okay_count, all_count);
-            UPDATE fhir_endpoint_info SET availability = (okay_count * 1.0) / all_count;
-            RETURN NEW url;
+            SELECT COUNT(*) INTO all_count FROM fhir_endpoints_info_history WHERE url = i.url AND (operation = 'I' OR operation = 'U');
+            SELECT COUNT(*) INTO okay_count FROM fhir_endpoints_info_history WHERE url = i.url AND http_response = 200 AND (operation = 'I' OR operation = 'U');
+            INSERT INTO fhir_endpoints_availability VALUES (i.url, okay_count, all_count);
+            UPDATE fhir_endpoints_info SET availability = (okay_count * 1.0) / all_count WHERE url = i.url;
         END LOOP;
     END
 $$ LANGUAGE plpgsql;
