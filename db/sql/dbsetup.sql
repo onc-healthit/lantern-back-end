@@ -217,7 +217,9 @@ CREATE TABLE product_criteria (
 CREATE TABLE fhir_endpoint_availability (
     url             VARCHAR(500),
     http_200_count       BIGINT,
-    http_all_count       BIGINT
+    http_all_count       BIGINT,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX fhir_endpoint_url_index ON fhir_endpoints (url);
