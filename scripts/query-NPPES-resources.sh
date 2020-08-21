@@ -3,12 +3,18 @@
 #update source data from endpoint source list and NPPES
 cd ../resources/prod_resources
 YEAR=$(date +%Y)
-PASTMONTH=$(date -v-1m +%B)
-MONTH=$(date +%B)	
-DATE=$(date +%Y%m%d)
-PASTDATE=$(date -v-1m +%Y%m%d)	
+PASTMONTH=$(date -v-1m +%B 2> /dev/null) || PASTMONTH=$(date -d '1 months ago' +%B)
+MONTH=$(date +%B)
+
+if [[ "${PASTMONTH}" -eq "December" ]]
+then
+  PASTYEAR=$(date -v-1y +%Y 2> /dev/null) || PASTYEAR=$(date -d '1 years ago' +%Y)
+else
+  PASTYEAR=$(date +%Y)
+fi
+
 NPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YEAR}.zip"
-PASTNPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${YEAR}.zip"
+PASTNPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${PASTYEAR}.zip"
 
 rm -f endpoint_pfile.csv
 rm -f npidata_pfile.csv
