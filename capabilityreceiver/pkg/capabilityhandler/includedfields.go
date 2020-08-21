@@ -117,37 +117,55 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "resource-approvalDate"},
 		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "resource-effectivePeriod"},
 		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "resource-lastReviewDate"},
-	}
-
-	multipleFieldsExtensionList := [][]string{
-		{"http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "resource", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchRevInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "interaction", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "resource", "searchParam", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
 	}
 
 	// Get name of extension and create extensionObj with extension name, if the extension exists, and if it is an extension
 	for _, extensionPath := range extensionList {
 		extensionName := extensionPath[len(extensionPath)-1]
 		extensionURL := extensionPath[len(extensionPath)-2]
-		extensionObj := endpointmanager.IncludedField{
-			Field:     extensionName,
-			Exists:    checkExtension(capInt, extensionPath, extensionURL),
-			Extension: true,
+		//Check if includedFields already contains this extension
+		index := includedFieldsContains(includedFields, extensionName)
+		if index != -1 {
+			//If includedFields contains extension but Exists is false, check next possible location to see if it exists
+			if !includedFields[index].Exists {
+				includedFields[index].Exists = checkExtension(capInt, extensionPath, extensionURL)
+			} else {
+				continue
+			}
+		} else {
+			extensionObj := endpointmanager.IncludedField{
+				Field:     extensionName,
+				Exists:    checkExtension(capInt, extensionPath, extensionURL),
+				Extension: true,
+			}
+			includedFields = append(includedFields, extensionObj)
 		}
-		includedFields = append(includedFields, extensionObj)
-	}
-
-	// Get name of extension with multiple possible locations and create extensionObj with extension name, if the extension exists, and if it is an extension
-	for _, multipleExtensionPath := range multipleFieldsExtensionList {
-		extensionName := multipleExtensionPath[1]
-		extensionURL := multipleExtensionPath[0]
-		extensionObj := endpointmanager.IncludedField{
-			Field:     extensionName,
-			Exists:    checkMultipleFieldsExtension(capInt, extensionURL, extensionName),
-			Extension: true,
-		}
-		includedFields = append(includedFields, extensionObj)
 	}
 
 	return includedFields
@@ -161,8 +179,8 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 		}
 
 		field := capInt[name]
-
-		if name == "extension" || name == "modifierExtension" {
+		// Check if at an extension field in fieldNames
+		if index == len(fieldNames)-3 {
 			extensionArr := field.([]interface{})
 			return checkExtensionURL(extensionArr, url)
 		} else if arrContains(arrayFields, name) {
@@ -190,7 +208,7 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 		if extensionField == nil {
 			// If the desired field does not exist in that object, continue to the next object within the array of interface objects
 			continue
-		} else if name != "extension" && name != "modifierExtension" && arrContains(arrayFields, name) {
+		} else if len(fieldNames)-3 != 0 && arrContains(arrayFields, name) {
 			// If the desired field is not extension or modifierExtension and it is also an array of interface objects, call checkArrFieldExtension with this new array
 			fieldArr := extensionField.([]interface{})
 			length := len(fieldNames)
@@ -198,7 +216,7 @@ func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url str
 			if found {
 				return found
 			}
-		} else if name != "extension" && name != "modifierExtension" && !arrContains(arrayFields, name) {
+		} else if len(fieldNames)-3 != 0 && !arrContains(arrayFields, name) {
 			// If the desired field is not extension or modifierExtension and it is not an array of interface objects, call checkExtension with this field map[string]interface
 			extensionField := extensionField.(map[string]interface{})
 			length := len(fieldNames)
@@ -232,48 +250,6 @@ func checkExtensionURL(extensionArr []interface{}, url string) bool {
 	return found
 }
 
-// checkMultipleFieldsExtension loops through all the possible locations of the extension to see if it exists
-func checkMultipleFieldsExtension(capInt map[string]interface{}, url string, extensionString string) bool {
-	var extensionList [][]string
-	if extensionString == "capabilitystatement-prohibited" || extensionString == "conformance-prohibited" {
-		extensionList = [][]string{
-			{"rest", "resource", "interaction", "modifierExtension"},
-			{"rest", "resource", "searchParam", "modifierExtension"},
-			{"rest", "searchParam", "modifierExtension"},
-			{"rest", "operation", "modifierExtension"},
-			{"document", "modifierExtension"},
-			{"rest", "interaction", "modifierExtension"},
-		}
-	}
-
-	if extensionString == "capabilitystatement-expectation" || extensionString == "conformance-expectation" {
-		extensionList = [][]string{
-			{"rest", "resource", "interaction", "extension"},
-			{"rest", "resource", "searchParam", "extension"},
-			{"rest", "searchParam", "extension"},
-			{"rest", "operation", "extension"},
-			{"document", "extension"},
-			{"rest", "interaction", "extension"},
-		}
-	}
-
-	if extensionString == "capabilitystatement-expectation" {
-		row1 := []string{"rest", "resource", "_searchInclude", "extension"}
-		row2 := []string{"rest", "resource", "_searchRevInclude", "extension"}
-		extensionList = append(extensionList, row1, row2)
-	}
-
-	found := false
-	for _, extensionPath := range extensionList {
-		found = checkExtension(capInt, extensionPath, url)
-		if found {
-			break
-		}
-	}
-
-	return found
-}
-
 func arrContains(arr []string, str string) bool {
 	for _, a := range arr {
 		if a == str {
@@ -281,4 +257,14 @@ func arrContains(arr []string, str string) bool {
 		}
 	}
 	return false
+}
+
+// Checks if includedFields array already contains an extension with extensionName
+func includedFieldsContains(includedFields []endpointmanager.IncludedField, extensionName string) int {
+	for index, fieldObj := range includedFields {
+		if fieldObj.Field == extensionName {
+			return index
+		}
+	}
+	return -1
 }
