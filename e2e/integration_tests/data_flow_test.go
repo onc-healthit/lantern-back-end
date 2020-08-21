@@ -613,11 +613,11 @@ func Test_LanternSource(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
-	expected_link_count := 3
+	expected_link_count := 4
 	var link_count int
 
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")

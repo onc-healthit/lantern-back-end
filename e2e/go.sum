@@ -247,6 +247,7 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d/go.mod h1:o96d
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6 h1:+wJAkmqrYYmQ5tH7o9ssLXq4UMwEeDZEdv/hQwABaoE=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:D1+Dbr7oRkqfpFVytc9HB9DcaqbVhG63FMi0WxLakUE=
+github.com/onc-healthit/lantern-back-end v1.0.0 h1:C6FIvZRahTlpLqPdlq7mPYsqmy+ZgL/VxHuFEGxzP6Y=
 github.com/onc-healthit/lantern-back-end/capabilityquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:coNhm1eDaFhpn7ludPQYFlLFntXTyIb+7VPO5Wb2fBc=
 github.com/onc-healthit/lantern-back-end/capabilityreceiver v0.0.0-20200821155436-0db4e1ee207d h1:1bPuYcMCEfY5Ebda8h8Mj45nuISSN9D9sPxTCzvNbVk=
 github.com/onc-healthit/lantern-back-end/capabilityreceiver v0.0.0-20200821155436-0db4e1ee207d/go.mod h1:WexVlI1rRqJlcm8iafNnmU09bgMVZiF/elydWQ59hDk=
@@ -285,6 +286,7 @@ github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200813185856-8
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200813185856-847e227c7366/go.mod h1:0aj5b+a/IfXHEXN8kDDmFfMLAy84siwjIkfv+TX+Rfc=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200813191243-8d38570f1722 h1:JMiEA+RSDhTolQxQiMQHAAi5RSIjw678jrHR1oIebIA=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200813191243-8d38570f1722/go.mod h1:RpE7Gnxe0Crd/046eRbvVpgOlqRyxy4/gmQg1S0iCmA=
+github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200821133130-e05844ab1fc3 h1:fHus0K5KRlfew/7Pvg8QdYnp9jcrvpoq5zfTdZFKBB8=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200821155203-25f2ded89be2 h1:x/FkaD+yA8qo4DkaLjFHZqmaM0uD87ZQDuxtn1EAGvs=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200821155203-25f2ded89be2/go.mod h1:uwilPD14DgikyFzGBifWQzQKdL/VV6eoSyCJ0duc28A=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200821155436-0db4e1ee207d h1:qKsN1IhfzfY9qRBvRo+5o6qyMJOq7jv6X196W4Bk5JE=
