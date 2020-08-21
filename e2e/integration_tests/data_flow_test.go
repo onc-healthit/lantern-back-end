@@ -533,7 +533,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	}
 
 	// Test that old endpoints are removed if not in list on update
-	populateTestEndpointData(shortEndptList)
+	populateTestEndpointData(shortEndptList, "Test")
 
 	expected_endpt_ct := 26
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
