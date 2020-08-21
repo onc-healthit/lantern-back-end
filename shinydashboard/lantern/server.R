@@ -195,7 +195,7 @@ function(input, output, session) {
     }
   })
 
-    observeEvent(input$removeall, {
+  observeEvent(input$removeall, {
     if (input$removeall == 0) {
       return(NULL)
     }
