@@ -23,20 +23,28 @@ capabilitymodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  sel_resources
 ) {
 
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
     res <- app_data$endpoint_resource_types
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), sel_resources())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     if (sel_vendor() != ui_special_values$ALL_VENDORS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+
+    if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
+      list <- get_resource_list(res)
+      req(sel_resources() %in% list)
+      res <- res %>% filter(type %in% sel_resources())
+    }
+
     res
   })
 
@@ -68,7 +76,7 @@ capabilitymodule <- function(
   output$resource_bar_plot <- renderCachedPlot({
     ggplot(endpoint_resource_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
-      geom_text(aes(label = stat(y)), vjust = 0.5, hjust = -.5) +
+      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 14)) +
       labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
@@ -81,7 +89,7 @@ capabilitymodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), app_data$last_updated)
     })
 
 }

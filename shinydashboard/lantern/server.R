@@ -37,7 +37,8 @@ function(input, output, session) {
     capabilitymodule,
     "capability_page",
     reactive(input$fhir_version),
-    reactive(input$vendor))
+    reactive(input$vendor),
+    reactive(input$resources))
 
   callModule(
     fieldsmodule,
@@ -69,6 +70,8 @@ function(input, output, session) {
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
+
+  show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -130,6 +133,74 @@ function(input, output, session) {
             selectize = FALSE)
         )
       )
+    }
+  })
+
+  checkbox_resources <- reactive({
+    res <- app_data$endpoint_resource_types
+    req(input$fhir_version, input$vendor)
+    if (input$fhir_version != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == input$fhir_version)
+    }
+    if (input$vendor != ui_special_values$ALL_VENDORS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+           distinct(type) %>%
+           arrange(type) %>%
+           split(.$type) %>%
+           purrr::map(~ .$type)
+
+    return(res)
+  })
+
+  output$show_resource_checkboxes <- renderUI({
+    if (show_resource_checkbox()) {
+      fluidPage(
+        fluidRow(
+          actionButton("selectall", "Select All Resources"),
+          actionButton("removeall", "Clear All Resources"),
+          selectizeInput("resources", "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+          p("Note: The resource list will only contain resources that are supported by endpoints that pass the selected filtering criteria.", style = "font-size:13px; margin-top:-15px")
+        )
+      )
+    }
+  })
+
+  current_selection <- reactiveVal(NULL)
+
+  observeEvent(input$resources, {
+    current_selection(input$resources)
+  })
+
+  observe({
+    req(input$side_menu)
+    if (show_resource_checkbox()) {
+      updateSelectInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = checkbox_resources())
+    }
+  })
+
+  observe({
+    req(input$fhir_version, input$vendor)
+    updateSelectInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = current_selection())
+  })
+
+  observeEvent(input$selectall, {
+    if (input$selectall == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  observeEvent(input$removeall, {
+    if (input$removeall == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 }

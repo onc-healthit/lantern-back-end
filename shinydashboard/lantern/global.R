@@ -28,8 +28,9 @@ devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_FHIR_VERSIONS" = "All FHIR Versions",
-  "ALL_VENDORS" = "All Vendors"
-  )
+  "ALL_VENDORS" = "All Vendors",
+  "ALL_RESOURCES" = "All Resources"
+)
 
 # The list of fhir versions and vendors are unlikely to change during a user's session
 # we'll update them on timer, but not refresh the UI
