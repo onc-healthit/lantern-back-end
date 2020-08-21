@@ -160,9 +160,10 @@ function(input, output, session) {
       fluidPage(
         fluidRow(
           actionButton("selectall", "Select All Resources"),
-          actionButton("removeall", "Clear All Resources")
-        ),
-        selectizeInput("resources", "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%")
+          actionButton("removeall", "Clear All Resources"),
+          selectizeInput("resources", "Choose or type in any resource from the list below:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+          p("Note: The resource list will only contain resources that are supported by endpoints that pass the selected filtering criteria.", style = "font-size:13px; margin-top:-15px")
+        )
       )
     }
   })
