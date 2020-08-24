@@ -163,7 +163,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	critJSON, err := getCriteriaJSON(ctx, &(tc.Client))
+	critJSON, err := getCriteriaJSON(ctx, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
@@ -185,7 +185,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, _ = getCriteriaJSON(ctx, &(tc.Client))
+	_, _ = getCriteriaJSON(ctx, &(tc.Client), "")
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -205,7 +205,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, _ = getCriteriaJSON(ctx, &(tc.Client))
+	_, _ = getCriteriaJSON(ctx, &(tc.Client), "")
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
@@ -227,7 +227,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getCriteriaJSON(ctx, &(tc.Client))
+	_, err = getCriteriaJSON(ctx, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// ok

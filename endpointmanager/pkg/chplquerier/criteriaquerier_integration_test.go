@@ -186,7 +186,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 
 	ctx = context.Background()
 
-	err = GetCHPLCriteria(ctx, store, &(tc.Client))
+	err = GetCHPLCriteria(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -209,7 +209,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM certification_criteria;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLCriteria(ctx, store, &(tc.Client))
+	err = GetCHPLCriteria(ctx, store, &(tc.Client), "")
 
 	// expect presence of a log message
 	found := false
@@ -235,7 +235,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM certification_criteria;") // reset values
 	th.Assert(t, err == nil, err)
 
-	err = GetCHPLCriteria(ctx, store, &(tc.Client))
+	err = GetCHPLCriteria(ctx, store, &(tc.Client), "")
 	switch errors.Cause(err).(type) {
 	case *json.SyntaxError:
 		// ok

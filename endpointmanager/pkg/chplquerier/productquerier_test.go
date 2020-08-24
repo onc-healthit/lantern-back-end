@@ -317,7 +317,7 @@ func Test_getProductJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, _ = getProductJSON(ctx, &(tc.Client))
+	_, _ = getProductJSON(ctx, &(tc.Client), "")
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -337,7 +337,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, _ = getProductJSON(ctx, &(tc.Client))
+	_, _ = getProductJSON(ctx, &(tc.Client), "")
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
