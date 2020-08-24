@@ -112,7 +112,7 @@ The vendor table stores health IT product vendor information gathered from CHPL.
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
 ## healthit_products table
-The vendor table stores health IT product information gathered from CHPL.
+The healthit_products table stores health IT product information gathered from CHPL.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | id     | INTEGER | Database ID of healthit product |
@@ -131,3 +131,28 @@ The vendor table stores health IT product information gathered from CHPL.
 | chpl_id | VARCHAR(500)      |    Healthit product CHPL ID |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## certification_criteria table
+The certification_criteria table stores certification criteria information gathered from CHPL.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id | INTEGER | Database ID of certification criteria |
+| certification_id | INTEGER | ID of the certification criteria saved in CHPL |
+|	cerification_number | VARCHAR(500) | The name of the certification criteria |
+|	title | VARCHAR(500) | The title of the certification criteria |
+| certification_edition_id  | INTEGER | The ID of the certification edition the criteria was defined in |
+|	certification_edition | VARCHAR(500) | The certification edition of the criteria |
+|	description | VARCHAR(500) | Description of the certification criteria |
+|	removed | BOOLEAN | Whether the criteria has been removed |
+| created_at | TIMESTAMPTZ | Timestamp of creation |
+| updated_at | TIMESTAMPTZ | Timestamp of last update |
+
+## product_criteria table
+The product criteria table maps the Health IT product Database ID to entries in the certification_criteria based on the product's `certification_criteria` field.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| healthit_product_id | INTEGER | Database ID of healthit product |
+| certification_id | INTEGER | ID of the certification criteria saved in CHPL |
+| certification_number | VARCHAR(500) | The name of the certification criteria |
+| created_at | TIMESTAMPTZ | Timestamp of creation |
+| updated_at | TIMESTAMPTZ | Timestamp of last update |
