@@ -305,7 +305,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	// as of 7/30/20, at least 182 entries are expected to be added to the database
 	minNumExpCriteriaStored := 182
 
-	err = chplquerier.GetCHPLCriteria(ctx, store, client)
+	err = chplquerier.GetCHPLCriteria(ctx, store, client, "")
 	assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM certification_criteria;")
 	err = rows.Scan(&actualCriteriaStored)

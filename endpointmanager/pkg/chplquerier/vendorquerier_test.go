@@ -16,7 +16,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
-	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
@@ -355,9 +354,6 @@ func Test_getVendorJSON(t *testing.T) {
 
 	hook := logtest.NewGlobal()
 	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed:"
-
-	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/developers?api_key=tmp_api_key\": context canceled"
 
 	tc, err = basicVendorTestClient()
 	th.Assert(t, err == nil, err)
