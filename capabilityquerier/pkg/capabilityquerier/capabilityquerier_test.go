@@ -123,7 +123,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(message.MIMETypes) == 0, "expected no matched mime types")
 
-	// test with one mime type and it's the one that works
+	// test with fhir3PlusJSONMIMEType already saved
 	message = Message{}
 	message.MIMETypes = []string{fhir3PlusJSONMIMEType}
 	expectedCapStat, err = capabilityStatement()
@@ -145,7 +145,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
-	// test with one mime type and it's the other one that works
+	// test with fhir2LessJSONMIMEType already saved
 	message = Message{}
 	message.MIMETypes = []string{fhir2LessJSONMIMEType}
 	expectedCapStat, err = capabilityStatement()
@@ -165,6 +165,28 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
 	th.Assert(t, len(message.MIMETypes) == 1, fmt.Sprintf("expected one matched mime type. Got %d.", len(message.MIMETypes)))
 	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
+	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
+
+	// test situation where fhir2LessJSONMIMEType is saved but only fhir3PlusJSONMIMEType works
+	message = Message{}
+	message.MIMETypes = []string{fhir2LessJSONMIMEType}
+	expectedCapStat, err = capabilityStatement()
+	th.Assert(t, err == nil, err)
+	expectedMimeType = fhir3PlusJSONMIMEType
+	expectedTLSVersion = "TLS 1.0"
+
+	ctx = context.Background()
+	tc, err = testClientOnlyAcceptGivenType(fhir3PlusJSONMIMEType)
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, "metadata", &(tc.Client), "", &message)
+	th.Assert(t, err == nil, err)
+	capStat, err = json.Marshal(message.CapabilityStatement)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, bytes.Equal(capStat, expectedCapStat), "capability statement did not match expected capability statement")
+	th.Assert(t, len(message.MIMETypes) == 1, fmt.Sprintf("expected one matched mime type. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("mismatched: expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
 	// test with two mime types and they both don't work
@@ -338,6 +360,28 @@ func testClientWithContentType(contentType string) (*th.TestClient, error) {
 		w.Header().Set("Content-Type", contentType+"; charset=utf-8")
 
 		if r.Header.Get("Accept") != fhir2LessJSONMIMEType && r.Header.Get("Accept") != fhir3PlusJSONMIMEType {
+			http.Error(w, "sample 406 error", http.StatusNotAcceptable)
+		} else {
+			_, _ = w.Write(okResponse)
+		}
+	})
+
+	tc := th.NewTestClient(h)
+
+	return tc, nil
+}
+
+func testClientOnlyAcceptGivenType(contentType string) (*th.TestClient, error) {
+	path := filepath.Join("testdata", "metadata.json")
+	okResponse, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", contentType+"; charset=utf-8")
+
+		if r.Header.Get("Accept") != contentType {
 			http.Error(w, "sample 406 error", http.StatusNotAcceptable)
 		} else {
 			_, _ = w.Write(okResponse)
