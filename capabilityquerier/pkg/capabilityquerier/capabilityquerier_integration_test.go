@@ -1,22 +1,19 @@
 // +build integration
 
-package capabilityquerier_test
+package capabilityquerier
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
-	"path/filepath"
 	"testing"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	log "github.com/sirupsen/logrus"
@@ -106,7 +103,7 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 			fmt.Printf("Getting and sending capability statement %d/10\n", i+1)
 			metadataURL.Path = path.Join(metadataURL.Path, "metadata")
 			args := make(map[string]interface{})
-			querierArgs := capabilityquerier.QuerierArgs{
+			querierArgs := QuerierArgs{
 				FhirURL:      metadataURL.String(),
 				Client:       client,
 				MessageQueue: mq,
@@ -115,7 +112,7 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 				Store:        store,
 			}
 			args["querierArgs"] = querierArgs
-			err = capabilityquerier.GetAndSendCapabilityStatement(ctx, &args)
+			err = GetAndSendCapabilityStatement(ctx, &args)
 			th.Assert(t, err == nil, err)
 		}
 	}
@@ -157,7 +154,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
-	expectedMsgStruct := capabilityquerier.Message{
+	expectedMsgStruct := Message{
 		URL:               fhirURL.String(),
 		MIMETypes:         expectedMimeType,
 		TLSVersion:        expectedTLSVersion,
@@ -176,7 +173,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	args := make(map[string]interface{})
-	querierArgs := capabilityquerier.QuerierArgs{
+	querierArgs := QuerierArgs{
 		FhirURL:      sampleURL,
 		Client:       &(tc.Client),
 		MessageQueue: &mq,
@@ -187,13 +184,13 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	args["querierArgs"] = querierArgs
 
 	// execute tested function
-	err = capabilityquerier.GetAndSendCapabilityStatement(ctx, &args)
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
 
 	//Change response time in message to 0 to make the response time match with the expected message
-	var messageStruct capabilityquerier.Message
+	var messageStruct Message
 	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when unmarshalling message")
 	messageStruct.ResponseTime = 0
@@ -206,7 +203,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	err = capabilityquerier.GetAndSendCapabilityStatement(ctx, &args)
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, "expected GetAndSendCapabilityStatement not to error out due to context ending")
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one messages on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
@@ -223,7 +220,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	querierArgs.Client = &(tc.Client)
 	args["querierArgs"] = querierArgs
 
-	err = capabilityquerier.GetAndSendCapabilityStatement(ctx, &args)
+	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
@@ -296,48 +293,4 @@ func teardown() {
 	conn.Close()
 	conn.Close()
 	store.Close()
-}
-
-func capabilityStatement() ([]byte, error) {
-	path := filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var capStatInt interface{}
-
-	err = json.Unmarshal(expectedCapStat, &capStatInt)
-	if err != nil {
-		return nil, err
-	}
-
-	expectedCapStat, err = json.Marshal(capStatInt)
-	if err != nil {
-		return nil, err
-	}
-
-	return expectedCapStat, nil
-}
-
-func testClientWithContentType(contentType string) (*th.TestClient, error) {
-	path := filepath.Join("testdata", "metadata.json")
-	okResponse, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", contentType+"; charset=utf-8")
-
-		if r.Header.Get("Accept") != fhir2LessJSONMIMEType && r.Header.Get("Accept") != fhir3PlusJSONMIMEType {
-			http.Error(w, "sample 406 error", http.StatusNotAcceptable)
-		} else {
-			_, _ = w.Write(okResponse)
-		}
-	})
-
-	tc := th.NewTestClient(h)
-
-	return tc, nil
 }

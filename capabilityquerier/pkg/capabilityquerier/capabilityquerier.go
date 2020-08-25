@@ -330,7 +330,6 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 		// first JSON request type it receives and continues to respond with that.
 		if isJSONMIMEType(respMimeType) {
 			defer resp.Body.Close()
-			//println("URL: " + req.URL.String() + " MIME Type: " + req.Header.Get("Accept") + " HTTP Response Code: " + strconv.Itoa(resp.StatusCode) + " HTTP OK: " + strconv.Itoa(http.StatusOK) + " Encode: " + req.Form.Encode())
 			mimeMatches = true
 
 			capStat, err = ioutil.ReadAll(resp.Body)
