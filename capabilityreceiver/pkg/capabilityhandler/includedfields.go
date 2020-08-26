@@ -56,9 +56,10 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 	// Get name of field
 	for _, fieldNames := range fieldsList {
 		var stringIndex string
-		if len(fieldNames) != 1 {
+		length := len(fieldNames)
+		if length != 1 {
 			for index, name := range fieldNames {
-				if index == (len(fieldNames) - 1) {
+				if index == length-1 {
 					stringIndex = stringIndex + name
 				} else if index == 0 {
 					stringIndex = name + "."
@@ -149,7 +150,7 @@ func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields [
 	for _, extensionPath := range extensionList {
 		extensionName := extensionPath[len(extensionPath)-1]
 		extensionURL := extensionPath[len(extensionPath)-2]
-		//Check if includedFields already contains this extension
+		// Check if includedFields already contains this extension
 		index := includedFieldsContains(includedFields, extensionName)
 		if index != -1 {
 			//If includedFields contains extension but Exists is false, check next possible location to see if it exists
@@ -179,14 +180,14 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 		}
 
 		field := capInt[name]
+		length := len(fieldNames)
 		// Check if at an extension field in fieldNames
-		if index == len(fieldNames)-3 {
+		if index == length-3 {
 			extensionArr := field.([]interface{})
 			return checkExtensionURL(extensionArr, url)
 		} else if arrContains(arrayFields, name) {
 			fieldArr := field.([]interface{})
 			nextIndex := index + 1
-			length := len(fieldNames)
 			return checkArrFieldExtension(fieldNames[nextIndex:length], fieldArr, url)
 		} else {
 			capInt = field.(map[string]interface{})
@@ -199,27 +200,27 @@ func checkExtension(capInt map[string]interface{}, fieldNames []string, url stri
 // Given an array of interface objects, loops through each object to check whether the extension is populated following the path of fieldNames
 func checkArrFieldExtension(fieldNames []string, fieldArr []interface{}, url string) bool {
 	var found bool
+	length := len(fieldNames)
+	name := fieldNames[0]
+	interfaceArrTrue := arrContains(arrayFields, name)
 	// Loop through the array of interface objects
 	for _, obj := range fieldArr {
 		// For each object in interface array, get desired field using name in fieldNames
-		name := fieldNames[0]
 		objMap := obj.(map[string]interface{})
 		extensionField := objMap[name]
 		if extensionField == nil {
 			// If the desired field does not exist in that object, continue to the next object within the array of interface objects
 			continue
-		} else if len(fieldNames)-3 != 0 && arrContains(arrayFields, name) {
+		} else if length-3 != 0 && interfaceArrTrue {
 			// If the desired field is not extension or modifierExtension and it is also an array of interface objects, call checkArrFieldExtension with this new array
 			fieldArr := extensionField.([]interface{})
-			length := len(fieldNames)
 			found = checkArrFieldExtension(fieldNames[1:length], fieldArr, url)
 			if found {
 				return found
 			}
-		} else if len(fieldNames)-3 != 0 && !arrContains(arrayFields, name) {
+		} else if length-3 != 0 && !interfaceArrTrue {
 			// If the desired field is not extension or modifierExtension and it is not an array of interface objects, call checkExtension with this field map[string]interface
 			extensionField := extensionField.(map[string]interface{})
-			length := len(fieldNames)
 			found = checkExtension(extensionField, fieldNames[1:length], url)
 			if found {
 				return found
