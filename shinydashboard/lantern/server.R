@@ -1,13 +1,13 @@
 # Define server function
 function(input, output, session) {
-
-  observe({
+  setBookmarkExclude(session)
+  
+  observeEvent(input$side_menu, {
     # Trigger this observer every time an input changes
-    reactiveValuesToList(input)
     session$doBookmark()
-  })
+  }, ignoreInit = FALSE,)
   onBookmarked(function(url) {
-    updateQueryString(url)
+    updateQueryString(paste0("?tab=",input$side_menu), mode = "push")
   })
 
   callModule(
