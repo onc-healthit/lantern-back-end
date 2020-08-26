@@ -36,11 +36,6 @@ var endpoints fetcher.ListOfEndpoints
 var conn *amqp.Connection
 var channel *amqp.Channel
 
-var sampleURL = "https://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/"
-var sampleURLNoTLS = "http://fhir-myrecord.cerner.com/dstu2/sqiH60CNKO9o0PByEO9XAxX0dZX5s5b2/"
-var fhir3PlusJSONMIMEType = "application/fhir+json"
-var fhir2LessJSONMIMEType = "application/json+fhir"
-
 func TestMain(m *testing.M) {
 	var err error
 
