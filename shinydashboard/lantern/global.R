@@ -13,16 +13,6 @@ library(shiny)
 library(shinydashboard)
 library(tidyverse)
 shinyOptions(cache = memoryCache(max_size = 20e6, max_age = 3600))
-enableBookmarking(store = "url")
-
-observe({
-  query <- parseQueryString(session$clientData$url_search)
-  if (!is.null(query[['tab']])) {
-    updateTabItems(session, inputId = query[['tab']], selected = TRUE)
-  } else {
-    updateTabItems(session, inputId = 'dashboard_tab', selected = TRUE)
-  }
-})
 
 root <- ifelse(Sys.getenv("HOME") == "/home/shiny", ".", "lantern")
 config_yaml <- yaml::read_yaml(here(root, "configuration.yml"))
