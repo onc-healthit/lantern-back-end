@@ -38,132 +38,244 @@ var testValidationObj = endpointmanager.Validation{
 
 var testIncludedFields = []endpointmanager.IncludedField{
 	{
-		Field:  "url",
-		Exists: true,
+		Field:     "url",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "version",
-		Exists: false,
+		Field:     "version",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "name",
-		Exists: true,
+		Field:     "name",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "title",
-		Exists: false,
+		Field:     "title",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "status",
-		Exists: true,
+		Field:     "status",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "experimental",
-		Exists: false,
+		Field:     "experimental",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "date",
-		Exists: true,
+		Field:     "date",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "publisher",
-		Exists: true,
+		Field:     "publisher",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "contact",
-		Exists: false,
+		Field:     "contact",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "description",
-		Exists: true,
+		Field:     "description",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "requirements",
-		Exists: false,
+		Field:     "requirements",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "useContext",
-		Exists: false,
+		Field:     "useContext",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "jurisdiction",
-		Exists: false,
+		Field:     "jurisdiction",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "purpose",
-		Exists: false,
+		Field:     "purpose",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "copyright",
-		Exists: false,
+		Field:     "copyright",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "kind",
-		Exists: true,
+		Field:     "kind",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "instantiates",
-		Exists: false,
+		Field:     "instantiates",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "imports",
-		Exists: false,
+		Field:     "imports",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.name",
-		Exists: false,
+		Field:     "software.name",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.version",
-		Exists: false,
+		Field:     "software.version",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "software.releaseDate",
-		Exists: false,
+		Field:     "software.releaseDate",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.description",
-		Exists: false,
+		Field:     "implementation.description",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.url",
-		Exists: false,
+		Field:     "implementation.url",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "implementation.custodian",
-		Exists: false,
+		Field:     "implementation.custodian",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "fhirVersion",
-		Exists: true,
+		Field:     "fhirVersion",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "format",
-		Exists: true,
+		Field:     "format",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "patchFormat",
-		Exists: false,
+		Field:     "patchFormat",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "acceptUnknown",
-		Exists: true,
+		Field:     "acceptUnknown",
+		Exists:    true,
+		Extension: false,
 	},
 	{
-		Field:  "implementationGuide",
-		Exists: false,
+		Field:     "implementationGuide",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "profile",
-		Exists: false,
+		Field:     "profile",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "messaging",
-		Exists: false,
+		Field:     "messaging",
+		Exists:    false,
+		Extension: false,
 	},
 	{
-		Field:  "document",
-		Exists: false,
+		Field:     "document",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "conformance-supported-system",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-search-parameter-combination",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "DSTU2-oauth-uris",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilities",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-search-parameter-combination",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-supported-system",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-websocket",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "oauth-uris",
+		Exists:    true,
+		Extension: true,
+	},
+	{
+		Field:     "replaces",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-approvalDate",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-effectivePeriod",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "resource-lastReviewDate",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-expectation",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-prohibited",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-expectation",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "capabilitystatement-prohibited",
+		Exists:    false,
+		Extension: true,
 	},
 }
 
@@ -311,19 +423,22 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["responseTime"] = 0.1234
 }
 
-func Test_RunIncludedFieldsChecks(t *testing.T) {
+func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields := RunIncludedFieldsChecks(capInt)
+	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == true, "Expected name in includedFields to be true, was false")
 	th.Assert(t, includedFields[18].Exists == false, "Expected software.name in includedFields to be false, was true")
 	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
+	th.Assert(t, includedFields[41].Exists == false, "Expected expectation extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[39].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields = RunIncludedFieldsChecks(capInt)
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
 
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == false, "Expected name in includedFields to be false, was true")
@@ -331,6 +446,53 @@ func Test_RunIncludedFieldsChecks(t *testing.T) {
 	th.Assert(t, includedFields[19].Exists == true, "Expected software.version in includedFields to be true, was false")
 	th.Assert(t, includedFields[25].Exists == true, "Expected format in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == true, "Expected contact in includedFields to be true, was false")
+	th.Assert(t, includedFields[32].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[39].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Exists == false, "Expected resource-approvalDate extension in includedFields to be false, was true")
+
+	//Testing for R4 Capability Statement extensions where all extensions present
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_r4_capability_statement_extensions.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+
+	th.Assert(t, includedFields[35].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Field == "capabilities", fmt.Sprintf("Expected field to be capabilities, was %s", includedFields[34].Field))
+	th.Assert(t, includedFields[36].Exists == true, "Expected capabilitystatement-search-parameter-combination extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[36].Field == "capabilitystatement-search-parameter-combination", fmt.Sprintf("Expected field to be capabilitystatement-search-parameter-combination, was %s", includedFields[35].Field))
+	th.Assert(t, includedFields[37].Exists == true, "Expected capabilitystatement-supported-system extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[37].Field == "capabilitystatement-supported-system", fmt.Sprintf("Expected field to be capabilitystatement-supported-system, was %s", includedFields[36].Field))
+	th.Assert(t, includedFields[38].Exists == true, "Expected capabilitystatement-websocket extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[38].Field == "capabilitystatement-websocket", fmt.Sprintf("Expected field to be capabilitystatement-websocket extension, was %s", includedFields[37].Field))
+	th.Assert(t, includedFields[39].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[39].Field == "oauth-uris", fmt.Sprintf("Expected field to be oauth-uris, was %s", includedFields[38].Field))
+	th.Assert(t, includedFields[40].Exists == true, "Expected replaces extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[40].Field == "replaces", fmt.Sprintf("Expected field to be replaces, was %s", includedFields[39].Field))
+	th.Assert(t, includedFields[41].Exists == true, "Expected resource-approvalDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Field == "resource-approvalDate", fmt.Sprintf("Expected field to be resource-approvalDate, was %s", includedFields[40].Field))
+	th.Assert(t, includedFields[42].Exists == true, "Expected resource-effectivePeriod extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[42].Field == "resource-effectivePeriod", fmt.Sprintf("Expected field to be resource-effectivePeriod, was %s", includedFields[41].Field))
+	th.Assert(t, includedFields[43].Exists == true, "Expected resource-lastReviewDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[43].Field == "resource-lastReviewDate", fmt.Sprintf("Expected field to be resource-lastReviewDate, was %s", includedFields[42].Field))
+	th.Assert(t, includedFields[46].Exists == true, "Expected capabilitystatement-expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[46].Field == "capabilitystatement-expectation", fmt.Sprintf("Expected field to be capabilitystatement-expectation, was %s", includedFields[45].Field))
+	th.Assert(t, includedFields[47].Exists == true, "Expected capabilitystatement-prohibited extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[47].Field == "capabilitystatement-prohibited", fmt.Sprintf("Expected field to be capabilitystatement-prohibited, was %s", includedFields[46].Field))
+
+	//Testing for DSTU2 Capability Statement extensions where all extensions present
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_cerner_capability_dstu2_extensions.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+
+	th.Assert(t, includedFields[32].Exists == true, "Expected conformance-supported-system extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[32].Field == "conformance-supported-system", fmt.Sprintf("Expected field to be conformance-supported-system, was %s", includedFields[32].Field))
+	th.Assert(t, includedFields[33].Exists == true, "Expected conformance-search-parameter-combination extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[33].Field == "conformance-search-parameter-combination", fmt.Sprintf("Expected field to be conformance-search-parameter-combination, was %s", includedFields[33].Field))
+	th.Assert(t, includedFields[34].Exists == true, "Expected DSTU2-oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[34].Field == "DSTU2-oauth-uris", fmt.Sprintf("Expected field to be DSTU2-oauth-uris, was %s", includedFields[33].Field))
+	th.Assert(t, includedFields[44].Exists == true, "Expected conformance-expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[44].Field == "conformance-expectation", fmt.Sprintf("Expected field to be conformance-expectation, was %s", includedFields[43].Field))
+	th.Assert(t, includedFields[45].Exists == true, "Expected conformance-prohibited extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[45].Field == "conformance-prohibited", fmt.Sprintf("Expected field to be conformance-prohibited extension, was %s", includedFields[44].Field))
 }
 
 func Test_RunSupportedResourcesChecks(t *testing.T) {
