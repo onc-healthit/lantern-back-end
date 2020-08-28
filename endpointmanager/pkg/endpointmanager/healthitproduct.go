@@ -127,11 +127,8 @@ func certEqual(hitp1 []interface{}, hitp2 []interface{}) bool {
 		}
 		hitpInts2[i] = intVal
 	}
-	// compare
-	if cmp.Equal(hitpInts1, hitpInts2) {
-		return true
-	}
-	return false
+
+	return cmp.Equal(hitpInts1, hitpInts2)
 }
 
 // converts an interface to an int
