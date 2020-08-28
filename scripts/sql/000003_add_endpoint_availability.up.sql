@@ -56,11 +56,11 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
             END IF;
         ELSE
             IF NEW.http_response = 200 THEN
-                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1, http_all_count = all_count + 1 WHERE url = NEW.url;
-                NEW.availability := (okay_count + 1.0) / (all_count + 1);
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
                 RETURN NEW;
             ELSE
-                UPDATE fhir_endpoints_availability SET http_200_count = okay_count, http_all_count = all_count + 1 WHERE url = NEW.url;
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url;
                 NEW.availability := (okay_count) / (all_count + 1.0);
                 RETURN NEW;
             END IF;
