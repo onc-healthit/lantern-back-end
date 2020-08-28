@@ -18,7 +18,9 @@ function(input, output, session) {
 
   callModule(
     locationmodule,
-    "location_page")
+    "location_page",
+    reactive(input$fhir_version),
+    reactive(input$vendor))
 
   callModule(
     performancemodule,
@@ -68,7 +70,7 @@ function(input, output, session) {
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab")
   )
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
