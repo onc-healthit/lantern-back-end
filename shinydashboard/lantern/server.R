@@ -7,7 +7,6 @@ function(input, output, session) {
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
       updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
-      updateTabItems(session, "side_menu", selected = "dashboard_tab")
     }
   }, priority = 100)
 
