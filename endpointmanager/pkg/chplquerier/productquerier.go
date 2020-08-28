@@ -257,7 +257,7 @@ func persistProduct(ctx context.Context,
 		if err != nil {
 			// Should continue to rest of function even if the existing prod does not need
 			// an update
-			log.Warn("determining if a health IT product needs updating within the store failed")
+			log.Warn("determining if a health IT product needs updating within the store failed, %s", err)
 		}
 
 		if needsUpdate {
@@ -397,15 +397,22 @@ func certIDToInt(certID interface{}) (int, bool, error) {
 
 	newInt, ok = certID.(int)
 	if !ok {
-		// Check if it can be converted to a string, then convert it to an int
-		newStr, ok2 := certID.(string)
+		// if the value is a float, cast it to an int
+		newFloat, ok2 := certID.(float64)
 		if !ok2 {
-			return 0, false, fmt.Errorf("Certification ID %v is in unexpected format", certID)
-		}
-		isStr = true
-		newInt, err = strconv.Atoi(newStr)
-		if err != nil {
-			return 0, false, fmt.Errorf("Certification ID %v is in unexpected format", certID)
+			// Check if it can be converted to a string, then convert it to an int
+			newStr, ok3 := certID.(string)
+			if !ok3 {
+				return 0, false, fmt.Errorf("Certification ID %#v is in unexpected format, type %T", certID, certID)
+			}
+			isStr = true
+			newInt, err = strconv.Atoi(newStr)
+			if err != nil {
+				return 0, false, fmt.Errorf("Certification ID %v could not be converted to int", certID)
+			}
+		} else {
+			newInt = int(newFloat)
+			return newInt, false, nil
 		}
 	}
 	return newInt, isStr, nil
