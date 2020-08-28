@@ -17,14 +17,14 @@ ui <- function(request) {
     # Sidebar with menu items for each module
   dashboardSidebar(
       sidebarMenu(id = "side_menu",
-        menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = FALSE),
-        menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table"), selected = FALSE),
-        menuItem("Availability", icon = icon("th"), tabName = "availability_tab", selected = FALSE),
-        menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green", selected = FALSE),
-        menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab", selected = FALSE),
-        menuItem("Performance", icon = icon("bar-chart-o"),tabName = "performance_tab", selected = FALSE),
-        menuItem("Location", tabName = "location_tab", icon = icon("map"), selected = FALSE),
-        menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle"), selected = FALSE),
+        menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
+        menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
+        menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
+        menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab", badgeLabel = "new", badgeColor = "green"),
+        menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
+        menuItem("Performance", icon = icon("bar-chart-o"),tabName = "performance_tab"),
+        menuItem("Location", tabName = "location_tab", icon = icon("map")),
+        menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
         hr()
       )
   ),

@@ -1,16 +1,16 @@
 # Define server function
 function(input, output, session) {
-  observe({
+  observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
     if (!is.null(query[["tab"]])) {
       current_tab <- toString(query[["tab"]])
       print(current_tab)
-      updateTabItems(session, current_tab, selected = TRUE)
+      updateTabItems(session, "side_menu", selected = current_tab)
     } else {
       updateQueryString(paste0("?tab=",input$side_menu), mode = "push")
-      updateTabItems(session, "dashboard_tab", selected = TRUE)
+      updateTabItems(session, "side_menu", selected = "dashboard_tab")
     }
-  }, priority = 100,)  
+  }, priority = 1000,) 
 
   observeEvent(input$side_menu, {
     # Trigger this observer every time an input changes
