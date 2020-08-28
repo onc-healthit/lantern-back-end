@@ -99,11 +99,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		return nil, fmt.Errorf("Response time is not a float")
 	}
 
-	availability, ok := msgJSON["availability"].(float64)
-	if !ok {
-		return nil, fmt.Errorf("Availability is not a float")
-	}
-
 	fhirVersion := ""
 	if capStat != nil {
 		fhirVersion, _ = capStat.GetFHIRVersion()
@@ -127,7 +122,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		IncludedFields:      includedFields,
 		SupportedResources:  supportedResources,
 		ResponseTime:        responseTime,
-		Availability:        availability,
 	}
 
 	return &fhirEndpoint, nil
