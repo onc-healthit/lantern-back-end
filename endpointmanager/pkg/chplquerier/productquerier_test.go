@@ -38,7 +38,7 @@ var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	CertificationDate:     time.Date(2016, 7, 1, 0, 0, 0, 0, time.UTC),
 	CertificationEdition:  "2014",
 	CHPLID:                "15.04.04.2657.Care.01.00.0.160701",
-	CertificationCriteria: []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
+	CertificationCriteria: makeTestCrit(),
 	APIURL:                "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 }
 
@@ -232,7 +232,8 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	expectedResults = append(expectedResults, expectedResult{name: "dateBefore", hitProd: dateBefore, needsUpdate: false, err: nil})
 
 	critListShorter := testHITP
-	critListShorter.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37}
+	testCrit := makeTestCrit()
+	critListShorter.CertificationCriteria = testCrit[:len(testCrit)-2]
 	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
 	chplID := testHITP
@@ -377,4 +378,13 @@ func basicTestClient() (*th.TestClient, error) {
 	tc := th.NewTestClientWithResponse(okResponse)
 
 	return tc, nil
+}
+
+func makeTestCrit() []interface{} {
+	critIDs := []int{30, 31, 32, 33, 34, 35, 36, 37, 38}
+	critInt := make([]interface{}, len(critIDs))
+	for i, v := range critIDs {
+		critInt[i] = v
+	}
+	return critInt
 }
