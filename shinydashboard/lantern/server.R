@@ -6,14 +6,14 @@ function(input, output, session) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
-      updateQueryString(paste0("?tab=",input$side_menu), mode = "push")
+      updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
       updateTabItems(session, "side_menu", selected = "dashboard_tab")
     }
-  }, priority = 100,) 
+  }, priority = 100)
 
   observeEvent(input$side_menu, {
     # Trigger this observer every time an input changes
-    updateQueryString(paste0("?tab=",input$side_menu), mode = "push")
+    updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
   callModule(
