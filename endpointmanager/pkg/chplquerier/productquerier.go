@@ -236,8 +236,6 @@ func persistProducts(ctx context.Context, store *postgresql.Store, prodList *chp
 func persistProduct(ctx context.Context,
 	store *postgresql.Store,
 	prod *chplCertifiedProduct) error {
-	var needsUpdate bool
-	var err error
 
 	newDbProd, err := parseHITProd(ctx, prod, store)
 	if err != nil {
@@ -255,11 +253,11 @@ func persistProduct(ctx context.Context,
 		return errors.Wrap(err, "getting health IT product from store failed")
 	} else {
 		newElement = false
-		needsUpdate, err = prodNeedsUpdate(existingDbProd, newDbProd)
+		needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
 		if err != nil {
 			// Should continue to rest of function even if the existing prod does not need
 			// an update
-			log.Warnf("determining if a health IT product needs updating within the store failed, %s", err)
+			log.Warn("determining if a health IT product needs updating within the store failed, %s", err)
 		}
 
 		if needsUpdate {
@@ -294,9 +292,9 @@ func persistProduct(ctx context.Context,
 			if err != nil {
 				return err
 			}
-			// if it was initially saved as a string and has not been updated, update the
-			// certification criteria in the database so it's a list of ints instead of strings
-			if isStr && !needsUpdate {
+			// if it was initially saved as a string, update the certification criteria
+			// in the database so its a list of ints instead of strings
+			if isStr {
 				justUpdateCrit := existingDbProd
 				justUpdateCrit.CertificationCriteria = newDbProd.CertificationCriteria
 				err = store.UpdateHealthITProduct(ctx, justUpdateCrit)

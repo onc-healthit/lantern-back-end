@@ -1,11 +1,11 @@
 package endpointmanager
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 // HealthITProduct represents a health IT vendor product such as an
@@ -61,7 +61,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp.APIURL != hitp2.APIURL {
 		return false
 	}
-	if !certEqual(hitp.CertificationCriteria, hitp2.CertificationCriteria) {
+	if !cmp.Equal(hitp.CertificationCriteria, hitp2.CertificationCriteria) {
 		return false
 	}
 	if hitp.CertificationStatus != hitp2.CertificationStatus {
@@ -101,48 +101,4 @@ func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	hitp.CHPLID = hitp2.CHPLID
 
 	return nil
-}
-
-// compare certification criteria interface arrays, which should be able to be converted
-// to int arrays
-func certEqual(hitp1 []interface{}, hitp2 []interface{}) bool {
-	if len(hitp1) != len(hitp2) {
-		return false
-	}
-	hitpInts1 := make([]int, len(hitp1))
-	hitpInts2 := make([]int, len(hitp2))
-	// convert hitp1 to ints
-	for i, v := range hitp1 {
-		intVal, err := convertValToInt(v)
-		if err != nil {
-			return false
-		}
-		hitpInts1[i] = intVal
-	}
-	// convert hitp2 to ints
-	for i, v := range hitp2 {
-		intVal, err := convertValToInt(v)
-		if err != nil {
-			return false
-		}
-		hitpInts2[i] = intVal
-	}
-	// compare
-	if cmp.Equal(hitpInts1, hitpInts2) {
-		return true
-	}
-	return false
-}
-
-// converts an interface to an int
-func convertValToInt(val interface{}) (int, error) {
-	intVal, ok := val.(int)
-	if !ok {
-		floatVal, ok2 := val.(float64)
-		if !ok2 {
-			return 0, fmt.Errorf("Can't convert value %v of type %T", val, val)
-		}
-		intVal = int(floatVal)
-	}
-	return intVal, nil
 }
