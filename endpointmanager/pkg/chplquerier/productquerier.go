@@ -142,10 +142,6 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		}
 		criteriaIDs = append(criteriaIDs, retID)
 	}
-	critAsInterface := make([]interface{}, len(criteriaIDs))
-	for idx, critID := range criteriaIDs {
-		critAsInterface[idx] = critID
-	}
 
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
@@ -155,7 +151,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
 		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: critAsInterface,
+		CertificationCriteria: criteriaIDs,
 	}
 
 	apiURL, err := getAPIURL(prod.APIDocumentation)
@@ -255,9 +251,7 @@ func persistProduct(ctx context.Context,
 		newElement = false
 		needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
 		if err != nil {
-			// Should continue to rest of function even if the existing prod does not need
-			// an update
-			log.Warn("determining if a health IT product needs updating within the store failed")
+			return errors.Wrap(err, "determining if a health IT product needs updating within the store failed")
 		}
 
 		if needsUpdate {
@@ -272,43 +266,20 @@ func persistProduct(ctx context.Context,
 		}
 	}
 
-	// Add mapping from certification id to product id in product_criteria table
 	if newElement {
 		for _, critID := range newDbProd.CertificationCriteria {
-			// critID is an interface to convert it to an int
-			critIntID, _, err := certIDToInt(critID)
-			if err != nil {
-				return err
-			}
-			err = linkProductToCriteria(ctx, store, critIntID, newDbProd.ID)
+			err = linkProductToCriteria(ctx, store, critID, newDbProd.ID)
 			if err != nil {
 				return err
 			}
 		}
 	} else {
 		for _, critID := range existingDbProd.CertificationCriteria {
-			// critID is an interface to convert it to an int
-			critIntID, isStr, err := certIDToInt(critID)
-			if err != nil {
-				return err
-			}
-			// if it was initially saved as a string, update the certification criteria
-			// in the database so its a list of ints instead of strings
-			if isStr {
-				justUpdateCrit := existingDbProd
-				justUpdateCrit.CertificationCriteria = newDbProd.CertificationCriteria
-				err = store.UpdateHealthITProduct(ctx, justUpdateCrit)
-				if err != nil {
-					return errors.Wrap(err, "updating health IT product to store failed")
-				}
-			}
-			// remove old links from the table so we don't keep criteria ids that are
-			// no longer associated with the product
 			err = store.DeleteLinksByProduct(ctx, existingDbProd.ID)
 			if err != nil {
 				return errors.Wrap(err, "removing old product from links store failed")
 			}
-			err = linkProductToCriteria(ctx, store, critIntID, existingDbProd.ID)
+			err = linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
 			if err != nil {
 				return err
 			}
@@ -386,27 +357,4 @@ func linkProductToCriteria(ctx context.Context,
 		return err
 	}
 	return nil
-}
-
-// certIDToInt takes a certification criteria ID as an interface and converts it to an integer
-func certIDToInt(certID interface{}) (int, bool, error) {
-	var newInt int
-	var ok bool
-	var err error
-	isStr := false
-
-	newInt, ok = certID.(int)
-	if !ok {
-		// Check if it can be converted to a string, then convert it to an int
-		newStr, ok2 := certID.(string)
-		if !ok2 {
-			return 0, false, fmt.Errorf("Certification ID %v is in unexpected format", certID)
-		}
-		isStr = true
-		newInt, err = strconv.Atoi(newStr)
-		if err != nil {
-			return 0, false, fmt.Errorf("Certification ID %v is in unexpected format", certID)
-		}
-	}
-	return newInt, isStr, nil
 }
