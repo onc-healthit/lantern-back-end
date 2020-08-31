@@ -24,7 +24,7 @@ func Test_HealthITProductEqual(t *testing.T) {
 		AuthorizationStandard: "OAuth 2.0",
 		APISyntax:             "FHIR R4",
 		APIURL:                "example.com",
-		CertificationCriteria: makeTestCrit([]int{1, 2}),
+		CertificationCriteria: []int{1, 2},
 		CertificationStatus:   "Active",
 		CertificationDate:     now,
 		CertificationEdition:  "2015",
@@ -44,7 +44,7 @@ func Test_HealthITProductEqual(t *testing.T) {
 		AuthorizationStandard: "OAuth 2.0",
 		APISyntax:             "FHIR R4",
 		APIURL:                "example.com",
-		CertificationCriteria: makeTestCrit([]int{1, 2}),
+		CertificationCriteria: []int{1, 2},
 		CertificationStatus:   "Active",
 		CertificationDate:     now,
 		CertificationEdition:  "2015",
@@ -103,11 +103,11 @@ func Test_HealthITProductEqual(t *testing.T) {
 	}
 	hitp2.APIURL = hitp1.APIURL
 
-	hitp2.CertificationCriteria = makeTestCrit([]int{10, 2})
+	hitp2.CertificationCriteria[0] = 10
 	if hitp1.Equal(hitp2) {
 		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. CertificationCriteria should be different. %d vs %d", hitp1.CertificationCriteria[0], hitp2.CertificationCriteria[0])
 	}
-	hitp2.CertificationCriteria = makeTestCrit([]int{1, 2})
+	hitp2.CertificationCriteria[0] = hitp1.CertificationCriteria[0]
 
 	hitp2.CertificationStatus = "other"
 	if hitp1.Equal(hitp2) {
@@ -160,12 +160,4 @@ func Test_HealthITProductEqual(t *testing.T) {
 	if !hitp1.Equal(hitp2) {
 		t.Errorf("Nil hitp 1 should equal nil hitp 2.")
 	}
-}
-
-func makeTestCrit(critIDs []int) []interface{} {
-	critInt := make([]interface{}, len(critIDs))
-	for i, v := range critIDs {
-		critInt[i] = v
-	}
-	return critInt
 }

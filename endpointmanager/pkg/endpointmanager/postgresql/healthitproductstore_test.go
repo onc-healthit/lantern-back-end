@@ -54,7 +54,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		AuthorizationStandard: "OAuth 2.0",
 		APISyntax:             "FHIR R4",
 		APIURL:                "example.com",
-		CertificationCriteria: makeTestCrit([]int{31, 32}),
+		CertificationCriteria: []int{31, 32},
 		CertificationStatus:   "Active",
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
@@ -188,7 +188,7 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		AuthorizationStandard: "OAuth 2.0",
 		APISyntax:             "FHIR R4",
 		APIURL:                "example.com",
-		CertificationCriteria: makeTestCrit([]int{44}),
+		CertificationCriteria: []int{44},
 		CertificationStatus:   "Active",
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
@@ -199,7 +199,7 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		Version:               "2.0",
 		VendorID:              vendors[1].ID, // cerner
 		APISyntax:             "FHIR DSTU2",
-		CertificationCriteria: makeTestCrit([]int{64}),
+		CertificationCriteria: []int{64},
 		CertificationEdition:  "2014"}
 
 	// criteria
@@ -257,12 +257,4 @@ func Test_LinkProductToCriteria(t *testing.T) {
 	th.Assert(t, retProdID == hitp2.ID, fmt.Sprintf("expected stored ID '%d' to be the same as the ID that was stored '%d'.", retProdID, hitp2.ID))
 	th.Assert(t, retCritID == crit2.CertificationID, fmt.Sprintf("expected stored ID '%d' to be the same as the ID that was stored '%d'.", retCritID, crit2.CertificationID))
 	th.Assert(t, retCritNum == "170.314 (a)(4)", fmt.Sprintf("expected stored confidence '%s' to be the same as the confidence that was stored '170.314 (a)(4)'.", retCritNum))
-}
-
-func makeTestCrit(critIDs []int) []interface{} {
-	critInt := make([]interface{}, len(critIDs))
-	for i, v := range critIDs {
-		critInt[i] = v
-	}
-	return critInt
 }

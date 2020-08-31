@@ -153,25 +153,12 @@ func Test_persistProduct(t *testing.T) {
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error parsing product")
 
-	// check that ambiguous update displays a warning
-
-	hook := logtest.NewGlobal()
-	expectedErr := "determining if a health IT product needs updating within the store failed"
-
+	// check that ambiguous update throws error
 	prod = testCHPLProd
 	prod.Edition = "2015" // same date as what is in store
 	prod.CertificationStatus = "Retired"
-	_ = persistProduct(ctx, store, &prod)
-
-	// expect presence of a log message
-	found := false
-	for i := range hook.Entries {
-		if strings.Contains(hook.Entries[i].Message, expectedErr) {
-			found = true
-			break
-		}
-	}
-	th.Assert(t, found, "expected an ambiguous update to print a warning")
+	err = persistProduct(ctx, store, &prod)
+	th.Assert(t, err != nil, "expected error updating product")
 
 	// check that error adding to store throws error
 	prod = testCHPLProd
