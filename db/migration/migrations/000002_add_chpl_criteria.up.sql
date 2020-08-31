@@ -32,4 +32,12 @@ BEFORE UPDATE ON product_criteria
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE OR REPLACE FUNCTION delete_data_in_healthit_products() RETURNS VOID as $$
+    BEGIN
+        DELETE FROM healthit_products;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT delete_data_in_healthit_products();
+
 COMMIT;
