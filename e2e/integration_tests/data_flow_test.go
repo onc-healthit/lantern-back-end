@@ -289,6 +289,49 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 }
 
+func Test_GetCHPLCriteria(t *testing.T) {
+	var err error
+	var actualCriteriaStored int
+
+	if viper.GetString("chplapikey") == "" {
+		t.Skip("Skipping Test_GetCHPLCriteria because the CHPL API key is not set.")
+	}
+
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 35,
+	}
+
+	// as of 7/30/20, at least 182 entries are expected to be added to the database
+	minNumExpCriteriaStored := 182
+
+	err = chplquerier.GetCHPLCriteria(ctx, store, client, "")
+	assert(t, err == nil, err)
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM certification_criteria;")
+	err = rows.Scan(&actualCriteriaStored)
+	assert(t, err == nil, err)
+	assert(t, actualCriteriaStored >= minNumExpCriteriaStored, fmt.Sprintf("Expected at least %d criteria stored. Actually had %d criteria stored.", minNumExpCriteriaStored, actualCriteriaStored))
+
+	// expect to see this entry in the database:
+	// {
+	// CertificationID: 44,
+	// CertificationNumber: "170.315 (f)(2)",
+	// Title: "Transmission to Public Health Agencies - Syndromic Surveillance",
+	// CertificationEditionID: 3,
+	// CertificationEdition: "2015",
+	// Description: null,
+	// Removed: false
+	// }
+	criteria, err := store.GetCriteriaByCertificationID(ctx, 44)
+	assert(t, err == nil, err)
+	assert(t, criteria.CertificationID == 44, "CertificationID not as expected")
+	assert(t, criteria.CertificationNumber == "170.315 (f)(2)", "CertificationNumber not as expected")
+	assert(t, criteria.Title == "Transmission to Public Health Agencies - Syndromic Surveillance", "Title not as expected")
+	assert(t, criteria.CertificationEditionID == 3, "CertificationEditionID not as expected")
+	assert(t, criteria.CertificationEdition == "2015", "CertificationEdition not as expected")
+	assert(t, criteria.Removed == false, "Removed not as expected")
+}
+
 func Test_GetCHPLVendors(t *testing.T) {
 	var err error
 	var actualVendsStored int
@@ -381,6 +424,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	//	"criteriaMet":"100☺101☺103☺106☺107☺108☺109☺114☺115☺116☺61☺62☺63☺64☺65☺66☺67☺68☺69☺70☺71☺72☺73☺74☺75☺76☺77☺81☺82☺83☺84☺86☺87☺88☺91☺92☺93☺94☺95☺96☺97☺98☺99"
 	//	}
 
+	ctx = context.Background()
 	vend, err := store.GetVendorUsingName(ctx, "Intuitive Medical Documents")
 	assert(t, err == nil, err)
 
@@ -392,7 +436,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2014",
 		CHPLID:                "CHP-029177",
-		CertificationCriteria: []string{"100", "101", "103", "106", "107", "108", "109", "114", "115", "116", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "81", "82", "83", "84", "86", "87", "88", "91", "92", "93", "94", "95", "96", "97", "98", "99"},
+		CertificationCriteria: []int{100, 101, 103, 106, 107, 108, 109, 114, 115, 116, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 81, 82, 83, 84, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98, 99},
 	}
 
 	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Intuitive Medical Document", "2.0")
@@ -403,6 +447,16 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
 	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
+
+	// check that there are links in the product_criteria database
+	var link_count int
+	prod_crit_row := store.DB.QueryRow("SELECT COUNT(*) FROM product_criteria;")
+	err = prod_crit_row.Scan(&link_count)
+	failOnError(err)
+
+	if link_count <= 0 {
+		t.Fatalf("There should be links in the product_criteria table.")
+	}
 }
 
 func Test_RetrieveCapabilityStatements(t *testing.T) {

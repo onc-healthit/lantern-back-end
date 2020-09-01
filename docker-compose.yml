@@ -5,8 +5,8 @@ services:
     image: postgres:11.8
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./scripts/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
-      - ./scripts/sql/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
+      - ./db/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
+      - ./db/sql/dbusersetup.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - POSTGRES_PASSWORD=${LANTERN_DBPASSWORD}
       - POSTGRES_USER=${LANTERN_DBUSER}

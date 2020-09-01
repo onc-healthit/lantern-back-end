@@ -47,6 +47,8 @@ func main() {
 	userAgent := "LANTERN/" + versionNum[1]
 	log.Infof("user agent is %s", userAgent)
 
+	err = chplquerier.GetCHPLCriteria(ctx, store, client, userAgent)
+	failOnError(err)
 	err = chplquerier.GetCHPLVendors(ctx, store, client, userAgent)
 	failOnError(err)
 	err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)

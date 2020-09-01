@@ -16,8 +16,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
-	logtest "github.com/sirupsen/logrus/hooks/test"
 	log "github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
@@ -27,6 +27,16 @@ var testVendorCHPLProd *endpointmanager.Vendor = &endpointmanager.Vendor{
 	Name:          "Carefluence",
 	DeveloperCode: "D",
 	CHPLID:        4,
+}
+
+var testCriteria = &endpointmanager.CertificationCriteria{
+	CertificationID:        30,
+	CertificationNumber:    "170.315 (d)(2)",
+	Title:                  "Transmission to Public Health Agencies - Syndromic Surveillance",
+	CertificationEditionID: 3,
+	CertificationEdition:   "2015",
+	Description:            "Syndromic Surveillance",
+	Removed:                false,
 }
 
 func TestMain(m *testing.M) {
@@ -87,6 +97,20 @@ func Test_persistProduct(t *testing.T) {
 	// check that new item is stored
 	store.AddVendor(ctx, testVendorCHPLProd) // add vendor product so we can link to it
 	hitp.VendorID = testVendorCHPLProd.ID
+
+	// add all criteria
+	apiKey := viper.GetString("chplapikey")
+	viper.Set("chplapikey", "tmp_api_key")
+	defer viper.Set("chplapikey", apiKey)
+
+	criteriaClient, err := basicTestCriteriaClient()
+	th.Assert(t, err == nil, err)
+	defer criteriaClient.Close()
+
+	ctx = context.Background()
+
+	err = GetCHPLCriteria(ctx, store, &(criteriaClient.Client), "")
+	th.Assert(t, err == nil, err)
 
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -150,6 +174,45 @@ func Test_persistProduct(t *testing.T) {
 	prod.CertificationStatus = strings.Repeat("a", 510) // name too long. throw db error.
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error updating product")
+
+	// test criteria linking
+
+	// add criteria so we can link to it
+	tmpCrit := testCriteria
+	err = store.AddCriteria(ctx, tmpCrit)
+	th.Assert(t, err == nil, "did not expect error adding criteria")
+
+	prod = testCHPLProd
+	prod.Product = "A new product for criteria testing"
+	err = persistProduct(ctx, store, &prod)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not add a new element to healthit_product store")
+
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "A new product for criteria testing", "1")
+	th.Assert(t, err == nil, "error getting stored hitp from database")
+	retProd, retCritID, retCritNum, err := store.GetProductCriteriaLink(ctx, tmpCrit.CertificationID, storedHitp.ID)
+	th.Assert(t, err == nil, fmt.Errorf("link did not occur, %s", err))
+	th.Assert(t, retProd == storedHitp.ID, "returned product ID is not expected value")
+	th.Assert(t, retCritID == tmpCrit.CertificationID, "returned criteria ID is not expected value")
+	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
+
+	// test critera linking update
+	prod.CriteriaMet = "31☺32☺33☺34☺35☺36☺37☺38"
+	prod.Edition = "2020"
+	err = persistProduct(ctx, store, &prod)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not add a new element to healthit_product store")
+
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "A new product for criteria testing", "1")
+	th.Assert(t, err == nil, "error getting stored hitp from database")
+	_, _, _, err = store.GetProductCriteriaLink(ctx, tmpCrit.CertificationID, storedHitp.ID)
+	th.Assert(t, err != nil, fmt.Errorf("Should have returned nothing since the criteria no longer exists in the product"))
 }
 
 func Test_persistProducts(t *testing.T) {
@@ -217,7 +280,7 @@ func Test_persistProducts(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected an error to be logged")
+	th.Assert(t, found, "expected an api error to be logged")
 
 	// persist when context has ended
 
@@ -231,7 +294,6 @@ func Test_persistProducts(t *testing.T) {
 	prod2.Product = "another prod"
 
 	err = persistProducts(ctx, store, &prodList)
-	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistProducts to error out due to context ending")
 }
 
 func Test_parseHITProd(t *testing.T) {
@@ -338,7 +400,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, found, "expected an error to be logged")
 
 	// test http status != 200
-	
+
 	hook = logtest.NewGlobal()
 	expectedErr = "CHPL request responded with status: 404 Not Found"
 

@@ -59,7 +59,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("requesting products from CHPL")
 	prodJSON, err := getProductJSON(ctx, cli, userAgent)
 	if err != nil {
-		return err
+		return nil
 	}
 	log.Debug("done requesting products from CHPL")
 
@@ -131,6 +131,18 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
 
+	// Convert the string of criteria IDs into an array of int criteria IDs
+	criteriaMet := strings.Split(prod.CriteriaMet, delimiter1)
+	var criteriaIDs []int
+	for _, criteria := range criteriaMet {
+		retID, err := strconv.Atoi(criteria)
+		if err != nil {
+			log.Warnf("error in CHPL data: non ID value in Certification Criteria")
+			continue
+		}
+		criteriaIDs = append(criteriaIDs, retID)
+	}
+
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
 		Version:               prod.Version,
@@ -139,7 +151,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
 		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: strings.Split(prod.CriteriaMet, delimiter1),
+		CertificationCriteria: criteriaIDs,
 	}
 
 	apiURL, err := getAPIURL(prod.APIDocumentation)
@@ -227,6 +239,7 @@ func persistProduct(ctx context.Context,
 	}
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
 
+	newElement := true
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
@@ -235,6 +248,7 @@ func persistProduct(ctx context.Context,
 	} else if err != nil {
 		return errors.Wrap(err, "getting health IT product from store failed")
 	} else {
+		newElement = false
 		needsUpdate, err := prodNeedsUpdate(existingDbProd, newDbProd)
 		if err != nil {
 			return errors.Wrap(err, "determining if a health IT product needs updating within the store failed")
@@ -251,6 +265,27 @@ func persistProduct(ctx context.Context,
 			}
 		}
 	}
+
+	if newElement {
+		for _, critID := range newDbProd.CertificationCriteria {
+			err = linkProductToCriteria(ctx, store, critID, newDbProd.ID)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		for _, critID := range existingDbProd.CertificationCriteria {
+			err = store.DeleteLinksByProduct(ctx, existingDbProd.ID)
+			if err != nil {
+				return errors.Wrap(err, "removing old product from links store failed")
+			}
+			err = linkProductToCriteria(ctx, store, critID, existingDbProd.ID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -298,4 +333,28 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// cert dates are the same. unknown update precedence. throw error and don't perform update.
 	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+}
+
+// linkProductToCriteria checks whether the product and certification have been linked before, and if not
+// links them
+func linkProductToCriteria(ctx context.Context,
+	store *postgresql.Store,
+	critID int,
+	prodID int) error {
+	_, _, _, err := store.GetProductCriteriaLink(ctx, critID, prodID)
+	// Only care about whether it's not there, if it's already saved it shouldn't need
+	// to be updated
+	if err == sql.ErrNoRows {
+		certCrit, err := store.GetCriteriaByCertificationID(ctx, critID)
+		if err != nil {
+			return errors.Wrap(err, "Error linking criteria to FHIR endpoint")
+		}
+		err = store.LinkProductToCriteria(ctx, critID, prodID, certCrit.CertificationNumber)
+		if err != nil {
+			return errors.Wrap(err, "Error linking criteria to FHIR endpoint")
+		}
+	} else if err != nil {
+		return err
+	}
+	return nil
 }

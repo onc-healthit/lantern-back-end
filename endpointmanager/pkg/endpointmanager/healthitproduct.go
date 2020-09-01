@@ -20,7 +20,7 @@ type HealthITProduct struct {
 	AuthorizationStandard string    // examples: OAuth 2.0, Basic, etc.
 	APISyntax             string    // the format of the information provided by the API, for example, REST, FHIR STU3, etc.
 	APIURL                string    // the URL to the API documentation for the product.
-	CertificationCriteria []string  // the ONC criteria that the product was certified to, for example, ["170.315 (g)(7)", "170.315 (g)(8)", "170.315 (g)(9)"]
+	CertificationCriteria []int     // the IDs to the ONC criteria that the product was certified to, for example, [21, ...] where 21 is associated to "170.315 (g)(7)"
 	CertificationStatus   string    // the ONC certification status, for example, "Active", "Retired", "Suspended by ONC", etc.
 	CertificationDate     time.Time
 	CertificationEdition  string // the product's certification edition for the ONC Health IT certification program, for example, "2014", "2015".

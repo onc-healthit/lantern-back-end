@@ -93,6 +93,19 @@ CREATE TABLE healthit_products (
     CONSTRAINT healthit_product_info UNIQUE(name, version)
 );
 
+CREATE TABLE certification_criteria (
+    id                        SERIAL PRIMARY KEY,
+    certification_id          INTEGER,
+	cerification_number       VARCHAR(500),
+	title                     VARCHAR(500),
+	certification_edition_id  INTEGER,
+	certification_edition     VARCHAR(500),
+	description               VARCHAR(500),
+	removed                   BOOLEAN,
+    created_at                TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
@@ -156,6 +169,15 @@ CREATE TABLE endpoint_organization (
     CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
 );
 
+CREATE TABLE product_criteria (
+    healthit_product_id      INT REFERENCES healthit_products(id) ON DELETE CASCADE,
+    certification_id         INTEGER,
+    certification_number     VARCHAR(500),
+    created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT product_crit  PRIMARY KEY (healthit_product_id, certification_id)
+);
+
 CREATE INDEX fhir_endpoint_url_index ON fhir_endpoints (url);
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
@@ -178,6 +200,11 @@ BEFORE UPDATE ON healthit_products
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_certification_criteria
+BEFORE UPDATE ON certification_criteria
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 CREATE TRIGGER set_timestamp_fhir_endpoints_info
 BEFORE UPDATE ON fhir_endpoints_info
 FOR EACH ROW
@@ -185,6 +212,11 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE TRIGGER set_timestamp_endpoint_organization
 BEFORE UPDATE ON endpoint_organization
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_product_criteria
+BEFORE UPDATE ON product_criteria
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 

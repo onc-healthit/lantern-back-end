@@ -13,6 +13,8 @@ import (
 var addHealthITProductStatement *sql.Stmt
 var updateHealthITProductStatement *sql.Stmt
 var deleteHealthITProductStatement *sql.Stmt
+var getProductCriteriaLinkStatement *sql.Stmt
+var linkProductToCriteriaStatement *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -288,6 +290,42 @@ func (s *Store) DeleteHealthITProduct(ctx context.Context, hitp *endpointmanager
 	return err
 }
 
+// GetProductCriteriaLink retrieves the product database id, criteria id, and criteria number for the requested
+// product db id and criteria id. If the link doesn't exist, returns a SQL no rows error.
+func (s *Store) GetProductCriteriaLink(ctx context.Context, criteriaID int, productID int) (int, int, string, error) {
+	var retProductID int
+	var retCriteriaID int
+	var retCriteriaNumber string
+
+	row := getProductCriteriaLinkStatement.QueryRowContext(ctx,
+		productID,
+		criteriaID)
+
+	err := row.Scan(
+		&retProductID,
+		&retCriteriaID,
+		&retCriteriaNumber,
+	)
+
+	return retProductID, retCriteriaID, retCriteriaNumber, err
+}
+
+// LinkProductToCriteria links a product database id to a certification criteria id
+func (s *Store) LinkProductToCriteria(ctx context.Context, criteriaID int, productID int, productNumber string) error {
+	_, err := linkProductToCriteriaStatement.ExecContext(ctx,
+		productID,
+		criteriaID,
+		productNumber)
+	return err
+}
+
+// DeleteLinksByProduct deletes all of the links in product_criteria with the given health it product database id
+func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
+	sqlStatement := `DELETE FROM product_criteria WHERE healthit_product_id=$1`
+	_, err := s.DB.ExecContext(ctx, sqlStatement, productID)
+	return err
+}
+
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
 	addHealthITProductStatement, err = s.DB.Prepare(`
@@ -332,6 +370,26 @@ func prepareHealthITProductStatements(s *Store) error {
 	deleteHealthITProductStatement, err = s.DB.Prepare(`
 		DELETE FROM healthit_products
 		WHERE id=$1`)
+	if err != nil {
+		return err
+	}
+	getProductCriteriaLinkStatement, err = s.DB.Prepare(`
+		SELECT
+			healthit_product_id,
+			certification_id,
+			certification_number
+		FROM product_criteria
+		WHERE healthit_product_id=$1 AND certification_id=$2
+	`)
+	if err != nil {
+		return err
+	}
+	linkProductToCriteriaStatement, err = s.DB.Prepare(`
+		INSERT INTO product_criteria (
+			healthit_product_id,
+			certification_id,
+			certification_number)
+		VALUES ($1, $2, $3)`)
 	if err != nil {
 		return err
 	}

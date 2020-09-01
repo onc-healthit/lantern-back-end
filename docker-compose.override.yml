@@ -5,8 +5,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./scripts/sql/testdbsetup.sql:/docker-entrypoint-initdb.d/testdbsetup.sql
-      - ./scripts/sql/dbusersetup_dev.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
+      - ./db/sql/testdbsetup.sql:/docker-entrypoint-initdb.d/testdbsetup.sql
+      - ./db/sql/dbusersetup_dev.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
     environment:
       - LANTERN_DBUSER_READONLY=${LANTERN_DBUSER_READONLY}
       - LANTERN_DBPASSWORD_READONLY=${LANTERN_DBPASSWORD_READONLY}
