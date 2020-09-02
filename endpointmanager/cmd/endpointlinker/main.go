@@ -9,7 +9,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 func main() {
@@ -26,12 +25,7 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	sharedfunctions.failOnError("Error creating store", err)
 
-<<<<<<< HEAD
-	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "/go/src/app/resources/linkerMatchesWhitelist.json", "/go/src/app/resources/linkerMatchesBlacklist.json", verbose)
-	failOnError("Error linking all orgs and enpoints", err)
-=======
 	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, verbose)
 	sharedfunctions.failOnError("Error linking all orgs and enpoints", err)
->>>>>>> a879834... Fix package import
 
 }

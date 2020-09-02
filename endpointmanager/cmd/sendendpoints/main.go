@@ -15,16 +15,16 @@ import (
 
 func main() {
 	err := config.SetupConfig()
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages to capabilityquerier
 	capQName := viper.GetString("enptinfo_capquery_qname")
 	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
 
 	errs := make(chan error)

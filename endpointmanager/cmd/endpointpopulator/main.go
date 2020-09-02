@@ -29,18 +29,18 @@ func main() {
 	}
 
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source)
-	sharedfunctions.failOnError("Endpoint List Parsing Error: ", err)
+	sharedfunctions.FailOnError("Endpoint List Parsing Error: ", err)
 
 	if len(listOfEndpoints.Entries) != 0 {
 		err = config.SetupConfig()
-		sharedfunctions.failOnError("", err)
+		sharedfunctions.FailOnError("", err)
 
 		ctx := context.Background()
 		store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-		sharedfunctions.failOnError("", err)
+		sharedfunctions.FailOnError("", err)
 		log.Info("Successfully connected to DB!")
 
 		dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
-		sharedfunctions.failOnError("Saving in fhir_endpoints database error: ", dbErr)
+		sharedfunctions.FailOnError("Saving in fhir_endpoints database error: ", dbErr)
 	}
 }

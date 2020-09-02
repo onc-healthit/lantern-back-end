@@ -30,15 +30,15 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 	ch, err := mq.CreateChannel()
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 
 	err = mq.DeclareQueue(ch, "hello")
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 
 	body := bodyFrom(os.Args)
 	err = mq.PublishToQueue(ch, "hello", body)
 	log.Printf(" [x] Sent %s", body)
-	sharedfunctions.failOnError("", err)
+	sharedfunctions.FailOnError("", err)
 }
