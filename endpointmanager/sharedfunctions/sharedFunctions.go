@@ -2,7 +2,7 @@ package sharedfunctions
 
 import "log"
 
-func failOnError(errString string, err error) {
+func FailOnError(errString string, err error) {
 	if err != nil {
 		if errString == "" {
 			log.Fatalf("%s", err)
