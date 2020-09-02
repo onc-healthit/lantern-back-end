@@ -10,7 +10,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
-	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 var mq lanternmq.MessageQueue

@@ -11,7 +11,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
-	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 func main() {

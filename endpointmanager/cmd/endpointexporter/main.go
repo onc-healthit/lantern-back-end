@@ -7,7 +7,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 func main() {

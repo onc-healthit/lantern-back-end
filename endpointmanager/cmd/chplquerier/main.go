@@ -11,7 +11,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
-	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 
 	"github.com/spf13/viper"
 )

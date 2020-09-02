@@ -33,7 +33,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 	Assert "github.com/stretchr/testify/assert"
-	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 type Endpoint struct {
