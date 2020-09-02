@@ -41,16 +41,16 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	ch, err := mq.CreateChannel()
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	err = mq.DeclareExchange(ch, "logs_topic", "topic")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	body := bodyFrom(os.Args)
 	severity := severityFrom(os.Args)
 	err = mq.PublishToExchange(ch, "logs_topic", severity, body)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	log.Printf(" [x] Sent %s", body)
 }

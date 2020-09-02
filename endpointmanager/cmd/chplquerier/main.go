@@ -20,10 +20,10 @@ func main() {
 	var err error
 
 	err = config.SetupConfig()
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	defer store.Close()
 	log.Info("Successfully connected!")
 
@@ -43,9 +43,9 @@ func main() {
 	log.Infof("user agent is %s", userAgent)
 
 	err = chplquerier.GetCHPLCriteria(ctx, store, client, userAgent)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	err = chplquerier.GetCHPLVendors(ctx, store, client, userAgent)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 }

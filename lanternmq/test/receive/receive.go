@@ -38,29 +38,29 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	ch, err := mq.CreateChannel()
-	failOnError(err)
+	sharedfunctions.failOnError("", err)
 
 	err = mq.NumConcurrentMsgs(ch, 1)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	// Queue
 	err = mq.DeclareQueue(ch, "hello")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	msgs, err := mq.ConsumeFromQueue(ch, "hello")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	// Topic
 	tqName := os.Args[1]
 	err = mq.DeclareExchange(ch, "logs_topic", "topic")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "warning")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "error")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	forever := make(chan bool)
 

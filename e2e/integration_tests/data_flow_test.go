@@ -89,28 +89,28 @@ func populateTestNPIData() {
 	ctx := context.Background()
 	err = store.DeleteAllNPIOrganizations(ctx)
 	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 }
 
 func populateTestEndpointData(testEndpointList string, source string) {
 	var listOfEndpoints fetcher.ListOfEndpoints
 	var knownSource fetcher.Source
 	content, err := ioutil.ReadFile(testEndpointList)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	if source == "Test" {
 		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 	} else {
 		knownSource = "LanternEndpointSourcesJson"
 		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 	}
 
 	ctx := context.Background()
 
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
-	failOnError("", dbErr)
+	sharedfunctions.failOnError("", dbErr)
 }
 
 func metadataHandler(w http.ResponseWriter, r *http.Request) {
@@ -190,7 +190,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var link_count int
 	err = response_time_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	if link_count != 30 {
 		t.Fatalf("Only 30 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
@@ -203,7 +203,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	if link_count != 0 {
 		t.Fatalf("Empty database should not have had any links made yet. Has: " + strconv.Itoa(link_count))
@@ -215,7 +215,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	if link_count != expected_link_count {
 		t.Fatalf("Database should only have made 30 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
@@ -253,13 +253,13 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed org url is "+ep.url+"\nError %v\n", err)
 		}
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 
 		// Assert that endpoint id has correct url
 		var endpoint_url string
 		query_str = "SELECT url FROM fhir_endpoints WHERE id=$1;"
 		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&endpoint_url)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 		if endpoint_url != ep.url {
 			t.Fatalf("Endpoint id mapped to wrong endpoint url")
 		}
@@ -267,7 +267,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		var num_npi_ids int
 		query_str = "SELECT count(*) FROM endpoint_organization WHERE url =$1;"
 		err = store.DB.QueryRow(query_str, ep.url).Scan(&num_npi_ids)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 		if num_npi_ids != len(ep.mapped_npi_ids) {
 			t.Fatalf("Expected number of npi organizations mapped to endpoint is " + strconv.Itoa(len(ep.mapped_npi_ids)) + " Got: " + strconv.Itoa(num_npi_ids))
 		}
@@ -277,7 +277,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 			var linked_endpoint_url string
 			query_str = "SELECT url FROM endpoint_organization WHERE organization_npi_id =$1;"
 			err = store.DB.QueryRow(query_str, npi_id).Scan(&linked_endpoint_url)
-			failOnError("", err)
+			sharedfunctions.failOnError("", err)
 			if linked_endpoint_url != ep.url {
 				t.Fatalf("Endpoint url mapped to wrong npi organization")
 			}
@@ -387,7 +387,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	expected_hitp_count := 7829
 	var hitp_count int
 	err = healthit_prod_row.Scan(&hitp_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if hitp_count != 0 {
 		t.Fatalf("Healthit product database should initially be empty")
 	}
@@ -397,11 +397,11 @@ func Test_GetCHPLProducts(t *testing.T) {
 		Timeout: time.Second * 35,
 	}
 	err = chplquerier.GetCHPLProducts(ctx, store, client, "")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
 	err = healthit_prod_row.Scan(&hitp_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if hitp_count < expected_hitp_count {
 		t.Fatalf("Database should have at least " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
 	}
@@ -448,7 +448,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var link_count int
 	prod_crit_row := store.DB.QueryRow("SELECT COUNT(*) FROM product_criteria;")
 	err = prod_crit_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	if link_count <= 0 {
 		t.Fatalf("There should be links in the product_criteria table.")
@@ -483,7 +483,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
 	err = query_str.Scan(&capability_statement_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if capability_statement_count == 0 {
 		t.Fatalf("Fhir_endpoints_info db should have capability statements")
 	}
@@ -492,25 +492,25 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var fhir_version_count int
 	expected_fhir_version_count := 30
 	err = query_str.Scan(&fhir_version_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if fhir_version_count < expected_fhir_version_count {
 		t.Fatalf("There should be at least 30 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
 	}
 
 	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	common_vendor_list := [2]int{epic.ID, cerner.ID}
 	vendor_rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	var test_vendor_list []int
 	defer vendor_rows.Close()
 	for vendor_rows.Next() {
 		var vendorID int
 		err = vendor_rows.Scan(&vendorID)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 		test_vendor_list = append(test_vendor_list, vendorID)
 	}
 	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
@@ -534,7 +534,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var endpt_count int
 	err = endpt_ct_st.Scan(&endpt_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if endpt_count != expected_endpt_ct {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
 	}
@@ -548,7 +548,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("endpoint_organization should still have %d links after update", expected_link_count)
 	}
@@ -563,7 +563,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
 	var endpt_info_count int
 	err = endpt_info_ct_st.Scan(&endpt_info_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if endpt_info_count != expected_endpt_ct {
 		t.Fatalf("fhir_endpoints_info should have %d endpoints after update. Got: %d", expected_endpt_ct, link_count)
 	}
@@ -579,12 +579,12 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	expected_deleted_endpt := 6
 	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")
 	var deleted_fhir_urls []string
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	defer rows.Close()
 	for rows.Next() {
 		var fhirURL string
 		err = rows.Scan(&fhirURL)
-		failOnError("", err)
+		sharedfunctions.failOnError("", err)
 		deleted_fhir_urls = append(deleted_fhir_urls, fhirURL)
 	}
 
@@ -632,7 +632,7 @@ func Test_LanternSource(t *testing.T) {
 	expected_endpt_ct := 2
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	err = endpt_ct_st.Scan(&endpt_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if endpt_count != expected_endpt_ct {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, LanternEndptList, endpt_count)
 	}
@@ -645,7 +645,7 @@ func Test_LanternSource(t *testing.T) {
 
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("endpoint_organization should have %d links, had %d", expected_link_count, link_count)
 	}
@@ -654,7 +654,7 @@ func Test_LanternSource(t *testing.T) {
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization WHERE url = 'example.com/';")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("example.com should have %d links in endpoint_organization, had %d", expected_link_count, link_count)
 	}

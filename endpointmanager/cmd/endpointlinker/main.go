@@ -20,13 +20,18 @@ func main() {
 	log.Info("Starting to link FHIR endpoints to npi organizations")
 
 	err := config.SetupConfig()
-	failOnError("Error setting up config", err)
+	sharedfunctions.failOnError("Error setting up config", err)
 	ctx := context.Background()
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError("Error creating store", err)
+	sharedfunctions.failOnError("Error creating store", err)
 
+<<<<<<< HEAD
 	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "/go/src/app/resources/linkerMatchesWhitelist.json", "/go/src/app/resources/linkerMatchesBlacklist.json", verbose)
 	failOnError("Error linking all orgs and enpoints", err)
+=======
+	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, verbose)
+	sharedfunctions.failOnError("Error linking all orgs and enpoints", err)
+>>>>>>> a879834... Fix package import
 
 }

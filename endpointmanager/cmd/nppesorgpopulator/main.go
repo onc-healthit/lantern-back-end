@@ -16,17 +16,17 @@ import (
 
 func main() {
 	err := config.SetupConfig()
-	failOnError(err)
+	sharedfunctions.failOnError("", err)
 
 	ctx := context.Background()
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	if len(os.Args) != 2 {
 		log.Fatal("NPPES csv file not provided as argument.")
 	}
 	fname := os.Args[1]
 	err = store.DeleteAllNPIOrganizations(ctx)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 }

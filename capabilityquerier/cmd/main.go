@@ -78,7 +78,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 
 func main() {
 	err := config.SetupConfig()
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	failOnError(err)
@@ -91,17 +91,17 @@ func main() {
 	qPort := viper.GetString("qport")
 	capQName := viper.GetString("capquery_qname")
 	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	endptQName := viper.GetString("endptinfo_capquery_qname")
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	defer mq.Close()
 
 	// Read version file that is mounted
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 	versionString := string(version)
 	versionNum := strings.Split(versionString, "=")
 	userAgent := "LANTERN/" + versionNum[1]
@@ -119,7 +119,7 @@ func main() {
 
 	// Start workers and have then always running
 	err = workers.Start(ctx, numWorkers, errs)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
@@ -135,7 +135,7 @@ func main() {
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)
-	failOnError("", err)
+	sharedfunctions.failOnError("", err)
 
 	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)
 
