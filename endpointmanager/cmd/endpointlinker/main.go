@@ -2,19 +2,15 @@ package main
 
 import (
 	"context"
+	"os"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointlinker"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"os"
+	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
 )
-
-func failOnError(errString string, err error) {
-	if err != nil {
-		log.Fatalf("%s %s", errString, err)
-	}
-}
 
 func main() {
 	var verbose = false

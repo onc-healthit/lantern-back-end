@@ -11,13 +11,8 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
+	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
 )
-
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
 
 func main() {
 	err := config.SetupConfig()
@@ -25,13 +20,13 @@ func main() {
 
 	ctx := context.Background()
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
+	failOnError("", err)
 	if len(os.Args) != 2 {
 		log.Fatal("NPPES csv file not provided as argument.")
 	}
 	fname := os.Args[1]
 	err = store.DeleteAllNPIOrganizations(ctx)
-	failOnError(err)
+	failOnError("", err)
 	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
-	failOnError(err)
+	failOnError("", err)
 }

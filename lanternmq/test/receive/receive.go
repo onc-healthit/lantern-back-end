@@ -14,15 +14,10 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
+	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
 )
 
 var mq lanternmq.MessageQueue
-
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
 
 func handleQueueMessage(msg []byte, _ *map[string]interface{}) error {
 	log.Printf("QUEUE: Received a message: %s", msg)
@@ -43,29 +38,29 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	failOnError(err)
+	failOnError("", err)
 	ch, err := mq.CreateChannel()
 	failOnError(err)
 
 	err = mq.NumConcurrentMsgs(ch, 1)
-	failOnError(err)
+	failOnError("", err)
 
 	// Queue
 	err = mq.DeclareQueue(ch, "hello")
-	failOnError(err)
+	failOnError("", err)
 	msgs, err := mq.ConsumeFromQueue(ch, "hello")
-	failOnError(err)
+	failOnError("", err)
 
 	// Topic
 	tqName := os.Args[1]
 	err = mq.DeclareExchange(ch, "logs_topic", "topic")
-	failOnError(err)
+	failOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "warning")
-	failOnError(err)
+	failOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "error")
-	failOnError(err)
+	failOnError("", err)
 	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
-	failOnError(err)
+	failOnError("", err)
 
 	forever := make(chan bool)
 

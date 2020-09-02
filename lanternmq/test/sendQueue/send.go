@@ -10,15 +10,10 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
+	"github.com/onc-healthit/lantern-back-end/sharedfunctions"
 )
 
 var mq lanternmq.MessageQueue
-
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
 
 func bodyFrom(args []string) string {
 	var s string
@@ -35,15 +30,15 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	failOnError(err)
+	failOnError("", err)
 	ch, err := mq.CreateChannel()
-	failOnError(err)
+	failOnError("", err)
 
 	err = mq.DeclareQueue(ch, "hello")
-	failOnError(err)
+	failOnError("", err)
 
 	body := bodyFrom(os.Args)
 	err = mq.PublishToQueue(ch, "hello", body)
 	log.Printf(" [x] Sent %s", body)
-	failOnError(err)
+	failOnError("", err)
 }
