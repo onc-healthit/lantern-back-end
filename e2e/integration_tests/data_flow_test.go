@@ -204,7 +204,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 
 func Test_EndpointLinksAreAvailable(t *testing.T) {
 	var err error
-	expected_link_count := 30
+	expected_link_count := 31
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -215,7 +215,8 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+	//This will add one link to the endpoint_organization table
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -532,11 +533,12 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
 	}
 
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+	//This will add one link to the endpoint_organization table
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
-	expected_link_count := 30
+	expected_link_count := 31
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -611,11 +613,9 @@ func Test_LanternSource(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, false)
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
 
-	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
-	// to organizations
-	expected_link_count := 3
+	expected_link_count := 4
 	var link_count int
 
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")

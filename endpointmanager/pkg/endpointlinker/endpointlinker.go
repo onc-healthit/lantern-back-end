@@ -3,8 +3,11 @@ package endpointlinker
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -307,7 +310,7 @@ func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*en
 	return tokenVal
 }
 
-func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbose bool) error {
+func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, whitelistFile string, blacklistFile string, verbose bool) error {
 	jaccardThreshold := .85
 	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
@@ -355,6 +358,22 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		}
 	}
 
+	if whitelistFile != "" && blacklistFile != "" {
+		matchEndpointOrganization, err := openLinkerCorrectionFiles(whitelistFile)
+		if err != nil {
+			return errors.Wrap(err, "Error opening linker correction whitelist file")
+		}
+		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blacklistFile)
+		if err != nil {
+			return errors.Wrap(err, "Error opening linker correction blacklist file")
+		}
+
+		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
+		if err != nil {
+			return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
+		}
+	}
+
 	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpoints)), verbose)
 
 	verbosePrint("UNMATCHABLE ENDPOINT ORG NAMES", verbose)
@@ -364,5 +383,71 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, verbo
 		}
 	}
 
+	return nil
+}
+
+// Open whitelist and blacklist files for manually correcting matching algorithm
+func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var linkerCorrections []map[string]string
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &linkerCorrections)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return linkerCorrections, nil
+}
+
+// Add/update endpoint to npi organization links found in whitelist file from database, and remove endpoint to npi organization links found in blacklist file from database
+func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string, unmatchEndpointOrganization []map[string]string) error {
+	if len(matchEndpointOrganization) != 0 {
+		for _, matchesMap := range matchEndpointOrganization {
+			orgID := matchesMap["organizationID"]
+			endpointURL := matchesMap["endpointURL"]
+			confidence := 1.0
+			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+
+			if err == sql.ErrNoRows {
+				err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
+				if err != nil {
+					return errors.Wrap(err, "Error manually linking org to FHIR endpoint")
+				}
+			} else if err == nil {
+				err := store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL, confidence)
+				if err != nil {
+					return errors.Wrap(err, "Error manually updating org to FHIR endpoint link confidence")
+				}
+			} else {
+				return errors.Wrap(err, "Error checking if org to FHIR endpoint link exists")
+			}
+		}
+	}
+	if len(unmatchEndpointOrganization) != 0 {
+		for _, unmatchMap := range unmatchEndpointOrganization {
+			orgID := unmatchMap["organizationID"]
+			endpointURL := unmatchMap["endpointURL"]
+			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+
+			if err == sql.ErrNoRows {
+				return nil
+			} else {
+				err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+				if err != nil {
+					return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
+				}
+			}
+		}
+	}
 	return nil
 }

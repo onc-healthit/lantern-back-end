@@ -1,0 +1,10 @@
+[
+    {
+        "endpointURL": "example3.com/FHIR/DSTU2",
+        "organizationID": "3"
+    },
+    {
+        "endpointURL": "example2.com/FHIR/DSTU2",
+        "organizationID": "2"
+    }
+]

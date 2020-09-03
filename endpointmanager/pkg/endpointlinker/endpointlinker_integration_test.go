@@ -4,6 +4,7 @@ package endpointlinker
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"os"
 	"testing"
@@ -149,6 +150,80 @@ func Test_addMatch(t *testing.T) {
 	th.Assert(t, sNpiID == npiID, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored '%s'.", sNpiID, npiID))
 	th.Assert(t, sEpURL == ep.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored '%s'.", sEpURL, ep.URL))
 	th.Assert(t, sConfidence == newConfidence, fmt.Sprintf("expected stored confidence '%f' to be the same as the new confidence that was stored '%f'.", sConfidence, newConfidence))
+}
+
+func Test_manualLinkerCorrections(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	ctx := context.Background()
+	ep1 := &endpointmanager.FHIREndpoint{
+		ID:                1,
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"FOO FOO BAR"},
+		NPIIDs:            []string{},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+	npiID1 := "1"
+	confidence1 := .6
+	ep2 := &endpointmanager.FHIREndpoint{
+		ID:                2,
+		URL:               "example2.com/FHIR/DSTU2",
+		OrganizationNames: []string{"FOO BAR BAR"},
+		NPIIDs:            []string{},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+	npiID2 := "2"
+	confidence2 := .8
+	ep3 := &endpointmanager.FHIREndpoint{
+		ID:                3,
+		URL:               "example3.com/FHIR/DSTU2",
+		OrganizationNames: []string{"FOO BAR FOO"},
+		NPIIDs:            []string{},
+		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+	npiID3 := "3"
+	confidence3 := .5
+
+	// add matches
+	err := addMatch(ctx, store, npiID1, ep1, confidence1)
+	th.Assert(t, err == nil, err)
+	err = addMatch(ctx, store, npiID2, ep2, confidence2)
+	th.Assert(t, err == nil, err)
+	err = addMatch(ctx, store, npiID3, ep3, confidence3)
+	th.Assert(t, err == nil, err)
+
+	// open fake whitelist and blacklist files
+	whitelistMap, err := openLinkerCorrectionFiles("../testdata/fakeWhitelist.json")
+	th.Assert(t, err == nil, err)
+	blacklistMap, err := openLinkerCorrectionFiles("../testdata/fakeBlacklist.json")
+	th.Assert(t, err == nil, err)
+
+	// run linkerFix manual linker algorithm correction function
+	err = linkerFix(ctx, store, whitelistMap, blacklistMap)
+	th.Assert(t, err == nil, err)
+	ep4URL := "example4.com/FHIR/DSTU2"
+	npiID4 := "4"
+	sNpiID, sEpURL, sConfidence, err := store.GetNPIOrganizationFHIREndpointLink(ctx, npiID4, ep4URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npiID4, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID4))
+	th.Assert(t, sEpURL == ep4URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep4URL))
+	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
+
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID1, ep3.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID1))
+	th.Assert(t, sEpURL == ep3.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep3.URL))
+	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
+
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID1, ep1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID1))
+	th.Assert(t, sEpURL == ep1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep1.URL))
+	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
+
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID3, ep3.URL)
+	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blacklist file")
+
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep2.URL)
+	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blacklist file")
 }
 
 func setup() error {

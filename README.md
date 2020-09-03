@@ -68,6 +68,7 @@ This removes all docker images, networks, and local volumes.
       * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
       * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
         * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`
+      * **linkerMatchesWhitelist and linkerMatchesBlacklist** - whitelist and blacklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to whitelist and blacklist files
 
       ```bash
       make populatedb
@@ -80,7 +81,7 @@ This removes all docker images, networks, and local volumes.
       * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
         * this is item will take an hour to load if you use the full npidata_pfile
 
-1. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
+3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1

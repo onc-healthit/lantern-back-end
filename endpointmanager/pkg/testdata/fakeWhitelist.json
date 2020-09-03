@@ -1,0 +1,15 @@
+[
+    {
+        "endpointURL": "example4.com/FHIR/DSTU2",
+        "organizationID": "4"
+    },
+    {
+        "endpointURL": "example3.com/FHIR/DSTU2",
+        "organizationID": "1"
+    },
+    {
+        "endpointURL": "example.com/FHIR/DSTU2",
+        "organizationID": "1"
+    }
+
+]
