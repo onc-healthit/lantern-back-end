@@ -193,6 +193,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		HTTPResponse:      200,
+		Availability:      1.0,
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
@@ -221,6 +222,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		HTTPResponse:      200,
+		Availability:      1.0,
 		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
@@ -295,6 +297,12 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.HTTPResponse = endpointInfo1.HTTPResponse
 
+	endpointInfo2.Availability = 0
+	if endpointInfo2.Equal(endpointInfo1) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Availability should be different. %f vs %f", endpointInfo1.Availability, endpointInfo2.Availability)
+	}
+	endpointInfo2.Availability = endpointInfo1.Availability
+
 	endpointInfo2.Errors = "other"
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Errors should be different. %s vs %s", endpointInfo1.Errors, endpointInfo2.Errors)
@@ -362,7 +370,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 
 	endpointInfo2.ResponseTime = 0.234567
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %d vs %d", endpointInfo1.HTTPResponse, endpointInfo2.HTTPResponse)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %f vs %f", endpointInfo1.ResponseTime, endpointInfo2.ResponseTime)
 	}
 	endpointInfo2.ResponseTime = endpointInfo1.ResponseTime
 

@@ -26,6 +26,40 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
     END;
 $fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
+    DECLARE
+        okay_count       bigint;
+        all_count        bigint;
+    BEGIN
+        --
+        -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
+        -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
+        -- endpoint availability precentage
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url;
+        IF  NOT FOUND THEN
+            IF NEW.http_response = 200 THEN
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1);
+                NEW.availability = 1.00;
+                RETURN NEW;
+            ELSE
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1);
+                NEW.availability = 0.00;
+                RETURN NEW;
+            END IF;
+        ELSE
+            IF NEW.http_response = 200 THEN
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
+                RETURN NEW;
+            ELSE
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                NEW.availability := (okay_count) / (all_count + 1.0);
+                RETURN NEW;
+            END IF;
+        END IF;
+    END;
+$fhir_endpoints_availability$ LANGUAGE plpgsql;
+
 CREATE TABLE npi_organizations (
     id               SERIAL PRIMARY KEY,
     npi_id			 VARCHAR(500) UNIQUE,
@@ -125,6 +159,7 @@ CREATE TABLE fhir_endpoints_info (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
+    availability            DECIMAL(64,4),
     errors                  VARCHAR(500),
     capability_statement    JSONB,
     validation              JSONB,
@@ -148,6 +183,7 @@ CREATE TABLE fhir_endpoints_info_history (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     http_response           INTEGER,
+    availability            DECIMAL(64,4),
     errors                  VARCHAR(500),
     capability_statement    JSONB,
     validation              JSONB,
@@ -176,6 +212,14 @@ CREATE TABLE product_criteria (
     created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT product_crit  PRIMARY KEY (healthit_product_id, certification_id)
+);
+
+CREATE TABLE fhir_endpoints_availability (
+    url             VARCHAR(500),
+    http_200_count       BIGINT,
+    http_all_count       BIGINT,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX fhir_endpoint_url_index ON fhir_endpoints (url);
@@ -220,12 +264,22 @@ BEFORE UPDATE ON product_criteria
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TRIGGER set_timestamp_fhir_endpoint_availability
+BEFORE UPDATE ON fhir_endpoints_availability
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
+-- increments total number of times http status returned for endpoint 
+CREATE TRIGGER update_fhir_endpoint_availability_trigger
+BEFORE INSERT OR UPDATE on fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE

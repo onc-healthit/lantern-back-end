@@ -21,6 +21,7 @@ var testQueueMsg = map[string]interface{}{
 	"smarthttpResponse": 0,
 	"smartResp":         nil,
 	"responseTime":      0.1234,
+	"availability":      1.0,
 }
 
 var testValidationObj = endpointmanager.Validation{
@@ -320,6 +321,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
 	ResponseTime:       0.1234,
+	Availability:       1.0,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -357,6 +359,8 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr == nil, returnErr)
 	// Just check that the first validation field is valid
 	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
+	// formatMessage does not check for availability field in JSON because availability is written by a trigger
+	endpt.Availability = 1.0
 	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
 
 	// should not throw error if metadata is not in the URL
@@ -406,7 +410,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect HTTP response")
 	tmpMessage["httpResponse"] = 200
 
-	// test incorrect http response
+	// test incorrect smart http response
 	tmpMessage["smarthttpResponse"] = "200"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
