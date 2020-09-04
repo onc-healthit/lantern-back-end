@@ -295,7 +295,7 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	minNumExpCriteriaStored := 182
 
 	err = chplquerier.GetCHPLCriteria(ctx, store, client, "")
-	Test_GetCHPLProducts.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM certification_criteria;")
 	err = rows.Scan(&actualCriteriaStored)
 	th.Assert(t, err == nil, err)
