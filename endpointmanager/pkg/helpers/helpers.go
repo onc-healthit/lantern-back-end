@@ -1,8 +1,8 @@
 package helpers
 
-import(
-	"sort"
+import (
 	"log"
+	"sort"
 )
 
 // StringArrayContains checks if the string array contains the provided string.
@@ -46,7 +46,7 @@ func StringArraysEqual(l1 []string, l2 []string) bool {
 	return true
 }
 
-// Fail on error checks if err is not equal to nil and if it isn't, logs failure and exits the program
+// FailOnError checks if err is not equal to nil and if it isn't, logs failure and exits the program
 func FailOnError(errString string, err error) {
 	if err != nil {
 		if errString == "" {

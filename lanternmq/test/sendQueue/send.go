@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 )
@@ -30,15 +30,15 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	ch, err := mq.CreateChannel()
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	err = mq.DeclareQueue(ch, "hello")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	body := bodyFrom(os.Args)
 	err = mq.PublishToQueue(ch, "hello", body)
 	log.Printf(" [x] Sent %s", body)
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 }
