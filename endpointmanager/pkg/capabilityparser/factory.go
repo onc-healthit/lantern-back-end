@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 )
 
@@ -138,22 +139,13 @@ func NewCapabilityStatementFromInterface(capStat map[string]interface{}) (Capabi
 		return nil, errors.New("unable to parse fhir version from capability/conformance statement")
 	}
 
-	if contains(dstu2, fhirVersion) {
+	if helpers.StringArrayContains(dstu2, fhirVersion) {
 		return newDSTU2(capStat), nil
-	} else if contains(stu3, fhirVersion) {
+	} else if helpers.StringArrayContains(stu3, fhirVersion) {
 		return newSTU3(capStat), nil
-	} else if contains(r4, fhirVersion) {
+	} else if helpers.StringArrayContains(r4, fhirVersion) {
 		return newR4(capStat), nil
 	}
 
 	return nil, fmt.Errorf("unknown FHIR version %s", fhirVersion)
-}
-
-func contains(arr []string, str string) bool {
-	for _, a := range arr {
-		if a == str {
-			return true
-		}
-	}
-	return false
 }

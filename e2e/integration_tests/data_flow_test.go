@@ -16,7 +16,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -75,12 +74,6 @@ func TestMain(m *testing.M) {
 	conn.Close()
 
 	os.Exit(code)
-}
-
-func assert(t *testing.T, boolStatement bool, errorValue interface{}) {
-	if !boolStatement {
-		t.Fatalf("%s: %+v", t.Name(), errorValue)
-	}
 }
 
 func populateTestNPIData() {
@@ -302,11 +295,11 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	minNumExpCriteriaStored := 182
 
 	err = chplquerier.GetCHPLCriteria(ctx, store, client, "")
-	assert(t, err == nil, err)
+	Test_GetCHPLProducts.Assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM certification_criteria;")
 	err = rows.Scan(&actualCriteriaStored)
-	assert(t, err == nil, err)
-	assert(t, actualCriteriaStored >= minNumExpCriteriaStored, fmt.Sprintf("Expected at least %d criteria stored. Actually had %d criteria stored.", minNumExpCriteriaStored, actualCriteriaStored))
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualCriteriaStored >= minNumExpCriteriaStored, fmt.Sprintf("Expected at least %d criteria stored. Actually had %d criteria stored.", minNumExpCriteriaStored, actualCriteriaStored))
 
 	// expect to see this entry in the database:
 	// {
@@ -319,13 +312,13 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	// Removed: false
 	// }
 	criteria, err := store.GetCriteriaByCertificationID(ctx, 44)
-	assert(t, err == nil, err)
-	assert(t, criteria.CertificationID == 44, "CertificationID not as expected")
-	assert(t, criteria.CertificationNumber == "170.315 (f)(2)", "CertificationNumber not as expected")
-	assert(t, criteria.Title == "Transmission to Public Health Agencies - Syndromic Surveillance", "Title not as expected")
-	assert(t, criteria.CertificationEditionID == 3, "CertificationEditionID not as expected")
-	assert(t, criteria.CertificationEdition == "2015", "CertificationEdition not as expected")
-	assert(t, criteria.Removed == false, "Removed not as expected")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, criteria.CertificationID == 44, "CertificationID not as expected")
+	th.Assert(t, criteria.CertificationNumber == "170.315 (f)(2)", "CertificationNumber not as expected")
+	th.Assert(t, criteria.Title == "Transmission to Public Health Agencies - Syndromic Surveillance", "Title not as expected")
+	th.Assert(t, criteria.CertificationEditionID == 3, "CertificationEditionID not as expected")
+	th.Assert(t, criteria.CertificationEdition == "2015", "CertificationEdition not as expected")
+	th.Assert(t, criteria.Removed == false, "Removed not as expected")
 }
 
 func Test_GetCHPLVendors(t *testing.T) {
@@ -345,11 +338,11 @@ func Test_GetCHPLVendors(t *testing.T) {
 	minNumExpVendsStored := 1440
 
 	err = chplquerier.GetCHPLVendors(ctx, store, client, "")
-	assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM vendors;")
 	err = rows.Scan(&actualVendsStored)
-	assert(t, err == nil, err)
-	assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
 
 	// expect to see this entry in the database:
 	// {
@@ -368,12 +361,12 @@ func Test_GetCHPLVendors(t *testing.T) {
 	// 	"country": "US"
 	// }
 	vend, err := store.GetVendorUsingName(ctx, "Carefluence")
-	assert(t, err == nil, err)
-	assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
-	assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
-	assert(t, vend.Name == "Carefluence", "Name not as expected")
-	assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
-	assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
+	th.Assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
+	th.Assert(t, vend.Name == "Carefluence", "Name not as expected")
+	th.Assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
+	th.Assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
 }
 
 func Test_GetCHPLProducts(t *testing.T) {
@@ -422,7 +415,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 	vend, err := store.GetVendorUsingName(ctx, "Intuitive Medical Documents")
-	assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 
 	var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 		Name:                  "Intuitive Medical Document",

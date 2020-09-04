@@ -9,6 +9,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
@@ -504,16 +505,7 @@ func Test_RunSupportedResourcesChecks(t *testing.T) {
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
 	supportedResources := RunSupportedResourcesChecks(capInt)
 	th.Assert(t, len(supportedResources) == 27, fmt.Sprintf("Expected there to be 27 supported resources in supportedResources array, were %v", len(supportedResources)))
-	th.Assert(t, contains(supportedResources, "ProcedureRequest"), "Expected supportedResources to contain ProcedureRequest resource type")
-	th.Assert(t, contains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
-	th.Assert(t, !contains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
-}
-
-func contains(arr []string, str string) bool {
-	for _, a := range arr {
-		if a == str {
-			return true
-		}
-	}
-	return false
+	th.Assert(t, helpers.StringArrayContains(supportedResources, "ProcedureRequest"), "Expected supportedResources to contain ProcedureRequest resource type")
+	th.Assert(t, helpers.StringArrayContains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
+	th.Assert(t, !helpers.StringArrayContains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
 }

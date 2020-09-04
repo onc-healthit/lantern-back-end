@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
@@ -97,7 +99,7 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 
 	var mimeError string
 	for _, mt := range mimeTypes {
-		if contains(version3plus, fhirVersion) {
+		if helpers.StringArrayContains(version3plus, fhirVersion) {
 			if mt == fhir3PlusJSONMIMEType {
 				ruleError.Expected = fhir3PlusJSONMIMEType
 				ruleError.Comment = "FHIR Version " + fhirVersion + " requires the Mime Type to be " + fhir3PlusJSONMIMEType
