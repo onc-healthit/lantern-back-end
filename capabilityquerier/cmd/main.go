@@ -11,8 +11,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/spf13/viper"
@@ -81,7 +81,7 @@ func main() {
 	helpers.FailOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
+	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages

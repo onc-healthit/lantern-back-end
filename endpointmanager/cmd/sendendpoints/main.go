@@ -6,8 +6,8 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
