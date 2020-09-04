@@ -70,6 +70,7 @@ The fhir_endpoints_info table contains the data collected from the last query of
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 | smart_http_response     | INTEGER | HTTP response receieved from endpoint SMART url |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
+| availability     | DECIMAL(64,4)      |   All-time availability percentage. The number of total HTTP 200 responses that have ever been received from this endpoint divided by the total number of HTTP request attempts|
 
 ## fhir_endpoints_info_history table
 The fhir_endpoints_info_history table contains the history of the fhir_endpoints_info table. The operation field of the fhir_endpoints_info_history table represents if the entry was inserted for the first time (I) ie: The first query ever performed at the given `url`, if the information retrieved from querying the `url` for an existing info entry was updated in any way (U) or if the info entry was removed (D). Deletion occurs in the case where a URL was once in a vendor list and was being queried by Lantern, but no longer exists in a vendor list and therefore will no longer exist in the `fhir_endpoints` table and will no longer be queried.
@@ -95,6 +96,8 @@ The fhir_endpoints_info_history table contains the history of the fhir_endpoints
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 | smart_http_response     | INTEGER | HTTP response receieved from endpoint SMART url |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
+| availability     | DECIMAL(64,4)      |   All-time availability percentage. The number of total HTTP 200 responses that have ever been received from this endpoint divided by the total number of HTTP request attempts|
+
 
 ## vendor table
 The vendor table stores health IT product vendor information gathered from CHPL.
@@ -154,5 +157,15 @@ The product criteria table maps the Health IT product Database ID to entries in 
 | healthit_product_id | INTEGER | Database ID of healthit product |
 | certification_id | INTEGER | ID of the certification criteria saved in CHPL |
 | certification_number | VARCHAR(500) | The name of the certification criteria |
+| created_at | TIMESTAMPTZ | Timestamp of creation |
+| updated_at | TIMESTAMPTZ | Timestamp of last update |
+
+# fhir_endpoint_availability table
+The FHIR endpoint availability table keeps track of how many HTTP 200 responses have been received from a URL and how many total responses have been received to cache the availability to reduce the burden of having to calculate the availability of a given endpoint.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| url     | VARCHAR(500)      |   Service base URL of endpoint |
+| http_200_count | BIGINT | Count of HTTP 200 responses ever received from endpoint |
+| http_all_count | BIGINT | Total count of all HTTP requests sent to the endpoint |
 | created_at | TIMESTAMPTZ | Timestamp of creation |
 | updated_at | TIMESTAMPTZ | Timestamp of last update |
