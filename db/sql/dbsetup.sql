@@ -214,7 +214,7 @@ CREATE TABLE product_criteria (
     CONSTRAINT product_crit  PRIMARY KEY (healthit_product_id, certification_id)
 );
 
-CREATE TABLE fhir_endpoint_availability (
+CREATE TABLE fhir_endpoints_availability (
     url             VARCHAR(500),
     http_200_count       BIGINT,
     http_all_count       BIGINT,

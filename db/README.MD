@@ -160,8 +160,8 @@ The product criteria table maps the Health IT product Database ID to entries in 
 | created_at | TIMESTAMPTZ | Timestamp of creation |
 | updated_at | TIMESTAMPTZ | Timestamp of last update |
 
-# fhir_endpoint_availability table
-The FHIR endpoint availability table keeps track of how many HTTP 200 responses have been received from a URL and how many total responses have been received to cache the availability to reduce the burden of having to calculate the availability of a given endpoint.
+# fhir_endpoints_availability table
+The FHIR endpoints availability table keeps track of how many HTTP 200 responses have been received from a URL and how many total responses have been received to cache the availability to reduce the burden of having to calculate the availability of a given endpoint.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
