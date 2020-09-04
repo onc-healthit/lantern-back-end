@@ -1,6 +1,8 @@
 package sharedfunctions
 
-import "log"
+import (
+	"log"
+)
 
 func FailOnError(errString string, err error) {
 	if err != nil {

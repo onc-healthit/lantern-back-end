@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 func main() {

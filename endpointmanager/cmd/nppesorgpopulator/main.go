@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
 	log "github.com/sirupsen/logrus"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/nppesquerier"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 func main() {

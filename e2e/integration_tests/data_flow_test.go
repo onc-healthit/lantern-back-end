@@ -16,6 +16,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -33,7 +34,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 	Assert "github.com/stretchr/testify/assert"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
 )
 
 type Endpoint struct {
