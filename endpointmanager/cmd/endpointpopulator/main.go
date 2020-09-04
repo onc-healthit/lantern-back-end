@@ -7,7 +7,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -29,18 +29,18 @@ func main() {
 	}
 
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source)
-	sharedfunctions.FailOnError("Endpoint List Parsing Error: ", err)
+	helpers.FailOnError("Endpoint List Parsing Error: ", err)
 
 	if len(listOfEndpoints.Entries) != 0 {
 		err = config.SetupConfig()
-		sharedfunctions.FailOnError("", err)
+		helpers.FailOnError("", err)
 
 		ctx := context.Background()
 		store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-		sharedfunctions.FailOnError("", err)
+		helpers.FailOnError("", err)
 		log.Info("Successfully connected to DB!")
 
 		dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
-		sharedfunctions.FailOnError("Saving in fhir_endpoints database error: ", dbErr)
+		helpers.FailOnError("Saving in fhir_endpoints database error: ", dbErr)
 	}
 }

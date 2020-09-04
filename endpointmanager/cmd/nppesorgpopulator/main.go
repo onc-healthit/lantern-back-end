@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
@@ -17,17 +17,17 @@ import (
 
 func main() {
 	err := config.SetupConfig()
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	ctx := context.Background()
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	if len(os.Args) != 2 {
 		log.Fatal("NPPES csv file not provided as argument.")
 	}
 	fname := os.Args[1]
 	err = store.DeleteAllNPIOrganizations(ctx)
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 }

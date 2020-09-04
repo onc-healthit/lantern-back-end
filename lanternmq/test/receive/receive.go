@@ -12,7 +12,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/sharedfunctions"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 )
@@ -38,29 +38,29 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	ch, err := mq.CreateChannel()
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	err = mq.NumConcurrentMsgs(ch, 1)
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	// Queue
 	err = mq.DeclareQueue(ch, "hello")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	msgs, err := mq.ConsumeFromQueue(ch, "hello")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	// Topic
 	tqName := os.Args[1]
 	err = mq.DeclareExchange(ch, "logs_topic", "topic")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "warning")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	err = mq.DeclareExchangeReceiveQueue(ch, "logs_topic", tqName, "error")
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 	tmsgs, err := mq.ConsumeFromQueue(ch, tqName)
-	sharedfunctions.FailOnError("", err)
+	helpers.FailOnError("", err)
 
 	forever := make(chan bool)
 
