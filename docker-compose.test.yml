@@ -5,6 +5,7 @@ services:
     environment:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
+      - LANTERN_DBHOST=postgres
 
   capability_receiver:
     environment:
