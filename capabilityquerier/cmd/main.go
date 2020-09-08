@@ -10,6 +10,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -30,6 +31,7 @@ type queryArgs struct {
 	ch          *lanternmq.ChannelID
 	qName       string
 	userAgent   string
+	store       *postgresql.Store
 }
 
 func failOnError(err error) {
@@ -61,6 +63,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		ChannelID:    qa.ch,
 		QueueName:    qa.qName,
 		UserAgent:    qa.userAgent,
+		Store:        qa.store,
 	}
 
 	job := workers.Job{
@@ -81,6 +84,10 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 func main() {
 	err := config.SetupConfig()
 	failOnError(err)
+
+	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
+	failOnError(err)
+	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
@@ -129,6 +136,7 @@ func main() {
 		ch:          &ch,
 		qName:       capQName,
 		userAgent:   userAgent,
+		store:       store,
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)

@@ -55,6 +55,7 @@ services:
       context: ./capabilityquerier
     depends_on:
       - lantern-mq
+      - postgres
     restart: on-failure
     environment:
       - LANTERN_QUSER=${LANTERN_QUSER}
@@ -64,10 +65,16 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_DBHOST=${LANTERN_DBHOST}
+      - LANTERN_DBPORT=${LANTERN_DBPORT}
+      - LANTERN_DBUSER=${LANTERN_DBUSER}
+      - LANTERN_DBPASSWORD=${LANTERN_DBPASSWORD}
+      - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
+      - LANTERN_DBNAME=${LANTERN_DBNAME}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"
-    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- ./main
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   capability_receiver:
     build: 
