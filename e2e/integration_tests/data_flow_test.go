@@ -167,6 +167,17 @@ func sendEndpointsOverQueue(ctx context.Context, t *testing.T, queueName string,
 	time.Sleep(30 * time.Second)
 }
 
+func queueIsEmpty(t *testing.T, queueName string) {
+	count, err := aq.QueueCount(queueName, channel)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 0, "should be no messages in queue.")
+}
+
+func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
+	th.Assert(t, err == nil, err)
+}
+
 func Test_EndpointDataIsAvailable(t *testing.T) {
 	var err error
 	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
@@ -439,8 +450,8 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var err error
-	th.QueueIsEmpty(t, testQName, channel)
-	defer th.CheckCleanQueue(t, testQName, channel)
+	queueIsEmpty(t, testQName)
+	defer checkCleanQueue(t, testQName, channel)
 	capQName := viper.GetString("endptinfo_capquery_qname")
 
 	var mq lanternmq.MessageQueue

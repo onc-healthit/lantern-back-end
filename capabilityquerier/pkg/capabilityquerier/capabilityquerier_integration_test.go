@@ -72,8 +72,8 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	queueName := viper.GetString("qname")
-	th.Queueis(t, queueName)
-	defer th.CheckCleanQueue(t, queueName, channel)
+	queueIsEmpty(t, queueName)
+	defer checkCleanQueue(t, queueName, channel)
 
 	var err error
 
