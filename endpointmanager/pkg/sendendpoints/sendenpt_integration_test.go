@@ -77,8 +77,8 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	queueName := viper.GetString("qname")
-	queueIsEmpty(t, queueName)
-	defer checkCleanQueue(t, queueName, channel)
+	th.QueueIsEmpty(t, queueName, channel)
+	defer th.CheckCleanQueue(t, queueName, channel)
 
 	ctx := context.Background()
 	var err error
@@ -101,17 +101,6 @@ func Test_GetEnptsAndSend(t *testing.T) {
 	// Expect 3 messages: 3 endpoints
 	th.Assert(t, count == 3, fmt.Sprintf("expected there to be 3 messages in the queue, instead got %d", count))
 	wg.Done()
-}
-
-func queueIsEmpty(t *testing.T, queueName string) {
-	count, err := aq.QueueCount(queueName, channel)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 0, "should be no messages in queue.")
-}
-
-func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
-	err := aq.CleanQueue(queueName, channel)
-	th.Assert(t, err == nil, err)
 }
 
 func setup() error {

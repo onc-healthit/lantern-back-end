@@ -8,7 +8,9 @@ import (
 	"testing"
 	"time"
 
+	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
+	"github.com/streadway/amqp"
 )
 
 // HostAndPort holds the host and port information for a resource.
@@ -189,4 +191,15 @@ func deleteTableEntries(tableNames []string, db *sql.DB) error {
 	}
 
 	return nil
+}
+
+func CheckCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
+	err := aq.CleanQueue(queueName, channel)
+	Assert(t, err == nil, err)
+}
+
+func QueueIsEmpty(t *testing.T, queueName string, channel *amqp.Channel) {
+	count, err := aq.QueueCount(queueName, channel)
+	Assert(t, err == nil, err)
+	Assert(t, count == 0, "should be no messages in queue.")
 }
