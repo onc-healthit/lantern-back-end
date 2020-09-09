@@ -247,6 +247,7 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d/go.mod h1:o96d
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6 h1:+wJAkmqrYYmQ5tH7o9ssLXq4UMwEeDZEdv/hQwABaoE=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:D1+Dbr7oRkqfpFVytc9HB9DcaqbVhG63FMi0WxLakUE=
+github.com/onc-healthit/lantern-back-end v1.0.0 h1:C6FIvZRahTlpLqPdlq7mPYsqmy+ZgL/VxHuFEGxzP6Y=
 github.com/onc-healthit/lantern-back-end/capabilityquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:coNhm1eDaFhpn7ludPQYFlLFntXTyIb+7VPO5Wb2fBc=
 github.com/onc-healthit/lantern-back-end/capabilityreceiver v0.0.0-20200909151456-d6d72610caf4 h1:Oe1Aq/TO5CDdCy9NR9VtugpFB+cDdYMNO3Lt/+rf0yw=
 github.com/onc-healthit/lantern-back-end/capabilityreceiver v0.0.0-20200909151456-d6d72610caf4/go.mod h1:vjaB0KKubFPSblISqUVK4sfM85AqaAsT3RI16dBLquA=
@@ -290,6 +291,7 @@ github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200904154706-6
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200904154706-65bc68a275e2/go.mod h1:nYz9YMYz2o5IRGVmhbfLacL3ywixaPDGsx0JV6Q0Vzk=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200904160739-91661c94da0e h1:W7V6OKb1JAVZwfyvxMGcg8QGiVYzWgrew1VshIPpqok=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200904160739-91661c94da0e/go.mod h1:CR0J8s5HXk3vVYn8bWrME4VwngPOZqSv4RXiNTKbVQ0=
+github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200908190833-f2c578c11a79 h1:4KtA8IMI/u8HWHWtYiuTo/y3kjcx9OfkGSBdPj3HBfw=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200909133403-7a5a9166c426 h1:JG7fzCOY3klAB9EjgNH1XASOepFPw6JK/JRL6bjRiLc=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200909133403-7a5a9166c426/go.mod h1:u2/B+/ijl9g9+YcZbB+yMC22rRnoAHWdX+vbpyyneP0=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200909141540-8f08afaea024 h1:DVNr14I6lQJ2MvTGGJkLEruj7bUAWMn4A8CGDLrmDoY=

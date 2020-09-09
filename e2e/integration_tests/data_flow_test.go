@@ -515,8 +515,8 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	expected_availability_ct := 30
 	var availability_count int
 	err = availability_ct_st.Scan(&availability_count)
-	failOnError(err)
-	if availability_count !=  expected_availability_ct{
+	helpers.FailOnError("", err)
+	if availability_count != expected_availability_ct {
 		t.Fatalf("There should be same number of endpoints in availability table as fhir_endpoints_info, Got: %d", availability_count)
 	}
 
@@ -548,7 +548,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 
 	// Check that endpoints were not deleted from availability table
 	err = availability_ct_st.Scan(&availability_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if availability_count != expected_availability_ct {
 		t.Fatalf("fhir_endpoints_availability should still have %d endpoints after update, Got: %d", expected_availability_ct, availability_count)
 	}
@@ -597,7 +597,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		var availability float64
 		get_availability_str := "SELECT http_response, availability FROM fhir_endpoints_info WHERE url=$1;"
 		err = store.DB.QueryRow(get_availability_str, url).Scan(&http_response, &availability)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		if http_response == 200 {
 			th.Assert(t, availability == 1.0, fmt.Sprintf("expected availability for %s to be %f", url, availability))
 		} else {
