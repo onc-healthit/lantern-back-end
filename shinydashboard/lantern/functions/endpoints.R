@@ -175,6 +175,15 @@ get_fhir_resource_count <- function(fhir_resources_tbl) {
     rename(Resource = type, Endpoints = n)
 }
 
+# Summarize count of resource types by type, fhir_version
+get_implementation_guide_count <- function(fhir_resources_tbl) {
+  res <- fhir_resources_tbl %>%
+    group_by(implementation_guide, fhir_version) %>%
+    filter(implementation_guide != "None") %>%
+    count() %>%
+    rename(Implementation = implementation_guide, Endpoints = n)
+}
+
 get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
   res <- capstat_fields_tbl %>%
     group_by(field, exist, fhir_version, extension) %>%
@@ -410,4 +419,20 @@ get_endpoint_locations <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
   res
+}
+# get implementation guides stored in capability statement
+get_implementation_guide<- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT
+          f.url as url,
+          capability_statement->>'fhirVersion' as fhir_version,
+          capability_statement->>'implementationGuide' as implementation_guide,
+          vendors.name as vendor_name
+          FROM fhir_endpoints_info f
+          LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown")) %>%
+    tidyr::replace_na(list(implementation_guide = "None"))
+
 }
