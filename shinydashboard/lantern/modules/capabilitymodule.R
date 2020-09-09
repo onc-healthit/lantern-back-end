@@ -108,7 +108,9 @@ capabilitymodule <- function(
       )
     }
     else {
-      return("There are no Implementation guides supported by the endpoints that passed the selected filtering criteia")
+      tagList(
+        plotOutput(ns("implementation_guide_empty_plot"), height = plot_height_implementation())
+      )
     }
   })
 
@@ -149,4 +151,13 @@ capabilitymodule <- function(
     cacheKeyExpr = {
       list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
     })
+
+  output$implementation_guide_empty_plot <- renderPlot({
+    ggplot(implementation_count()) +
+    geom_col(width = 0.8) +
+    labs(x = "Implementation Guides", y = "Number of Endpoints") +
+    theme(axis.text.x = element_blank(),
+  axis.text.y = element_blank(), axis.ticks = element_blank()) +
+    annotate("text", label = "There are no Implementation guides supported by the endpoints that passed the selected filtering criteia", x = 1, y = 2, size = 5, colour = "red", hjust = 0.5)
+  })
 }
