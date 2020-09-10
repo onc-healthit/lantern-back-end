@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -1055,7 +1057,7 @@ func getValidator(capStat capabilityparser.CapabilityStatement, checkVersions []
 	if err != nil {
 		return nil, err
 	}
-	if !contains(checkVersions, fhirVersion) {
+	if !helpers.StringArrayContains(checkVersions, fhirVersion) {
 		return nil, fmt.Errorf("capstat's returned version %s is not one of the expected versions %+v", fhirVersion, checkVersions)
 	}
 	validator := ValidatorForFHIRVersion(fhirVersion)

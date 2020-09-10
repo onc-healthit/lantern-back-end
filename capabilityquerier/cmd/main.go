@@ -11,6 +11,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -32,12 +33,6 @@ type queryArgs struct {
 	qName       string
 	userAgent   string
 	store       *postgresql.Store
-}
-
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
 }
 
 // queryEndpoints gets an endpoint from the queue message and queries it to get the Capability Statement.
@@ -83,10 +78,10 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 
 func main() {
 	err := config.SetupConfig()
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
+	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages
@@ -96,17 +91,17 @@ func main() {
 	qPort := viper.GetString("qport")
 	capQName := viper.GetString("capquery_qname")
 	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	endptQName := viper.GetString("endptinfo_capquery_qname")
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	defer mq.Close()
 
 	// Read version file that is mounted
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
-	failOnError(err)
+	helpers.FailOnError("", err)
 	versionString := string(version)
 	versionNum := strings.Split(versionString, "=")
 	userAgent := "LANTERN/" + versionNum[1]
@@ -124,7 +119,7 @@ func main() {
 
 	// Start workers and have then always running
 	err = workers.Start(ctx, numWorkers, errs)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
@@ -140,7 +135,7 @@ func main() {
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)
 

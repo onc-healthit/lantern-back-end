@@ -76,46 +76,34 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
-
-func assert(t *testing.T, boolStatement bool, errorValue interface{}) {
-	if !boolStatement {
-		t.Fatalf("%s: %+v", t.Name(), errorValue)
-	}
-}
-
 func populateTestNPIData() {
 	var err error
 	fname := "./testdata/npidata_min.csv"
 	ctx := context.Background()
 	err = store.DeleteAllNPIOrganizations(ctx)
 	_, err = nppesquerier.ParseAndStoreNPIFile(ctx, fname, store)
-	failOnError(err)
+	helpers.FailOnError("", err)
 }
 
 func populateTestEndpointData(testEndpointList string, source string) {
 	var listOfEndpoints fetcher.ListOfEndpoints
 	var knownSource fetcher.Source
 	content, err := ioutil.ReadFile(testEndpointList)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	if source == "Test" {
 		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source)
-		failOnError(err)
+		helpers.FailOnError("", err)
 	} else {
 		knownSource = "LanternEndpointSourcesJson"
 		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource)
-		failOnError(err)
+		helpers.FailOnError("", err)
 	}
 
 	ctx := context.Background()
 
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
-	failOnError(dbErr)
+	helpers.FailOnError("", dbErr)
 }
 
 func metadataHandler(w http.ResponseWriter, r *http.Request) {
@@ -195,7 +183,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	response_time_row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var link_count int
 	err = response_time_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	if link_count != 30 {
 		t.Fatalf("Only 30 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
@@ -208,7 +196,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	var link_count int
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	if link_count != 0 {
 		t.Fatalf("Empty database should not have had any links made yet. Has: " + strconv.Itoa(link_count))
@@ -220,7 +208,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	if link_count != expected_link_count {
 		t.Fatalf("Database should only have made 30 links given the fake NPPES data that was loaded. Has: " + strconv.Itoa(link_count))
@@ -258,13 +246,13 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed org url is "+ep.url+"\nError %v\n", err)
 		}
-		failOnError(err)
+		helpers.FailOnError("", err)
 
 		// Assert that endpoint id has correct url
 		var endpoint_url string
 		query_str = "SELECT url FROM fhir_endpoints WHERE id=$1;"
 		err = store.DB.QueryRow(query_str, endpoint_id).Scan(&endpoint_url)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		if endpoint_url != ep.url {
 			t.Fatalf("Endpoint id mapped to wrong endpoint url")
 		}
@@ -272,7 +260,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 		var num_npi_ids int
 		query_str = "SELECT count(*) FROM endpoint_organization WHERE url =$1;"
 		err = store.DB.QueryRow(query_str, ep.url).Scan(&num_npi_ids)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		if num_npi_ids != len(ep.mapped_npi_ids) {
 			t.Fatalf("Expected number of npi organizations mapped to endpoint is " + strconv.Itoa(len(ep.mapped_npi_ids)) + " Got: " + strconv.Itoa(num_npi_ids))
 		}
@@ -282,7 +270,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 			var linked_endpoint_url string
 			query_str = "SELECT url FROM endpoint_organization WHERE organization_npi_id =$1;"
 			err = store.DB.QueryRow(query_str, npi_id).Scan(&linked_endpoint_url)
-			failOnError(err)
+			helpers.FailOnError("", err)
 			if linked_endpoint_url != ep.url {
 				t.Fatalf("Endpoint url mapped to wrong npi organization")
 			}
@@ -307,11 +295,11 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	minNumExpCriteriaStored := 182
 
 	err = chplquerier.GetCHPLCriteria(ctx, store, client, "")
-	assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM certification_criteria;")
 	err = rows.Scan(&actualCriteriaStored)
-	assert(t, err == nil, err)
-	assert(t, actualCriteriaStored >= minNumExpCriteriaStored, fmt.Sprintf("Expected at least %d criteria stored. Actually had %d criteria stored.", minNumExpCriteriaStored, actualCriteriaStored))
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualCriteriaStored >= minNumExpCriteriaStored, fmt.Sprintf("Expected at least %d criteria stored. Actually had %d criteria stored.", minNumExpCriteriaStored, actualCriteriaStored))
 
 	// expect to see this entry in the database:
 	// {
@@ -324,13 +312,13 @@ func Test_GetCHPLCriteria(t *testing.T) {
 	// Removed: false
 	// }
 	criteria, err := store.GetCriteriaByCertificationID(ctx, 44)
-	assert(t, err == nil, err)
-	assert(t, criteria.CertificationID == 44, "CertificationID not as expected")
-	assert(t, criteria.CertificationNumber == "170.315 (f)(2)", "CertificationNumber not as expected")
-	assert(t, criteria.Title == "Transmission to Public Health Agencies - Syndromic Surveillance", "Title not as expected")
-	assert(t, criteria.CertificationEditionID == 3, "CertificationEditionID not as expected")
-	assert(t, criteria.CertificationEdition == "2015", "CertificationEdition not as expected")
-	assert(t, criteria.Removed == false, "Removed not as expected")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, criteria.CertificationID == 44, "CertificationID not as expected")
+	th.Assert(t, criteria.CertificationNumber == "170.315 (f)(2)", "CertificationNumber not as expected")
+	th.Assert(t, criteria.Title == "Transmission to Public Health Agencies - Syndromic Surveillance", "Title not as expected")
+	th.Assert(t, criteria.CertificationEditionID == 3, "CertificationEditionID not as expected")
+	th.Assert(t, criteria.CertificationEdition == "2015", "CertificationEdition not as expected")
+	th.Assert(t, criteria.Removed == false, "Removed not as expected")
 }
 
 func Test_GetCHPLVendors(t *testing.T) {
@@ -350,11 +338,11 @@ func Test_GetCHPLVendors(t *testing.T) {
 	minNumExpVendsStored := 1440
 
 	err = chplquerier.GetCHPLVendors(ctx, store, client, "")
-	assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM vendors;")
 	err = rows.Scan(&actualVendsStored)
-	assert(t, err == nil, err)
-	assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualVendsStored >= minNumExpVendsStored, fmt.Sprintf("Expected at least %d vendors stored. Actually had %d vendors stored.", minNumExpVendsStored, actualVendsStored))
 
 	// expect to see this entry in the database:
 	// {
@@ -373,12 +361,12 @@ func Test_GetCHPLVendors(t *testing.T) {
 	// 	"country": "US"
 	// }
 	vend, err := store.GetVendorUsingName(ctx, "Carefluence")
-	assert(t, err == nil, err)
-	assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
-	assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
-	assert(t, vend.Name == "Carefluence", "Name not as expected")
-	assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
-	assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, vend.CHPLID == 1658, "CHPLID not as expected")
+	th.Assert(t, vend.DeveloperCode == "2657", "DeveloperCode not as expected")
+	th.Assert(t, vend.Name == "Carefluence", "Name not as expected")
+	th.Assert(t, vend.URL == "http://www.carefluence.com", "URL not as expected")
+	th.Assert(t, vend.Location.ZipCode == "48439", "ZipCode not as expected")
 }
 
 func Test_GetCHPLProducts(t *testing.T) {
@@ -392,7 +380,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	expected_hitp_count := 7829
 	var hitp_count int
 	err = healthit_prod_row.Scan(&hitp_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if hitp_count != 0 {
 		t.Fatalf("Healthit product database should initially be empty")
 	}
@@ -402,11 +390,11 @@ func Test_GetCHPLProducts(t *testing.T) {
 		Timeout: time.Second * 35,
 	}
 	err = chplquerier.GetCHPLProducts(ctx, store, client, "")
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	healthit_prod_row = store.DB.QueryRow("SELECT COUNT(*) FROM healthit_products;")
 	err = healthit_prod_row.Scan(&hitp_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if hitp_count < expected_hitp_count {
 		t.Fatalf("Database should have at least " + strconv.Itoa(expected_hitp_count) + " health it products after querying chpl Got: " + strconv.Itoa(hitp_count))
 	}
@@ -427,7 +415,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx = context.Background()
 	vend, err := store.GetVendorUsingName(ctx, "Intuitive Medical Documents")
-	assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)
 
 	var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 		Name:                  "Intuitive Medical Document",
@@ -453,7 +441,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	var link_count int
 	prod_crit_row := store.DB.QueryRow("SELECT COUNT(*) FROM product_criteria;")
 	err = prod_crit_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	if link_count <= 0 {
 		t.Fatalf("There should be links in the product_criteria table.")
@@ -488,7 +476,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	query_str := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info where capability_statement is not null;")
 	var capability_statement_count int
 	err = query_str.Scan(&capability_statement_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if capability_statement_count == 0 {
 		t.Fatalf("Fhir_endpoints_info db should have capability statements")
 	}
@@ -497,25 +485,25 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var fhir_version_count int
 	expected_fhir_version_count := 30
 	err = query_str.Scan(&fhir_version_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if fhir_version_count < expected_fhir_version_count {
 		t.Fatalf("There should be at least 30 capability statement with fhir version specified, actual is " + strconv.Itoa(fhir_version_count))
 	}
 
 	epic, err := store.GetVendorUsingName(ctx, "Epic Systems Corporation")
-	failOnError(err)
+	helpers.FailOnError("", err)
 	cerner, err := store.GetVendorUsingName(ctx, "Cerner Corporation")
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	common_vendor_list := [2]int{epic.ID, cerner.ID}
 	vendor_rows, err := store.DB.Query("SELECT DISTINCT vendor_id FROM fhir_endpoints_info where vendor_id!=0;")
-	failOnError(err)
+	helpers.FailOnError("", err)
 	var test_vendor_list []int
 	defer vendor_rows.Close()
 	for vendor_rows.Next() {
 		var vendorID int
 		err = vendor_rows.Scan(&vendorID)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		test_vendor_list = append(test_vendor_list, vendorID)
 	}
 	th.Assert(t, len(test_vendor_list) >= len(common_vendor_list), "List of distinct vendors should at least include most common vendors")
@@ -527,8 +515,8 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	expected_availability_ct := 30
 	var availability_count int
 	err = availability_ct_st.Scan(&availability_count)
-	failOnError(err)
-	if availability_count !=  expected_availability_ct{
+	helpers.FailOnError("", err)
+	if availability_count != expected_availability_ct {
 		t.Fatalf("There should be same number of endpoints in availability table as fhir_endpoints_info, Got: %d", availability_count)
 	}
 
@@ -539,7 +527,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	var endpt_count int
 	err = endpt_ct_st.Scan(&endpt_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if endpt_count != expected_endpt_ct {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, shortEndptList, endpt_count)
 	}
@@ -553,14 +541,14 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var link_count int
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("endpoint_organization should still have %d links after update", expected_link_count)
 	}
 
 	// Check that endpoints were not deleted from availability table
 	err = availability_ct_st.Scan(&availability_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if availability_count != expected_availability_ct {
 		t.Fatalf("fhir_endpoints_availability should still have %d endpoints after update, Got: %d", expected_availability_ct, availability_count)
 	}
@@ -568,7 +556,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
 	var endpt_info_count int
 	err = endpt_info_ct_st.Scan(&endpt_info_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if endpt_info_count != expected_endpt_ct {
 		t.Fatalf("fhir_endpoints_info should have %d endpoints after update. Got: %d", expected_endpt_ct, link_count)
 	}
@@ -584,12 +572,12 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	expected_deleted_endpt := 6
 	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")
 	var deleted_fhir_urls []string
-	failOnError(err)
+	helpers.FailOnError("", err)
 	defer rows.Close()
 	for rows.Next() {
 		var fhirURL string
 		err = rows.Scan(&fhirURL)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		deleted_fhir_urls = append(deleted_fhir_urls, fhirURL)
 	}
 
@@ -609,7 +597,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		var availability float64
 		get_availability_str := "SELECT http_response, availability FROM fhir_endpoints_info WHERE url=$1;"
 		err = store.DB.QueryRow(get_availability_str, url).Scan(&http_response, &availability)
-		failOnError(err)
+		helpers.FailOnError("", err)
 		if http_response == 200 {
 			th.Assert(t, availability == 1.0, fmt.Sprintf("expected availability for %s to be %f", url, availability))
 		} else {
@@ -637,7 +625,7 @@ func Test_LanternSource(t *testing.T) {
 	expected_endpt_ct := 2
 	endpt_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	err = endpt_ct_st.Scan(&endpt_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if endpt_count != expected_endpt_ct {
 		t.Fatalf("Only %d endpoints should be in fhir_endpoints after updating with file %s, Got: %d", expected_endpt_ct, LanternEndptList, endpt_count)
 	}
@@ -650,7 +638,7 @@ func Test_LanternSource(t *testing.T) {
 
 	endpoint_orgs_row := store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("endpoint_organization should have %d links, had %d", expected_link_count, link_count)
 	}
@@ -659,7 +647,7 @@ func Test_LanternSource(t *testing.T) {
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization WHERE url = 'example.com/';")
 	err = endpoint_orgs_row.Scan(&link_count)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	if link_count != expected_link_count {
 		t.Fatalf("example.com should have %d links in endpoint_organization, had %d", expected_link_count, link_count)
 	}

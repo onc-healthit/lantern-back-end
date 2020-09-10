@@ -9,17 +9,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/rabbitmq"
 )
 
 var mq lanternmq.MessageQueue
-
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
 
 func bodyFrom(args []string) string {
 	var s string
@@ -46,16 +41,16 @@ func main() {
 	defer mq.Close()
 
 	err := mq.Connect("guest", "guest", "localhost", "5672")
-	failOnError(err)
+	helpers.FailOnError("", err)
 	ch, err := mq.CreateChannel()
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	err = mq.DeclareExchange(ch, "logs_topic", "topic")
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	body := bodyFrom(os.Args)
 	severity := severityFrom(os.Args)
 	err = mq.PublishToExchange(ch, "logs_topic", severity, body)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	log.Printf(" [x] Sent %s", body)
 }

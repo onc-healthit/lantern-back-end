@@ -6,30 +6,25 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	se "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/sendendpoints"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatalf("%s", err)
-	}
-}
-
 func main() {
 	err := config.SetupConfig()
-	failOnError(err)
+	helpers.FailOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	failOnError(err)
+	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages to capabilityquerier
 	capQName := viper.GetString("enptinfo_capquery_qname")
 	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
-	failOnError(err)
+	helpers.FailOnError("", err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
 
 	errs := make(chan error)
