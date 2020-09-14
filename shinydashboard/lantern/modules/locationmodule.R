@@ -5,13 +5,12 @@ locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
     h3("Map of Zip Codes with identified organization"),
-    p(strong("Demonstration Only:"), "This map is for demonstration purposes and is still a work in progress."),
     leafletOutput(ns("location_map"), width = "100%", height = "600px"),
     p("Lantern uses organization information from the NPPES provider NPI registry. Points above are mapped
       to the zip code associated with the primary address of identified organizations. It does not necessarily
       represent a phyical location where services are provided or a geolocation of any individual endpoint."),
-    p("Green points represent indexed endpoints which have been mapped to an organization. These locations are
-      the zip code associated with the primary location of the organization mapped to the endpoint.")
+    p("Green points represent indexed endpoints which have been mapped to an organization with a match score greater than 0.97. These locations are
+      the zip code associated with the primary location of the organization mapped to the endpoint. For more information about match scores and how they are calculated see the \"About Lantern page\".")
   )
 }
 
