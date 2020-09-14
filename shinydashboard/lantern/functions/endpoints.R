@@ -400,8 +400,9 @@ get_endpoint_locations <- function(db_connection) {
           organization_name,
           fhir_version,
           vendor_name,
+          match_score,
           left(zipcode,5) as zipcode
-        FROM endpoint_export where zipcode is NOT NULL")
+        FROM endpoint_export where zipcode is NOT NULL AND match_score > .97 ")
     ) %>%
     collect() %>%
     left_join(app$zip_to_zcta, by = c("zipcode" = "zipcode")) %>%

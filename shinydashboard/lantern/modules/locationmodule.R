@@ -44,7 +44,6 @@ locationmodule <- function(
   output$location_map  <- renderLeaflet({
     map <- leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addCircles(data = app_data$org_locations, lat = ~ lat, lng = ~ lng, popup = ~name,  weight = 7, color = "#ff6633", opacity = 0.3, fillOpacity = 0.3, fillColor = "#ff6633") %>%
       addCircles(data = selected_fhir_endpoints(), lat = ~ lat, lng = ~ lng, popup = ~endpoint_name,  weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
       setView(-98.9, 37.7, zoom = 4)
     map

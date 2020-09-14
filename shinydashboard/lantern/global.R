@@ -68,7 +68,6 @@ app_data <<- list(
   well_known_endpoints_tbl = NULL,    # endpoints returning smart core capabilities JSON doc
   well_known_endpoints_no_doc = NULL, # well known endpoints reached, but no JSON doc returned
   well_known_endpoint_counts = NULL,  # summary table of well known URI endpoints
-  org_locations = NULL,               # org-zcta mappings
   endpoint_locations = NULL           # endpoints with location information mappings
 )
 
@@ -129,8 +128,6 @@ updater <- observe({
   app_data$well_known_endpoint_counts  <<- get_well_known_endpoint_counts(db_connection)
 
   app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
-
-  app_data$org_locations <<- get_organization_locations(db_connection)
 
   app_data$endpoint_locations <<- get_endpoint_locations(db_connection)
 })
