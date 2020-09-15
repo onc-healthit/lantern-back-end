@@ -54,10 +54,10 @@ performancemodule <- function(
   })
 
   output$note_text <- renderUI({
-    note_info <- "There are many variables that influence response time, such 
-      as network congestion, geographic location, hosting configurations, etc. 
-      This graphic only intends to convey the health of the FHIR endpoint ecosystem 
-      as a whole, drastic changes to which may represent some widespread issue 
+    note_info <- "There are many variables that influence response time, such
+      as network congestion, geographic location, hosting configurations, etc.
+      This graphic only intends to convey the health of the FHIR endpoint ecosystem
+      as a whole, drastic changes to which may represent some widespread issue
       throughout the ecosystem."
     res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)

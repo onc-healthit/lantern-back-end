@@ -180,15 +180,15 @@ dashboard <- function(
   })
 
   output$note_text <- renderUI({
-    note_info <- "(1) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability 
-               Resources (FHIR) endpoints published publicly by Certified API Developers in conformance with 
-               the ONC Cures Act Final Rule, or discovered through the National Plan and Provider Enumeration 
-               System (NPPES). This data, therefore, may not represent all FHIR endpoints in existence. 
-               (2) The number of endpoints for each Certified API Developer and FHIR version is a sum of all 
-               API Information Sources and unique endpoints discovered for each unique Certified API Developer. 
-               The API Information Source name associated with each endpoint may be represented as different 
-               organization types, including as a single clinician, practice group, facility or health system. 
-               Due to this variation in how API Information Sources are represented, insights gathered from this 
+    note_info <- "(1) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
+               Resources (FHIR) endpoints published publicly by Certified API Developers in conformance with
+               the ONC Cures Act Final Rule, or discovered through the National Plan and Provider Enumeration
+               System (NPPES). This data, therefore, may not represent all FHIR endpoints in existence.
+               (2) The number of endpoints for each Certified API Developer and FHIR version is a sum of all
+               API Information Sources and unique endpoints discovered for each unique Certified API Developer.
+               The API Information Source name associated with each endpoint may be represented as different
+               organization types, including as a single clinician, practice group, facility or health system.
+               Due to this variation in how API Information Sources are represented, insights gathered from this
                data should be framed accordingly."
     res <- paste("<div style='font-size: 16px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
