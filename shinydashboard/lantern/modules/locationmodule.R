@@ -4,8 +4,8 @@ library(leaflet)
 locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    h3("Map of Zip Codes with identified organization"),
-    p("Lantern uses organization information from the NPPES provider NPI registry. Points above are mapped
+    h3("Map of Endpoints Linked to an Organization"),
+    p("Lantern uses organization information from the NPPES provider NPI registry. Points below are mapped
       to the zip code associated with the primary address of identified organizations. It does not necessarily
       represent a physical location where services are provided or a geolocation of any individual endpoint."),
     p("Green points represent indexed endpoints which have been mapped to an organization with a match score greater than 0.97. These locations are
