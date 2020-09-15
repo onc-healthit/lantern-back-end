@@ -12,7 +12,8 @@ endpointsmodule_UI <- function(id) {
              downloadButton(ns("download_data"), "Download")
       ),
     ),
-    DT::dataTableOutput(ns("endpoints_table"))
+    DT::dataTableOutput(ns("endpoints_table")),
+    htmlOutput(ns("note_text"))
   )
 }
 
@@ -57,4 +58,15 @@ endpointsmodule <- function(
       write.csv(selected_fhir_endpoints(), file, row.names = FALSE)
     }
   )
+
+  output$note_text <- renderUI({
+    note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability 
+      Resources (FHIR) endpoints published publicly by Certified API Developers in conformance 
+      with the ONC Cures Act Final Rule, or discovered through the National Plan and Provider 
+      Enumeration System (NPPES). This data, therefore, may not represent all FHIR endpoints 
+      in existence. Insights gathered from this data should be framed accordingly."
+    res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+    HTML(res)
+  })
+
 }

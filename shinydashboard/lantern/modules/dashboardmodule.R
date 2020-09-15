@@ -28,7 +28,8 @@ dashboard_UI <- function(id) {
              tableOutput(ns("fhir_vendor_table"))
       ),
       column(width = 8,
-             plotOutput(ns("vendor_share_plot"))
+             plotOutput(ns("vendor_share_plot")),
+             htmlOutput(ns("note_text"))
       )
     ),
     h3("All Endpoint Responses"),
@@ -147,7 +148,7 @@ dashboard <- function(
            title = "Endpoints by Vendor and FHIR Version") +
       scale_fill_manual(values = c("#66C2A5", "#8DA0CB", "#EFA182", "#E78AC3", "#A6D854"))
   }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
+                                  height = 350,
                                   growthRate = 1.2),
     res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated }
   )
@@ -176,6 +177,21 @@ dashboard <- function(
       Other endpoints may fail to properly indicate FHIR Version or Vendor information in their capability statement.",
       easyClose = TRUE
     ))
+  })
+
+  output$note_text <- renderUI({
+    note_info <- "(1) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability 
+               Resources (FHIR) endpoints published publicly by Certified API Developers in conformance with 
+               the ONC Cures Act Final Rule, or discovered through the National Plan and Provider Enumeration 
+               System (NPPES). This data, therefore, may not represent all FHIR endpoints in existence. 
+               (2) The number of endpoints for each Certified API Developer and FHIR version is a sum of all 
+               API Information Sources and unique endpoints discovered for each unique Certified API Developer. 
+               The API Information Source name associated with each endpoint may be represented as different 
+               organization types, including as a single clinician, practice group, facility or health system. 
+               Due to this variation in how API Information Sources are represented, insights gathered from this 
+               data should be framed accordingly."
+    res <- paste("<div style='font-size: 16px;'><b>Note:</b>", note_info, "</div>")
+    HTML(res)
   })
 
 }

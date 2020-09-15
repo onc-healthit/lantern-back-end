@@ -8,7 +8,8 @@ performance_UI <- function(id) {
   tagList(
     textOutput(ns("no_graph")),
     dygraphOutput(ns("mean_response_time_plot")),
-    p("Click and drag on plot to zoom in, double-click to zoom out.")
+    p("Click and drag on plot to zoom in, double-click to zoom out."),
+    htmlOutput(ns("note_text"))
   )
 }
 
@@ -37,18 +38,29 @@ performancemodule <- function(
       res
     })
 
-    output$no_graph <- renderText({
-      if (nrow(response_time_xts()) == 0) {
-        "Sorry, there isn't enough data to show response times!"
-      }
-    })
+  output$no_graph <- renderText({
+    if (nrow(response_time_xts()) == 0) {
+      "Sorry, there isn't enough data to show response times!"
+    }
+  })
 
-    output$mean_response_time_plot <- renderDygraph({
-      if (nrow(response_time_xts()) > 0) {
-        dygraph(response_time_xts(),
-              main = "Endpoint Mean Response Time",
-              ylab = "seconds",
-              xlab = "Date")
-      }
-    })
+  output$mean_response_time_plot <- renderDygraph({
+    if (nrow(response_time_xts()) > 0) {
+      dygraph(response_time_xts(),
+            main = "Endpoint Mean Response Time",
+            ylab = "seconds",
+            xlab = "Date")
+    }
+  })
+
+  output$note_text <- renderUI({
+    note_info <- "There are many variables that influence response time, such 
+      as network congestion, geographic location, hosting configurations, etc. 
+      This graphic only intends to convey the health of the FHIR endpoint ecosystem 
+      as a whole, drastic changes to which may represent some widespread issue 
+      throughout the ecosystem."
+    res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+    HTML(res)
+  })
+
 }
