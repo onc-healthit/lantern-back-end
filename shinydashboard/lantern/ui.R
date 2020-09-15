@@ -17,7 +17,7 @@ ui <- dashboardPage(
   # Sidebar with menu items for each module
   dashboardSidebar(
     sidebarMenu(id = "side_menu",
-      menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard"), selected = TRUE),
+      menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
