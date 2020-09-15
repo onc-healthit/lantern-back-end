@@ -148,7 +148,7 @@ dashboard <- function(
            title = "Endpoints by Vendor and FHIR Version") +
       scale_fill_manual(values = c("#66C2A5", "#8DA0CB", "#EFA182", "#E78AC3", "#A6D854"))
   }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 350,
+                                  height = 333,
                                   growthRate = 1.2),
     res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated }
   )
