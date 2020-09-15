@@ -129,7 +129,7 @@ updater <- observe({
   app_data$well_known_endpoint_counts  <<- get_well_known_endpoint_counts(db_connection)
 
   app_data$endpoint_security_counts <<- get_endpoint_security_counts(db_connection)
-  
+
   app_data$implementation_guide <<- get_implementation_guide(db_connection)
 
   app_data$endpoint_locations <<- get_endpoint_locations(db_connection)

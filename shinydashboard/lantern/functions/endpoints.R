@@ -421,7 +421,7 @@ get_endpoint_locations <- function(db_connection) {
   res
 }
 # get implementation guides stored in capability statement
-get_implementation_guide<- function(db_connection) {
+get_implementation_guide <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT
           f.url as url,
@@ -434,5 +434,4 @@ get_implementation_guide<- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown")) %>%
     tidyr::replace_na(list(implementation_guide = "None"))
-
 }

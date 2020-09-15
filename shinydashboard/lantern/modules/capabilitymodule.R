@@ -15,7 +15,7 @@ capabilitymodule_UI <- function(id) {
              uiOutput(ns("resource_plot"))
       )
     ),
-    h1("FHIR Implementation Guides"), 
+    h1("FHIR Implementation Guides"),
     p("This is the list of FHIR implementation guides reported by the capability statements from the endpoints."),
     fluidRow(
       column(width = 12,
