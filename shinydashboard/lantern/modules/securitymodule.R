@@ -71,5 +71,4 @@ securitymodule <- function(
               options = list(scrollX = TRUE)
     )
   })
-
 }

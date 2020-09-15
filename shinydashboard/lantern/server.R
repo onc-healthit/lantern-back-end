@@ -17,6 +17,12 @@ function(input, output, session) {
     "availability_page")
 
   callModule(
+    locationmodule,
+    "location_page",
+    reactive(input$fhir_version),
+    reactive(input$vendor))
+
+  callModule(
     performancemodule,
     "performance_page",
     reactive(input$date))
@@ -56,7 +62,7 @@ function(input, output, session) {
      "capability_tab" = "Capability Page",
      "fields_tab" = "Fields Page",
      "availability_tab" = "Endpoint Server Availability",
-     "location_tab" = "Location Map Page",
+     "location_tab" = "Location Map",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
@@ -64,7 +70,7 @@ function(input, output, session) {
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab")
   )
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))

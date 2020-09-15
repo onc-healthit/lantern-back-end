@@ -51,5 +51,4 @@ performancemodule <- function(
               xlab = "Date")
       }
     })
-
 }

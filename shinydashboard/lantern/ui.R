@@ -65,10 +65,7 @@ ui <- dashboardPage(
               smartresponsemodule_UI("smartresponse_page")
       ),
       tabItem("location_tab",
-              h3("Map of Zip Codes with identified endpoint/organization"),
-              img(src = "images/endpoint_zcta_map.png", width = "100%"),
-              p("This is a placeholder map for showing endpoints associated with a location.
-                      Will be updated with interactive map with pins for endpoints")
+              locationmodule_UI("location_page")
       ),
       tabItem("about_tab",
               img(src = "images/lantern-logo@1x.png", width = "300px"),
