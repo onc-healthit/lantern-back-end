@@ -4,13 +4,14 @@ library(leaflet)
 locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    h3("Map of Zip Codes with identified organization"),
-    leafletOutput(ns("location_map"), width = "100%", height = "600px"),
-    p("Lantern uses organization information from the NPPES provider NPI registry. Points above are mapped
+    h3("Map of Endpoints Linked to an Organization"),
+    p("Lantern uses organization information from the NPPES provider NPI registry. Points below are mapped
       to the zip code associated with the primary address of identified organizations. It does not necessarily
-      represent a phyical location where services are provided or a geolocation of any individual endpoint."),
+      represent a physical location where services are provided or a geolocation of any individual endpoint."),
     p("Green points represent indexed endpoints which have been mapped to an organization with a match score greater than 0.97. These locations are
-      the zip code associated with the primary location of the organization mapped to the endpoint. For more information about match scores and how they are calculated see the \"About Lantern page\".")
+      the zip code associated with the primary location of the organization mapped to the endpoint. For more information about match scores and how they are calculated see the \"About Lantern page\"."),
+    leafletOutput(ns("location_map"), width = "100%", height = "600px"),
+    htmlOutput(ns("note_text"))
   )
 }
 
@@ -46,6 +47,20 @@ locationmodule <- function(
       addCircles(data = selected_fhir_endpoints(), lat = ~ lat, lng = ~ lng, popup = ~endpoint_name,  weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
       setView(-98.9, 37.7, zoom = 4)
     map
+  })
+
+  output$note_text <- renderUI({
+    note_info <- "This map represents the locations of the API Information Sources which Lantern
+      has associated with a FHIR endpoint by matching an API Information Source (organization name)
+      as reported by a Certified API Developer with an organization name in the National Payer and
+      Provider Enumeration System (NPPES). Caution should be taking when gathering insights from
+      this map as linking an API Information Source to an organization name in NPPES based on reported
+      organization name may not be done with 100% confidence. Additionally, the location reported by
+      NPPES may not be the physical location of the API Information Source, serviced by a given endpoint.
+      This is especially true for API Information Sources which may have more than one physical location,
+      which may vary by facility type and geographic location."
+    res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+    HTML(res)
   })
 
 }
