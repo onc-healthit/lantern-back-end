@@ -158,6 +158,6 @@ capabilitymodule <- function(
     labs(x = "Implementation Guides", y = "Number of Endpoints") +
     theme(axis.text.x = element_blank(),
     axis.text.y = element_blank(), axis.ticks = element_blank()) +
-    annotate("text", label = "There are no Implementation guides supported by the endpoints that passed the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+    annotate("text", label = "There are no Implementation guides supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 }
