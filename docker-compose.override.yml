@@ -7,6 +7,7 @@ services:
     volumes:
       - ./db/sql/testdbsetup.sql:/docker-entrypoint-initdb.d/testdbsetup.sql
       - ./db/sql/dbusersetup_dev.sql:/docker-entrypoint-initdb.d/dbusersetup.sql
+    command: ["postgres", "-c", "log_statement=all"]
     environment:
       - LANTERN_DBUSER_READONLY=${LANTERN_DBUSER_READONLY}
       - LANTERN_DBPASSWORD_READONLY=${LANTERN_DBPASSWORD_READONLY}
