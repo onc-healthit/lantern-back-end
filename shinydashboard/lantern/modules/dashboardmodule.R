@@ -160,7 +160,7 @@ dashboard <- function(
       ) +
       theme(text = element_text(size = 15)) +
       labs(fill = "Code",
-         title = "All HTTP Response Codes Ever Received from Endpoints",
+         title = "HTTP Response Codes Received from Endpoints During Most Recent Query",
          x = "HTTP Response Received",
          y = "Count of endpoints")
   }, sizePolicy = sizeGrowthRatio(width = 400,

@@ -4,7 +4,7 @@ function(input, output, session) {
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "availability_tab", "capability_tab", "fields_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -27,10 +27,6 @@ function(input, output, session) {
     "endpoints_page",
     reactive(input$fhir_version),
     reactive(input$vendor))
-
-  callModule(
-    availabilitymodule,
-    "availability_page")
 
   callModule(
     locationmodule,
@@ -77,7 +73,6 @@ function(input, output, session) {
      "endpoints_tab" = "List of Endpoints",
      "capability_tab" = "Capability Page",
      "fields_tab" = "Fields Page",
-     "availability_tab" = "Endpoint Server Availability",
      "location_tab" = "Location Map",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
