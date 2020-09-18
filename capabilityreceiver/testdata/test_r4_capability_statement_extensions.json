@@ -185,7 +185,6 @@
             "readHistory": true,
             "updateCreate": false,
             "conditionalCreate": true,
-            "conditionalRead": "full-support",
             "conditionalUpdate": false,
             "conditionalDelete": "not-supported",
             "searchInclude": [
@@ -237,6 +236,7 @@
             "readHistory": false,
             "updateCreate": false,
             "conditionalCreate": false,
+            "conditionalRead": "full-support",
             "conditionalUpdate": false,
             "conditionalDelete": "not-supported",
             "searchParam": [
