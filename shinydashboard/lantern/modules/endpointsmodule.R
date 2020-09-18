@@ -36,7 +36,7 @@ endpointsmodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     res
@@ -44,7 +44,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- DT::renderDataTable({
     datatable(selected_fhir_endpoints() %>% select(-supported_resources),
-              colnames = c("URL", "Organization", "Updated", "Vendor", "FHIR Version", "TLS Version", "MIME Types", "Status"),
+              colnames = c("URL", "Organization", "Updated", "Developer", "FHIR Version", "TLS Version", "MIME Types", "Status"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )

@@ -113,7 +113,7 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
 # Get the list of distinct vendor names for use in filtering
 get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- list(
-    "All Vendors" = ui_special_values$ALL_VENDORS
+    "All Developers" = ui_special_values$ALL_DEVELOPERS
   )
 
   vl <- endpoint_export_tbl %>%

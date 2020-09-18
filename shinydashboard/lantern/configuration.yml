@@ -35,4 +35,4 @@ module_files:
   - "modules/smartresponsemodule.R"
 
 refresh_timeout_minutes:
-  - 720
+  - 1440

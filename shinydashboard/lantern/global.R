@@ -28,7 +28,7 @@ devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_FHIR_VERSIONS" = "All FHIR Versions",
-  "ALL_VENDORS" = "All Vendors",
+  "ALL_DEVELOPERS" = "All Developers",
   "ALL_RESOURCES" = "All Resources"
 )
 

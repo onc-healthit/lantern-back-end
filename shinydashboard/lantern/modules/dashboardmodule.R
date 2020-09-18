@@ -22,7 +22,7 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
-    h3("Endpoint Counts by Vendor and FHIR Version"),
+    h3("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       column(width = 4,
              tableOutput(ns("fhir_vendor_table"))
@@ -57,7 +57,7 @@ dashboard <- function(
   selected_http_summary <- reactive({
     res <- app_data$http_pct
     req(sel_vendor())
-    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>%
         filter(vendor_name == sel_vendor()) %>%
         left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
@@ -145,7 +145,7 @@ dashboard <- function(
       labs(fill = "FHIR Version",
            x = NULL,
            y = "Number of Endpoints",
-           title = "Endpoints by Vendor and FHIR Version") +
+           title = "Endpoints by Developer and FHIR Version") +
       scale_fill_manual(values = c("#66C2A5", "#8DA0CB", "#EFA182", "#E78AC3", "#A6D854"))
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 333,
@@ -172,9 +172,9 @@ dashboard <- function(
   observeEvent(input$show_info, {
     showModal(modalDialog(
       title = "Information About Lantern",
-      "Lantern takes a strict approach to showing FHIR Version and Vendor information. If a given FHIR
-      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Vendor information as 'Unknown'.
-      Other endpoints may fail to properly indicate FHIR Version or Vendor information in their capability statement.",
+      "Lantern takes a strict approach to showing FHIR Version and Developer information. If a given FHIR
+      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Developer information as 'Unknown'.
+      Other endpoints may fail to properly indicate FHIR Version or Developer information in their capability statement.",
       easyClose = TRUE
     ))
   })

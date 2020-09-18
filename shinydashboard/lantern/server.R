@@ -117,9 +117,9 @@ function(input, output, session) {
         column(width = 4,
           selectInput(
             inputId = "vendor",
-            label = "Vendor:",
+            label = "Developer:",
             choices = app$vendor_list,
-            selected = ui_special_values$ALL_VENDORS,
+            selected = ui_special_values$ALL_DEVELOPERS,
             size = 1,
             selectize = FALSE)
         )
@@ -133,9 +133,9 @@ function(input, output, session) {
         column(width = 4,
           selectInput(
             inputId = "httpvendor",
-            label = "Vendor:",
+            label = "Developer:",
             choices = app$vendor_list,
-            selected = ui_special_values$ALL_VENDORS,
+            selected = ui_special_values$ALL_DEVELOPERS,
           )
         )
       )
@@ -164,7 +164,7 @@ function(input, output, session) {
     if (input$fhir_version != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == input$fhir_version)
     }
-    if (input$vendor != ui_special_values$ALL_VENDORS) {
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == input$vendor)
     }
 
