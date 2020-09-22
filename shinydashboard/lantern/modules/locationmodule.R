@@ -5,13 +5,13 @@ locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
     h3("Map of Endpoints Linked to an Organization"),
-    p("This map visualizes the locations of the API Information Sources which Lantern has associated with a FHIR endpoint by matching an API 
-    Information Source (organization name), as reported by a Certified API Developer, with an organization name in the National Payer and 
-    Provider Enumeration System (NPPES). Caution should be taken when gathering insights from this map as linking an API Information Source 
+    p("This map visualizes the locations of the API Information Sources which Lantern has associated with a FHIR endpoint by matching an API
+    Information Source (organization name), as reported by a Certified API Developer, with an organization name in the National Payer and
+    Provider Enumeration System (NPPES). Caution should be taken when gathering insights from this map as linking an API Information Source
     to an organization name in NPPES based on reported organization name may not be done with 100% confidence. See note below the map for more information."),
     p("The points on the map, below, represent the zip code associated with the primary address of matched organizations. The location reported by
-     NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where 
-     services are provided, or may not be the geolocation of any individual endpoint. This is especially true for API Information Sources which may 
+     NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where
+     services are provided, or may not be the geolocation of any individual endpoint. This is especially true for API Information Sources which may
      have more than one physical location, which may vary by facility type and geographic location."),
     leafletOutput(ns("location_map"), width = "100%", height = "600px"),
     htmlOutput(ns("note_text"))
