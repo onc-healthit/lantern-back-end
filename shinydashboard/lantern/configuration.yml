@@ -32,6 +32,7 @@ module_files:
   - "modules/performancemodule.R"
   - "modules/securitymodule.R"
   - "modules/smartresponsemodule.R"
+  - "modules/valuesmodule.R"
 
 refresh_timeout_minutes:
   - 1440
