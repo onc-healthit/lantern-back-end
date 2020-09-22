@@ -58,11 +58,10 @@ fieldsmodule <- function(
 
   ns <- session$ns
 
-  capstat_fields_list <- get_capstat_fields_list(app_data$capstat_fields)
   capstat_extensions_list <- get_capstat_extensions_list(app_data$capstat_fields)
 
   output$capstat_fields_text <- renderUI({
-    col <- capstat_fields_list %>% pull(1)
+    col <- app_data$capstat_fields_list %>% pull(1)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='field-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following fields: ", divElem)

@@ -22,21 +22,21 @@ performancemodule <- function(
   ns <- session$ns
 
   response_time_xts <- reactive({
-      if (all(sel_date() == "Past 7 days")) {
-        range <- "604800"
-      }
-      else if (all(sel_date() == "Past 14 days")) {
-        range <- "1209600"
-      }
-      else if (all(sel_date() == "Past 30 days")) {
-        range <- "2592000"
-      }
-      else{
-        range <- "maxdate.maximum"
-      }
-      res <- get_avg_response_time(db_connection, range)
-      res
-    })
+    if (all(sel_date() == "Past 7 days")) {
+      range <- "604800"
+    }
+    else if (all(sel_date() == "Past 14 days")) {
+      range <- "1209600"
+    }
+    else if (all(sel_date() == "Past 30 days")) {
+      range <- "2592000"
+    }
+    else{
+      range <- "maxdate.maximum"
+    }
+    res <- get_avg_response_time(db_connection, range)
+    res
+  })
 
   output$no_graph <- renderText({
     if (nrow(response_time_xts()) == 0) {
