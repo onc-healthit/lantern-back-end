@@ -3,7 +3,7 @@ package capabilityhandler
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
 // List of capability statement fields that are arrays of interfaces
-var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document", "_searchInclude", "_searchRevInclude"}
+var arrayFields = []string{"rest", "resource", "interaction", "searchParam", "operation", "document", "_searchInclude", "_searchRevInclude", "messaging", "supportedMessage"}
 
 // RunIncludedFieldsAndExtensionsChecks returns an interface that contains information about whether fields and extensions are supported or not
 func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}) []endpointmanager.IncludedField {
@@ -51,6 +51,17 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 		{"profile"},
 		{"messaging"},
 		{"document"},
+		{"rest", "mode"},
+		{"rest", "resource", "type"},
+		{"rest", "resource", "interaction", "code"},
+		{"rest", "resource", "versioning"},
+		{"rest", "resource", "conditionalRead"},
+		{"rest", "resource", "conditionalDelete"},
+		{"rest", "resource", "referencePolicy"},
+		{"rest", "resource", "searchParam", "type"},
+		{"rest", "interaction", "code"},
+		{"messaging", "supportedMessage", "mode"},
+		{"document", "mode"},
 	}
 
 	// Get name of field
@@ -64,7 +75,7 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 				} else if index == 0 {
 					stringIndex = name + "."
 				} else {
-					stringIndex = stringIndex + "." + name
+					stringIndex = stringIndex + name + "."
 				}
 			}
 		} else {
@@ -91,16 +102,56 @@ func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 		}
 
 		field := capInt[name]
+		length := len(fieldNames)
 
 		if index == (len(fieldNames) - 1) {
 			return field != nil
+		} else if arrContains(arrayFields, name) {
+			fieldArr := field.([]interface{})
+			nextIndex := index + 1
+			return checkFieldArr(fieldNames[nextIndex:length], fieldArr)
+		} else {
+			capInt = field.(map[string]interface{})
 		}
-
-		capInt = field.(map[string]interface{})
-
 	}
 
 	return false
+}
+
+// Given an array of interface objects, loops through each object to check whether the field is populated following the path of fieldNames
+func checkFieldArr(fieldNames []string, fieldArr []interface{}) bool {
+	var found bool
+	length := len(fieldNames)
+	name := fieldNames[0]
+	interfaceArrTrue := arrContains(arrayFields, name)
+	// Loop through the array of interface objects
+	for _, obj := range fieldArr {
+		// For each object in interface array, get desired field using name in fieldNames
+		objMap := obj.(map[string]interface{})
+		field := objMap[name]
+		if field == nil {
+			// If the desired field does not exist in that object, continue to the next object within the array of interface objects
+			continue
+		} else if length != 1 && interfaceArrTrue {
+			// If the desired field is is not the last field to check and an array of interface objects, call checkFieldArr with this new array
+			fieldArr := field.([]interface{})
+			found = checkFieldArr(fieldNames[1:length], fieldArr)
+			if found {
+				return found
+			}
+		} else if length != 1 && !interfaceArrTrue {
+			// If the desired field is not the last field to check and not an array of interface objects, call checkField with this field map[string]interface
+			field := field.(map[string]interface{})
+			found = checkField(field, fieldNames[1:length])
+			if found {
+				return found
+			}
+		} else {
+			found = true
+			return found
+		}
+	}
+	return found
 }
 
 // RunIncludedExtensionsChecks stores whether each extension in capability statement is populated or not populated
