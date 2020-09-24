@@ -71,3 +71,25 @@ To run, perform the following commands:
 cd cmd/capabilityreceiver
 go run main.go
 ```
+
+## Tracking New FHIR Capability Statement Fields
+
+To start tracking a new FHIR capability statement field, the field must be added in accordance with the functionality in the capabilityreceiver/pkg/capabilityhandler/includedfields.go file, which is responsible for tracking if certain FHIR capability statement fields exist. To begin, add a list entry of fields representing the path to the new field to the fieldsList at the beginning of the RunIncludedFieldsChecks function in the capabilityreceiver/pkg/capabilityhandler/includedfields.go file. The path should be a list of all the capability statement fields that must be accessed to reach where the new field is stored in the capability statement, with the last element in the list being the name of the newly added field. If any of the included fields in the path to the new field are arrays of interfaces rather than a single interface, check to make sure the field name is included in the arrayFields list at the top of the capabilityreceiver/pkg/capabilityhandler/includedfields.go file, and if it is not, add the name of the field to that list. A field will be recorded as a supported field with 'Exists' in the includedFields structure set to true if there is at least one instance of that field being used in any of the possible locations specified for it. 
+
+For example, if a new version of FHIR is published that has foo as a field, with foo being nested within a field called bar, you would add an entry to the fieldsList structure that looked like this:
+
+```
+{"bar", "foo"}
+```
+
+## Tracking New FHIR Capability Statement Extensions
+
+To start tracking a new FHIR capability statement extension, the extension must be added in accordance with the functionality in the capabilityreceiver/pkg/capabilityhandler/includedfields.go file, which is responsible for tracking FHIR extensions. To begin, add a list entry of fields representing the path to the new FHIR extension to the extensionList at the beginning of the RunIncludedExtensionsChecks function in the capabilityreceiver/pkg/capabilityhandler/includedfields.go file. The path should be a list of all the capability statement fields that must be accessed to reach where the new extension is stored in the capability statement, with the second to last element in the list being the extension url and the last element in the list being the name of the FHIR extension. If an extension can be stored at multiple different locations in the capability statement, add an entry for each path to the extensionList with each having the same extension url and name. If any of the included fields in the path to the extension are arrays of interfaces rather than a single interface, check to make sure the field name is included in the arrayFields list at the top of the capabilityreceiver/pkg/capabilityhandler/includedfields.go file, and if it is not, add the name of the field to that list. An extension will be recorded as a supported extension with 'Exists' in the includedFields structure set to true if there is at least one instance of that extension being used in any of the possible locations specified for it.
+
+For example, if a new version of FHIR is published that has capabilitystatement-foo as an extension with url http://example.org/fhir/capabilitystatement-foo, with this extension being nested within an extension field array which is nested inside field called bar, you would add an entry to the extensionList structure that looked like this:
+
+```
+{"bar", "extension", "http://example.org/fhir/capabilitystatement-foo", "capabilitystatement-foo"}
+```
+
+If the bar field was an array of interfaces, you would add "bar" to the end of the arrayFields list.
