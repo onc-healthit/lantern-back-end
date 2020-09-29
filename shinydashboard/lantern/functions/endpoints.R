@@ -252,9 +252,11 @@ get_capstat_values <- function(db_connection) {
       capability_statement->'implementation'->>'url' as implementation_url,
       capability_statement->'implementation'->>'custodian' as implementation_custodian
       from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE capability_statement != 'null'")) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
 }
 
 # @TODO Get rid of this?
