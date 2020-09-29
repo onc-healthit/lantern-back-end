@@ -11,9 +11,11 @@ valuesmodule_UI <- function(id) {
              tableOutput(ns("capstat_values_table")),
             ),
       column(width = 7,
-             h4("Given Values for Chosen Field"),
+             h4("Percent of Endpoints that Use Given Field"),
+             # @TODO Get rid of commented out code
             #  tableOutput(ns("values_chart"))
-            uiOutput(ns("values_chart"))
+            uiOutput(ns("values_chart")),
+            # htmlOutput(ns("values_sum"))
       )
     ),
   )
@@ -43,11 +45,12 @@ valuesmodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     # Repeat with filtering fields to see values
-    # if (all(sel_capstat_values() != "All fields")) {
-      res <- res %>% group_by_at(vars("vendor_name", "fhir_version", sel_capstat_values())) %>%
-        count() %>%
-        rename(Count = n, Vendor = vendor_name, "FHIR Version" = fhir_version)
-    # }
+    res <- res %>% group_by_at(vars("vendor_name", "fhir_version", sel_capstat_values())) %>%
+      count() %>%
+      rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = fhir_version) %>%
+      rename(field_value = sel_capstat_values()) %>%
+      # If the field is empty then put an "[Empty]" string
+      tidyr::replace_na(list(field_value = "[Empty]"))
     res
   })
 
@@ -60,32 +63,100 @@ valuesmodule <- function(
     capstat_values_list()
   )
 
-  chart_group <- reactive({
-    capstat_values_list() %>%
-    ungroup() %>%
-    # group_by_at(vars(sel_capstat_values())) %>%
-    # count() %>%
-    select(c(Count, sel_capstat_values())) %>%
-    rename(value = Count, group = sel_capstat_values())
-  })
-
-  # output$values_chart <- renderTable(
-  #   chart_group()
-  # )
-
-  # chart_values <- reactive({
+  # Chart for displaying the total number of each given value
+  # @TODO Figure out what to do with this
+  # chart_group <- reactive({
   #   capstat_values_list() %>%
-  #   select(Count)
+  #   # necessary to ungroup because you can't select a subset of fields in a dataset
+  #   # that is grouped
+  #   ungroup() %>%
+  #   select(c(Endpoints, field_value)) %>%
+  #   rename(value = Endpoints, group = field_value)
   # })
 
-  # df <- data.frame(
-  #   group = chart_group(),
-  #   value = chart_values()
-  #   )
-  # head(df)
+  # Want to group by who has added a value vs who hasn't
+  #
+  # EXAMPLE:
+  # capstat_values_list                   returned value
+  # field_value      Endpoints            field_value   Endpoints   used
+  # 1.0.1            3                    1.0.1         3           yes
+  # 3.4.1            6                    3.4.1         6           yes
+  # [Empty]          4                    [Empty]       4           no
+  is_field_being_used <- reactive({
+    capstat_values_list() %>%
+    # necessary to ungroup because you can't select a subset of fields in a dataset
+    # that is grouped
+    ungroup() %>%
+    select(c(Endpoints, field_value)) %>%
+    # create a new column called used
+    # if the field is not being used, set it to "no", otherwise set it to "yes"
+    mutate(used = ifelse(field_value == "[Empty]", "no", "yes"))
+  })
 
-  # bp <- ggplot(chart_group(), aes(x="", y=value, fill=group)) +
-  #     geom_bar(width = 1, stat = "identity")
+  # Gets the total number of endpoints that are using the currently selected field
+  being_used <- reactive({
+    # Filter by the endpoints that have a value in the currently selected field
+    # then pull the Endpoints column which has the count of endpoints
+    #
+    # EXAMPLE:
+    # is_field_being_used                     res
+    # field_value   Endpoints   used          Endpoints
+    # 1.0.1         3           yes           3
+    # 3.4.1         6           yes           6
+    # [Empty]       4           no
+    res <- is_field_being_used() %>%
+      filter(used == "yes") %>%
+      pull(Endpoints)
+
+    # Get the total of all of the values in the Endpoints column if the column
+    # is not empty
+    total_endpts <- 0
+    if (!is.null(res)) {
+      total_endpts <- sum(res)
+    }
+    total_endpts
+  })
+
+  not_being_used <- reactive({
+    # Filter by the endpoints that don't have a value in the currently selected field
+    # then pull the Endpoints column which has the count of endpoints
+    #
+    # EXAMPLE:
+    # is_field_being_used                     res
+    # field_value   Endpoints   used          Endpoints
+    # 1.0.1         3           yes           4
+    # 3.4.1         6           yes
+    # [Empty]       4           no
+    res <- is_field_being_used() %>%
+      filter(used == "no") %>%
+      pull(Endpoints)
+
+    # Get the total of all of the values in the Endpoints column if the column
+    # is not empty
+    total_endpts <- 0
+    if (!is.null(res)) {
+      total_endpts <- sum(res)
+    }
+    total_endpts
+  })
+
+  percent_used_chart <- reactive({
+    data.frame(
+      group = c("Yes", "No"),
+      value = c(being_used(), not_being_used())
+    )
+  })
+
+  # @TODO Remove
+  # output$values_sum <- renderUI({
+  #   # col <- paste("<li>", sum_being_used(), "</li>")
+  #   col <- paste("<li> NOT BEING USED: ", sum_not_being_used(), "</li>")
+  #   col2 <- paste("<li> BEING USED: ", sum_being_used(), "</li>", col)
+  #   #head(sum_being_used(), 1), head(not_being_used(), 1))
+  #   col3 <- paste("<li> NOT BEING USED FIRST ELEM?: ", head(sum_not_being_used(), 1), "</li>", col2)
+  #   col4 <- paste("<li> BEING USED FIRST ELEM?: ", head(sum_being_used(), 1), "</li>", col3)
+  #   HTML(col4)
+  # })
 
   output$values_chart <- renderUI({
     tagList(
@@ -93,9 +164,9 @@ valuesmodule <- function(
     )
   })
 
-  # output$values_chart <-  renderCachedPlot({bp + coord_polar("y", start=0)},
-   output$values_chart_plot <-  renderCachedPlot({
-      ggplot(chart_group(), aes(x="", y=value, fill=group)) +
+  # Pi chart of the percent of the endpoints that use the given field
+  output$values_chart_plot <-  renderCachedPlot({
+      ggplot(percent_used_chart(), aes(x="", y=value, fill=group)) +
       geom_col(width = 0.8) +
       geom_bar(stat = "identity") +
       coord_polar("y", start=0)},
