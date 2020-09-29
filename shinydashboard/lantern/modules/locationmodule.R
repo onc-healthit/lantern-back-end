@@ -53,15 +53,9 @@ locationmodule <- function(
   })
 
   output$note_text <- renderUI({
-    note_info <- "This map represents the locations of the API Information Sources which Lantern
-      has associated with a FHIR endpoint by matching an API Information Source (organization name)
-      as reported by a Certified API Developer with an organization name in the National Payer and
-      Provider Enumeration System (NPPES). Caution should be taking when gathering insights from
-      this map as linking an API Information Source to an organization name in NPPES based on reported
-      organization name may not be done with 100% confidence. Additionally, the location reported by
-      NPPES may not be the physical location of the API Information Source, serviced by a given endpoint.
-      This is especially true for API Information Sources which may have more than one physical location,
-      which may vary by facility type and geographic location."
+    note_info <- "These points only represent indexed endpoints which have been mapped to an
+    organization with a match score greater than 0.97. The match scores are derived from the
+    algorithms used by the Lantern application and are subject to change."
     res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
   })
