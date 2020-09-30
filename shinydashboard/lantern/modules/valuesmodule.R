@@ -6,15 +6,15 @@ valuesmodule_UI <- function(id) {
     h1("Values of FHIR Capability Statement Fields"),
     p("This is the set of values from the endpoints for a given field included in the FHIR capability statements."),
     fluidRow(
-      column(width = 5,
-             h4("Field Values"),
-             tableOutput(ns("capstat_values_table")),
-            ),
       column(width = 7,
+             h4("Field Values"),
+             DT::dataTableOutput(ns("capstat_values_table"))
+            ),
+      column(width = 5,
              h4("Percent of Endpoints that Use Given Field"),
              # @TODO Get rid of commented out code
             #  tableOutput(ns("values_chart"))
-            uiOutput(ns("values_chart")),
+             uiOutput(ns("values_chart")),
             # htmlOutput(ns("values_sum"))
       )
     ),
@@ -58,10 +58,12 @@ valuesmodule <- function(
     get_capstat_values_list(selected_fhir_endpoints())
   })
 
-  # Table of the required fields
-  output$capstat_values_table <- renderTable(
-    capstat_values_list()
-  )
+  output$capstat_values_table <- DT::renderDataTable({
+    datatable(capstat_values_list(),
+              colnames = c( "Developer", "FHIR Version", "Field Value", "Endpoints"),
+              rownames = FALSE,
+              options = list(scrollX = TRUE))
+  })
 
   # Chart for displaying the total number of each given value
   # @TODO Figure out what to do with this
@@ -160,7 +162,7 @@ valuesmodule <- function(
 
   output$values_chart <- renderUI({
     tagList(
-      plotOutput(ns("values_chart_plot"), height = 800)
+      plotOutput(ns("values_chart_plot"), height = 400)
     )
   })
 

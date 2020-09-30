@@ -166,8 +166,8 @@ function(input, output, session) {
           selectInput(
             inputId = "field",
             label = "Field",
-            choices = list("fhir_version", "url", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
-            selected = "fhir_version",
+            choices = list("url", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
+            selected = "url",
             size = 1,
             selectize = FALSE)
         )
