@@ -11,11 +11,8 @@ valuesmodule_UI <- function(id) {
              DT::dataTableOutput(ns("capstat_values_table"))
             ),
       column(width = 5,
-             h4("Percent of Endpoints that Use Given Field"),
-             # @TODO Get rid of commented out code
-            #  tableOutput(ns("values_chart"))
+             h4("Endpoints that Use Given Field"),
              uiOutput(ns("values_chart")),
-            # htmlOutput(ns("values_sum"))
       )
     ),
   )
@@ -65,18 +62,7 @@ valuesmodule <- function(
               options = list(scrollX = TRUE))
   })
 
-  # Chart for displaying the total number of each given value
-  # @TODO Figure out what to do with this
-  # chart_group <- reactive({
-  #   capstat_values_list() %>%
-  #   # necessary to ungroup because you can't select a subset of fields in a dataset
-  #   # that is grouped
-  #   ungroup() %>%
-  #   select(c(Endpoints, field_value)) %>%
-  #   rename(value = Endpoints, group = field_value)
-  # })
-
-  # Want to group by who has added a value vs who hasn't
+  # Group by who has added a value vs who hasn't
   #
   # EXAMPLE:
   # capstat_values_list                   returned value
@@ -90,14 +76,14 @@ valuesmodule <- function(
     # that is grouped
     ungroup() %>%
     select(c(Endpoints, field_value)) %>%
-    # create a new column called used
+    # create a new column called "used"
     # if the field is not being used, set it to "no", otherwise set it to "yes"
     mutate(used = ifelse(field_value == "[Empty]", "no", "yes"))
   })
 
   # Gets the total number of endpoints that are using the currently selected field
   being_used <- reactive({
-    # Filter by the endpoints that have a value in the currently selected field
+    # Filter by the endpoints that have a value in the currently selected field,
     # then pull the Endpoints column which has the count of endpoints
     #
     # EXAMPLE:
@@ -111,7 +97,7 @@ valuesmodule <- function(
       pull(Endpoints)
 
     # Get the total of all of the values in the Endpoints column if the column
-    # is not empty
+    # is not empty. If the column is empty then the total is 0.
     total_endpts <- 0
     if (!is.null(res)) {
       total_endpts <- sum(res)
@@ -119,8 +105,9 @@ valuesmodule <- function(
     total_endpts
   })
 
+  # Gets the total number of endpoints that are not using the currently selected field
   not_being_used <- reactive({
-    # Filter by the endpoints that don't have a value in the currently selected field
+    # Filter by the endpoints that don't have a value in the currently selected field,
     # then pull the Endpoints column which has the count of endpoints
     #
     # EXAMPLE:
@@ -134,7 +121,7 @@ valuesmodule <- function(
       pull(Endpoints)
 
     # Get the total of all of the values in the Endpoints column if the column
-    # is not empty
+    # is not empty. If the column is empty then the total is 0.
     total_endpts <- 0
     if (!is.null(res)) {
       total_endpts <- sum(res)
@@ -142,6 +129,7 @@ valuesmodule <- function(
     total_endpts
   })
 
+  # Data format for the Pie Chart
   percent_used_chart <- reactive({
     data.frame(
       group = c("Yes", "No"),
@@ -149,29 +137,28 @@ valuesmodule <- function(
     )
   })
 
-  # @TODO Remove
-  # output$values_sum <- renderUI({
-  #   # col <- paste("<li>", sum_being_used(), "</li>")
-  #   col <- paste("<li> NOT BEING USED: ", sum_not_being_used(), "</li>")
-  #   col2 <- paste("<li> BEING USED: ", sum_being_used(), "</li>", col)
-  #   #head(sum_being_used(), 1), head(not_being_used(), 1))
-  #   col3 <- paste("<li> NOT BEING USED FIRST ELEM?: ", head(sum_not_being_used(), 1), "</li>", col2)
-  #   col4 <- paste("<li> BEING USED FIRST ELEM?: ", head(sum_being_used(), 1), "</li>", col3)
-  #   HTML(col4)
-  # })
-
   output$values_chart <- renderUI({
     tagList(
-      plotOutput(ns("values_chart_plot"), height = 400)
+      plotOutput(ns("values_chart_plot"), height = 600)
     )
   })
 
-  # Pi chart of the percent of the endpoints that use the given field
+  # Pie chart of the percent of the endpoints that use the given field
   output$values_chart_plot <-  renderCachedPlot({
       ggplot(percent_used_chart(), aes(x="", y=value, fill=group)) +
       geom_col(width = 0.8) +
       geom_bar(stat = "identity") +
-      coord_polar("y", start=0)},
+      # Turns the plot into a Pie Chart
+      coord_polar("y", start=0) +
+      # Change Legend label
+      labs(fill = "Use Field?") +
+      # Increase label size and remove x & y axis labels
+      theme(legend.text=element_text(size=20),
+            legend.title=element_text(size=20),
+            axis.text=element_text(size=20),
+            axis.title.y=element_blank(),
+            axis.title.x=element_blank())
+    },
     sizePolicy = sizeGrowthRatio( width = 300,
                                   height = 400,
                                   growthRate = 1.2),

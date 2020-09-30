@@ -259,7 +259,6 @@ get_capstat_values <- function(db_connection) {
     tidyr::replace_na(list(fhir_version = "Unknown"))
 }
 
-# @TODO Get rid of this?
 get_capstat_values_list <- function(capstat_values_tbl) {
   res <- capstat_values_tbl
 }
