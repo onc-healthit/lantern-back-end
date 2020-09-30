@@ -42,7 +42,8 @@ valuesmodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     # Repeat with filtering fields to see values
-    res <- res %>% group_by_at(vars("vendor_name", "fhir_version", sel_capstat_values())) %>%
+    res <- res %>%
+      group_by_at(vars("vendor_name", "fhir_version", sel_capstat_values())) %>%
       count() %>%
       rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = fhir_version) %>%
       rename(field_value = sel_capstat_values()) %>%
@@ -57,7 +58,7 @@ valuesmodule <- function(
 
   output$capstat_values_table <- DT::renderDataTable({
     datatable(capstat_values_list(),
-              colnames = c( "Developer", "FHIR Version", "Field Value", "Endpoints"),
+              colnames = c("Developer", "FHIR Version", "Field Value", "Endpoints"),
               rownames = FALSE,
               options = list(scrollX = TRUE))
   })
@@ -145,23 +146,23 @@ valuesmodule <- function(
 
   # Pie chart of the percent of the endpoints that use the given field
   output$values_chart_plot <-  renderCachedPlot({
-      ggplot(percent_used_chart(), aes(x="", y=value, fill=group)) +
+      ggplot(percent_used_chart(), aes(x = "", y = value, fill = group)) +
       geom_col(width = 0.8) +
       geom_bar(stat = "identity") +
       # Turns the plot into a Pie Chart
-      coord_polar("y", start=0) +
+      coord_polar("y", start = 0) +
       # Change Legend label
       labs(fill = "Use Field?") +
       # Increase label size and remove x & y axis labels
-      theme(legend.text=element_text(size=20),
-            legend.title=element_text(size=20),
-            axis.text=element_text(size=20),
-            axis.title.y=element_blank(),
-            axis.title.x=element_blank())
+      theme(legend.text = element_text(size = 20),
+            legend.title = element_text(size = 20),
+            axis.text = element_text(size = 20),
+            axis.title.y = element_blank(),
+            axis.title.x = element_blank())
     },
-    sizePolicy = sizeGrowthRatio( width = 300,
-                                  height = 400,
-                                  growthRate = 1.2),
+    sizePolicy = sizeGrowthRatio(width = 300,
+                                 height = 400,
+                                 growthRate = 1.2),
     res = 72,
     cache = "app",
     cacheKeyExpr = {

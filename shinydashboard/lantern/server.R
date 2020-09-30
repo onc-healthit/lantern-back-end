@@ -1,5 +1,5 @@
 # Define server function
-function(input, output, session) {
+function(input, output, session) { #nolint
 
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
@@ -73,7 +73,7 @@ function(input, output, session) {
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
-   page_name_list <- list(
+  page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "capability_tab" = "Capability Page",
