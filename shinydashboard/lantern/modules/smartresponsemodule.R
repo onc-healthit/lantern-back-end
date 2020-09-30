@@ -46,7 +46,7 @@ smartresponsemodule <- function(
       count() %>%
       group_by(fhir_version, vendor_name) %>%
       count(wt = n) %>%
-      select("FHIR Version" = fhir_version, "Vendor" = vendor_name, "Endpoints" = n)
+      select("FHIR Version" = fhir_version, "Developer" = vendor_name, "Endpoints" = n)
   })
 
   output$well_known_summary_table <- renderTable(
