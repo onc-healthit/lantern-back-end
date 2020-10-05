@@ -46,7 +46,7 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 
 	ep.VendorID = vendorID
 
-	chplProductNameVersion, err := openProductLinksFile("/go/src/app/resources/CHPLProductMapping.json")
+	chplProductNameVersion, err := openProductLinksFile("/etc/lantern/resources/CHPLProductMapping.json")
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 	}
