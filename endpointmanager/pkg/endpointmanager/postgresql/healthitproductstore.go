@@ -15,6 +15,7 @@ var updateHealthITProductStatement *sql.Stmt
 var deleteHealthITProductStatement *sql.Stmt
 var getProductCriteriaLinkStatement *sql.Stmt
 var linkProductToCriteriaStatement *sql.Stmt
+var getHealthITProductIDByCHPLID *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -216,6 +217,17 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	return hitps, nil
 }
 
+// GetHealthITProductIDByCHPLID gets the HealthITProduct db ID for the product with chpl_id=CHPLID
+func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string) (int, error) {
+	var retProductID int
+
+	row := getHealthITProductIDByCHPLID.QueryRowContext(ctx, CHPLID)
+
+	err := row.Scan(&retProductID)
+
+	return retProductID, err
+}
+
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	locationJSON, err := json.Marshal(hitp.Location)
@@ -390,6 +402,14 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_id,
 			certification_number)
 		VALUES ($1, $2, $3)`)
+	if err != nil {
+		return err
+	}
+	getHealthITProductIDByCHPLID, err = s.DB.Prepare(`
+		SELECT
+			id
+		FROM healthit_products
+		WHERE chpl_id = $1`)
 	if err != nil {
 		return err
 	}

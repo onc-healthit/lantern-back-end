@@ -3,6 +3,9 @@ package chplmapper
 import (
 	"context"
 	"strings"
+	"encoding/json"
+	"io/ioutil"
+	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -43,6 +46,23 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 
 	ep.VendorID = vendorID
 
+	chplProductNameVersion, err := openProductLinksFile("/go/src/app/resources/CHPLProductMapping.json")
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
+
+	// cs, err := NewCapabilityStatement(csJSON)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+	chplID := chplProductNameVersion[softwareName][softwareVersion]
+	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+	ep.HealthITProductID = healthITProductID
+
+
+
 	return nil
 }
 
@@ -77,6 +97,43 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 	}
 
 	return vendorID, nil
+}
+
+func getHealthITProductID(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (int, error) {
+
+	return -1, nil
+}
+
+func openProductLinksFile(filepath string) (map[string]map[string]string, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareNameVersion []map[string]string
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap map[string]map[string]string
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &softwareNameVersion)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range softwareNameVersion {
+			var name = obj["name"]
+			var version = obj["version"]
+			var chplID = obj["CHPLID"]
+			if chplMap[name] == nil {
+				chplMap[name] = make(map[string]string)
+			}
+			chplMap[name][version] = chplID
+		}
+	}
+
+	return chplMap, nil
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
