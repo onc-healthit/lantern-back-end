@@ -27,17 +27,34 @@ get_endpoint_totals_list <- function(db_tables) {
 }
 
 # create a join to get more detailed table of fhir_endpoint information
-get_fhir_endpoints_tbl <- function(db_tables) {
-  db_tables$fhir_endpoints %>%
-    collect() %>%
-    left_join(endpoint_export_tbl %>%
-        distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources), by = c("url" = "url")) %>%
-        mutate(updated = as.Date(updated_at)) %>%
-        select(url, organization_names, updated, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
-        left_join(app$http_response_code_tbl %>% select(code, label),
-          by = c("http_response" = "code")) %>%
-          mutate(status = paste(http_response, "-", label)) %>%
-          distinct(url, .keep_all = TRUE)
+get_fhir_endpoints_tbl <- function() {
+
+  ret_tbl <- endpoint_export_tbl %>%
+    # distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, .keep_all = TRUE)
+    distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, .keep_all = TRUE) %>%
+    # @TODO Supported resources is not currently in the csv but we could talk about whether it should be
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors) %>%
+    mutate(updated = as.Date(info_updated)) %>%
+    left_join(app$http_response_code_tbl %>% select(code, label),
+      by = c("http_response" = "code")) %>%
+      mutate(status = paste(http_response, "-", label)) %>%
+      distinct(url, .keep_all = TRUE)
+
+  # # @TODO rewrite this?
+  # db_tables$fhir_endpoints %>%
+  #   # @TODO What does collect do?
+  #   collect() %>%
+  #   left_join(endpoint_export_tbl %>%
+  #       distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources), by = c("url" = "url")) %>%
+  #       # @TODO Wrong updated at?
+  #       mutate(updated = as.Date(info_updated)) %>%
+  #       mutate(created_at = as.Date(info_created)) %>%
+  #       # @TODO Supported resources is not currently in the csv but we could talk about whether it should be
+  #       select(url, organization_names, created_at, updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources) %>%
+  #       left_join(app$http_response_code_tbl %>% select(code, label),
+  #         by = c("http_response" = "code")) %>%
+  #         mutate(status = paste(http_response, "-", label)) %>%
+  #         distinct(url, .keep_all = TRUE)
 }
 
 # get the endpoint tally by http_response received

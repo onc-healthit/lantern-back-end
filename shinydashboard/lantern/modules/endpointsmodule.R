@@ -13,6 +13,7 @@ endpointsmodule_UI <- function(id) {
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
+    # tableOutput(ns("endpoints_table")),
     htmlOutput(ns("note_text"))
   )
 }
@@ -31,7 +32,9 @@ endpointsmodule <- function(
   })
 
   selected_fhir_endpoints <- reactive({
-    res <- get_fhir_endpoints_tbl(db_tables) %>% select(-http_response, -label)
+    # @TODO why are these not included?
+    # res <- get_fhir_endpoints_tbl() %>% select(-http_response, -label)
+    res <- get_fhir_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
@@ -42,20 +45,36 @@ endpointsmodule <- function(
     res
   })
 
+  # @TODO Remove?
+  # output$endpoints_table <- renderTable({
+  #   selected_fhir_endpoints()
+  # })
+
+  # @TODO Something weird is happening here
   output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(-supported_resources),
+    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
               colnames = c("URL", "Organization", "Updated", "Developer", "FHIR Version", "TLS Version", "MIME Types", "Status"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
-    })
+  })
+
+  # Create the format for the csv
+  csv_format <- reactive({
+    res <- selected_fhir_endpoints() %>%
+      select(-supported_resources, -updated, -label, -status) %>%
+      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(created_at = info_created, updated = info_updated) %>%
+      rename(http_response_time_second = response_time_seconds)
+  })
+
   # Downloadable csv of selected dataset ----
   output$download_data <- downloadHandler(
     filename = function() {
       "fhir_endpoints.csv"
     },
     content = function(file) {
-      write.csv(selected_fhir_endpoints(), file, row.names = FALSE)
+      write.csv(csv_format(), file, row.names = FALSE)
     }
   )
 
