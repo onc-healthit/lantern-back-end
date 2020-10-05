@@ -28,7 +28,7 @@ devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_FHIR_VERSIONS" = "All FHIR Versions",
-  "ALL_VENDORS" = "All Vendors",
+  "ALL_DEVELOPERS" = "All Developers",
   "ALL_RESOURCES" = "All Resources"
 )
 
@@ -51,7 +51,6 @@ app_data <<- list(
   fhir_endpoint_totals = NULL,        # count of endpoints, indexed and nonindexed
   response_tally = NULL,              # counts of http responses
   http_pct = NULL,                    # percentage of http responses for each endpoint
-  http_pctf = NULL,                   # http percentages with status as factors for graphing
   http_summary = NULL,                # counts of all http_responses ever
   vendor_count_tbl = NULL,            # endpoint counts by vendor
   endpoint_resource_types = NULL,     # Resource types from capability statement by endpoint
@@ -84,10 +83,6 @@ updater <- observe({
   app_data$response_tally <<- get_response_tally_list(db_tables)
 
   app_data$http_pct <<- get_http_response_summary_tbl(db_tables)
-
-  app_data$http_pctf <<- app_data$http_pct %>%
-    filter(http_response > 0, http_response != 200) %>%
-    mutate(name = url, Code = as.factor(code))
 
   app_data$http_summary <<- app_data$http_pct %>%
     left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%

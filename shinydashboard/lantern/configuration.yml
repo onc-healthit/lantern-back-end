@@ -24,7 +24,6 @@ function_files:
   - "functions/ui_functions.R"
   
 module_files:
-  - "modules/availabilitymodule.R"
   - "modules/capabilitymodule.R"
   - "modules/dashboardmodule.R"
   - "modules/endpointsmodule.R"
@@ -35,4 +34,4 @@ module_files:
   - "modules/smartresponsemodule.R"
 
 refresh_timeout_minutes:
-  - 720
+  - 1440

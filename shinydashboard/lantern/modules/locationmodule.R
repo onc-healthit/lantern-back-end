@@ -5,11 +5,14 @@ locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
     h3("Map of Endpoints Linked to an Organization"),
-    p("Lantern uses organization information from the NPPES provider NPI registry. Points below are mapped
-      to the zip code associated with the primary address of identified organizations. It does not necessarily
-      represent a physical location where services are provided or a geolocation of any individual endpoint."),
-    p("Green points represent indexed endpoints which have been mapped to an organization with a match score greater than 0.97. These locations are
-      the zip code associated with the primary location of the organization mapped to the endpoint. For more information about match scores and how they are calculated see the \"About Lantern page\"."),
+    p("This map visualizes the locations of the API Information Sources which Lantern has associated with a FHIR endpoint by matching an API
+    Information Source (organization name), as reported by a Certified API Developer, with an organization name in the National Payer and
+    Provider Enumeration System (NPPES). Caution should be taken when gathering insights from this map as linking an API Information Source
+    to an organization name in NPPES based on reported organization name may not be done with 100% confidence. See note below the map for more information."),
+    p("The points on the map, below, represent the zip code associated with the primary address of matched organizations. The location reported by
+     NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where
+     services are provided, or may not be the geolocation of any individual endpoint. This is especially true for API Information Sources which may
+     have more than one physical location, which may vary by facility type and geographic location."),
     leafletOutput(ns("location_map"), width = "100%", height = "600px"),
     htmlOutput(ns("note_text"))
   )
@@ -33,8 +36,8 @@ locationmodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+    # Same as above but with the developer dropdown
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     res
@@ -50,15 +53,9 @@ locationmodule <- function(
   })
 
   output$note_text <- renderUI({
-    note_info <- "This map represents the locations of the API Information Sources which Lantern
-      has associated with a FHIR endpoint by matching an API Information Source (organization name)
-      as reported by a Certified API Developer with an organization name in the National Payer and
-      Provider Enumeration System (NPPES). Caution should be taking when gathering insights from
-      this map as linking an API Information Source to an organization name in NPPES based on reported
-      organization name may not be done with 100% confidence. Additionally, the location reported by
-      NPPES may not be the physical location of the API Information Source, serviced by a given endpoint.
-      This is especially true for API Information Sources which may have more than one physical location,
-      which may vary by facility type and geographic location."
+    note_info <- "These points only represent indexed endpoints which have been mapped to an
+    organization with a match score greater than 0.97. The match scores are derived from the
+    algorithms used by the Lantern application and are subject to change."
     res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
   })

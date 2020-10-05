@@ -19,7 +19,6 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
-      menuItem("Availability", icon = icon("th"), tabName = "availability_tab"),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
@@ -48,9 +47,6 @@ ui <- dashboardPage(
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")
-      ),
-      tabItem("availability_tab",
-              availability_UI("availability_page")
       ),
       tabItem("capability_tab",
               capabilitymodule_UI("capability_page")

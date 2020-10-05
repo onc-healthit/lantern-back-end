@@ -57,7 +57,7 @@ securitymodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     res <- res %>% filter(code == input$auth_type_code)
@@ -66,7 +66,7 @@ securitymodule <- function(
 
   output$security_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
-              colnames = c("URL", "Organization", "Vendor", "FHIR Version", "TLS Version", "Authorization"),
+              colnames = c("URL", "Organization", "Developer", "FHIR Version", "TLS Version", "Authorization"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )

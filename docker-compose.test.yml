@@ -1,6 +1,8 @@
 version: '3'
 
 services:
+  postgres:
+    command: ["postgres"]
   capability_querier:
     environment:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}

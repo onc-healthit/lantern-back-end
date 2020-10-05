@@ -64,7 +64,7 @@ get_endpoint_last_updated <- function(db_tables) {
 
 # Compute the percentage of each response code for all responses received
 get_http_response_summary_tbl <- function(db_tables) {
-  db_tables$fhir_endpoints_info_history %>%
+  db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
       select(url, vendor_name), by = c("url" = "url")) %>%
@@ -113,7 +113,7 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
 # Get the list of distinct vendor names for use in filtering
 get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- list(
-    "All Vendors" = ui_special_values$ALL_VENDORS
+    "All Developers" = ui_special_values$ALL_DEVELOPERS
   )
 
   vl <- endpoint_export_tbl %>%
