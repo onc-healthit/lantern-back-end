@@ -116,7 +116,7 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 	if err != nil {
 		return nil, err
 	}
-	var chplMap map[string]map[string]string
+	var chplMap = make(map[string]map[string]string)
 	if len(byteValueFile) != 0 {
 		err = json.Unmarshal(byteValueFile, &softwareNameVersion)
 		if err != nil {
