@@ -153,7 +153,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
+		if err != nil {
+			return err
+		}
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
 		}
@@ -176,7 +180,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 		existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
 		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+		if err != nil {
+			return err
+		}
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
 		}

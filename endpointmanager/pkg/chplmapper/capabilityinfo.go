@@ -26,7 +26,7 @@ var fluffWords = []string{
 	"corporation.",
 }
 
-// MatchEndpointToVendorAndProduct creates the database association between the endpoint and the vendor,
+// MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
 // It returns a boolean specifying if the match was possible or not.
 //
@@ -34,7 +34,7 @@ var fluffWords = []string{
 // An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
 // In this future, this may be changed to using a vendor table and linking the endpoint entry to
 // the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
+func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -46,22 +46,20 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 
 	ep.VendorID = vendorID
 
+	return nil
+}
+
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
 	chplProductNameVersion, err := openProductLinksFile("/etc/lantern/resources/CHPLProductMapping.json")
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 	}
 
-	// cs, err := NewCapabilityStatement(csJSON)
-	// if err != nil {
-	// 	return nil, err
-	// }
 	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
 	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
 	chplID := chplProductNameVersion[softwareName][softwareVersion]
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
 	ep.HealthITProductID = healthITProductID
-
-
 
 	return nil
 }

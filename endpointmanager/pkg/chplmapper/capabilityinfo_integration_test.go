@@ -79,7 +79,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
+func Test_MatchEndpointToVendor(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -111,7 +111,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
 	// "Cerner Corporation" second item in vendor list
 	th.Assert(t, epInfo.VendorID == vendors[1].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[1].ID, epInfo.VendorID))
@@ -130,7 +130,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -139,7 +139,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
 		URL: ep.URL}
-	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -162,7 +162,7 @@ func Test_MatchEndpointToVendorAndProduct(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendorAndProduct(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 }
