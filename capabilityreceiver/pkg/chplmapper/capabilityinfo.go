@@ -101,10 +101,6 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 	return vendorID, nil
 }
 
-func getHealthITProductID(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (int, error) {
-
-	return -1, nil
-}
 
 func openProductLinksFile(filepath string) (map[string]map[string]string, error) {
 	jsonFile, err := os.Open(filepath)
