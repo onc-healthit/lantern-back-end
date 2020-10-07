@@ -49,12 +49,8 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	return nil
 }
 
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
-	chplProductNameVersion, err := openProductLinksFile("/etc/lantern/resources/CHPLProductMapping.json")
-	// Attempt to use the local resources copy if the production copy is not available, this will be the case in the test environmnet
-	if err != nil {
-		chplProductNameVersion, err = openProductLinksFile("../../testdata/CHPLProductMapping.json")
-	}
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, string matchFile) error {
+	chplProductNameVersion, err := openProductLinksFile(matchFile)
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 	}

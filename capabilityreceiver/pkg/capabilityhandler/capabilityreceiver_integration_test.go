@@ -82,6 +82,8 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	args := make(map[string]interface{})
 	args["store"] = store
+	args["chplMatchFile"] = "../../testdata/CHPLProductMapping.json"
+
 
 	ctx := context.Background()
 

@@ -157,7 +157,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, (*args)["chplMatchFile"])
 		if err != nil {
 			return err
 		}
@@ -184,7 +184,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, (*args)["chplMatchFile"])
 		if err != nil {
 			return err
 		}
@@ -208,6 +208,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	args := make(map[string]interface{})
 	args["store"] = store
 	args["ctx"] = ctx
+	args["chplMatchFile"] = "/etc/lantern/resources/CHPLProductMapping.json"
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {
