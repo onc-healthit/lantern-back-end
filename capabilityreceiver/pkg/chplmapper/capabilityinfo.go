@@ -49,7 +49,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	return nil
 }
 
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, string matchFile) error {
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
 	chplProductNameVersion, err := openProductLinksFile(matchFile)
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
