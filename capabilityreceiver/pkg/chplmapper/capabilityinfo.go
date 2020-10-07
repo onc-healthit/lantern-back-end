@@ -64,11 +64,12 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 	}
 	chplID := chplProductNameVersion[softwareName][softwareVersion]
+
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+	if err == nil {
+		ep.HealthITProductID = healthITProductID
 	}
-	ep.HealthITProductID = healthITProductID
 
 	return nil
 }
