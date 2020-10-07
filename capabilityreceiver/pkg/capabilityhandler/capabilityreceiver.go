@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
