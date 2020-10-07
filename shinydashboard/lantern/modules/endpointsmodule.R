@@ -9,7 +9,8 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download")
+             downloadButton(ns("download_data"), "Download"),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions")
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
@@ -75,6 +76,15 @@ endpointsmodule <- function(
     },
     content = function(file) {
       write.csv(csv_format(), file, row.names = FALSE)
+    }
+  )
+
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoints_fields.csv", file)
     }
   )
 
