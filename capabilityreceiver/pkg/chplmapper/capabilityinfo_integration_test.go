@@ -79,6 +79,108 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func Test_MatchEndpointToProduct(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	ctx := context.Background()
+
+	var err error
+
+	// populate healthit products
+	var hitp1 = &endpointmanager.HealthITProduct{
+		Name:                 "FooBarProduct",
+		Version:              "2.0",
+		APISyntax:            "FHIR DSTU2",
+		CHPLID:				  "somefakeCHPLID",
+		CertificationEdition: "2014"}
+	var hitp2 = &endpointmanager.HealthITProduct{
+		Name:                 "Allscripts FHIR",
+		Version:              "2.0",
+		APISyntax:            "FHIR DSTU2",
+		CHPLID:				  "correctNameIncorrectVersion",
+		CertificationEdition: "2014"}
+	var hitp3 = &endpointmanager.HealthITProduct{
+		Name:                 "WrongName",
+		Version:              "19.4.121.0",
+		APISyntax:            "FHIR DSTU2",
+		CHPLID:				  "correctVersionIncorrectName",
+		CertificationEdition: "2014"}
+	var hitp4 = &endpointmanager.HealthITProduct{
+		Name:                 "Allscripts FHIR",
+		Version:              "19.4.121.0",
+		APISyntax:            "FHIR DSTU2",
+		CHPLID:				  "CorrectVersionAndName",
+		CertificationEdition: "2014"}
+
+
+	err = store.AddHealthITProduct(ctx, hitp1)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+	err = store.AddHealthITProduct(ctx, hitp2)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+	err = store.AddHealthITProduct(ctx, hitp3)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+	err = store.AddHealthITProduct(ctx, hitp4)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	// populate fhir endpoint
+	ep := &endpointmanager.FHIREndpoint{
+		URL:               "example.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Inc."}}
+	store.AddFHIREndpoint(ctx, ep)
+
+	// capability statement
+	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
+	csJSON, err := ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	th.Assert(t, err == nil, err)
+
+	// endpoint info
+	epInfo := &endpointmanager.FHIREndpointInfo{
+		URL:                 ep.URL,
+		CapabilityStatement: cs}
+
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	th.Assert(t, err == nil, err)
+	// No healthIT product should have matched
+	th.Assert(t, epInfo.HealthITProductID == 0, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", 0, epInfo.HealthITProductID))
+
+	// capability statement
+	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
+	csJSON, err = ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
+	th.Assert(t, err == nil, err)
+
+	// populate fhir endpoint
+	ep = &endpointmanager.FHIREndpoint{
+		URL:               "example2.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example2 Inc."}}
+	store.AddFHIREndpoint(ctx, ep)
+
+	// endpoint info
+	epInfo = &endpointmanager.FHIREndpointInfo{
+		URL:                 ep.URL,
+		CapabilityStatement: cs}
+
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	th.Assert(t, err == nil, err)
+	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
+	th.Assert(t, err == nil, err)
+	// No healthIT product should have matched
+	th.Assert(t, epInfo.HealthITProductID == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, epInfo.HealthITProductID))
+
+}
+
 func Test_MatchEndpointToVendor(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
