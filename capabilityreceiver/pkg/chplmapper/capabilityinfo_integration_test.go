@@ -100,7 +100,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	// basic test
 
 	// capability statement
-	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
@@ -119,7 +119,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	// test no match
 
 	// capability statement
-	path = filepath.Join("../testdata", "novendor_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "novendor_capability_dstu2.json")
 	csJSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
@@ -191,7 +191,7 @@ func Test_getVendorMatch(t *testing.T) {
 	// cerner
 	expected = vendors[1].ID // "Cerner Corporation"
 
-	path = filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -205,7 +205,7 @@ func Test_getVendorMatch(t *testing.T) {
 	// epic
 	expected = vendors[0].ID // "Epic Systems Corporation" // this uses the "hackMatch" capability
 
-	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -233,7 +233,7 @@ func Test_getVendorMatch(t *testing.T) {
 	// allscripts
 	expected = vendors[5].ID // "Allscripts"
 
-	path = filepath.Join("../testdata", "allscripts_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -247,7 +247,7 @@ func Test_getVendorMatch(t *testing.T) {
 	// meditech
 	expected = vendors[4].ID // "Medical Information Technology, Inc. (MEDITECH)"
 
-	path = filepath.Join("../testdata", "meditech_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -304,7 +304,7 @@ func Test_publisherMatch(t *testing.T) {
 	// cerner
 	expected = "Cerner Corporation"
 
-	path = filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -318,7 +318,7 @@ func Test_publisherMatch(t *testing.T) {
 	// epic
 	expected = "" // the capability statement is missing the publisher
 
-	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -332,7 +332,7 @@ func Test_publisherMatch(t *testing.T) {
 	// allscripts
 	expected = "Allscripts" // the capability statement is missing the publisher
 
-	path = filepath.Join("../testdata", "allscripts_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -346,7 +346,7 @@ func Test_publisherMatch(t *testing.T) {
 	// meditech
 	expected = "Medical Information Technology, Inc. (MEDITECH)" // the capability statement is missing the publisher
 
-	path = filepath.Join("../testdata", "meditech_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -403,7 +403,7 @@ func Test_hackMatch(t *testing.T) {
 	// epic
 	expected = "Epic Systems Corporation"
 
-	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -440,7 +440,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	// epic
 	expected = "Epic Systems Corporation"
 
-	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -455,7 +455,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	// has no copyright
 	expected = ""
 
-	path = filepath.Join("../testdata", "cerner_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
@@ -470,7 +470,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	// has non-matching copyright
 	expected = ""
 
-	path = filepath.Join("../testdata", "meditech_capability_dstu2.json")
+	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
 	dstu2JSON, err = ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
 

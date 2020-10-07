@@ -53,7 +53,7 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	chplProductNameVersion, err := openProductLinksFile("/etc/lantern/resources/CHPLProductMapping.json")
 	// Attempt to use the local resources copy if the production copy is not available, this will be the case in the test environmnet
 	if err != nil {
-		chplProductNameVersion, err = openProductLinksFile("../../resources/CHPLProductMapping.json")
+		chplProductNameVersion, err = openProductLinksFile("../../testdata/CHPLProductMapping.json")
 	}
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
