@@ -38,7 +38,7 @@ valuesmodule <- function(
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_VENDORS) {
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     # Repeat with filtering fields to see values
