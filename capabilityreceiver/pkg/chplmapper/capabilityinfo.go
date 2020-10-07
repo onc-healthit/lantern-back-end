@@ -2,10 +2,10 @@ package chplmapper
 
 import (
 	"context"
-	"strings"
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -56,9 +56,18 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	}
 
 	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
 	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
 	chplID := chplProductNameVersion[softwareName][softwareVersion]
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
 	ep.HealthITProductID = healthITProductID
 
 	return nil
@@ -96,7 +105,6 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 
 	return vendorID, nil
 }
-
 
 func openProductLinksFile(filepath string) (map[string]map[string]string, error) {
 	jsonFile, err := os.Open(filepath)
