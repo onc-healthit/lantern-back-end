@@ -28,12 +28,6 @@ var fluffWords = []string{
 
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
-// It returns a boolean specifying if the match was possible or not.
-//
-// NOTE: at this time, only vendor matching is supported.
-// An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
-// In this future, this may be changed to using a vendor table and linking the endpoint entry to
-// the vendor entry.
 func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
 	if ep.CapabilityStatement == nil {
 		return nil
@@ -49,6 +43,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	return nil
 }
 
+// MatchEndpointTopRODUCT creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
 	chplProductNameVersion, err := openProductLinksFile(matchFile)
 	if err != nil {
