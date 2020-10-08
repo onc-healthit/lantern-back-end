@@ -153,10 +153,16 @@ valuesmodule <- function(
       coord_polar("y", start = 0) +
       # Change Legend label
       labs(fill = "Includes a Value \nfor the Given Field") +
-      # Increase label size and remove x & y axis labels
+      # Only display labels that are non-zero, position the label in the middle of the pie chart area, and increase the label size
+      geom_text(data = subset(percent_used_chart(), value != 0), aes(label = value), position = position_stack(vjust = 0.5), size = 10) +
+      # Increase label size
       theme(legend.text = element_text(size = 20),
             legend.title = element_text(size = 20),
-            axis.text = element_text(size = 20),
+            # remove axes labels
+            axis.text = element_blank(),
+            # remove line around pie chart
+            panel.grid = element_blank(),
+            # remove x & y axis labels
             axis.title.y = element_blank(),
             axis.title.x = element_blank())
     },
