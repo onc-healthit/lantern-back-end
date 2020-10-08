@@ -152,7 +152,7 @@ valuesmodule <- function(
       # Turns the plot into a Pie Chart
       coord_polar("y", start = 0) +
       # Change Legend label
-      labs(fill = "Use Field?") +
+      labs(fill = "Includes a Value \nfor the Given Field") +
       # Increase label size and remove x & y axis labels
       theme(legend.text = element_text(size = 20),
             legend.title = element_text(size = 20),
