@@ -11,7 +11,7 @@ valuesmodule_UI <- function(id) {
              DT::dataTableOutput(ns("capstat_values_table"))
             ),
       column(width = 5,
-             h4("Endpoints that Use Given Field"),
+             h4("Endpoints that Include a Value for the Given Field"),
              uiOutput(ns("values_chart")),
       )
     ),
