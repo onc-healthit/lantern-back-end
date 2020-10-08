@@ -93,3 +93,12 @@ For example, if a new version of FHIR is published that has capabilitystatement-
 ```
 
 If the bar field was an array of interfaces, you would add "bar" to the end of the arrayFields list.
+
+## Adding New Manual CHPL Product Matches
+Start by viewing which FHIR endpoints do not yet have a mapped HealthIT Product and also have a populated software field in their capability statement by executing the following query against the Lantern database.
+`SELECT DISTINCT healthit_product_id, capability_statement->'software'->>'name', capability_statement->'software'->>'version' FROM fhir_endpoints_info WHERE capability_statement->>'software' IS NOT NULL;`
+
+Next, search through the HealthIT Products for a product that has a name similar to one of the names which was advertized by the software name field in the capability statemnt, returned by the query above.
+Given that software names as advertized by capability statements won't always align exactly with what is in CHPL (the healthit_products table) you may have to try different variations of the advertized name before a product is found using the query below.
+`SELECT * FROM healthit_products WHERE name ILIKE '%foobar%'`
+If one of the resulting matches has a matching name, and a version that represents the version advertized by the capability statement. For example, if the capability statement advertised software with name 'foobar' version '2.0.1' and there is a HealthIT Product with name 'foobar' and version '2.0', the CHPLID for the given HealthIT product can be associated with the software name and version advertized by the capability statement. This represented in the `lantern-back-end/resources/prod_resources/CHPLProductMapping.json` file as an entry that adheres to the following format.
