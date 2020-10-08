@@ -43,7 +43,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	return nil
 }
 
-// MatchEndpointTopRODUCT creates the database association between the endpoint and the HealthITProduct,
+// MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
 	chplProductNameVersion, err := openProductLinksFile(matchFile)
 	if err != nil {
