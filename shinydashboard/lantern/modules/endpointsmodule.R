@@ -33,8 +33,6 @@ endpointsmodule <- function(
   })
 
   selected_fhir_endpoints <- reactive({
-    # @TODO why are these not included?
-    # res <- get_fhir_endpoints_tbl() %>% select(-http_response, -label)
     res <- get_fhir_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -46,12 +44,6 @@ endpointsmodule <- function(
     res
   })
 
-  # @TODO Remove?
-  # output$endpoints_table <- renderTable({
-  #   selected_fhir_endpoints()
-  # })
-
-  # @TODO Something weird is happening here
   output$endpoints_table <- DT::renderDataTable({
     datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
               colnames = c("URL", "Organization", "Updated", "Developer", "FHIR Version", "TLS Version", "MIME Types", "Status"),
@@ -69,7 +61,7 @@ endpointsmodule <- function(
       rename(http_response_time_second = response_time_seconds)
   })
 
-  # Downloadable csv of selected dataset ----
+  # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
     filename = function() {
       "fhir_endpoints.csv"
@@ -79,6 +71,7 @@ endpointsmodule <- function(
     }
   )
 
+  # Download csv of the field descriptions in the dataset csv
   output$download_descriptions <- downloadHandler(
     filename = function() {
       "fhir_endpoints_fields.csv"
