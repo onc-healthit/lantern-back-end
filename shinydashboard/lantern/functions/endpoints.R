@@ -230,7 +230,6 @@ get_capstat_extensions_list <- function(capstat_fields_tbl) {
 
 # get values from specific fields we're interested in displaying
 get_capstat_values <- function(db_connection) {
-      # ORDER BY field"
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
