@@ -21,9 +21,10 @@ ui <- dashboardPage(
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
+      menuItem("Values", icon = icon("table"), tabName = "values_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
-      menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab", badgeLabel = "new", badgeColor = "green"),
-      menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
+      menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       hr()
@@ -37,6 +38,7 @@ ui <- dashboardPage(
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
     uiOutput("show_date_filters"),
+    uiOutput("show_value_filters"),
     uiOutput("show_resource_checkboxes"),
     tabItems(
       tabItem("dashboard_tab",
@@ -53,6 +55,9 @@ ui <- dashboardPage(
       ),
       tabItem("fields_tab",
               fieldsmodule_UI("fields_page")
+      ),
+      tabItem("values_tab",
+              valuesmodule_UI("values_page")
       ),
       tabItem("security_tab",
               securitymodule_UI("security_page")

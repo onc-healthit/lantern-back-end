@@ -1,10 +1,10 @@
 # Define server function
-function(input, output, session) {
+function(input, output, session) { #nolint
 
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "values_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -64,15 +64,21 @@ function(input, output, session) {
     reactive(input$fhir_version),
     reactive(input$vendor))
 
+  callModule(
+    valuesmodule,
+    "values_page",
+    reactive(input$fhir_version),
+    reactive(input$vendor),
+    reactive(input$field))
+
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
-  show_datefilter <- reactive(input$side_menu %in% c("performance_tab"))
-
-   page_name_list <- list(
+  page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "capability_tab" = "Capability Page",
      "fields_tab" = "Fields Page",
+     "values_tab" = "Values Page",
      "location_tab" = "Location Map",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
@@ -81,14 +87,14 @@ function(input, output, session) {
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab")
   )
-
-  show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
+
+  show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -146,6 +152,22 @@ function(input, output, session) {
             label = "Date range",
             choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
             selected = "All time",
+            size = 1,
+            selectize = FALSE)
+        )
+      )
+    }
+  })
+
+  output$show_value_filters <- renderUI({
+    if (show_value_filter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "field",
+            label = "Field",
+            choices = list("url", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
+            selected = "url",
             size = 1,
             selectize = FALSE)
         )

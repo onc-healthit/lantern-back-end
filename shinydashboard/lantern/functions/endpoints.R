@@ -228,6 +228,40 @@ get_capstat_extensions_list <- function(capstat_fields_tbl) {
     select(field)
 }
 
+# get values from specific fields we're interested in displaying
+get_capstat_values <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      capability_statement->>'url' as url,
+      capability_statement->>'version' as version,
+      capability_statement->>'name' as name,
+      capability_statement->>'title' as title,
+      capability_statement->>'date' as date,
+      capability_statement->>'publisher' as publisher,
+      capability_statement->>'description' as description,
+      capability_statement->>'purpose' as purpose,
+      capability_statement->>'copyright' as copyright,
+      capability_statement->'software'->>'name' as software_name,
+      capability_statement->'software'->>'version' as software_version,
+      capability_statement->'software'->>'releaseDate' as software_release_date,
+      capability_statement->'implementation'->>'description' as implementation_description,
+      capability_statement->'implementation'->>'url' as implementation_url,
+      capability_statement->'implementation'->>'custodian' as implementation_custodian
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE capability_statement != 'null'")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
+get_capstat_values_list <- function(capstat_values_tbl) {
+  res <- capstat_values_tbl
+}
+
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days

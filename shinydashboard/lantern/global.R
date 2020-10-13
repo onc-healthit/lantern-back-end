@@ -55,6 +55,8 @@ app_data <<- list(
   vendor_count_tbl = NULL,            # endpoint counts by vendor
   endpoint_resource_types = NULL,     # Resource types from capability statement by endpoint
   capstat_fields = NULL,              # fields from the capability statement
+  capstat_fields_list = NULL,         # the list of fields we keep track of in a capability statement
+  capstat_values = NULL,              # values of specific fields from the capability statement
   last_updated = NULL,                # time app_data was last updated
   avg_response_time = NULL,           # mean response time for endpoints by refresh period
   vc_totals = NULL,                   # counts of endpoints by vendor
@@ -95,6 +97,10 @@ updater <- observe({
   app_data$endpoint_resource_types <<- get_fhir_resource_types(db_connection)
 
   app_data$capstat_fields <<- get_capstat_fields(db_connection)
+
+  app_data$capstat_fields_list <<- get_capstat_fields_list(app_data$capstat_fields)
+
+  app_data$capstat_values <<- get_capstat_values(db_connection)
 
   app_data$last_updated <<- now()
 
