@@ -124,10 +124,12 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 			var name = obj["name"]
 			var version = obj["version"]
 			var chplID = obj["CHPLID"]
-			if chplMap[name] == nil {
-				chplMap[name] = make(map[string]string)
+			if name != "" && version != "" && chplID != "" {
+				if chplMap[name] == nil {
+					chplMap[name] = make(map[string]string)
+				}
+				chplMap[name][version] = chplID
 			}
-			chplMap[name][version] = chplID
 		}
 	}
 

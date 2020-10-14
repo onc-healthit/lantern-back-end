@@ -101,4 +101,10 @@ Start by viewing which FHIR endpoints do not yet have a mapped HealthIT Product 
 Next, search through the HealthIT Products for a product that has a name similar to one of the names which was advertised by the software name field in the capability statemnt, returned by the query above.
 Given that software names as advertised by capability statements won't always align exactly with what is in CHPL (the healthit_products table) you may have to try different variations of the advertised name before a product is found using the query below.
 `SELECT * FROM healthit_products WHERE name ILIKE '%foobar%'`
-If one of the resulting matches has a matching name, and a version that represents the version advertised by the capability statement. For example, if the capability statement advertised software with name 'foobar' version '2.0.1' and there is a HealthIT Product with name 'foobar' and version '2.0', the CHPLID for the given HealthIT product can be associated with the software name and version advertised by the capability statement. This represented in the `lantern-back-end/resources/prod_resources/CHPLProductMapping.json` file as an entry that adheres to the following format.
+If one of the resulting matches has a matching name, and a version that represents the version advertised by the capability statement, we will associate the CHPLID of the matching HealthIT Product to the name and version as advertised by the capability statement. For example, if the capability statement advertised software with name 'foobar' version '2.0.1' and there is a HealthIT Product with name 'foobar' and version '2.0', the CHPLID for the given HealthIT product can be associated with the software name and version advertised by the capability statement. This represented in the `lantern-back-end/resources/prod_resources/CHPLProductMapping.json` file as an entry that adheres to the following format.
+```
+{
+     "name": "product name as it appears in the capability statement",
+     "version": "product version at it appears in the capability statement",
+     "CHPLID": "Given CHPL ID of the product"
+}

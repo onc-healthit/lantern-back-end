@@ -79,6 +79,20 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func Test_openProductLinksFile(t *testing.T) {
+	path := filepath.Join("../../testdata", "test_chpl_product_mapping_bad.json")
+	chplProductNameVersion, err := openProductLinksFile(path)
+	th.Assert(t, err == nil, err)
+	// make sure that product name with wrong key in test file is not in the returned structure
+	th.Assert(t, chplProductNameVersion["badchplidentry"] == nil, "Field keyed with bad chplid key should not exist")
+	// make sure that product name with wrong key in test file is not in the returned structure
+	th.Assert(t, chplProductNameVersion["Allscripts FHIR"] == nil, "Field keyed as noname should not exist")
+	// make sure that product version with correct key in test file is in the returned structure
+	th.Assert(t, chplProductNameVersion["FooBarProduct"]["4.0"] == "somefakeCHPLID", "Link represented correctly should exist")	
+	// make sure that product version with wrong key in test file is not in the returned structure
+	th.Assert(t, chplProductNameVersion["FooBarProduct"]["2.0"] == "", "Field keyed as noversion should not exist")
+}
+
 func Test_MatchEndpointToProduct(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
@@ -149,7 +163,8 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
+	err = MatchEndpointToProduct(ctx, epInfo, store, path)
 	th.Assert(t, err == nil, err)
 	// No healthIT product should have matched
 	th.Assert(t, epInfo.HealthITProductID == 0, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", 0, epInfo.HealthITProductID))
@@ -176,7 +191,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
 	th.Assert(t, err == nil, err)
-	// No healthIT product should have matched
+	// healthIT product with ID healthITProductID should have matched
 	th.Assert(t, epInfo.HealthITProductID == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, epInfo.HealthITProductID))
 
 }
