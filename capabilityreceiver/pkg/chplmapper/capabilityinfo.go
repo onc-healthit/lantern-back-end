@@ -45,6 +45,10 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
+	if ep.CapabilityStatement == nil {
+		return nil
+	}
+
 	chplProductNameVersion, err := openProductLinksFile(matchFile)
 	if err != nil {
 		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
