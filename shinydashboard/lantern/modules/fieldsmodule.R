@@ -58,10 +58,10 @@ fieldsmodule <- function(
 
   ns <- session$ns
 
-  capstat_extensions_list <- get_capstat_extensions_list(app_data$capstat_fields)
+  capstat_extensions_list <- get_capstat_extensions_list(isolate(app_data$capstat_fields()))
 
   output$capstat_fields_text <- renderUI({
-    col <- app_data$capstat_fields_list %>% pull(1)
+    col <- isolate(app_data$capstat_fields_list()) %>% pull(1)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='field-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following fields: ", divElem)
@@ -77,7 +77,7 @@ fieldsmodule <- function(
   })
 
   selected_fhir_endpoints <- reactive({
-    res <- app_data$capstat_fields
+    res <- isolate(app_data$capstat_fields())
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with
@@ -151,7 +151,7 @@ fieldsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
     }
   )
 
@@ -178,7 +178,7 @@ fieldsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
     }
   )
 }

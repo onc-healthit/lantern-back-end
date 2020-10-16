@@ -30,7 +30,7 @@ valuesmodule <- function(
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
-    res <- app_data$capstat_values
+    res <- isolate(app_data$capstat_values())
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with

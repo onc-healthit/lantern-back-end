@@ -55,7 +55,7 @@ dashboard <- function(
   ns <- session$ns
 
   selected_http_summary <- reactive({
-    res <- app_data$http_pct
+    res <- isolate(app_data$http_pct())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>%
@@ -83,7 +83,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", app_data$fhir_endpoint_totals$all_endpoints, icon = icon("fire", lib = "glyphicon"),
+      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = icon("fire", lib = "glyphicon"),
       color = "blue"
     )
   })
@@ -91,7 +91,7 @@ dashboard <- function(
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
       "Indexed Endpoints",
-      app_data$fhir_endpoint_totals$indexed_endpoints,
+      isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
       icon = icon("flash", lib = "glyphicon"),
       color = "teal"
     )
@@ -99,28 +99,28 @@ dashboard <- function(
 
   output$nonindexed_endpoints_box <- renderInfoBox({
     infoBox(
-      "Non-Indexed Endpoints", app_data$fhir_endpoint_totals$nonindexed_endpoints, icon = icon("comment-slash", lib = "font-awesome"),
+      "Non-Indexed Endpoints", isolate(app_data$fhir_endpoint_totals()$nonindexed_endpoints), icon = icon("comment-slash", lib = "font-awesome"),
       color = "maroon"
     )
   })
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      app_data$response_tally$http_200, "200 (Success)", icon = icon("thumbs-up", lib = "glyphicon"),
+      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = icon("thumbs-up", lib = "glyphicon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      app_data$response_tally$http_404, "404 (Not found)", icon = icon("thumbs-down", lib = "glyphicon"),
+      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = icon("thumbs-down", lib = "glyphicon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      app_data$response_tally$http_503, "503 (Unavailable)", icon = icon("ban-circle", lib = "glyphicon"),
+      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = icon("ban-circle", lib = "glyphicon"),
       color = "orange"
     )
   })
@@ -131,12 +131,12 @@ dashboard <- function(
   )
 
   output$fhir_vendor_table <- renderTable(
-    app_data$vendor_count_tbl %>%
+    isolate(app_data$vendor_count_tbl()) %>%
       select(Vendor = vendor_name, "FHIR Version" = fhir_version, Count = n)
   )
 
   output$vendor_share_plot <- renderCachedPlot({
-   ggplot(app_data$vendor_count_tbl, aes(y = n, x = short_name, fill = fhir_version)) +
+   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = short_name, fill = fhir_version)) +
       geom_bar(stat = "identity") +
       geom_text(aes(label = stat(y), group = short_name),
         stat = "summary", fun = sum, vjust = -1
@@ -150,7 +150,7 @@ dashboard <- function(
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 333,
                                   growthRate = 1.2),
-    res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated }
+    res = 72, cache = "app", cacheKeyExpr = { app_data$last_updated() }
   )
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
@@ -166,7 +166,7 @@ dashboard <- function(
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 400,
                                   growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = {list(app_data$last_updated, sel_vendor())
+  res = 72, cache = "app", cacheKeyExpr = {list(app_data$last_updated(), sel_vendor())
   })
 
   observeEvent(input$show_info, {
