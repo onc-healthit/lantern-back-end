@@ -9,12 +9,11 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download"),
+             downloadButton(ns("download_data"), "Download Endpoint Data"),
              downloadButton(ns("download_descriptions"), "Download Field Descriptions")
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
-    # tableOutput(ns("endpoints_table")),
     htmlOutput(ns("note_text"))
   )
 }
