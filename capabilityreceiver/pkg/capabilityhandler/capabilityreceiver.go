@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplmapper"
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -153,7 +153,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
+		if err != nil {
+			return err
+		}
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 		if err != nil {
 			return err
 		}
@@ -176,7 +180,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 		existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
 		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
-		err = chplmapper.MatchEndpointToVendorAndProduct(ctx, existingEndpt, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+		if err != nil {
+			return err
+		}
+		err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 		if err != nil {
 			return err
 		}
@@ -200,6 +208,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	args := make(map[string]interface{})
 	args["store"] = store
 	args["ctx"] = ctx
+	args["chplMatchFile"] = "/etc/lantern/resources/CHPLProductMapping.json"
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {

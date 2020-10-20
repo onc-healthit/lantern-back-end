@@ -1,0 +1,6 @@
+[
+    {"name": "badchplidentry", "version": "2.01", "noCHPLID": "15.04.04.2883.eCli.11.00.1.171228"},
+    {"name": "FooBarProduct", "version": "4.0", "CHPLID": "somefakeCHPLID"},
+    {"name": "FooBarProduct", "noversion": "2.0", "CHPLID": "somefakeCHPLID"},
+    {"noname": "Allscripts FHIR", "version": "19.4.121.0", "CHPLID": "CorrectVersionAndName"}
+]

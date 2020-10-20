@@ -2,6 +2,9 @@ package chplmapper
 
 import (
 	"context"
+	"encoding/json"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -23,15 +26,9 @@ var fluffWords = []string{
 	"corporation.",
 }
 
-// MatchEndpointToVendorAndProduct creates the database association between the endpoint and the vendor,
+// MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
-// It returns a boolean specifying if the match was possible or not.
-//
-// NOTE: at this time, only vendor matching is supported.
-// An endpoint is matched to a vendor by adding the vendor to the endpoint entry in the database.
-// In this future, this may be changed to using a vendor table and linking the endpoint entry to
-// the vendor entry.
-func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
+func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -42,6 +39,36 @@ func MatchEndpointToVendorAndProduct(ctx context.Context, ep *endpointmanager.FH
 	}
 
 	ep.VendorID = vendorID
+
+	return nil
+}
+
+// MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
+	if ep.CapabilityStatement == nil {
+		return nil
+	}
+
+	chplProductNameVersion, err := openProductLinksFile(matchFile)
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
+
+	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
+	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
+	chplID := chplProductNameVersion[softwareName][softwareVersion]
+
+	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+	// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+	if err == nil {
+		ep.HealthITProductID = healthITProductID
+	}
 
 	return nil
 }
@@ -77,6 +104,40 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 	}
 
 	return vendorID, nil
+}
+
+func openProductLinksFile(filepath string) (map[string]map[string]string, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareNameVersion []map[string]string
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap = make(map[string]map[string]string)
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &softwareNameVersion)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range softwareNameVersion {
+			var name = obj["name"]
+			var version = obj["version"]
+			var chplID = obj["CHPLID"]
+			if name != "" && version != "" && chplID != "" {
+				if chplMap[name] == nil {
+					chplMap[name] = make(map[string]string)
+				}
+				chplMap[name][version] = chplID
+			}
+		}
+	}
+
+	return chplMap, nil
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
