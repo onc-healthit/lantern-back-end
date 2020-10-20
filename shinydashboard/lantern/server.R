@@ -14,7 +14,10 @@ function(input, output, session) { #nolint
 
   observeEvent(database_fetch, {
     if (database_fetch() == 1) {
-      show_modal_spinner()
+      show_modal_spinner(
+        spin = "double-bounce",
+        color = "#112446",
+        text = "Please Wait, Loading...")
       database_fetcher()
       database_fetch(0)
       remove_modal_spinner()
