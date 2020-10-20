@@ -9,7 +9,8 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download")
+             downloadButton(ns("download_data"), "Download Endpoint Data"),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions")
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
@@ -31,7 +32,7 @@ endpointsmodule <- function(
   })
 
   selected_fhir_endpoints <- reactive({
-    res <- get_fhir_endpoints_tbl(db_tables) %>% select(-http_response, -label)
+    res <- get_fhir_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
@@ -43,19 +44,39 @@ endpointsmodule <- function(
   })
 
   output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(-supported_resources),
+    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
               colnames = c("URL", "Organization", "Updated", "Developer", "FHIR Version", "TLS Version", "MIME Types", "Status"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
-    })
-  # Downloadable csv of selected dataset ----
+  })
+
+  # Create the format for the csv
+  csv_format <- reactive({
+    res <- selected_fhir_endpoints() %>%
+      select(-supported_resources, -updated, -label, -status) %>%
+      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(created_at = info_created, updated = info_updated) %>%
+      rename(http_response_time_second = response_time_seconds)
+  })
+
+  # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
     filename = function() {
       "fhir_endpoints.csv"
     },
     content = function(file) {
-      write.csv(selected_fhir_endpoints(), file, row.names = FALSE)
+      write.csv(csv_format(), file, row.names = FALSE)
+    }
+  )
+
+  # Download csv of the field descriptions in the dataset csv
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoints_fields.csv", file)
     }
   )
 

@@ -1,0 +1,14 @@
+Field,	Description
+url,	Service base URL of the endpoint
+api_information_source_name,	Organization names associated with the endpoint reported by the list source
+created_at,	Timestamp of the endpoint's record creation in the Lantern database
+updated,	Timestamp of the last update of the endpoint's record
+list_source,	Name or URL of the list source that included the endpoint
+certified_api_developer_name,	Name of the API developer associated with the endpoint
+fhir_version,	FHIR version that is pulled from the endpoint's capability statement
+tls_version,	Transport Layer Security (TLS) version of the endpoint
+mime_types,	MIME types supported by this endpoint
+http_response,	HTTP response received from querying the endpoint's metadata url
+http_response_time_second,	HTTP response time of the endpoint
+smart_http_response,	HTTP response received from querying the endpoint's SMART url
+errors,	Errors received from querying the endpoint
