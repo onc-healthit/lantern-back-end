@@ -16,6 +16,7 @@ libraries:
   - "purrr"
   - "xts"
   - "leaflet"
+  - "jsonlite"
 
 function_files:
   - "functions/db_connection.R"

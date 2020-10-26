@@ -1,5 +1,7 @@
 library(DT)
 library(purrr)
+# library(dplyr)
+library(jsonlite)
 
 endpointsmodule_UI <- function(id) {
 
@@ -9,8 +11,9 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download Endpoint Data"),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions")
+             downloadButton(ns("download_data"), "Download Endpoint Data (CSV)"),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)"),
+             downloadButton(ns("download_data_json"), "Download Endpoint Data (JSON)"),
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
@@ -94,6 +97,16 @@ endpointsmodule <- function(
     },
     content = function(file) {
       file.copy("fhir_endpoints_fields.csv", file)
+    }
+  )
+
+  output$download_data_json <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints.json"
+    },
+    content = function(file) {
+      exportJSON <- toJSON(csv_format(), force = TRUE)
+      write(exportJSON, file)
     }
   )
 
