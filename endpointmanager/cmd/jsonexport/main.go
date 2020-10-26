@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -46,11 +48,14 @@ func main() {
 	ctx := context.Background()
 	log.Info("Successfully connected to DB!")
 
-	// Copy entire contents of endpoint_export view into a csv which will be written to /tmp
-	sqlQuery := "SELECT url, organization_names, created_at, list_source, vendor_name FROM endpoint_export;"
+	// Get everything from the fhir_endpoints_info table
+	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	helpers.FailOnError("Error querying endpoint_export", err)
 
+	var vendorNameNullable sql.NullString
+
+	// Put into an object
 	var entries []*jsonEntry
 	defer rows.Close()
 	for rows.Next() {
@@ -60,17 +65,119 @@ func main() {
 			pq.Array(&entry.OrganizationNames),
 			&entry.CreatedAt,
 			&entry.ListSource,
-			&entry.VendorName)
+			&vendorNameNullable)
 		helpers.FailOnError("Error saving endpoint_export data", err)
+
+		if !vendorNameNullable.Valid {
+			entry.VendorName = ""
+		}
+
 		entries = append(entries, &entry)
 	}
 
-	fmt.Printf("ENTRIES IN THE DATABASE: %+v", entries)
+	// fmt.Printf("ENTRIES IN THE DATABASE")
+	// for _, e := range entries {
+	// 	fmt.Printf("%+v\n", e)
+	// }
 
-	// Get everything from the fhir_endpoints_info table
-	// Put into an object
 	// Get everything from the fhir_endpoints_info_history table
-	// Put it all into that object
+	ctx = context.Background()
+	selectHistory := `
+		SELECT url, http_response, response_time_seconds, errors,
+		capability_statement, tls_version, mime_types, supported_resources,
+		smart_http_response, smart_response, updated_at
+		FROM fhir_endpoints_info_history;`
+	historyRows, err := store.DB.QueryContext(ctx, selectHistory)
+	helpers.FailOnError("Error querying endpoint_export", err)
+	log.Info("Successfully got everything from fhir_endpoints_info_history table")
 
-	// @TODO Figure out how to get fhirversion
+	// Put it all into that object
+	mapURLHistory := make(map[string][]Operation)
+	defer historyRows.Close()
+	for historyRows.Next() {
+		var op Operation
+		var url string
+		var capStat interface{}
+		var smartRsp interface{}
+		err = historyRows.Scan(
+			&url,
+			&op.HTTPResponse,
+			&op.HTTPResponseTimeSecond,
+			&op.Errors,
+			&capStat,
+			&op.TLSVersion,
+			pq.Array(&op.MIMETypes),
+			pq.Array(&op.SupportedResources),
+			&op.SMARTHTTPResponse,
+			&smartRsp,
+			&op.UpdatedAt)
+		helpers.FailOnError("Error saving fhir_endpoints_info_history data", err)
+
+		// fmt.Printf("OPERATION: %+v\n", op)
+
+		// Get fhirVersion
+		if capStat != nil {
+			capStatObj, ok := capStat.(map[string]interface{})
+			if !ok {
+				// @TODO Fix error message
+				helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
+			} else {
+				// fmt.Printf("CAPSTAT: %+v \n", capStatObj)
+				if capStatObj["fhirVersion"] != nil {
+					fhirVersion, ok := capStatObj["fhirVersion"].(string)
+					if !ok {
+						// @TODO Fix error message
+						helpers.FailOnError("Error converting fhirVersion to string", err)
+					} else {
+						op.FHIRVersion = fhirVersion
+					}
+				} else {
+					op.FHIRVersion = ""
+				}
+			}
+		}
+
+		// fmt.Printf("FHIR VERSION: %+v\n", op.FHIRVersion)
+
+		// Format the JSON SMART Response that's received from the database
+		if smartRsp != nil {
+			smartInt, ok := smartRsp.(capabilityparser.SMARTResponse)
+			if !ok {
+				// @TODO Fix error message
+				helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
+			} else {
+				op.SMARTResponse = smartInt
+			}
+		} else {
+			var smartDefault capabilityparser.SMARTResponse
+			op.SMARTResponse = smartDefault
+		}
+
+		// fmt.Printf("SMART RESPONSE: %+v\n", op.SMARTResponse)
+
+		if val, ok := mapURLHistory[url]; ok {
+			mapURLHistory[url] = append(val, op)
+		} else {
+			mapURLHistory[url] = []Operation{op}
+		}
+	}
+
+	// fmt.Printf("URL MAP")
+	// for k, v := range mapURLHistory {
+	// 	fmt.Printf("%s -> %+v\n", k, v)
+	// }
+
+	// Put the map into the array
+	for i, v := range entries {
+		url := v.URL
+		if val, ok := mapURLHistory[url]; ok {
+			entries[i].Operation = val
+		}
+	}
+
+	// Convert to JSON
+	finalJSON, err := json.Marshal(entries)
+	helpers.FailOnError("Error converting interface to JSON", err)
+	fmt.Printf("FINAL JSON: %s", string(finalJSON))
+
 }
