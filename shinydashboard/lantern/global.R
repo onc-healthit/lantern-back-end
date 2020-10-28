@@ -49,7 +49,6 @@ app <<- list(
 # define global app_data which is computed at application startup, and
 # refreshed at interval specified by refresh_timeout_minutes in configuration.yml
 app_data <<- list(
-  fhir_version_list = reactiveVal(NULL),           # list of fhir_versions reported by endpoints
   fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
   response_tally = reactiveVal(NULL),              # counts of http responses
   http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
