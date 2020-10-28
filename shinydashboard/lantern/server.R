@@ -17,7 +17,7 @@ function(input, output, session) { #nolint
       show_modal_spinner(
         spin = "double-bounce",
         color = "#112446",
-        text = "Please Wait, Loading...")
+        text = "Please Wait, Lantern is fetching the most up-to-date data")
       database_fetcher()
       database_fetch(0)
       remove_modal_spinner()

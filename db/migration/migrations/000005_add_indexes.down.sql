@@ -1,5 +1,6 @@
 BEGIN;
 
+DROP INDEX IF EXISTS vendor_name_idx;
 DROP INDEX IF EXISTS fhir_version_idx;
 DROP INDEX IF EXISTS implementation_guide_idx;
 DROP INDEX IF EXISTS field_idx;

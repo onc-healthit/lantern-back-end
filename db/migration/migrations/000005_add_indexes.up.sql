@@ -1,5 +1,6 @@
 BEGIN;
 
+CREATE INDEX vendor_name_idx ON vendors (name);
 CREATE INDEX fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
 CREATE INDEX implementation_guide_idx ON fhir_endpoints_info ((capability_statement->>'implementationGuide'));
 CREATE INDEX field_idx ON fhir_endpoints_info ((included_fields->> 'Field'));

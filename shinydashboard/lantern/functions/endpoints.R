@@ -486,13 +486,11 @@ get_implementation_guide <- function(db_connection) {
     tidyr::replace_na(list(implementation_guide = "None"))
 }
 
-database_fetcher <- reactive({
-  print('hello')
-  
+database_fetcher <- reactive({  
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
 
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
-  print(isolate(app_data$fhir_endpoint_totals))
+
   app_data$response_tally(get_response_tally_list(db_tables))
 
   app_data$http_pct(get_http_response_summary_tbl(db_tables))
@@ -513,7 +511,7 @@ database_fetcher <- reactive({
 
   app_data$capstat_values(get_capstat_values(db_connection))
 
-  app_data$last_updated(now())
+  app_data$last_updated(now("UTC"))
 
   app_data$avg_response_time(get_avg_response_time(db_connection, "maxdate.maximum"))
 

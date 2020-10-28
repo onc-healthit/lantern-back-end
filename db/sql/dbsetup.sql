@@ -304,11 +304,11 @@ CREATE INDEX endpoint_organization_url_idx ON endpoint_organization (url);
 CREATE INDEX vendor_id_idx ON vendors (id);
 CREATE INDEX fhir_endpoints_info_vendor_id_idx ON fhir_endpoints_info (vendor_id);
 CREATE INDEX fhir_endpoints_info_history_vendor_id_idx ON fhir_endpoints_info_history (vendor_id);
-CREATE INDEX vendor_name_idx ON vendors (name);
 
 CREATE INDEX npi_organizations_npi_id_idx ON npi_organizations (npi_id);
 CREATE INDEX endpoint_organization_npi_id_idx ON endpoint_organization (organization_npi_id);
 
+CREATE INDEX vendor_name_idx ON vendors (name);
 CREATE INDEX fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
 CREATE INDEX implementation_guide_idx ON fhir_endpoints_info ((capability_statement->>'implementationGuide'));
 CREATE INDEX field_idx ON fhir_endpoints_info ((included_fields->> 'Field'));
