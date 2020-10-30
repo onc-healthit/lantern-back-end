@@ -486,7 +486,7 @@ get_implementation_guide <- function(db_connection) {
     tidyr::replace_na(list(implementation_guide = "None"))
 }
 
-database_fetcher <- reactive({  
+database_fetcher <- reactive({
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
 
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
