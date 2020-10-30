@@ -27,16 +27,16 @@ type jsonEntry struct {
 
 // Operation is a subset of the FHIREndpointInfo and also includes FHIRVersion
 type Operation struct {
-	HTTPResponse           int                            `json:"http_response"`
-	HTTPResponseTimeSecond float64                        `json:"http_response_time_second"`
-	Errors                 string                         `json:"errors"`
-	FHIRVersion            string                         `json:"fhir_version"`
-	TLSVersion             string                         `json:"tls_verison"`
-	MIMETypes              []string                       `json:"mime_types"`
-	SupportedResources     []string                       `json:"supported_resources"`
-	SMARTHTTPResponse      int                            `json:"smart_http_response"`
-	SMARTResponse          capabilityparser.SMARTResponse `json:"smart_response"`
-	UpdatedAt              time.Time                      `json:"updated"`
+	HTTPResponse           int                    `json:"http_response"`
+	HTTPResponseTimeSecond float64                `json:"http_response_time_second"`
+	Errors                 string                 `json:"errors"`
+	FHIRVersion            string                 `json:"fhir_version"`
+	TLSVersion             string                 `json:"tls_verison"`
+	MIMETypes              []string               `json:"mime_types"`
+	SupportedResources     []string               `json:"supported_resources"`
+	SMARTHTTPResponse      int                    `json:"smart_http_response"`
+	SMARTResponse          map[string]interface{} `json:"smart_response"`
+	UpdatedAt              time.Time              `json:"updated"`
 }
 
 func main() {
@@ -97,8 +97,8 @@ func main() {
 	for historyRows.Next() {
 		var op Operation
 		var url string
-		var capStat interface{}
-		var smartRsp interface{}
+		var capStat []byte
+		var smartRsp []byte
 		err = historyRows.Scan(
 			&url,
 			&op.HTTPResponse,
@@ -117,43 +117,47 @@ func main() {
 
 		// Get fhirVersion
 		if capStat != nil {
-			capStatObj, ok := capStat.(map[string]interface{})
-			if !ok {
-				// @TODO Fix error message
-				helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
-			} else {
-				// fmt.Printf("CAPSTAT: %+v \n", capStatObj)
-				if capStatObj["fhirVersion"] != nil {
-					fhirVersion, ok := capStatObj["fhirVersion"].(string)
-					if !ok {
-						// @TODO Fix error message
-						helpers.FailOnError("Error converting fhirVersion to string", err)
-					} else {
-						op.FHIRVersion = fhirVersion
-					}
-				} else {
-					op.FHIRVersion = ""
-				}
+			formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
+			helpers.FailOnError("Error converting cap stat to CapabilityStatement", err)
+			if formatCapStat != nil {
+				fhirVersion, err := formatCapStat.GetFHIRVersion()
+				helpers.FailOnError("Error getting FHIR Version", err)
+				op.FHIRVersion = fhirVersion
 			}
+
+			// if !ok {
+			// 	// @TODO Fix error message
+			// 	helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
+			// } else {
+			// 	// fmt.Printf("CAPSTAT: %+v \n", capStatObj)
+			// 	if capStatObj["fhirVersion"] != nil {
+			// 		fhirVersion, ok := capStatObj["fhirVersion"].(string)
+			// 		if !ok {
+			// 			// @TODO Fix error message
+			// 			helpers.FailOnError("Error converting fhirVersion to string", err)
+			// 		} else {
+			// 			op.FHIRVersion = fhirVersion
+			// 		}
+			// 	} else {
+			// 		op.FHIRVersion = ""
+			// 	}
+			// }
 		}
 
-		// fmt.Printf("FHIR VERSION: %+v\n", op.FHIRVersion)
-
-		// Format the JSON SMART Response that's received from the database
 		if smartRsp != nil {
-			smartInt, ok := smartRsp.(capabilityparser.SMARTResponse)
-			if !ok {
-				// @TODO Fix error message
-				helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
-			} else {
-				op.SMARTResponse = smartInt
-			}
+			fmt.Printf("Smart response is not nil")
+			testSmartRsp := []byte(`
+			{
+				"authorization_endpoint": "https://ehr.example.com/auth/authorize"
+			}`)
+			// @TODO Convert SMART Response to a map[string]interface{}
+			smartInt, err := capabilityparser.NewSMARTResp(testSmartRsp)
+			fmt.Printf("SMART INTERFACE? %+v", smartInt)
+			helpers.FailOnError("Error converting smart resp to SMARTResponse", err)
+			op.SMARTResponse = smartInt
 		} else {
-			var smartDefault capabilityparser.SMARTResponse
-			op.SMARTResponse = smartDefault
+			fmt.Printf("SMART RESPONSE: %s", string(smartRsp))
 		}
-
-		// fmt.Printf("SMART RESPONSE: %+v\n", op.SMARTResponse)
 
 		if val, ok := mapURLHistory[url]; ok {
 			mapURLHistory[url] = append(val, op)
@@ -176,8 +180,14 @@ func main() {
 	}
 
 	// Convert to JSON
-	finalJSON, err := json.Marshal(entries)
+	finalJSON, err := json.Marshal(entries[0])
 	helpers.FailOnError("Error converting interface to JSON", err)
 	fmt.Printf("FINAL JSON: %s", string(finalJSON))
+
+	// @TODO Figure out how to write it to a file?
+	// finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
+	// helpers.FailOnError("Error converting interface to formatted JSON", err)
+	// err = ioutil.WriteFile("fhir_endpoints_fields.json", finalFormatJSON, 0644)
+	// helpers.FailOnError("Writing to file failed", err)
 
 }
