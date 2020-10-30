@@ -52,15 +52,12 @@ app_data <<- list(
   fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
   response_tally = reactiveVal(NULL),              # counts of http responses
   http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
-  http_summary = reactiveVal(NULL),                # counts of all http_responses ever
   vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
   capstat_fields_list = reactiveVal(NULL),         # the list of fields we keep track of in a capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement
   last_updated = reactiveVal(NULL),                # time app_data was last updated
-  avg_response_time = reactiveVal(NULL),           # mean response time for endpoints by refresh period
-  vc_totals = reactiveVal(NULL),                   # counts of endpoints by vendor
   security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint
   security_endpoints_tbl = reactiveVal(NULL),      # list of endpoints filterable by auth type
   auth_type_counts = reactiveVal(NULL),            # count and pct of endpoints by auth type and fhir_version

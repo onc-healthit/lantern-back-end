@@ -495,12 +495,6 @@ database_fetcher <- reactive({
 
   app_data$http_pct(get_http_response_summary_tbl(db_tables))
 
-  app_data$http_summary(isolate(app_data$http_pct()) %>%
-    left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
-    select(id, code, label) %>%
-    group_by(code, label) %>%
-    summarise(count = n()))
-
   app_data$vendor_count_tbl(get_fhir_version_vendor_count(endpoint_export_tbl))
 
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
@@ -512,13 +506,6 @@ database_fetcher <- reactive({
   app_data$capstat_values(get_capstat_values(db_connection))
 
   app_data$last_updated(now("UTC"))
-
-  app_data$avg_response_time(get_avg_response_time(db_connection, "maxdate.maximum"))
-
-  app_data$vc_totals(isolate(app_data$vendor_count_tbl()) %>%
-    filter(!(vendor_name == "Unknown")) %>%
-    group_by(vendor_name) %>%
-    summarise(total = sum(n)))
 
   app_data$security_endpoints(get_security_endpoints(db_connection))
 
