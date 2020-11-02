@@ -29,7 +29,7 @@ locationmodule <- function(
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
-    res <- app_data$endpoint_locations
+    res <- isolate(app_data$endpoint_locations())
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with

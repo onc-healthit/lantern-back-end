@@ -12,64 +12,80 @@ function(input, output, session) { #nolint
     }
   }, priority = 100)
 
+  observeEvent(database_fetch, {
+    if (database_fetch() == 1) {
+      show_modal_spinner(
+        spin = "double-bounce",
+        color = "#112446",
+        text = "Please Wait, Lantern is fetching the most up-to-date data")
+      database_fetcher()
+      database_fetch(0)
+      remove_modal_spinner()
+    }
+  }, priority = 90)
+
   # Trigger this observer every time side_menu changes, and change the url to contain the new tab name
   observeEvent(input$side_menu, {
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
   callModule(
-    dashboard,
-    "dashboard_page",
-    reactive(input$httpvendor))
+        dashboard,
+        "dashboard_page",
+        reactive(input$httpvendor))
 
-  callModule(
-    endpointsmodule,
-    "endpoints_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor))
+  observeEvent(database_fetch, {
+    if (database_fetch() == 0) {
+      callModule(
+        endpointsmodule,
+        "endpoints_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
 
-  callModule(
-    locationmodule,
-    "location_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor))
+      callModule(
+        locationmodule,
+        "location_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
 
-  callModule(
-    performancemodule,
-    "performance_page",
-    reactive(input$date))
+      callModule(
+        performancemodule,
+        "performance_page",
+        reactive(input$date))
 
-  callModule(
-    securitymodule,
-    "security_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor))
+      callModule(
+        securitymodule,
+        "security_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
 
-  callModule(
-    smartresponsemodule,
-    "smartresponse_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor))
+      callModule(
+        smartresponsemodule,
+        "smartresponse_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
 
-  callModule(
-    capabilitymodule,
-    "capability_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor),
-    reactive(input$resources))
+      callModule(
+        capabilitymodule,
+        "capability_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$resources))
 
-  callModule(
-    fieldsmodule,
-    "fields_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor))
+      callModule(
+        fieldsmodule,
+        "fields_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
 
-  callModule(
-    valuesmodule,
-    "values_page",
-    reactive(input$fhir_version),
-    reactive(input$vendor),
-    reactive(input$field))
+      callModule(
+        valuesmodule,
+        "values_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$field))
+    }
+  })
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
@@ -110,7 +126,7 @@ function(input, output, session) { #nolint
           selectInput(
             inputId = "fhir_version",
             label = "FHIR Version:",
-            choices = app$fhir_version_list,
+            choices = isolate(app$fhir_version_list()),
             selected = ui_special_values$ALL_FHIR_VERSIONS,
             size = 1,
             selectize = FALSE)
@@ -176,7 +192,7 @@ function(input, output, session) { #nolint
   })
 
   checkbox_resources <- reactive({
-    res <- app_data$endpoint_resource_types
+    res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
     if (input$fhir_version != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == input$fhir_version)

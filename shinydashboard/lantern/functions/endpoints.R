@@ -57,7 +57,7 @@ get_response_tally_list <- function(db_tables) {
 
 # get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(app_data$last_updated)
+  as.character.Date(isolate(app_data$last_updated()))
 }
 
 # Compute the percentage of each response code for all responses received
@@ -400,11 +400,11 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
 get_well_known_endpoint_counts <- function(db_connection) {
   res <- tribble(
     ~Status, ~Endpoints,
-    "Total Indexed Endpoints", as.integer(app_data$fhir_endpoint_totals$all_endpoints),
-    "Endpoints with successful response (HTTP 200)", as.integer(app_data$response_tally$http_200),
+    "Total Indexed Endpoints", as.integer(isolate(app_data$fhir_endpoint_totals()$all_endpoints)),
+    "Endpoints with successful response (HTTP 200)", as.integer(isolate(app_data$response_tally()$http_200)),
     "Well Known URI Endpoints with successful response (HTTP 200)", get_well_known_endpoints_count(db_connection),
-    "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_tbl)),
-    "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(app_data$well_known_endpoints_no_doc))
+    "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(isolate(app_data$well_known_endpoints_tbl()))),
+    "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(isolate(app_data$well_known_endpoints_no_doc())))
   )
 }
 
@@ -431,11 +431,11 @@ get_no_cap_statement_count <- function(db_connection) {
 get_endpoint_security_counts <- function(db_connection) {
   res <- tribble(
     ~Status, ~Endpoints,
-    "Total Indexed Endpoints", as.integer(app_data$fhir_endpoint_totals$all_endpoints),
-    "Endpoints with successful response (HTTP 200)", as.integer(app_data$response_tally$http_200),
-    "Endpoints with unsuccessful response", as.integer(app_data$response_tally$http_non200),
+    "Total Indexed Endpoints", as.integer(isolate(app_data$fhir_endpoint_totals()$all_endpoints)),
+    "Endpoints with successful response (HTTP 200)", as.integer(isolate(app_data$response_tally()$http_200)),
+    "Endpoints with unsuccessful response", as.integer(isolate(app_data$response_tally()$http_non200)),
     "Endpoints without valid capability statement", as.integer(get_no_cap_statement_count(db_connection)),
-    "Endpoints with valid security resource", as.integer(nrow(app_data$security_endpoints %>% distinct(id)))
+    "Endpoints with valid security resource", as.integer(nrow(isolate(app_data$security_endpoints()) %>% distinct(id)))
   )
 }
 
@@ -483,3 +483,49 @@ get_implementation_guide <- function(db_connection) {
     tidyr::replace_na(list(fhir_version = "Unknown")) %>%
     tidyr::replace_na(list(implementation_guide = "None"))
 }
+
+database_fetcher <- reactive({
+  app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
+
+  app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
+
+  app_data$response_tally(get_response_tally_list(db_tables))
+
+  app_data$http_pct(get_http_response_summary_tbl(db_tables))
+
+  app_data$vendor_count_tbl(get_fhir_version_vendor_count(endpoint_export_tbl))
+
+  app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
+
+  app_data$capstat_fields(get_capstat_fields(db_connection))
+
+  app_data$capstat_fields_list(get_capstat_fields_list(isolate(app_data$capstat_fields())))
+
+  app_data$capstat_values(get_capstat_values(db_connection))
+
+  app_data$last_updated(now("UTC"))
+
+  app_data$security_endpoints(get_security_endpoints(db_connection))
+
+  app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection))
+
+  app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints())))
+
+  app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
+    distinct(code) %>%
+    pull(code))
+
+  app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection))
+
+  app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection))
+
+  app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection))
+
+  app_data$well_known_endpoint_counts(get_well_known_endpoint_counts(db_connection))
+
+  app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection))
+
+  app_data$implementation_guide(get_implementation_guide(db_connection))
+
+  app_data$endpoint_locations(get_endpoint_locations(db_connection))
+})

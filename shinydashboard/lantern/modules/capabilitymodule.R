@@ -38,7 +38,7 @@ capabilitymodule <- function(
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
-    res <- app_data$endpoint_resource_types
+    res <- isolate(app_data$endpoint_resource_types())
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
@@ -74,7 +74,7 @@ capabilitymodule <- function(
   })
 
   selected_implementation_guide <- reactive({
-    res <- app_data$implementation_guide
+    res <- isolate(app_data$implementation_guide())
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
@@ -130,7 +130,7 @@ capabilitymodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), app_data$last_updated())
     })
 
   output$implementation_guide_plot <- renderCachedPlot({
@@ -149,7 +149,7 @@ capabilitymodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated)
+      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
     })
 
   output$implementation_guide_empty_plot <- renderPlot({

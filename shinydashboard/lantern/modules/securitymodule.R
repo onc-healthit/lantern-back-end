@@ -22,7 +22,7 @@ securitymodule_UI <- function(id) {
                selectInput(
                  inputId = ns("auth_type_code"),
                  label = "Supported Authorization Type:",
-                 choices = app_data$security_code_list,
+                 choices = isolate(app_data$security_code_list()),
                  selected = "SMART-on-FHIR",
                  size = 1,
                  selectize = FALSE)
@@ -44,15 +44,15 @@ securitymodule <- function(
   ns <- session$ns
 
   output$auth_type_count_table <- renderTable(
-    app_data$auth_type_counts,
+    isolate(app_data$auth_type_counts()),
     align = "llrr"
   )
   output$endpoint_summary_table <- renderTable(
-    app_data$endpoint_security_counts
+    isolate(app_data$endpoint_security_counts())
   )
 
   selected_endpoints <- reactive({
-    res <- app_data$security_endpoints_tbl
+    res <- isolate(app_data$security_endpoints_tbl())
     req(sel_fhir_version(), sel_vendor(), input$auth_type_code)
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())

@@ -36,11 +36,11 @@ smartresponsemodule <- function(
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
   # can we show a summary table of how many endpoints supporting /.well-known/smart-configuration ?
   output$smart_capability_count_table <- renderTable(
-    get_smart_response_capability_count(app_data$smart_response_capabilities)
+    get_smart_response_capability_count(isolate(app_data$smart_response_capabilities()))
   )
 
   output$smart_vendor_table <- renderTable({
-    app_data$smart_response_capabilities %>%
+    isolate(app_data$smart_response_capabilities()) %>%
       distinct(id, .keep_all = TRUE) %>%
       group_by(id, fhir_version, vendor_name) %>%
       count() %>%
@@ -50,11 +50,11 @@ smartresponsemodule <- function(
   })
 
   output$well_known_summary_table <- renderTable(
-    app_data$well_known_endpoint_counts
+    isolate(app_data$well_known_endpoint_counts())
   )
 
   selected_endpoints <- reactive({
-    res <- app_data$well_known_endpoints_tbl
+    res <- isolate(app_data$well_known_endpoints_tbl())
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
