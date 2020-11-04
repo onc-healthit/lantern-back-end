@@ -410,7 +410,7 @@ You may have to install R and the R lintr package first. To do this on a Mac, yo
 echo 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")' | R --save
 ```
 
-Or you may run the lintr.sh script in the ./scripts directory which will install the lintr package if not already installed, then print out and throw an error if the lintr recommends any changes to the R code
+Or you may run the lintr.sh script in the ./scripts directory which will print out and throw an error if the lintr recommends any changes to the R code
 
 More information about the R lintr can be found [here](https://github.com/jimhester/lintr)
 
