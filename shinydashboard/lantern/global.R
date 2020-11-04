@@ -31,7 +31,8 @@ database_fetch <- reactiveVal(0)
 ui_special_values <- list(
   "ALL_FHIR_VERSIONS" = "All FHIR Versions",
   "ALL_DEVELOPERS" = "All Developers",
-  "ALL_RESOURCES" = "All Resources"
+  "ALL_RESOURCES" = "All Resources",
+  "ALL_AVAILABILITY" = "All Availabilities"
 )
 
 # The list of fhir versions and vendors are unlikely to change during a user's session

@@ -106,6 +106,10 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab")
   )
 
+  show_availability_filter <- reactive(
+    input$side_menu %in% c("endpoints_tab")
+  )
+
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
@@ -121,26 +125,58 @@ function(input, output, session) { #nolint
 
   output$show_filters <- renderUI({
     if (show_filter()) {
-      fluidRow(
-        column(width = 4,
-          selectInput(
-            inputId = "fhir_version",
-            label = "FHIR Version:",
-            choices = isolate(app$fhir_version_list()),
-            selected = ui_special_values$ALL_FHIR_VERSIONS,
-            size = 1,
-            selectize = FALSE)
-        ),
-        column(width = 4,
-          selectInput(
-            inputId = "vendor",
-            label = "Developer:",
-            choices = app$vendor_list,
-            selected = ui_special_values$ALL_DEVELOPERS,
-            size = 1,
-            selectize = FALSE)
+      if (show_availability_filter()) {
+        fluidRow(
+          column(width = 4,
+            selectInput(
+              inputId = "fhir_version",
+              label = "FHIR Version:",
+              choices = isolate(app$fhir_version_list()),
+              selected = ui_special_values$ALL_FHIR_VERSIONS,
+              size = 1,
+              selectize = FALSE)
+          ),
+          column(width = 4,
+            selectInput(
+              inputId = "vendor",
+              label = "Developer:",
+              choices = app$vendor_list,
+              selected = ui_special_values$ALL_DEVELOPERS,
+              size = 1,
+              selectize = FALSE)
+          ),
+          column(width = 4,
+            selectInput(
+              inputId = "availability",
+              label = "Availability",
+              choices = list(ui_special_values$ALL_AVAILABILITY, "0%", "0-25%", "25-50%", "50-75%", "75-100%"),,
+              selected = ui_special_values$ALL_AVAILABILITY,
+              size = 1,
+              selectize = FALSE)
+          )
         )
-      )
+      } else {
+        fluidRow(
+          column(width = 4,
+            selectInput(
+              inputId = "fhir_version",
+              label = "FHIR Version:",
+              choices = isolate(app$fhir_version_list()),
+              selected = ui_special_values$ALL_FHIR_VERSIONS,
+              size = 1,
+              selectize = FALSE)
+          ),
+          column(width = 4,
+            selectInput(
+              inputId = "vendor",
+              label = "Developer:",
+              choices = app$vendor_list,
+              selected = ui_special_values$ALL_DEVELOPERS,
+              size = 1,
+              selectize = FALSE)
+          )
+        )
+      }
     }
   })
 
