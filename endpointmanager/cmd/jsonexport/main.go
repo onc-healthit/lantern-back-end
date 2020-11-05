@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/lib/pq"
@@ -75,11 +75,6 @@ func main() {
 		entries = append(entries, &entry)
 	}
 
-	// fmt.Printf("ENTRIES IN THE DATABASE")
-	// for _, e := range entries {
-	// 	fmt.Printf("%+v\n", e)
-	// }
-
 	// Get everything from the fhir_endpoints_info_history table
 	ctx = context.Background()
 	selectHistory := `
@@ -113,8 +108,6 @@ func main() {
 			&op.UpdatedAt)
 		helpers.FailOnError("Error saving fhir_endpoints_info_history data", err)
 
-		// fmt.Printf("OPERATION: %+v\n", op)
-
 		// Get fhirVersion
 		if capStat != nil {
 			formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
@@ -124,39 +117,15 @@ func main() {
 				helpers.FailOnError("Error getting FHIR Version", err)
 				op.FHIRVersion = fhirVersion
 			}
-
-			// if !ok {
-			// 	// @TODO Fix error message
-			// 	helpers.FailOnError("Error converting capstat to map[string]interface{}", err)
-			// } else {
-			// 	// fmt.Printf("CAPSTAT: %+v \n", capStatObj)
-			// 	if capStatObj["fhirVersion"] != nil {
-			// 		fhirVersion, ok := capStatObj["fhirVersion"].(string)
-			// 		if !ok {
-			// 			// @TODO Fix error message
-			// 			helpers.FailOnError("Error converting fhirVersion to string", err)
-			// 		} else {
-			// 			op.FHIRVersion = fhirVersion
-			// 		}
-			// 	} else {
-			// 		op.FHIRVersion = ""
-			// 	}
-			// }
 		}
 
 		if smartRsp != nil {
-			fmt.Printf("Smart response is not nil")
-			testSmartRsp := []byte(`
-			{
-				"authorization_endpoint": "https://ehr.example.com/auth/authorize"
-			}`)
-			// @TODO Convert SMART Response to a map[string]interface{}
-			smartInt, err := capabilityparser.NewSMARTResp(testSmartRsp)
-			fmt.Printf("SMART INTERFACE? %+v", smartInt)
-			helpers.FailOnError("Error converting smart resp to SMARTResponse", err)
-			op.SMARTResponse = smartInt
-		} else {
-			fmt.Printf("SMART RESPONSE: %s", string(smartRsp))
+			var smartInt map[string]interface{}
+			if len(smartRsp) > 0 {
+				err = json.Unmarshal(smartRsp, &smartInt)
+				helpers.FailOnError("Error converting smart resp to map[string]interface{}", err)
+				op.SMARTResponse = smartInt
+			}
 		}
 
 		if val, ok := mapURLHistory[url]; ok {
@@ -165,11 +134,6 @@ func main() {
 			mapURLHistory[url] = []Operation{op}
 		}
 	}
-
-	// fmt.Printf("URL MAP")
-	// for k, v := range mapURLHistory {
-	// 	fmt.Printf("%s -> %+v\n", k, v)
-	// }
 
 	// Put the map into the array
 	for i, v := range entries {
@@ -180,14 +144,13 @@ func main() {
 	}
 
 	// Convert to JSON
-	finalJSON, err := json.Marshal(entries[0])
-	helpers.FailOnError("Error converting interface to JSON", err)
-	fmt.Printf("FINAL JSON: %s", string(finalJSON))
+	// finalJSON, err := json.Marshal(entries[0])
+	// helpers.FailOnError("Error converting interface to JSON", err)
 
 	// @TODO Figure out how to write it to a file?
-	// finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
-	// helpers.FailOnError("Error converting interface to formatted JSON", err)
-	// err = ioutil.WriteFile("fhir_endpoints_fields.json", finalFormatJSON, 0644)
-	// helpers.FailOnError("Writing to file failed", err)
+	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
+	helpers.FailOnError("Error converting interface to formatted JSON", err)
+	err = ioutil.WriteFile("../../../shinydashboard/lantern/fhir_endpoints_fields.json", finalFormatJSON, 0644)
+	helpers.FailOnError("Writing to file failed", err)
 
 }
