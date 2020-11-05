@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/google/martian/log"
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type jsonEntry struct {
