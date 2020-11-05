@@ -38,7 +38,7 @@ type Operation struct {
 	UpdatedAt              time.Time              `json:"updated"`
 }
 
-func CreateJSONExport(ctx context.Context, store *postgresql.Store) {
+func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) {
 	// Get everything from the fhir_endpoints_info table
 	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
@@ -141,6 +141,6 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store) {
 	// @TODO Figure out how to write it to a file?
 	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
 	helpers.FailOnError("Error converting interface to formatted JSON", err)
-	err = ioutil.WriteFile("../../../shinydashboard/lantern/fhir_endpoints_fields.json", finalFormatJSON, 0644)
+	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
 	helpers.FailOnError("Writing to file failed", err)
 }
