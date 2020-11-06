@@ -10,9 +10,6 @@ import (
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type jsonEntry struct {
@@ -38,31 +35,35 @@ type Operation struct {
 	UpdatedAt              time.Time              `json:"updated"`
 }
 
-func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) {
+// CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
+// tables into a given specification
+func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
 	// Get everything from the fhir_endpoints_info table
 	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
-	helpers.FailOnError("Error querying endpoint_export", err)
-
-	var vendorNameNullable sql.NullString
+	if err != nil {
+		return err
+	}
 
 	// Put into an object
 	var entries []*jsonEntry
 	defer rows.Close()
 	for rows.Next() {
 		var entry jsonEntry
+		var vendorNameNullable sql.NullString
 		err = rows.Scan(
 			&entry.URL,
 			pq.Array(&entry.OrganizationNames),
 			&entry.CreatedAt,
 			&entry.ListSource,
 			&vendorNameNullable)
-		helpers.FailOnError("Error saving endpoint_export data", err)
+		if err != nil {
+			return err
+		}
 
 		if !vendorNameNullable.Valid {
 			entry.VendorName = ""
 		}
-
 		entries = append(entries, &entry)
 	}
 
@@ -74,10 +75,11 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 		smart_http_response, smart_response, updated_at
 		FROM fhir_endpoints_info_history;`
 	historyRows, err := store.DB.QueryContext(ctx, selectHistory)
-	helpers.FailOnError("Error querying endpoint_export", err)
-	log.Info("Successfully got everything from fhir_endpoints_info_history table")
+	if err != nil {
+		return err
+	}
 
-	// Put it all into that object
+	// Group the rows by URL, to create a map from URLs
 	mapURLHistory := make(map[string][]Operation)
 	defer historyRows.Close()
 	for historyRows.Next() {
@@ -97,24 +99,33 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 			&op.SMARTHTTPResponse,
 			&smartRsp,
 			&op.UpdatedAt)
-		helpers.FailOnError("Error saving fhir_endpoints_info_history data", err)
+		if err != nil {
+			return err
+		}
 
-		// Get fhirVersion
+		// Get the FHIR Version from the capability statement
 		if capStat != nil {
 			formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
-			helpers.FailOnError("Error converting cap stat to CapabilityStatement", err)
+			if err != nil {
+				return err
+			}
 			if formatCapStat != nil {
 				fhirVersion, err := formatCapStat.GetFHIRVersion()
-				helpers.FailOnError("Error getting FHIR Version", err)
+				if err != nil {
+					return err
+				}
 				op.FHIRVersion = fhirVersion
 			}
 		}
 
+		// Format the SMART Response into JSON
 		if smartRsp != nil {
 			var smartInt map[string]interface{}
 			if len(smartRsp) > 0 {
 				err = json.Unmarshal(smartRsp, &smartInt)
-				helpers.FailOnError("Error converting smart resp to map[string]interface{}", err)
+				if err != nil {
+					return err
+				}
 				op.SMARTResponse = smartInt
 			}
 		}
@@ -126,7 +137,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 		}
 	}
 
-	// Put the map into the array
+	// Add each array of rows to the Operation field in the entries
 	for i, v := range entries {
 		url := v.URL
 		if val, ok := mapURLHistory[url]; ok {
@@ -134,13 +145,12 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 		}
 	}
 
-	// Convert to JSON
-	// finalJSON, err := json.Marshal(entries[0])
-	// helpers.FailOnError("Error converting interface to JSON", err)
-
-	// @TODO Figure out how to write it to a file?
+	// Convert the object to JSON using proper tab formatting
 	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
-	helpers.FailOnError("Error converting interface to formatted JSON", err)
+	if err != nil {
+		return err
+	}
+	// Write to the given file
 	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
-	helpers.FailOnError("Writing to file failed", err)
+	return err
 }
