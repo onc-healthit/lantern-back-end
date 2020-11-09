@@ -105,8 +105,7 @@ endpointsmodule <- function(
       "fhir_endpoints.json"
     },
     content = function(file) {
-      exportJSON <- toJSON(csv_format(), force = TRUE)
-      write(exportJSON, file)
+      file.copy("/srv/shiny-server/exportfolder/fhir_endpoints_fields.json", file)
     }
   )
 
