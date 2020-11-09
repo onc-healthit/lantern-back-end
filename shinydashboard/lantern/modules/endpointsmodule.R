@@ -14,6 +14,7 @@ endpointsmodule_UI <- function(id) {
              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)"),
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)"),
              downloadButton(ns("download_data_json"), "Download Endpoint Data (JSON)"),
+             downloadButton(ns("download_descriptions_markdown"), "Download Field Descriptions (JSON)"),
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
@@ -106,6 +107,15 @@ endpointsmodule <- function(
     },
     content = function(file) {
       file.copy("/srv/shiny-server/exportfolder/fhir_endpoints_fields.json", file)
+    }
+  )
+
+  output$download_descriptions_markdown <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints_fields_json.md"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoints_fields_json.md", file)
     }
   )
 
