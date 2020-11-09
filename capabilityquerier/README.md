@@ -35,6 +35,9 @@ The capability querier reads the following environment variables:
 
   Default value: 1380 (23 hours)
 
+* **LANTERN_EXPORTFILE_WAIT**: The length of time between getting the final endpoints off of the queue and creating the JSON export file of data. This is in seconds.
+
+  Default value: 300 (5 minutes)
 
 ### Test Configuration
 

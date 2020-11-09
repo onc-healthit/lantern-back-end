@@ -12,6 +12,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -24,15 +25,16 @@ import (
 // (see endpointmanager/pkg/workers) as well as the arguments for the capabilityquerier.QuerierArgs
 // struct that is used when calling capabilityquerier.GetAndSendCapabilityStatement
 type queryArgs struct {
-	workers     *workers.Workers
-	ctx         context.Context
-	client      *http.Client
-	jobDuration time.Duration
-	mq          *lanternmq.MessageQueue
-	ch          *lanternmq.ChannelID
-	qName       string
-	userAgent   string
-	store       *postgresql.Store
+	workers        *workers.Workers
+	ctx            context.Context
+	client         *http.Client
+	jobDuration    time.Duration
+	mq             *lanternmq.MessageQueue
+	ch             *lanternmq.ChannelID
+	qName          string
+	userAgent      string
+	store          *postgresql.Store
+	exportFileWait int
 }
 
 // queryEndpoints gets an endpoint from the queue message and queries it to get the Capability Statement.
@@ -48,6 +50,12 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	}
 
 	urlString := string(message)
+
+	if urlString == "FINISHED" {
+		time.Sleep(time.Duration(qa.exportFileWait) * time.Second)
+		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
+		return err
+	}
 
 	jobArgs := make(map[string]interface{})
 
@@ -97,6 +105,8 @@ func main() {
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
 	helpers.FailOnError("", err)
 
+	exportFileWait := viper.GetInt("exportfile_wait")
+
 	defer mq.Close()
 
 	// Read version file that is mounted
@@ -123,15 +133,16 @@ func main() {
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
-		workers:     workers,
-		ctx:         ctx,
-		client:      client,
-		jobDuration: 30 * time.Second,
-		mq:          &mq,
-		ch:          &ch,
-		qName:       capQName,
-		userAgent:   userAgent,
-		store:       store,
+		workers:        workers,
+		ctx:            ctx,
+		client:         client,
+		jobDuration:    30 * time.Second,
+		mq:             &mq,
+		ch:             &ch,
+		qName:          capQName,
+		userAgent:      userAgent,
+		store:          store,
+		exportFileWait: exportFileWait,
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)

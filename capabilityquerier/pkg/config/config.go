@@ -68,6 +68,13 @@ func SetupConfig() error {
 		return err
 	}
 
+	// Export JSON file
+
+	err = viper.BindEnv("exportfile_wait")
+	if err != nil {
+		return err
+	}
+
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qhost", "localhost")
@@ -82,6 +89,8 @@ func SetupConfig() error {
 	viper.SetDefault("dbpassword", "postgrespassword")
 	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
+
+	viper.SetDefault("exportfile_wait", 300)
 
 	return nil
 }
