@@ -6,16 +6,8 @@ git:
 notifications:
   email: false
 
-install:
-  - sudo apt-get update
-  - sudo apt-get install r-base
-  - sudo apt-get install r-base-dev
-  - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
-
-r_packages:
-  - lintr
-sudo: false
-cache: packages
+# install:
+#   - sudo apt-get update
   
 env:
   global:
@@ -46,33 +38,23 @@ env:
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
   - LINTR_COMMENT_BOT=false
 
-after_script:
-  - R CMD INSTALL $PKG_TARBALL
-  - Rscript -e 'lintr::lint_package()'
 
 before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
 # start preparing services for integration test
-#- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
 jobs:
   include:
     - stage: lint_and_test
       script:
-      # - Rscript -e "lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL, object_length_linter = NULL))"
       - make lint_go
-      # - make test
-
       # unit tests
-      #- make test
+      - make test
       # integration tests
       # ensure that necessary services are up before starting the integration tests
-      # localhost:5432: postgres database
-      # localhost:15672/5672: lanternmq queue
-      #- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
-
-      # - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
-      # - make stop
-      # - export LANTERN_QHOST=lantern-mq
-      # - make test_e2e_CI
-      # env: LANTERN_QHOST=localhost
+      - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
+      - make stop
+      - export LANTERN_QHOST=lantern-mq
+      - make test_e2e_CI
+      env: LANTERN_QHOST=localhost
