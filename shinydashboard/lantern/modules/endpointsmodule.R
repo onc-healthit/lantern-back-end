@@ -1,6 +1,5 @@
 library(DT)
 library(purrr)
-# library(dplyr)
 library(jsonlite)
 
 endpointsmodule_UI <- function(id) {
