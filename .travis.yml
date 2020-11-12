@@ -62,6 +62,7 @@ jobs:
       # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
     - stage: test_e2e
+      script:
       #- make stop
       - export LANTERN_QHOST=lantern-mq
       - make test_e2e_CI
