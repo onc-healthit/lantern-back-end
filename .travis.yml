@@ -41,17 +41,19 @@ env:
   - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
   - LINTR_COMMENT_BOT=false
 
-before_script:
-- go get ./...
-- go get github.com/golangci/golangci-lint/cmd/golangci-lint
-# start preparing services for integration test
-- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+# before_script:
+# - go get ./...
+# - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+# # start preparing services for integration test
 jobs:
   include:
     - stage: lint_and_test
+      script: go get ./...
+      script: go get github.com/golangci/golangci-lint/cmd/golangci-lint
       script: make lint_R
       script: make lint_go
       script: make test
+    - stage: integration_tests
       script:
       # unit tests
       #- make test
@@ -59,7 +61,7 @@ jobs:
       # ensure that necessary services are up before starting the integration tests
       # localhost:5432: postgres database
       # localhost:15672/5672: lanternmq queue
-      #- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+      - docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       - make stop
       - export LANTERN_QHOST=lantern-mq
