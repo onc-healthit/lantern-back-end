@@ -38,11 +38,21 @@ type Operation struct {
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
 func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
+	finalFormatJSON, err := createJSON(ctx, store)
+	if err != nil {
+		return err
+	}
+	// Write to the given file
+	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
+	return err
+}
+
+func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	// Get everything from the fhir_endpoints_info table
 	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Put into an object
@@ -58,7 +68,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 			&entry.ListSource,
 			&vendorNameNullable)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if !vendorNameNullable.Valid {
@@ -76,7 +86,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 		FROM fhir_endpoints_info_history;`
 	historyRows, err := store.DB.QueryContext(ctx, selectHistory)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Group the rows by URL, to create a map from URLs
@@ -100,35 +110,11 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 			&smartRsp,
 			&op.UpdatedAt)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		// Get the FHIR Version from the capability statement
-		if capStat != nil {
-			formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
-			if err != nil {
-				return err
-			}
-			if formatCapStat != nil {
-				fhirVersion, err := formatCapStat.GetFHIRVersion()
-				if err != nil {
-					return err
-				}
-				op.FHIRVersion = fhirVersion
-			}
-		}
-
-		// Format the SMART Response into JSON
-		if smartRsp != nil {
-			var smartInt map[string]interface{}
-			if len(smartRsp) > 0 {
-				err = json.Unmarshal(smartRsp, &smartInt)
-				if err != nil {
-					return err
-				}
-				op.SMARTResponse = smartInt
-			}
-		}
+		op.FHIRVersion = getFHIRVersion(capStat)
+		op.SMARTResponse = getSMARTResponse(smartRsp)
 
 		if val, ok := mapURLHistory[url]; ok {
 			mapURLHistory[url] = append(val, op)
@@ -147,10 +133,40 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 
 	// Convert the object to JSON using proper tab formatting
 	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
-	if err != nil {
-		return err
+	return finalFormatJSON, err
+}
+
+// Get the FHIR Version from the capability statement
+func getFHIRVersion(capStat []byte) string {
+	// Get the FHIR Version from the capability statement
+	if capStat != nil {
+		formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
+		if err != nil {
+			return ""
+		}
+		if formatCapStat != nil {
+			fhirVersion, err := formatCapStat.GetFHIRVersion()
+			if err != nil {
+				return ""
+			}
+			return fhirVersion
+		}
 	}
-	// Write to the given file
-	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
-	return err
+	return ""
+}
+
+// Format the SMART Response into JSON
+func getSMARTResponse(smartRsp []byte) map[string]interface{} {
+	var defaultInt map[string]interface{}
+	var smartInt map[string]interface{}
+	if smartRsp != nil {
+		if len(smartRsp) > 0 {
+			err := json.Unmarshal(smartRsp, &smartInt)
+			if err != nil {
+				return defaultInt
+			}
+			return smartInt
+		}
+	}
+	return defaultInt
 }
