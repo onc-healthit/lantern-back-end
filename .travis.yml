@@ -48,7 +48,8 @@ before_script:
 - docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
 jobs:
   include:
-      - script: 
+    - stage: lint_and_test
+      script:
       - make lint_R
       - make lint_go
       - make test
