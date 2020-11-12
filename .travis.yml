@@ -49,10 +49,10 @@ before_script:
 jobs:
   include:
       - script: 
-        - make lint_R
-        - make lint_go
+      - make lint_R
+      - make lint_go
       - script: 
-        - make test
+      - make test
       - script:
       # unit tests
       #- make test
