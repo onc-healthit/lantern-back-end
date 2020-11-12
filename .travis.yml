@@ -51,9 +51,7 @@ jobs:
       - script: 
       - make lint_R
       - make lint_go
-      - script: 
       - make test
-      - script:
       # unit tests
       #- make test
       # integration tests
