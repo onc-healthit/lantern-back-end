@@ -11,7 +11,7 @@ matrix:
       install:
         - Rscript -e 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")'
       script:
-        - Rscript -e "lintr::lint_dir(linters = lintr::with_defaults(object_usage_linter=NULL, closed_curly_linter = NULL, open_curly_linter = NULL, line_length_linter = NULL, object_name_linter = NULL, object_length_linter = NULL))"
+        - make lint_R
     
     - language: go
       go:
