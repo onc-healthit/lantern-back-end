@@ -45,8 +45,7 @@ before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
 # start preparing services for integration test
-- docker-compose up -d --build
-
+- docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver lantern-e2e
 jobs:
   include:
     - stage: test
