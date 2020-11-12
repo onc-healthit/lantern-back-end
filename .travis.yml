@@ -1,15 +1,12 @@
+git:
+  depth: 1
+notifications:
+  email: false
 matrix:
   include:
     - language: go
-      go:
-      - 1.14.x
-      git:
-        depth: 1
-      notifications:
-        email: false
-        
+
       env:
-        global:
         - LANTERN_DBHOST=localhost
         - LANTERN_DBPORT=5432
         - LANTERN_DBUSER=lantern
