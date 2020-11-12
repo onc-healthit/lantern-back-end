@@ -123,6 +123,22 @@ get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- c(vendor_list, vl)
 }
 
+# Get the list of distinct availability percentages for use in filtering
+get_availability_list <- function(db_tables) {
+  availability_list <- list(
+    "All Availability" = ui_special_values$ALL_AVAILABILITY
+  )
+
+  al <- db_tables$fhir_endpoints_info %>%
+           select(availability) %>%
+           group_by(availability) %>%
+           arrange(availability) %>%
+           split(.$availability, ceiling(x/2)) %>%
+           purrr::map(~ .$availability)
+
+  vendor_list <- c(availability_list, al)
+}
+
 # Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
 get_fhir_resource_types <- function(db_connection) {
   res <- tbl(db_connection,
@@ -528,4 +544,6 @@ database_fetcher <- reactive({
   app_data$implementation_guide(get_implementation_guide(db_connection))
 
   app_data$endpoint_locations(get_endpoint_locations(db_connection))
+
+  app_data$availability_list(get_availability_list(db_tables))
 })
