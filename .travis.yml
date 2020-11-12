@@ -9,8 +9,8 @@ notifications:
 install:
   - sudo apt-get update
   - sudo apt-get install r-base
-  # - sudo apt-get install r-base-dev
-  # - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
+  - sudo apt-get install r-base-dev
+  - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
 
 r_packages:
   - lintr
@@ -54,7 +54,7 @@ before_script:
 - go get ./...
 - go get github.com/golangci/golangci-lint/cmd/golangci-lint
 # start preparing services for integration test
-- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+#- docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
 jobs:
   include:
     - stage: lint_and_test
