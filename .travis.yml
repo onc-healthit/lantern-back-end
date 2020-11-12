@@ -49,9 +49,11 @@ before_script:
 - docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up -d --build lantern-e2e
 jobs:
   include:
-    - stage: test
+    - stage: lint
       script:
       - make lint
+    - stage: test
+      script:
       # unit tests
       - make test
       # integration tests
@@ -59,7 +61,8 @@ jobs:
       # localhost:5432: postgres database
       # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
-      - make stop
+    - stage: test_e2e
+      #- make stop
       - export LANTERN_QHOST=lantern-mq
       - make test_e2e_CI
       env: LANTERN_QHOST=localhost
