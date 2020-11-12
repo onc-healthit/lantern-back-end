@@ -36,6 +36,7 @@ matrix:
       - LANTERN_TEST_QNAME=test-queue
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
       - LINTR_COMMENT_BOT=false
+      - LANTERN_QHOST=localhost
 
 
     before_script:
@@ -44,17 +45,14 @@ matrix:
     # start preparing services for integration test
     - docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
 
-    jobs:
-      include:
-        - stage: lint_and_test
-          script:
-          - make lint_go
-          # unit tests
-          - make test
-          # integration tests
-          # ensure that necessary services are up before starting the integration tests
-          - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
-          - make stop
-          - export LANTERN_QHOST=lantern-mq
-          - make test_e2e_CI
-          env: LANTERN_QHOST=localhost
+
+    script:
+    - make lint_go
+    # unit tests
+    - make test
+    # integration tests
+    # ensure that necessary services are up before starting the integration tests
+    - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
+    - make stop
+    - export LANTERN_QHOST=lantern-mq
+    - make test_e2e_CI
