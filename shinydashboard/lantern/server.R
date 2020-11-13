@@ -150,8 +150,8 @@ function(input, output, session) { #nolint
             selectInput(
               inputId = "availability",
               label = "Availability Percentage:",
-              choices = app_data$availability_list(),
-              selected = ui_special_values$ALL_AVAILABILITY,
+              choices = list("0-100","0","50-100","75-100","95-100","99-100", "100"),
+              selected = "0-100",
               size = 1,
               selectize = FALSE)
           )
