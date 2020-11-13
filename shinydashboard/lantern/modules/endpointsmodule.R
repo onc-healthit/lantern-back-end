@@ -53,7 +53,7 @@ endpointsmodule <- function(
         availability_lower <- as.character(availability_lower_num)
         availability_upper <- as.character(availability_upper_num)
       
-        res <- res %>% filter(availability >= availability_lower && availability <= availability_upper)
+        res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
       }
     }
     res
