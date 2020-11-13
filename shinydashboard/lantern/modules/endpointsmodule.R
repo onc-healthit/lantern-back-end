@@ -23,7 +23,8 @@ endpointsmodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor, 
+  sel_availability
 ) {
   ns <- session$ns
 
@@ -40,6 +41,11 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+    if (sel_availability() != ui_special_values$ALL_AVAILABILITY) {
+      availability_num <- as.numeric(sel_availability())/100
+      availability_filter <- as.character(availability_num)
+      res <- res %>% filter(availability == availability_filter)
+    }
     res
   })
 
@@ -54,7 +60,7 @@ endpointsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- selected_fhir_endpoints() %>%
-      select(-supported_resources, -updated, -label, -status) %>%
+      select(-supported_resources, -updated, -label, -status, -availability) %>%
       rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)

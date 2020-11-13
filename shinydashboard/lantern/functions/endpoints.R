@@ -30,7 +30,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
     distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors, availability) %>%
     mutate(updated = as.Date(info_updated)) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
@@ -130,13 +130,14 @@ get_availability_list <- function(db_tables) {
   )
 
   al <- db_tables$fhir_endpoints_info %>%
-           select(availability) %>%
+           distinct(availability) %>%
            group_by(availability) %>%
-           arrange(availability) %>%
-           split(.$availability, ceiling(x/2)) %>%
+           mutate(availability = availability*100) %>%
+           collect() %>%
+           split(.$availability) %>%
            purrr::map(~ .$availability)
 
-  vendor_list <- c(availability_list, al)
+  availability_list <- c(availability_list, al)
 }
 
 # Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor

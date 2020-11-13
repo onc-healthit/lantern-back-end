@@ -40,7 +40,8 @@ function(input, output, session) { #nolint
         endpointsmodule,
         "endpoints_page",
         reactive(input$fhir_version),
-        reactive(input$vendor))
+        reactive(input$vendor),
+        reactive(input$availability))
 
       callModule(
         locationmodule,
@@ -148,7 +149,7 @@ function(input, output, session) { #nolint
           column(width = 4,
             selectInput(
               inputId = "availability",
-              label = "Availability",
+              label = "Availability Percentage:",
               choices = app_data$availability_list(),
               selected = ui_special_values$ALL_AVAILABILITY,
               size = 1,
