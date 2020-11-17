@@ -45,7 +45,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- DT::renderDataTable({
     datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
-              colnames = c("URL", "Organization", "Updated", "Developer", "FHIR Version", "TLS Version", "MIME Types", "Status"),
+              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
