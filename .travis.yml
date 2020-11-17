@@ -42,7 +42,6 @@ matrix:
         - LANTERN_TEST_QPASSWORD=capabilityquerier
         - LANTERN_TEST_QNAME=test-queue
         - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
-        - LINTR_COMMENT_BOT=false
         - LANTERN_QHOST=localhost
 
 
