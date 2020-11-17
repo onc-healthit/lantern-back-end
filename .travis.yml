@@ -8,6 +8,8 @@ matrix:
       r: 3.4
       sudo: false
       cache: packages
+      env:
+        - LINTR_COMMENT_BOT=false
       install:
         - Rscript -e 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")'
       script:
