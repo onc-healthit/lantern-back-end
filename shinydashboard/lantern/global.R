@@ -75,7 +75,7 @@ app_data <<- list(
 updater <- observe({
 
   invalidateLater(config_yaml$refresh_timeout_minutes * 60 * 1000) # convert minutes to milliseconds
-  # Database fetch is a reactive val that is set to 1 when the global app_data tables must be re-populated and is set to 0 when it is completed  
+  # Database fetch is a reactive val that is set to 1 when the global app_data tables must be re-populated and is set to 0 when it is completed
   database_fetch(1)
 
 })

@@ -1,65 +1,73 @@
-language: go
-go:
-- 1.14.x
 git:
   depth: 1
 notifications:
   email: false
-
-install:
-  - sudo apt-get update
-  - sudo apt-get install r-base
-  - sudo apt-get install r-base-dev
-  - sudo Rscript -e 'install.packages("lintr", repos = "http://cran.us.r-project.org")'
-  
-env:
-  global:
-  - LANTERN_DBHOST=localhost
-  - LANTERN_DBPORT=5432
-  - LANTERN_DBUSER=lantern
-  - LANTERN_DBPASSWORD=postgrespassword
-  - LANTERN_DBUSER_READONLY=lantern_ro
-  - LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
-  - LANTERN_DBUSER_READWRITE=lantern_rw
-  - LANTERN_DBPASSWORD_READWRITE=lantern_rw
-  - LANTERN_DBNAME=lantern
-  - LANTERN_DBSSLMODE=disable
-  - LANTERN_TEST_DBPASSWORD=postgrespassword
-  - LANTERN_TEST_DBNAME=lantern_test
-  - LANTERN_TEST_DBUSER=lantern
-  - LANTERN_TEST_DBPASSWORD=postgrespassword
-  - LANTERN_QUSER=capabilityquerier
-  - LANTERN_QPASSWORD=capabilityquerier
-  - LANTERN_QPORT=5672
-  - LANTERN_CAPQUERY_QNAME=capability-statements
-  - LANTERN_CAPQUERY_NUMWORKERS=10
-  - LANTERN_ENDPTQRY_NUMWORKERS=10
-  - LANTERN_CAPQUERY_QRYINTVL=1380
-  - LANTERN_TEST_QUSER=capabilityquerier
-  - LANTERN_TEST_QPASSWORD=capabilityquerier
-  - LANTERN_TEST_QNAME=test-queue
-  - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
-  - LINTR_COMMENT_BOT=false
-
-before_script:
-- go get ./...
-- go get github.com/golangci/golangci-lint/cmd/golangci-lint
-# start preparing services for integration test
-- docker-compose up -d --build
-
-jobs:
+matrix:
   include:
-    - stage: test
+    - language: R
+      r: 3.4
+      sudo: false
+      cache: packages
+      env:
+        - LINTR_COMMENT_BOT=false
+      install:
+        - Rscript -e 'install.packages("lintr", dependencies = TRUE, repos="http://cran.rstudio.com/")'
       script:
-      - make lint
-      # unit tests
-      - make test
+        - make lint_R
+    
+    - language: go
+      go: 1.14.x
+
+      env:
+        - LANTERN_DBHOST=localhost
+        - LANTERN_DBPORT=5432
+        - LANTERN_DBUSER=lantern
+        - LANTERN_DBPASSWORD=postgrespassword
+        - LANTERN_DBUSER_READONLY=lantern_ro
+        - LANTERN_DBPASSWORD_READONLY=postgrespassword_ro
+        - LANTERN_DBUSER_READWRITE=lantern_rw
+        - LANTERN_DBPASSWORD_READWRITE=lantern_rw
+        - LANTERN_DBNAME=lantern
+        - LANTERN_DBSSLMODE=disable
+        - LANTERN_TEST_DBPASSWORD=postgrespassword
+        - LANTERN_TEST_DBNAME=lantern_test
+        - LANTERN_TEST_DBUSER=lantern
+        - LANTERN_TEST_DBPASSWORD=postgrespassword
+        - LANTERN_QUSER=capabilityquerier
+        - LANTERN_QPASSWORD=capabilityquerier
+        - LANTERN_QPORT=5672
+        - LANTERN_CAPQUERY_QNAME=capability-statements
+        - LANTERN_CAPQUERY_NUMWORKERS=10
+        - LANTERN_ENDPTQRY_NUMWORKERS=10
+        - LANTERN_CAPQUERY_QRYINTVL=1380
+        - LANTERN_TEST_QUSER=capabilityquerier
+        - LANTERN_TEST_QPASSWORD=capabilityquerier
+        - LANTERN_TEST_QNAME=test-queue
+        - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=test-endpoints-to-capability
+        - LANTERN_QHOST=localhost
+
+
+      before_script:
+      # start preparing services for integration test
+      - docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+
+
+      script:
       # integration tests
       # ensure that necessary services are up before starting the integration tests
-      # localhost:5432: postgres database
-      # localhost:15672/5672: lanternmq queue
       - ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       - make stop
       - export LANTERN_QHOST=lantern-mq
       - make test_e2e_CI
-      env: LANTERN_QHOST=localhost
+
+    - language: go
+      go: 1.14.x
+
+      before_script:
+      - go get ./...
+      - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+
+      script:
+      - make lint_go
+      # unit tests
+      - make test
