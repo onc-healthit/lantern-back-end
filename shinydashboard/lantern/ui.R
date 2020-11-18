@@ -19,6 +19,7 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
+      menuItem("Downloads", tabName="downloads_tab", icon = icon("download")),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab", badgeLabel = "new", badgeColor = "green"),
@@ -46,6 +47,9 @@ ui <- dashboardPage(
       ),
       tabItem("endpoints_tab",
               endpointsmodule_UI("endpoints_page")
+      ),
+      tabItem("downloads_tab",
+              downloadsmodule_UI("downloads_page")
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")

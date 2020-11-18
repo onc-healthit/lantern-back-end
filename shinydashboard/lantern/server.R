@@ -44,6 +44,10 @@ function(input, output, session) { #nolint
         reactive(input$availability))
 
       callModule(
+        downloadsmodule,
+        "downloads_page")
+
+      callModule(
         locationmodule,
         "location_page",
         reactive(input$fhir_version),
@@ -93,6 +97,7 @@ function(input, output, session) { #nolint
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
+     "downloads_tab" = "Downloads Page",
      "capability_tab" = "Capability Page",
      "fields_tab" = "Fields Page",
      "values_tab" = "Values Page",

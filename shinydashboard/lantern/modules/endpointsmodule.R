@@ -1,6 +1,5 @@
 library(DT)
 library(purrr)
-library(jsonlite)
 
 endpointsmodule_UI <- function(id) {
 
@@ -9,11 +8,7 @@ endpointsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
-             h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download Endpoint Data (CSV)"),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)"),
-             downloadButton(ns("download_data_json"), "Download Endpoint Data (JSON)"),
-             downloadButton(ns("download_descriptions_markdown"), "Download Field Descriptions (JSON)"),
+             h3(style = "margin-top:0", textOutput(ns("endpoint_count")))
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
