@@ -25,16 +25,15 @@ import (
 // (see endpointmanager/pkg/workers) as well as the arguments for the capabilityquerier.QuerierArgs
 // struct that is used when calling capabilityquerier.GetAndSendCapabilityStatement
 type queryArgs struct {
-	workers        *workers.Workers
-	ctx            context.Context
-	client         *http.Client
-	jobDuration    time.Duration
-	mq             *lanternmq.MessageQueue
-	ch             *lanternmq.ChannelID
-	qName          string
-	userAgent      string
-	store          *postgresql.Store
-	exportFileWait int
+	workers     *workers.Workers
+	ctx         context.Context
+	client      *http.Client
+	jobDuration time.Duration
+	mq          *lanternmq.MessageQueue
+	ch          *lanternmq.ChannelID
+	qName       string
+	userAgent   string
+	store       *postgresql.Store
 }
 
 // queryEndpoints gets an endpoint from the queue message and queries it to get the Capability Statement.
@@ -50,9 +49,10 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	}
 
 	urlString := string(message)
+	exportFileWait := viper.GetInt("exportfile_wait")
 
 	if urlString == "FINISHED" {
-		time.Sleep(time.Duration(qa.exportFileWait) * time.Second)
+		time.Sleep(time.Duration(exportFileWait) * time.Second)
 		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		return err
 	}
@@ -105,8 +105,6 @@ func main() {
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
 	helpers.FailOnError("", err)
 
-	exportFileWait := viper.GetInt("exportfile_wait")
-
 	defer mq.Close()
 
 	// Read version file that is mounted
@@ -133,16 +131,15 @@ func main() {
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
-		workers:        workers,
-		ctx:            ctx,
-		client:         client,
-		jobDuration:    30 * time.Second,
-		mq:             &mq,
-		ch:             &ch,
-		qName:          capQName,
-		userAgent:      userAgent,
-		store:          store,
-		exportFileWait: exportFileWait,
+		workers:     workers,
+		ctx:         ctx,
+		client:      client,
+		jobDuration: 30 * time.Second,
+		mq:          &mq,
+		ch:          &ch,
+		qName:       capQName,
+		userAgent:   userAgent,
+		store:       store,
 	}
 
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)
