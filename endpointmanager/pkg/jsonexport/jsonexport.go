@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"time"
 
@@ -52,7 +53,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
 	}
 
 	// Put into an object
