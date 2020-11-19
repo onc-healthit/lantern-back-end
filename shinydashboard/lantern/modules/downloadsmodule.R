@@ -8,14 +8,7 @@ downloadsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
-             p("These files include the endpoint data in CSV and JSON format. Note: The CSV file only includes the most recent query of the data, while the JSON file includes historic data.")
-      )
-    ),
-    fluidRow(
-      column(width = 12,
-             h3("CSV Downloads"),
-             downloadButton(ns("download_data"), "Download Endpoint Data"),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions"),
+             p("These files include the endpoint data over time in JSON format.")
       )
     ),
     fluidRow(
@@ -39,35 +32,6 @@ downloadsmodule <- function(
   session
 ) {
   ns <- session$ns
-
-  # Create the format for the csv
-  csv_format <- reactive({
-    res <- get_fhir_endpoints_tbl() %>%
-      select(-supported_resources, -updated, -label, -status) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
-      rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
-  })
-
-  # Downloadable csv of selected dataset
-  output$download_data <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints.csv"
-    },
-    content = function(file) {
-      write.csv(csv_format(), file, row.names = FALSE)
-    }
-  )
-
-  # Download csv of the field descriptions in the dataset csv
-  output$download_descriptions <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints_fields.csv"
-    },
-    content = function(file) {
-      file.copy("fhir_endpoints_fields.csv", file)
-    }
-  )
 
   output$download_data_json <- downloadHandler(
     filename = function() {
