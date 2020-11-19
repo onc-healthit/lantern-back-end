@@ -137,7 +137,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
 |  `make lint_R` | Runs the R lintr |
-| `make json_export file=<export file name>` | Exports the history of the endpoint data as a JSON file |
+| `make json_export file=<export file name>` | Exports the history of the endpoint data to a JSON file specified by the 'file' parameter |
 
 # Configure Data Collection Failure System
 
