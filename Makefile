@@ -43,7 +43,7 @@ backup_database:
 	@echo "Database was backed up to ${BACKUP}"
 	
 restore_database:
-	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean -U lantern -d lantern < $(file)
+	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean --if-exists -U lantern -d lantern < $(file)
 	@echo "Database was restored from $(file)"
 
 migrate_database:
