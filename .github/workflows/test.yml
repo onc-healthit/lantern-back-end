@@ -10,3 +10,10 @@ jobs:
       - name: Go Unit Tests
         id: go-unit-tests
         run: make test
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Go Integrationo Tests
+        id: go-integratinoo-tests
+        run: make test_int
