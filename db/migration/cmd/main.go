@@ -41,7 +41,7 @@ func main() {
 		"file://./migrations",
 		"postgres", driver)
 
-	if err := m.Steps(2); err != nil {
+	if err := m.Steps(1); err != nil {
 		version, dirty, retError := m.Version()
 		fmt.Printf("Version %+v with Dirty Flag %+v threw Error \n %+v", version, dirty, retError)
 		log.Fatal(err)
