@@ -19,5 +19,4 @@ jobs:
         run: make run
       - name: Go Integration Tests
         id: go-integration-tests
-        run: make run
         run: make test_int
