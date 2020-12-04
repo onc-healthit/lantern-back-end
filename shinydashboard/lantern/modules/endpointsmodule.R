@@ -41,6 +41,7 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+    res <- res %>% mutate(availability = availability * 100) 
     if (sel_availability() != "0-100") {
       if (sel_availability() == "0" || sel_availability() == "100") {
         availability_filter_num <- as.numeric(sel_availability())/100
@@ -60,8 +61,8 @@ endpointsmodule <- function(
   })
 
   output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
-              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response"),
+    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
+              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
