@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Go Integrationo Tests
-        id: go-integratinoo-tests
+      - name: Go Integration Tests
+        id: go-integration-tests
+        run: make run
         run: make test_int
