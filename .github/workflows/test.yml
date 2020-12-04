@@ -45,7 +45,10 @@ jobs:
           LANTERN_QHOST: localhost
       - name: Go Integration Tests
         id: go-integration-tests
-        run: make test_int
+        run: ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
       - name: Stop System
         run: make stop
-
+      - name: Set LANTERN_QHOST For E2E Tests
+        run: export LANTERN_QHOST=lantern-mq
+      - name: Run E2E Tests
+        run: make test_e2e_CI
