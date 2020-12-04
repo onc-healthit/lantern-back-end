@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install Go Dependencies
+        id: install-go-dependencies
+        run: go get ./... && go get github.com/golangci/golangci-lint/cmd/golangci-lint
       - name: Lintrs
         id: lintrs
         run: make lint
