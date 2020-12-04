@@ -28,7 +28,6 @@ jobs:
           LANTERN_DBPASSWORD_READWRITE: lantern_rw
           LANTERN_DBNAME: lantern
           LANTERN_DBSSLMODE: disable
-          LANTERN_TEST_DBPASSWORD: postgrespassword
           LANTERN_TEST_DBNAME: lantern_test
           LANTERN_TEST_DBUSER: lantern
           LANTERN_TEST_DBPASSWORD: postgrespassword
