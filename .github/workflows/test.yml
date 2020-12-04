@@ -1,0 +1,11 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Go Unit Tests
+        id: go-unit-tests
+        run: make test
