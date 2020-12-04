@@ -9,7 +9,7 @@ If changes are made to the database setup file `db/dbsetup.sql` then there shoul
 Migration scripts should be placed in `db/migration/migratrions`. For more information about how to write migration scripts see the tutorial here https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
 
 ## Migrate Down
-If you find yourself in the unlikely scenario of needing to undo migrations, by way of the `down.sql` scripts in the `db/migration/migrations` directory, you can change the line that reads `m.Steps(2)` in `db/migration/cmd/main.go` to `m.Steps(-2)` and run `make migrate_database` from the base directory.
+If you find yourself in the unlikely scenario of needing to undo migrations, by way of the `down.sql` scripts in the `db/migration/migrations` directory, you can change the line that reads `m.Steps(1)` in `db/migration/cmd/main.go` to `m.Steps(-1)` and run `make migrate_database` from the base directory.
 
 
 # Database Schema
