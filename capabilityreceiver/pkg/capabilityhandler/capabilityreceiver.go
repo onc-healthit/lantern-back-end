@@ -202,7 +202,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 }
 
 func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
-	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U';", fhirEndpoint.URL)
+	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
 	helpers.FailOnError("", err)
 	defer rows.Close()
 	for rows.Next() {
@@ -240,7 +240,7 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 		} else {
 			var equal = (capabilityStatement == nil && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
-				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at NOT IN (SELECT MAX(entered_at) FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' GROUP BY url); ", fhirEndpoint.URL)
+				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
 			}
 		}
 	}
