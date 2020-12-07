@@ -11,13 +11,14 @@ import (
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 )
 
 type jsonEntry struct {
 	URL               string      `json:"url"`
 	OrganizationNames []string    `json:"api_information_source_name"`
 	CreatedAt         time.Time   `json:"created_at"`
-	ListSource        string      `json:"list_source"`
+	ListSource        []string    `json:"list_source"`
 	VendorName        string      `json:"certified_api_developer_name"`
 	Operation         []Operation `json:"operation"`
 }
@@ -36,6 +37,20 @@ type Operation struct {
 	UpdatedAt              time.Time              `json:"updated"`
 }
 
+// Result is the value that is returned from getting the history data from the
+// given URL
+type Result struct {
+	URL  string
+	Rows []Operation
+}
+
+type historyArgs struct {
+	fhirURL  string
+	store    *postgresql.Store
+	tmpCount int
+	result   chan Result
+}
+
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
 func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
@@ -50,78 +65,71 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 
 func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	// Get everything from the fhir_endpoints_info table
-	sqlQuery := "SELECT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
+	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
 	}
 
 	// Put into an object
-	var entries []*jsonEntry
+	var urls []string
+	entryCheck := make(map[string]jsonEntry)
 	defer rows.Close()
 	for rows.Next() {
 		var entry jsonEntry
 		var vendorNameNullable sql.NullString
+		var listSource string
 		err = rows.Scan(
 			&entry.URL,
 			pq.Array(&entry.OrganizationNames),
 			&entry.CreatedAt,
-			&entry.ListSource,
+			&listSource,
 			&vendorNameNullable)
 		if err != nil {
 			return nil, err
 		}
-
 		if !vendorNameNullable.Valid {
 			entry.VendorName = ""
 		}
-		entries = append(entries, &entry)
+		// If the URL already exists, include the new list source and organization names
+		if val, ok := entryCheck[entry.URL]; ok {
+			val.ListSource = append(val.ListSource, listSource)
+			val.OrganizationNames = append(val.OrganizationNames, entry.OrganizationNames...)
+			entryCheck[entry.URL] = val
+		} else {
+			entry.ListSource = []string{listSource}
+			entryCheck[entry.URL] = entry
+			urls = append(urls, entry.URL)
+		}
 	}
 
-	// Get everything from the fhir_endpoints_info_history table
-	ctx = context.Background()
-	selectHistory := `
-		SELECT url, http_response, response_time_seconds, errors,
-		capability_statement, tls_version, mime_types, supported_resources,
-		smart_http_response, smart_response, updated_at
-		FROM fhir_endpoints_info_history;`
-	historyRows, err := store.DB.QueryContext(ctx, selectHistory)
+	var entries []jsonEntry
+	for _, e := range entryCheck {
+		entries = append(entries, e)
+	}
+
+	errs := make(chan error)
+	numWorkers := 50 // @TODO set env variable?
+	allWorkers := workers.NewWorkers()
+
+	// Start workers
+	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
 		return nil, err
 	}
 
-	// Group the rows by URL, to create a map from URLs
+	resultCh := make(chan Result)
+	go createJobs(ctx, resultCh, urls, store, allWorkers)
+
+	// Add the results from createJobs to mapURLHistory
+	count := 0
 	mapURLHistory := make(map[string][]Operation)
-	defer historyRows.Close()
-	for historyRows.Next() {
-		var op Operation
-		var url string
-		var capStat []byte
-		var smartRsp []byte
-		err = historyRows.Scan(
-			&url,
-			&op.HTTPResponse,
-			&op.HTTPResponseTimeSecond,
-			&op.Errors,
-			&capStat,
-			&op.TLSVersion,
-			pq.Array(&op.MIMETypes),
-			pq.Array(&op.SupportedResources),
-			&op.SMARTHTTPResponse,
-			&smartRsp,
-			&op.UpdatedAt)
-		if err != nil {
-			return nil, err
+	for res := range resultCh {
+		mapURLHistory[res.URL] = res.Rows
+		if count == len(urls)-1 {
+			close(resultCh)
 		}
-
-		op.FHIRVersion = getFHIRVersion(capStat)
-		op.SMARTResponse = getSMARTResponse(smartRsp)
-
-		if val, ok := mapURLHistory[url]; ok {
-			mapURLHistory[url] = append(val, op)
-		} else {
-			mapURLHistory[url] = []Operation{op}
-		}
+		count++
 	}
 
 	// Add each array of rows to the Operation field in the entries
@@ -170,4 +178,92 @@ func getSMARTResponse(smartRsp []byte) map[string]interface{} {
 		}
 	}
 	return defaultInt
+}
+
+// creates jobs for the workers so that each worker gets the history data
+// for a specified url
+func createJobs(ctx context.Context,
+	ch chan Result,
+	urls []string,
+	store *postgresql.Store,
+	allWorkers *workers.Workers) error {
+	for index := range urls {
+		jobArgs := make(map[string]interface{})
+		jobArgs["historyArgs"] = historyArgs{
+			fhirURL:  urls[index],
+			store:    store,
+			tmpCount: index,
+			result:   ch,
+		}
+
+		job := workers.Job{
+			Context:     ctx,
+			Duration:    30 * time.Second, // @TODO figure this out
+			Handler:     getHistory,
+			HandlerArgs: &jobArgs,
+		}
+
+		err := allWorkers.Add(&job)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// getHistory gets the database history of a specified url
+func getHistory(ctx context.Context, args *map[string]interface{}) error {
+	ha, ok := (*args)["historyArgs"].(historyArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast arguments to type historyArgs")
+	}
+
+	// Get everything from the fhir_endpoints_info_history table
+	ctx = context.Background()
+	selectHistory := `
+		SELECT url, http_response, response_time_seconds, errors,
+		capability_statement, tls_version, mime_types, supported_resources,
+		smart_http_response, smart_response, updated_at
+		FROM fhir_endpoints_info_history
+		WHERE url=$1;`
+	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
+	if err != nil {
+		return err
+	}
+
+	// Puts the rows in an array and sends it back on the channel to be processed
+	var resultRows []Operation
+	defer historyRows.Close()
+	for historyRows.Next() {
+		var op Operation
+		var url string
+		var capStat []byte
+		var smartRsp []byte
+		err = historyRows.Scan(
+			&url,
+			&op.HTTPResponse,
+			&op.HTTPResponseTimeSecond,
+			&op.Errors,
+			&capStat,
+			&op.TLSVersion,
+			pq.Array(&op.MIMETypes),
+			pq.Array(&op.SupportedResources),
+			&op.SMARTHTTPResponse,
+			&smartRsp,
+			&op.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+		op.FHIRVersion = getFHIRVersion(capStat)
+		op.SMARTResponse = getSMARTResponse(smartRsp)
+
+		resultRows = append(resultRows, op)
+	}
+	result := Result{
+		URL:  ha.fhirURL,
+		Rows: resultRows,
+	}
+	ha.result <- result
+	return nil
 }
