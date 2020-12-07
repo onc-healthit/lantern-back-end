@@ -13,31 +13,31 @@ jobs:
         with:
           version: v1.29
           working-directory: capabilityquerier
-          args: --modules-download-mode vendor --config ./.golangci.yml ./...
+          args: ./...
       - name: Check golangci-lint for lanternmq
         uses: golangci/golangci-lint-action@v2.2.0
         with:
           version: v1.29
           working-directory: lanternmq
-          args: --modules-download-mode vendor --config ./.golangci.yml ./...
+          args: ./...
       - name: Check golangci-lint for fhir
         uses: golangci/golangci-lint-action@v2.2.0
         with:
           version: v1.29
           working-directory: fhir
-          args: --modules-download-mode vendor --config ./.golangci.yml ./...
+          args: ./...
       - name: Check golangci-lint for endpointmanager
         uses: golangci/golangci-lint-action@v2.2.0
         with:
           version: v1.29
           working-directory: endpointmanager
-          args: --modules-download-mode vendor --config ./.golangci.yml ./...
+          args: ./...
       - name: Check golangci-lint for capabilityreceiver
         uses: golangci/golangci-lint-action@v2.2.0
         with:
           version: v1.29
           working-directory: capabilityreceiver
-          args: --modules-download-mode vendor --config ./.golangci.yml ./...
+          args: ./...
   rlintr:
     runs-on: ubuntu-latest
     steps:
