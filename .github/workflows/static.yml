@@ -8,5 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Lintrs
+        uses: golangci/golangci-lint-action@v2
         id: lintrs
         run: go get github.com/golangci/golangci-lint/cmd/golangci-lint && make lint
