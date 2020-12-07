@@ -15,6 +15,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -188,6 +189,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
+
+		historyPruningCheck(ctx, store, fhirEndpoint)
+
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -195,6 +199,51 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	}
 
 	return nil
+}
+
+func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
+	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U';", fhirEndpoint.URL)
+	helpers.FailOnError("", err)
+	defer rows.Close()
+	for rows.Next() {
+		var capabilityStatement capabilityparser.CapabilityStatement
+		err = rows.Scan(&capabilityStatement)
+		helpers.FailOnError("", err)
+
+		if capabilityStatement != nil {
+			var jsonCapStat, err = capabilityStatement.GetJSON()
+			helpers.FailOnError("", err)
+
+			var capInt map[string]interface{}
+			err = json.Unmarshal(jsonCapStat, &capInt)
+			helpers.FailOnError("", err)
+			capDate := capInt["date"]
+			delete(capInt, "date")
+			capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
+			helpers.FailOnError("", err)
+
+			jsonCapStat, err = fhirEndpoint.CapabilityStatement.GetJSON()
+			helpers.FailOnError("", err)
+
+			var existingCapInt map[string]interface{}
+			err = json.Unmarshal(jsonCapStat, &existingCapInt)
+			helpers.FailOnError("", err)
+			delete(existingCapInt, "date")
+			existingCapStat, err := capabilityparser.NewCapabilityStatementFromInterface(existingCapInt)
+			helpers.FailOnError("", err)
+
+			var equal = capStat.Equal(existingCapStat)
+
+			if equal {
+				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
+			}
+		} else {
+			var equal = (capabilityStatement == nil && fhirEndpoint.CapabilityStatement == nil)
+			if equal {
+				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at NOT IN (SELECT MAX(entered_at) FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' GROUP BY url); ", fhirEndpoint.URL)
+			}
+		}
+	}
 }
 
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
