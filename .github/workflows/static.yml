@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Lintrs
+      - name: R Lintr
+        run: make lint_R
+      - name: Go Lintr
         uses: golangci/golangci-lint-action@v2
         id: lintrs
-        run: go get github.com/golangci/golangci-lint/cmd/golangci-lint && make lint
