@@ -1,6 +1,7 @@
 package capabilityhandler
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -206,14 +207,11 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 	helpers.FailOnError("", err)
 	defer rows.Close()
 	for rows.Next() {
-		var capabilityStatement capabilityparser.CapabilityStatement
-		err = rows.Scan(&capabilityStatement)
+		var jsonCapStat []byte
+		err = rows.Scan(&jsonCapStat)
 		helpers.FailOnError("", err)
 
-		if capabilityStatement != nil {
-			var jsonCapStat, err = capabilityStatement.GetJSON()
-			helpers.FailOnError("", err)
-
+		if !bytes.Equal(jsonCapStat, []byte("null")) {
 			var capInt map[string]interface{}
 			err = json.Unmarshal(jsonCapStat, &capInt)
 			helpers.FailOnError("", err)
@@ -238,7 +236,7 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
 			}
 		} else {
-			var equal = (capabilityStatement == nil && fhirEndpoint.CapabilityStatement == nil)
+			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
 				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
 			}
