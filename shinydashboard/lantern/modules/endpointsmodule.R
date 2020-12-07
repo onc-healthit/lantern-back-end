@@ -41,7 +41,6 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>% mutate(availability = availability * 100)
     if (sel_availability() != "0-100") {
       if (sel_availability() == "0" || sel_availability() == "100") {
         availability_filter_num <- as.numeric(sel_availability()) / 100
@@ -57,6 +56,7 @@ endpointsmodule <- function(
         res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
       }
     }
+    res <- res %>% mutate(availability = availability * 100)
     res
   })
 

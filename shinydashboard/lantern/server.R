@@ -126,56 +126,19 @@ function(input, output, session) { #nolint
 
   output$show_filters <- renderUI({
     if (show_filter()) {
+      fhirDropdown <- selectInput(inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list()), selected = ui_special_values$ALL_FHIR_VERSIONS, size = 1, selectize = FALSE)
+      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+      availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 4,
-            selectInput(
-              inputId = "fhir_version",
-              label = "FHIR Version:",
-              choices = isolate(app$fhir_version_list()),
-              selected = ui_special_values$ALL_FHIR_VERSIONS,
-              size = 1,
-              selectize = FALSE)
-          ),
-          column(width = 4,
-            selectInput(
-              inputId = "vendor",
-              label = "Developer:",
-              choices = app$vendor_list,
-              selected = ui_special_values$ALL_DEVELOPERS,
-              size = 1,
-              selectize = FALSE)
-          ),
-          column(width = 4,
-            selectInput(
-              inputId = "availability",
-              label = "Availability Percentage:",
-              choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"),
-              selected = "0-100",
-              size = 1,
-              selectize = FALSE)
-          )
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown),
+          column(width = 4, availabilityDropdown)
         )
       } else {
         fluidRow(
-          column(width = 4,
-            selectInput(
-              inputId = "fhir_version",
-              label = "FHIR Version:",
-              choices = isolate(app$fhir_version_list()),
-              selected = ui_special_values$ALL_FHIR_VERSIONS,
-              size = 1,
-              selectize = FALSE)
-          ),
-          column(width = 4,
-            selectInput(
-              inputId = "vendor",
-              label = "Developer:",
-              choices = app$vendor_list,
-              selected = ui_special_values$ALL_DEVELOPERS,
-              size = 1,
-              selectize = FALSE)
-          )
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown)
         )
       }
     }
@@ -189,7 +152,7 @@ function(input, output, session) { #nolint
             inputId = "httpvendor",
             label = "Developer:",
             choices = app$vendor_list,
-            selected = ui_special_values$ALL_DEVELOPERS,
+            selected = ui_special_values$ALL_DEVELOPERS
           )
         )
       )
