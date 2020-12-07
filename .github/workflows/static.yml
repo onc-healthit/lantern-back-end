@@ -9,32 +9,31 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         - name: Check golangci-lint for capabilityquerier
-          uses: golangci/golangci-lint-action@v2.2.0
+          uses: golangci/golangci-lint-action@v2.3.0
           with:
             version: v1.29
             working-directory: capabilityquerier
-            args: -E ./...
+            args: ./...
         - name: Check golangci-lint for lanternmq
-          if: ${{ always() }}
-          uses: golangci/golangci-lint-action@v2.2.0
+          uses: golangci/golangci-lint-action@v2.3.0
           with:
             version: v1.29
             working-directory: lanternmq
             args: ./...
         - name: Check golangci-lint for fhir
-          uses: golangci/golangci-lint-action@v2.2.0
+          uses: golangci/golangci-lint-action@v2.3.0
           with:
             version: v1.29
             working-directory: fhir
             args: ./...
         - name: Check golangci-lint for endpointmanager
-          uses: golangci/golangci-lint-action@v2.2.0
+          uses: golangci/golangci-lint-action@v2.3.0
           with:
             version: v1.29
             working-directory: endpointmanager
             args: ./...
         - name: Check golangci-lint for capabilityreceiver
-          uses: golangci/golangci-lint-action@v2.2.0
+          uses: golangci/golangci-lint-action@v2.3.0
           with:
             version: v1.29
             working-directory: capabilityreceiver
