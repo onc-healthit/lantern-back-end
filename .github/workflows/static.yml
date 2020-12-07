@@ -45,22 +45,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v1
 
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+      - name: Install lintr
+        run: install.packages("lintr")
         shell: Rscript {0}
-
-      - name: Install dependencies
-        run: |
-          install.packages(c("remotes"))
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("lintr")
-        shell: Rscript {0}
-
-      - name: Install package
-        run: R CMD INSTALL .
 
       - name: Lint
-        run: lintr::lint_package()
+        run: lintr::lint_dir(linters = lintr::with_defaults(assignment_linter = NULL, line_length_linter = NULL, spaces_left_parentheses_linter = NULL), pattern = '[.]R$|[.]Rmd')
         shell: Rscript {0}
