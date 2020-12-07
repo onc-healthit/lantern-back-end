@@ -3,12 +3,17 @@ name: Static Analysis
 on: [push]
 
 jobs:
-  lintrs:
+  golangci:
+      name: lint
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: golangci-lint
+          uses: golangci/golangci-lint-action@v2
+  rlintr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: R Lintr
         run: make lint_R
-      - name: Go Lintr
-        uses: golangci/golangci-lint-action@v2
-        id: lintrs
+
