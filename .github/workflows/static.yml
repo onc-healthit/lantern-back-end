@@ -13,8 +13,7 @@ jobs:
           with:
             version: v1.29
             working-directory: capabilityquerier
-            golangci_lint_flags: "-E"
-            args: ./...
+            args: --issues-exit-code=0 ./...
         - name: Check golangci-lint for lanternmq
           if: ${{ always() }}
           uses: golangci/golangci-lint-action@v2.2.0
