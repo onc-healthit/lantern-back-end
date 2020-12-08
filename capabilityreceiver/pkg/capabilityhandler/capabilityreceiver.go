@@ -216,21 +216,10 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 			err = json.Unmarshal(jsonCapStat, &capInt)
 			helpers.FailOnError("", err)
 			capDate := capInt["date"]
-			delete(capInt, "date")
 			capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
 			helpers.FailOnError("", err)
 
-			jsonCapStat, err = fhirEndpoint.CapabilityStatement.GetJSON()
-			helpers.FailOnError("", err)
-
-			var existingCapInt map[string]interface{}
-			err = json.Unmarshal(jsonCapStat, &existingCapInt)
-			helpers.FailOnError("", err)
-			delete(existingCapInt, "date")
-			existingCapStat, err := capabilityparser.NewCapabilityStatementFromInterface(existingCapInt)
-			helpers.FailOnError("", err)
-
-			var equal = capStat.Equal(existingCapStat)
+			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
 				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)

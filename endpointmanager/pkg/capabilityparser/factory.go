@@ -34,6 +34,7 @@ type CapabilityStatement interface {
 	GetDescription() (string, error)
 
 	Equal(CapabilityStatement) bool
+	EqualIgnore(CapabilityStatement) bool
 	GetJSON() ([]byte, error)
 }
 

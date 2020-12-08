@@ -251,6 +251,51 @@ func (cp *baseParser) GetDescription() (string, error) {
 	return descriptionStr, nil
 }
 
+// EqualIgnore checks if the conformance/capability statement is equal to the given conformance/capability statement while ignoring certain fields that may differ.
+func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
+	ignoredFields := []string{"date"}
+
+	if cs2 == nil {
+		return false
+	}
+
+	var cpCopy *baseParser
+	var cs2Copy CapabilityStatement
+	DeepCopy(cp, cpCopy)
+	DeepCopy(cs2, cs2Copy)
+
+	cs2CopyMap, err := cs2Copy.GetJSON()
+	if err != nil {
+		return false
+	}
+	var cs2CapStat map[string]interface{}
+	err = json.Unmarshal(cs2CopyMap, &cs2CapStat)
+
+	for _, field := range ignoredFields {
+		delete(cpCopy.capStat, field)
+		delete(cs2CapStat, field)
+	}
+
+	cs2CopyCapibility, err := NewCapabilityStatementFromInterface(cs2CapStat)
+	if err != nil {
+		return false
+	}
+
+	j1, err := cpCopy.GetJSON()
+	if err != nil {
+		return false
+	}
+	j2, err := cs2CopyCapibility.GetJSON()
+	if err != nil {
+		return false
+	}
+	if !bytes.Equal(j1, j2) {
+		return false
+	}
+
+	return true
+}
+
 // Equal checks if the conformance/capability statement is equal to the given conformance/capability statement.
 func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
 	if cs2 == nil {
@@ -275,4 +320,10 @@ func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
 // GetJSON returns the JSON representation of the capability statement.
 func (cp *baseParser) GetJSON() ([]byte, error) {
 	return json.Marshal(cp.capStat)
+}
+
+// DeepCopy deepcopies a to b using json marshaling
+func DeepCopy(a, b interface{}) {
+	byt, _ := json.Marshal(a)
+	json.Unmarshal(byt, b)
 }
