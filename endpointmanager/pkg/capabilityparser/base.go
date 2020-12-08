@@ -270,22 +270,11 @@ func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
 		return false
 	}
 
-	cs2CopyMap, err := cs2Copy.GetJSON()
-	if err != nil {
-		return false
-	}
-	var cs2CapStat map[string]interface{}
-	err = json.Unmarshal(cs2CopyMap, &cs2CapStat)
-	if err != nil {
-		return false
-	}
-
 	for _, field := range ignoredFields {
-		delete(cpCopy.capStat, field)
-		delete(cs2CapStat, field)
+		DeleteFieldFromCapStat(cpCopy, field)
+		DeleteFieldFromCapStat(cs2Copy, field)
 	}
 
-	cs2CopyCapibility, err := NewCapabilityStatementFromInterface(cs2CapStat)
 	if err != nil {
 		return false
 	}
@@ -294,7 +283,7 @@ func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
 	if err != nil {
 		return false
 	}
-	j2, err := cs2CopyCapibility.GetJSON()
+	j2, err := cs2Copy.GetJSON()
 	if err != nil {
 		return false
 	}

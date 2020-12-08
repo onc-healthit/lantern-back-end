@@ -181,7 +181,7 @@ func Test_GetPublisher(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetPublisher()
@@ -229,7 +229,7 @@ func Test_GetCopyright(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetCopyright()
@@ -266,7 +266,7 @@ func Test_GetSoftware(t *testing.T) {
 
 	// missing field
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetSoftware()
@@ -368,7 +368,7 @@ func Test_GetRest(t *testing.T) {
 
 	// missing field
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetRest()
@@ -464,7 +464,7 @@ func Test_GetKind(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetKind()
@@ -500,7 +500,7 @@ func Test_GetImplementation(t *testing.T) {
 
 	// missing field
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetImplementation()
@@ -534,7 +534,7 @@ func Test_GetMessaging(t *testing.T) {
 
 	// missing field
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetMessaging()
@@ -629,7 +629,7 @@ func Test_GetDocument(t *testing.T) {
 
 	// missing field
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetDocument()
@@ -663,7 +663,7 @@ func Test_GetDescription(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := deleteFieldFromCapStat(cs, field)
+	cs2, err := DeleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetDescription()
@@ -695,7 +695,39 @@ func Test_Equal(t *testing.T) {
 	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
 
 	// test not equal
-	cs2, err = deleteFieldFromCapStat(cs2, "publisher")
+	cs2, err = DeleteFieldFromCapStat(cs2, "publisher")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.Equal(cs2)
+	th.Assert(t, !equal, "expected equality comparison of unequal capability statement to be false")
+
+}
+
+func Test_Equal_Ignore(t *testing.T) {
+	var cs1 CapabilityStatement
+	var cs2 CapabilityStatement
+	var equal bool
+	var err error
+
+	cs1, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+
+	// test nil
+	cs2, err = NewCapabilityStatement(nil)
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, !equal, "expected equality comparison to nil to be false")
+
+	// test equal
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
+	// test not equal
+	cs2, err = DeleteFieldFromCapStat(cs2, "publisher")
 	th.Assert(t, err == nil, err)
 
 	equal = cs1.Equal(cs2)
@@ -794,7 +826,7 @@ func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field
 	return NewCapabilityStatement(csJSON)
 }
 
-func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
+func DeleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
 	csInt, _, err := getCapFormats(cs)
 	if err != nil {
 		return nil, err
