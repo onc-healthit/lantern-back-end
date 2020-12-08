@@ -222,7 +222,7 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
-				_, err := ("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
 				helpers.FailOnError("", err)
 			}
 		} else {
