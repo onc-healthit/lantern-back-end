@@ -10,9 +10,9 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -49,18 +49,12 @@ type Result struct {
 type historyArgs struct {
 	fhirURL string
 	store   *postgresql.Store
-	jobNum  int
 	result  chan Result
 }
 
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
 func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
-	err := config.SetupConfig()
-	if err != nil {
-		return err
-	}
-
 	finalFormatJSON, err := createJSON(ctx, store)
 	if err != nil {
 		return err
@@ -117,7 +111,6 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 
 	errs := make(chan error)
 	numWorkers := viper.GetInt("export_numworkers")
-	fmt.Printf("NUMBER OF WORKERS %d", numWorkers)
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -194,13 +187,12 @@ func createJobs(ctx context.Context,
 	ch chan Result,
 	urls []string,
 	store *postgresql.Store,
-	allWorkers *workers.Workers) error {
+	allWorkers *workers.Workers) {
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
 			fhirURL: urls[index],
 			store:   store,
-			jobNum:  index,
 			result:  ch,
 		}
 
@@ -213,10 +205,9 @@ func createJobs(ctx context.Context,
 
 		err := allWorkers.Add(&job)
 		if err != nil {
-			return err
+			log.Warnf("Error while adding job for getting history for URL %s", urls[index])
 		}
 	}
-	return nil
 }
 
 // getHistory gets the database history of a specified url
@@ -226,10 +217,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
 
-	fmt.Printf("JOB NUMBER %d", ha.jobNum)
-
-	// Get everything from the fhir_endpoints_info_history table
-	ctx = context.Background()
+	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `
 		SELECT url, http_response, response_time_seconds, errors,
 		capability_statement, tls_version, mime_types, supported_resources,
