@@ -222,12 +222,14 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
-				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
+				_, err := ("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
+				helpers.FailOnError("", err)
 			}
 		} else {
 			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
-				store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
+				helpers.FailOnError("", err)
 			}
 		}
 	}

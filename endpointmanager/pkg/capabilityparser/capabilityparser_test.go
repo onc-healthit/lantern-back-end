@@ -726,6 +726,7 @@ func Test_Equal_Ignore(t *testing.T) {
 	equal = cs1.EqualIgnore(cs2)
 	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
 
+	// test equal when cs2 has different date
 	cs2, err = getDSTU2CapStat()
 	th.Assert(t, err == nil, err)
 	cs2, err = getBadFormatCapStat(cs2, "date")
@@ -734,6 +735,7 @@ func Test_Equal_Ignore(t *testing.T) {
 	equal = cs1.EqualIgnore(cs2)
 	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
 
+	// test equal when cs1 has different date
 	cs2, err = getDSTU2CapStat()
 	th.Assert(t, err == nil, err)
 	cs1, err = getBadFormatCapStat(cs1, "date")
