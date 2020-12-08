@@ -181,7 +181,7 @@ func Test_GetPublisher(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetPublisher()
@@ -229,7 +229,7 @@ func Test_GetCopyright(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetCopyright()
@@ -266,7 +266,7 @@ func Test_GetSoftware(t *testing.T) {
 
 	// missing field
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetSoftware()
@@ -368,7 +368,7 @@ func Test_GetRest(t *testing.T) {
 
 	// missing field
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetRest()
@@ -464,7 +464,7 @@ func Test_GetKind(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetKind()
@@ -500,7 +500,7 @@ func Test_GetImplementation(t *testing.T) {
 
 	// missing field
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetImplementation()
@@ -534,7 +534,7 @@ func Test_GetMessaging(t *testing.T) {
 
 	// missing field
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetMessaging()
@@ -629,7 +629,7 @@ func Test_GetDocument(t *testing.T) {
 
 	// missing field
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetDocument()
@@ -663,7 +663,7 @@ func Test_GetDescription(t *testing.T) {
 
 	expected = ""
 
-	cs2, err := DeleteFieldFromCapStat(cs, field)
+	cs2, err := deleteFieldFromCapStat(cs, field)
 	th.Assert(t, err == nil, err)
 
 	actual, err = cs2.GetDescription()
@@ -695,7 +695,7 @@ func Test_Equal(t *testing.T) {
 	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
 
 	// test not equal
-	cs2, err = DeleteFieldFromCapStat(cs2, "publisher")
+	cs2, err = deleteFieldFromCapStat(cs2, "publisher")
 	th.Assert(t, err == nil, err)
 
 	equal = cs1.Equal(cs2)
@@ -726,8 +726,24 @@ func Test_Equal_Ignore(t *testing.T) {
 	equal = cs1.EqualIgnore(cs2)
 	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
 
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+	cs2, err = getBadFormatCapStat(cs2, "date")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+	cs1, err = getBadFormatCapStat(cs1, "date")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
 	// test not equal
-	cs2, err = DeleteFieldFromCapStat(cs2, "publisher")
+	cs2, err = deleteFieldFromCapStat(cs2, "publisher")
 	th.Assert(t, err == nil, err)
 
 	equal = cs1.Equal(cs2)
@@ -746,22 +762,6 @@ func getDSTU2CapStat() (CapabilityStatement, error) {
 		return nil, err
 	}
 	return cs, nil
-}
-
-func getCapFormats(cs CapabilityStatement) (map[string]interface{}, []byte, error) {
-	var csInt map[string]interface{}
-
-	csJSON, err := cs.GetJSON()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = json.Unmarshal(csJSON, &csInt)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return csInt, csJSON, nil
 }
 
 func getBadFormatCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
@@ -818,22 +818,6 @@ func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field
 	}
 
 	innerFieldMap[field2] = []int{1, 2, 3} // bad format for given field
-	csJSON, err := json.Marshal(csInt)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewCapabilityStatement(csJSON)
-}
-
-func DeleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
-	csInt, _, err := getCapFormats(cs)
-	if err != nil {
-		return nil, err
-	}
-
-	delete(csInt, field)
-
 	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err

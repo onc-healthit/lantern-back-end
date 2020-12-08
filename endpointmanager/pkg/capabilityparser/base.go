@@ -259,24 +259,23 @@ func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
 		return false
 	}
 
-	var cpCopy *baseParser
+	var cpCopy CapabilityStatement
 	var cs2Copy CapabilityStatement
-	err := DeepCopy(cp, cpCopy)
-	if err != nil {
-		return false
-	}
-	err = DeepCopy(cs2, cs2Copy)
-	if err != nil {
-		return false
-	}
+
+	cpCopy = cp
+	cs2Copy = cs2
+
+	var err error
 
 	for _, field := range ignoredFields {
-		DeleteFieldFromCapStat(cpCopy, field)
-		DeleteFieldFromCapStat(cs2Copy, field)
-	}
-
-	if err != nil {
-		return false
+		cpCopy, err = deleteFieldFromCapStat(cpCopy, field)
+		if err != nil {
+			return false
+		}
+		cs2Copy, err = deleteFieldFromCapStat(cs2Copy, field)
+		if err != nil {
+			return false
+		}
 	}
 
 	j1, err := cpCopy.GetJSON()
@@ -320,12 +319,34 @@ func (cp *baseParser) GetJSON() ([]byte, error) {
 	return json.Marshal(cp.capStat)
 }
 
-// DeepCopy deepcopies a to b using json marshaling
-func DeepCopy(a, b interface{}) error {
-	byt, err := json.Marshal(a)
+func getCapFormats(cs CapabilityStatement) (map[string]interface{}, []byte, error) {
+	var csInt map[string]interface{}
+
+	csJSON, err := cs.GetJSON()
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
-	json.Unmarshal(byt, b)
-	return nil
+
+	err = json.Unmarshal(csJSON, &csInt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return csInt, csJSON, nil
+}
+
+func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
+	csInt, _, err := getCapFormats(cs)
+	if err != nil {
+		return nil, err
+	}
+
+	delete(csInt, field)
+
+	csJSON, err := json.Marshal(csInt)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewCapabilityStatement(csJSON)
 }
