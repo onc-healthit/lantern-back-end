@@ -65,7 +65,6 @@ func TestMain(m *testing.M) {
 }
 
 func Test_createJSON(t *testing.T) {
-	// _, _ = th.IntegrationDBTestSetup(t, store.DB)
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -99,6 +98,71 @@ func Test_createJSON(t *testing.T) {
 	th.Assert(t, len(jsonAsObj[0].Operation) == 2, fmt.Sprintf("Expected 2 history values in JSON. Actually had %d endpoints stored.", len(jsonAsObj[0].Operation)))
 	th.Assert(t, jsonAsObj[0].Operation[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", jsonAsObj[0].Operation[0]))
 	th.Assert(t, jsonAsObj[0].Operation[1].TLSVersion == "TLS 1.4", fmt.Sprintf("Should be the first entry stored in the fhir_endpoints_info table. %+v", jsonAsObj[0].Operation[1]))
+}
+
+func Test_getHistory(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	var actualNumEndptsStored int
+
+	ctx := context.Background()
+	err := store.AddFHIREndpoint(ctx, &testEndpoint)
+	th.Assert(t, err == nil, err)
+
+	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint)
+	th.Assert(t, err == nil, err)
+
+	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = rows.Scan(&actualNumEndptsStored)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualNumEndptsStored == 1, fmt.Sprintf("Expected 1 endpoint stored. Actually had %d endpoints stored.", actualNumEndptsStored))
+
+	// Base case
+
+	resultCh := make(chan Result)
+	jobArgs := make(map[string]interface{})
+	jobArgs["historyArgs"] = historyArgs{
+		fhirURL: "www.testURL.com",
+		store:   store,
+		result:  resultCh,
+	}
+
+	go getHistory(ctx, &jobArgs)
+
+	for res := range resultCh {
+		th.Assert(t, len(res.Rows) == 1, fmt.Sprintf("Expected 1 entry in history table. Actually had %d entries.", len(res.Rows)))
+		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
+		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
+		close(resultCh)
+	}
+
+	// If the args are not properly formatted
+
+	jobArgs2 := make(map[string]interface{})
+	jobArgs2["historyArgs"] = map[string]interface{}{
+		"nonsense": 1,
+	}
+
+	err = getHistory(ctx, &jobArgs2)
+	th.Assert(t, err != nil, fmt.Sprint("Malformed arguments should have thrown error."))
+
+	// If the URL does not exist, return an empty array
+
+	resultCh3 := make(chan Result)
+	jobArgs3 := make(map[string]interface{})
+	jobArgs3["historyArgs"] = historyArgs{
+		fhirURL: "thisurldoesntexist.com",
+		store:   store,
+		result:  resultCh3,
+	}
+
+	go getHistory(ctx, &jobArgs3)
+	for res := range resultCh3 {
+		th.Assert(t, len(res.Rows) == 0, fmt.Sprintf("Expected 0 entries in history table. Actually had %d entries.", len(res.Rows)))
+		th.Assert(t, res.URL == "thisurldoesntexist.com", fmt.Sprintf("Expected URL to equal 'thisurldoesntexist.com'. Is actually '%s'.", res.URL))
+		close(resultCh3)
+	}
 }
 
 func setup() error {
