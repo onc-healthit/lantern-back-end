@@ -261,8 +261,14 @@ func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
 
 	var cpCopy *baseParser
 	var cs2Copy CapabilityStatement
-	DeepCopy(cp, cpCopy)
-	DeepCopy(cs2, cs2Copy)
+	err := DeepCopy(cp, cpCopy)
+	if err != nil {
+		return false
+	}
+	err = DeepCopy(cs2, cs2Copy)
+	if err != nil {
+		return false
+	}
 
 	cs2CopyMap, err := cs2Copy.GetJSON()
 	if err != nil {
@@ -270,6 +276,9 @@ func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
 	}
 	var cs2CapStat map[string]interface{}
 	err = json.Unmarshal(cs2CopyMap, &cs2CapStat)
+	if err != nil {
+		return false
+	}
 
 	for _, field := range ignoredFields {
 		delete(cpCopy.capStat, field)
@@ -323,7 +332,11 @@ func (cp *baseParser) GetJSON() ([]byte, error) {
 }
 
 // DeepCopy deepcopies a to b using json marshaling
-func DeepCopy(a, b interface{}) {
-	byt, _ := json.Marshal(a)
+func DeepCopy(a, b interface{}) error {
+	byt, err := json.Marshal(a)
+	if err != nil {
+		return err
+	}
 	json.Unmarshal(byt, b)
+	return nil
 }
