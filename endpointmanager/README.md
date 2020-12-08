@@ -59,6 +59,10 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: endpoints-to-capability
 
+* **LANTERN_EXPORT_NUMWORKERS**: The number of workers to use to parallelize creating the JSON export file.
+
+  Default value: 50
+
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:

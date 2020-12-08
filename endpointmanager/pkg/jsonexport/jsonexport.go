@@ -10,8 +10,10 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
+	"github.com/spf13/viper"
 )
 
 type jsonEntry struct {
@@ -45,15 +47,20 @@ type Result struct {
 }
 
 type historyArgs struct {
-	fhirURL  string
-	store    *postgresql.Store
-	tmpCount int
-	result   chan Result
+	fhirURL string
+	store   *postgresql.Store
+	jobNum  int
+	result  chan Result
 }
 
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
 func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
+	err := config.SetupConfig()
+	if err != nil {
+		return err
+	}
+
 	finalFormatJSON, err := createJSON(ctx, store)
 	if err != nil {
 		return err
@@ -109,7 +116,8 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	}
 
 	errs := make(chan error)
-	numWorkers := 50 // @TODO set env variable?
+	numWorkers := viper.GetInt("export_numworkers")
+	fmt.Printf("NUMBER OF WORKERS %d", numWorkers)
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -190,15 +198,15 @@ func createJobs(ctx context.Context,
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
-			fhirURL:  urls[index],
-			store:    store,
-			tmpCount: index,
-			result:   ch,
+			fhirURL: urls[index],
+			store:   store,
+			jobNum:  index,
+			result:  ch,
 		}
 
 		job := workers.Job{
 			Context:     ctx,
-			Duration:    30 * time.Second, // @TODO figure this out
+			Duration:    30 * time.Second,
 			Handler:     getHistory,
 			HandlerArgs: &jobArgs,
 		}
@@ -217,6 +225,8 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	if !ok {
 		return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
+
+	fmt.Printf("JOB NUMBER %d", ha.jobNum)
 
 	// Get everything from the fhir_endpoints_info_history table
 	ctx = context.Background()
