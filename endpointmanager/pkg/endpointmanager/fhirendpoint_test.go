@@ -103,7 +103,7 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		NPIIDs:            []string{"1", "2", "3"},
 		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
 
-	if endpoint1.Equal(endpoint2) {
+	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
 	}
 
