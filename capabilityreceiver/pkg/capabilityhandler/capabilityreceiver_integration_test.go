@@ -4,11 +4,15 @@ package capabilityhandler
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -18,6 +22,9 @@ import (
 )
 
 var store *postgresql.Store
+
+var addFHIREndpointInfoHistoryStatement *sql.Stmt
+var updateFHIREndpointInfoHistoryStatement *sql.Stmt
 
 var testFhirEndpoint1 = &endpointmanager.FHIREndpoint{
 	URL: "http://example.com/DTSU2/",
@@ -83,7 +90,6 @@ func Test_saveMsgInDB(t *testing.T) {
 	args := make(map[string]interface{})
 	args["store"] = store
 	args["chplMatchFile"] = "../../testdata/test_chpl_product_mapping.json"
-
 
 	ctx := context.Background()
 
@@ -215,6 +221,186 @@ func Test_saveMsgInDB(t *testing.T) {
 	// resetting values
 	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
+
+	historyUrl := "http://example.com/DTSU2/"
+	// reset context
+	ctx = context.Background()
+	args["ctx"] = ctx
+
+	// Clear history table in database
+	clearStatement, err := store.DB.Prepare(`DELETE FROM fhir_endpoints_info_history WHERE url = $1;`)
+	th.Assert(t, err == nil, err)
+	defer clearStatement.Close()
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	err = prepareFHIREndpointInfoHistoryStatements(store)
+	th.Assert(t, err == nil, err)
+
+	// Add fhir endpoint info history entry with old entered at date
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-06-20 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	var count int
+	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1;`)
+	th.Assert(t, err == nil, err)
+	defer ctStatement.Close()
+
+	// Ensure entry was added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, count)
+
+	// Add a second old info history entry
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Save message in DB stores a new entry in endpoint info history table and prunes old entries
+	queueTmp = testQueueMsg
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Should only be one entry as history pruning will remove the two old entries
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, count)
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	currentTime := time.Now()
+
+	// Add two endpoint entries to info history table with current entered_at dates
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, currentTime.Format("2006-01-02 15:04:05"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, currentTime.Format("2006-01-02 15:04:05"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have 3 entries as history pruning will not remove entries less than month old
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, count)
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	// Modify the date field of the capability statement
+	originalCapStat := testFhirEndpointInfo.CapabilityStatement
+	cs := testFhirEndpointInfo.CapabilityStatement
+	var csInt map[string]interface{}
+	csJSON, err := cs.GetJSON()
+	th.Assert(t, err == nil, err)
+	err = json.Unmarshal(csJSON, &csInt)
+	th.Assert(t, err == nil, err)
+
+	csInt["date"] = "2010-01-03 15:04:05"
+	capStatDate, err := capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
+	testFhirEndpointInfo.CapabilityStatement = capStatDate
+
+	// Add two endpoint entries to info history table with old dates and modified capability statement date fields
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have only 1 entry as history pruning will remove old entries if their capability statements only differ by date field
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, count)
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	// Add two endpoint entries to info history table with current dates and modified capability statement date fields
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, currentTime.Format("2006-01-02 15:04:05"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, currentTime.Format("2006-01-02 15:04:05"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have 3 entries as history pruning will not remove entries less than month old
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, count)
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	// Modify the description field of the capability statement
+	testFhirEndpointInfo.CapabilityStatement = originalCapStat
+	cs = testFhirEndpointInfo.CapabilityStatement
+	csJSON, err = cs.GetJSON()
+	th.Assert(t, err == nil, err)
+	err = json.Unmarshal(csJSON, &csInt)
+	th.Assert(t, err == nil, err)
+
+	csInt["description"] = "This is a new description for the capability statement"
+	capStatDescription, err := capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
+	testFhirEndpointInfo.CapabilityStatement = capStatDescription
+
+	// Add two endpoint entries to info history table with old dates and modified capability statement description fields
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have 3 entries as history pruning will not remove old entries if their capability statements differ by field other than date field
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, count)
+
 }
 
 func setup() error {
@@ -229,4 +415,68 @@ func setup() error {
 
 func teardown() {
 	store.Close()
+}
+
+// AddFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
+func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e endpointmanager.FHIREndpointInfo, created_at string) error {
+	var err error
+	var capabilityStatementJSON []byte
+
+	if e.CapabilityStatement != nil {
+		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
+		if err != nil {
+			return err
+		}
+	} else {
+		capabilityStatementJSON = []byte("null")
+	}
+	_, err = addFHIREndpointInfoHistoryStatement.ExecContext(ctx,
+		"U",
+		created_at,
+		123,
+		e.URL,
+		capabilityStatementJSON)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func prepareFHIREndpointInfoHistoryStatements(s *postgresql.Store) error {
+	var err error
+	addFHIREndpointInfoHistoryStatement, err = s.DB.Prepare(`
+		INSERT INTO fhir_endpoints_info_history (
+			operation, 
+			entered_at, 
+			id, 
+			url, 
+			capability_statement)			
+		VALUES ($1, $2, $3, $4, $5)`)
+	if err != nil {
+		return err
+	}
+	updateFHIREndpointInfoHistoryStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints_info_history
+		SET 
+		    url = $1,
+		    healthit_product_id = $2,
+			vendor_id = $3,
+			tls_version = $4,
+			mime_types = $5,
+			http_response = $6,
+			errors = $7,
+			capability_statement = $8,
+			validation = $9,
+			smart_http_response = $10,
+			smart_response = $11,
+			included_fields = $12,
+			supported_resources = $13,
+			response_time_seconds = $14,
+			availability = $15
+			
+		WHERE id = $16`)
+	if err != nil {
+		return err
+	}
+	return nil
 }
