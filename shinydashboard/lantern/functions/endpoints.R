@@ -30,7 +30,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
     distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors, availability) %>%
     mutate(updated = as.Date(info_updated)) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%

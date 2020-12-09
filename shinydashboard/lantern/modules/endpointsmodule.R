@@ -23,7 +23,8 @@ endpointsmodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  sel_availability
 ) {
   ns <- session$ns
 
@@ -40,12 +41,28 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+    if (sel_availability() != "0-100") {
+      if (sel_availability() == "0" || sel_availability() == "100") {
+        availability_filter_num <- as.numeric(sel_availability()) / 100
+        availability_filter <- as.character(availability_filter_num)
+        res <- res %>% filter(availability == availability_filter)
+      }
+      else {
+        availability_upper_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][2]) / 100
+        availability_lower_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][1]) / 100
+        availability_lower <- as.character(availability_lower_num)
+        availability_upper <- as.character(availability_upper_num)
+
+        res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
+      }
+    }
+    res <- res %>% mutate(availability = availability * 100)
     res
   })
 
   output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status),
-              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response"),
+    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
+              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
@@ -54,7 +71,7 @@ endpointsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- selected_fhir_endpoints() %>%
-      select(-supported_resources, -updated, -label, -status) %>%
+      select(-supported_resources, -updated, -label, -status, -availability) %>%
       rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
