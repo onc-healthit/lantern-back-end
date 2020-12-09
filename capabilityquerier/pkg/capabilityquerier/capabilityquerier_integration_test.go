@@ -181,7 +181,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	// execute tested function
 	err = GetAndSendCapabilityStatement(ctx, &args)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 0, "expect one message on the queue")
+	th.Assert(t, len(mq.(*mock.BasicMockMessageQueue).Queue) == 1, "expect one message on the queue")
 	message = <-mq.(*mock.BasicMockMessageQueue).Queue
 
 	//Change response time in message to 0 to make the response time match with the expected message
