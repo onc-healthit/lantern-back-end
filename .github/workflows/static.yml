@@ -46,4 +46,4 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
 
       - name: Lint R Files
-        run: ./scripts/lintr.sh
+        run: cd ./scripts && ./lintr.sh
