@@ -24,7 +24,6 @@ import (
 var store *postgresql.Store
 
 var addFHIREndpointInfoHistoryStatement *sql.Stmt
-var updateFHIREndpointInfoHistoryStatement *sql.Stmt
 
 var testFhirEndpoint1 = &endpointmanager.FHIREndpoint{
 	URL: "http://example.com/DTSU2/",
@@ -218,6 +217,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, err != nil, "expected error adding product")
 
+	addFHIREndpointInfoHistoryStatement, err = store.DB.Prepare(`
+	INSERT INTO fhir_endpoints_info_history (
+		operation, 
+		entered_at, 
+		id, 
+		url, 
+		capability_statement)			
+	VALUES ($1, $2, $3, $4, $5);`)
+	th.Assert(t, err == nil, err)
+	defer addFHIREndpointInfoHistoryStatement.Close()
+
 	// resetting values
 	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
@@ -232,9 +242,6 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer clearStatement.Close()
 	_, err = clearStatement.ExecContext(ctx, historyUrl)
-	th.Assert(t, err == nil, err)
-
-	err = prepareFHIREndpointInfoHistoryStatements(store)
 	th.Assert(t, err == nil, err)
 
 	// Add fhir endpoint info history entry with old entered at date
@@ -498,43 +505,4 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 		return err
 	}
 	return err
-}
-
-func prepareFHIREndpointInfoHistoryStatements(s *postgresql.Store) error {
-	var err error
-	addFHIREndpointInfoHistoryStatement, err = s.DB.Prepare(`
-		INSERT INTO fhir_endpoints_info_history (
-			operation, 
-			entered_at, 
-			id, 
-			url, 
-			capability_statement)			
-		VALUES ($1, $2, $3, $4, $5)`)
-	if err != nil {
-		return err
-	}
-	updateFHIREndpointInfoHistoryStatement, err = s.DB.Prepare(`
-		UPDATE fhir_endpoints_info_history
-		SET 
-		    url = $1,
-		    healthit_product_id = $2,
-			vendor_id = $3,
-			tls_version = $4,
-			mime_types = $5,
-			http_response = $6,
-			errors = $7,
-			capability_statement = $8,
-			validation = $9,
-			smart_http_response = $10,
-			smart_response = $11,
-			included_fields = $12,
-			supported_resources = $13,
-			response_time_seconds = $14,
-			availability = $15
-			
-		WHERE id = $16`)
-	if err != nil {
-		return err
-	}
-	return nil
 }
