@@ -170,7 +170,7 @@ func sendEndpointsOverQueue(ctx context.Context, t *testing.T, queueName string,
 func queueIsEmpty(t *testing.T, queueName string) {
 	count, err := aq.QueueCount(queueName, channel)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, "should be no messages in queue.")
+	th.Assert(t, count == 0, "should be no messages in queue.")
 }
 
 func checkCleanQueue(t *testing.T, queueName string, channel *amqp.Channel) {
