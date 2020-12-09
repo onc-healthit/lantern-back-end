@@ -5,10 +5,11 @@ on: [push]
 jobs:
   Golintr:
       name: Go Lintr
-      runs-on: ubuntu-latest
+      runs-on: macOS-latest
       steps:
         - uses: actions/checkout@v2
-        #- uses: golangci/golangci-lint-action@v2.3.0
+        - name: Install golangci-lint
+          run: brew install golangci/tap/golangci-lint
         - name: Run Go Lintr
           run: make lint_go
         # - name: Check golangci-lint for capabilityquerier
