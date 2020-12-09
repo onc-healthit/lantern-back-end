@@ -1,4 +1,5 @@
 package capabilityquerier
+
 import (
 	"context"
 	"crypto/tls"
