@@ -401,6 +401,64 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, count)
 
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	// Set capability statement equal to null
+	testFhirEndpointInfo.CapabilityStatement = nil
+
+	// Add two endpoint entries to info history table with old dates and null capability statement
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have 3 entries as history pruning will not remove old entries if their capability statements are null but new capability statement is not null
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, count)
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyUrl)
+	th.Assert(t, err == nil, err)
+
+	// Set msg queue capability statement equal to null
+	queueTmp["capabilityStatement"] = nil
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+
+	// Add two endpoint entries to info history table with old dates and null capability statement
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, "2019-10-10 19:10:25-07")
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, count)
+
+	// Call saveMsgInDB function which will call the history pruning function
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	// Info history table should have 1 entry as history pruning will remove old entries if both their capability statements and new capability statement null
+	err = ctStatement.QueryRow(historyUrl).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, count)
+
 }
 
 func setup() error {
