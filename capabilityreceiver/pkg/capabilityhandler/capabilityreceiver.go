@@ -6,6 +6,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
+
+	"github.com/spf13/viper"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
@@ -203,7 +206,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 }
 
 func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
-	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
+	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
+	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
 	helpers.FailOnError("", err)
 	defer rows.Close()
 	for rows.Next() {
@@ -228,7 +232,7 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 		} else {
 			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
-				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('month', entered_at) <= date_trunc('month', current_date - interval '1' month));", fhirEndpoint.URL)
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
 				helpers.FailOnError("", err)
 			}
 		}

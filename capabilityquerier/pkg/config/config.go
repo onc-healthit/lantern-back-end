@@ -67,6 +67,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("pruning_threshold")
+	if err != nil {
+		return err
+	}
 
 	// Export JSON file
 
@@ -97,6 +101,7 @@ func SetupConfig() error {
 	viper.SetDefault("dbpassword", "postgrespassword")
 	viper.SetDefault("dbname", "lantern")
 	viper.SetDefault("dbsslmode", "disable")
+	viper.SetDefault("pruning_threshold", 43800)
 
 	viper.SetDefault("exportfile_wait", 300)
 	viper.SetDefault("export_numworkers", 50)
