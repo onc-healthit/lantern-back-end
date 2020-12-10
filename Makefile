@@ -51,6 +51,9 @@ migrate_database:
 	cd ./db/migration; docker build --tag migration . --build-arg cert_dir=./certs
 	docker run --env-file .env -e LANTERN_DBHOST=postgres_migrate --network=lantern-back-end_default migration; docker stop postgres_migrate; docker rm postgres_migrate
 
+history_pruning:
+	cd endpointmanager/cmd/historypruning; go run main.go;
+
 lint:
 	make lint_go || exit $?
 	make lint_R || exit $?

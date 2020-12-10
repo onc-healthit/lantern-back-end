@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -25,13 +24,19 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 
-	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
-	rows, err := store.DB.Query("SELECT url, capability_statement FROM fhir_endpoints_info_history WHERE operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '" + threshold + "' minute));")
+	var count int
+	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1 AND entered_at = $2;`)
+	helpers.FailOnError("", err)
+
+	rows, err := store.DB.Query("SELECT url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE operation='U' OR operation='I';")
+	helpers.FailOnError("", err)
 
 	for rows.Next() {
+
 		var fhirURL string
 		var capStatJSON []byte
-		err = rows.Scan(&fhirURL, &capStatJSON)
+		var entryDate string
+		err = rows.Scan(&fhirURL, &capStatJSON, &entryDate)
 		helpers.FailOnError("", err)
 
 		var capInt map[string]interface{}
@@ -45,7 +50,10 @@ func main() {
 			CapabilityStatement: capStat,
 		}
 
-		capabilityhandler.HistoryPruningCheck(ctx, store, fhirEndpoint)
+		err = ctStatement.QueryRow(fhirURL, entryDate).Scan(&count)
+		if count != 0 {
+			capabilityhandler.HistoryPruningCheck(ctx, store, &fhirEndpoint, entryDate)
+		}
 
 	}
 }
