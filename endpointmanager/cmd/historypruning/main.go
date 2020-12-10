@@ -28,7 +28,7 @@ func main() {
 	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1 AND entered_at = $2;`)
 	helpers.FailOnError("", err)
 
-	rows, err := store.DB.Query("SELECT url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE operation='U' OR operation='I';")
+	rows, err := store.DB.Query("SELECT url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE operation='U' OR operation='I' ORDER BY url, operation, entered_at DESC;")
 	helpers.FailOnError("", err)
 
 	for rows.Next() {
