@@ -194,7 +194,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			return err
 		}
 
-		historyPruningCheck(ctx, store, fhirEndpoint)
+		HistoryPruningCheck(ctx, store, fhirEndpoint)
 
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
@@ -205,7 +205,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
-func historyPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
+func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
 	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
 	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
 	helpers.FailOnError("", err)
