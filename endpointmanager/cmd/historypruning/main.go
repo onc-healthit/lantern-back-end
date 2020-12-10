@@ -50,6 +50,7 @@ func main() {
 			CapabilityStatement: capStat,
 		}
 
+		// Check to make sure the entry has not already been deleted, and if not call history pruning function
 		err = ctStatement.QueryRow(fhirURL, entryDate).Scan(&count)
 		if count != 0 {
 			capabilityhandler.HistoryPruningCheck(ctx, store, &fhirEndpoint, entryDate)

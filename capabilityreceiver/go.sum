@@ -240,6 +240,7 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d/go.mod h1:o96d
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6 h1:+wJAkmqrYYmQ5tH7o9ssLXq4UMwEeDZEdv/hQwABaoE=
 github.com/onc-healthit/lantern-back-end v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:D1+Dbr7oRkqfpFVytc9HB9DcaqbVhG63FMi0WxLakUE=
+github.com/onc-healthit/lantern-back-end v1.2.0 h1:Zw70KnHv2cQz4Qaert9wJeJ1iMK98CG6SwDKWUYtrlY=
 github.com/onc-healthit/lantern-back-end/capabilityquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:coNhm1eDaFhpn7ludPQYFlLFntXTyIb+7VPO5Wb2fBc=
 github.com/onc-healthit/lantern-back-end/capabilityreceiver v0.0.0-20201210165805-861bb527d9e1/go.mod h1:GfWN7hwe9mi07wBVuilmUf4L3cpjLHJ+Ecv7agkWkGc=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20200319151735-49dd5d7c3af0/go.mod h1:IYetlCA7Jkwo2HjEJkzRiwN4hVUB+5p3Kss5z40DQPQ=
@@ -287,6 +288,7 @@ github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201208145019-8
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201208145019-89a89442975e/go.mod h1:nlQh3MTtiLW810fGeOzC5k87iH8OANnxFn1vebzYj4c=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201208154458-88c012714bf1 h1:2a7WOcjt7C/Jr6PgAktLnIomr/8dkB4smhn/DuLmGnQ=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201208154458-88c012714bf1/go.mod h1:uxrjs/yYSqepcl2Fc8Fo1hggH2XhzbX4x93lGXEGPXY=
+github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201210153221-20b5c2996e1f h1:obmDOT0ZQRHI3WCrv1AYSqKYyFTugyJkOCQc2zjpoMY=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201210165805-861bb527d9e1 h1:SwhzVxLpEM6/s0TZEjCP+SAcGWNqn324SA4T5M0K8cM=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201210165805-861bb527d9e1/go.mod h1:ImFDQ0sUZuJCXNIuSJRXyHjSVryzUZ2o67hfxbXX9iE=
 github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20201210182933-417ba54338c1 h1:/UF94FJxsBJ9619J6EnsAMJJKkUd96c89lLzdVZkkYY=
