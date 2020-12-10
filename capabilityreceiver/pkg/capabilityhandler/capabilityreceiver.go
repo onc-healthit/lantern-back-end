@@ -194,7 +194,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			return err
 		}
 
-		HistoryPruningCheck(ctx, store, fhirEndpoint)
+		HistoryPruningCheck(ctx, store, fhirEndpoint, "")
 
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
@@ -205,34 +205,42 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
-func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo) {
+// HistoryPruningCheck prunes all endpoints in info history table that have the same url as fhirEndpoint and unchanged capability statements
+func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo, fhirEntryDate string) {
 	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
-	rows, err := store.DB.Query("SELECT capability_statement FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
-	helpers.FailOnError("", err)
+	var rows *sql.Rows
+	var err error
+	if len(fhirEntryDate) != 0 {
+		rows, err = store.DB.Query("SELECT capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at != $2 AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL, fhirEntryDate)
+		helpers.FailOnError("", err)
+	} else {
+		rows, err = store.DB.Query("SELECT capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
+		helpers.FailOnError("", err)
+	}
 	defer rows.Close()
 	for rows.Next() {
 		var jsonCapStat []byte
-		err = rows.Scan(&jsonCapStat)
+		var entryDate string
+		err = rows.Scan(&jsonCapStat, &entryDate)
 		helpers.FailOnError("", err)
 
 		if !bytes.Equal(jsonCapStat, []byte("null")) {
 			var capInt map[string]interface{}
 			err = json.Unmarshal(jsonCapStat, &capInt)
 			helpers.FailOnError("", err)
-			capDate := capInt["date"]
 			capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
 			helpers.FailOnError("", err)
 
 			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
-				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement ->> 'date' = $2", fhirEndpoint.URL, capDate)
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
 				helpers.FailOnError("", err)
 			}
 		} else {
 			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
-				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute));", fhirEndpoint.URL)
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
 				helpers.FailOnError("", err)
 			}
 		}
