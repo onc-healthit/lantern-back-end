@@ -211,17 +211,18 @@ func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 	var rows *sql.Rows
 	var err error
 	if len(fhirEntryDate) != 0 {
-		rows, err = store.DB.Query("SELECT capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at < $2 AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL, fhirEntryDate)
+		rows, err = store.DB.Query("SELECT operation, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND (operation='U' or operation = 'I') AND entered_at < $2 AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL, fhirEntryDate)
 		helpers.FailOnError("", err)
 	} else {
-		rows, err = store.DB.Query("SELECT capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL)
+		rows, err = store.DB.Query("SELECT operation, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND (operation='U' or operation = 'I') AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL)
 		helpers.FailOnError("", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var jsonCapStat []byte
 		var entryDate string
-		err = rows.Scan(&jsonCapStat, &entryDate)
+		var operation string
+		err = rows.Scan(&operation, &jsonCapStat, &entryDate)
 		helpers.FailOnError("", err)
 
 		if !bytes.Equal(jsonCapStat, []byte("null")) {
@@ -234,16 +235,26 @@ func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
-				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
-				helpers.FailOnError("", err)
+				if operation == "I" && len(fhirEntryDate) != 0 {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, fhirEntryDate)
+					helpers.FailOnError("", err)
+				} else {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
+					helpers.FailOnError("", err)
+				}
 			} else {
 				return
 			}
 		} else {
 			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
 			if equal {
-				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
-				helpers.FailOnError("", err)
+				if operation == "I" && len(fhirEntryDate) != 0 {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, fhirEntryDate)
+					helpers.FailOnError("", err)
+				} else {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
+					helpers.FailOnError("", err)
+				}
 			} else {
 				return
 			}
