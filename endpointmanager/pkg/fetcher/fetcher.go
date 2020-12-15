@@ -50,6 +50,8 @@ func checkSource(source string) Source {
 		return Epic
 	case "Lantern":
 		return Lantern
+	case "FHIR":
+		return FHIR
 	}
 	return ""
 }
@@ -99,25 +101,30 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source, listURL stri
 	}
 
 	if source == Cerner {
-		cernerList := initialList["endpoints"]
-		if cernerList == nil {
-			return result, fmt.Errorf("cerner list not given in Cerner format")
+		cernerList, err := convertInterfaceToList(initialList, "endpoints")
+		if err != nil {
+			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
 		result = CernerList{}.GetEndpoints(cernerList, listURL)
 	} else if source == Epic {
-		epicList := initialList["Entries"]
-		if epicList == nil {
-			return result, fmt.Errorf("epic list not given in Epic format")
+		epicList, err := convertInterfaceToList(initialList, "Entries")
+		if err != nil {
+			return result, fmt.Errorf("epic list not given in EPIC format: %s", err)
 		}
 		result = EpicList{}.GetEndpoints(epicList, listURL)
 	} else if source == Lantern {
-		lanternList := initialList["Endpoints"]
-		if lanternList == nil {
-			return result, fmt.Errorf("lantern list not given in Lantern format")
+		lanternList, err := convertInterfaceToList(initialList, "Endpoints")
+		if err != nil {
+			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, listURL)
+	} else if source == FHIR {
+		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
+		fhirList, err := convertInterfaceToList(initialList, "entry")
+		if err != nil {
+			return result, fmt.Errorf("fhir list not given in FHIR format: %s", err)
 		}
-		result = LanternList{}.GetEndpoints(lanternList)
+		result = FHIRList{}.GetEndpoints(fhirList, listURL)
 	} else {
 		return result, fmt.Errorf("no endpoint list parser implemented for the given source")
 	}
@@ -150,4 +157,27 @@ func GetListOfEndpoints(rawendpts []byte, source string, listURL string) (ListOf
 	result = getDefaultEndpoints(defaultList, source, listURL)
 
 	return result, err
+}
+
+func convertInterfaceToList(list map[string]interface{}, ref string) ([]map[string]interface{}, error) {
+	var formatList []map[string]interface{}
+
+	endptList := list[ref]
+	if endptList == nil {
+		return formatList, fmt.Errorf("incorrect reference value")
+	}
+
+	intList, ok := endptList.([]interface{})
+	if !ok {
+		return formatList, fmt.Errorf("endpoint list is not an array")
+	}
+
+	for i := range intList {
+		elem, ok := intList[i].(map[string]interface{})
+		if !ok {
+			return formatList, fmt.Errorf("list element is not map[string]interface{}")
+		}
+		formatList = append(formatList, elem)
+	}
+	return formatList, nil
 }
