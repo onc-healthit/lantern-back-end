@@ -1,0 +1,83 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Go Unit Tests
+        id: go-unit-tests
+        run: make test
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start System
+        id: start-system
+        run: docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+        env:
+          LANTERN_DBHOST: localhost
+          LANTERN_DBPORT: 5432
+          LANTERN_DBUSER: lantern
+          LANTERN_DBPASSWORD: postgrespassword
+          LANTERN_DBUSER_READONLY: lantern_ro
+          LANTERN_DBPASSWORD_READONLY: postgrespassword_ro
+          LANTERN_DBUSER_READWRITE: lantern_rw
+          LANTERN_DBPASSWORD_READWRITE: lantern_rw
+          LANTERN_DBNAME: lantern
+          LANTERN_DBSSLMODE: disable
+          LANTERN_TEST_DBNAME: lantern_test
+          LANTERN_TEST_DBUSER: lantern
+          LANTERN_TEST_DBPASSWORD: postgrespassword
+          LANTERN_QUSER: capabilityquerier
+          LANTERN_QPASSWORD: capabilityquerier
+          LANTERN_QPORT: 5672
+          LANTERN_CAPQUERY_QNAME: capability-statements
+          LANTERN_CAPQUERY_NUMWORKERS: 10
+          LANTERN_ENDPTQRY_NUMWORKERS: 10
+          LANTERN_CAPQUERY_QRYINTVL: 1380
+          LANTERN_TEST_QUSER: capabilityquerier
+          LANTERN_TEST_QPASSWORD: capabilityquerier
+          LANTERN_TEST_QNAME: test-queue
+          LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
+          LANTERN_QHOST: localhost
+      - name: Go Integration Tests
+        id: go-integration-tests
+        run: ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start System
+        id: start-system
+        run: docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+      - name: Run E2E Tests
+        run: make test_e2e_CI
+        env:
+          LANTERN_DBHOST: localhost
+          LANTERN_DBPORT: 5432
+          LANTERN_DBUSER: lantern
+          LANTERN_DBPASSWORD: postgrespassword
+          LANTERN_DBUSER_READONLY: lantern_ro
+          LANTERN_DBPASSWORD_READONLY: postgrespassword_ro
+          LANTERN_DBUSER_READWRITE: lantern_rw
+          LANTERN_DBPASSWORD_READWRITE: lantern_rw
+          LANTERN_DBNAME: lantern
+          LANTERN_DBSSLMODE: disable
+          LANTERN_TEST_DBNAME: lantern_test
+          LANTERN_TEST_DBUSER: lantern
+          LANTERN_TEST_DBPASSWORD: postgrespassword
+          LANTERN_QUSER: capabilityquerier
+          LANTERN_QPASSWORD: capabilityquerier
+          LANTERN_QPORT: 5672
+          LANTERN_CAPQUERY_QNAME: capability-statements
+          LANTERN_CAPQUERY_NUMWORKERS: 10
+          LANTERN_ENDPTQRY_NUMWORKERS: 10
+          LANTERN_CAPQUERY_QRYINTVL: 1380
+          LANTERN_TEST_QUSER: capabilityquerier
+          LANTERN_TEST_QPASSWORD: capabilityquerier
+          LANTERN_TEST_QNAME: test-queue
+          LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
+          LANTERN_QHOST: lantern-mq

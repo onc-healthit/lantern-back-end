@@ -1,0 +1,23 @@
+name: Static Analysis
+
+on: [push]
+
+jobs:
+  Golintr:
+      name: Go Lintr
+      runs-on: macOS-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Install golangci-lint
+          run: brew install golangci/tap/golangci-lint
+        - name: Run Go Lintr
+          run: make lint_go
+  Rlintr:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+
+      - name: Lint R Files
+        run: cd ./scripts && ./lintr.sh
