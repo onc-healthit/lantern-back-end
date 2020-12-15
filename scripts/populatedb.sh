@@ -8,11 +8,12 @@ cd cmd/endpointpopulator
 jq -c '.[]' /go/src/app/resources/EndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
+    LISTURL=$(echo $endpoint | jq -c -r '.URL')
 
-    go run main.go /etc/lantern/resources/$FILENAME $NAME
+    go run main.go /etc/lantern/resources/$FILENAME $NAME $LISTURL
 done
 
-# Only use the line below that populates the database with CareEvolution for development 
+# Only use the line below that populates the database with CareEvolution for development
 # go run main.go /etc/lantern/resources/CareEvolutionEndpointSources.json CareEvolution
 
 cd ..

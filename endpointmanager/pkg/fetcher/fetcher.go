@@ -31,11 +31,12 @@ type ListOfEndpoints struct {
 // Source is an enum of the known endpoint source list urls
 type Source string
 
-// Cerner is a field in the Source enum for the cerner endpoint url
+// Cerner, Epic, Lantern & FHIR are fields in the Source enum
 const (
-	Cerner  Source = "https://github.com/cerner/ignite-endpoints"
-	Epic    Source = "https://open.epic.com/MyApps/EndpointsJson"
+	Cerner  Source = "CernerSource"
+	Epic    Source = "EpicSource"
 	Lantern Source = "LanternEndpointSourcesJson"
+	FHIR    Source = "FHIRSource"
 )
 
 // Converts the string version of the endpoint source to the fetcher.Source enum
@@ -56,11 +57,11 @@ func checkSource(source string) Source {
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
 type Endpoints interface {
-	GetEndpoints(map[string]interface{}) ListOfEndpoints
+	GetEndpoints(map[string]interface{}, string) ListOfEndpoints
 }
 
 // GetEndpointsFromFilepath parses a list of endpoints out of the file at the provided path
-func GetEndpointsFromFilepath(filePath string, source string) (ListOfEndpoints, error) {
+func GetEndpointsFromFilepath(filePath string, source string, listURL string) (ListOfEndpoints, error) {
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
@@ -76,15 +77,15 @@ func GetEndpointsFromFilepath(filePath string, source string) (ListOfEndpoints, 
 
 	validSource := checkSource(source)
 	if validSource != "" {
-		return GetListOfEndpointsKnownSource([]byte(byteValue), validSource)
+		return GetListOfEndpointsKnownSource([]byte(byteValue), validSource, listURL)
 	}
-	return GetListOfEndpoints([]byte(byteValue), source)
+	return GetListOfEndpoints([]byte(byteValue), source, listURL)
 }
 
 // GetListOfEndpointsKnownSource parses a list of endpoints out of a given byte array
-func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpoints, error) {
+func GetListOfEndpointsKnownSource(rawendpts []byte, source Source, listURL string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
-	var initialList map[string][]map[string]interface{}
+	var initialList map[string]interface{}
 
 	err := json.Unmarshal(rawendpts, &initialList)
 
@@ -102,17 +103,19 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpo
 		if cernerList == nil {
 			return result, fmt.Errorf("cerner list not given in Cerner format")
 		}
-		result = CernerList{}.GetEndpoints(cernerList)
+		result = CernerList{}.GetEndpoints(cernerList, listURL)
 	} else if source == Epic {
 		epicList := initialList["Entries"]
 		if epicList == nil {
 			return result, fmt.Errorf("epic list not given in Epic format")
 		}
-		result = EpicList{}.GetEndpoints(epicList)
+		result = EpicList{}.GetEndpoints(epicList, listURL)
 	} else if source == Lantern {
 		lanternList := initialList["Endpoints"]
 		if lanternList == nil {
 			return result, fmt.Errorf("lantern list not given in Lantern format")
+		}
+		result = LanternList{}.GetEndpoints(lanternList, listURL)
 		}
 		result = LanternList{}.GetEndpoints(lanternList)
 	} else {
@@ -123,7 +126,7 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source) (ListOfEndpo
 }
 
 // GetListOfEndpoints parses a list of endpoints out of a given byte array
-func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error) {
+func GetListOfEndpoints(rawendpts []byte, source string, listURL string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 	var initialList map[string][]map[string]interface{}
 
@@ -144,7 +147,7 @@ func GetListOfEndpoints(rawendpts []byte, source string) (ListOfEndpoints, error
 		return result, fmt.Errorf(`the given endpoint list is not formatted in the default format,
 			see 'Expected Endpoint Source Formatting' in the Endpoint Manager README`)
 	}
-	result = getDefaultEndpoints(defaultList, source)
+	result = getDefaultEndpoints(defaultList, source, listURL)
 
 	return result, err
 }

@@ -18,17 +18,21 @@ import (
 func main() {
 	var endpointsFile string
 	var source string
+	var listURL string
 
-	if len(os.Args) == 3 {
+	if len(os.Args) >= 3 {
 		endpointsFile = os.Args[1]
 		source = os.Args[2]
+		if len(os.Args) == 4 {
+			listURL = os.Args[3]
+		}
 	} else if len(os.Args) == 2 {
 		log.Fatalf("ERROR: Missing endpoints list source command-line argument")
 	} else {
 		log.Fatalf("ERROR: Missing endpoints list command-line argument")
 	}
 
-	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source)
+	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source, listURL)
 	helpers.FailOnError("Endpoint List Parsing Error: ", err)
 
 	if len(listOfEndpoints.Entries) != 0 {
