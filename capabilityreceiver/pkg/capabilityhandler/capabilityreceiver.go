@@ -225,6 +225,7 @@ func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 		err = rows.Scan(&operation, &jsonCapStat, &entryDate)
 		helpers.FailOnError("", err)
 
+		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
 		if !bytes.Equal(jsonCapStat, []byte("null")) {
 			var capInt map[string]interface{}
 			err = json.Unmarshal(jsonCapStat, &capInt)
@@ -235,6 +236,7 @@ func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpo
 			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
 
 			if equal {
+				// If the current entry passed in and being checked reaches the Insert entry and they are the same, remove the entry being checked (only occurs with pruning script), otherwise delete the old matching Update entry from history table
 				if operation == "I" && len(fhirEntryDate) != 0 {
 					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, fhirEntryDate)
 					helpers.FailOnError("", err)
