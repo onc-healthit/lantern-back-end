@@ -106,44 +106,6 @@ endpointsmodule <- function(
       rename(http_response_time_second = response_time_seconds)
   })
 
-  # Downloadable csv of selected dataset
-  output$download_data <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints.csv"
-    },
-    content = function(file) {
-      write.csv(csv_format(), file, row.names = FALSE)
-    }
-  )
-
-  # Download csv of the field descriptions in the dataset csv
-  output$download_descriptions <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints_fields.csv"
-    },
-    content = function(file) {
-      file.copy("fhir_endpoints_fields.csv", file)
-    }
-  )
-
-  output$download_data_json <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints.json"
-    },
-    content = function(file) {
-      file.copy("/srv/shiny-server/exportfolder/fhir_endpoints_fields.json", file)
-    }
-  )
-
-  output$download_descriptions_markdown <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints_fields_json.md"
-    },
-    content = function(file) {
-      file.copy("fhir_endpoints_fields_json.md", file)
-    }
-  )
-
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
       Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
