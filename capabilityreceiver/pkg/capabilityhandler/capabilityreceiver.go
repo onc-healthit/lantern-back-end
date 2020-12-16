@@ -1,14 +1,10 @@
 package capabilityhandler
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"strconv"
-
-	"github.com/spf13/viper"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
@@ -19,7 +15,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -194,8 +189,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			return err
 		}
 
-		HistoryPruningCheck(ctx, store, fhirEndpoint, "")
-
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -203,65 +196,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	}
 
 	return nil
-}
-
-// HistoryPruningCheck prunes all endpoints in info history table that have the same url as fhirEndpoint and unchanged capability statements
-func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, fhirEndpoint *endpointmanager.FHIREndpointInfo, fhirEntryDate string) {
-	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
-	var rows *sql.Rows
-	var err error
-	if len(fhirEntryDate) != 0 {
-		rows, err = store.DB.Query("SELECT operation, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND (operation='U' or operation = 'I') AND entered_at < $2 AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL, fhirEntryDate)
-		helpers.FailOnError("", err)
-	} else {
-		rows, err = store.DB.Query("SELECT operation, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE url=$1 AND (operation='U' or operation = 'I') AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - interval '"+threshold+"' minute)) ORDER BY url, entered_at DESC;", fhirEndpoint.URL)
-		helpers.FailOnError("", err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var jsonCapStat []byte
-		var entryDate string
-		var operation string
-		err = rows.Scan(&operation, &jsonCapStat, &entryDate)
-		helpers.FailOnError("", err)
-
-		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
-		if !bytes.Equal(jsonCapStat, []byte("null")) {
-			var capInt map[string]interface{}
-			err = json.Unmarshal(jsonCapStat, &capInt)
-			helpers.FailOnError("", err)
-			capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
-			helpers.FailOnError("", err)
-
-			var equal = capStat.EqualIgnore(fhirEndpoint.CapabilityStatement)
-
-			if equal {
-				// If the current entry passed in and being checked reaches the Insert entry and they are the same, remove the entry being checked (only occurs with pruning script), otherwise delete the old matching Update entry from history table
-				if operation == "I" && len(fhirEntryDate) != 0 {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, fhirEntryDate)
-					helpers.FailOnError("", err)
-				} else {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
-					helpers.FailOnError("", err)
-				}
-			} else {
-				return
-			}
-		} else {
-			var equal = (bytes.Equal(jsonCapStat, []byte("null")) && fhirEndpoint.CapabilityStatement == nil)
-			if equal {
-				if operation == "I" && len(fhirEntryDate) != 0 {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, fhirEntryDate)
-					helpers.FailOnError("", err)
-				} else {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirEndpoint.URL, entryDate)
-					helpers.FailOnError("", err)
-				}
-			} else {
-				return
-			}
-		}
-	}
 }
 
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability

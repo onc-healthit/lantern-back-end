@@ -71,6 +71,10 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("pruning_threshold") // in minutes
+	if err != nil {
+		return err
+	}
 
 	err = viper.BindEnv("export_numworkers")
 	if err != nil {
@@ -94,7 +98,8 @@ func SetupConfig() error {
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
-	viper.SetDefault("capquery_qryintvl", 1380) // 1380 minutes -> 23 hours.
+	viper.SetDefault("capquery_qryintvl", 1380)  // 1380 minutes -> 23 hours.
+	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
 
 	viper.SetDefault("export_numworkers", 50)
 	viper.SetDefault("export_duration", 120)

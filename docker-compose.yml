@@ -45,6 +45,7 @@ services:
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
       - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
       - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
+      - LANTERN_PRUNING_THRESHOLD=${LANTERN_PRUNING_THRESHOLD}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
@@ -101,7 +102,6 @@ services:
       - LANTERN_QHOST=${LANTERN_QHOST}
       - LANTERN_QPORT=${LANTERN_QPORT}
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
-      - LANTERN_PRUNING_THRESHOLD=${LANTERN_PRUNING_THRESHOLD}
     volumes:
       - ./resources/prod_resources/CHPLProductMapping.json:/etc/lantern/resources/CHPLProductMapping.json
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
