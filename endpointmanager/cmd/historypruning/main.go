@@ -24,10 +24,10 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 
-	historyPruningCheckNew(ctx, store)
+	historyPruningCheck(ctx, store)
 }
 
-func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
+func historyPruningCheck(ctx context.Context, store *postgresql.Store) {
 	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
 
 	rows, err := store.DB.Query("SELECT operation, url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + threshold + "' minute)) ORDER BY url, entered_at DESC;")
@@ -44,47 +44,31 @@ func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
 		operation2, fhirURL2, entryDate2, capStat2 := getRowInfo(rows)
 
 		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
+		var equal bool
 		if capStat1 != nil {
-			var equal = capStat1.EqualIgnore(capStat2)
-			if equal {
-				if operation2 == "I" {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate1)
-					helpers.FailOnError("", err)
-					if !rows.Next() {
-						return
-					}
-					_, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
-				} else {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate2)
-					helpers.FailOnError("", err)
-				}
-			} else {
-				fhirURL1 = fhirURL2
-				entryDate1 = entryDate2
-				capStat1 = capStat2
-				continue
-			}
+			equal = capStat1.EqualIgnore(capStat2)
 		} else {
-			if capStat2 == nil {
-				if operation2 == "I" {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate1)
-					helpers.FailOnError("", err)
-					if !rows.Next() {
-						return
-					}
-					_, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
-				} else {
-					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate2)
-					helpers.FailOnError("", err)
-				}
-			} else {
-				fhirURL1 = fhirURL2
-				entryDate1 = entryDate2
-				capStat1 = capStat2
-				continue
-			}
+			equal = (capStat2 == nil)
 		}
 
+		if equal {
+			if operation2 == "I" {
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate1)
+				helpers.FailOnError("", err)
+				if !rows.Next() {
+					return
+				}
+				_, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+			} else {
+				_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate2)
+				helpers.FailOnError("", err)
+			}
+		} else {
+			fhirURL1 = fhirURL2
+			entryDate1 = entryDate2
+			capStat1 = capStat2
+			continue
+		}
 	}
 }
 
