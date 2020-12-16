@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	"strconv"
 
-	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -24,38 +24,78 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 
-	var count int
-	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1 AND entered_at = $2;`)
+	historyPruningCheckNew(ctx, store)
+}
+
+func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
+	threshold := strconv.Itoa(viper.GetInt("pruning_threshold"))
+
+	rows, err := store.DB.Query("SELECT operation, url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + threshold + "' minute)) ORDER BY url, entered_at DESC;")
 	helpers.FailOnError("", err)
 
-	rows, err := store.DB.Query("SELECT url, capability_statement, entered_at FROM fhir_endpoints_info_history WHERE operation='U' ORDER BY url, entered_at DESC;")
-	helpers.FailOnError("", err)
+	if !rows.Next() {
+		return
+	}
+
+	operation1, fhirURL1, entryDate1, capStat1 := getRowInfo(rows)
 
 	for rows.Next() {
 
-		var fhirURL string
-		var capStatJSON []byte
-		var entryDate string
-		err = rows.Scan(&fhirURL, &capStatJSON, &entryDate)
-		helpers.FailOnError("", err)
-
-		var capInt map[string]interface{}
-		err = json.Unmarshal(capStatJSON, &capInt)
-		helpers.FailOnError("", err)
-		capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
-		helpers.FailOnError("", err)
-
-		fhirEndpoint := endpointmanager.FHIREndpointInfo{
-			URL:                 fhirURL,
-			CapabilityStatement: capStat,
+		if operation1 == "I" {
+			operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+			continue
 		}
 
-		// Check to make sure the entry has not already been deleted, and if not call history pruning function
-		err = ctStatement.QueryRow(fhirURL, entryDate).Scan(&count)
-		helpers.FailOnError("", err)
-		if count != 0 {
-			capabilityhandler.HistoryPruningCheck(ctx, store, &fhirEndpoint, entryDate)
+		operation2, _, entryDate2, capStat2 := getRowInfo(rows)
+
+		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
+		if capStat1 != nil {
+			var equal = capStat1.EqualIgnore(capStat2)
+			if equal {
+				if operation2 == "I" {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate1)
+					helpers.FailOnError("", err)
+					operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				} else {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate2)
+					helpers.FailOnError("", err)
+				}
+			} else {
+				operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				continue
+			}
+		} else {
+			if capStat2 == nil {
+				if operation2 == "I" {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate1)
+					helpers.FailOnError("", err)
+					operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				} else {
+					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate2)
+					helpers.FailOnError("", err)
+				}
+			} else {
+				operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				continue
+			}
 		}
 
 	}
+}
+
+func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement) {
+	var capInt map[string]interface{}
+	var operation string
+	var fhirURL string
+	var capStatJSON []byte
+	var entryDate string
+
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate)
+	helpers.FailOnError("", err)
+
+	err = json.Unmarshal(capStatJSON, &capInt)
+	helpers.FailOnError("", err)
+	capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
+	helpers.FailOnError("", err)
+	return operation, fhirURL, entryDate, capStat
 }
