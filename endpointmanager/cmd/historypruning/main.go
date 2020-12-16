@@ -37,16 +37,11 @@ func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
 		return
 	}
 
-	operation1, fhirURL1, entryDate1, capStat1 := getRowInfo(rows)
+	_, fhirURL1, entryDate1, capStat1 := getRowInfo(rows)
 
 	for rows.Next() {
 
-		if operation1 == "I" {
-			operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
-			continue
-		}
-
-		operation2, _, entryDate2, capStat2 := getRowInfo(rows)
+		operation2, fhirURL2, entryDate2, capStat2 := getRowInfo(rows)
 
 		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
 		if capStat1 != nil {
@@ -55,13 +50,18 @@ func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
 				if operation2 == "I" {
 					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate1)
 					helpers.FailOnError("", err)
-					operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+					if !rows.Next() {
+						return
+					}
+					_, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
 				} else {
 					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate2)
 					helpers.FailOnError("", err)
 				}
 			} else {
-				operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				fhirURL1 = fhirURL2
+				entryDate1 = entryDate2
+				capStat1 = capStat2
 				continue
 			}
 		} else {
@@ -69,13 +69,18 @@ func historyPruningCheckNew(ctx context.Context, store *postgresql.Store) {
 				if operation2 == "I" {
 					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate1)
 					helpers.FailOnError("", err)
-					operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+					if !rows.Next() {
+						return
+					}
+					_, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
 				} else {
 					_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND capability_statement = 'null' AND entered_at = $2;", fhirURL1, entryDate2)
 					helpers.FailOnError("", err)
 				}
 			} else {
-				operation1, fhirURL1, entryDate1, capStat1 = getRowInfo(rows)
+				fhirURL1 = fhirURL2
+				entryDate1 = entryDate2
+				capStat1 = capStat2
 				continue
 			}
 		}
