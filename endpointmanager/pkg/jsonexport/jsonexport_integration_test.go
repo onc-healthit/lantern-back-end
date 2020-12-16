@@ -33,7 +33,7 @@ var testEndpointInfo = endpointmanager.FHIREndpointInfo{
 	SMARTHTTPResponse:  200,
 	SupportedResources: []string{"AllergyIntolerance", "Binary", "CarePlan"},
 	ResponseTime:       0.345,
-	Availability:       100,
+	Availability:       1.00,
 }
 
 var firstEndpoint = testEndpointInfo
@@ -73,31 +73,29 @@ func Test_createJSON(t *testing.T) {
 
 	ctx := context.Background()
 	err := store.AddFHIREndpoint(ctx, &testEndpoint)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error while adding a FHIR Endpoint. Error: %s", err))
 
 	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error while adding the FHIR Endpoint Info. Error: %s", err))
 
 	secondEndpoint.ID = firstEndpoint.ID
 	err = store.UpdateFHIREndpointInfo(ctx, &secondEndpoint)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error while updating the FHIR Endpoint Info. Error: %s", err))
 
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
 	err = rows.Scan(&actualNumEndptsStored)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error while getting number of endpoints from the history table. Error: %s", err))
 	th.Assert(t, actualNumEndptsStored == 2, fmt.Sprintf("Expected 2 endpoints stored. Actually had %d endpoints stored.", actualNumEndptsStored))
 
 	// Base case
 
 	returnedJSON, err := createJSON(ctx, store)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error returned from the createJSON function: %s", err))
 	err = json.Unmarshal(returnedJSON, &jsonAsObj)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, fmt.Sprintf("Error while unmarshalling the JSON. Error: %s", err))
 	th.Assert(t, len(jsonAsObj) == 1, fmt.Sprintf("Expected 1 endpoints in JSON. Actually had %d endpoints stored.", len(jsonAsObj)))
 	th.Assert(t, jsonAsObj[0].URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", jsonAsObj[0].URL))
 	th.Assert(t, len(jsonAsObj[0].Operation) == 2, fmt.Sprintf("Expected 2 history values in JSON. Actually had %d endpoints stored.", len(jsonAsObj[0].Operation)))
-	th.Assert(t, jsonAsObj[0].Operation[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", jsonAsObj[0].Operation[0]))
-	th.Assert(t, jsonAsObj[0].Operation[1].TLSVersion == "TLS 1.4", fmt.Sprintf("Should be the first entry stored in the fhir_endpoints_info table. %+v", jsonAsObj[0].Operation[1]))
 }
 
 func Test_getHistory(t *testing.T) {

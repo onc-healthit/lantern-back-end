@@ -87,7 +87,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 			&listSource,
 			&vendorNameNullable)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Error scanning the row. Error: %s", err)
 		}
 		if !vendorNameNullable.Valid {
 			entry.VendorName = ""
@@ -116,7 +116,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	// Start workers
 	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
 	}
 
 	resultCh := make(chan Result)
@@ -226,7 +226,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		WHERE url=$1;`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed getting the history rows. Error: %s", err)
 	}
 
 	// Puts the rows in an array and sends it back on the channel to be processed
@@ -250,7 +250,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			&smartRsp,
 			&op.UpdatedAt)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
 		}
 
 		op.FHIRVersion = getFHIRVersion(capStat)
