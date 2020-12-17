@@ -111,6 +111,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 
 	errs := make(chan error)
 	numWorkers := viper.GetInt("export_numworkers")
+	fmt.Printf("NUM WORKERS: %d", numWorkers)
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -122,10 +123,15 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	resultCh := make(chan Result)
 	go createJobs(ctx, resultCh, urls, store, allWorkers)
 
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
 	// Add the results from createJobs to mapURLHistory
 	count := 0
 	mapURLHistory := make(map[string][]Operation)
 	for res := range resultCh {
+		//		fmt.Printf("RETURNED INFO FOR: %s", res.URL)
 		mapURLHistory[res.URL] = res.Rows
 		if count == len(urls)-1 {
 			close(resultCh)
