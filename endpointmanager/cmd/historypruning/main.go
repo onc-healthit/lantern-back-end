@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/lib/pq"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
@@ -82,6 +84,9 @@ func historyPruningCheck(ctx context.Context, store *postgresql.Store, threshold
 		} else {
 			fhirURL1 = fhirURL2
 			capStat1 = capStat2
+			tlsVersion1 = tlsVersion2
+			mimeTypes1 = mimeTypes2
+			smartResponse1 = smartResponse2
 			continue
 		}
 	}
@@ -96,8 +101,9 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	var tlsVersion string
 	var mimeTypes []string
 	var smartResponseJSON []byte
+	var smartResponseInt map[string]interface{}
 
-	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, &mimeTypes, &smartResponseJSON)
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON)
 	helpers.FailOnError("", err)
 
 	err = json.Unmarshal(capStatJSON, &capInt)
@@ -105,8 +111,9 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
 	helpers.FailOnError("", err)
 
-	smartResponse, err := capabilityparser.NewSMARTResp(smartResponseJSON)
+	err = json.Unmarshal(smartResponseJSON, &smartResponseInt)
 	helpers.FailOnError("", err)
+	smartResponse := capabilityparser.NewSMARTRespFromInterface(smartResponseInt)
 
 	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse
 }
