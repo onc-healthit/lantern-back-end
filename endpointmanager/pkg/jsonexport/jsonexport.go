@@ -205,7 +205,7 @@ func createJobs(ctx context.Context,
 
 		err := allWorkers.Add(&job)
 		if err != nil {
-			log.Warnf("Error while adding job for getting history for URL %s", urls[index])
+			log.Warnf("Error while adding job for getting history for URL %s, %s", urls[index], err)
 		}
 	}
 }

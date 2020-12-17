@@ -60,15 +60,6 @@ endpointsmodule <- function(
     res
   })
 
-  # Create the format for the csv
-  csv_format <- reactive({
-    res <- selected_fhir_endpoints() %>%
-      select(-supported_resources, -updated, -label, -status) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
-      rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
-  })
-
   # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
     filename = function() {
