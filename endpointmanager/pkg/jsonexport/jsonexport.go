@@ -72,6 +72,8 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
 	}
 
+	log.Warnf("ERRORS HERE")
+
 	// Put into an object
 	var urls []string
 	entryCheck := make(map[string]jsonEntry)
@@ -104,6 +106,8 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 		}
 	}
 
+	log.Warnf("GET THROUGH URLS")
+
 	var entries []jsonEntry
 	for _, e := range entryCheck {
 		entries = append(entries, e)
@@ -111,7 +115,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 
 	errs := make(chan error)
 	numWorkers := viper.GetInt("export_numworkers")
-	fmt.Printf("NUM WORKERS: %d", numWorkers)
+	log.Warnf("NUM WORKERS: %d", numWorkers)
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -123,6 +127,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	resultCh := make(chan Result)
 	go createJobs(ctx, resultCh, urls, store, allWorkers)
 
+	log.Warnf("ERRORS HERE")
 	for elem := range errs {
 		log.Warn(elem)
 	}
