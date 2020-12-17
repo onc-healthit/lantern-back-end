@@ -72,8 +72,6 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
 	}
 
-	log.Warnf("ERRORS HERE")
-
 	// Put into an object
 	var urls []string
 	entryCheck := make(map[string]jsonEntry)
@@ -106,8 +104,6 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 		}
 	}
 
-	log.Warnf("GET THROUGH URLS")
-
 	var entries []jsonEntry
 	for _, e := range entryCheck {
 		entries = append(entries, e)
@@ -115,7 +111,6 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 
 	errs := make(chan error)
 	numWorkers := viper.GetInt("export_numworkers")
-	log.Warnf("NUM WORKERS: %d", numWorkers)
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -127,16 +122,11 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	resultCh := make(chan Result)
 	go createJobs(ctx, resultCh, urls, store, allWorkers)
 
-	log.Warnf("ERRORS HERE")
-	for elem := range errs {
-		log.Warn(elem)
-	}
-
 	// Add the results from createJobs to mapURLHistory
 	count := 0
 	mapURLHistory := make(map[string][]Operation)
 	for res := range resultCh {
-		//		fmt.Printf("RETURNED INFO FOR: %s", res.URL)
+		log.Infof("RETURNED INFO FOR: %s", res.URL)
 		mapURLHistory[res.URL] = res.Rows
 		if count == len(urls)-1 {
 			close(resultCh)
@@ -209,14 +199,14 @@ func createJobs(ctx context.Context,
 
 		job := workers.Job{
 			Context:     ctx,
-			Duration:    30 * time.Second,
+			Duration:    120 * time.Second,
 			Handler:     getHistory,
 			HandlerArgs: &jobArgs,
 		}
 
 		err := allWorkers.Add(&job)
 		if err != nil {
-			// log.Warnf("Error while adding job for getting history for URL %s, %s", urls[index], err)
+			log.Warnf("Error while adding job for getting history for URL %s, %s", urls[index], err)
 		}
 	}
 }
