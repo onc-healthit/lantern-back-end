@@ -63,6 +63,10 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: 50
 
+* **LANTERN_EXPORT_DURATION**: The amount of time given to a worker (in seconds) to get a URL's history data from the database for the JSON export file.
+
+  Default value: 120
+
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:

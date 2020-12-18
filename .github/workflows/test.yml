@@ -45,6 +45,7 @@ jobs:
           LANTERN_QHOST: localhost
           LANTERN_EXPORTFILE_WAIT: 300
           LANTERN_EXPORT_NUMWORKERS: 50
+          LANTERN_EXPORT_DURATION: 120
       - name: Go Integration Tests
         id: go-integration-tests
         run: ./scripts/wait-for-it.sh localhost:5432 -- ./scripts/wait-for-it.sh localhost:15672 -- ./scripts/wait-for-it.sh localhost:5672 -- make test_int
@@ -85,3 +86,4 @@ jobs:
           LANTERN_QHOST: lantern-mq
           LANTERN_EXPORTFILE_WAIT: 300
           LANTERN_EXPORT_NUMWORKERS: 50
+          LANTERN_EXPORT_DURATION: 120

@@ -111,6 +111,10 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 
 	errs := make(chan error)
 	numWorkers := viper.GetInt("export_numworkers")
+	// If numWorkers not set, default to 10 workers
+	if numWorkers == 0 {
+		numWorkers = 10
+	}
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
@@ -125,8 +129,9 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	// Add the results from createJobs to mapURLHistory
 	count := 0
 	mapURLHistory := make(map[string][]Operation)
+	fmt.Printf("TOTAL NUM ENDPTS: %d", len(urls))
 	for res := range resultCh {
-		log.Infof("RETURNED INFO FOR: %s", res.URL)
+		log.Infof("COUNTING THROUGH THE URLS: %d", count)
 		mapURLHistory[res.URL] = res.Rows
 		if count == len(urls)-1 {
 			close(resultCh)
@@ -196,10 +201,15 @@ func createJobs(ctx context.Context,
 			store:   store,
 			result:  ch,
 		}
+		workerDur := viper.GetInt("export_duration")
+		// If duration not set, default to 120 seconds
+		if workerDur == 0 {
+			workerDur = 120
+		}
 
 		job := workers.Job{
 			Context:     ctx,
-			Duration:    120 * time.Second,
+			Duration:    workerDur * time.Second,
 			Handler:     getHistory,
 			HandlerArgs: &jobArgs,
 		}

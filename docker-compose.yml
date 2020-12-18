@@ -44,6 +44,7 @@ services:
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
       - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
+      - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
@@ -73,6 +74,8 @@ services:
       - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
       - LANTERN_DBNAME=${LANTERN_DBNAME}
       - LANTERN_EXPORTFILE_WAIT=${LANTERN_EXPORTFILE_WAIT}
+      - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
+      - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"

@@ -74,6 +74,14 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = viper.BindEnv("export_numworkers")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("export_duration")
+	if err != nil {
+		return err
+	}
 
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
@@ -91,6 +99,8 @@ func SetupConfig() error {
 	viper.SetDefault("dbsslmode", "disable")
 
 	viper.SetDefault("exportfile_wait", 300)
+	viper.SetDefault("export_numworkers", 50)
+	viper.SetDefault("export_duration", 120)
 
 	return nil
 }
