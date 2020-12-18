@@ -225,6 +225,8 @@ func createJobs(ctx context.Context,
 func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	var resultRows []Operation
 
+	log.Warnf("GET HISTORY")
+
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
 		log.Warnf("unable to cast arguments to type historyArgs")
@@ -235,6 +237,8 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		ha.result <- result
 		return nil
 	}
+
+	log.Warnf("FOR %s", ha.fhirURL)
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `
