@@ -5,8 +5,6 @@ import (
 	"errors"
 	"sync"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Job contains all of the information for a worker to execute the job.
@@ -114,16 +112,13 @@ func worker(ctx context.Context, jobs chan *Job, kill chan bool, wg *sync.WaitGr
 		select {
 		case job := <-jobs:
 			err := jobHandler(job)
-			log.Warnf("JOBS DONE")
 			if err != nil {
 				errs <- err
 			}
 		case <-ctx.Done():
-			log.Warnf("CONTEXT DONE %+v", job.HandlerArgs)
 			wg.Done()
 			return
 		case <-kill:
-			log.Warnf("KILLED %+v", job.HandlerArgs)
 			wg.Done()
 			return
 		}
