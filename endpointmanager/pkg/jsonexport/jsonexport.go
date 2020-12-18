@@ -209,7 +209,7 @@ func createJobs(ctx context.Context,
 
 		job := workers.Job{
 			Context:     ctx,
-			Duration:    workerDur * time.Second,
+			Duration:    time.Duration(workerDur) * time.Second,
 			Handler:     getHistory,
 			HandlerArgs: &jobArgs,
 		}
