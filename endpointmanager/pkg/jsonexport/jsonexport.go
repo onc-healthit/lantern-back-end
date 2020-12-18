@@ -130,7 +130,9 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	count := 0
 	mapURLHistory := make(map[string][]Operation)
 	for res := range resultCh {
-		mapURLHistory[res.URL] = res.Rows
+		if res.URL != "unknown" {
+			mapURLHistory[res.URL] = res.Rows
+		}
 		if count == len(urls)-1 {
 			close(resultCh)
 		}
@@ -221,11 +223,13 @@ func createJobs(ctx context.Context,
 
 // getHistory gets the database history of a specified url
 func getHistory(ctx context.Context, args *map[string]interface{}) error {
+	var resultRows []Operation
+
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
 		log.Warnf("unable to cast arguments to type historyArgs")
 		result := Result{
-			URL:  ha.fhirURL,
+			URL:  "unknown",
 			Rows: resultRows,
 		}
 		ha.result <- result
@@ -251,7 +255,6 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Puts the rows in an array and sends it back on the channel to be processed
-	var resultRows []Operation
 	defer historyRows.Close()
 	for historyRows.Next() {
 		var op Operation
