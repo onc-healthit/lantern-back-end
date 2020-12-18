@@ -129,9 +129,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	// Add the results from createJobs to mapURLHistory
 	count := 0
 	mapURLHistory := make(map[string][]Operation)
-	fmt.Printf("TOTAL NUM ENDPTS: %d", len(urls))
 	for res := range resultCh {
-		log.Infof("COUNTING THROUGH THE URLS: %d", count)
 		mapURLHistory[res.URL] = res.Rows
 		if count == len(urls)-1 {
 			close(resultCh)
@@ -226,8 +224,12 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
 		log.Warnf("unable to cast arguments to type historyArgs")
+		result := Result{
+			URL:  ha.fhirURL,
+			Rows: resultRows,
+		}
+		ha.result <- result
 		return nil
-		// return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
@@ -240,8 +242,12 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
+		result := Result{
+			URL:  ha.fhirURL,
+			Rows: resultRows,
+		}
+		ha.result <- result
 		return nil
-		// return fmt.Errorf("Failed getting the history rows. Error: %s", err)
 	}
 
 	// Puts the rows in an array and sends it back on the channel to be processed
@@ -266,8 +272,12 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			&op.UpdatedAt)
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			result := Result{
+				URL:  ha.fhirURL,
+				Rows: resultRows,
+			}
+			ha.result <- result
 			return nil
-			// return fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
 		}
 
 		op.FHIRVersion = getFHIRVersion(capStat)
