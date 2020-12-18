@@ -225,7 +225,9 @@ func createJobs(ctx context.Context,
 func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
-		return fmt.Errorf("unable to cast arguments to type historyArgs")
+		log.Warnf("unable to cast arguments to type historyArgs")
+		return nil
+		// return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
@@ -237,7 +239,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		WHERE url=$1;`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
-		return fmt.Errorf("Failed getting the history rows. Error: %s", err)
+		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
+		return nil
+		// return fmt.Errorf("Failed getting the history rows. Error: %s", err)
 	}
 
 	// Puts the rows in an array and sends it back on the channel to be processed
@@ -261,7 +265,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			&smartRsp,
 			&op.UpdatedAt)
 		if err != nil {
-			return fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
+			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			return nil
+			// return fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
 		}
 
 		op.FHIRVersion = getFHIRVersion(capStat)
