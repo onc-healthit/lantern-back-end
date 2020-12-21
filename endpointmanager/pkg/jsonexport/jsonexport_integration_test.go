@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -14,6 +15,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
@@ -137,16 +139,32 @@ func Test_getHistory(t *testing.T) {
 
 	// If the args are not properly formatted
 
+	hook := logtest.NewGlobal()
+	expectedErr := "unable to cast arguments to type historyArgs"
+	resultCh2 := make(chan Result)
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = map[string]interface{}{
 		"nonsense": 1,
 	}
 
-	err = getHistory(ctx, &jobArgs2)
-	th.Assert(t, err != nil, fmt.Sprint("Malformed arguments should have thrown error."))
+	go getHistory(ctx, &jobArgs2)
+	for res := range resultCh2 {
+		th.Assert(t, len(res.Rows) == 0, fmt.Sprintf("Expected rows to be empty due to the error.", len(res.Rows)))
+		th.Assert(t, res.URL == "unknown", fmt.Sprintf("Expected URL to equal 'unknown'. Is actually '%s'.", res.URL))
+		close(resultCh2)
+	}
+	found := false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected an error from casting to historyArgs to be logged from context")
 
 	// If the URL does not exist, return an empty array
 
+	expectedErr2 := "Failed getting the history rows for URL"
 	resultCh3 := make(chan Result)
 	jobArgs3 := make(map[string]interface{})
 	jobArgs3["historyArgs"] = historyArgs{
@@ -161,6 +179,15 @@ func Test_getHistory(t *testing.T) {
 		th.Assert(t, res.URL == "thisurldoesntexist.com", fmt.Sprintf("Expected URL to equal 'thisurldoesntexist.com'. Is actually '%s'.", res.URL))
 		close(resultCh3)
 	}
+	found = false
+	for i := range hook.Entries {
+		if strings.Contains(hook.Entries[i].Message, expectedErr2) {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected an error from getting the URL from the history table")
+
 }
 
 func setup() error {
