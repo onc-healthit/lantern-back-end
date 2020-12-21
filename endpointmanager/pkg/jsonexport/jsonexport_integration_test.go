@@ -149,7 +149,7 @@ func Test_getHistory(t *testing.T) {
 
 	go getHistory(ctx, &jobArgs2)
 	for res := range resultCh2 {
-		th.Assert(t, len(res.Rows) == 0, fmt.Sprintf("Expected rows to be empty due to the error.", len(res.Rows)))
+		th.Assert(t, len(res.Rows) == 0, fmt.Sprintf("Expected rows to be empty due to the error, instead there are %d.", len(res.Rows)))
 		th.Assert(t, res.URL == "unknown", fmt.Sprintf("Expected URL to equal 'unknown'. Is actually '%s'.", res.URL))
 		close(resultCh2)
 	}
