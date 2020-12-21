@@ -92,11 +92,11 @@ func populateTestEndpointData(testEndpointList string, source string) {
 	helpers.FailOnError("", err)
 
 	if source == "Test" {
-		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source)
+		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source, "test.com")
 		helpers.FailOnError("", err)
 	} else {
 		knownSource = "LanternEndpointSourcesJson"
-		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource)
+		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource, "")
 		helpers.FailOnError("", err)
 	}
 

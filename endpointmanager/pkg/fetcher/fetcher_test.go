@@ -175,7 +175,7 @@ func Test_convertInterfaceToList(t *testing.T) {
 
 	// incorrect reference value
 
-	resultList, err = convertInterfaceToList(initialList, "Entries")
+	_, err = convertInterfaceToList(initialList, "Entries")
 	th.Assert(t, err != nil, fmt.Sprintf("Should have thrown an incorrect reference value error, instead threw %s", err))
 
 	// the referenced value is not an array
@@ -185,7 +185,7 @@ func Test_convertInterfaceToList(t *testing.T) {
 		"entry": "broken JSON" }`)
 	err = json.Unmarshal(testNoArray, &initialList2)
 	th.Assert(t, err == nil, "The given JSON should have been valid")
-	resultList, err = convertInterfaceToList(initialList2, "entry")
+	_, err = convertInterfaceToList(initialList2, "entry")
 	th.Assert(t, err != nil, fmt.Sprintf("Should have thrown endpoint list is not an array error, instead threw %s", err))
 
 	// the referenced array is not made of map[string]interface{}
@@ -195,6 +195,6 @@ func Test_convertInterfaceToList(t *testing.T) {
 		"entry": [1, 2, 3] }`)
 	err = json.Unmarshal(testNoMap, &initialList3)
 	th.Assert(t, err == nil, "The given JSON should have been valid")
-	resultList, err = convertInterfaceToList(initialList3, "entry")
+	_, err = convertInterfaceToList(initialList3, "entry")
 	th.Assert(t, err != nil, fmt.Sprintf("Should have thrown endpoint list is not map[string]interface{} error, instead threw %s", err))
 }
