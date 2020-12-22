@@ -158,18 +158,23 @@ CREATE TABLE fhir_endpoints_info (
     url                     VARCHAR(500) UNIQUE,
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    http_response           INTEGER,
-    availability            DECIMAL(5,4),
-    errors                  VARCHAR(500),
     capability_statement    JSONB,
     validation              JSONB,
     included_fields         JSONB,
     supported_resources     VARCHAR(500)[],
-    response_time_seconds   DECIMAL(7,4),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_http_response     INTEGER,
     smart_response          JSONB
+);
+
+CREATE TABLE fhir_endpoints_metadata (
+    id                      SERIAL PRIMARY KEY,
+    url                     VARCHAR(500) UNIQUE,
+    http_response           INTEGER,
+    availability            DECIMAL(5,4),
+    errors                  VARCHAR(500),
+    response_time_seconds   DECIMAL(7,4),
+    smart_http_response     INTEGER
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -182,17 +187,12 @@ CREATE TABLE fhir_endpoints_info_history (
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    http_response           INTEGER,
-    availability            DECIMAL(5,4),
-    errors                  VARCHAR(500),
     capability_statement    JSONB,
     validation              JSONB,
     included_fields         JSONB,
     supported_resources     VARCHAR(500)[],
-    response_time_seconds   DECIMAL(7,4),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_http_response     INTEGER,
     smart_response          JSONB
 );
 
@@ -276,7 +276,7 @@ EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 -- increments total number of times http status returned for endpoint 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger
-BEFORE INSERT OR UPDATE on fhir_endpoints_info
+BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
@@ -291,8 +291,8 @@ LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
     vendors.name as vendor_name,
-    endpts_info.tls_version, endpts_info.mime_types, endpts_info.http_response,
-    endpts_info.response_time_seconds, endpts_info.smart_http_response, endpts_info.errors,
+    endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
+    endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
     endpts_info.capability_statement->>'fhirVersion' AS FHIR_VERSION,
     endpts_info.capability_statement->>'publisher' AS PUBLISHER,
     endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
@@ -302,10 +302,11 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
     links.confidence AS MATCH_SCORE, endpts_info.supported_resources,
-    endpts_info.availability
+    endpts_metadata.availability
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts.url = endpts_metadata.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 

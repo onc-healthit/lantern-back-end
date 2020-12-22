@@ -123,18 +123,13 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		vendor_id,
 		tls_version,
 		mime_types,
-		http_response,
-		errors,
 		capability_statement,
 		validation,
 		created_at,
 		updated_at,
-		smart_http_response,
 		smart_response,
 		included_fields,
-		supported_resources,
-		response_time_seconds,
-		availability
+		supported_resources
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
@@ -146,18 +141,13 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&vendorIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Errors,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
-		&endpointInfo.SMARTHTTPResponse,
 		&smartResponseJSON,
 		&includedFieldsJSON,
-		pq.Array(&endpointInfo.SupportedResources),
-		&endpointInfo.ResponseTime,
-		&endpointInfo.Availability)
+		pq.Array(&endpointInfo.SupportedResources))
 	if err != nil {
 		return nil, err
 	}
@@ -322,17 +312,12 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			vendor_id,
 			tls_version,
 			mime_types,
-			http_response,
-			errors,
 			capability_statement,
 			validation,
-			smart_http_response,
 			smart_response,
 			included_fields,
-			supported_resources,
-			response_time_seconds,
-			availability)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+			supported_resources)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -345,18 +330,13 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			vendor_id = $3,
 			tls_version = $4,
 			mime_types = $5,
-			http_response = $6,
-			errors = $7,
-			capability_statement = $8,
-			validation = $9,
-			smart_http_response = $10,
-			smart_response = $11,
-			included_fields = $12,
-			supported_resources = $13,
-			response_time_seconds = $14,
-			availability = $15
+			capability_statement = $6,
+			validation = $7,
+			smart_response = $8,
+			included_fields = $9,
+			supported_resources = $10
 			
-		WHERE id = $16`)
+		WHERE id = $11`)
 	if err != nil {
 		return err
 	}
