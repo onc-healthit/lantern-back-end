@@ -227,13 +227,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
-		log.Warnf("unable to cast arguments to type historyArgs")
-		result := Result{
-			URL:  "unknown",
-			Rows: resultRows,
-		}
-		ha.result <- result
-		return nil
+		return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
