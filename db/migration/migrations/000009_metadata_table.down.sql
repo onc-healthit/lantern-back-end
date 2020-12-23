@@ -9,6 +9,13 @@ ADD COLUMN errors VARCHAR(500),
 ADD COLUMN response_time_seconds DECIMAL(7,4), 
 ADD COLUMN smart_http_response INTEGER;
 
+ALTER TABLE fhir_endpoints_info_history 
+ADD COLUMN http_response INTEGER, 
+ADD COLUMN availability DECIMAL(5,4), 
+ADD COLUMN errors VARCHAR(500), 
+ADD COLUMN response_time_seconds DECIMAL(7,4), 
+ADD COLUMN smart_http_response INTEGER;
+
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
     DECLARE
