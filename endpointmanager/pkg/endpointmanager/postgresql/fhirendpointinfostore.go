@@ -424,7 +424,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			availability = $3,
 			errors = $4,
 			response_time_seconds = $5,
-			smart_http_response = $6)
+			smart_http_response = $6
 		WHERE id = $7`)
 	if err != nil {
 		return err
