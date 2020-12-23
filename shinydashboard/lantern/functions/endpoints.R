@@ -40,7 +40,7 @@ get_fhir_endpoints_tbl <- function() {
 
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_info %>%
+  curr_tally <- db_tables$fhir_endpoints_metadata %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -65,6 +65,7 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
+    left_join(db_tables$fhir_endpoints_metadata %>%
       select(url, vendor_name), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name) %>%
       mutate(code = as.character(http_response)) %>%
@@ -355,10 +356,11 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version
     FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m on f.id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
-    WHERE f.smart_http_response = 200
+    WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -369,7 +371,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 # checking if valid SMART core capability doc returned)
 get_well_known_endpoints_count <- function(db_connection) {
   res <- tbl(db_connection,
-      sql("SELECT count(*) from fhir_endpoints_info
+      sql("SELECT count(*) from fhir_endpoints_metadata
           WHERE smart_http_response = 200")) %>%
       collect() %>%
       pull(count)
@@ -386,10 +388,11 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
       f.smart_http_response,
       f.smart_response
     FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m on f.id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
-    WHERE f.smart_http_response = 200
+    WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
