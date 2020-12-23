@@ -281,10 +281,10 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		e.ID,
 		e.URL,
 		e.HTTPResponse,
+		e.Availability,
 		e.Errors,
-		e.SMARTHTTPResponse,
 		e.ResponseTime,
-		e.Availability)
+		e.SMARTHTTPResponse)
 
 	err = row.Scan(&e.ID)
 
@@ -346,10 +346,10 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	_, err = updateFHIREndpointMetadataStatement.ExecContext(ctx,
 		e.URL,
 		e.HTTPResponse,
-		e.Errors,
-		e.SMARTHTTPResponse,
-		e.ResponseTime,
 		e.Availability,
+		e.Errors,
+		e.ResponseTime,
+		e.SMARTHTTPResponse,
 		e.ID)
 
 	return err
