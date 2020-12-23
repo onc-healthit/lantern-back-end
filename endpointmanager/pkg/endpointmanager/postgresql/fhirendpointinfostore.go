@@ -343,6 +343,15 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
+	err = s.UpdateFHIREndpointMetadata(ctx, e)
+
+	return err
+}
+
+// UpdateFHIREndpointMetadata updates the FHIREndpointMetadata in the database using the FHIREndpointInfo's database id as the key.
+func (s *Store) UpdateFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+	var err error
+
 	_, err = updateFHIREndpointMetadataStatement.ExecContext(ctx,
 		e.URL,
 		e.HTTPResponse,

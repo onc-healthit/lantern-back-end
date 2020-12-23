@@ -168,18 +168,36 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	} else if err != nil {
 		return err
 	} else {
-		// If the endpoint info does exist, update it with the new information.
-		existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
-		existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
-		existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+
+		if !existingEndpt.Equal(fhirEndpoint) {
+			// If the endpoint info does exist, update it with the new information.
+			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
+			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
+			existingEndpt.Validation = fhirEndpoint.Validation
+			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
+			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
+			existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
+
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			if err != nil {
+				return err
+			}
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+			if err != nil {
+				return err
+			}
+			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
+			if err != nil {
+				return err
+			}
+		}
+
 		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
 		existingEndpt.Errors = fhirEndpoint.Errors
-		existingEndpt.Validation = fhirEndpoint.Validation
-		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
-		existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
-		existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
-		existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
 		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
+		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+
 		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
 		if err != nil {
 			return err
@@ -190,6 +208,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		}
 
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
+
+		err = store.UpdateFHIREndpointMetadata(ctx, existingEndpt)
 		if err != nil {
 			return err
 		}
