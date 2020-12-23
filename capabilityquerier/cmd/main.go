@@ -12,6 +12,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -48,6 +49,13 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	}
 
 	urlString := string(message)
+	exportFileWait := viper.GetInt("exportfile_wait")
+
+	if urlString == "FINISHED" {
+		time.Sleep(time.Duration(exportFileWait) * time.Second)
+		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
+		return err
+	}
 
 	jobArgs := make(map[string]interface{})
 

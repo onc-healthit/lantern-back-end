@@ -9,8 +9,8 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download Endpoint Data"),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions")
+             downloadButton(ns("download_data"), "Download Endpoint Data (CSV)"),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)")
       ),
     ),
     DT::dataTableOutput(ns("endpoints_table")),
@@ -60,23 +60,6 @@ endpointsmodule <- function(
     res
   })
 
-  output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
-              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
-              rownames = FALSE,
-              options = list(scrollX = TRUE)
-    )
-  })
-
-  # Create the format for the csv
-  csv_format <- reactive({
-    res <- selected_fhir_endpoints() %>%
-      select(-supported_resources, -updated, -label, -status, -availability) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
-      rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
-  })
-
   # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
     filename = function() {
@@ -96,6 +79,23 @@ endpointsmodule <- function(
       file.copy("fhir_endpoints_fields.csv", file)
     }
   )
+
+  output$endpoints_table <- DT::renderDataTable({
+    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
+              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
+              rownames = FALSE,
+              options = list(scrollX = TRUE)
+    )
+  })
+
+  # Create the format for the csv
+  csv_format <- reactive({
+    res <- selected_fhir_endpoints() %>%
+      select(-supported_resources, -updated, -label, -status, -availability) %>%
+      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(created_at = info_created, updated = info_updated) %>%
+      rename(http_response_time_second = response_time_seconds)
+  })
 
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability

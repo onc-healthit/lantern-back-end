@@ -16,6 +16,7 @@ libraries:
   - "purrr"
   - "xts"
   - "leaflet"
+  - "jsonlite"
 
 function_files:
   - "functions/db_connection.R"
@@ -26,6 +27,7 @@ function_files:
 module_files:
   - "modules/capabilitymodule.R"
   - "modules/dashboardmodule.R"
+  - "modules/downloadsmodule.R"
   - "modules/endpointsmodule.R"
   - "modules/fieldsmodule.R"
   - "modules/locationmodule.R"

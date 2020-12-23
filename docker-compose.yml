@@ -43,6 +43,8 @@ services:
       - LANTERN_CAPQUERY_QNAME=${LANTERN_CAPQUERY_QNAME}
       - LANTERN_CAPQUERY_NUMWORKERS=${LANTERN_CAPQUERY_NUMWORKERS}
       - LANTERN_CAPQUERY_QRYINTVL=${LANTERN_CAPQUERY_QRYINTVL}
+      - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
+      - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
@@ -71,9 +73,13 @@ services:
       - LANTERN_DBPASSWORD=${LANTERN_DBPASSWORD}
       - LANTERN_DBSSLMODE=${LANTERN_DBSSLMODE}
       - LANTERN_DBNAME=${LANTERN_DBNAME}
+      - LANTERN_EXPORTFILE_WAIT=${LANTERN_EXPORTFILE_WAIT}
+      - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
+      - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"
+      - jsonexport:/etc/lantern/exportfolder
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   capability_receiver:
@@ -118,11 +124,11 @@ services:
       - ./shinydashboard/lantern/:/srv/shiny-server
       - ./shinydashboard/shiny_logs:/var/log/shiny-server
       - "./VERSION:/srv/shiny-server/VERSION:ro"
+      - jsonexport:/srv/shiny-server/exportfolder
     ports:
       - "8090:3838"
 
 volumes:
   pgdata:
   rabbitmqdata:
-
-
+  jsonexport:

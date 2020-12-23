@@ -72,6 +72,15 @@ func SetupConfig() error {
 		return err
 	}
 
+	err = viper.BindEnv("export_numworkers")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("export_duration")
+	if err != nil {
+		return err
+	}
+
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
 	viper.SetDefault("dbuser", "lantern")
@@ -86,6 +95,9 @@ func SetupConfig() error {
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
 	viper.SetDefault("capquery_qryintvl", 1380) // 1380 minutes -> 23 hours.
+
+	viper.SetDefault("export_numworkers", 50)
+	viper.SetDefault("export_duration", 120)
 
 	return nil
 }
