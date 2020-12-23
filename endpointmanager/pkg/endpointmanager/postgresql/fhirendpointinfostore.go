@@ -174,7 +174,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		errors,
 		response_time_seconds,
 		smart_http_response 
-	FROM fhir_endpoints_metadata WHERE fhir_endpoints_info.url = $1`
+	FROM fhir_endpoints_metadata WHERE fhir_endpoints_metadata.url = $1`
 
 	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, url)
 
