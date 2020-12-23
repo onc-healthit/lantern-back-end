@@ -174,7 +174,9 @@ CREATE TABLE fhir_endpoints_metadata (
     availability            DECIMAL(5,4),
     errors                  VARCHAR(500),
     response_time_seconds   DECIMAL(7,4),
-    smart_http_response     INTEGER
+    smart_http_response     INTEGER,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -250,6 +252,11 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE TRIGGER set_timestamp_fhir_endpoints_info
 BEFORE UPDATE ON fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_fhir_endpoints_metadata
+BEFORE UPDATE ON fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
