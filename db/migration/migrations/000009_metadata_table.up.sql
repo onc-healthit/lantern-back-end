@@ -15,6 +15,14 @@ DROP COLUMN errors,
 DROP COLUMN response_time_seconds, 
 DROP COLUMN smart_http_response;
 
+ALTER TABLE fhir_endpoints_info_history 
+DROP COLUMN http_response, 
+DROP COLUMN availability, 
+DROP COLUMN errors, 
+DROP COLUMN response_time_seconds, 
+DROP COLUMN smart_http_response;
+
+
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
     vendors.name as vendor_name,
