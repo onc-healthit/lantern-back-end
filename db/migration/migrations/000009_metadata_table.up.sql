@@ -2,12 +2,18 @@ BEGIN;
 
 DROP VIEW IF EXISTS endpoint_export;
 
-CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata AS (
-    SELECT id, url, http_response, availability, errors, response_time_seconds, smart_http_response 
-    FROM fhir_endpoints_info;
-);
+DROP TABLE IF EXISTS fhir_endpoints_metadata;
 
-ALTER TABLE fhir_endpoints_info DROP COLUMN http_response, availability, errors, response_time_seconds, smart_http_response;
+CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata AS
+    SELECT id, url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at   
+    FROM fhir_endpoints_info;
+
+ALTER TABLE fhir_endpoints_info 
+DROP COLUMN http_response, 
+DROP COLUMN availability, 
+DROP COLUMN errors, 
+DROP COLUMN response_time_seconds, 
+DROP COLUMN smart_http_response;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
@@ -32,11 +38,18 @@ LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
 DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
+DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_metadata;
+DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoints_metadata ON fhir_endpoints_metadata;
 
 -- increments total number of times http status returned for endpoint 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger
 BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
+
+CREATE TRIGGER set_timestamp_fhir_endpoints_metadata
+BEFORE UPDATE ON fhir_endpoints_metadata
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
 
 COMMIT;
