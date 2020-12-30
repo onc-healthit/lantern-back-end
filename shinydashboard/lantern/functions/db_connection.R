@@ -28,7 +28,7 @@ db_connection <-
 db_tables <- list(
   fhir_endpoints              = tbl(db_connection, "fhir_endpoints"),
   fhir_endpoints_info         = tbl(db_connection, "fhir_endpoints_info"),
-  fhir_endpoints_metadata         = tbl(db_connection, "fhir_endpoints_metadata"),
+  fhir_endpoints_metadata     = tbl(db_connection, "fhir_endpoints_metadata"),
   fhir_endpoints_info_history = tbl(db_connection, "fhir_endpoints_info_history"),
   end_org                     = tbl(db_connection, "endpoint_organization"),
   hit_prod                    = tbl(db_connection, "healthit_products"),
