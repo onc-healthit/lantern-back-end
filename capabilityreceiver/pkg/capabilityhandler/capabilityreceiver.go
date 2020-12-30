@@ -169,7 +169,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 
-		if !existingEndpt.Equal(fhirEndpoint) {
+		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			// If the endpoint info does exist, update it with the new information.
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion

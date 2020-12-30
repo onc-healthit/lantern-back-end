@@ -33,6 +33,63 @@ type FHIREndpointInfo struct {
 	Availability        float64
 }
 
+// EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
+func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
+	if e == nil && e2 == nil {
+		return true
+	} else if e == nil {
+		return false
+	} else if e2 == nil {
+		return false
+	}
+
+	if e.URL != e2.URL {
+		return false
+	}
+	if e.HealthITProductID != e2.HealthITProductID {
+		return false
+	}
+
+	if e.TLSVersion != e2.TLSVersion {
+		return false
+	}
+
+	if !helpers.StringArraysEqual(e.MIMETypes, e2.MIMETypes) {
+		return false
+	}
+
+	if e.VendorID != e2.VendorID {
+		return false
+	}
+	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal
+	// method.
+	if e.CapabilityStatement != nil && !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
+		return false
+	}
+	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
+	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
+		return false
+	}
+	if e.SMARTResponse == nil && e2.SMARTResponse != nil {
+		return false
+	}
+
+	if !cmp.Equal(e.Validation, e2.Validation) {
+		return false
+	}
+
+	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
+		return false
+	}
+
+	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
+		return false
+	}
+	return true
+}
+
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	if e == nil && e2 == nil {
