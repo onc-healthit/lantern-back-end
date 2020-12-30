@@ -74,7 +74,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		errors,
 		response_time_seconds,
 		smart_http_response 
-	FROM fhir_endpoints_metadata WHERE id=$1`
+	FROM fhir_endpoints_metadata WHERE id=$1 ORDER BY updated_at DESC LIMIT 1;`
 
 	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, id)
 
@@ -260,16 +260,11 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
-		e.HTTPResponse,
-		e.Errors,
 		capabilityStatementJSON,
 		validationJSON,
-		e.SMARTHTTPResponse,
 		smartResponseJSON,
 		includedFieldsJSON,
-		pq.Array(e.SupportedResources),
-		e.ResponseTime,
-		e.Availability)
+		pq.Array(e.SupportedResources))
 
 	err = row.Scan(&e.ID)
 
@@ -277,16 +272,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
-	row = addFHIREndpointMetadataStatement.QueryRowContext(ctx,
-		e.ID,
-		e.URL,
-		e.HTTPResponse,
-		e.Availability,
-		e.Errors,
-		e.ResponseTime,
-		e.SMARTHTTPResponse)
-
-	err = row.Scan(&e.ID)
+	err = s.AddFHIREndpointMetadata(ctx, e)
 
 	return err
 }
@@ -343,23 +329,25 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
-	err = s.UpdateFHIREndpointMetadata(ctx, e)
+	err = s.AddFHIREndpointMetadata(ctx, e)
 
 	return err
 }
 
-// UpdateFHIREndpointMetadata updates the FHIREndpointMetadata in the database using the FHIREndpointInfo's database id as the key.
-func (s *Store) UpdateFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+// AddFHIREndpointMetadata adds the FHIREndpointMetadata in the database
+func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	var err error
 
-	_, err = updateFHIREndpointMetadataStatement.ExecContext(ctx,
+	row := addFHIREndpointMetadataStatement.QueryRowContext(ctx,
+		e.ID,
 		e.URL,
 		e.HTTPResponse,
 		e.Availability,
 		e.Errors,
 		e.ResponseTime,
-		e.SMARTHTTPResponse,
-		e.ID)
+		e.SMARTHTTPResponse)
+
+	err = row.Scan(&e.ID)
 
 	return err
 }
@@ -367,10 +355,6 @@ func (s *Store) UpdateFHIREndpointMetadata(ctx context.Context, e *endpointmanag
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
-	if err != nil {
-		return err
-	}
-	_, err = deleteFHIREndpointMetadataStatement.ExecContext(ctx, e.ID)
 	return err
 }
 

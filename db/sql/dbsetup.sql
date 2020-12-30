@@ -168,8 +168,8 @@ CREATE TABLE fhir_endpoints_info (
 );
 
 CREATE TABLE fhir_endpoints_metadata (
-    id                      INTEGER PRIMARY KEY,
-    url                     VARCHAR(500) UNIQUE,
+    id                      INTEGER,
+    url                     VARCHAR(500),
     http_response           INTEGER,
     availability            DECIMAL(5,4),
     errors                  VARCHAR(500),
