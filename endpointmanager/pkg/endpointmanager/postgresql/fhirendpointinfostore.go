@@ -17,8 +17,9 @@ var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
 
 var addFHIREndpointMetadataStatement *sql.Stmt
-var updateFHIREndpointMetadataStatement *sql.Stmt
-var deleteFHIREndpointMetadataStatement *sql.Stmt
+
+//var updateFHIREndpointMetadataStatement *sql.Stmt
+//var deleteFHIREndpointMetadataStatement *sql.Stmt
 
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
@@ -409,7 +410,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	if err != nil {
 		return err
 	}
-	updateFHIREndpointMetadataStatement, err = s.DB.Prepare(`
+	/*updateFHIREndpointMetadataStatement, err = s.DB.Prepare(`
 		UPDATE fhir_endpoints_metadata
 		SET
 			url = $1,
@@ -421,18 +422,18 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		WHERE id = $7`)
 	if err != nil {
 		return err
-	}
+	}*/
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
         WHERE id = $1`)
 	if err != nil {
 		return err
 	}
-	deleteFHIREndpointMetadataStatement, err = s.DB.Prepare(`
+	/*deleteFHIREndpointMetadataStatement, err = s.DB.Prepare(`
 		DELETE FROM fhir_endpoints_metadata
 		WHERE id = $1`)
 	if err != nil {
 		return err
-	}
+	}*/
 	return nil
 }
