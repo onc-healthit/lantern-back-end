@@ -83,7 +83,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		HandlerArgs: &jobArgs,
 	}
 
-	err = qa.workers.Add(&job)
+	err := qa.workers.Add(&job)
 	if err != nil {
 		return fmt.Errorf("error adding job to workers: %s", err.Error())
 	}
