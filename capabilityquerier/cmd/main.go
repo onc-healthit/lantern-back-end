@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -51,7 +53,12 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	urlString := string(message)
 	exportFileWait := viper.GetInt("exportfile_wait")
 
+	thresholdInt := viper.GetInt("pruning_threshold")
+	threshold := strconv.Itoa(thresholdInt)
+	queryInterval := strconv.Itoa(thresholdInt + (2 * viper.GetInt("capquery_qryintvl")))
+
 	if urlString == "FINISHED" {
+		historypruning.HistoryPruningCheck(qa.ctx, qa.store, threshold, queryInterval)
 		time.Sleep(time.Duration(exportFileWait) * time.Second)
 		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		return err
@@ -76,7 +83,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 		HandlerArgs: &jobArgs,
 	}
 
-	err := qa.workers.Add(&job)
+	err = qa.workers.Add(&job)
 	if err != nil {
 		return fmt.Errorf("error adding job to workers: %s", err.Error())
 	}
