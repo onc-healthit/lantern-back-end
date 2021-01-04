@@ -92,6 +92,16 @@ func Test_historypruning(t *testing.T) {
 	// Add few days to the threshold to make sure date is older than a month
 	pastDate := thresholdInt + 3*(1440)
 
+	var Timestamp time.Time
+	expectedTimeStatement, err := store.DB.Prepare(`SELECT entered_at FROM fhir_endpoints_info_history WHERE url = $1;`)
+	th.Assert(t, err == nil, err)
+	defer expectedTimeStatement.Close()
+
+	var count int
+	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1;`)
+	th.Assert(t, err == nil, err)
+	defer ctStatement.Close()
+
 	// Clear history table in database
 	clearStatement, err := store.DB.Prepare(`DELETE FROM fhir_endpoints_info_history WHERE url = $1;`)
 	th.Assert(t, err == nil, err)
@@ -99,43 +109,34 @@ func Test_historypruning(t *testing.T) {
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
 
-	// Add fhir endpoint info history entry with old entered at date
+	// Add three fhir endpoint info history entries with old entered at date
+	oldestTime := time.Now().Add(time.Duration((-1)*pastDate) * time.Minute).Format("2006-01-02 15:04:05.000000000")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, oldestTime)
+	th.Assert(t, err == nil, err)
+
 	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
 	th.Assert(t, err == nil, err)
 
-	var count int
-	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1;`)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
 	th.Assert(t, err == nil, err)
-	defer ctStatement.Close()
 
-	// Ensure entry was added to info history table correctly
+	// Ensure all entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, "1Should have got 1, got "+strconv.Itoa(count))
-
-	// Add a second and third old info history entry
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
-	th.Assert(t, err == nil, err)
-
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
-	th.Assert(t, err == nil, err)
-
-	// Ensure both entries were added to info history table correctly
-	err = ctStatement.QueryRow(historyURL).Scan(&count)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "2Should have got 3, got "+strconv.Itoa(count))
-
-	// Add current info history entry
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"))
-	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
 	// HistoryPruningCheck ignores current entry and prunes old repetitive info entries, keeping the oldest entry
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Should be two entry as history pruning will remove the two newest repetitive entries and keep oldest repetitive entry and current entry
+	// Should be 1 entry as history pruning will remove the two newest repetitive entries and keep oldest repetitive entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "3Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
+
+	// Check remaining entry is the oldest entry
+	err = expectedTimeStatement.QueryRow(historyURL).Scan(&Timestamp)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, Timestamp.Format("2006-01-02 15:04:05.000000000") == oldestTime, "Expected remaining entry "+Timestamp.Format("2006-01-02 15:04:05.000000000")+" to be the oldest repeated entry "+oldestTime)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -151,15 +152,15 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "4Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Call HistoryPruningCheck function which will call the history pruning function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 3 entries as history pruning will not remove entries less than month old
+	// Info history table should have 2 entries as history pruning will not remove entries less than month old
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "5Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -175,7 +176,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "6Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Modify the date field of the capability statement
 	originalCapStat := testFhirEndpointInfo.CapabilityStatement
@@ -198,18 +199,18 @@ func Test_historypruning(t *testing.T) {
 	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
 	th.Assert(t, err == nil, err)
 
-	// Ensure both entries were added to info history table correctly
+	// Ensure all entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 4, "7Should have got 4, got "+strconv.Itoa(count))
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have only 1 entry as history pruning will remove old entries if their capability statements only differ by date field
+	// Info history table should have only 1 entry as history pruning will remove all old entries if their capability statements only differ by date field and keep only oldest entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, "8Should have got 1, got "+strconv.Itoa(count))
+	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -225,7 +226,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "9Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Modify the description field of the capability statement
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
@@ -247,18 +248,18 @@ func Test_historypruning(t *testing.T) {
 	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
 	th.Assert(t, err == nil, err)
 
-	// Ensure both entries were added to info history table correctly
+	// Ensure all entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 4, "10Should have got 4, got "+strconv.Itoa(count))
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 3 entries as history pruning will not remove old entries if their capability statements differ by field other than date field
+	// Info history table should have 2 entries as history pruning will remove 1 entry with modified description and 1 entry without modified description, keeping the oldest of each
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "11Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -276,7 +277,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "12Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Modify the description field of the capability statement
 	testFhirEndpointInfo.CapabilityStatement = capStatDescription
@@ -288,7 +289,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure entry was added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "13Should have got 3, got "+strconv.Itoa(count))
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
 	// Add two endpoint entries to info history table with non-modified capability statement description fields
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
@@ -302,15 +303,15 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 5, "14Should have got 5, got "+strconv.Itoa(count))
+	th.Assert(t, count == 5, "Should have got 5, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 4 entries as history pruning will only remove the first two equal entries and will not remove more entries when capability statements differ by field other than date field
+	// Info history table should have 3 entries as history pruning will remove 1 of the first two equal entries, will not remove the modified description entry in middle, and will remove 1 of the oldest non modified capability statements
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "15Should have got 3, got "+strconv.Itoa(count))
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -329,15 +330,15 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "16Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 3 entries as history pruning will not remove old entries if their capability statements are null but new capability statement is not null
+	// Info history table should have 1 entries as history pruning will remove the newer null capability statement entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, "17Should have got 1, got "+strconv.Itoa(count))
+	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -353,7 +354,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "18Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Add two endpoint entries to info history table with old dates and non-null capability statement
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
@@ -367,15 +368,15 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 4, "19Should have got 4, got "+strconv.Itoa(count))
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 1 entry as history pruning will remove old entries if both their capability statements and new capability statement null
+	// Info history table should have 2 entry as history pruning will remove 1 of the non null capability statment entries and 1 of the null capability statement entries
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "20Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
@@ -393,7 +394,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 2, "21Should have got 2, got "+strconv.Itoa(count))
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Add one endpoint entries to info history table with old dates and non-null capability statement
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
@@ -404,7 +405,7 @@ func Test_historypruning(t *testing.T) {
 	// Ensure entry was added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "22Should have got 3, got "+strconv.Itoa(count))
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	testFhirEndpointInfo.CapabilityStatement = nil
@@ -418,15 +419,174 @@ func Test_historypruning(t *testing.T) {
 	// Ensure both entries were added to info history table correctly
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 5, "23Should have got 5, got "+strconv.Itoa(count))
+	th.Assert(t, count == 5, "Should have got 5, got "+strconv.Itoa(count))
 
-	// Call saveMsgInDB function which will call the history pruning function
+	// Call HistoryPruningCheck function
 	HistoryPruningCheck(ctx, store, threshold, queryInterval)
 
-	// Info history table should have 4 entries as history pruning will only remove the first two old null entries, it will not remove more entries once it reaches non-null capstat
+	// Info history table should have 3 entries as history pruning will remove 1 of the first two old null entries, it will not remove the non-null entry in middle, and it will remove 1 of the older null entries more entries
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "24Should have got 3, got "+strconv.Itoa(count))
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyURL)
+	th.Assert(t, err == nil, err)
+
+	// Add two endpoint entries to info history table with old dates
+	testFhirEndpointInfo.CapabilityStatement = originalCapStat
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Add two endpoint entries to info history table with old dates and different MIME types
+	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir", "application/fhir+json"}
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
+
+	// Add two endpoint entries to info history table with old dates and no MIME types
+	testFhirEndpointInfo.MIMETypes = []string{}
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 6, "Should have got 6, got "+strconv.Itoa(count))
+
+	// Call HistoryPruningCheck function
+	HistoryPruningCheck(ctx, store, threshold, queryInterval)
+
+	// Info history table should have 3 entries as history pruning will keep one entry for each differing mime type
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
+
+	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir"}
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyURL)
+	th.Assert(t, err == nil, err)
+
+	// Add two endpoint entries to info history table with old dates
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Add two endpoint entries to info history table with old dates and different TLS version
+	testFhirEndpointInfo.TLSVersion = "TLS 1.3"
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
+
+	// Call HistoryPruningCheck function
+	HistoryPruningCheck(ctx, store, threshold, queryInterval)
+
+	// Info history table should have 2 entries one for each differing tls version
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	testFhirEndpointInfo.TLSVersion = "TLS 1.2"
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyURL)
+	th.Assert(t, err == nil, err)
+
+	// Add two endpoint entries to info history table with old dates
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure both entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Add two endpoint entries to info history table with old dates and different smart response
+	smartResp, _ := capabilityparser.NewSMARTResp([]byte(
+		`{
+			"authorization_endpoint": "https://ehr.example.com/auth/authorize",
+			"token_endpoint": "https://ehr.example.com/auth/token"
+		}`))
+	testFhirEndpointInfo.SMARTResponse = smartResp
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
+
+	// Add two endpoint entries to info history table with old dates and different smart response
+	smartResp2, _ := capabilityparser.NewSMARTResp([]byte(
+		`{
+			"authorization_endpoint": "https://ehr.differentexample.com/auth/authorize",
+			"token_endpoint": "https://ehr.example.com/auth/token"
+		}`))
+	testFhirEndpointInfo.SMARTResponse = smartResp2
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 6, "Should have got 6, got "+strconv.Itoa(count))
+
+	// Call HistoryPruningCheck function
+	HistoryPruningCheck(ctx, store, threshold, queryInterval)
+
+	// Info history table should have 3 entries one for each differing smart response
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
+
 }
 
 // AddFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
