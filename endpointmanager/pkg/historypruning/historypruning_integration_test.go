@@ -67,7 +67,6 @@ func Test_historypruning(t *testing.T) {
 
 	thresholdInt := viper.GetInt("pruning_threshold")
 	threshold := strconv.Itoa(thresholdInt)
-	//queryInterval := strconv.Itoa(thresholdInt + (2 * viper.GetInt("capquery_qryintvl")))
 	queryInterval := ""
 	var err error
 
