@@ -24,6 +24,8 @@ import (
 
 var store *postgresql.Store
 var addFHIREndpointInfoHistoryStatement *sql.Stmt
+var getIDStatement *sql.Stmt
+var idCount int = 0
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:           "http://example.com/DTSU2/",
@@ -90,11 +92,13 @@ func Test_historypruning(t *testing.T) {
 
 	// Add few days to the threshold to make sure date is older than a month
 	pastDate := thresholdInt + 3*(1440)
+	var idExpectedArr []int
+	var checkCorrectness bool
 
-	var Timestamp time.Time
-	expectedTimeStatement, err := store.DB.Prepare(`SELECT entered_at FROM fhir_endpoints_info_history WHERE url = $1;`)
+	var idActual int
+	getIDStatement, err = store.DB.Prepare(`SELECT id FROM fhir_endpoints_info_history WHERE url = $1 ORDER BY entered_at ASC;`)
 	th.Assert(t, err == nil, err)
-	defer expectedTimeStatement.Close()
+	defer getIDStatement.Close()
 
 	var count int
 	ctStatement, err := store.DB.Prepare(`SELECT count(*) FROM fhir_endpoints_info_history WHERE url = $1;`)
@@ -108,44 +112,11 @@ func Test_historypruning(t *testing.T) {
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
 
-	// Add three fhir endpoint info history entries with old entered at date
-	oldestTime := time.Now().Add(time.Duration((-1)*pastDate) * time.Minute).Format("2006-01-02 15:04:05.000000000")
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, oldestTime)
-	th.Assert(t, err == nil, err)
-
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
-	th.Assert(t, err == nil, err)
-
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
-	th.Assert(t, err == nil, err)
-
-	// Ensure all entries were added to info history table correctly
-	err = ctStatement.QueryRow(historyURL).Scan(&count)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
-
-	// HistoryPruningCheck ignores current entry and prunes old repetitive info entries, keeping the oldest entry
-	HistoryPruningCheck(ctx, store, threshold, queryInterval)
-
-	// Should be 1 entry as history pruning will remove the two newest repetitive entries and keep oldest repetitive entry
-	err = ctStatement.QueryRow(historyURL).Scan(&count)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
-
-	// Check remaining entry is the oldest entry
-	err = expectedTimeStatement.QueryRow(historyURL).Scan(&Timestamp)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, Timestamp.Format("2006-01-02 15:04:05.000000000") == oldestTime, "Expected remaining entry "+Timestamp.Format("2006-01-02 15:04:05.000000000")+" to be the oldest repeated entry "+oldestTime)
-
-	// Clear history table in database
-	_, err = clearStatement.ExecContext(ctx, historyURL)
-	th.Assert(t, err == nil, err)
-
 	// Add two endpoint entries to info history table with current entered_at dates
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -164,12 +135,85 @@ func Test_historypruning(t *testing.T) {
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
-	// Add endpoint entries to info history table with old dates and non-modified capability statement date fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	// Add four fhir endpoint info history entries with old entered at date, first and second to last I operations
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
+
+	// HistoryPruningCheck ignores current entry and prunes old repetitive info entries, keeping the oldest entry
+	HistoryPruningCheck(ctx, store, threshold, queryInterval)
+
+	// Should be 2 entries as history pruning will not remove the I operation entries but will remove each of their duplicates
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyURL)
+	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
+
+	// Add three fhir endpoint info history entries with old entered at date
+	expectedID := idCount
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
+
+	// HistoryPruningCheck ignores current entry and prunes old repetitive info entries, keeping the oldest entry
+	HistoryPruningCheck(ctx, store, threshold, queryInterval)
+
+	// Should be 1 entry as history pruning will remove the two newest repetitive entries and keep oldest repetitive entry
+	err = ctStatement.QueryRow(historyURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
+
+	// Check remaining entry is the oldest entry
+	err = getIDStatement.QueryRow(historyURL).Scan(&idActual)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
+
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, historyURL)
+	th.Assert(t, err == nil, err)
+
+	// Add endpoint entries to info history table with old dates and non-modified capability statement date fields
+	expectedID = idCount
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -192,10 +236,10 @@ func Test_historypruning(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = capStatDate
 
 	// Add two endpoint entries to info history table with old dates and modified capability statement date fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -211,15 +255,22 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
 
+	// Check remaining entry is the oldest entry
+	err = getIDStatement.QueryRow(historyURL).Scan(&idActual)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add endpoint entries to info history table with old dates and non-modified capability statement date fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -241,10 +292,11 @@ func Test_historypruning(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = capStatDescription
 
 	// Add two endpoint entries to info history table with old dates and modified capability statement description fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -260,17 +312,24 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with non-modified capability statement description fields
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -282,7 +341,8 @@ func Test_historypruning(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = capStatDescription
 
 	// Add one endpoint entries to info history table with old dates and modified capability statement description fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure entry was added to info history table correctly
@@ -293,10 +353,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with non-modified capability statement description fields
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -312,6 +373,11 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
@@ -320,10 +386,11 @@ func Test_historypruning(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = nil
 
 	// Add two endpoint entries to info history table with old dates and null capability statement
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	expectedID = idCount
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -339,15 +406,22 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 1, "Should have got 1, got "+strconv.Itoa(count))
 
+	// Check remaining entry is the oldest entry
+	err = getIDStatement.QueryRow(historyURL).Scan(&idActual)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with old dates and null capability statement
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -358,10 +432,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with old dates and non-null capability statement
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -377,17 +452,24 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	testFhirEndpointInfo.CapabilityStatement = nil
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -398,7 +480,8 @@ func Test_historypruning(t *testing.T) {
 	// Add one endpoint entries to info history table with old dates and non-null capability statement
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure entry was added to info history table correctly
@@ -409,10 +492,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	testFhirEndpointInfo.CapabilityStatement = nil
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -428,17 +512,24 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with old dates
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -449,10 +540,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with old dates and different MIME types
 	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir", "application/fhir+json"}
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -463,10 +555,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with old dates and no MIME types
 	testFhirEndpointInfo.MIMETypes = []string{}
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -482,17 +575,24 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir"}
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with old dates
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -503,10 +603,11 @@ func Test_historypruning(t *testing.T) {
 	// Add two endpoint entries to info history table with old dates and different TLS version
 	testFhirEndpointInfo.TLSVersion = "TLS 1.3"
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -522,17 +623,24 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
 	testFhirEndpointInfo.TLSVersion = "TLS 1.2"
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, historyURL)
 	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
 
 	// Add two endpoint entries to info history table with old dates
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -548,10 +656,11 @@ func Test_historypruning(t *testing.T) {
 		}`))
 	testFhirEndpointInfo.SMARTResponse = smartResp
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -567,10 +676,11 @@ func Test_historypruning(t *testing.T) {
 		}`))
 	testFhirEndpointInfo.SMARTResponse = smartResp2
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"))
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -586,10 +696,17 @@ func Test_historypruning(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, historyURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
+	testFhirEndpointInfo.SMARTResponse = nil
+
 }
 
 // AddFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
-func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e endpointmanager.FHIREndpointInfo, createdAt string) error {
+func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e endpointmanager.FHIREndpointInfo, createdAt string, id int, operation string) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -613,9 +730,9 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 	}
 
 	_, err = addFHIREndpointInfoHistoryStatement.ExecContext(ctx,
-		"U",
+		operation,
 		createdAt,
-		123,
+		id,
 		e.URL,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
@@ -624,7 +741,36 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 	if err != nil {
 		return err
 	}
+
+	idCount++
+
 	return err
+}
+
+func checkCorrect(idArr []int, historyURL string) (bool, error) {
+	rows, err := getIDStatement.Query(historyURL)
+
+	if err != nil {
+		return false, err
+	}
+
+	indexCount := 0
+	var idActual int
+
+	for rows.Next() {
+		err = rows.Scan(&idActual)
+		if err != nil {
+			return false, err
+		}
+
+		if idArr[indexCount] != idActual {
+			return false, nil
+		}
+
+		indexCount++
+	}
+
+	return true, nil
 }
 
 func setupCapabilityStatement(t *testing.T, path string) {
