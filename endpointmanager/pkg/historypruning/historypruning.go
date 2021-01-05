@@ -12,7 +12,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-func HistoryPruningCheck(ctx context.Context, store *postgresql.Store, threshold string, queryInterval string) {
+// PruneInfoHistory checks info table and prunes any repetitive entries
+func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold string, queryInterval string) {
 
 	var rows *sql.Rows
 	var err error

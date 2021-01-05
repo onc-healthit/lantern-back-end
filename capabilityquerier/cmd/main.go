@@ -58,7 +58,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	queryInterval := strconv.Itoa(thresholdInt + (2 * viper.GetInt("capquery_qryintvl")))
 
 	if urlString == "FINISHED" {
-		historypruning.HistoryPruningCheck(qa.ctx, qa.store, threshold, queryInterval)
+		historypruning.PruneInfoHistory(qa.ctx, qa.store, threshold, queryInterval)
 		time.Sleep(time.Duration(exportFileWait) * time.Second)
 		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		return err

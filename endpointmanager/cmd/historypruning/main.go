@@ -27,5 +27,5 @@ func main() {
 	threshold := strconv.Itoa(thresholdInt)
 	queryInterval := ""
 
-	historypruning.HistoryPruningCheck(ctx, store, threshold, queryInterval)
+	historypruning.PruneInfoHistory(ctx, store, threshold, queryInterval)
 }
