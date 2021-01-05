@@ -3,8 +3,8 @@ module github.com/onc-healthit/lantern-back-end/capabilityquerier
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210104155903-8dbb08f411fb
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20210104155903-8dbb08f411fb
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210105141240-b649572c44d6
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20210105141240-b649572c44d6
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
