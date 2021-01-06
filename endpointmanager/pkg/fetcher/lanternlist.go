@@ -13,7 +13,7 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, listURL
 		if listURL != "" {
 			fhirEntry.ListSource = listURL
 		} else {
-			fhirEntry.ListSource = string(Lantern)
+			fhirEntry.ListSource = "Lantern"
 		}
 		orgName, orgOk := lanternList[entry]["OrganizationName"].(string)
 		if orgOk {

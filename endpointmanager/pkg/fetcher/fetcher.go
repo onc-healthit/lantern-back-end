@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 )
 
@@ -28,32 +29,15 @@ type ListOfEndpoints struct {
 	Entries []EndpointEntry
 }
 
-// Source is an enum of the known endpoint source list urls
-type Source string
+// Source is a slice of the known endpoint source lists
+var sources = []string{"Cerner", "Epic", "Lantern", "FHIR"}
 
-// Cerner, Epic, Lantern & FHIR are fields in the Source enum
-const (
-	Cerner  Source = "CernerSource"
-	Epic    Source = "EpicSource"
-	Lantern Source = "LanternEndpointSourcesJson"
-	FHIR    Source = "FHIRSource"
-)
-
-// Converts the string version of the endpoint source to the fetcher.Source enum
-// This will eventually become unnecessary once we're pulling the data directly from the
-// endpoint lists.
-func checkSource(source string) Source {
-	switch source {
-	case "Cerner":
-		return Cerner
-	case "Epic":
-		return Epic
-	case "Lantern":
-		return Lantern
-	case "FHIR":
-		return FHIR
+// checks whether the given source is a known source
+func checkSource(source string) bool {
+	if helpers.StringArrayContains(sources, source) {
+		return true
 	}
-	return ""
+	return false
 }
 
 // Endpoints is an interface that every endpoint list can implement to parse their list into
@@ -78,14 +62,14 @@ func GetEndpointsFromFilepath(filePath string, source string, listURL string) (L
 	}
 
 	validSource := checkSource(source)
-	if validSource != "" {
-		return GetListOfEndpointsKnownSource([]byte(byteValue), validSource, listURL)
+	if validSource {
+		return GetListOfEndpointsKnownSource([]byte(byteValue), source, listURL)
 	}
 	return GetListOfEndpoints([]byte(byteValue), source, listURL)
 }
 
 // GetListOfEndpointsKnownSource parses a list of endpoints out of a given byte array
-func GetListOfEndpointsKnownSource(rawendpts []byte, source Source, listURL string) (ListOfEndpoints, error) {
+func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 	var initialList map[string]interface{}
 
@@ -100,25 +84,25 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source Source, listURL stri
 		return result, nil
 	}
 
-	if source == Cerner {
+	if source == "Cerner" {
 		cernerList, err := convertInterfaceToList(initialList, "endpoints")
 		if err != nil {
 			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
 		result = CernerList{}.GetEndpoints(cernerList, listURL)
-	} else if source == Epic {
+	} else if source == "Epic" {
 		epicList, err := convertInterfaceToList(initialList, "Entries")
 		if err != nil {
 			return result, fmt.Errorf("epic list not given in EPIC format: %s", err)
 		}
 		result = EpicList{}.GetEndpoints(epicList, listURL)
-	} else if source == Lantern {
+	} else if source == "Lantern" {
 		lanternList, err := convertInterfaceToList(initialList, "Endpoints")
 		if err != nil {
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, listURL)
-	} else if source == FHIR {
+	} else if source == "FHIR" {
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")
 		if err != nil {

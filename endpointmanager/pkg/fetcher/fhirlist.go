@@ -1,9 +1,13 @@
 package fetcher
 
-// FHIRList implements the Endpoints interface for epic's endpoint list in FHIR
+import (
+	log "github.com/sirupsen/logrus"
+)
+
+// FHIRList implements the Endpoints interface for an endpoint list in FHIR
 type FHIRList struct{}
 
-// GetEndpoints takes the list of cerner endpoints and formats it into a ListOfEndpoints
+// GetEndpoints takes the list of endpoints in FHIR format and formats it into a ListOfEndpoints
 // Assumed Structure:
 /**
 { ... entry: [ {
@@ -26,7 +30,7 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL strin
 		if listURL != "" {
 			fhirEntry.ListSource = listURL
 		} else {
-			fhirEntry.ListSource = string(FHIR)
+			fhirEntry.ListSource = "FHIR"
 		}
 
 		resource, ok := fhirList[entry]["resource"].(map[string]interface{})
@@ -53,6 +57,8 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL strin
 				fhirEntry.FHIRPatientFacingURI = uri
 			}
 			innerList = append(innerList, fhirEntry)
+		} else {
+			log.Warnf("No resource field in FHIR list. Returning an empty list of entries.")
 		}
 	}
 
