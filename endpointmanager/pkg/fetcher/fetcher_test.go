@@ -124,7 +124,7 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	// test improperly formatted fhir list
 	hook := logtest.NewGlobal()
 	expectedErr := "No resource field in FHIR list. Returning an empty list of entries."
-	_, err = GetListOfEndpointsKnownSource([]byte(`{ "entry": [{ "notresource": {}}] }`), "FHIR", "")
+	_, _ = GetListOfEndpointsKnownSource([]byte(`{ "entry": [{ "notresource": {}}] }`), "FHIR", "")
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {

@@ -32,14 +32,6 @@ type ListOfEndpoints struct {
 // Source is a slice of the known endpoint source lists
 var sources = []string{"Cerner", "Epic", "Lantern", "FHIR"}
 
-// checks whether the given source is a known source
-func checkSource(source string) bool {
-	if helpers.StringArrayContains(sources, source) {
-		return true
-	}
-	return false
-}
-
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
 type Endpoints interface {
@@ -61,7 +53,7 @@ func GetEndpointsFromFilepath(filePath string, source string, listURL string) (L
 		return ListOfEndpoints{}, nil
 	}
 
-	validSource := checkSource(source)
+	validSource := helpers.StringArrayContains(sources, source)
 	if validSource {
 		return GetListOfEndpointsKnownSource([]byte(byteValue), source, listURL)
 	}
