@@ -387,7 +387,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, infoID
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx, infoTriggerEnable, metadataID, infoID)
+	_, err = s.DB.ExecContext(ctx, infoTriggerEnable)
 
 	return err
 }
