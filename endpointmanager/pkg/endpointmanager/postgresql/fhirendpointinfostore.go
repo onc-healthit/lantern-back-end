@@ -130,6 +130,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var metadataID int
 
 	sqlStatementInfo := `
 	SELECT
@@ -145,7 +146,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		updated_at,
 		smart_response,
 		included_fields,
-		supported_resources
+		supported_resources,
+		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, url)
@@ -163,7 +165,8 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
 		&includedFieldsJSON,
-		pq.Array(&endpointInfo.SupportedResources))
+		pq.Array(&endpointInfo.SupportedResources),
+		&metadataID)
 	if err != nil {
 		return nil, err
 	}
@@ -175,9 +178,9 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		errors,
 		response_time_seconds,
 		smart_http_response 
-	FROM fhir_endpoints_metadata WHERE fhir_endpoints_metadata.url = $1`
+	FROM fhir_endpoints_metadata WHERE fhir_endpoints_metadata.id = $1`
 
-	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, url)
+	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, metadataID)
 
 	err = row.Scan(
 		&endpointInfo.HTTPResponse,
@@ -255,6 +258,12 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 
 	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
 
+	err = s.AddFHIREndpointMetadata(ctx, e)
+
+	if err == sql.ErrNoRows {
+		return err
+	}
+
 	row := addFHIREndpointInfoStatement.QueryRowContext(ctx,
 		e.URL,
 		nullableInts[0],
@@ -268,12 +277,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		pq.Array(e.SupportedResources))
 
 	err = row.Scan(&e.ID)
-
-	if err == sql.ErrNoRows {
-		return err
-	}
-
-	err = s.AddFHIREndpointMetadata(ctx, e)
 
 	return err
 }
@@ -313,6 +316,12 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
 
+	err = s.AddFHIREndpointMetadata(ctx, e)
+
+	if err != nil {
+		return err
+	}
+
 	_, err = updateFHIREndpointInfoStatement.ExecContext(ctx,
 		e.URL,
 		nullableInts[0],
@@ -326,18 +335,13 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		pq.Array(e.SupportedResources),
 		e.ID)
 
-	if err != nil {
-		return err
-	}
-
-	err = s.AddFHIREndpointMetadata(ctx, e)
-
 	return err
 }
 
 // AddFHIREndpointMetadata adds the FHIREndpointMetadata in the database
 func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	var err error
+	var metadataID int
 
 	row := addFHIREndpointMetadataStatement.QueryRowContext(ctx,
 		e.ID,
@@ -348,7 +352,35 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 		e.ResponseTime,
 		e.SMARTHTTPResponse)
 
-	err = row.Scan(&e.ID)
+	err = row.Scan(&metadataID)
+
+	infoTriggerDisable := `
+	ALTER TABLE fhir_endpoints_info
+	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
+	infoTriggerEnable := `
+	ALTER TABLE fhir_endpoints_info
+	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
+	_, err = s.DB.ExecContext(ctx, infoTriggerDisable)
+
+	if err != nil {
+		return err
+	}
+
+	infoMetadataUpdate := `
+	UPDATE fhir_endpoints_info
+	SET 
+		metadata_id = $1		
+	WHERE id = $2`
+
+	_, err = s.DB.ExecContext(ctx, infoMetadataUpdate, metadataID, e.ID)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = s.DB.ExecContext(ctx, infoTriggerEnable, metadataID, e.ID)
 
 	return err
 }
@@ -380,7 +412,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	}
 	addFHIREndpointMetadataStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints_metadata (
-			id,
+			info_id,
 			url,
 			http_response,
 			availability,
@@ -404,36 +436,16 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation = $7,
 			smart_response = $8,
 			included_fields = $9,
-			supported_resources = $10
-			
+			supported_resources = $10		
 		WHERE id = $11`)
 	if err != nil {
 		return err
 	}
-	/*updateFHIREndpointMetadataStatement, err = s.DB.Prepare(`
-		UPDATE fhir_endpoints_metadata
-		SET
-			url = $1,
-			http_response = $2,
-			availability = $3,
-			errors = $4,
-			response_time_seconds = $5,
-			smart_http_response = $6
-		WHERE id = $7`)
-	if err != nil {
-		return err
-	}*/
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
         WHERE id = $1`)
 	if err != nil {
 		return err
 	}
-	/*deleteFHIREndpointMetadataStatement, err = s.DB.Prepare(`
-		DELETE FROM fhir_endpoints_metadata
-		WHERE id = $1`)
-	if err != nil {
-		return err
-	}*/
 	return nil
 }
