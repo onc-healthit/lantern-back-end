@@ -258,7 +258,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 
 	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
 
-	err = s.AddFHIREndpointMetadata(ctx, e)
+	metadataID, err := s.AddFHIREndpointMetadata(ctx, e)
 
 	if err == sql.ErrNoRows {
 		return err
@@ -274,7 +274,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		validationJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
-		pq.Array(e.SupportedResources))
+		pq.Array(e.SupportedResources),
+		metadataID)
 
 	err = row.Scan(&e.ID)
 
@@ -316,7 +317,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
 
-	err = s.AddFHIREndpointMetadata(ctx, e)
+	metadataID, err := s.AddFHIREndpointMetadata(ctx, e)
 
 	if err != nil {
 		return err
@@ -333,13 +334,14 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
+		metadataID,
 		e.ID)
 
 	return err
 }
 
 // AddFHIREndpointMetadata adds the FHIREndpointMetadata in the database
-func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointInfo) (int, error) {
 	var err error
 	var metadataID int
 
@@ -354,6 +356,11 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 
 	err = row.Scan(&metadataID)
 
+	return metadataID, err
+}
+
+// UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
+func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, infoID int) error {
 	infoTriggerDisable := `
 	ALTER TABLE fhir_endpoints_info
 	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
@@ -362,7 +369,7 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 	ALTER TABLE fhir_endpoints_info
 	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
 
-	_, err = s.DB.ExecContext(ctx, infoTriggerDisable)
+	_, err := s.DB.ExecContext(ctx, infoTriggerDisable)
 
 	if err != nil {
 		return err
@@ -374,13 +381,13 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 		metadata_id = $1		
 	WHERE id = $2`
 
-	_, err = s.DB.ExecContext(ctx, infoMetadataUpdate, metadataID, e.ID)
+	_, err = s.DB.ExecContext(ctx, infoMetadataUpdate, metadataID, infoID)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx, infoTriggerEnable, metadataID, e.ID)
+	_, err = s.DB.ExecContext(ctx, infoTriggerEnable, metadataID, infoID)
 
 	return err
 }
@@ -404,8 +411,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation,
 			smart_response,
 			included_fields,
-			supported_resources)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+			supported_resources,
+			metadata_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -436,8 +444,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation = $7,
 			smart_response = $8,
 			included_fields = $9,
-			supported_resources = $10		
-		WHERE id = $11`)
+			supported_resources = $10,
+			metadata_id = $11		
+		WHERE id = $12`)
 	if err != nil {
 		return err
 	}

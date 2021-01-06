@@ -169,6 +169,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 
+		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
+		existingEndpt.Errors = fhirEndpoint.Errors
+		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
+		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			// If the endpoint info does exist, update it with the new information.
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
@@ -191,27 +196,31 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			if err != nil {
 				return err
 			}
-		}
+		} else {
+			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt)
+			if err != nil {
+				return err
+			}
 
-		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
-		existingEndpt.Errors = fhirEndpoint.Errors
-		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
-		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			if err != nil {
+				return err
+			}
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+			if err != nil {
+				return err
+			}
 
-		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
-		if err != nil {
-			return err
-		}
-		err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
-		if err != nil {
-			return err
-		}
+			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 
-		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
-
-		err = store.UpdateFHIREndpointMetadata(ctx, existingEndpt)
-		if err != nil {
-			return err
+			err = store.UpdateFHIREndpointMetadata(ctx, existingEndpt)
+			if err != nil {
+				return err
+				err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
 
