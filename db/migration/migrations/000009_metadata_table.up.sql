@@ -4,9 +4,63 @@ DROP VIEW IF EXISTS endpoint_export;
 
 DROP TABLE IF EXISTS fhir_endpoints_metadata;
 
-CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata AS
-    SELECT id, url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at   
-    FROM fhir_endpoints_info;
+CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata (
+    id                      SERIAL PRIMARY KEY,
+    info_id                 INTEGER,
+    url                     VARCHAR(500),
+    http_response           INTEGER,
+    availability            DECIMAL(5,4),
+    errors                  VARCHAR(500),
+    response_time_seconds   DECIMAL(7,4),
+    smart_http_response     INTEGER,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE fhir_endpoints_info
+DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+
+ALTER TABLE fhir_endpoints_info 
+ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
+
+ALTER TABLE fhir_endpoints_info_history 
+ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
+
+
+CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info() RETURNS VOID as $$
+    DECLARE
+        i RECORD;
+        j INTEGER;
+    BEGIN
+        FOR i IN SELECT DISTINCT fhir_endpoints_info.id, fhir_endpoints_info.url, fhir_endpoints_info.http_response, fhir_endpoints_info.availability, fhir_endpoints_info.errors, fhir_endpoints_info.response_time_seconds, fhir_endpoints_info.smart_http_response, fhir_endpoints_info.created_at, fhir_endpoints_info.updated_at FROM fhir_endpoints_info
+        LOOP
+            INSERT INTO fhir_endpoints_metadata (info_id, url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.id, i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+            SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
+            UPDATE fhir_endpoints_info SET metadata_id = j WHERE id = i.id; 
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT populate_endpoints_metadata_info();
+
+CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VOID as $$
+    DECLARE
+        i RECORD;
+        j INTEGER;
+    BEGIN
+        FOR i IN SELECT DISTINCT fhir_endpoints_info_history.id, fhir_endpoints_info_history.url, fhir_endpoints_info_history.http_response, fhir_endpoints_info_history.availability, fhir_endpoints_info_history.errors, fhir_endpoints_info_history.response_time_seconds, fhir_endpoints_info_history.smart_http_response, fhir_endpoints_info_history.created_at, fhir_endpoints_info_history.updated_at FROM fhir_endpoints_info_history
+        LOOP
+            INSERT INTO fhir_endpoints_metadata (info_id, url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.id, i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+            SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
+            UPDATE fhir_endpoints_info_history SET metadata_id = j WHERE updated_at = i.updated_at; 
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT populate_endpoints_metadata_info_history();
+
+ALTER TABLE fhir_endpoints_info
+ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;
 
 ALTER TABLE fhir_endpoints_info 
 DROP COLUMN http_response, 

@@ -2,6 +2,10 @@ BEGIN;
 
 DROP VIEW IF EXISTS endpoint_export;
 
+DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
+DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_metadata;
+DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoints_metadata ON fhir_endpoints_metadata;
+
 ALTER TABLE fhir_endpoints_info 
 ADD COLUMN http_response INTEGER, 
 ADD COLUMN availability DECIMAL(5,4), 
@@ -16,19 +20,32 @@ ADD COLUMN errors VARCHAR(500),
 ADD COLUMN response_time_seconds DECIMAL(7,4), 
 ADD COLUMN smart_http_response INTEGER;
 
+ALTER TABLE fhir_endpoints_info
+DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
     DECLARE
         i RECORD;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_metadata.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.availability, fhir_endpoints_metadata.errors, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.smart_http_response FROM fhir_endpoints_metadata
+        FOR i IN SELECT DISTINCT fhir_endpoints_metadata.id, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.availability, fhir_endpoints_metadata.errors, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.smart_http_response FROM fhir_endpoints_metadata
         LOOP
-            UPDATE fhir_endpoints_info SET http_response=i.http_response, availability=i.availability, errors=i.errors, response_time_seconds=i.response_time_seconds, smart_http_response=i.smart_http_response WHERE url = i.url;
+            UPDATE fhir_endpoints_info SET http_response=i.http_response, availability=i.availability, errors=i.errors, response_time_seconds=i.response_time_seconds, smart_http_response=i.smart_http_response WHERE metadata_id = i.id;
+            UPDATE fhir_endpoints_info_history SET http_response=i.http_response, availability=i.availability, errors=i.errors, response_time_seconds=i.response_time_seconds, smart_http_response=i.smart_http_response WHERE metadata_id = i.id;
         END LOOP;
     END
 $$ LANGUAGE plpgsql;
 
 SELECT populate_existing_tables_endpoints_info();
+
+ALTER TABLE fhir_endpoints_info 
+DROP COLUMN metadata_id;
+
+ALTER TABLE fhir_endpoints_info_history
+DROP COLUMN metadata_id;
+
+ALTER TABLE fhir_endpoints_info
+ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;
 
 DROP TABLE IF EXISTS fhir_endpoints_metadata;
 
@@ -52,10 +69,6 @@ RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
-
-DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
-DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_metadata;
-DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoints_metadata ON fhir_endpoints_metadata;
 
 -- increments total number of times http status returned for endpoint 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger

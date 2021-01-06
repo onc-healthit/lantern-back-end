@@ -151,6 +151,19 @@ CREATE TABLE fhir_endpoints (
     CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
 );
 
+CREATE TABLE fhir_endpoints_metadata (
+    id                      SERIAL PRIMARY KEY,
+    info_id                 INTEGER,
+    url                     VARCHAR(500),
+    http_response           INTEGER,
+    availability            DECIMAL(5,4),
+    errors                  VARCHAR(500),
+    response_time_seconds   DECIMAL(7,4),
+    smart_http_response     INTEGER,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
     healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
@@ -164,19 +177,8 @@ CREATE TABLE fhir_endpoints_info (
     supported_resources     VARCHAR(500)[],
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB
-);
-
-CREATE TABLE fhir_endpoints_metadata (
-    id                      INTEGER,
-    url                     VARCHAR(500),
-    http_response           INTEGER,
-    availability            DECIMAL(5,4),
-    errors                  VARCHAR(500),
-    response_time_seconds   DECIMAL(7,4),
-    smart_http_response     INTEGER,
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    smart_response          JSONB,
+    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -195,7 +197,8 @@ CREATE TABLE fhir_endpoints_info_history (
     supported_resources     VARCHAR(500)[],
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB
+    smart_response          JSONB, 
+    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL
 );
 
 CREATE TABLE endpoint_organization (
