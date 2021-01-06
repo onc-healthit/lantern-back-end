@@ -41,6 +41,9 @@ backup_database:
 	$(eval BACKUP=lantern_backup_$(shell date +%Y%m%d%H%M%S).sql)
 	@docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > "${BACKUP}"
 	@echo "Database was backed up to ${BACKUP}"
+
+yearly_archive:
+	cd endpointmanager/cmd/yearlyarchive; go run main.go $(start) $(end)
 	
 restore_database:
 	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean --if-exists -U lantern -d lantern < $(file)
