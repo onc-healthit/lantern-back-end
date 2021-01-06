@@ -3,7 +3,7 @@ module github.com/onc-healthit/lantern-back-end/lanternmq
 go 1.14
 
 require (
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210106170728-03af80e9af9e
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210106174550-4a3f811c0541
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.7.0
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
