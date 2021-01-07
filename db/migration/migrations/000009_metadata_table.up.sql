@@ -31,11 +31,11 @@ CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info() RETURNS VOID as $$
         i RECORD;
         j INTEGER;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_info.id, fhir_endpoints_info.url, fhir_endpoints_info.http_response, fhir_endpoints_info.availability, fhir_endpoints_info.errors, fhir_endpoints_info.response_time_seconds, fhir_endpoints_info.smart_http_response, fhir_endpoints_info.created_at, fhir_endpoints_info.updated_at FROM fhir_endpoints_info
+        FOR i IN SELECT DISTINCT fhir_endpoints_info.url, fhir_endpoints_info.http_response, fhir_endpoints_info.availability, fhir_endpoints_info.errors, fhir_endpoints_info.response_time_seconds, fhir_endpoints_info.smart_http_response, fhir_endpoints_info.created_at, fhir_endpoints_info.updated_at FROM fhir_endpoints_info
         LOOP
-            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.id, i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
             SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
-            UPDATE fhir_endpoints_info SET metadata_id = j WHERE id = i.id; 
+            UPDATE fhir_endpoints_info SET metadata_id = j WHERE url = i.url; 
         END LOOP;
     END
 $$ LANGUAGE plpgsql;
@@ -47,9 +47,9 @@ CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VO
         i RECORD;
         j INTEGER;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_info_history.id, fhir_endpoints_info_history.url, fhir_endpoints_info_history.http_response, fhir_endpoints_info_history.availability, fhir_endpoints_info_history.errors, fhir_endpoints_info_history.response_time_seconds, fhir_endpoints_info_history.smart_http_response, fhir_endpoints_info_history.created_at, fhir_endpoints_info_history.updated_at FROM fhir_endpoints_info_history
+        FOR i IN SELECT DISTINCT fhir_endpoints_info_history.url, fhir_endpoints_info_history.http_response, fhir_endpoints_info_history.availability, fhir_endpoints_info_history.errors, fhir_endpoints_info_history.response_time_seconds, fhir_endpoints_info_history.smart_http_response, fhir_endpoints_info_history.created_at, fhir_endpoints_info_history.updated_at FROM fhir_endpoints_info_history
         LOOP
-            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.id, i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
             SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
             UPDATE fhir_endpoints_info_history SET metadata_id = j WHERE updated_at = i.updated_at; 
         END LOOP;

@@ -93,6 +93,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		return nil, err
 	}
 
+	endpointMetadata.URL = endpointInfo.URL
 	endpointInfo.Metadata = endpointMetadata
 
 	if capabilityStatementJSON != nil {
@@ -199,6 +200,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		return nil, err
 	}
 
+	endpointMetadata.URL = endpointInfo.URL
 	endpointInfo.Metadata = endpointMetadata
 
 	if capabilityStatementJSON != nil {
