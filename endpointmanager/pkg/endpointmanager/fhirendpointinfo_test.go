@@ -185,6 +185,22 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Error(err)
 	}
 
+	var endpointMetadata1 = FHIREndpointMetadata{
+		URL:          "http://www.example.com",
+		HTTPResponse: 200,
+		Availability: 1.0,
+		Errors:       "Example Error",
+		ResponseTime: 0.123456,
+	}
+
+	var endpointMetadata2 = FHIREndpointMetadata{
+		URL:          "http://www.example.com",
+		HTTPResponse: 200,
+		Availability: 1.0,
+		Errors:       "Example Error",
+		ResponseTime: 0.123456,
+	}
+
 	// endpointInfos
 	var endpointInfo1 = &FHIREndpointInfo{
 		ID:                1,
@@ -192,9 +208,6 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		HealthITProductID: 3,
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
 			Results: []Rule{
@@ -211,8 +224,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		},
 		IncludedFields:      testIncludedFields,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
-		ResponseTime:        0.123456,
-		CapabilityStatement: cs}
+		CapabilityStatement: cs,
+		Metadata:            endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
 	copy(includedFieldsCopy, testIncludedFields)
 	var endpointInfo2 = &FHIREndpointInfo{
@@ -221,9 +234,6 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		HealthITProductID: 3,
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
 			Results: []Rule{
@@ -240,8 +250,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		},
 		IncludedFields:      includedFieldsCopy,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
-		ResponseTime:        0.123456,
-		CapabilityStatement: cs}
+		CapabilityStatement: cs,
+		Metadata:            endpointMetadata2}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo2. They are not equal.")
@@ -291,23 +301,23 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.MIMETypes = endpointInfo1.MIMETypes
 
-	endpointInfo2.HTTPResponse = 404
+	endpointInfo2.Metadata.HTTPResponse = 404
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. HTTPResponse should be different. %d vs %d", endpointInfo1.HTTPResponse, endpointInfo2.HTTPResponse)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. HTTPResponse should be different. %d vs %d", endpointInfo1.Metadata.HTTPResponse, endpointInfo2.Metadata.HTTPResponse)
 	}
-	endpointInfo2.HTTPResponse = endpointInfo1.HTTPResponse
+	endpointInfo2.Metadata.HTTPResponse = endpointInfo1.Metadata.HTTPResponse
 
-	endpointInfo2.Availability = 0
+	endpointInfo2.Metadata.Availability = 0
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Availability should be different. %f vs %f", endpointInfo1.Availability, endpointInfo2.Availability)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Availability should be different. %f vs %f", endpointInfo1.Metadata.Availability, endpointInfo2.Metadata.Availability)
 	}
-	endpointInfo2.Availability = endpointInfo1.Availability
+	endpointInfo2.Metadata.Availability = endpointInfo1.Metadata.Availability
 
-	endpointInfo2.Errors = "other"
+	endpointInfo2.Metadata.Errors = "other"
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Errors should be different. %s vs %s", endpointInfo1.Errors, endpointInfo2.Errors)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Errors should be different. %s vs %s", endpointInfo1.Metadata.Errors, endpointInfo2.Metadata.Errors)
 	}
-	endpointInfo2.Errors = endpointInfo1.Errors
+	endpointInfo2.Metadata.Errors = endpointInfo1.Metadata.Errors
 
 	endpointInfo2.CapabilityStatement = nil
 	if endpointInfo1.Equal(endpointInfo2) {
@@ -368,11 +378,11 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.SupportedResources = endpointInfo1.SupportedResources
 
-	endpointInfo2.ResponseTime = 0.234567
+	endpointInfo2.Metadata.ResponseTime = 0.234567
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %f vs %f", endpointInfo1.ResponseTime, endpointInfo2.ResponseTime)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %f vs %f", endpointInfo1.Metadata.ResponseTime, endpointInfo2.Metadata.ResponseTime)
 	}
-	endpointInfo2.ResponseTime = endpointInfo1.ResponseTime
+	endpointInfo2.Metadata.ResponseTime = endpointInfo1.Metadata.ResponseTime
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

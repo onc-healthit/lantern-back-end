@@ -113,7 +113,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		URL:               url,
 		HTTPResponse:      httpResponse,
 		Errors:            errs,
-		SMARTHTTPResponse: smartResponse,
+		SMARTHTTPResponse: smarthttpResponse,
 		ResponseTime:      responseTime,
 	}
 

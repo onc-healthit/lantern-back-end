@@ -22,7 +22,7 @@ type FHIREndpointMetadata struct {
 	Availability      float64
 }
 
-// Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
+// Equal checks each field of the two FHIREndpointMetadatass except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpointMetadata) Equal(e2 *FHIREndpointMetadata) bool {
 	if e == nil && e2 == nil {
 		return true

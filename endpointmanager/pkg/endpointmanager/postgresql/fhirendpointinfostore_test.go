@@ -51,24 +51,32 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		CHPLID:        222,
 	}
 
+	var endpointMetadata1 = endpointmanager.FHIREndpointMetadata{
+		URL:               endpoint1.URL,
+		HTTPResponse:      200,
+		Errors:            "Example Error",
+		SMARTHTTPResponse: 0,
+		Availability:      1.0}
+
+	var endpointMetadata2 = endpointmanager.FHIREndpointMetadata{
+		URL:          endpoint2.URL,
+		HTTPResponse: 404,
+		Errors:       "Example Error 2"}
+
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
 		URL:                 endpoint1.URL,
 		VendorID:            cerner.ID,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir"},
-		HTTPResponse:        200,
-		Errors:              "Example Error",
 		CapabilityStatement: cs,
-		SMARTHTTPResponse:   0,
 		SMARTResponse:       nil,
-		Availability:        1.0}
+		Metadata:            endpointMetadata1}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
-		URL:          endpoint2.URL,
-		TLSVersion:   "TLS 1.2",
-		MIMETypes:    []string{"application/fhir+json"},
-		HTTPResponse: 404,
-		Errors:       "Example Error 2"}
+		URL:        endpoint2.URL,
+		TLSVersion: "TLS 1.2",
+		MIMETypes:  []string{"application/fhir+json"},
+		Metadata:   endpointMetadata2}
 
 	// add endpointInfos
 
@@ -200,7 +208,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("expected 1 insertion for endpointInfo1. Got %d.", count)
 	}
 
-	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE id=$1 AND http_response = 200;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1;", endpointInfo1.URL)
 	err = rows.Scan(&count)
 	if err != nil {
 		t.Errorf("metadata count for insertions: %s", err.Error())
@@ -209,7 +217,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("expected 2 insertions for endpointInfo1. Got %d.", count)
 	}
 
-	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE id=$1 AND http_response = 700;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1 AND http_response = 700;", endpointInfo1.URL)
 	err = rows.Scan(&count)
 	if err != nil {
 		t.Errorf("metadata count for insertions: %s", err.Error())
