@@ -25,12 +25,14 @@ var addFHIREndpointMetadataStatement *sql.Stmt
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
+	var endpointMetadata endpointmanager.FHIREndpointMetadata
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
 	var includedFieldsJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var metadataID int
 
 	sqlStatementInfo := `
 	SELECT
@@ -46,7 +48,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		updated_at,
 		smart_response,
 		included_fields,
-		supported_resources
+		supported_resources,
+		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
 
@@ -63,7 +66,8 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
 		&includedFieldsJSON,
-		pq.Array(&endpointInfo.SupportedResources))
+		pq.Array(&endpointInfo.SupportedResources),
+		&metadataID)
 	if err != nil {
 		return nil, err
 	}
@@ -75,19 +79,21 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		errors,
 		response_time_seconds,
 		smart_http_response 
-	FROM fhir_endpoints_metadata WHERE id=$1 ORDER BY updated_at DESC LIMIT 1;`
+	FROM fhir_endpoints_metadata WHERE id=$1;`
 
-	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, id)
+	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, metadataID)
 
 	err = row.Scan(
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Availability,
-		&endpointInfo.Errors,
-		&endpointInfo.ResponseTime,
-		&endpointInfo.SMARTHTTPResponse)
+		&endpointMetadata.HTTPResponse,
+		&endpointMetadata.Availability,
+		&endpointMetadata.Errors,
+		&endpointMetadata.ResponseTime,
+		&endpointMetadata.SMARTHTTPResponse)
 	if err != nil {
 		return nil, err
 	}
+
+	endpointInfo.Metadata = endpointMetadata
 
 	if capabilityStatementJSON != nil {
 		endpointInfo.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
@@ -124,6 +130,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 // GetFHIREndpointInfoUsingURL gets the FHIREndpointInfo object that corresponds to the FHIREndpoint with the given ID.
 func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
+	var endpointMetadata endpointmanager.FHIREndpointMetadata
 	var capabilityStatementJSON []byte
 	var validationJSON []byte
 	var includedFieldsJSON []byte
@@ -183,14 +190,16 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	row = s.DB.QueryRowContext(ctx, sqlStatementMetadata, metadataID)
 
 	err = row.Scan(
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Availability,
-		&endpointInfo.Errors,
-		&endpointInfo.ResponseTime,
-		&endpointInfo.SMARTHTTPResponse)
+		&endpointMetadata.HTTPResponse,
+		&endpointMetadata.Availability,
+		&endpointMetadata.Errors,
+		&endpointMetadata.ResponseTime,
+		&endpointMetadata.SMARTHTTPResponse)
 	if err != nil {
 		return nil, err
 	}
+
+	endpointInfo.Metadata = endpointMetadata
 
 	if capabilityStatementJSON != nil {
 		endpointInfo.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
@@ -346,13 +355,12 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 	var metadataID int
 
 	row := addFHIREndpointMetadataStatement.QueryRowContext(ctx,
-		e.ID,
-		e.URL,
-		e.HTTPResponse,
-		e.Availability,
-		e.Errors,
-		e.ResponseTime,
-		e.SMARTHTTPResponse)
+		e.Metadata.URL,
+		e.Metadata.HTTPResponse,
+		e.Metadata.Availability,
+		e.Metadata.Errors,
+		e.Metadata.ResponseTime,
+		e.Metadata.SMARTHTTPResponse)
 
 	err = row.Scan(&metadataID)
 
@@ -360,7 +368,7 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 }
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
-func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, infoID int) error {
+func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
 	infoTriggerDisable := `
 	ALTER TABLE fhir_endpoints_info
 	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
@@ -379,9 +387,9 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, infoID
 	UPDATE fhir_endpoints_info
 	SET 
 		metadata_id = $1		
-	WHERE id = $2`
+	WHERE url = $2`
 
-	_, err = s.DB.ExecContext(ctx, infoMetadataUpdate, metadataID, infoID)
+	_, err = s.DB.ExecContext(ctx, infoMetadataUpdate, metadataID, url)
 
 	if err != nil {
 		return err
@@ -420,7 +428,6 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	}
 	addFHIREndpointMetadataStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints_metadata (
-			info_id,
 			url,
 			http_response,
 			availability,

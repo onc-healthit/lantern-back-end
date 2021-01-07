@@ -18,19 +18,15 @@ type FHIREndpointInfo struct {
 	URL                 string
 	TLSVersion          string
 	MIMETypes           []string
-	HTTPResponse        int
-	Errors              string
 	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	Validation          Validation
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-	SMARTHTTPResponse   int
 	SMARTResponse       capabilityparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
-	ResponseTime        float64
-	Availability        float64
+	Metadata            FHIREndpointMetadata
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -115,13 +111,13 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if e.HTTPResponse != e2.HTTPResponse {
+	if e.Metadata.HTTPResponse != e2.Metadata.HTTPResponse {
 		return false
 	}
-	if e.Availability != e2.Availability {
+	if e.Metadata.Availability != e2.Metadata.Availability {
 		return false
 	}
-	if e.Errors != e2.Errors {
+	if e.Metadata.Errors != e2.Metadata.Errors {
 		return false
 	}
 	if e.VendorID != e2.VendorID {
@@ -135,7 +131,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
 		return false
 	}
-	if e.SMARTHTTPResponse != e2.SMARTHTTPResponse {
+	if e.Metadata.SMARTHTTPResponse != e2.Metadata.SMARTHTTPResponse {
 		return false
 	}
 	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
@@ -157,7 +153,7 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !cmp.Equal(e.ResponseTime, e2.ResponseTime) {
+	if !cmp.Equal(e.Metadata.ResponseTime, e2.Metadata.ResponseTime) {
 		return false
 	}
 

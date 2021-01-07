@@ -109,19 +109,24 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	supportedResources := RunSupportedResourcesChecks(capInt)
 
+	FHIREndpointMetadata := endpointmanager.FHIREndpointMetadata{
+		URL:               url,
+		HTTPResponse:      httpResponse,
+		Errors:            errs,
+		SMARTHTTPResponse: smartResponse,
+		ResponseTime:      responseTime,
+	}
+
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
 		URL:                 url,
 		TLSVersion:          tlsVersion,
 		MIMETypes:           mimeTypes,
-		HTTPResponse:        httpResponse,
-		Errors:              errs,
 		Validation:          validationObj,
 		CapabilityStatement: capStat,
-		SMARTHTTPResponse:   smarthttpResponse,
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
 		SupportedResources:  supportedResources,
-		ResponseTime:        responseTime,
+		Metadata:            FHIREndpointMetadata,
 	}
 
 	return &fhirEndpoint, nil
@@ -169,10 +174,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 
-		existingEndpt.HTTPResponse = fhirEndpoint.HTTPResponse
-		existingEndpt.Errors = fhirEndpoint.Errors
-		existingEndpt.ResponseTime = fhirEndpoint.ResponseTime
-		existingEndpt.SMARTHTTPResponse = fhirEndpoint.SMARTHTTPResponse
+		existingEndpt.Metadata.HTTPResponse = fhirEndpoint.Metadata.HTTPResponse
+		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
+		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
+		existingEndpt.Metadata.SMARTHTTPResponse = fhirEndpoint.Metadata.SMARTHTTPResponse
 
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			// If the endpoint info does exist, update it with the new information.
@@ -197,29 +202,14 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return err
 			}
 		} else {
-			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt)
+			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
 				return err
 			}
 
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.URL)
 			if err != nil {
 				return err
-			}
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
-			if err != nil {
-				return err
-			}
-
-			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
-
-			err = store.UpdateFHIREndpointMetadata(ctx, existingEndpt)
-			if err != nil {
-				return err
-				err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
-				if err != nil {
-					return err
-				}
 			}
 		}
 	}
