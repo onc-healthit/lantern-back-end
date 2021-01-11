@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strconv"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -13,16 +14,19 @@ import (
 )
 
 // PruneInfoHistory checks info table and prunes any repetitive entries
-func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold string, queryInterval string) {
+func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold int, queryInterval int) {
 
 	var rows *sql.Rows
 	var err error
 
-	if len(queryInterval) != 0 {
-		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + threshold + "' minute)) AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '" + queryInterval + "' minute))) ORDER BY url, entered_at ASC;")
+	thresholdString := strconv.Itoa(threshold)
+
+	if queryInterval >= 0 {
+		queryIntString := strconv.Itoa(threshold + (3 * queryInterval))
+		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + thresholdString + "' minute)) AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '" + queryIntString + "' minute))) ORDER BY url, entered_at ASC;")
 		helpers.FailOnError("", err)
 	} else {
-		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + threshold + "' minute)) ORDER BY url, entered_at ASC;")
+		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + thresholdString + "' minute)) ORDER BY url, entered_at ASC;")
 		helpers.FailOnError("", err)
 	}
 

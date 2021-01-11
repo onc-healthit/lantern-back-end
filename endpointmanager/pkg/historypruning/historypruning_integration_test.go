@@ -67,9 +67,8 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	ctx := context.Background()
 
-	thresholdInt := viper.GetInt("pruning_threshold")
-	threshold := strconv.Itoa(thresholdInt)
-	queryInterval := ""
+	threshold := viper.GetInt("pruning_threshold")
+	queryInterval := -1
 	var err error
 
 	addFHIREndpointInfoHistoryStatement, err = store.DB.Prepare(`
@@ -91,7 +90,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	ctx = context.Background()
 
 	// Add few days to the threshold to make sure date is older than a month
-	pastDate := thresholdInt + 3*(1440)
+	pastDate := threshold + 3*(1440)
 	var idExpectedArr []int
 	var checkCorrectness bool
 

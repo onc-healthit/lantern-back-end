@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 
@@ -23,9 +22,8 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 
-	thresholdInt := viper.GetInt("pruning_threshold")
-	threshold := strconv.Itoa(thresholdInt)
-	queryInterval := ""
+	pruningThreshold := viper.GetInt("pruning_threshold")
+	queryInterval := -1
 
-	historypruning.PruneInfoHistory(ctx, store, threshold, queryInterval)
+	historypruning.PruneInfoHistory(ctx, store, pruningThreshold, queryInterval)
 }
