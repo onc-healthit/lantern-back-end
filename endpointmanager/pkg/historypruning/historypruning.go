@@ -12,12 +12,12 @@ import (
 )
 
 // PruneInfoHistory checks info table and prunes any repetitive entries
-func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold int, queryInterval int) {
+func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterval bool) {
 
 	var rows *sql.Rows
 	var err error
 
-	rows, err = store.PruningGetInfoHistory(ctx, threshold, queryInterval)
+	rows, err = store.PruningGetInfoHistory(ctx, queryInterval)
 	helpers.FailOnError("", err)
 
 	if !rows.Next() {

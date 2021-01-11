@@ -21,8 +21,5 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 
-	pruningThreshold := viper.GetInt("pruning_threshold")
-	queryInterval := -1
-
-	historypruning.PruneInfoHistory(ctx, store, pruningThreshold, queryInterval)
+	historypruning.PruneInfoHistory(ctx, store, false)
 }

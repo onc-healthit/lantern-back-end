@@ -52,11 +52,8 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	urlString := string(message)
 	exportFileWait := viper.GetInt("exportfile_wait")
 
-	pruningThreshold := viper.GetInt("pruning_threshold")
-	queryInterval := viper.GetInt("capquery_qryintvl")
-
 	if urlString == "FINISHED" {
-		historypruning.PruneInfoHistory(qa.ctx, qa.store, pruningThreshold, queryInterval)
+		historypruning.PruneInfoHistory(qa.ctx, qa.store, true)
 		time.Sleep(time.Duration(exportFileWait) * time.Second)
 		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		return err
