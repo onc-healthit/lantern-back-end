@@ -39,6 +39,10 @@ The capability querier reads the following environment variables:
 
   Default value: 300 (5 minutes)
 
+* **LANTERN_PRUNING_THRESHOLD**: The length of time in which fhir endpoint info history entries stored in the database which are older than this threshold will be pruned. This is in minutes.
+
+  Default value: 43800 (1 month)
+
 ### Test Configuration
 
 When testing, the capability querier uses the following environment variables:
