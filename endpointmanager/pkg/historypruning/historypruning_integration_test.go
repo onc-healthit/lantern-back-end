@@ -1,6 +1,6 @@
 // +build integration
 
-package historypruning
+package postgresql
 
 import (
 	"context"
@@ -124,7 +124,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function which will call the history pruning function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 2 entries as history pruning will not remove entries less than month old
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -157,7 +157,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// PruneInfoHistory ignores current entry and prunes old repetitive info entries, keeping the oldest entry
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Should be 2 entries as history pruning will not remove the I operation entries but will remove each of their duplicates
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -191,7 +191,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 3, "Should have got 3, got "+strconv.Itoa(count))
 
 	// PruneInfoHistory ignores current entry and prunes old repetitive info entries, keeping the oldest entry
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Should be 1 entry as history pruning will remove the two newest repetitive entries and keep oldest repetitive entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -247,7 +247,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have only 1 entry as history pruning will remove all old entries if their capability statements only differ by date field and keep only oldest entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -304,7 +304,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 2 entries as history pruning will remove 1 entry with modified description and 1 entry without modified description, keeping the oldest of each
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -365,7 +365,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 5, "Should have got 5, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 3 entries as history pruning will remove 1 of the first two equal entries, will not remove the modified description entry in middle, and will remove 1 of the oldest non modified capability statements
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -398,7 +398,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 1 entries as history pruning will remove the newer null capability statement entry
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -444,7 +444,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 2 entry as history pruning will remove 1 of the non null capability statment entries and 1 of the null capability statement entries
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -504,7 +504,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 5, "Should have got 5, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 3 entries as history pruning will remove 1 of the first two old null entries, it will not remove the non-null entry in middle, and it will remove 1 of the older null entries more entries
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -567,7 +567,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 6, "Should have got 6, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 3 entries as history pruning will keep one entry for each differing mime type
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -615,7 +615,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 2 entries one for each differing tls version
 	err = ctStatement.QueryRow(historyURL).Scan(&count)
@@ -688,7 +688,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 6, "Should have got 6, got "+strconv.Itoa(count))
 
 	// Call PruneInfoHistory function
-	PruneInfoHistory(ctx, store, threshold, queryInterval)
+	store.PruneInfoHistory(ctx, threshold, queryInterval)
 
 	// Info history table should have 3 entries one for each differing smart response
 	err = ctStatement.QueryRow(historyURL).Scan(&count)

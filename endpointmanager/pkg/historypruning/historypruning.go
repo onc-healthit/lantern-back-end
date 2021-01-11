@@ -1,4 +1,4 @@
-package historypruning
+package postgresql
 
 import (
 	"context"
@@ -9,12 +9,14 @@ import (
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
+var pruningStatementQueryInterval *sql.Stmt
+var pruningStatementNoQueryInterval *sql.Stmt
+var pruningDeleteStatement *sql.Stmt
+
 // PruneInfoHistory checks info table and prunes any repetitive entries
-func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold int, queryInterval int) {
+func (s *Store) PruneInfoHistory(ctx context.Context, threshold int, queryInterval int) {
 
 	var rows *sql.Rows
 	var err error
@@ -23,10 +25,10 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold in
 
 	if queryInterval >= 0 {
 		queryIntString := strconv.Itoa(threshold + (3 * queryInterval))
-		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + thresholdString + "' minute)) AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '" + queryIntString + "' minute))) ORDER BY url, entered_at ASC;")
+		rows, err = pruningStatementQueryInterval.QueryContext(ctx, thresholdString, queryIntString)
 		helpers.FailOnError("", err)
 	} else {
-		rows, err = store.DB.Query("SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history WHERE (operation='U' OR operation='I') AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + thresholdString + "' minute)) ORDER BY url, entered_at ASC;")
+		rows, err = pruningStatementNoQueryInterval.QueryContext(ctx, thresholdString)
 		helpers.FailOnError("", err)
 	}
 
@@ -62,7 +64,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold in
 		equal := capStatEqual && tlsVersionEqual && mimeTypesEqual && smartResponseEqual
 
 		if equal && operation2 != "I" {
-			_, err := store.DB.Exec("DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;", fhirURL1, entryDate2)
+			_, err := pruningDeleteStatement.ExecContext(ctx, fhirURL1, entryDate2)
 			helpers.FailOnError("", err)
 		} else {
 			fhirURL1 = fhirURL2
@@ -99,4 +101,28 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	smartResponse := capabilityparser.NewSMARTRespFromInterface(smartResponseInt)
 
 	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse
+}
+
+func prepareHistoryPruningStatements(s *Store) error {
+	var err error
+	pruningStatementQueryInterval, err = s.DB.Prepare(`
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
+		WHERE (operation='U' OR operation='I') 
+			AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + $1 + "' minute)) 
+			AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '" + $2 + "' minute))) 
+		ORDER BY url, entered_at ASC;`)
+	if err != nil {
+		return err
+	}
+	pruningStatementNoQueryInterval, err = s.DB.Prepare(`
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
+		WHERE (operation='U' OR operation='I') 
+			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + $1 + "' minute)) 
+		ORDER BY url, entered_at ASC;")`)
+	if err != nil {
+		return err
+	}
+	pruningDeleteStatement, err = s.DB.Prepare(`
+		DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;`)
+	return nil
 }
