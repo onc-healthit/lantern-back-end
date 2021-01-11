@@ -1,6 +1,6 @@
 // +build integration
 
-package postgresql
+package historypruning
 
 import (
 	"context"

@@ -1,0 +1,91 @@
+package historypruning
+
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+
+	"github.com/lib/pq"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+)
+
+// PruneInfoHistory checks info table and prunes any repetitive entries
+func PruneInfoHistory(ctx context.Context, store *Store, threshold int, queryInterval int) {
+
+	var rows *sql.Rows
+	var err error
+
+	rows, err = store.PruningGetInfoHistory(ctx, threshold, queryInterval)
+	helpers.FailOnError("", err)
+
+	if !rows.Next() {
+		return
+	}
+
+	_, fhirURL1, _, capStat1, tlsVersion1, mimeTypes1, smartResponse1 := getRowInfo(rows)
+
+	for rows.Next() {
+
+		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2 := getRowInfo(rows)
+
+		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
+		var capStatEqual bool
+		var smartResponseEqual bool
+
+		tlsVersionEqual := (tlsVersion1 == tlsVersion2)
+		mimeTypesEqual := helpers.StringArraysEqual(mimeTypes1, mimeTypes2)
+
+		if capStat1 != nil {
+			capStatEqual = capStat1.EqualIgnore(capStat2)
+		} else {
+			capStatEqual = (capStat2 == nil)
+		}
+
+		if smartResponse1 != nil {
+			smartResponseEqual = smartResponse1.EqualIgnore(smartResponse2)
+		} else {
+			smartResponseEqual = (smartResponse2 == nil)
+		}
+
+		equal := capStatEqual && tlsVersionEqual && mimeTypesEqual && smartResponseEqual
+
+		if equal && operation2 != "I" {
+			_, err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
+			helpers.FailOnError("", err)
+		} else {
+			fhirURL1 = fhirURL2
+			capStat1 = capStat2
+			tlsVersion1 = tlsVersion2
+			mimeTypes1 = mimeTypes2
+			smartResponse1 = smartResponse2
+			continue
+		}
+	}
+}
+
+func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, capabilityparser.SMARTResponse) {
+	var capInt map[string]interface{}
+	var fhirURL string
+	var operation string
+	var capStatJSON []byte
+	var entryDate string
+	var tlsVersion string
+	var mimeTypes []string
+	var smartResponseJSON []byte
+	var smartResponseInt map[string]interface{}
+
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON)
+	helpers.FailOnError("", err)
+
+	err = json.Unmarshal(capStatJSON, &capInt)
+	helpers.FailOnError("", err)
+	capStat, err := capabilityparser.NewCapabilityStatementFromInterface(capInt)
+	helpers.FailOnError("", err)
+
+	err = json.Unmarshal(smartResponseJSON, &smartResponseInt)
+	helpers.FailOnError("", err)
+	smartResponse := capabilityparser.NewSMARTRespFromInterface(smartResponseInt)
+
+	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse
+}
