@@ -77,6 +77,7 @@ services:
       - LANTERN_EXPORTFILE_WAIT=${LANTERN_EXPORTFILE_WAIT}
       - LANTERN_EXPORT_NUMWORKERS=${LANTERN_EXPORT_NUMWORKERS}
       - LANTERN_EXPORT_DURATION=${LANTERN_EXPORT_DURATION}
+      - LANTERN_PRUNING_THRESHOLD=${LANTERN_PRUNING_THRESHOLD}
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"
