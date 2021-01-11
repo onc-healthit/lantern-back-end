@@ -12,6 +12,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -55,7 +56,7 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	queryInterval := viper.GetInt("capquery_qryintvl")
 
 	if urlString == "FINISHED" {
-		qa.store.PruneInfoHistory(qa.ctx, pruningThreshold, queryInterval)
+		historypruning.PruneInfoHistory(qa.ctx, qa.store, pruningThreshold, queryInterval)
 		time.Sleep(time.Duration(exportFileWait) * time.Second)
 		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		return err

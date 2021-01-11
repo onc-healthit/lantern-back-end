@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 
@@ -23,5 +24,5 @@ func main() {
 	pruningThreshold := viper.GetInt("pruning_threshold")
 	queryInterval := -1
 
-	store.PruneInfoHistory(ctx, pruningThreshold, queryInterval)
+	historypruning.PruneInfoHistory(ctx, store, pruningThreshold, queryInterval)
 }
