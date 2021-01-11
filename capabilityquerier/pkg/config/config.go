@@ -83,12 +83,6 @@ func SetupConfig() error {
 		return err
 	}
 
-	// Info History Pruning
-	err = viper.BindEnv("pruning_threshold") // in minutes
-	if err != nil {
-		return err
-	}
-
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qhost", "localhost")
@@ -107,8 +101,6 @@ func SetupConfig() error {
 	viper.SetDefault("exportfile_wait", 300)
 	viper.SetDefault("export_numworkers", 50)
 	viper.SetDefault("export_duration", 120)
-
-	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
 
 	return nil
 }
