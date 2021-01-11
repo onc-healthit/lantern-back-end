@@ -7,11 +7,12 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
 // PruneInfoHistory checks info table and prunes any repetitive entries
-func PruneInfoHistory(ctx context.Context, store *Store, threshold int, queryInterval int) {
+func PruneInfoHistory(ctx context.Context, store *postgresql.Store, threshold int, queryInterval int) {
 
 	var rows *sql.Rows
 	var err error
@@ -51,7 +52,7 @@ func PruneInfoHistory(ctx context.Context, store *Store, threshold int, queryInt
 		equal := capStatEqual && tlsVersionEqual && mimeTypesEqual && smartResponseEqual
 
 		if equal && operation2 != "I" {
-			_, err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
+			err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
 			helpers.FailOnError("", err)
 		} else {
 			fhirURL1 = fhirURL2
