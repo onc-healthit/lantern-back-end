@@ -105,20 +105,19 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 
 func prepareHistoryPruningStatements(s *Store) error {
 	var err error
-	pruningStatementQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
-		WHERE (operation='U' OR operation='I') 
-			AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + $1 + "' minute)) 
-			AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '" + $2 + "' minute))) 
-		ORDER BY url, entered_at ASC;`)
+	pruningStatmentSQL := `
+	SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
+	WHERE (operation='U' OR operation='I') 
+		AND ((date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '$1 minute'))`
+
+	pruningStatementQueryInterval, err = s.DB.Prepare(pruningStatmentSQL +
+		`AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - interval '$2 minute'))) 
+			ORDER BY url, entered_at ASC;`)
 	if err != nil {
 		return err
 	}
-	pruningStatementNoQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
-		WHERE (operation='U' OR operation='I') 
-			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - interval '" + $1 + "' minute)) 
-		ORDER BY url, entered_at ASC;")`)
+	pruningStatementNoQueryInterval, err = s.DB.Prepare(pruningStatmentSQL +
+		`ORDER BY url, entered_at ASC;`)
 	if err != nil {
 		return err
 	}
