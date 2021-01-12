@@ -191,13 +191,13 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
-	th.Assert(t, storedEndpt.HTTPResponse == 404, "The http response was not updated")
+	th.Assert(t, storedEndpt.Metadata.HTTPResponse == 404, "The http response was not updated")
 
 	// check that availability is updated
 	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, &http_all_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 2, "http all count should have been incremented to 2")
-	th.Assert(t, storedEndpt.Availability == 0.5, "endpoint availability should have been updated to 0.5")
+	th.Assert(t, http_all_ct == 2, "http all count should have been incremented to 2, was %d")
+	th.Assert(t, storedEndpt.Metadata.Availability == 0.5, "endpoint availability should have been updated to 0.5")
 
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
 	queueTmp["httpResponse"] = 200
