@@ -65,8 +65,9 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-    left_join(db_tables$fhir_endpoints_metadata %>%
       select(url, vendor_name), by = c("url" = "url")) %>%
+      left_join(db_tables$fhir_endpoints_metadata %>%
+      select(http_response), by = c("metadata_id" = "id")) %>%
       select(url, id, http_response, vendor_name) %>%
       mutate(code = as.character(http_response)) %>%
       group_by(id, url, code, http_response, vendor_name) %>%
@@ -267,7 +268,7 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, date.average AS avg
-                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_info_history.response_time_seconds) as average FROM fhir_endpoints_info_history GROUP BY datetime) as date,
+                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_metadata.response_time_seconds) as average FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id GROUP BY datetime) as date,
                     (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time, average
@@ -326,13 +327,13 @@ get_smart_response_capabilities <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT
       f.id,
-      f.smart_http_response,
+      m.smart_http_response,
       v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
       json_array_elements_text((smart_response->'capabilities')::json) as capability
-    FROM fhir_endpoints_info f, vendors v
-    WHERE vendor_id = v.id
-    AND smart_http_response=200")) %>%
+    FROM fhir_endpoints_info f, vendors v, fhir_endpoints_metadata m
+    WHERE vendor_id = v.id AND f.metadata_id = m.id
+    AND m.smart_http_response=200")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
