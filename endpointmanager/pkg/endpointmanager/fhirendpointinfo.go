@@ -88,72 +88,13 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
-	if e == nil && e2 == nil {
-		return true
-	} else if e == nil {
-		return false
-	} else if e2 == nil {
+	if !e.EqualExcludeMetadata(e2) {
 		return false
 	}
-
-	if e.URL != e2.URL {
+	if e.Metadata != nil && !e.Metadata.Equal(e2.Metadata) {
 		return false
 	}
-	if e.HealthITProductID != e2.HealthITProductID {
-		return false
-	}
-
-	if e.TLSVersion != e2.TLSVersion {
-		return false
-	}
-
-	if !helpers.StringArraysEqual(e.MIMETypes, e2.MIMETypes) {
-		return false
-	}
-
-	if e.Metadata.HTTPResponse != e2.Metadata.HTTPResponse {
-		return false
-	}
-	if e.Metadata.Availability != e2.Metadata.Availability {
-		return false
-	}
-	if e.Metadata.Errors != e2.Metadata.Errors {
-		return false
-	}
-	if e.VendorID != e2.VendorID {
-		return false
-	}
-	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal
-	// method.
-	if e.CapabilityStatement != nil && !e.CapabilityStatement.Equal(e2.CapabilityStatement) {
-		return false
-	}
-	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
-		return false
-	}
-	if e.Metadata.SMARTHTTPResponse != e2.Metadata.SMARTHTTPResponse {
-		return false
-	}
-	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
-		return false
-	}
-	if e.SMARTResponse == nil && e2.SMARTResponse != nil {
-		return false
-	}
-
-	if !cmp.Equal(e.Validation, e2.Validation) {
-		return false
-	}
-
-	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
-		return false
-	}
-
-	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
-		return false
-	}
-
-	if !cmp.Equal(e.Metadata.ResponseTime, e2.Metadata.ResponseTime) {
+	if e.Metadata == nil && e2.Metadata != nil {
 		return false
 	}
 
