@@ -30,28 +30,35 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 
 		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2 := getRowInfo(rows)
 
-		// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
-		var capStatEqual bool
-		var smartResponseEqual bool
+		equalFhirEntries := fhirURL1 == fhirURL2
 
-		tlsVersionEqual := (tlsVersion1 == tlsVersion2)
-		mimeTypesEqual := helpers.StringArraysEqual(mimeTypes1, mimeTypes2)
+		if equalFhirEntries {
+			equalFhirEntries = (tlsVersion1 == tlsVersion2)
 
-		if capStat1 != nil {
-			capStatEqual = capStat1.EqualIgnore(capStat2)
-		} else {
-			capStatEqual = (capStat2 == nil)
+			if equalFhirEntries {
+				equalFhirEntries = helpers.StringArraysEqual(mimeTypes1, mimeTypes2)
+
+				if equalFhirEntries {
+					// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
+					if capStat1 != nil {
+						equalFhirEntries = capStat1.EqualIgnore(capStat2)
+					} else {
+						equalFhirEntries = (capStat2 == nil)
+					}
+
+					if equalFhirEntries {
+						// If smartresponse is not null check if current entry that was passed in has smartresponse equal to smartresponse of old entry being checked from history table, otherwise check they are both null
+						if smartResponse1 != nil {
+							equalFhirEntries = smartResponse1.EqualIgnore(smartResponse2)
+						} else {
+							equalFhirEntries = (smartResponse2 == nil)
+						}
+					}
+				}
+			}
 		}
 
-		if smartResponse1 != nil {
-			smartResponseEqual = smartResponse1.EqualIgnore(smartResponse2)
-		} else {
-			smartResponseEqual = (smartResponse2 == nil)
-		}
-
-		equal := capStatEqual && tlsVersionEqual && mimeTypesEqual && smartResponseEqual
-
-		if equal && operation2 != "I" {
+		if equalFhirEntries && operation2 == "U" {
 			err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
 			helpers.FailOnError("", err)
 		} else {
