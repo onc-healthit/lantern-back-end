@@ -101,6 +101,8 @@ func Test_saveMsgInDB(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedEndpt.VendorID = vendors[1].ID // "Cerner Corporation"
 	expectedEndpt.URL = testFhirEndpoint1.URL
+	expectedMetadata := testFhirEndpointMetadata
+	expectedEndpt.Metadata = &expectedMetadata
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
@@ -151,6 +153,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
 	expectedEndpt.URL = testFhirEndpoint2.URL
+	expectedEndpt.Metadata.URL = testFhirEndpoint2.URL
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -163,8 +166,8 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint2.URL)
 	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
-	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
-	expectedEndpt = testFhirEndpointInfo
+	th.Assert(t, expectedEndpt.Equal(storedEndpt), storedEndpt.Metadata)
+	expectedEndpt.URL = testFhirEndpoint1.URL
 	queueTmp["url"] = "http://example.com/DTSU2/"
 
 	// check that a second endpoint also added to availability table
@@ -214,6 +217,62 @@ func Test_saveMsgInDB(t *testing.T) {
 	// resetting values
 	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
+
+	// test selective update
+
+	// Update endpoint back to original values
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+	//oldUpdateAt := storedEndpt.UpdatedAt
+	oldMetadataID := storedEndpt.Metadata.ID
+	oldMetadataUpdatedAt := storedEndpt.Metadata.UpdatedAt
+
+	// Try to update with exact same values besides metadata
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+	//th.Assert(t, storedEndpt2.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
+	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
+	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
+	oldMetadataID = storedEndpt.Metadata.ID
+	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
+
+	// Try to update with exact same values besides metadata
+	queueTmp["httpResponse"] = 404
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+	//th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
+	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
+	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
+	//oldUpdateAt = storedEndpt.UpdatedAt
+	oldMetadataID = storedEndpt.Metadata.ID
+	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
+
+	queueTmp["httpResponse"] = 200
 
 }
 

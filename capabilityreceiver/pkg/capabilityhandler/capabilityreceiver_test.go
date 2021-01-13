@@ -365,7 +365,7 @@ var testSupportedResources = []string{
 	"Slot",
 	"StructureDefinition"}
 
-var testFhirEndpointMetadata = &endpointmanager.FHIREndpointMetadata{
+var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
 	URL:               "http://example.com/DTSU2/",
 	HTTPResponse:      200,
 	Errors:            "",
@@ -382,7 +382,6 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	Validation:         testValidationObj,
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
-	Metadata:           testFhirEndpointMetadata,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -410,6 +409,8 @@ func setupCapabilityStatement(t *testing.T, path string) {
 func Test_formatMessage(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	expectedEndpt := testFhirEndpointInfo
+	expectedMetadata := testFhirEndpointMetadata
+	expectedEndpt.Metadata = &expectedMetadata
 	tmpMessage := testQueueMsg
 
 	message, err := convertInterfaceToBytes(tmpMessage)
