@@ -185,7 +185,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Error(err)
 	}
 
-	var endpointMetadata1 = FHIREndpointMetadata{
+	var endpointMetadata1 = &FHIREndpointMetadata{
 		URL:          "http://www.example.com",
 		HTTPResponse: 200,
 		Availability: 1.0,
@@ -193,7 +193,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		ResponseTime: 0.123456,
 	}
 
-	var endpointMetadata2 = FHIREndpointMetadata{
+	var endpointMetadata2 = &FHIREndpointMetadata{
 		URL:          "http://www.example.com",
 		HTTPResponse: 200,
 		Availability: 1.0,

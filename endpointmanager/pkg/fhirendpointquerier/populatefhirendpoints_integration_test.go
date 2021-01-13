@@ -348,8 +348,10 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not persist second endpoint as expected")
+
 	endptInfo := endpointmanager.FHIREndpointInfo{
-		URL: endpt2.URL,
+		URL:      endpt2.URL,
+		Metadata: &endpointmanager.FHIREndpointMetadata{},
 	}
 	err = store.AddFHIREndpointInfo(ctx, &endptInfo)
 	th.Assert(t, err == nil, err)
