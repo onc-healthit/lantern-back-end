@@ -190,7 +190,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
 		existingEndpt.Metadata.SMARTHTTPResponse = fhirEndpoint.Metadata.SMARTHTTPResponse
 
-		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
+		if !existingEndpt.EqualExcludeMetadataAndValidation(fhirEndpoint) {
 			// If the endpoint info does exist, update it with the new information.
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
