@@ -24,7 +24,9 @@ func (s *Store) GetFHIREndpointMetadata(ctx context.Context, metadataID int) (*e
 		availability,
 		errors,
 		response_time_seconds,
-		smart_http_response 
+		smart_http_response,
+		updated_at,
+		created_at 
 	FROM fhir_endpoints_metadata WHERE id=$1;`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatementMetadata, metadataID)
@@ -35,7 +37,9 @@ func (s *Store) GetFHIREndpointMetadata(ctx context.Context, metadataID int) (*e
 		&endpointMetadata.Availability,
 		&endpointMetadata.Errors,
 		&endpointMetadata.ResponseTime,
-		&endpointMetadata.SMARTHTTPResponse)
+		&endpointMetadata.SMARTHTTPResponse,
+		&endpointMetadata.UpdatedAt,
+		&endpointMetadata.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
