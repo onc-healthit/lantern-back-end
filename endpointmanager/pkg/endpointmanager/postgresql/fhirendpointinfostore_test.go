@@ -51,14 +51,14 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		CHPLID:        222,
 	}
 
-	var endpointMetadata1 = endpointmanager.FHIREndpointMetadata{
+	var endpointMetadata1 = &endpointmanager.FHIREndpointMetadata{
 		URL:               endpoint1.URL,
 		HTTPResponse:      200,
 		Errors:            "Example Error",
 		SMARTHTTPResponse: 0,
 		Availability:      1.0}
 
-	var endpointMetadata2 = endpointmanager.FHIREndpointMetadata{
+	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
 		URL:          endpoint2.URL,
 		HTTPResponse: 404,
 		Errors:       "Example Error 2"}

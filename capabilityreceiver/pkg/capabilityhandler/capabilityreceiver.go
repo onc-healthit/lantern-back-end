@@ -109,7 +109,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	supportedResources := RunSupportedResourcesChecks(capInt)
 
-	FHIREndpointMetadata := endpointmanager.FHIREndpointMetadata{
+	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:               url,
 		HTTPResponse:      httpResponse,
 		Errors:            errs,

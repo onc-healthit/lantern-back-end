@@ -365,7 +365,7 @@ var testSupportedResources = []string{
 	"Slot",
 	"StructureDefinition"}
 
-var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
+var testFhirEndpointMetadata = &endpointmanager.FHIREndpointMetadata{
 	URL:               "http://example.com/DTSU2/",
 	HTTPResponse:      200,
 	Errors:            "",
