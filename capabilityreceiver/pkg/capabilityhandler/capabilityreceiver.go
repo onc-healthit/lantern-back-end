@@ -174,6 +174,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 
+		existingEndpt.Metadata.URL = fhirEndpoint.Metadata.URL
 		existingEndpt.Metadata.HTTPResponse = fhirEndpoint.Metadata.HTTPResponse
 		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
 		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
