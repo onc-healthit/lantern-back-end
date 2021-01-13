@@ -88,6 +88,14 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
 func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
+	if e == nil && e2 == nil {
+		return true
+	} else if e == nil {
+		return false
+	} else if e2 == nil {
+		return false
+	}
+
 	if !e.EqualExcludeMetadata(e2) {
 		return false
 	}
