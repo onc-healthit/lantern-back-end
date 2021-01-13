@@ -174,12 +174,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	} else {
 
-		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
 		if err != nil {
 			return err
 		}
 
-		err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 		if err != nil {
 			return err
 		}
@@ -199,6 +199,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 			existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
+			existingEndpt.VendorID = fhirEndpoint.VendorID
+			existingEndpt.HealthITProductID = fhirEndpoint.HealthITProductID
 
 			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 			if err != nil {
