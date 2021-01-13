@@ -63,27 +63,43 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
-	infoTriggerDisable := `
+	infoHistoryTriggerDisable := `
 	ALTER TABLE fhir_endpoints_info
 	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
 
-	infoTriggerEnable := `
+	infoHistoryTriggerEnable := `
 	ALTER TABLE fhir_endpoints_info
 	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
 
-	_, err := s.DB.ExecContext(ctx, infoTriggerDisable)
+	timestampTriggerDisable := `
+	ALTER TABLE fhir_endpoints_info
+	DISABLE TRIGGER set_timestamp_fhir_endpoints_info;`
 
+	timestampTriggerEnable := `
+	ALTER TABLE fhir_endpoints_info
+	ENABLE TRIGGER set_timestamp_fhir_endpoints_info;`
+
+	_, err := s.DB.ExecContext(ctx, infoHistoryTriggerDisable)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.DB.ExecContext(ctx, timestampTriggerDisable)
 	if err != nil {
 		return err
 	}
 
 	_, err = updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, url)
-
 	if err != nil {
 		return err
 	}
 
-	_, err = s.DB.ExecContext(ctx, infoTriggerEnable)
+	_, err = s.DB.ExecContext(ctx, infoHistoryTriggerEnable)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.DB.ExecContext(ctx, timestampTriggerEnable)
 
 	return err
 }
