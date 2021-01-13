@@ -99,7 +99,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	}
 
 	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-	endpointInfo.Metadata = *endpointMetadata
+	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
 }
@@ -184,7 +184,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	}
 
 	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-	endpointInfo.Metadata = *endpointMetadata
+	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
 }
@@ -194,7 +194,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
-	metadataID, err := s.AddFHIREndpointMetadata(ctx, &e.Metadata)
+	metadataID, err := s.AddFHIREndpointMetadata(ctx, e.Metadata)
 	if err != nil {
 		return err
 	}
@@ -252,7 +252,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var err error
 	var capabilityStatementJSON []byte
 
-	metadataID, err := s.AddFHIREndpointMetadata(ctx, &e.Metadata)
+	metadataID, err := s.AddFHIREndpointMetadata(ctx, e.Metadata)
 
 	if err != nil {
 		return err
