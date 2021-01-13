@@ -232,7 +232,7 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	//oldUpdateAt := storedEndpt.UpdatedAt
+	oldUpdateAt := storedEndpt.UpdatedAt
 	oldMetadataID := storedEndpt.Metadata.ID
 	oldMetadataUpdatedAt := storedEndpt.Metadata.UpdatedAt
 
@@ -247,7 +247,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, ct == 2, "did not store data as expected")
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	//th.Assert(t, storedEndpt2.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
+	th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
 	oldMetadataID = storedEndpt.Metadata.ID
@@ -265,12 +265,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	//th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
+	th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
-	//oldUpdateAt = storedEndpt.UpdatedAt
-	oldMetadataID = storedEndpt.Metadata.ID
-	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
 
 	queueTmp["httpResponse"] = 200
 
