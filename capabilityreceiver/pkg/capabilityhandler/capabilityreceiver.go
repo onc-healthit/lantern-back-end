@@ -188,6 +188,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
+
 		err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
 		if err != nil {
 			return err

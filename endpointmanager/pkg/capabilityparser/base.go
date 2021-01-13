@@ -251,6 +251,48 @@ func (cp *baseParser) GetDescription() (string, error) {
 	return descriptionStr, nil
 }
 
+// EqualIgnore checks if the conformance/capability statement is equal to the given conformance/capability statement while ignoring certain fields that may differ.
+func (cp *baseParser) EqualIgnore(cs2 CapabilityStatement) bool {
+	ignoredFields := []string{"date"}
+
+	if cs2 == nil {
+		return false
+	}
+
+	var cpCopy CapabilityStatement
+	var cs2Copy CapabilityStatement
+
+	cpCopy = cp
+	cs2Copy = cs2
+
+	var err error
+
+	for _, field := range ignoredFields {
+		cpCopy, err = deleteFieldFromCapStat(cpCopy, field)
+		if err != nil {
+			return false
+		}
+		cs2Copy, err = deleteFieldFromCapStat(cs2Copy, field)
+		if err != nil {
+			return false
+		}
+	}
+
+	j1, err := cpCopy.GetJSON()
+	if err != nil {
+		return false
+	}
+	j2, err := cs2Copy.GetJSON()
+	if err != nil {
+		return false
+	}
+	if !bytes.Equal(j1, j2) {
+		return false
+	}
+
+	return true
+}
+
 // Equal checks if the conformance/capability statement is equal to the given conformance/capability statement.
 func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
 	if cs2 == nil {
@@ -275,4 +317,36 @@ func (cp *baseParser) Equal(cs2 CapabilityStatement) bool {
 // GetJSON returns the JSON representation of the capability statement.
 func (cp *baseParser) GetJSON() ([]byte, error) {
 	return json.Marshal(cp.capStat)
+}
+
+func getCapFormats(cs CapabilityStatement) (map[string]interface{}, []byte, error) {
+	var csInt map[string]interface{}
+
+	csJSON, err := cs.GetJSON()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = json.Unmarshal(csJSON, &csInt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return csInt, csJSON, nil
+}
+
+func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
+	csInt, _, err := getCapFormats(cs)
+	if err != nil {
+		return nil, err
+	}
+
+	delete(csInt, field)
+
+	csJSON, err := json.Marshal(csInt)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewCapabilityStatement(csJSON)
 }

@@ -703,6 +703,56 @@ func Test_Equal(t *testing.T) {
 
 }
 
+func Test_Equal_Ignore(t *testing.T) {
+	var cs1 CapabilityStatement
+	var cs2 CapabilityStatement
+	var equal bool
+	var err error
+
+	cs1, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+
+	// test nil
+	cs2, err = NewCapabilityStatement(nil)
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, !equal, "expected equality comparison to nil to be false")
+
+	// test equal
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
+	// test equal when cs2 has different date
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+	cs2, err = getBadFormatCapStat(cs2, "date")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
+	// test equal when cs1 has different date
+	cs2, err = getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+	cs1, err = getBadFormatCapStat(cs1, "date")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.EqualIgnore(cs2)
+	th.Assert(t, equal, "expected equality comparison of equal capability statement to be true")
+
+	// test not equal
+	cs2, err = deleteFieldFromCapStat(cs2, "publisher")
+	th.Assert(t, err == nil, err)
+
+	equal = cs1.Equal(cs2)
+	th.Assert(t, !equal, "expected equality comparison of unequal capability statement to be false")
+
+}
+
 func getDSTU2CapStat() (CapabilityStatement, error) {
 	path := filepath.Join("../testdata", "allscripts_capability_dstu2.json")
 	csJSON, err := ioutil.ReadFile(path)
@@ -714,22 +764,6 @@ func getDSTU2CapStat() (CapabilityStatement, error) {
 		return nil, err
 	}
 	return cs, nil
-}
-
-func getCapFormats(cs CapabilityStatement) (map[string]interface{}, []byte, error) {
-	var csInt map[string]interface{}
-
-	csJSON, err := cs.GetJSON()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = json.Unmarshal(csJSON, &csInt)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return csInt, csJSON, nil
 }
 
 func getBadFormatCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
@@ -786,22 +820,6 @@ func getArrayNestedBadFormatCapStat(cs CapabilityStatement, field1 string, field
 	}
 
 	innerFieldMap[field2] = []int{1, 2, 3} // bad format for given field
-	csJSON, err := json.Marshal(csInt)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewCapabilityStatement(csJSON)
-}
-
-func deleteFieldFromCapStat(cs CapabilityStatement, field string) (CapabilityStatement, error) {
-	csInt, _, err := getCapFormats(cs)
-	if err != nil {
-		return nil, err
-	}
-
-	delete(csInt, field)
-
 	csJSON, err := json.Marshal(csInt)
 	if err != nil {
 		return nil, err

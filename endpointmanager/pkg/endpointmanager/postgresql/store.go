@@ -70,6 +70,10 @@ func NewStore(host string, port int, user string, password string, dbname string
 	if err != nil {
 		return nil, err
 	}
+	err = prepareHistoryPruningStatements(&store)
+	if err != nil {
+		return nil, err
+	}
 
 	return &store, nil
 }

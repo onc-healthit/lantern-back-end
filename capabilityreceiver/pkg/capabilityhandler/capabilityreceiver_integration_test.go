@@ -84,7 +84,6 @@ func Test_saveMsgInDB(t *testing.T) {
 	args["store"] = store
 	args["chplMatchFile"] = "../../testdata/test_chpl_product_mapping.json"
 
-
 	ctx := context.Background()
 
 	// populate vendors
@@ -215,6 +214,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	// resetting values
 	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
+
 }
 
 func setup() error {
