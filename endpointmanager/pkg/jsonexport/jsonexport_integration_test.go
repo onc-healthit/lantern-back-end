@@ -25,15 +25,19 @@ var testEndpoint = endpointmanager.FHIREndpoint{
 	ListSource:        "Test List Source",
 }
 
+var testEndpointMetadata = endpointmanager.FHIREndpointMetadata{
+	HTTPResponse:      200,
+	SMARTHTTPResponse: 200,
+	ResponseTime:      0.345,
+	Availability:      1.00,
+}
+
 var testEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:                "www.testURL.com",
 	TLSVersion:         "TLS 1.3",
 	MIMETypes:          []string{"application/fhir+json"},
-	HTTPResponse:       200,
-	SMARTHTTPResponse:  200,
 	SupportedResources: []string{"AllergyIntolerance", "Binary", "CarePlan"},
-	ResponseTime:       0.345,
-	Availability:       1.00,
+	Metadata:           &testEndpointMetadata,
 }
 
 var firstEndpoint = testEndpointInfo
