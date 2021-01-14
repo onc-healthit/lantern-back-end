@@ -29,8 +29,8 @@ type FHIREndpointInfo struct {
 	Metadata            *FHIREndpointMetadata
 }
 
-// EqualExcludeMetadataAndValidation checks each field of the two FHIREndpointInfos except for metadata fields and validation struct to see if they are equal.
-func (e *FHIREndpointInfo) EqualExcludeMetadataAndValidation(e2 *FHIREndpointInfo) bool {
+// EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
+func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	if e == nil && e2 == nil {
 		return true
 	} else if e == nil {
@@ -72,6 +72,10 @@ func (e *FHIREndpointInfo) EqualExcludeMetadataAndValidation(e2 *FHIREndpointInf
 		return false
 	}
 
+	if !cmp.Equal(e.Validation, e2.Validation) {
+		return false
+	}
+
 	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
 		return false
 	}
@@ -92,17 +96,13 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !e.EqualExcludeMetadataAndValidation(e2) {
+	if !e.EqualExcludeMetadata(e2) {
 		return false
 	}
 	if e.Metadata != nil && !e.Metadata.Equal(e2.Metadata) {
 		return false
 	}
 	if e.Metadata == nil && e2.Metadata != nil {
-		return false
-	}
-
-	if !cmp.Equal(e.Validation, e2.Validation) {
 		return false
 	}
 
