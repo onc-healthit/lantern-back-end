@@ -75,20 +75,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url st
 	ALTER TABLE fhir_endpoints_info
 	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
 
-	timestampTriggerDisable := `
-	ALTER TABLE fhir_endpoints_info
-	DISABLE TRIGGER set_timestamp_fhir_endpoints_info;`
-
-	timestampTriggerEnable := `
-	ALTER TABLE fhir_endpoints_info
-	ENABLE TRIGGER set_timestamp_fhir_endpoints_info;`
-
 	_, err := s.DB.ExecContext(ctx, infoHistoryTriggerDisable)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.DB.ExecContext(ctx, timestampTriggerDisable)
 	if err != nil {
 		return err
 	}
@@ -99,11 +86,6 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url st
 	}
 
 	_, err = s.DB.ExecContext(ctx, infoHistoryTriggerEnable)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.DB.ExecContext(ctx, timestampTriggerEnable)
 
 	return err
 }
