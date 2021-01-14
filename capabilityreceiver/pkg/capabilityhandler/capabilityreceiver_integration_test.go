@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -220,6 +221,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// test selective update
 
+	historySQLStatement := "SELECT updated_at FROM fhir_endpoints_info_history WHERE URL = $1 ORDER BY updated_at DESC LIMIT 1"
+	var updatedAt time.Time
+
 	// Update endpoint back to original values
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
@@ -232,11 +236,13 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	oldUpdateAt := storedEndpt.UpdatedAt
+
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	oldUpdateAt := updatedAt
 	oldMetadataID := storedEndpt.Metadata.ID
 	oldMetadataUpdatedAt := storedEndpt.Metadata.UpdatedAt
 
-	// Try to update with exact same values besides metadata
+	// Try to update with exact same values
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -247,14 +253,17 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, ct == 2, "did not store data as expected")
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
+
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	th.Assert(t, updatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time in the history table")
+
 	oldMetadataID = storedEndpt.Metadata.ID
 	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
 
 	// Try to update with exact same values besides metadata
-	queueTmp["httpResponse"] = 404
+	queueTmp["responseTime"] = 0.3456
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, err == nil, err)
@@ -265,11 +274,13 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, storedEndpt.UpdatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time")
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
 
-	queueTmp["httpResponse"] = 200
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	th.Assert(t, updatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time in the history table")
+
+	queueTmp["responseTime"] = 0.1234
 
 }
 

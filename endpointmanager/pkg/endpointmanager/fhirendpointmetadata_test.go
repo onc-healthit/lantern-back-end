@@ -9,21 +9,23 @@ import (
 func Test_FHIREndpointMetadataEqual(t *testing.T) {
 
 	var endpointMetadata1 = &FHIREndpointMetadata{
-		ID:           1,
-		URL:          "http://www.example.com",
-		HTTPResponse: 200,
-		Availability: 1.0,
-		Errors:       "Example Error",
-		ResponseTime: 0.123456,
+		ID:                1,
+		URL:               "http://www.example.com",
+		HTTPResponse:      200,
+		Availability:      1.0,
+		Errors:            "Example Error",
+		ResponseTime:      0.123456,
+		SMARTHTTPResponse: 200,
 	}
 
 	var endpointMetadata2 = &FHIREndpointMetadata{
-		ID:           1,
-		URL:          "http://www.example.com",
-		HTTPResponse: 200,
-		Availability: 1.0,
-		Errors:       "Example Error",
-		ResponseTime: 0.123456,
+		ID:                1,
+		URL:               "http://www.example.com",
+		HTTPResponse:      200,
+		Availability:      1.0,
+		Errors:            "Example Error",
+		ResponseTime:      0.123456,
+		SMARTHTTPResponse: 200,
 	}
 
 	if !endpointMetadata1.Equal(endpointMetadata2) {
@@ -47,6 +49,12 @@ func Test_FHIREndpointMetadataEqual(t *testing.T) {
 		t.Errorf("Expect endpointMetadata1 to not equal endpointMetadata2. HTTP responses should be different. %d vs %d", endpointMetadata1.HTTPResponse, endpointMetadata2.HTTPResponse)
 	}
 	endpointMetadata2.HTTPResponse = endpointMetadata1.HTTPResponse
+
+	endpointMetadata2.SMARTHTTPResponse = 0
+	if endpointMetadata1.Equal(endpointMetadata2) {
+		t.Errorf("Expect endpointMetadata1 to not equal endpointMetadata2. Smart HTTP responses should be different. %d vs %d", endpointMetadata1.HTTPResponse, endpointMetadata2.HTTPResponse)
+	}
+	endpointMetadata2.SMARTHTTPResponse = endpointMetadata1.SMARTHTTPResponse
 
 	endpointMetadata2.Availability = 0
 	if endpointMetadata1.Equal(endpointMetadata2) {
