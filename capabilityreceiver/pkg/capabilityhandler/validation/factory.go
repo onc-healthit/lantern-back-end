@@ -8,9 +8,9 @@ import (
 
 // from https://www.hl7.org/fhir/codesystem-FHIR-version.html
 // looking at official and release versions only
-var dstu2 = []string{"1.0.1", "1.0.2"}
-var stu3 = []string{"3.0.0", "3.0.1"}
-var r4 = []string{"4.0.0", "4.0.1"}
+var dstu2 = []string{"0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2"}
+var stu3 = []string{"1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2"}
+var r4 = []string{"3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1"}
 
 // Validator is an interface that can be implemented for each FHIR Version to run the correct
 // version's validation checks
