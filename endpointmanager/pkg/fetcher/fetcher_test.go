@@ -37,7 +37,8 @@ var testFHIR = []byte(`{"resourceType": "Bundle",
 					"name": "CarePlan repository",
 					"managingOrganization": {
 						"reference": "Telstra Health"
-					}
+					},
+					"address": "http://example2.com/DTSU2"
 	}}]}`)
 
 var testDefault = []byte(`{"Entries":[
@@ -134,6 +135,19 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 		}
 	}
 	th.Assert(t, found, "expected a resource field missing message to be logged")
+
+	// test fhir list entry with no address
+	expectedErr = "No address field in the resource. Ignoring resource."
+	_, _ = GetListOfEndpointsKnownSource([]byte(`{ "entry": [{ "resource": { "notAddress" : "" }}] }`), "FHIR", "")
+	// expect presence of a log message
+	found = false
+	for i := range hook.Entries {
+		if hook.Entries[i].Message == expectedErr {
+			found = true
+			break
+		}
+	}
+	th.Assert(t, found, "expected an address field missing message to be logged")
 
 	// test invalid source
 

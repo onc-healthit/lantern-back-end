@@ -35,28 +35,35 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL strin
 
 		resource, ok := fhirList[entry]["resource"].(map[string]interface{})
 		if ok {
-			// Save both name & managing organization in the array since both could be used
-			// for storing the organization name
-			managingOrg, orgOk := resource["managingOrganization"].(map[string]interface{})
-			if orgOk {
-				orgName, orgOk := managingOrg["display"].(string)
-				if orgOk {
-					fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, orgName)
-				}
-				alternateName, orgOk := managingOrg["reference"].(string)
-				if orgOk {
-					fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, alternateName)
-				}
-			}
-			nameEndpt, nameOk := resource["name"].(string)
-			if nameOk {
-				fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, nameEndpt)
-			}
 			uri, uriOk := resource["address"].(string)
 			if uriOk {
 				fhirEntry.FHIRPatientFacingURI = uri
+
+				// Save both name & managing organization in the array since both could be used
+				// for storing the organization name
+				managingOrg, orgOk := resource["managingOrganization"].(map[string]interface{})
+				if orgOk {
+					orgName, orgOk := managingOrg["display"].(string)
+					if orgOk {
+						fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, orgName)
+					}
+					alternateName, orgOk := managingOrg["reference"].(string)
+					if orgOk {
+						fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, alternateName)
+					}
+				}
+				nameEndpt, nameOk := resource["name"].(string)
+				if nameOk {
+					fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, nameEndpt)
+				}
+
+				if fhirEntry.OrganizationNames == nil {
+					log.Warnf("No associated organization name for the URL %s.", uri)
+				}
+				innerList = append(innerList, fhirEntry)
+			} else {
+				log.Warnf("No address field in the resource. Ignoring resource.")
 			}
-			innerList = append(innerList, fhirEntry)
 		} else {
 			log.Warnf("No resource field in FHIR list. Returning an empty list of entries.")
 		}
