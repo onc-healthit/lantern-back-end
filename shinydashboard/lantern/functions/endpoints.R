@@ -65,9 +65,7 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-      select(url, vendor_name), by = c("url" = "url")) %>%
-      left_join(db_tables$fhir_endpoints_metadata %>%
-      select(http_response), by = c("metadata_id" = "id")) %>%
+      select(url, vendor_name, http_response), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name) %>%
       mutate(code = as.character(http_response)) %>%
       group_by(id, url, code, http_response, vendor_name) %>%
@@ -386,7 +384,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id, e.url, f.vendor_id, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
-      f.smart_http_response,
+      m.smart_http_response,
       f.smart_response
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.id = m.id
