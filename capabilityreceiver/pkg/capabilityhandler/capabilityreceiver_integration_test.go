@@ -167,7 +167,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint2.URL)
 	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
-	th.Assert(t, expectedEndpt.Equal(storedEndpt), storedEndpt.Metadata)
+	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt.URL = testFhirEndpoint1.URL
 	queueTmp["url"] = "http://example.com/DTSU2/"
 
