@@ -1,5 +1,3 @@
-BEGIN;
-
 DROP VIEW IF EXISTS endpoint_export;
 
 DROP TABLE IF EXISTS fhir_endpoints_metadata;
@@ -28,32 +26,32 @@ ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET 
 
 CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info() RETURNS VOID as $$
     DECLARE
-        i RECORD;
+        t_curs cursor for select * from fhir_endpoints_info;
+        t_row fhir_endpoints_info%ROWTYPE;
         j INTEGER;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_info.url, fhir_endpoints_info.http_response, fhir_endpoints_info.availability, fhir_endpoints_info.errors, fhir_endpoints_info.response_time_seconds, fhir_endpoints_info.smart_http_response, fhir_endpoints_info.created_at, fhir_endpoints_info.updated_at FROM fhir_endpoints_info
-        LOOP
-            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+        FOR t_row in t_curs LOOP
+            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (t_row.url, t_row.http_response, t_row.availability, t_row.errors, t_row.response_time_seconds, t_row.smart_http_response, t_row.created_at, t_row.updated_at);
             SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
-            UPDATE fhir_endpoints_info SET metadata_id = j WHERE url = i.url; 
+            UPDATE fhir_endpoints_info SET metadata_id = j WHERE current of t_curs; 
         END LOOP;
-    END
+    END;
 $$ LANGUAGE plpgsql;
 
 SELECT populate_endpoints_metadata_info();
 
 CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VOID as $$
     DECLARE
-        i RECORD;
+        t_curs cursor for select * from fhir_endpoints_info_history;
+        t_row fhir_endpoints_info_history%ROWTYPE;
         j INTEGER;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_info_history.url, fhir_endpoints_info_history.http_response, fhir_endpoints_info_history.availability, fhir_endpoints_info_history.errors, fhir_endpoints_info_history.response_time_seconds, fhir_endpoints_info_history.smart_http_response, fhir_endpoints_info_history.created_at, fhir_endpoints_info_history.updated_at FROM fhir_endpoints_info_history
-        LOOP
-            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (i.url, i.http_response, i.availability, i.errors, i.response_time_seconds, i.smart_http_response, i.created_at, i.updated_at);
+        FOR t_row in t_curs LOOP
+            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (t_row.url, t_row.http_response, t_row.availability, t_row.errors, t_row.response_time_seconds, t_row.smart_http_response, t_row.created_at, t_row.updated_at);
             SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
-            UPDATE fhir_endpoints_info_history SET metadata_id = j WHERE updated_at = i.updated_at; 
+            UPDATE fhir_endpoints_info_history SET metadata_id = j WHERE current of t_curs; 
         END LOOP;
-    END
+    END;
 $$ LANGUAGE plpgsql;
 
 SELECT populate_endpoints_metadata_info_history();
@@ -94,7 +92,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts.url = endpts_metadata.url
+LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
@@ -112,5 +110,3 @@ CREATE TRIGGER set_timestamp_fhir_endpoints_metadata
 BEFORE UPDATE ON fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
-
-COMMIT;
