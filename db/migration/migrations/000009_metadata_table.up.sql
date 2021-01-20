@@ -1,3 +1,5 @@
+BEGIN;
+
 DROP VIEW IF EXISTS endpoint_export;
 
 DROP TABLE IF EXISTS fhir_endpoints_metadata;
@@ -110,3 +112,5 @@ CREATE TRIGGER set_timestamp_fhir_endpoints_metadata
 BEFORE UPDATE ON fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
+
+COMMIT;
