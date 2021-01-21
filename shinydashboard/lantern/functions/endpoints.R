@@ -40,7 +40,7 @@ get_fhir_endpoints_tbl <- function() {
 
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_info%>%
+  curr_tally <- db_tables$fhir_endpoints_info %>%
     select(metadata_id) %>%
     left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
       by = c("metadata_id" = "id")) %>%
