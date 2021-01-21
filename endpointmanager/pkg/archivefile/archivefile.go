@@ -1,20 +1,16 @@
-package main
+package archivefile
 
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 /**
@@ -86,66 +82,18 @@ type firstLastStrArr struct {
 	Last  []string `json:"last"`
 }
 
-// type historySummary struct {
-// 	Updated         map[string]interface{}
-// 	NumberOfUpdates int
-// 	Operation       map[string]interface{}
-// 	FHIRVersion     map[string]interface{}
-// 	TLSVersion      map[string]interface{}
-// 	MIMETypes       firstLastStrArr
-// }
-
-// type vendorSummary struct {
-// 	Vendor map[string]interface{} `json:"certified_api_developer_name""`
-// }
-
 var defaultMapInterface = map[string]interface{}{
 	"first": nil,
 	"last":  nil,
 }
 
 // @TODO Get rid of all print statements
-func main() {
-	var dateStart string
-	var dateEnd string
-
-	if len(os.Args) >= 3 {
-		dateStart = os.Args[1]
-		dateEnd = os.Args[2]
-	} else {
-		log.Fatalf("ERROR: Missing date-range command-line arguments")
-	}
-
-	err := config.SetupConfig()
-	helpers.FailOnError("", err)
-
-	layout := "2006-01-02"
-	formatStart, err := time.Parse(layout, dateStart)
-
-	if err != nil {
-		log.Fatalf("ERROR: Start date not in correct format, %s", err)
-	}
-	fmt.Println(formatStart)
-
-	formatEnd, err := time.Parse(layout, dateEnd)
-
-	if err != nil {
-		log.Fatalf("ERROR: End date not in correct format, %s", err)
-	}
-	fmt.Println(formatEnd)
-
-	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
-	helpers.FailOnError("", err)
-	log.Info("Successfully connected to DB!")
-
-	ctx := context.Background()
-
+func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart string, dateEnd string) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
 	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source from fhir_endpoints;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		// return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
-		log.Fatalf("ERROR getting data from fhir_endpoints: %s", err)
+		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints: %s", err)
 	}
 
 	var urls []string
@@ -160,7 +108,7 @@ func main() {
 			&entry.CreatedAt,
 			&listSource)
 		if err != nil {
-			log.Fatalf("ERROR getting row from fhir_endpoints: %s", err)
+			return nil, fmt.Errorf("ERROR getting row from fhir_endpoints: %s", err)
 		}
 
 		// If the URL already exists, include the new list source and organization names
@@ -205,8 +153,7 @@ func main() {
 		WHERE updated_at between '` + dateStart + `' AND '` + dateEnd + `' ORDER BY updated_at`
 	historyRows, err := store.DB.QueryContext(ctx, historyQuery)
 	if err != nil {
-		// return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
-		log.Fatalf("ERROR getting data from fhir_endpoints_info_history: %s", err)
+		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints_info_history: %s", err)
 	}
 
 	// Have to pull out the data properly
@@ -225,8 +172,7 @@ func main() {
 			&e.TLSVersion,
 			pq.Array(&e.MIMETypes))
 		if err != nil {
-			// log.Warnf("Error while scanning the rows of the history table. Error: %s", err)
-			log.Fatalf("Error while scanning the rows of the history table. Error: %s", err)
+			return nil, fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
 		}
 
 		e.FHIRVersion, e.FHIRVersionError = getFHIRVersion(capStat)
@@ -241,8 +187,12 @@ func main() {
 
 	// @TODO Might want to put this in the above loop later
 	// Loop through the url list to get associated history data
-	for k, u := range allData {
-		if history, ok := resultMap[k]; ok {
+	for _, url := range urls {
+		u, ok := allData[url]
+		if !ok {
+			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
+		}
+		if history, ok := resultMap[url]; ok {
 			u.NumberOfUpdates = len(history)
 
 			startElem := history[0]
@@ -286,9 +236,9 @@ func main() {
 				u.MIMETypes.Last = endElem.MIMETypes
 			}
 
-			allData[k] = u
+			allData[url] = u
 		} else {
-			log.Infof("This url %s does not have an entry in the history table", u)
+			log.Infof("This url %s does not have an entry in the history table", url)
 		}
 	}
 
@@ -305,8 +255,7 @@ func main() {
 		WHERE f.updated_at between '` + dateStart + `' AND '` + dateEnd + `' AND f.vendor_id = v.id ORDER BY f.updated_at`
 	vendorRows, err := store.DB.QueryContext(ctx, vendorQuery)
 	if err != nil {
-		// return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
-		log.Fatalf("ERROR getting data from fhir_endpoints_info_history and vendors: %s", err)
+		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints_info_history and vendors: %s", err)
 	}
 
 	vendorResults := make(map[string][]vendorEntry)
@@ -321,8 +270,7 @@ func main() {
 			&v.ID,
 			&v.VendorName)
 		if err != nil {
-			// log.Warnf("Error while scanning the rows of the history table. Error: %s", err)
-			log.Fatalf("Error while scanning the rows of the history and vendor table. Error: %s", err)
+			return nil, fmt.Errorf("Error while scanning the rows of the history and vendor table. Error: %s", err)
 		}
 
 		if !vendorIDNullable.Valid {
@@ -331,8 +279,6 @@ func main() {
 			v.VendorID = int(vendorIDNullable.Int64)
 		}
 
-		// @TODO Do we have to worry about repeat urls?
-		// If the URL already exists, currently just print out something
 		if val, ok := vendorResults[v.URL]; ok {
 			vendorResults[v.URL] = append(val, v)
 		} else {
@@ -340,8 +286,12 @@ func main() {
 		}
 	}
 
-	for k, u := range allData {
-		if vResult, ok := vendorResults[k]; ok {
+	for _, url := range urls {
+		u, ok := allData[url]
+		if !ok {
+			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
+		}
+		if vResult, ok := vendorResults[url]; ok {
 			startElem := vResult[0]
 			endElem := vResult[len(vResult)-1]
 
@@ -351,8 +301,9 @@ func main() {
 			if startElem.VendorName != endElem.VendorName {
 				u.Vendor["last"] = endElem.VendorName
 			}
+			allData[url] = u
 		} else {
-			log.Infof("This url %s does not have an entry in the vendor table", u)
+			log.Infof("This url %s does not have an entry in the vendor table", url)
 		}
 	}
 
@@ -412,17 +363,6 @@ func main() {
 	*/
 
 	/**
-	Fields from fhir_endpoints:
-	"url":"",
-	"created_at":"",
-	"list_source":"",
-	"api_information_source_name":{
-		"first":"",
-		"last":""
-	},
-	*/
-
-	/**
 	Fields from the new metadata table:
 	"response_time_second":"",
 	"http_response":[
@@ -457,17 +397,7 @@ func main() {
 	],
 	*/
 
-	/** Questions
-	1. We don't have the history of the api information source name (organization name) since there is no fhir_endpoints history table, just one for the info
-	*/
-
-	// Format as JSON
-	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
-	// finalFormatJSON, err := json.MarshalIndent(resultMap, "", "\t")
-	// finalFormatJSON, err := json.MarshalIndent(allHistory, "", "\t")
-	// finalFormatJSON, err := json.MarshalIndent(vendorHistory, "", "\t")
-	fmt.Printf("JSON: %s", string(finalFormatJSON))
-
+	return entries, nil
 }
 
 // Get the FHIR Version from the capability statement
