@@ -16,18 +16,7 @@ securitymodule_UI <- function(id) {
     ),
     h3("Endpoints by Authorization Type"),
     div(
-      # uiOutput(ns("show_security_filter")),
-      fluidRow(
-        column(width = 4,
-               selectInput(
-                 inputId = ns("auth_type_code"),
-                 label = "Supported Authorization Type:",
-                 choices = isolate(app_data$security_code_list()),
-                 selected = "SMART-on-FHIR",
-                 size = 1,
-                 selectize = FALSE)
-        )
-      ),
+      uiOutput("show_security_filter"),
       DT::dataTableOutput(ns("security_endpoints"))
     )
   )

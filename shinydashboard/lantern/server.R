@@ -122,6 +122,8 @@ function(input, output, session) { #nolint
 
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
+  show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
+
   page_name <- reactive({
     page_name_list[[input$side_menu]]
   })
@@ -189,6 +191,22 @@ function(input, output, session) { #nolint
             label = "Field",
             choices = list("url", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
             selected = "url",
+            size = 1,
+            selectize = FALSE)
+        )
+      )
+    }
+  })
+
+  output$show_security_filter <- renderUI({
+    if (show_security_filter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "auth_type_code",
+            label = "Supported Authorization Type:",
+            choices = isolate(app_data$security_code_list()),
+            selected = "SMART-on-FHIR",
             size = 1,
             selectize = FALSE)
         )
