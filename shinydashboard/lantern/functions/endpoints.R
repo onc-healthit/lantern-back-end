@@ -40,7 +40,10 @@ get_fhir_endpoints_tbl <- function() {
 
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_metadata %>%
+  curr_tally <- db_tables$fhir_endpoints_info%>%
+    select(metadata_id) %>%
+    left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
+      by = c("metadata_id" = "id")) %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -355,7 +358,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version
     FROM fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.id = m.id
+    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
@@ -370,8 +373,8 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 # checking if valid SMART core capability doc returned)
 get_well_known_endpoints_count <- function(db_connection) {
   res <- tbl(db_connection,
-      sql("SELECT count(*) from fhir_endpoints_metadata
-          WHERE smart_http_response = 200")) %>%
+      sql("SELECT count(*) from fhir_endpoints_info, fhir_endpoints_metadata
+          WHERE fhir_endpoints_info.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_metadata.smart_http_response = 200")) %>%
       collect() %>%
       pull(count)
   as.integer(res)
@@ -387,7 +390,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
       m.smart_http_response,
       f.smart_response
     FROM fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.id = m.id
+    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
