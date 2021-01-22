@@ -4,13 +4,16 @@ package fetcher
 type LanternList struct{}
 
 // GetEndpoints takes the list of lantern endpoints and formats it into a ListOfEndpoints
-func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}) ListOfEndpoints {
+func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, listURL string) ListOfEndpoints {
 	var finalList ListOfEndpoints
 	var innerList []EndpointEntry
 
 	for entry := range lanternList {
-		fhirEntry := EndpointEntry{
-			ListSource: string(Lantern),
+		fhirEntry := EndpointEntry{}
+		if listURL != "" {
+			fhirEntry.ListSource = listURL
+		} else {
+			fhirEntry.ListSource = "Lantern"
 		}
 		orgName, orgOk := lanternList[entry]["OrganizationName"].(string)
 		if orgOk {

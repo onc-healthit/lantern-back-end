@@ -1,12 +1,15 @@
 package fetcher
 
 // GetEndpoints takes the a list of endpoints and formats it into a ListOfEndpoints
-func getDefaultEndpoints(defaultList []map[string]interface{}, source string) ListOfEndpoints {
+func getDefaultEndpoints(defaultList []map[string]interface{}, source string, listURL string) ListOfEndpoints {
 	var finalList ListOfEndpoints
 	var innerList []EndpointEntry
 	for entry := range defaultList {
-		fhirEntry := EndpointEntry{
-			ListSource: source,
+		fhirEntry := EndpointEntry{}
+		if listURL != "" {
+			fhirEntry.ListSource = listURL
+		} else {
+			fhirEntry.ListSource = source
 		}
 		orgName, orgOk := defaultList[entry]["OrganizationName"].(string)
 		if orgOk {

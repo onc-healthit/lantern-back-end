@@ -87,16 +87,16 @@ func populateTestNPIData() {
 
 func populateTestEndpointData(testEndpointList string, source string) {
 	var listOfEndpoints fetcher.ListOfEndpoints
-	var knownSource fetcher.Source
+	var knownSource string
 	content, err := ioutil.ReadFile(testEndpointList)
 	helpers.FailOnError("", err)
 
 	if source == "Test" {
-		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source)
+		listOfEndpoints, err = fetcher.GetListOfEndpoints(content, source, "test.com")
 		helpers.FailOnError("", err)
 	} else {
-		knownSource = "LanternEndpointSourcesJson"
-		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource)
+		knownSource = "Lantern"
+		listOfEndpoints, err = fetcher.GetListOfEndpointsKnownSource(content, knownSource, "")
 		helpers.FailOnError("", err)
 	}
 
