@@ -27,7 +27,8 @@ securitymodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  sel_auth_type_code
 ) {
 
   ns <- session$ns
@@ -42,14 +43,14 @@ securitymodule <- function(
 
   selected_endpoints <- reactive({
     res <- isolate(app_data$security_endpoints_tbl())
-    req(sel_fhir_version(), sel_vendor(), input$auth_type_code)
+    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>% filter(code == input$auth_type_code)
+    res <- res %>% filter(code == sel_auth_type_code())
     res
   })
 

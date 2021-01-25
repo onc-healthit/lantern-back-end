@@ -314,7 +314,7 @@ get_security_endpoints_tbl <- function(db_connection) {
           json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
         FROM fhir_endpoints_info f, vendors v, fhir_endpoints e
         WHERE f.vendor_id = v.id
-        AND e.id = f.id")) %>%
+        AND e.url = f.url")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))

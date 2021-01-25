@@ -62,7 +62,8 @@ function(input, output, session) { #nolint
         securitymodule,
         "security_page",
         reactive(input$fhir_version),
-        reactive(input$vendor))
+        reactive(input$vendor),
+        reactive(input$auth_type_code))
 
       callModule(
         smartresponsemodule,
