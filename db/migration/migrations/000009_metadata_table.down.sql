@@ -26,12 +26,12 @@ DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
     DECLARE
-        i RECORD;
+        t_curs cursor for select * from fhir_endpoints_metadata;
+        t_row fhir_endpoints_metadata%ROWTYPE;
     BEGIN
-        FOR i IN SELECT DISTINCT fhir_endpoints_metadata.id, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.availability, fhir_endpoints_metadata.errors, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.smart_http_response FROM fhir_endpoints_metadata
-        LOOP
-            UPDATE fhir_endpoints_info SET http_response=i.http_response, availability=i.availability, errors=i.errors, response_time_seconds=i.response_time_seconds, smart_http_response=i.smart_http_response WHERE metadata_id = i.id;
-            UPDATE fhir_endpoints_info_history SET http_response=i.http_response, availability=i.availability, errors=i.errors, response_time_seconds=i.response_time_seconds, smart_http_response=i.smart_http_response WHERE metadata_id = i.id;
+        FOR t_row in t_curs LOOP
+            UPDATE fhir_endpoints_info SET http_response=t_row.http_response, availability=t_row.availability, errors=t_row.errors, response_time_seconds=t_row.response_time_seconds, smart_http_response=t_row.smart_http_response WHERE metadata_id = t_row.id;
+            UPDATE fhir_endpoints_info_history SET http_response=t_row.http_response, availability=t_row.availability, errors=t_row.errors, response_time_seconds=t_row.response_time_seconds, smart_http_response=t_row.smart_http_response WHERE metadata_id = t_row.id;
         END LOOP;
     END
 $$ LANGUAGE plpgsql;

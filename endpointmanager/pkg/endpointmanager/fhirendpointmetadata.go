@@ -38,7 +38,7 @@ func (e *FHIREndpointMetadata) Equal(e2 *FHIREndpointMetadata) bool {
 	if e.HTTPResponse != e2.HTTPResponse {
 		return false
 	}
-	if e.Availability != e2.Availability {
+	if !cmp.Equal(e.Availability, e2.Availability) {
 		return false
 	}
 	if e.Errors != e2.Errors {

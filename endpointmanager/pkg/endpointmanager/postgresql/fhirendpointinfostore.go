@@ -15,6 +15,7 @@ import (
 var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
+var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
@@ -302,6 +303,31 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	return err
 }
 
+// UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
+func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
+	infoHistoryTriggerDisable := `
+	ALTER TABLE fhir_endpoints_info
+	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
+	infoHistoryTriggerEnable := `
+	ALTER TABLE fhir_endpoints_info
+	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
+	_, err := s.DB.ExecContext(ctx, infoHistoryTriggerDisable)
+	if err != nil {
+		return err
+	}
+
+	_, err = updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, url)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.DB.ExecContext(ctx, infoHistoryTriggerEnable)
+
+	return err
+}
+
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
@@ -343,6 +369,14 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			supported_resources = $10,
 			metadata_id = $11		
 		WHERE id = $12`)
+	if err != nil {
+		return err
+	}
+	updateFHIREndpointInfoMetadataStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints_info
+		SET 
+			metadata_id = $1		
+		WHERE url = $2`)
 	if err != nil {
 		return err
 	}

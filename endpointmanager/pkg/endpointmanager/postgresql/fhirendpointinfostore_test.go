@@ -261,7 +261,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	// get the first update and check its value
-	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at ASC, fhir_endpoints_info_history.entered_at ASC LIMIT 1;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at ASC LIMIT 1;", endpointInfo1.ID)
 	err = rows.Scan(&response, &capStatJson)
 	if err != nil {
 		t.Errorf("history count for insertions: %s", err.Error())
@@ -274,7 +274,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	// get the second update and check its value
-	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at DESC, fhir_endpoints_info_history.entered_at DESC LIMIT 1;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at DESC LIMIT 1;", endpointInfo1.ID)
 	err = rows.Scan(&response, &capStatJson)
 	if err != nil {
 		t.Errorf("history count for insertions: %s", err.Error())

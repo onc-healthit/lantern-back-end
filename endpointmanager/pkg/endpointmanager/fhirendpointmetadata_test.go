@@ -52,7 +52,7 @@ func Test_FHIREndpointMetadataEqual(t *testing.T) {
 
 	endpointMetadata2.SMARTHTTPResponse = 0
 	if endpointMetadata1.Equal(endpointMetadata2) {
-		t.Errorf("Expect endpointMetadata1 to not equal endpointMetadata2. Smart HTTP responses should be different. %d vs %d", endpointMetadata1.HTTPResponse, endpointMetadata2.HTTPResponse)
+		t.Errorf("Expect endpointMetadata1 to not equal endpointMetadata2. Smart HTTP responses should be different. %d vs %d", endpointMetadata1.SMARTHTTPResponse, endpointMetadata2.SMARTHTTPResponse)
 	}
 	endpointMetadata2.SMARTHTTPResponse = endpointMetadata1.SMARTHTTPResponse
 
