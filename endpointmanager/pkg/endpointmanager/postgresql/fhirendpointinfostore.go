@@ -304,17 +304,33 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
+
+	infoHistoryTriggerDisable := `
+	ALTER TABLE fhir_endpoints_info
+	DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
+	infoHistoryTriggerEnable := `
+	ALTER TABLE fhir_endpoints_info
+	ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;`
+
 	tx, err := s.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'TRUE');")
+	_, err = tx.ExecContext(ctx, infoHistoryTriggerDisable)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+
 	_, err = tx.ExecContext(ctx, `UPDATE fhir_endpoints_info SET metadata_id = $1 WHERE url = $2`, metadataID, url)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.ExecContext(ctx, infoHistoryTriggerEnable)
 	if err != nil {
 		tx.Rollback()
 		return err
