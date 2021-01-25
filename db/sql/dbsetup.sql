@@ -277,7 +277,7 @@ BEFORE UPDATE ON fhir_endpoints_availability
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
-SELECT set_config('metadata.setting', 'TRUE', 'FALSE')
+SELECT set_config('metadata.setting', 'TRUE', 'FALSE');
 
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
