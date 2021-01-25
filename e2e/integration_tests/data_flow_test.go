@@ -572,7 +572,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	// Check that endpoints were not deleted from metadata table
 	endpt_metadata_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata;")
 	var endpt_metadata_count int
-	err = endpt_info_ct_st.Scan(&endpt_metadata_count)
+	err = endpt_metadata_ct_st.Scan(&endpt_metadata_count)
 	helpers.FailOnError("", err)
 	if endpt_metadata_count != fhir_metadata_count {
 		t.Fatalf("fhir_endpoints_metadata should have %d endpoints after update. Got: %d", fhir_metadata_count, endpt_metadata_count)
