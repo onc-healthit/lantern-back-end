@@ -320,19 +320,28 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url st
 
 	_, err = tx.ExecContext(ctx, infoHistoryTriggerDisable)
 	if err != nil {
-		tx.Rollback()
+		rollbackErr := tx.Rollback()
+		if rollbackErr != nil {
+			return rollbackErr
+		}
 		return err
 	}
 
 	_, err = tx.ExecContext(ctx, `UPDATE fhir_endpoints_info SET metadata_id = $1 WHERE url = $2`, metadataID, url)
 	if err != nil {
-		tx.Rollback()
+		rollbackErr := tx.Rollback()
+		if rollbackErr != nil {
+			return rollbackErr
+		}
 		return err
 	}
 
 	_, err = tx.ExecContext(ctx, infoHistoryTriggerEnable)
 	if err != nil {
-		tx.Rollback()
+		rollbackErr := tx.Rollback()
+		if rollbackErr != nil {
+			return rollbackErr
+		}
 		return err
 	}
 
