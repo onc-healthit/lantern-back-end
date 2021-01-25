@@ -15,7 +15,6 @@ import (
 var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
-var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
@@ -305,9 +304,23 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
+	tx, err := s.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
 
-	_, err := updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, url)
+	_, err = tx.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'TRUE');")
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.ExecContext(ctx, `UPDATE fhir_endpoints_info SET metadata_id = $1 WHERE url = $2`, metadataID, url)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 
+	err = tx.Commit()
 	return err
 }
 
@@ -352,15 +365,6 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			supported_resources = $10,
 			metadata_id = $11		
 		WHERE id = $12`)
-	if err != nil {
-		return err
-	}
-	updateFHIREndpointInfoMetadataStatement, err = s.DB.Prepare(`
-		SELECT set_config('metadata.setting', 'FALSE', 'TRUE');
-		UPDATE fhir_endpoints_info
-		SET 
-			metadata_id = $1		
-		WHERE url = $2`)
 	if err != nil {
 		return err
 	}
