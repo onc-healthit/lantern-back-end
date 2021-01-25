@@ -481,6 +481,14 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		t.Fatalf("Fhir_endpoints_info db should have capability statements")
 	}
 
+	query_str = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata;")
+	var fhir_metadata_count int
+	err = query_str.Scan(&fhir_metadata_count)
+	helpers.FailOnError("", err)
+	if fhir_metadata_count < 30 {
+		t.Fatalf("Fhir_endpoints_metadata db should have at least one entry for every endpoint")
+	}
+
 	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
 	var fhir_version_count int
 	expected_fhir_version_count := 30
@@ -561,6 +569,15 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		t.Fatalf("fhir_endpoints_info should have %d endpoints after update. Got: %d", expected_endpt_ct, link_count)
 	}
 
+	// Check that endpoints were not deleted from metadata table
+	endpt_info_ct_st := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata;")
+	var endpt_metadata_count int
+	err = endpt_info_ct_st.Scan(&endpt_metadata_count)
+	helpers.FailOnError("", err)
+	if endpt_metadata_count != fhir_metadata_count {
+		t.Fatalf("fhir_endpoints_metadata should have %d endpoints after update. Got: %d", fhir_metadata_count, endpt_metadata_count)
+	}
+
 	// List of endpoint urls that were removed in TestEndpointSources_1.json
 	fhir_urls := []string{"https://eloh-mapilive.primehealthcare.com/v1/argonaut/v1/",
 		"https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
@@ -595,7 +612,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		// check that endpoint availability is correct
 		var http_response int
 		var availability float64
-		get_availability_str := "SELECT http_response, availability FROM fhir_endpoints_info WHERE url=$1;"
+		get_availability_str := "SELECT http_response, availability FROM fhir_endpoints_metadata WHERE url=$1;"
 		err = store.DB.QueryRow(get_availability_str, url).Scan(&http_response, &availability)
 		helpers.FailOnError("", err)
 		if http_response == 200 {
