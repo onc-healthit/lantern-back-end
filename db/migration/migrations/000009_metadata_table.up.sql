@@ -16,8 +16,7 @@ CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE fhir_endpoints_info
-DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
 ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
@@ -25,22 +24,6 @@ ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET 
 ALTER TABLE fhir_endpoints_info_history 
 ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
 
-
-CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info() RETURNS VOID as $$
-    DECLARE
-        t_curs cursor for select * from fhir_endpoints_info;
-        t_row fhir_endpoints_info%ROWTYPE;
-        j INTEGER;
-    BEGIN
-        FOR t_row in t_curs LOOP
-            INSERT INTO fhir_endpoints_metadata (url, http_response, availability, errors, response_time_seconds, smart_http_response, created_at, updated_at) VALUES (t_row.url, t_row.http_response, t_row.availability, t_row.errors, t_row.response_time_seconds, t_row.smart_http_response, t_row.created_at, t_row.updated_at);
-            SELECT currval(pg_get_serial_sequence('fhir_endpoints_metadata','id')) INTO j;
-            UPDATE fhir_endpoints_info SET metadata_id = j WHERE current of t_curs; 
-        END LOOP;
-    END;
-$$ LANGUAGE plpgsql;
-
-SELECT populate_endpoints_metadata_info();
 
 CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VOID as $$
     DECLARE
@@ -58,8 +41,29 @@ $$ LANGUAGE plpgsql;
 
 SELECT populate_endpoints_metadata_info_history();
 
-ALTER TABLE fhir_endpoints_info
-ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info() RETURNS VOID as $$
+    DECLARE
+        t_curs cursor for select * from fhir_endpoints_info;
+        t_row fhir_endpoints_info%ROWTYPE;
+        j INTEGER;
+    BEGIN
+        FOR t_row in t_curs LOOP
+            SELECT metadata_id into j FROM fhir_endpoints_info_history where url = t_row.url ORDER BY updated_at DESC LIMIT 1;
+            UPDATE fhir_endpoints_info SET metadata_id = j WHERE current of t_curs; 
+        END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT populate_endpoints_metadata_info();
+
+SELECT set_config('metadata.setting', 'TRUE', 'FALSE')
+
+-- captures history for the fhir_endpoint_info table
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+WHEN (current_setting('metadata.setting') <> 'TRUE')
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 ALTER TABLE fhir_endpoints_info 
 DROP COLUMN http_response, 

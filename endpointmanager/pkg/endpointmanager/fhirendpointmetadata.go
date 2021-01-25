@@ -6,10 +6,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-// FHIREndpointMetadata represents a fielded FHIR API endpoint hosted by a
-// HealthITProduct and populated by a ProviderOrganization.
-// Information about the FHIR API endpoint is populated by the FHIR
-// capability statement found at that endpoint.
+// FHIREndpointMetadata represents information about the request made
+// to the FHIR endpoint's capability statement and it's SMART on FHIR well-known configuration
 type FHIREndpointMetadata struct {
 	ID                int
 	URL               string

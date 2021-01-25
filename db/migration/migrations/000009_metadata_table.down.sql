@@ -5,6 +5,7 @@ DROP VIEW IF EXISTS endpoint_export;
 DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
 DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_metadata;
 DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoints_metadata ON fhir_endpoints_metadata;
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
 ADD COLUMN http_response INTEGER, 
@@ -19,9 +20,6 @@ ADD COLUMN availability DECIMAL(5,4),
 ADD COLUMN errors VARCHAR(500), 
 ADD COLUMN response_time_seconds DECIMAL(7,4), 
 ADD COLUMN smart_http_response INTEGER;
-
-ALTER TABLE fhir_endpoints_info
-DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
 
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
@@ -44,8 +42,11 @@ DROP COLUMN metadata_id;
 ALTER TABLE fhir_endpoints_info_history
 DROP COLUMN metadata_id;
 
-ALTER TABLE fhir_endpoints_info
-ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+-- captures history for the fhir_endpoint_info table
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 DROP TABLE IF EXISTS fhir_endpoints_metadata;
 
