@@ -16,8 +16,7 @@ CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE fhir_endpoints_info
-DISABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
 ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
@@ -57,8 +56,14 @@ $$ LANGUAGE plpgsql;
 
 SELECT populate_endpoints_metadata_info();
 
-ALTER TABLE fhir_endpoints_info
-ENABLE TRIGGER add_fhir_endpoint_info_history_trigger;
+SELECT set_config('metadata.setting', 'TRUE', 'FALSE')
+
+-- captures history for the fhir_endpoint_info table
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+WHEN (current_setting('metadata.setting') <> 'TRUE')
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 ALTER TABLE fhir_endpoints_info 
 DROP COLUMN http_response, 
