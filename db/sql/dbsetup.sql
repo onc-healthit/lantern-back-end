@@ -281,7 +281,7 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
 FOR EACH ROW
-WHEN (current_setting('metadata.setting', 't') IS NULL OR 'FALSE')
+WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metadata.setting', 't') = 'FALSE')
 EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 -- increments total number of times http status returned for endpoint 
