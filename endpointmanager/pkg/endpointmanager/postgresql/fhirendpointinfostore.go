@@ -313,7 +313,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url st
 	if err != nil {
 		return err
 	}
-	_, err = s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', NULL, 'FALSE');")
+	_, err = s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'FALSE');")
 	if err != nil {
 		return err
 	}
