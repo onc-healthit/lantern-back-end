@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
 DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
@@ -23,6 +24,10 @@ ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET 
 
 ALTER TABLE fhir_endpoints_info_history 
 ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
+
+CREATE INDEX info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
+CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
+CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
 
 
 CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VOID as $$

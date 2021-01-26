@@ -22,14 +22,26 @@ ADD COLUMN response_time_seconds DECIMAL(7,4),
 ADD COLUMN smart_http_response INTEGER;
 
 
-CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
+CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info_history() RETURNS VOID as $$
     DECLARE
         t_curs cursor for select * from fhir_endpoints_metadata;
         t_row fhir_endpoints_metadata%ROWTYPE;
     BEGIN
         FOR t_row in t_curs LOOP
-            UPDATE fhir_endpoints_info SET http_response=t_row.http_response, availability=t_row.availability, errors=t_row.errors, response_time_seconds=t_row.response_time_seconds, smart_http_response=t_row.smart_http_response WHERE metadata_id = t_row.id;
             UPDATE fhir_endpoints_info_history SET http_response=t_row.http_response, availability=t_row.availability, errors=t_row.errors, response_time_seconds=t_row.response_time_seconds, smart_http_response=t_row.smart_http_response WHERE metadata_id = t_row.id;
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT populate_existing_tables_endpoints_info_history();
+
+CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info() RETURNS VOID as $$
+    DECLARE
+        t_curs cursor for SELECT h.http_response, h.availability, h.errors, h.response_time_seconds, h.smart_http_response, h.metadata_id FROM fhir_endpoints_info_history as h, fhir_endpoints_info as i WHERE h.metadata_id = i.metadata_id;
+        t_row fhir_endpoints_info_history%ROWTYPE;
+    BEGIN
+        FOR t_row in t_curs LOOP
+            UPDATE fhir_endpoints_info SET http_response=t_row.http_response, availability=t_row.availability, errors=t_row.errors, response_time_seconds=t_row.response_time_seconds, smart_http_response=t_row.smart_http_response WHERE metadata_id = t_row.metadata_id;
         END LOOP;
     END
 $$ LANGUAGE plpgsql;
@@ -76,5 +88,9 @@ CREATE TRIGGER update_fhir_endpoint_availability_trigger
 BEFORE INSERT OR UPDATE on fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
+
+DROP INDEX IF EXISTS info_metadata_id_idx;
+DROP INDEX IF EXISTS info_history_metadata_id_idx;
+DROP INDEX IF EXISTS metadata_id_idx;
 
 COMMIT;

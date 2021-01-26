@@ -364,3 +364,7 @@ CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement:
 CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->'capabilities'));
 
 CREATE INDEX location_zipcode_idx ON npi_organizations ((location->>'zipcode'));
+
+CREATE INDEX info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
+CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
+CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
