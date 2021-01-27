@@ -20,39 +20,6 @@ Fields from fhir_endpoints:
 "list_source":[],
 "api_information_source_name":[],
 */
-type totalSummary struct {
-	URL               string    `json:"url"`
-	CreatedAt         time.Time `json:"created_at"`
-	ListSource        []string  `json:"list_source"`
-	OrganizationNames []string  `json:"api_information_source_name"`
-	Updated           map[string]interface{}
-	NumberOfUpdates   int
-	Operation         map[string]interface{}
-	FHIRVersion       map[string]interface{}
-	TLSVersion        map[string]interface{}
-	MIMETypes         firstLastStrArr
-	Vendor            map[string]interface{} `json:"certified_api_developer_name""`
-}
-
-// @TODO Remove json
-type historyEntry struct {
-	URL              string    `json:"url"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	Operation        string    `json:"operation"`
-	FHIRVersion      string    `json:"fhir_version"`
-	FHIRVersionError error     `json:"fhir_version_error"`
-	TLSVersion       string    `json:"tls_version"`
-	MIMETypes        []string  `json:"mime_types`
-}
-
-type vendorEntry struct {
-	VendorID   int
-	UpdatedAt  time.Time
-	URL        string
-	ID         int
-	VendorName string
-}
-
 /**
 "updated":{
 	"first":"",
@@ -76,15 +43,42 @@ type vendorEntry struct {
 	"last":""
 },
 */
+type totalSummary struct {
+	URL               string                 `json:"url"`
+	CreatedAt         time.Time              `json:"created_at"`
+	ListSource        []string               `json:"list_source"`
+	OrganizationNames []string               `json:"api_information_source_name"`
+	Updated           map[string]interface{} `json:"updated_at"`
+	NumberOfUpdates   int                    `json:"number_of_updates"`
+	Operation         map[string]interface{} `json:"operation"`
+	FHIRVersion       map[string]interface{} `json:"fhir_version"`
+	TLSVersion        map[string]interface{} `json:"tls_version"`
+	MIMETypes         firstLastStrArr        `json:"mime_types"`
+	Vendor            map[string]interface{} `json:"certified_api_developer_name"`
+}
+
+// @TODO Remove json
+type historyEntry struct {
+	URL              string
+	UpdatedAt        time.Time
+	Operation        string
+	FHIRVersion      string
+	FHIRVersionError error
+	TLSVersion       string
+	MIMETypes        []string
+}
+
+type vendorEntry struct {
+	VendorID   int
+	UpdatedAt  time.Time
+	URL        string
+	ID         int
+	VendorName string
+}
 
 type firstLastStrArr struct {
 	First []string `json:"first"`
 	Last  []string `json:"last"`
-}
-
-var defaultMapInterface = map[string]interface{}{
-	"first": nil,
-	"last":  nil,
 }
 
 // @TODO Get rid of all print statements
@@ -192,41 +186,34 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		if !ok {
 			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
 		}
+		u.NumberOfUpdates = 0
+		u.Updated = makeDefaultMap()
+		u.Operation = makeDefaultMap()
+		u.FHIRVersion = makeDefaultMap()
+		u.TLSVersion = makeDefaultMap()
 		if history, ok := resultMap[url]; ok {
 			u.NumberOfUpdates = len(history)
-
 			startElem := history[0]
 			endElem := history[len(history)-1]
 
-			// summary.Updated = make(map[string]interface{})
-			// @TODO Make sure to have defaults for each if for some reason an entry doesn't have a row in the history table?
-			u.Updated = defaultMapInterface
 			u.Updated["first"] = startElem.UpdatedAt
-			u.Updated["last"] = nil
 			if startElem.UpdatedAt != endElem.UpdatedAt {
 				u.Updated["last"] = endElem.UpdatedAt
 			}
 
-			u.Operation = make(map[string]interface{})
 			u.Operation["first"] = startElem.Operation
-			u.Operation["last"] = nil
 			if startElem.Operation != endElem.Operation {
 				u.Operation["last"] = endElem.Operation
 			}
 
-			u.FHIRVersion = make(map[string]interface{})
-			u.FHIRVersion["first"] = nil
 			if startElem.FHIRVersionError == nil {
 				u.FHIRVersion["first"] = startElem.FHIRVersion
 			}
-			u.FHIRVersion["last"] = nil
 			if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
 				u.FHIRVersion["last"] = endElem.FHIRVersion
 			}
 
-			u.TLSVersion = make(map[string]interface{})
 			u.TLSVersion["first"] = startElem.TLSVersion
-			u.TLSVersion["last"] = nil
 			if startElem.TLSVersion != endElem.TLSVersion {
 				u.TLSVersion["last"] = endElem.TLSVersion
 			}
@@ -235,11 +222,10 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 			if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
 				u.MIMETypes.Last = endElem.MIMETypes
 			}
-
-			allData[url] = u
 		} else {
 			log.Infof("This url %s does not have an entry in the history table", url)
 		}
+		allData[url] = u
 	}
 
 	/**
@@ -291,76 +277,25 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		if !ok {
 			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
 		}
+		u.Vendor = makeDefaultMap()
 		if vResult, ok := vendorResults[url]; ok {
 			startElem := vResult[0]
 			endElem := vResult[len(vResult)-1]
 
-			u.Vendor = make(map[string]interface{})
 			u.Vendor["first"] = startElem.VendorName
-			u.Vendor["last"] = nil
 			if startElem.VendorName != endElem.VendorName {
 				u.Vendor["last"] = endElem.VendorName
 			}
-			allData[url] = u
 		} else {
 			log.Infof("This url %s does not have an entry in the vendor table", url)
 		}
+		allData[url] = u
 	}
 
 	var entries []totalSummary
 	for _, e := range allData {
 		entries = append(entries, e)
 	}
-
-	/**
-	{
-		"url":"",
-		"created_at":"",
-		"list_source":"",
-		"api_information_source_name":{
-			"first":"",
-			"last":""
-			},
-		"updated":{
-			"first":"",
-			"last":""
-			},
-		"number_of_updates":""
-		"operation":{
-			"first":"",
-			"last":""
-			},
-		"certified_api_developer_name":{
-			"first":"",
-			"last":""
-			},
-		"fhir_version":{
-			"first":"",
-			"last":""
-			},
-		"tls_version":{
-			"first":"",
-			"last":""
-			},
-		"mime_types":{
-			"first":"",
-			"last":""
-			},
-		"response_time_second":"",
-		"http_response":{
-			"http_response_code":[""],
-			"http_response_count":[""]
-			},
-		"smart_http_response":{
-			"smart_http_response_code":[""],
-			"smart_http_response_count":[""]
-			},
-		"errors":{
-			"error":[""],
-			"error_count":[""]
-			}
-		}
-	*/
 
 	/**
 	Fields from the new metadata table:
@@ -417,4 +352,12 @@ func getFHIRVersion(capStat []byte) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("no capability statement to retreive FHIR Version from")
+}
+
+func makeDefaultMap() map[string]interface{} {
+	defaultMap := map[string]interface{}{
+		"first": nil,
+		"last":  nil,
+	}
+	return defaultMap
 }
