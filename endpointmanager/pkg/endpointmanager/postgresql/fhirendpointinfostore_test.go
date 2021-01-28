@@ -78,14 +78,21 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		MIMETypes:  []string{"application/fhir+json"},
 		Metadata:   endpointMetadata2}
 
-	// add endpointInfos
-
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo1)
+	// add endpointInfos and Metadata
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
 
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo2)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo2.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
 	}
@@ -124,11 +131,15 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	// update endpointInfo
+	// update endpointInfo and add update to metadata table
 
 	e1.Metadata.HTTPResponse = 700
 
-	err = store.UpdateFHIREndpointInfo(ctx, e1)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, e1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}
@@ -150,7 +161,11 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	capStat := e1.CapabilityStatement
 	e1.CapabilityStatement = nil
 
-	err = store.UpdateFHIREndpointInfo(ctx, e1)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, e1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}

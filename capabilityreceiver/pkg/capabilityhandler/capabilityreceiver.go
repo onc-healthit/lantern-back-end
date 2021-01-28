@@ -166,7 +166,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return err
 		}
-		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint)
+
+		metadataID, err := store.AddFHIREndpointMetadata(ctx, fhirEndpoint.Metadata)
+		if err != nil {
+			return err
+		}
+		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 		if err != nil {
 			return err
 		}
@@ -203,7 +208,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return err
 			}
 
-			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt)
+			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
+			if err != nil {
+				return err
+			}
+
+			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID)
 			if err != nil {
 				return err
 			}

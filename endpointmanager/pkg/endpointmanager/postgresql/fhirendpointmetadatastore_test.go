@@ -89,14 +89,21 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("retrieved endpointMetadata is not equal to saved endpointMetadata.")
 	}
 
-	// add endpointMetadata by inserting endpoint info
-
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo1)
+	// add endpointMetadata and endpointInfo
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
 
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo2)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo2.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
 	}
@@ -215,7 +222,12 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 
 	endpointInfo1.Metadata.HTTPResponse = 404
 
-	err = store.UpdateFHIREndpointInfo(ctx, endpointInfo1)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
+	}
+
+	err = store.UpdateFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}

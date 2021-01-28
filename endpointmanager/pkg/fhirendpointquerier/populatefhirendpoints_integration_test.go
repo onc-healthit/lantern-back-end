@@ -356,7 +356,8 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 			HTTPResponse: 200,
 		},
 	}
-	err = store.AddFHIREndpointInfo(ctx, &endptInfo)
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, &(endptInfo.Metadata))
+	err = store.AddFHIREndpointInfo(ctx, &endptInfo, metadataID)
 	th.Assert(t, err == nil, err)
 
 	// Add third endpoint

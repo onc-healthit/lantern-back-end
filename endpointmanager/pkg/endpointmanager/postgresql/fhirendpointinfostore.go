@@ -188,14 +188,9 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 }
 
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
-func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
-
-	metadataID, err := s.AddFHIREndpointMetadata(ctx, e.Metadata)
-	if err != nil {
-		return err
-	}
 
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
@@ -246,15 +241,9 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 }
 
 // UpdateFHIREndpointInfo updates the FHIREndpointInfo in the database using the FHIREndpointInfo's database id as the key.
-func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
-
-	metadataID, err := s.AddFHIREndpointMetadata(ctx, e.Metadata)
-
-	if err != nil {
-		return err
-	}
 
 	if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
