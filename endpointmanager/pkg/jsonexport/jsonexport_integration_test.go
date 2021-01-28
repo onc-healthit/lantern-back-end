@@ -79,13 +79,13 @@ func Test_createJSON(t *testing.T) {
 	err := store.AddFHIREndpoint(ctx, &testEndpoint)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding a FHIR Endpoint. Error: %s", err))
 
-	metadataID, err := store.AddFHIREndpointMetadata(ctx, &(firstEndpoint.Metadata))
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
 	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding the FHIR Endpoint Info. Error: %s", err))
 
 	secondEndpoint.ID = firstEndpoint.ID
 
-	metadataID, err = AddFHIREndpointMetadata(ctx, &(secondEndpoint.Metadata))
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, secondEndpoint.Metadata)
 	err = store.UpdateFHIREndpointInfo(ctx, &secondEndpoint, metadataID)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while updating the FHIR Endpoint Info. Error: %s", err))
 
@@ -115,7 +115,7 @@ func Test_getHistory(t *testing.T) {
 	err := store.AddFHIREndpoint(ctx, &testEndpoint)
 	th.Assert(t, err == nil, err)
 
-	metadataID, err := store.AddFHIREndpointMetadata(ctx, &(firstEndpoint.Metadata))
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
 	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
 	th.Assert(t, err == nil, err)
 
