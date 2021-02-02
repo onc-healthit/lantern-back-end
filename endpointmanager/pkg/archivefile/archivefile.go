@@ -69,10 +69,7 @@ type historyEntry struct {
 }
 
 type vendorEntry struct {
-	VendorID   int
-	UpdatedAt  time.Time
 	URL        string
-	ID         int
 	VendorName string
 }
 
@@ -81,6 +78,8 @@ type firstLastStrArr struct {
 	Last  []string `json:"last"`
 }
 
+// CreateArchive gets all data from fhir_endpoints, fhir_endpoints_info and vendors between
+// the given start and end date and summarizes the data
 // @TODO Get rid of all print statements
 func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart string, dateEnd string) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
@@ -228,16 +227,9 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		allData[url] = u
 	}
 
-	/**
-	Want to deal with vendor stuff separately
-	"certified_api_developer_name":{
-		"first":"",
-		"last":""
-	},
-	*/
-
-	// Get vendor information
-	vendorQuery := `SELECT f.vendor_id, f.updated_at, f.url, v.id, v.name FROM fhir_endpoints_info_history f, vendors v
+	// Get vendor information separately so the endpoints that don't have vendor information aren't
+	// removed from the other history request
+	vendorQuery := `SELECT f.url, v.name FROM fhir_endpoints_info_history f, vendors v
 		WHERE f.updated_at between '` + dateStart + `' AND '` + dateEnd + `' AND f.vendor_id = v.id ORDER BY f.updated_at`
 	vendorRows, err := store.DB.QueryContext(ctx, vendorQuery)
 	if err != nil {
@@ -248,21 +240,11 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 	defer vendorRows.Close()
 	for vendorRows.Next() {
 		var v vendorEntry
-		var vendorIDNullable sql.NullInt64
 		err = vendorRows.Scan(
-			&vendorIDNullable,
-			&v.UpdatedAt,
 			&v.URL,
-			&v.ID,
 			&v.VendorName)
 		if err != nil {
 			return nil, fmt.Errorf("Error while scanning the rows of the history and vendor table. Error: %s", err)
-		}
-
-		if !vendorIDNullable.Valid {
-			v.VendorID = 0
-		} else {
-			v.VendorID = int(vendorIDNullable.Int64)
 		}
 
 		if val, ok := vendorResults[v.URL]; ok {
@@ -335,9 +317,8 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 	return entries, nil
 }
 
-// Get the FHIR Version from the capability statement
+// Gets the FHIR Version from the capability statement
 func getFHIRVersion(capStat []byte) (string, error) {
-	// Get the FHIR Version from the capability statement
 	if capStat != nil {
 		formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
 		if err != nil {
@@ -354,6 +335,7 @@ func getFHIRVersion(capStat []byte) (string, error) {
 	return "", fmt.Errorf("no capability statement to retreive FHIR Version from")
 }
 
+// Creates a default first & last JSON object
 func makeDefaultMap() map[string]interface{} {
 	defaultMap := map[string]interface{}{
 		"first": nil,
