@@ -2,7 +2,6 @@ package archivefile
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -10,7 +9,9 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 /**
@@ -57,7 +58,21 @@ type totalSummary struct {
 	Vendor            map[string]interface{} `json:"certified_api_developer_name"`
 }
 
-// @TODO Remove json
+// Result is the value that is returned from getting the history data from the
+// given URL
+type Result struct {
+	URL     string
+	Summary totalSummary
+}
+
+type historyArgs struct {
+	fhirURL   string
+	dateStart string
+	dateEnd   string
+	store     *postgresql.Store
+	result    chan Result
+}
+
 type historyEntry struct {
 	URL              string
 	UpdatedAt        time.Time
@@ -116,115 +131,42 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		}
 	}
 
-	/**
-	Fields from fhir_endpoints_info_history:
-	"updated":{
-		"first":"",
-		"last":""
-	},
-	"number_of_updates":""
-	"operation":{
-		"first":"",
-		"last":""
-	},
-	"fhir_version":{
-		"first":"",
-		"last":""
-	},
-	"tls_version":{
-		"first":"",
-		"last":""
-	},
-	"mime_types":{
-		"first":"",
-		"last":""
-	},
-	*/
+	errs := make(chan error)
+	numWorkers := viper.GetInt("export_numworkers")
+	// If numWorkers not set, default to 10 workers
+	if numWorkers == 0 {
+		numWorkers = 10
+	}
+	allWorkers := workers.NewWorkers()
 
-	// Get all rows in the history table between given dates
-	historyQuery := `SELECT url, updated_at, operation, capability_statement, tls_version, mime_types FROM fhir_endpoints_info_history
-		WHERE updated_at between '` + dateStart + `' AND '` + dateEnd + `' ORDER BY updated_at`
-	historyRows, err := store.DB.QueryContext(ctx, historyQuery)
+	// Start workers
+	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints_info_history: %s", err)
+		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
 	}
 
-	// Have to pull out the data properly
-	// Have to handle a null vendor id?
-	// @TODO Break this out into workers again?
-	resultMap := make(map[string][]historyEntry)
-	defer historyRows.Close()
-	for historyRows.Next() {
-		var e historyEntry
-		var capStat []byte
-		err = historyRows.Scan(
-			&e.URL,
-			&e.UpdatedAt,
-			&e.Operation,
-			&capStat,
-			&e.TLSVersion,
-			pq.Array(&e.MIMETypes))
-		if err != nil {
-			return nil, fmt.Errorf("Error while scanning the rows of the history table. Error: %s", err)
-		}
+	// Get history data using workers
+	resultCh := make(chan Result)
+	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, store, allWorkers)
 
-		e.FHIRVersion, e.FHIRVersionError = getFHIRVersion(capStat)
-
-		// If the URL already exists, currently just print out something
-		if val, ok := resultMap[e.URL]; ok {
-			resultMap[e.URL] = append(val, e)
-		} else {
-			resultMap[e.URL] = []historyEntry{e}
-		}
-	}
-
-	// @TODO Might want to put this in the above loop later
-	// Loop through the url list to get associated history data
-	for _, url := range urls {
-		u, ok := allData[url]
+	// Add the results from createJobs to allData
+	count := 0
+	for res := range resultCh {
+		u, ok := allData[res.URL]
 		if !ok {
-			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
+			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
 		}
-		u.NumberOfUpdates = 0
-		u.Updated = makeDefaultMap()
-		u.Operation = makeDefaultMap()
-		u.FHIRVersion = makeDefaultMap()
-		u.TLSVersion = makeDefaultMap()
-		if history, ok := resultMap[url]; ok {
-			u.NumberOfUpdates = len(history)
-			startElem := history[0]
-			endElem := history[len(history)-1]
-
-			u.Updated["first"] = startElem.UpdatedAt
-			if startElem.UpdatedAt != endElem.UpdatedAt {
-				u.Updated["last"] = endElem.UpdatedAt
-			}
-
-			u.Operation["first"] = startElem.Operation
-			if startElem.Operation != endElem.Operation {
-				u.Operation["last"] = endElem.Operation
-			}
-
-			if startElem.FHIRVersionError == nil {
-				u.FHIRVersion["first"] = startElem.FHIRVersion
-			}
-			if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
-				u.FHIRVersion["last"] = endElem.FHIRVersion
-			}
-
-			u.TLSVersion["first"] = startElem.TLSVersion
-			if startElem.TLSVersion != endElem.TLSVersion {
-				u.TLSVersion["last"] = endElem.TLSVersion
-			}
-
-			u.MIMETypes.First = startElem.MIMETypes
-			if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
-				u.MIMETypes.Last = endElem.MIMETypes
-			}
-		} else {
-			log.Infof("This url %s does not have an entry in the history table", url)
+		u.NumberOfUpdates = res.Summary.NumberOfUpdates
+		u.Updated = res.Summary.Updated
+		u.Operation = res.Summary.Operation
+		u.FHIRVersion = res.Summary.FHIRVersion
+		u.TLSVersion = res.Summary.TLSVersion
+		u.MIMETypes = res.Summary.MIMETypes
+		allData[res.URL] = u
+		if count == len(urls)-1 {
+			close(resultCh)
 		}
-		allData[url] = u
+		count++
 	}
 
 	// Get vendor information separately so the endpoints that don't have vendor information aren't
@@ -342,4 +284,135 @@ func makeDefaultMap() map[string]interface{} {
 		"last":  nil,
 	}
 	return defaultMap
+}
+
+// creates jobs for the workers so that each worker gets the history data
+// for a specified url
+func createJobs(ctx context.Context,
+	ch chan Result,
+	urls []string,
+	dateStart string,
+	dateEnd string,
+	store *postgresql.Store,
+	allWorkers *workers.Workers) {
+	for index := range urls {
+		jobArgs := make(map[string]interface{})
+		jobArgs["historyArgs"] = historyArgs{
+			fhirURL:   urls[index],
+			dateStart: dateStart,
+			dateEnd:   dateEnd,
+			store:     store,
+			result:    ch,
+		}
+
+		workerDur := viper.GetInt("export_duration")
+		// If duration not set, default to 120 seconds
+		if workerDur == 0 {
+			workerDur = 120
+		}
+
+		job := workers.Job{
+			Context:     ctx,
+			Duration:    time.Duration(workerDur) * time.Second,
+			Handler:     getHistory,
+			HandlerArgs: &jobArgs,
+		}
+
+		err := allWorkers.Add(&job)
+		if err != nil {
+			log.Warnf("Error while adding job for getting history for URL %s, %s", urls[index], err)
+		}
+	}
+}
+
+// getHistory retrieves the data from the history table for a specific URL and formats it
+// as a totalSummary object before sending it back over the channel
+func getHistory(ctx context.Context, args *map[string]interface{}) error {
+	returnResult := totalSummary{
+		NumberOfUpdates: 0,
+		Updated:         makeDefaultMap(),
+		Operation:       makeDefaultMap(),
+		FHIRVersion:     makeDefaultMap(),
+		TLSVersion:      makeDefaultMap(),
+	}
+	var history []historyEntry
+
+	ha, ok := (*args)["historyArgs"].(historyArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast arguments to type historyArgs")
+	}
+
+	// Get all rows in the history table between given dates
+	historyQuery := `SELECT url, updated_at, operation, capability_statement, tls_version, mime_types FROM fhir_endpoints_info_history
+		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
+	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL)
+	if err != nil {
+		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
+		result := Result{
+			URL:     ha.fhirURL,
+			Summary: returnResult,
+		}
+		ha.result <- result
+		return nil
+	}
+
+	defer historyRows.Close()
+	for historyRows.Next() {
+		var e historyEntry
+		var capStat []byte
+		err = historyRows.Scan(
+			&e.URL,
+			&e.UpdatedAt,
+			&e.Operation,
+			&capStat,
+			&e.TLSVersion,
+			pq.Array(&e.MIMETypes))
+		if err != nil {
+			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			result := Result{
+				URL:     ha.fhirURL,
+				Summary: returnResult,
+			}
+			ha.result <- result
+			return nil
+		}
+
+		e.FHIRVersion, e.FHIRVersionError = getFHIRVersion(capStat)
+
+		history = append(history, e)
+	}
+
+	returnResult.NumberOfUpdates = len(history)
+	startElem := history[0]
+	endElem := history[len(history)-1]
+
+	returnResult.Updated["first"] = startElem.UpdatedAt
+	if startElem.UpdatedAt != endElem.UpdatedAt {
+		returnResult.Updated["last"] = endElem.UpdatedAt
+	}
+	returnResult.Operation["first"] = startElem.Operation
+	if startElem.Operation != endElem.Operation {
+		returnResult.Operation["last"] = endElem.Operation
+	}
+	if startElem.FHIRVersionError == nil {
+		returnResult.FHIRVersion["first"] = startElem.FHIRVersion
+	}
+	if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
+		returnResult.FHIRVersion["last"] = endElem.FHIRVersion
+	}
+	returnResult.TLSVersion["first"] = startElem.TLSVersion
+	if startElem.TLSVersion != endElem.TLSVersion {
+		returnResult.TLSVersion["last"] = endElem.TLSVersion
+	}
+	returnResult.MIMETypes.First = startElem.MIMETypes
+	if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
+		returnResult.MIMETypes.Last = endElem.MIMETypes
+	}
+
+	result := Result{
+		URL:     ha.fhirURL,
+		Summary: returnResult,
+	}
+	ha.result <- result
+	return nil
 }
