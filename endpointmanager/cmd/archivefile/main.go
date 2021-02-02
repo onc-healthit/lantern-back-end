@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -19,12 +20,14 @@ import (
 func main() {
 	var dateStart string
 	var dateEnd string
+	var writeFile string
 
 	if len(os.Args) >= 3 {
 		dateStart = os.Args[1]
 		dateEnd = os.Args[2]
+		writeFile = os.Args[3]
 	} else {
-		log.Fatalf("ERROR: Missing date-range command-line arguments")
+		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
 	err := config.SetupConfig()
@@ -54,4 +57,10 @@ func main() {
 	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
 	helpers.FailOnError("", err)
 	fmt.Printf("JSON: %s", string(finalFormatJSON))
+
+	// Write to the given file
+	err = ioutil.WriteFile(writeFile, finalFormatJSON, 0644)
+	if err != nil {
+		log.Fatalf("ERROR: Writing to given file failed, %s", err)
+	}
 }
