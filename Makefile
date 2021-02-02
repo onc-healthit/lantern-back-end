@@ -43,7 +43,7 @@ backup_database:
 	@echo "Database was backed up to ${BACKUP}"
 
 create_archive:
-	cd endpointmanager/cmd/archivefile; go run main.go $(start) $(end)
+	cd endpointmanager/cmd/archivefile; go run main.go $(start) $(end) $(file)
 	
 restore_database:
 	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean --if-exists -U lantern -d lantern < $(file)
