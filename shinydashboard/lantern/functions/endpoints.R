@@ -173,22 +173,6 @@ get_fhir_resource_count <- function(fhir_resources_tbl) {
     rename(Resource = type, Endpoints = n)
 }
 
-# get implementation guides stored in capability statement
-get_implementation_guide <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          capability_statement->>'fhirVersion' as fhir_version,
-          capability_statement->>'implementationGuide' as implementation_guide,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    tidyr::replace_na(list(fhir_version = "Unknown")) %>%
-    tidyr::replace_na(list(implementation_guide = "None"))
-}
-
 # Summarize count of implementation guides by implementation_guide, fhir_version
 get_implementation_guide_count <- function(fhir_resources_tbl) {
   res <- fhir_resources_tbl %>%
@@ -474,7 +458,7 @@ get_implementation_guide <- function(db_connection) {
     sql("SELECT
           f.url as url,
           capability_statement->>'fhirVersion' as fhir_version,
-          capability_statement->>'implementationGuide' as implementation_guide,
+          json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide,
           vendors.name as vendor_name
           FROM fhir_endpoints_info f
           LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
