@@ -303,7 +303,7 @@ get_security_endpoints_tbl <- function(db_connection) {
             f.vendor_id,
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
           FROM fhir_endpoints_info f,fhir_endpoints e
-          WHERE e.url = f.url) a 
+          WHERE e.url = f.url) a
         LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
         ON a.vendor_id = b.id")) %>%
     collect() %>%
