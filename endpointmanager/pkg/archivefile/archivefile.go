@@ -14,36 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-/**
-Fields from fhir_endpoints:
-"url":"",
-"created_at":"",
-"list_source":[],
-"api_information_source_name":[],
-*/
-/**
-"updated":{
-	"first":"",
-	"last":""
-},
-"number_of_updates":""
-"operation":{
-	"first":"",
-	"last":""
-},
-"fhir_version":{
-	"first":"",
-	"last":""
-},
-"tls_version":{
-	"first":"",
-	"last":""
-},
-"mime_types":{
-	"first":"",
-	"last":""
-},
-*/
+// totalSummary is the format of a given URL's JSON object for the archive file
 type totalSummary struct {
 	URL               string                 `json:"url"`
 	CreatedAt         time.Time              `json:"created_at"`
@@ -65,6 +36,7 @@ type Result struct {
 	Summary totalSummary
 }
 
+// historyArgs is the format for the data passed to getHistory from a worker
 type historyArgs struct {
 	fhirURL   string
 	dateStart string
@@ -73,6 +45,7 @@ type historyArgs struct {
 	result    chan Result
 }
 
+// historyEntry is the format of the data received from the history table for the given URL
 type historyEntry struct {
 	URL              string
 	UpdatedAt        time.Time
@@ -83,11 +56,13 @@ type historyEntry struct {
 	MIMETypes        []string
 }
 
+// vendorEntry is the format of the data received from the vendor table for the given URL
 type vendorEntry struct {
 	URL        string
 	VendorName string
 }
 
+// firstLastStrArr is the format used for the MimeTypes field in totalSummary
 type firstLastStrArr struct {
 	First []string `json:"first"`
 	Last  []string `json:"last"`
@@ -95,7 +70,6 @@ type firstLastStrArr struct {
 
 // CreateArchive gets all data from fhir_endpoints, fhir_endpoints_info and vendors between
 // the given start and end date and summarizes the data
-// @TODO Get rid of all print statements
 func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart string, dateEnd string) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
 	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source from fhir_endpoints;"
@@ -277,7 +251,9 @@ func getFHIRVersion(capStat []byte) (string, error) {
 	return "", fmt.Errorf("no capability statement to retreive FHIR Version from")
 }
 
-// Creates a default first & last JSON object
+// Creates a default first & last JSON object, using map[string]interface{} so that an
+// empty field is "null" instead of defining it with strings or another type where the default
+// would be "" or 0, etc.
 func makeDefaultMap() map[string]interface{} {
 	defaultMap := map[string]interface{}{
 		"first": nil,
@@ -382,31 +358,33 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		history = append(history, e)
 	}
 
-	returnResult.NumberOfUpdates = len(history)
-	startElem := history[0]
-	endElem := history[len(history)-1]
+	if len(history) > 0 {
+		returnResult.NumberOfUpdates = len(history)
+		startElem := history[0]
+		endElem := history[len(history)-1]
 
-	returnResult.Updated["first"] = startElem.UpdatedAt
-	if startElem.UpdatedAt != endElem.UpdatedAt {
-		returnResult.Updated["last"] = endElem.UpdatedAt
-	}
-	returnResult.Operation["first"] = startElem.Operation
-	if startElem.Operation != endElem.Operation {
-		returnResult.Operation["last"] = endElem.Operation
-	}
-	if startElem.FHIRVersionError == nil {
-		returnResult.FHIRVersion["first"] = startElem.FHIRVersion
-	}
-	if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
-		returnResult.FHIRVersion["last"] = endElem.FHIRVersion
-	}
-	returnResult.TLSVersion["first"] = startElem.TLSVersion
-	if startElem.TLSVersion != endElem.TLSVersion {
-		returnResult.TLSVersion["last"] = endElem.TLSVersion
-	}
-	returnResult.MIMETypes.First = startElem.MIMETypes
-	if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
-		returnResult.MIMETypes.Last = endElem.MIMETypes
+		returnResult.Updated["first"] = startElem.UpdatedAt
+		if startElem.UpdatedAt != endElem.UpdatedAt {
+			returnResult.Updated["last"] = endElem.UpdatedAt
+		}
+		returnResult.Operation["first"] = startElem.Operation
+		if startElem.Operation != endElem.Operation {
+			returnResult.Operation["last"] = endElem.Operation
+		}
+		if startElem.FHIRVersionError == nil {
+			returnResult.FHIRVersion["first"] = startElem.FHIRVersion
+		}
+		if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
+			returnResult.FHIRVersion["last"] = endElem.FHIRVersion
+		}
+		returnResult.TLSVersion["first"] = startElem.TLSVersion
+		if startElem.TLSVersion != endElem.TLSVersion {
+			returnResult.TLSVersion["last"] = endElem.TLSVersion
+		}
+		returnResult.MIMETypes.First = startElem.MIMETypes
+		if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
+			returnResult.MIMETypes.Last = endElem.MIMETypes
+		}
 	}
 
 	result := Result{
