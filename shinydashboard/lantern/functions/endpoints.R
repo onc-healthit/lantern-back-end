@@ -295,17 +295,17 @@ get_security_endpoints_tbl <- function(db_connection) {
             a.fhir_version,
             a.tls_version,
             a.code
-          FROM
+        FROM
           (SELECT e.url,
             e.organization_names,
             capability_statement->>'fhirVersion' as fhir_version,
             f.tls_version,
-  		      f.vendor_id,
+            f.vendor_id,
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
-        	FROM fhir_endpoints_info f,fhir_endpoints e
-        	WHERE e.url = f.url) a 
-          LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
-			    ON a.vendor_id = b.id")) %>%
+          FROM fhir_endpoints_info f,fhir_endpoints e
+          WHERE e.url = f.url) a 
+        LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
+        ON a.vendor_id = b.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
