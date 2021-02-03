@@ -51,33 +51,48 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		CHPLID:        222,
 	}
 
+	var endpointMetadata1 = &endpointmanager.FHIREndpointMetadata{
+		URL:               endpoint1.URL,
+		HTTPResponse:      200,
+		Errors:            "Example Error",
+		SMARTHTTPResponse: 0,
+		Availability:      1.0}
+
+	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
+		URL:          endpoint2.URL,
+		HTTPResponse: 404,
+		Errors:       "Example Error 2"}
+
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
 		URL:                 endpoint1.URL,
 		VendorID:            cerner.ID,
 		TLSVersion:          "TLS 1.1",
 		MIMETypes:           []string{"application/json+fhir"},
-		HTTPResponse:        200,
-		Errors:              "Example Error",
 		CapabilityStatement: cs,
-		SMARTHTTPResponse:   0,
 		SMARTResponse:       nil,
-		Availability:		 1.0}
+		Metadata:            endpointMetadata1}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
-		URL:          endpoint2.URL,
-		TLSVersion:   "TLS 1.2",
-		MIMETypes:    []string{"application/fhir+json"},
-		HTTPResponse: 404,
-		Errors:       "Example Error 2"}
+		URL:        endpoint2.URL,
+		TLSVersion: "TLS 1.2",
+		MIMETypes:  []string{"application/fhir+json"},
+		Metadata:   endpointMetadata2}
 
-	// add endpointInfos
-
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo1)
+	// add endpointInfos and Metadata
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
 
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo2)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo2.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
 	}
@@ -116,11 +131,15 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	// update endpointInfo
+	// update endpointInfo and add update to metadata table
 
-	e1.HTTPResponse = 700
+	e1.Metadata.HTTPResponse = 700
 
-	err = store.UpdateFHIREndpointInfo(ctx, e1)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, e1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}
@@ -136,13 +155,17 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("UpdatedAt is not being properly set on update.")
 	}
 
-	e1.HTTPResponse = 200
+	e1.Metadata.HTTPResponse = 200
 
 	// update with nil capability statement
 	capStat := e1.CapabilityStatement
 	e1.CapabilityStatement = nil
 
-	err = store.UpdateFHIREndpointInfo(ctx, e1)
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, e1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}
@@ -200,8 +223,35 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("expected 1 insertion for endpointInfo1. Got %d.", count)
 	}
 
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1;", endpointInfo1.URL)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("metadata count for insertions: %s", err.Error())
+	}
+	if count != 3 {
+		t.Errorf("expected 3 insertions in metadata table for endpointInfo1. Got %d.", count)
+	}
+
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1 AND http_response = 700;", endpointInfo1.URL)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("metadata count for insertions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 insertion in metadata table for endpointInfo1 HTTP response 700. Got %d.", count)
+	}
+
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1 AND http_response = 200;", endpointInfo1.URL)
+	err = rows.Scan(&count)
+	if err != nil {
+		t.Errorf("metadata count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 insertions in metadata table for endpointInfo1 with HTTP response 200. Got %d.", count)
+	}
+
 	// check the value
-	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='I';", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.id= $1 AND operation='I';", endpointInfo1.ID)
 	err = rows.Scan(&response, &capStatJson)
 	if err != nil {
 		t.Errorf("get values for insertion: %s", err.Error())
@@ -226,7 +276,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	// get the first update and check its value
-	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at ASC LIMIT 1;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at ASC LIMIT 1;", endpointInfo1.ID)
 	err = rows.Scan(&response, &capStatJson)
 	if err != nil {
 		t.Errorf("history count for insertions: %s", err.Error())
@@ -239,7 +289,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	// get the second update and check its value
-	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U' ORDER BY entered_at DESC LIMIT 1;", endpointInfo1.ID)
+	rows = store.DB.QueryRow("SELECT http_response, capability_statement FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND operation='U' AND fhir_endpoints_info_history.id=$1 ORDER BY fhir_endpoints_info_history.entered_at DESC LIMIT 1;", endpointInfo1.ID)
 	err = rows.Scan(&response, &capStatJson)
 	if err != nil {
 		t.Errorf("history count for insertions: %s", err.Error())

@@ -15,6 +15,7 @@ import (
 var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
+var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
@@ -26,8 +27,9 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var metadataID int
 
-	sqlStatement := `
+	sqlStatementInfo := `
 	SELECT
 		id,
 		url,
@@ -35,20 +37,16 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		vendor_id,
 		tls_version,
 		mime_types,
-		http_response,
-		errors,
 		capability_statement,
 		validation,
 		created_at,
 		updated_at,
-		smart_http_response,
 		smart_response,
 		included_fields,
 		supported_resources,
-		response_time_seconds,
-		availability
+		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
-	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
+	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
 
 	err := row.Scan(
 		&endpointInfo.ID,
@@ -57,18 +55,14 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&vendorIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Errors,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
-		&endpointInfo.SMARTHTTPResponse,
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
-		&endpointInfo.ResponseTime,
-		&endpointInfo.Availability)
+		&metadataID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +95,9 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 			return nil, err
 		}
 	}
+
+	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
+	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
 }
@@ -114,8 +111,9 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var metadataID int
 
-	sqlStatement := `
+	sqlStatementInfo := `
 	SELECT
 		id,
 		url,
@@ -123,21 +121,17 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		vendor_id,
 		tls_version,
 		mime_types,
-		http_response,
-		errors,
 		capability_statement,
 		validation,
 		created_at,
 		updated_at,
-		smart_http_response,
 		smart_response,
 		included_fields,
 		supported_resources,
-		response_time_seconds,
-		availability
+		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
-	row := s.DB.QueryRowContext(ctx, sqlStatement, url)
+	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, url)
 
 	err := row.Scan(
 		&endpointInfo.ID,
@@ -146,18 +140,14 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&vendorIDNullable,
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
-		&endpointInfo.HTTPResponse,
-		&endpointInfo.Errors,
 		&capabilityStatementJSON,
 		&validationJSON,
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
-		&endpointInfo.SMARTHTTPResponse,
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
-		&endpointInfo.ResponseTime,
-		&endpointInfo.Availability)
+		&metadataID)
 	if err != nil {
 		return nil, err
 	}
@@ -190,11 +180,15 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 			return nil, err
 		}
 	}
+
+	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
+	endpointInfo.Metadata = endpointMetadata
+
 	return &endpointInfo, err
 }
 
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
-func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -234,16 +228,12 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
-		e.HTTPResponse,
-		e.Errors,
 		capabilityStatementJSON,
 		validationJSON,
-		e.SMARTHTTPResponse,
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
-		e.ResponseTime,
-		e.Availability)
+		metadataID)
 
 	err = row.Scan(&e.ID)
 
@@ -251,7 +241,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 }
 
 // UpdateFHIREndpointInfo updates the FHIREndpointInfo in the database using the FHIREndpointInfo's database id as the key.
-func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
+func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -291,17 +281,31 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
-		e.HTTPResponse,
-		e.Errors,
 		capabilityStatementJSON,
 		validationJSON,
-		e.SMARTHTTPResponse,
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
-		e.ResponseTime,
-		e.Availability,
+		metadataID,
 		e.ID)
+
+	return err
+}
+
+// UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
+func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, url string) error {
+	_, err := s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'TRUE', 'FALSE');")
+	if err != nil {
+		return err
+	}
+	_, err = updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, url)
+	if err != nil {
+		return err
+	}
+	_, err = s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'FALSE');")
+	if err != nil {
+		return err
+	}
 
 	return err
 }
@@ -309,7 +313,6 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
-
 	return err
 }
 
@@ -322,17 +325,13 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			vendor_id,
 			tls_version,
 			mime_types,
-			http_response,
-			errors,
 			capability_statement,
 			validation,
-			smart_http_response,
 			smart_response,
 			included_fields,
 			supported_resources,
-			response_time_seconds,
-			availability)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+			metadata_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -345,18 +344,21 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			vendor_id = $3,
 			tls_version = $4,
 			mime_types = $5,
-			http_response = $6,
-			errors = $7,
-			capability_statement = $8,
-			validation = $9,
-			smart_http_response = $10,
-			smart_response = $11,
-			included_fields = $12,
-			supported_resources = $13,
-			response_time_seconds = $14,
-			availability = $15
-			
-		WHERE id = $16`)
+			capability_statement = $6,
+			validation = $7,
+			smart_response = $8,
+			included_fields = $9,
+			supported_resources = $10,
+			metadata_id = $11		
+		WHERE id = $12`)
+	if err != nil {
+		return err
+	}
+	updateFHIREndpointInfoMetadataStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints_info
+		SET 
+			metadata_id = $1		
+		WHERE url = $2`)
 	if err != nil {
 		return err
 	}

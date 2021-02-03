@@ -50,6 +50,10 @@ func NewStore(host string, port int, user string, password string, dbname string
 	if err != nil {
 		return nil, err
 	}
+	err = prepareFHIREndpointMetadataStatements(&store)
+	if err != nil {
+		return nil, err
+	}
 	err = prepareHealthITProductStatements(&store)
 	if err != nil {
 		return nil, err

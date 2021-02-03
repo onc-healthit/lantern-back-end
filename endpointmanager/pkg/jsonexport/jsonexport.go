@@ -232,11 +232,11 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `
-		SELECT url, http_response, response_time_seconds, errors,
+		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, supported_resources,
-		smart_http_response, smart_response, updated_at
-		FROM fhir_endpoints_info_history
-		WHERE url=$1;`
+		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at
+		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
+		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1;`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)

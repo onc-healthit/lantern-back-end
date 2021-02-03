@@ -88,7 +88,7 @@ func Test_openProductLinksFile(t *testing.T) {
 	// make sure that product name with wrong key in test file is not in the returned structure
 	th.Assert(t, chplProductNameVersion["Allscripts FHIR"] == nil, "Field keyed as noname should not exist")
 	// make sure that product version with correct key in test file is in the returned structure
-	th.Assert(t, chplProductNameVersion["FooBarProduct"]["4.0"] == "somefakeCHPLID", "Link represented correctly should exist")	
+	th.Assert(t, chplProductNameVersion["FooBarProduct"]["4.0"] == "somefakeCHPLID", "Link represented correctly should exist")
 	// make sure that product version with wrong key in test file is not in the returned structure
 	th.Assert(t, chplProductNameVersion["FooBarProduct"]["2.0"] == "", "Field keyed as noversion should not exist")
 }
@@ -106,27 +106,26 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		Name:                 "FooBarProduct",
 		Version:              "2.0",
 		APISyntax:            "FHIR DSTU2",
-		CHPLID:				  "somefakeCHPLID",
+		CHPLID:               "somefakeCHPLID",
 		CertificationEdition: "2014"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Allscripts FHIR",
 		Version:              "2.0",
 		APISyntax:            "FHIR DSTU2",
-		CHPLID:				  "correctNameIncorrectVersion",
+		CHPLID:               "correctNameIncorrectVersion",
 		CertificationEdition: "2014"}
 	var hitp3 = &endpointmanager.HealthITProduct{
 		Name:                 "WrongName",
 		Version:              "19.4.121.0",
 		APISyntax:            "FHIR DSTU2",
-		CHPLID:				  "correctVersionIncorrectName",
+		CHPLID:               "correctVersionIncorrectName",
 		CertificationEdition: "2014"}
 	var hitp4 = &endpointmanager.HealthITProduct{
 		Name:                 "Allscripts FHIR",
 		Version:              "19.4.121.0",
 		APISyntax:            "FHIR DSTU2",
-		CHPLID:				  "CorrectVersionAndName",
+		CHPLID:               "CorrectVersionAndName",
 		CertificationEdition: "2014"}
-
 
 	err = store.AddHealthITProduct(ctx, hitp1)
 	if err != nil {

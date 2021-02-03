@@ -18,23 +18,19 @@ type FHIREndpointInfo struct {
 	URL                 string
 	TLSVersion          string
 	MIMETypes           []string
-	HTTPResponse        int
-	Errors              string
 	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
 	Validation          Validation
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-	SMARTHTTPResponse   int
 	SMARTResponse       capabilityparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
-	ResponseTime        float64
-	Availability        float64
+	Metadata            *FHIREndpointMetadata
 }
 
-// Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
-func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
+// EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
+func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	if e == nil && e2 == nil {
 		return true
 	} else if e == nil {
@@ -58,15 +54,6 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if e.HTTPResponse != e2.HTTPResponse {
-		return false
-	}
-	if e.Availability != e2.Availability {
-		return false
-	}
-	if e.Errors != e2.Errors {
-		return false
-	}
 	if e.VendorID != e2.VendorID {
 		return false
 	}
@@ -76,9 +63,6 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
-		return false
-	}
-	if e.SMARTHTTPResponse != e2.SMARTHTTPResponse {
 		return false
 	}
 	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
@@ -99,8 +83,26 @@ func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
 	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
 		return false
 	}
+	return true
+}
 
-	if !cmp.Equal(e.ResponseTime, e2.ResponseTime) {
+// Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
+func (e *FHIREndpointInfo) Equal(e2 *FHIREndpointInfo) bool {
+	if e == nil && e2 == nil {
+		return true
+	} else if e == nil {
+		return false
+	} else if e2 == nil {
+		return false
+	}
+
+	if !e.EqualExcludeMetadata(e2) {
+		return false
+	}
+	if e.Metadata != nil && !e.Metadata.Equal(e2.Metadata) {
+		return false
+	}
+	if e.Metadata == nil && e2.Metadata != nil {
 		return false
 	}
 

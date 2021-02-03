@@ -185,6 +185,24 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Error(err)
 	}
 
+	var endpointMetadata1 = &FHIREndpointMetadata{
+		URL:               "http://www.example.com",
+		HTTPResponse:      200,
+		Availability:      1.0,
+		Errors:            "Example Error",
+		ResponseTime:      0.123456,
+		SMARTHTTPResponse: 200,
+	}
+
+	var endpointMetadata2 = &FHIREndpointMetadata{
+		URL:               "http://www.example.com",
+		HTTPResponse:      200,
+		Availability:      1.0,
+		Errors:            "Example Error",
+		ResponseTime:      0.123456,
+		SMARTHTTPResponse: 200,
+	}
+
 	// endpointInfos
 	var endpointInfo1 = &FHIREndpointInfo{
 		ID:                1,
@@ -192,9 +210,6 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		HealthITProductID: 3,
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
 			Results: []Rule{
@@ -211,8 +226,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		},
 		IncludedFields:      testIncludedFields,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
-		ResponseTime:        0.123456,
-		CapabilityStatement: cs}
+		CapabilityStatement: cs,
+		Metadata:            endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
 	copy(includedFieldsCopy, testIncludedFields)
 	var endpointInfo2 = &FHIREndpointInfo{
@@ -221,9 +236,6 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		HealthITProductID: 3,
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
 		VendorID:          2,
 		Validation: Validation{
 			Results: []Rule{
@@ -240,8 +252,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		},
 		IncludedFields:      includedFieldsCopy,
 		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
-		ResponseTime:        0.123456,
-		CapabilityStatement: cs}
+		CapabilityStatement: cs,
+		Metadata:            endpointMetadata2}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo2. They are not equal.")
@@ -291,23 +303,59 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.MIMETypes = endpointInfo1.MIMETypes
 
-	endpointInfo2.HTTPResponse = 404
+	endpointInfo2.Metadata.HTTPResponse = 404
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. HTTPResponse should be different. %d vs %d", endpointInfo1.HTTPResponse, endpointInfo2.HTTPResponse)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. HTTPResponse should be different. %d vs %d", endpointInfo1.Metadata.HTTPResponse, endpointInfo2.Metadata.HTTPResponse)
 	}
-	endpointInfo2.HTTPResponse = endpointInfo1.HTTPResponse
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata HTTP responses should be ignored. %d vs %d", endpointInfo1.Metadata.HTTPResponse, endpointInfo1.Metadata.HTTPResponse)
+	}
+	endpointInfo2.Metadata.HTTPResponse = endpointInfo1.Metadata.HTTPResponse
 
-	endpointInfo2.Availability = 0
+	endpointInfo2.Metadata.SMARTHTTPResponse = 0
 	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Availability should be different. %f vs %f", endpointInfo1.Availability, endpointInfo2.Availability)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SMARTHTTPResponse should be different. %d vs %d", endpointInfo1.Metadata.SMARTHTTPResponse, endpointInfo2.Metadata.SMARTHTTPResponse)
 	}
-	endpointInfo2.Availability = endpointInfo1.Availability
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata Smart HTTP responses should be ignored. %d vs %d", endpointInfo1.Metadata.SMARTHTTPResponse, endpointInfo1.Metadata.SMARTHTTPResponse)
+	}
+	endpointInfo2.Metadata.SMARTHTTPResponse = endpointMetadata1.SMARTHTTPResponse
 
-	endpointInfo2.Errors = "other"
+	endpointInfo2.Metadata.Availability = 0
+	if endpointInfo2.Equal(endpointInfo1) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Availability should be different. %f vs %f", endpointInfo1.Metadata.Availability, endpointInfo2.Metadata.Availability)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata Availability should be ignored. %f vs %f", endpointInfo1.Metadata.Availability, endpointInfo2.Metadata.Availability)
+	}
+	endpointInfo2.Metadata.Availability = endpointInfo1.Metadata.Availability
+
+	endpointInfo2.Metadata.Errors = "other"
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Errors should be different. %s vs %s", endpointInfo1.Errors, endpointInfo2.Errors)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Errors should be different. %s vs %s", endpointInfo1.Metadata.Errors, endpointInfo2.Metadata.Errors)
 	}
-	endpointInfo2.Errors = endpointInfo1.Errors
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata Errors should be ignored. %s vs %s", endpointInfo1.Metadata.Errors, endpointInfo2.Metadata.Errors)
+	}
+	endpointInfo2.Metadata.Errors = endpointInfo1.Metadata.Errors
+
+	endpointInfo2.Metadata.ResponseTime = 0.234567
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Response times should be different. %f vs %f", endpointInfo1.Metadata.ResponseTime, endpointInfo2.Metadata.ResponseTime)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata Response time should be ignored. %f vs %f", endpointInfo1.Metadata.ResponseTime, endpointInfo2.Metadata.ResponseTime)
+	}
+	endpointInfo2.Metadata.ResponseTime = endpointInfo1.Metadata.ResponseTime
+
+	endpointInfo2.Metadata.URL = "other"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Metadata URL should be different. %s vs %s", endpointInfo1.Metadata.URL, endpointInfo2.Metadata.URL)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata URL should be ignored. %s vs %s", endpointInfo1.Metadata.URL, endpointInfo2.Metadata.URL)
+	}
+	endpointInfo2.Metadata.URL = endpointMetadata1.URL
 
 	endpointInfo2.CapabilityStatement = nil
 	if endpointInfo1.Equal(endpointInfo2) {
@@ -368,11 +416,30 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.SupportedResources = endpointInfo1.SupportedResources
 
-	endpointInfo2.ResponseTime = 0.234567
-	if endpointInfo2.Equal(endpointInfo1) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. ResponseTime should be different. %f vs %f", endpointInfo1.ResponseTime, endpointInfo2.ResponseTime)
+	endpointInfo2.Metadata = nil
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2 with nil Metadata.")
 	}
-	endpointInfo2.ResponseTime = endpointInfo1.ResponseTime
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata.")
+	}
+	endpointInfo2.Metadata = endpointMetadata1
+
+	endpointInfo1.Metadata = nil
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 with nil Metadata to equal endpointInfo 2.")
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata.")
+	}
+
+	endpointInfo2.Metadata = nil
+	if !endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did expect endpointInfo1 with nil Metadata to equal endpointInfo 2 with nil Metadata .")
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata.")
+	}
 
 	endpointInfo2 = nil
 	if endpointInfo1.Equal(endpointInfo2) {

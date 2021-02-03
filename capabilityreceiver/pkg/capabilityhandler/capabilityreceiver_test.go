@@ -365,19 +365,23 @@ var testSupportedResources = []string{
 	"Slot",
 	"StructureDefinition"}
 
+var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
+	URL:               "http://example.com/DTSU2/",
+	HTTPResponse:      200,
+	Errors:            "",
+	SMARTHTTPResponse: 0,
+	ResponseTime:      0.1234,
+	Availability:      1.0,
+}
+
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:                "http://example.com/DTSU2/",
 	MIMETypes:          []string{"application/json+fhir"},
 	TLSVersion:         "TLS 1.2",
-	HTTPResponse:       200,
-	Errors:             "",
-	SMARTHTTPResponse:  0,
 	SMARTResponse:      nil,
 	Validation:         testValidationObj,
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
-	ResponseTime:       0.1234,
-	Availability:       1.0,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -405,6 +409,8 @@ func setupCapabilityStatement(t *testing.T, path string) {
 func Test_formatMessage(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	expectedEndpt := testFhirEndpointInfo
+	expectedMetadata := testFhirEndpointMetadata
+	expectedEndpt.Metadata = &expectedMetadata
 	tmpMessage := testQueueMsg
 
 	message, err := convertInterfaceToBytes(tmpMessage)
@@ -416,7 +422,7 @@ func Test_formatMessage(t *testing.T) {
 	// Just check that the first validation field is valid
 	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
-	endpt.Availability = 1.0
+	endpt.Metadata.Availability = 1.0
 	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
 
 	// should not throw error if metadata is not in the URL

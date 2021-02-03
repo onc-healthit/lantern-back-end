@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -101,6 +102,8 @@ func Test_saveMsgInDB(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedEndpt.VendorID = vendors[1].ID // "Cerner Corporation"
 	expectedEndpt.URL = testFhirEndpoint1.URL
+	expectedMetadata := testFhirEndpointMetadata
+	expectedEndpt.Metadata = &expectedMetadata
 	queueTmp := testQueueMsg
 
 	queueMsg, err := convertInterfaceToBytes(queueTmp)
@@ -151,6 +154,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
 	expectedEndpt.URL = testFhirEndpoint2.URL
+	expectedEndpt.Metadata.URL = testFhirEndpoint2.URL
 	queueMsg, err = convertInterfaceToBytes(queueTmp)
 	th.Assert(t, err == nil, err)
 	err = saveMsgInDB(queueMsg, &args)
@@ -164,7 +168,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
-	expectedEndpt = testFhirEndpointInfo
+	expectedEndpt.URL = testFhirEndpoint1.URL
 	queueTmp["url"] = "http://example.com/DTSU2/"
 
 	// check that a second endpoint also added to availability table
@@ -191,13 +195,13 @@ func Test_saveMsgInDB(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
-	th.Assert(t, storedEndpt.HTTPResponse == 404, "The http response was not updated")
+	th.Assert(t, storedEndpt.Metadata.HTTPResponse == 404, "The http response was not updated")
 
 	// check that availability is updated
 	err = store.DB.QueryRow(query_str, testFhirEndpoint1.URL).Scan(&http_200_ct, &http_all_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 2, "http all count should have been incremented to 2")
-	th.Assert(t, storedEndpt.Availability == 0.5, "endpoint availability should have been updated to 0.5")
+	th.Assert(t, http_all_ct == 2, "http all count should have been incremented to 2, was %d")
+	th.Assert(t, storedEndpt.Metadata.Availability == 0.5, "endpoint availability should have been updated to 0.5")
 
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
 	queueTmp["httpResponse"] = 200
@@ -214,6 +218,69 @@ func Test_saveMsgInDB(t *testing.T) {
 	// resetting values
 	queueTmp["url"] = "http://example.com/DTSU2/"
 	queueTmp["tlsVersion"] = "TLS 1.2"
+
+	// test selective update
+
+	historySQLStatement := "SELECT updated_at FROM fhir_endpoints_info_history WHERE URL = $1 ORDER BY updated_at DESC LIMIT 1"
+	var updatedAt time.Time
+
+	// Update endpoint back to original values
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	oldUpdateAt := updatedAt
+	oldMetadataID := storedEndpt.Metadata.ID
+	oldMetadataUpdatedAt := storedEndpt.Metadata.UpdatedAt
+
+	// Try to update with exact same values
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	th.Assert(t, err == nil, err)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
+	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
+
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	th.Assert(t, updatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time in the history table")
+
+	oldMetadataID = storedEndpt.Metadata.ID
+	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
+
+	// Try to update with exact same values besides metadata
+	queueTmp["responseTime"] = 0.3456
+	queueMsg, err = convertInterfaceToBytes(queueTmp)
+	err = saveMsgInDB(queueMsg, &args)
+	th.Assert(t, err == nil, err)
+
+	err = ctStmt.QueryRow().Scan(&ct)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ct == 2, "did not store data as expected")
+
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
+	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
+
+	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
+	th.Assert(t, updatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time in the history table")
+
+	queueTmp["responseTime"] = 0.1234
 
 }
 

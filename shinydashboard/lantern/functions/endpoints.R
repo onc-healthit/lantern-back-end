@@ -41,6 +41,9 @@ get_fhir_endpoints_tbl <- function() {
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
   curr_tally <- db_tables$fhir_endpoints_info %>%
+    select(metadata_id) %>%
+    left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
+      by = c("metadata_id" = "id")) %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -65,7 +68,7 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-      select(url, vendor_name), by = c("url" = "url")) %>%
+      select(url, vendor_name, http_response), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name) %>%
       mutate(code = as.character(http_response)) %>%
       group_by(id, url, code, http_response, vendor_name) %>%
@@ -250,7 +253,7 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, date.average AS avg
-                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_info_history.response_time_seconds) as average FROM fhir_endpoints_info_history GROUP BY datetime) as date,
+                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_metadata.response_time_seconds) as average FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id GROUP BY datetime) as date,
                     (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time, average
@@ -309,13 +312,13 @@ get_smart_response_capabilities <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT
       f.id,
-      f.smart_http_response,
+      m.smart_http_response,
       v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
       json_array_elements_text((smart_response->'capabilities')::json) as capability
-    FROM fhir_endpoints_info f, vendors v
-    WHERE vendor_id = v.id
-    AND smart_http_response=200")) %>%
+    FROM fhir_endpoints_info f, vendors v, fhir_endpoints_metadata m
+    WHERE vendor_id = v.id AND f.metadata_id = m.id
+    AND m.smart_http_response=200")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
@@ -339,10 +342,11 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version
     FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
-    WHERE f.smart_http_response = 200
+    WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -353,8 +357,8 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 # checking if valid SMART core capability doc returned)
 get_well_known_endpoints_count <- function(db_connection) {
   res <- tbl(db_connection,
-      sql("SELECT count(*) from fhir_endpoints_info
-          WHERE smart_http_response = 200")) %>%
+      sql("SELECT count(*) from fhir_endpoints_info, fhir_endpoints_metadata
+          WHERE fhir_endpoints_info.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_metadata.smart_http_response = 200")) %>%
       collect() %>%
       pull(count)
   as.integer(res)
@@ -367,13 +371,14 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id, e.url, f.vendor_id, e.organization_names, v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
-      f.smart_http_response,
+      m.smart_http_response,
       f.smart_response
     FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.id = e.id
-    WHERE f.smart_http_response = 200
+    WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
