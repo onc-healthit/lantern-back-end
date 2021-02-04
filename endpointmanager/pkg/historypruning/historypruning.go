@@ -7,6 +7,7 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
@@ -72,7 +73,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 	}
 }
 
-func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, capabilityparser.SMARTResponse) {
+func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, endpointmanager.SMARTResponse) {
 	var capInt map[string]interface{}
 	var fhirURL string
 	var operation string
@@ -93,7 +94,7 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 
 	err = json.Unmarshal(smartResponseJSON, &smartResponseInt)
 	helpers.FailOnError("", err)
-	smartResponse := capabilityparser.NewSMARTRespFromInterface(smartResponseInt)
+	smartResponse := endpointmanager.NewSMARTRespFromInterface(smartResponseInt)
 
 	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse
 }

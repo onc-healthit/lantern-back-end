@@ -90,7 +90,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	}
 
 	if smartResponseJSON != nil {
-		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
+		endpointInfo.SMARTResponse, err = endpointmanager.NewSMARTResp(smartResponseJSON)
 		if err != nil {
 			return nil, err
 		}
@@ -175,7 +175,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	}
 
 	if smartResponseJSON != nil {
-		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
+		endpointInfo.SMARTResponse, err = endpointmanager.NewSMARTResp(smartResponseJSON)
 		if err != nil {
 			return nil, err
 		}
