@@ -23,7 +23,7 @@ type FHIREndpointInfo struct {
 	Validation          Validation
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-	SMARTResponse       capabilityparser.SMARTResponse
+	SMARTResponse       SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
 	Metadata            *FHIREndpointMetadata
