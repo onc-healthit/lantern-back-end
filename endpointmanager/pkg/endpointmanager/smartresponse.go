@@ -7,19 +7,24 @@ import (
 	"github.com/pkg/errors"
 )
 
+// SMARTResponse interface wraps the smart response so users don't need to worry about the smart response version.
 type SMARTResponse interface {
 	Equal(SMARTResponse) bool
 	EqualIgnore(SMARTResponse) bool
 	GetJSON() ([]byte, error)
 }
+
+// Response is a structure containing the Smart Response map interface
 type Response struct {
 	resp map[string]interface{}
 }
 
+// ResponseBody is a structure containing a Response struct
 type ResponseBody struct {
 	Response
 }
 
+// NewResponseBody returns a ResponseBody struct contanining the smart response map interface
 func NewResponseBody(response map[string]interface{}) *ResponseBody {
 	return &ResponseBody{
 		Response: Response{
@@ -28,6 +33,8 @@ func NewResponseBody(response map[string]interface{}) *ResponseBody {
 	}
 }
 
+// NewSMARTRespFromInterface is a method for creating a SMARTResponse from a Smart Response map interface. It creates the implementation of the
+// SMARTResponse interface.
 func NewSMARTRespFromInterface(response map[string]interface{}) SMARTResponse {
 	if response == nil {
 		return nil
@@ -35,6 +42,8 @@ func NewSMARTRespFromInterface(response map[string]interface{}) SMARTResponse {
 	return NewResponseBody(response)
 }
 
+// NewSMARTResp is a method for creating a SMARTResp from a Smart Response JSON byte array. It creates the implementation of the
+// SMARTResponse interface.
 func NewSMARTResp(respJSON []byte) (SMARTResponse, error) {
 	var err error
 	var respMsg map[string]interface{}
@@ -114,7 +123,7 @@ func (resp *Response) EqualIgnore(resp2 SMARTResponse) bool {
 	return true
 }
 
-// GetJSON returns the JSON representation of the capability statement.
+// GetJSON returns the JSON representation of a smart response
 func (resp *Response) GetJSON() ([]byte, error) {
 	return json.Marshal(resp.resp)
 }
