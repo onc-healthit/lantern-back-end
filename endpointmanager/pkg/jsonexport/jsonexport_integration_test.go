@@ -183,7 +183,7 @@ func setup() error {
 		"fhirVersion": "4.0.1",
 		"kind": "instance"
 	}`))
-	smartResp, _ := capabilityparser.NewSMARTResp([]byte(
+	smartResp, _ := endpointmanager.NewSMARTResp([]byte(
 		`{
 			"authorization_endpoint": "https://ehr.example.com/auth/authorize",
 			"token_endpoint": "https://ehr.example.com/auth/token"

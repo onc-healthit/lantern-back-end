@@ -671,7 +671,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
 	// Add two endpoint entries to info history table with old dates and different smart response
-	smartResp, _ := capabilityparser.NewSMARTResp([]byte(
+	smartResp, _ := endpointmanager.NewSMARTResp([]byte(
 		`{
 			"authorization_endpoint": "https://ehr.example.com/auth/authorize",
 			"token_endpoint": "https://ehr.example.com/auth/token"
@@ -691,7 +691,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, count == 4, "Should have got 4, got "+strconv.Itoa(count))
 
 	// Add two endpoint entries to info history table with old dates and different smart response
-	smartResp2, _ := capabilityparser.NewSMARTResp([]byte(
+	smartResp2, _ := endpointmanager.NewSMARTResp([]byte(
 		`{
 			"authorization_endpoint": "https://ehr.differentexample.com/auth/authorize",
 			"token_endpoint": "https://ehr.example.com/auth/token"
