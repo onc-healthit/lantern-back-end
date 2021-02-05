@@ -50,9 +50,11 @@ func GetEnptsAndSend(
 		}
 
 		log.Infof("Waiting %d minutes", qInterval)
-		err = accessqueue.SendToQueue(ctx, "FINISHED", mq, channelID, qName)
-		if err != nil {
-			errs <- err
+		if len(listOfEndpoints) != 0 {
+			err = accessqueue.SendToQueue(ctx, "FINISHED", mq, channelID, qName)
+			if err != nil {
+				errs <- err
+			}
 		}
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
