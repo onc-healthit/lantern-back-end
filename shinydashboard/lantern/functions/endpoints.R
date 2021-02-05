@@ -280,8 +280,8 @@ get_security_endpoints <- function(db_connection) {
           capability_statement->>'fhirVersion' as fhir_version,
           json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code,
           json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' as text
-        FROM fhir_endpoints_info f, vendors v
-        WHERE f.vendor_id = v.id")) %>%
+        FROM fhir_endpoints_info f LEFT JOIN vendors v
+        ON f.vendor_id = v.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
@@ -292,16 +292,23 @@ get_security_endpoints <- function(db_connection) {
 # for display in table of endpoints, with organization name and URL
 get_security_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
-    sql("SELECT
-          e.url,
-          e.organization_names,
-          v.name as vendor_name,
-          capability_statement->>'fhirVersion' as fhir_version,
-          f.tls_version,
-          json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
-        FROM fhir_endpoints_info f, vendors v, fhir_endpoints e
-        WHERE f.vendor_id = v.id
-        AND e.url = f.url")) %>%
+    sql("SELECT a.url,
+            a.organization_names,
+            b.vendor_name,
+            a.fhir_version,
+            a.tls_version,
+            a.code
+        FROM
+          (SELECT e.url,
+            e.organization_names,
+            capability_statement->>'fhirVersion' as fhir_version,
+            f.tls_version,
+            f.vendor_id,
+            json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
+          FROM fhir_endpoints_info f,fhir_endpoints e
+          WHERE e.url = f.url) a
+        LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
+        ON a.vendor_id = b.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
