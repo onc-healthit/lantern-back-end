@@ -48,6 +48,22 @@ var testFhirEndpoint = endpointmanager.FHIREndpoint{
 	ListSource:        "http://cerner.com/dstu2",
 }
 
+var testMetadata = endpointmanager.FHIREndpointMetadata{
+	URL:               "http://example.com/DTSU2/",
+	HTTPResponse:      200,
+	Errors:            "Smart Response Failed",
+	ResponseTime:      0.8,
+	SMARTHTTPResponse: 400,
+}
+
+var testMetadata2 = endpointmanager.FHIREndpointMetadata{
+	URL:               "http://example.com/DTSU2/",
+	HTTPResponse:      200,
+	Errors:            "Smart Response Failed",
+	ResponseTime:      1.0,
+	SMARTHTTPResponse: 0,
+}
+
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
 	&endpointmanager.Vendor{
 		Name:          "Epic Systems Corporation",
@@ -158,6 +174,19 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, len(entries[0].TLSVersion) == 2, fmt.Sprintf("TLS first and last should exist, is instead %+v", entries[0].TLSVersion))
 	th.Assert(t, entries[0].TLSVersion["first"] == nil, fmt.Sprint("TLS first should have been nil"))
 	th.Assert(t, entries[0].TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
+	th.Assert(t, entries[0].HTTPResponse == nil, fmt.Sprintf("HTTP Response should be nil, is instead %+v", entries[0].HTTPResponse))
+
+	// Add Metadata for Endpoint
+	_, err = store.AddFHIREndpointMetadata(ctx, &testMetadata)
+	th.Assert(t, err == nil, err)
+
+	// Metadata should exist without impacting the history fields
+
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
+	th.Assert(t, entries[0].NumberOfUpdates == 0, fmt.Sprintf("There should have been no updates, instead there were %d updates", entries[0].NumberOfUpdates))
+	th.Assert(t, len(entries[0].HTTPResponse) == 1, fmt.Sprintf("HTTP Response length should be 1, is instead %d", len(entries[0].HTTPResponse)))
 
 	// Add 1 endpoint and make sure values are correct
 
@@ -174,6 +203,9 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, len(entries[0].TLSVersion) == 2, fmt.Sprintf("TLS first and last should exist, is instead %+v", entries[0].TLSVersion))
 	th.Assert(t, entries[0].TLSVersion["first"] == "TLS 1.2", fmt.Sprintf("TLS first should have been TLS 1.2, is instead %s", entries[0].TLSVersion["first"]))
 	th.Assert(t, entries[0].TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
+	th.Assert(t, len(entries[0].SmartHTTPResponse) == 1, fmt.Sprintf("SMART HTTP Response length should be 1, is instead %d", len(entries[0].SmartHTTPResponse)))
+	th.Assert(t, entries[0].SmartHTTPResponse[0].ResponseCode == 400, fmt.Sprintf("SMART HTTP Response Code should be 400, is instead %d", entries[0].SmartHTTPResponse[0].ResponseCode))
+	th.Assert(t, entries[0].SmartHTTPResponse[0].ResponseCount == 1, fmt.Sprintf("SMART HTTP Response Count should be 1, is instead %d", entries[0].SmartHTTPResponse[0].ResponseCount))
 
 	// Add 2nd endpoint (with same data) and make sure values are correct
 
@@ -192,6 +224,9 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, entries[0].TLSVersion["last"] == nil, fmt.Sprintf("TLS last should have been nil since it should have been the same value, it is instead %s", entries[0].TLSVersion["last"]))
 	th.Assert(t, entries[0].Operation["first"] == "I", fmt.Sprintf("First operation should have been 'I', is instead %s", entries[0].Operation["first"]))
 	th.Assert(t, entries[0].Operation["last"] == "U", fmt.Sprintf("Last operation should have been 'U', is instead %s", entries[0].Operation["last"]))
+	th.Assert(t, len(entries[0].Errors) == 1, fmt.Sprintf("Errors length should be 1, is instead %d", len(entries[0].Errors)))
+	th.Assert(t, entries[0].Errors[0].Error == "Smart Response Failed", fmt.Sprintf("Errors should include 'Smart Response Failed', is instead %s", entries[0].Errors[0].Error))
+	th.Assert(t, entries[0].Errors[0].ErrorCount == 1, fmt.Sprintf("Error Count should be 1, is instead %d", entries[0].Errors[0].ErrorCount))
 
 	// Add 3rd endpoint (with different data) and make sure values are correct
 
@@ -306,6 +341,131 @@ func Test_getHistory(t *testing.T) {
 		th.Assert(t, res.Summary.TLSVersion["first"] == nil, fmt.Sprint("TLS first should have been nil"))
 		th.Assert(t, res.Summary.TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
 		close(resultCh3)
+	}
+}
+
+func Test_getMetadata(t *testing.T) {
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	var err error
+	ctx := context.Background()
+	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
+
+	// Get today and tomorrow's date
+	today := time.Now()
+	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
+	formatToday := today.Format("2006-01-02")
+
+	// Add Metadata for Endpoint
+	_, err = store.AddFHIREndpointMetadata(ctx, &testMetadata)
+	th.Assert(t, err == nil, err)
+
+	// Base Case
+
+	resultCh := make(chan Result)
+	jobArgs := make(map[string]interface{})
+	jobArgs["historyArgs"] = historyArgs{
+		fhirURL:   "http://example.com/DTSU2/",
+		dateStart: formatToday,
+		dateEnd:   formatTomorrow,
+		store:     store,
+		result:    resultCh,
+	}
+
+	go getMetadata(ctx, &jobArgs)
+
+	for res := range resultCh {
+		th.Assert(t, res.URL == "http://example.com/DTSU2/", fmt.Sprintf("Expected URL to equal 'http://example.com/DTSU2/'. Is actually '%s'.", res.URL))
+		th.Assert(t, len(res.Summary.SmartHTTPResponse) == 1, fmt.Sprintf("There should be 1 entry for the SMART HTTP Response, is instead %d", len(res.Summary.SmartHTTPResponse)))
+		th.Assert(t, res.Summary.SmartHTTPResponse[0].ResponseCode == 400, fmt.Sprintf("SMART HTTP Response Code should be 400, is instead %d", res.Summary.SmartHTTPResponse[0].ResponseCode))
+		th.Assert(t, res.Summary.SmartHTTPResponse[0].ResponseCount == 1, fmt.Sprintf("SMART HTTP Response Count should be 1, is instead %d", res.Summary.SmartHTTPResponse[0].ResponseCount))
+		close(resultCh)
+	}
+
+	// Add 2nd Metadata for Endpoint
+	_, err = store.AddFHIREndpointMetadata(ctx, &testMetadata2)
+	th.Assert(t, err == nil, err)
+
+	resultCh2 := make(chan Result)
+	jobArgs2 := make(map[string]interface{})
+	jobArgs2["historyArgs"] = historyArgs{
+		fhirURL:   "http://example.com/DTSU2/",
+		dateStart: formatToday,
+		dateEnd:   formatTomorrow,
+		store:     store,
+		result:    resultCh2,
+	}
+
+	go getMetadata(ctx, &jobArgs2)
+
+	for res := range resultCh2 {
+		th.Assert(t, res.URL == "http://example.com/DTSU2/", fmt.Sprintf("Expected URL to equal 'http://example.com/DTSU2/'. Is actually '%s'.", res.URL))
+		th.Assert(t, len(res.Summary.SmartHTTPResponse) == 2, fmt.Sprintf("SMART HTTP Response should have 2 entries, instead has %d", len(res.Summary.SmartHTTPResponse)))
+		th.Assert(t, len(res.Summary.HTTPResponse) == 1, fmt.Sprintf("HTTP Response should have 1 entry, instead has %d", len(res.Summary.HTTPResponse)))
+		th.Assert(t, res.Summary.HTTPResponse[0].ResponseCode == 200, fmt.Sprintf("HTTP Response Code should be 200, is instead %d", res.Summary.HTTPResponse[0].ResponseCode))
+		th.Assert(t, res.Summary.HTTPResponse[0].ResponseCount == 2, fmt.Sprintf("HTTP Response Count should be 2, is instead %d", res.Summary.HTTPResponse[0].ResponseCount))
+		th.Assert(t, len(res.Summary.Errors) == 1, fmt.Sprintf("Errors should have 1 entry, instead has %d", len(res.Summary.Errors)))
+		th.Assert(t, res.Summary.ResponseTimeSecond == 0.9, fmt.Sprintf("HTTP Response Code should be 0.9, the median of [0.8, 1.0], is instead %f", res.Summary.ResponseTimeSecond))
+		close(resultCh2)
+	}
+
+	// Add 3nd Metadata for Endpoint
+	_, err = store.AddFHIREndpointMetadata(ctx, &testMetadata)
+	th.Assert(t, err == nil, err)
+
+	resultCh3 := make(chan Result)
+	jobArgs3 := make(map[string]interface{})
+	jobArgs3["historyArgs"] = historyArgs{
+		fhirURL:   "http://example.com/DTSU2/",
+		dateStart: formatToday,
+		dateEnd:   formatTomorrow,
+		store:     store,
+		result:    resultCh3,
+	}
+
+	go getMetadata(ctx, &jobArgs3)
+
+	for res := range resultCh3 {
+		th.Assert(t, res.URL == "http://example.com/DTSU2/", fmt.Sprintf("Expected URL to equal 'http://example.com/DTSU2/'. Is actually '%s'.", res.URL))
+		th.Assert(t, len(res.Summary.SmartHTTPResponse) == 2, fmt.Sprintf("SMART HTTP Response should have 2 entries, instead has %d", len(res.Summary.SmartHTTPResponse)))
+		th.Assert(t, len(res.Summary.HTTPResponse) == 1, fmt.Sprintf("HTTP Response should have 1 entry, instead has %d", len(res.Summary.HTTPResponse)))
+		th.Assert(t, res.Summary.HTTPResponse[0].ResponseCode == 200, fmt.Sprintf("HTTP Response Code should be 200, is instead %d", res.Summary.HTTPResponse[0].ResponseCode))
+		th.Assert(t, res.Summary.HTTPResponse[0].ResponseCount == 3, fmt.Sprintf("HTTP Response Count should be 2, is instead %d", res.Summary.HTTPResponse[0].ResponseCount))
+		th.Assert(t, len(res.Summary.Errors) == 1, fmt.Sprintf("Errors should have 1 entry, instead has %d", len(res.Summary.Errors)))
+		th.Assert(t, res.Summary.ResponseTimeSecond == 0.8, fmt.Sprintf("HTTP Response Code should be 0.8, the median of [0.8, 0.8, 1.0], is instead %f", res.Summary.ResponseTimeSecond))
+		close(resultCh3)
+	}
+
+	// If the args are not properly formatted
+
+	jobArgs4 := make(map[string]interface{})
+	jobArgs4["historyArgs"] = map[string]interface{}{
+		"nonsense": 1,
+	}
+
+	err = getMetadata(ctx, &jobArgs4)
+	th.Assert(t, err != nil, fmt.Sprint("Malformed arguments should have thrown error."))
+
+	// If the URL does not exist, return default data
+
+	resultCh5 := make(chan Result)
+	jobArgs5 := make(map[string]interface{})
+	jobArgs5["historyArgs"] = historyArgs{
+		fhirURL:   "thisurldoesntexist.com",
+		dateStart: formatToday,
+		dateEnd:   formatTomorrow,
+		store:     store,
+		result:    resultCh5,
+	}
+
+	go getMetadata(ctx, &jobArgs5)
+	for res := range resultCh5 {
+		th.Assert(t, len(res.Summary.HTTPResponse) == 0, fmt.Sprintf("HTTP Response should have 0 entries, instead has %d", len(res.Summary.HTTPResponse)))
+		th.Assert(t, len(res.Summary.SmartHTTPResponse) == 0, fmt.Sprintf("SMART HTTP Response should have 0 entries, instead has %d", len(res.Summary.SmartHTTPResponse)))
+		th.Assert(t, len(res.Summary.Errors) == 0, fmt.Sprintf("Errors should have 0 entries, instead has %d", len(res.Summary.Errors)))
+		th.Assert(t, res.Summary.ResponseTimeSecond == nil, fmt.Sprintf("ResponseTimeSecond should be 0, instead is %f", res.Summary.ResponseTimeSecond))
+		close(resultCh5)
 	}
 }
 
