@@ -3,6 +3,8 @@ package archivefile
 import (
 	"context"
 	"fmt"
+	"math"
+	"sort"
 	"time"
 
 	"github.com/lib/pq"
@@ -16,17 +18,39 @@ import (
 
 // totalSummary is the format of a given URL's JSON object for the archive file
 type totalSummary struct {
-	URL               string                 `json:"url"`
-	CreatedAt         time.Time              `json:"created_at"`
-	ListSource        []string               `json:"list_source"`
-	OrganizationNames []string               `json:"api_information_source_name"`
-	Updated           map[string]interface{} `json:"updated_at"`
-	NumberOfUpdates   int                    `json:"number_of_updates"`
-	Operation         map[string]interface{} `json:"operation"`
-	FHIRVersion       map[string]interface{} `json:"fhir_version"`
-	TLSVersion        map[string]interface{} `json:"tls_version"`
-	MIMETypes         firstLastStrArr        `json:"mime_types"`
-	Vendor            map[string]interface{} `json:"certified_api_developer_name"`
+	URL                string                 `json:"url"`
+	CreatedAt          time.Time              `json:"created_at"`
+	ListSource         []string               `json:"list_source"`
+	OrganizationNames  []string               `json:"api_information_source_name"`
+	Updated            map[string]interface{} `json:"updated_at"`
+	NumberOfUpdates    int                    `json:"number_of_updates"`
+	Operation          map[string]interface{} `json:"operation"`
+	FHIRVersion        map[string]interface{} `json:"fhir_version"`
+	TLSVersion         map[string]interface{} `json:"tls_version"`
+	MIMETypes          firstLastStrArr        `json:"mime_types"`
+	Vendor             map[string]interface{} `json:"certified_api_developer_name"`
+	ResponseTimeSecond interface{}            `json:"response_time_second"`
+	HTTPResponse       []httpResponse         `json:"http_response"`
+	SmartHTTPResponse  []smartHTTPResponse    `json:"smart_http_response"`
+	Errors             []responseErrors       `json:"errors"`
+}
+
+// formats for specific fields in the above totalSummary struct
+type firstLastStrArr struct {
+	First []string `json:"first"`
+	Last  []string `json:"last"`
+}
+type httpResponse struct {
+	ResponseCode  int `json:"http_response_code"`
+	ResponseCount int `json:"http_response_count"`
+}
+type smartHTTPResponse struct {
+	ResponseCode  int `json:"smart_http_response_code"`
+	ResponseCount int `json:"smart_http_response_count"`
+}
+type responseErrors struct {
+	Error      string `json:"error"`
+	ErrorCount int    `json:"error_count"`
 }
 
 // Result is the value that is returned from getting the history data from the
@@ -62,10 +86,14 @@ type vendorEntry struct {
 	VendorName string
 }
 
-// firstLastStrArr is the format used for the MimeTypes field in totalSummary
-type firstLastStrArr struct {
-	First []string `json:"first"`
-	Last  []string `json:"last"`
+// metadataEntry is the format of the data received from the fhir_endpoints_metadata for the
+// given URL
+type metadataEntry struct {
+	URL                 string
+	ResponseTimeSeconds float64
+	HTTPResponse        int
+	SMARTHTTPResponse   int
+	Errors              string
 }
 
 // CreateArchive gets all data from fhir_endpoints, fhir_endpoints_info and vendors between
@@ -121,7 +149,7 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 
 	// Get history data using workers
 	resultCh := make(chan Result)
-	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, store, allWorkers)
+	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, "history", store, allWorkers)
 
 	// Add the results from createJobs to allData
 	count := 0
@@ -188,6 +216,28 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 			log.Infof("This url %s does not have an entry in the vendor table", url)
 		}
 		allData[url] = u
+	}
+
+	// Get history data using workers
+	metaResultCh := make(chan Result)
+	go createJobs(ctx, metaResultCh, urls, dateStart, dateEnd, "metadata", store, allWorkers)
+
+	// Add the results from metadata to allData
+	count = 0
+	for res := range metaResultCh {
+		u, ok := allData[res.URL]
+		if !ok {
+			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
+		}
+		u.ResponseTimeSecond = res.Summary.ResponseTimeSecond
+		u.HTTPResponse = res.Summary.HTTPResponse
+		u.SmartHTTPResponse = res.Summary.SmartHTTPResponse
+		u.Errors = res.Summary.Errors
+		allData[res.URL] = u
+		if count == len(urls)-1 {
+			close(metaResultCh)
+		}
+		count++
 	}
 
 	var entries []totalSummary
@@ -269,6 +319,7 @@ func createJobs(ctx context.Context,
 	urls []string,
 	dateStart string,
 	dateEnd string,
+	jobType string,
 	store *postgresql.Store,
 	allWorkers *workers.Workers) {
 	for index := range urls {
@@ -290,8 +341,13 @@ func createJobs(ctx context.Context,
 		job := workers.Job{
 			Context:     ctx,
 			Duration:    time.Duration(workerDur) * time.Second,
-			Handler:     getHistory,
 			HandlerArgs: &jobArgs,
+		}
+
+		if jobType == "history" {
+			job.Handler = getHistory
+		} else {
+			job.Handler = getMetadata
 		}
 
 		err := allWorkers.Add(&job)
@@ -385,6 +441,133 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		if !helpers.StringArraysEqual(startElem.MIMETypes, endElem.MIMETypes) {
 			returnResult.MIMETypes.Last = endElem.MIMETypes
 		}
+	}
+
+	result := Result{
+		URL:     ha.fhirURL,
+		Summary: returnResult,
+	}
+	ha.result <- result
+	return nil
+}
+
+// getMetadata retrieves the data from the metadata table for a specific URL and formats it
+// as a totalSummary object before sending it back over the channel
+func getMetadata(ctx context.Context, args *map[string]interface{}) error {
+	var returnResult totalSummary
+	var history []metadataEntry
+
+	ha, ok := (*args)["historyArgs"].(historyArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast arguments to type historyArgs")
+	}
+
+	// Get all rows in the history table between given dates
+	metadataQuery := `SELECT url, response_time_seconds, http_response, smart_http_response, errors FROM fhir_endpoints_metadata
+		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
+	metadataRows, err := ha.store.DB.QueryContext(ctx, metadataQuery, ha.fhirURL)
+	if err != nil {
+		log.Warnf("Failed getting the metadata rows for URL %s. Error: %s", ha.fhirURL, err)
+		result := Result{
+			URL:     ha.fhirURL,
+			Summary: returnResult,
+		}
+		ha.result <- result
+		return nil
+	}
+
+	defer metadataRows.Close()
+	for metadataRows.Next() {
+		var e metadataEntry
+		err = metadataRows.Scan(
+			&e.URL,
+			&e.ResponseTimeSeconds,
+			&e.HTTPResponse,
+			&e.SMARTHTTPResponse,
+			&e.Errors)
+		if err != nil {
+			log.Warnf("Error while scanning the rows of the metadata table for URL %s. Error: %s", ha.fhirURL, err)
+			result := Result{
+				URL:     ha.fhirURL,
+				Summary: returnResult,
+			}
+			ha.result <- result
+			return nil
+		}
+
+		history = append(history, e)
+	}
+
+	if len(history) > 0 {
+		var respTime []float64
+		httpResponseMap := make(map[int]int)
+		smartHTTPRespMap := make(map[int]int)
+		errorsMap := make(map[string]int)
+		// Keep track of each unique http response, smart http response, and error value
+		// and how many of each unique value there is
+		for _, elem := range history {
+			respTime = append(respTime, elem.ResponseTimeSeconds)
+			if val, ok := httpResponseMap[elem.HTTPResponse]; ok {
+				httpResponseMap[elem.HTTPResponse] = val + 1
+			} else {
+				httpResponseMap[elem.HTTPResponse] = 1
+			}
+			if val, ok := smartHTTPRespMap[elem.SMARTHTTPResponse]; ok {
+				smartHTTPRespMap[elem.SMARTHTTPResponse] = val + 1
+			} else {
+				smartHTTPRespMap[elem.SMARTHTTPResponse] = 1
+			}
+			if val, ok := errorsMap[elem.Errors]; ok {
+				errorsMap[elem.Errors] = val + 1
+			} else {
+				errorsMap[elem.Errors] = 1
+			}
+		}
+		// Calculate median of given response times
+		sort.Slice(respTime, func(i, j int) bool {
+			return respTime[i] < respTime[j]
+		})
+		var median float64
+		if len(respTime)%2 == 0 {
+			idx := (len(respTime) - 1) / 2
+			floatMedian := (respTime[idx] + respTime[idx+1]) / 2
+			// Round to 4 decimal places
+			median = math.Round(floatMedian*10000) / 10000
+		} else {
+			idx := len(respTime) / 2
+			median = respTime[idx]
+		}
+
+		// Loop through each map and for each element create an array
+		// item for it's respective totalSummary field
+		var httpRespArr []httpResponse
+		for resp, total := range httpResponseMap {
+			httpResp := httpResponse{
+				ResponseCode:  resp,
+				ResponseCount: total,
+			}
+			httpRespArr = append(httpRespArr, httpResp)
+		}
+		var smartHTTPRespArr []smartHTTPResponse
+		for resp, total := range smartHTTPRespMap {
+			smartResp := smartHTTPResponse{
+				ResponseCode:  resp,
+				ResponseCount: total,
+			}
+			smartHTTPRespArr = append(smartHTTPRespArr, smartResp)
+		}
+		var errorArray []responseErrors
+		for resp, total := range errorsMap {
+			errorResp := responseErrors{
+				Error:      resp,
+				ErrorCount: total,
+			}
+			errorArray = append(errorArray, errorResp)
+		}
+		returnResult.ResponseTimeSecond = median
+		returnResult.HTTPResponse = httpRespArr
+		returnResult.SmartHTTPResponse = smartHTTPRespArr
+		returnResult.Errors = errorArray
 	}
 
 	result := Result{
