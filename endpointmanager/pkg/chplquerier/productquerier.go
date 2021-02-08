@@ -317,6 +317,11 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
 	}
 
+	if newCertEdition == existingCertEdition && existingDbProd.CertificationDate == newDbProd.CertificationDate {
+		// cert dates are the same. unknown update precedence. throw error and don't perform update.
+		return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	}
+
 	// if new prod has more recent cert edition, should update.
 	if newCertEdition > existingCertEdition {
 		return true, nil
