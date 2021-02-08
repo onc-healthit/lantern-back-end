@@ -368,3 +368,5 @@ CREATE INDEX location_zipcode_idx ON npi_organizations ((location->>'zipcode'));
 CREATE INDEX info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
 CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
 CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
+
+CREATE INDEX healthit_product_name_version_idx ON healthit_products (name, version);
