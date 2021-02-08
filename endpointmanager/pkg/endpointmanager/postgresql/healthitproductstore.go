@@ -16,6 +16,7 @@ var deleteHealthITProductStatement *sql.Stmt
 var getProductCriteriaLinkStatement *sql.Stmt
 var linkProductToCriteriaStatement *sql.Stmt
 var getHealthITProductIDByCHPLID *sql.Stmt
+var getHealthITProductUsingNameAndVersion *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -88,26 +89,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
 
-	sqlStatement := `
-	SELECT
-		id,
-		name,
-		version,
-		vendor_id,
-		location,
-		authorization_standard,
-		api_syntax,
-		api_url,
-		certification_criteria,
-		certification_status,
-		certification_date,
-		certification_edition,
-		last_modified_in_chpl,
-		chpl_id,
-		created_at,
-		updated_at
-	FROM healthit_products WHERE name=$1 AND version=$2`
-	row := s.DB.QueryRowContext(ctx, sqlStatement, name, version)
+	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
 	err := row.Scan(
 		&hitp.ID,
@@ -410,6 +392,28 @@ func prepareHealthITProductStatements(s *Store) error {
 			id
 		FROM healthit_products
 		WHERE chpl_id = $1`)
+	if err != nil {
+		return err
+	}
+	getHealthITProductUsingNameAndVersion, err = s.DB.Prepare(`
+	SELECT
+		id,
+		name,
+		version,
+		vendor_id,
+		location,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_criteria,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id,
+		created_at,
+		updated_at
+	FROM healthit_products WHERE name=$1 AND version=$2`)
 	if err != nil {
 		return err
 	}
