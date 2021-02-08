@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -16,7 +15,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// @TODO Get rid of all print statements
 func main() {
 	var dateStart string
 	var dateEnd string
@@ -36,13 +34,9 @@ func main() {
 	// Verify that given dates are in the correct format
 	layout := "2006-01-02"
 	_, err = time.Parse(layout, dateStart)
-	if err != nil {
-		log.Fatalf("ERROR: Start date not in correct format, %s", err)
-	}
+	helpers.FailOnError("ERROR: Start date not in correct format", err)
 	_, err = time.Parse(layout, dateEnd)
-	if err != nil {
-		log.Fatalf("ERROR: End date not in correct format, %s", err)
-	}
+	helpers.FailOnError("ERROR: End date not in correct format", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
@@ -56,11 +50,8 @@ func main() {
 	// Format as JSON
 	finalFormatJSON, err := json.MarshalIndent(entries, "", "\t")
 	helpers.FailOnError("", err)
-	fmt.Printf("JSON: %s", string(finalFormatJSON))
 
 	// Write to the given file
 	err = ioutil.WriteFile(writeFile, finalFormatJSON, 0644)
-	if err != nil {
-		log.Fatalf("ERROR: Writing to given file failed, %s", err)
-	}
+	helpers.FailOnError("ERROR: Writing to given file failed", err)
 }

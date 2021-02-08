@@ -212,8 +212,6 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 			if startElem.VendorName != endElem.VendorName {
 				u.Vendor["last"] = endElem.VendorName
 			}
-		} else {
-			log.Infof("This url %s does not have an entry in the vendor table", url)
 		}
 		allData[url] = u
 	}
@@ -244,41 +242,6 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 	for _, e := range allData {
 		entries = append(entries, e)
 	}
-
-	/**
-	Fields from the new metadata table:
-	"response_time_second":"",
-	"http_response":[
-		{
-			"http_response_code": 200,
-			"http_response_count": 10
-		},
-		{
-			"http_response_code": 404,
-			"http_response_count": 10
-		}...
-	],
-	"smart_http_response":[
-		{
-			"smart_http_response_code": 200,
-			"smart_http_response_count": 10
-		},
-		{
-			"smart_http_response_code": 404,
-			"smart_http_response_count": 10
-		}...
-	],
-	"errors":[
-		{
-			"error": "did not return",
-			"error_count": 10
-		},
-		{
-			"error": "something went wrong",
-			"error_count": 10
-		}...
-	],
-	*/
 
 	return entries, nil
 }
