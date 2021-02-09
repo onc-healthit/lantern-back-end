@@ -44,8 +44,8 @@ jobs:
           LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
           LANTERN_QHOST: localhost
           LANTERN_EXPORTFILE_WAIT: 300
-          LANTERN_EXPORT_NUMWORKERS: 50
-          LANTERN_EXPORT_DURATION: 120
+          LANTERN_EXPORT_NUMWORKERS: 25
+          LANTERN_EXPORT_DURATION: 240
           LANTERN_PRUNING_THRESHOLD: 43800
       - name: Go Integration Tests
         id: go-integration-tests
@@ -86,5 +86,5 @@ jobs:
           LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
           LANTERN_QHOST: lantern-mq
           LANTERN_EXPORTFILE_WAIT: 300
-          LANTERN_EXPORT_NUMWORKERS: 50
-          LANTERN_EXPORT_DURATION: 120
+          LANTERN_EXPORT_NUMWORKERS: 25
+          LANTERN_EXPORT_DURATION: 240
