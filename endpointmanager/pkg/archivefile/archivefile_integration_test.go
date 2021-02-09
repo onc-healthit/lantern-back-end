@@ -65,17 +65,17 @@ var testMetadata2 = endpointmanager.FHIREndpointMetadata{
 }
 
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
-	&endpointmanager.Vendor{
+	{
 		Name:          "Epic Systems Corporation",
 		DeveloperCode: "A",
 		CHPLID:        1,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Corporation",
 		DeveloperCode: "B",
 		CHPLID:        2,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Health Services, Inc.",
 		DeveloperCode: "C",
 		CHPLID:        3,
@@ -284,13 +284,46 @@ func Test_getHistory(t *testing.T) {
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
+	// If there is no capability statement, FHIRVersion should be null instead of empty string
+
+	emptyCap := []byte("null")
+	cs, err := capabilityparser.NewCapabilityStatement(emptyCap)
+	th.Assert(t, err == nil, err)
+	testFhirEndpointInfo.CapabilityStatement = cs
+
 	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 1, fmt.Sprintf("Should have got 1, intead got %d", count))
 
+	resultCh2 := make(chan Result)
+	jobArgs2 := make(map[string]interface{})
+	jobArgs2["historyArgs"] = historyArgs{
+		fhirURL:   "http://example.com/DTSU2/",
+		dateStart: formatToday,
+		dateEnd:   formatTomorrow,
+		store:     store,
+		result:    resultCh2,
+	}
+
+	go getHistory(ctx, &jobArgs2)
+
+	for res := range resultCh2 {
+		th.Assert(t, res.URL == "http://example.com/DTSU2/", fmt.Sprintf("Expected URL to equal 'http://example.com/DTSU2/'. Is actually '%s'.", res.URL))
+		th.Assert(t, res.Summary.NumberOfUpdates == 1, fmt.Sprintf("1 update should have been registered, instead there were %d updates", res.Summary.NumberOfUpdates))
+		th.Assert(t, res.Summary.FHIRVersion["first"] == nil, fmt.Sprintf("FHIR Version first should have been nil, is instead %s", res.Summary.FHIRVersion["first"]))
+		close(resultCh2)
+	}
+
 	// Base Case
+
+	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	th.Assert(t, err == nil, err)
+	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, fmt.Sprintf("Should have got 2, intead got %d", count))
 
 	resultCh := make(chan Result)
 	jobArgs := make(map[string]interface{})
@@ -306,41 +339,42 @@ func Test_getHistory(t *testing.T) {
 
 	for res := range resultCh {
 		th.Assert(t, res.URL == "http://example.com/DTSU2/", fmt.Sprintf("Expected URL to equal 'http://example.com/DTSU2/'. Is actually '%s'.", res.URL))
-		th.Assert(t, res.Summary.NumberOfUpdates == 1, fmt.Sprintf("1 update should have been registered, instead there were %d updates", res.Summary.NumberOfUpdates))
+		th.Assert(t, res.Summary.NumberOfUpdates == 2, fmt.Sprintf("2 updates should have been registered, instead there were %d updates", res.Summary.NumberOfUpdates))
 		th.Assert(t, res.Summary.TLSVersion["first"] == "TLS 1.2", fmt.Sprintf("TLS first should have been TLS 1.2, is instead %s", res.Summary.TLSVersion["first"]))
 		th.Assert(t, res.Summary.TLSVersion["last"] == nil, fmt.Sprintf("TLS last should have been nil, it is instead %s", res.Summary.TLSVersion["last"]))
+		th.Assert(t, res.Summary.FHIRVersion["last"] == "1.0.2", fmt.Sprintf("FHIR Version last should have been 1.0.2, is instead %+v", res.Summary.FHIRVersion["last"]))
 		close(resultCh)
 	}
 
 	// If the args are not properly formatted
 
-	jobArgs2 := make(map[string]interface{})
-	jobArgs2["historyArgs"] = map[string]interface{}{
+	jobArgs3 := make(map[string]interface{})
+	jobArgs3["historyArgs"] = map[string]interface{}{
 		"nonsense": 1,
 	}
 
-	err = getHistory(ctx, &jobArgs2)
+	err = getHistory(ctx, &jobArgs3)
 	th.Assert(t, err != nil, fmt.Sprint("Malformed arguments should have thrown error."))
 
 	// If the URL does not exist, return default data
 
-	resultCh3 := make(chan Result)
-	jobArgs3 := make(map[string]interface{})
-	jobArgs3["historyArgs"] = historyArgs{
+	resultCh4 := make(chan Result)
+	jobArgs4 := make(map[string]interface{})
+	jobArgs4["historyArgs"] = historyArgs{
 		fhirURL:   "thisurldoesntexist.com",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
-		result:    resultCh3,
+		result:    resultCh4,
 	}
 
-	go getHistory(ctx, &jobArgs3)
-	for res := range resultCh3 {
+	go getHistory(ctx, &jobArgs4)
+	for res := range resultCh4 {
 		th.Assert(t, res.Summary.NumberOfUpdates == 0, fmt.Sprintf("Expected 0 entries in history table. Actually had %d entries.", res.Summary.NumberOfUpdates))
 		th.Assert(t, res.URL == "thisurldoesntexist.com", fmt.Sprintf("Expected URL to equal 'thisurldoesntexist.com'. Is actually '%s'.", res.URL))
 		th.Assert(t, res.Summary.TLSVersion["first"] == nil, fmt.Sprint("TLS first should have been nil"))
 		th.Assert(t, res.Summary.TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
-		close(resultCh3)
+		close(resultCh4)
 	}
 }
 
