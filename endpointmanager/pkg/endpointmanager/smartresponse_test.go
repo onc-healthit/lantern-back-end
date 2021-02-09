@@ -11,7 +11,7 @@ import (
 
 func Test_SMARTResponseEqual(t *testing.T) {
 
-	// get two differing formats for SMART Response
+	// get SMART Response
 	path := filepath.Join("../testdata", "authorization_cerner_smart_response.json")
 	smartResponseJSON1, err := ioutil.ReadFile(path)
 	th.Assert(t, err == nil, err)
@@ -67,6 +67,39 @@ func Test_SMARTResponseEqual(t *testing.T) {
 	}
 
 	SMARTResponse2 = NewSMARTRespFromInterface(SMARTResponse2Int)
+
+	equal = SMARTResponse1.Equal(SMARTResponse2)
+	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
+
+	// get different SMART Response format to ensure Equal works for any smart response format
+	path = filepath.Join("../testdata", "fhir_sandbox_smart_response.json")
+	smartResponseJSON1, err = ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+
+	SMARTResponse1, err = NewSMARTResp(smartResponseJSON1)
+	th.Assert(t, err == nil, err)
+
+	// test nil
+	SMARTResponse2, err = NewSMARTResp(nil)
+	th.Assert(t, err == nil, err)
+
+	equal = SMARTResponse1.Equal(SMARTResponse2)
+	th.Assert(t, !equal, "expected equality comparison to nil to be false")
+
+	// test equal
+	smartResponseJSON2, err = ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+
+	SMARTResponse2, err = NewSMARTResp(smartResponseJSON2)
+	th.Assert(t, err == nil, err)
+
+	if !SMARTResponse1.Equal(SMARTResponse2) {
+		t.Errorf("Expect SMARTResponse1 to equal SMARTResponse2, but they were not equal.")
+	}
+
+	// test not equal
+	SMARTResponse2, err = deleteFieldFromSmartResponse(SMARTResponse2, "token_endpoint_auth_signing_alg_values_supported")
+	th.Assert(t, err == nil, err)
 
 	equal = SMARTResponse1.Equal(SMARTResponse2)
 	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
