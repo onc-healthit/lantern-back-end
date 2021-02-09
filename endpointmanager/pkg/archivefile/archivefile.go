@@ -2,13 +2,13 @@ package archivefile
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"math"
 	"sort"
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
@@ -246,24 +246,6 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 	return entries, nil
 }
 
-// Gets the FHIR Version from the capability statement
-func getFHIRVersion(capStat []byte) (string, error) {
-	if capStat != nil {
-		formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
-		if err != nil {
-			return "", err
-		}
-		if formatCapStat != nil {
-			fhirVersion, err := formatCapStat.GetFHIRVersion()
-			if err != nil {
-				return "", err
-			}
-			return fhirVersion, nil
-		}
-	}
-	return "", fmt.Errorf("no capability statement to retreive FHIR Version from")
-}
-
 // Creates a default first & last JSON object, using map[string]interface{} so that an
 // empty field is "null" instead of defining it with strings or another type where the default
 // would be "" or 0, etc.
@@ -338,7 +320,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	historyQuery := `SELECT url, updated_at, operation, capability_statement, tls_version, mime_types FROM fhir_endpoints_info_history
+	historyQuery := `SELECT url, updated_at, operation, capability_statement->>'fhirVersion', tls_version, mime_types FROM fhir_endpoints_info_history
 		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
 	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL)
 	if err != nil {
@@ -354,12 +336,12 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	defer historyRows.Close()
 	for historyRows.Next() {
 		var e historyEntry
-		var capStat []byte
-		err = historyRows.Scan(
+		var fhirVersion sql.NullString
+		var err = historyRows.Scan(
 			&e.URL,
 			&e.UpdatedAt,
 			&e.Operation,
-			&capStat,
+			&fhirVersion,
 			&e.TLSVersion,
 			pq.Array(&e.MIMETypes))
 		if err != nil {
@@ -372,7 +354,13 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			return nil
 		}
 
-		e.FHIRVersion, e.FHIRVersionError = getFHIRVersion(capStat)
+		if !fhirVersion.Valid {
+			e.FHIRVersion = ""
+			e.FHIRVersionError = fmt.Errorf("received NULL FHIR version")
+		} else {
+			e.FHIRVersion = fhirVersion.String
+			e.FHIRVersionError = nil
+		}
 
 		history = append(history, e)
 	}
@@ -393,7 +381,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		if startElem.FHIRVersionError == nil {
 			returnResult.FHIRVersion["first"] = startElem.FHIRVersion
 		}
-		if (startElem.FHIRVersion != endElem.FHIRVersion) && endElem.FHIRVersionError != nil {
+		if (startElem.FHIRVersion != endElem.FHIRVersion) && (endElem.FHIRVersionError == nil) {
 			returnResult.FHIRVersion["last"] = endElem.FHIRVersion
 		}
 		returnResult.TLSVersion["first"] = startElem.TLSVersion
