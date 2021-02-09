@@ -1,0 +1,21 @@
+{
+    "capabilities": [
+        "launch-ehr",
+        "client-public",
+        "client-confidential-symmetric",
+        "permission-patient",
+        "permission-user"
+    ],
+    "token_endpoint": "https://fhirsandbox2.tsysinteropsvcs.net:8110/identity/connect/token",
+    "scopes_supported": [
+        "system/*.read"
+    ],
+    "authorization_endpoint": "https://fhirsandbox2.tsysinteropsvcs.net:8110/identity/connect/authorize",
+    "token_endpoint_auth_methods_supported": [
+        "private_key_jwt"
+    ],
+    "token_endpoint_auth_signing_alg_values_supported": [
+        "RS384",
+        "RS256"
+    ]
+}
