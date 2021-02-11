@@ -67,6 +67,10 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: 120
 
+* **LANTERN_PRUNING_THRESHOLD**: The length of time (in minutes) determining how old a fhir_endpoints_info_history entry has to be in order to be considered for pruning. Only entries equal to or older than this threshold will undergo pruning.
+
+  Default value: 43800
+  
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:
@@ -266,3 +270,7 @@ To manually add a link between an endpoint and npi organization after the linker
   ...
 ]
 ```
+
+## Endpoint Info History Pruning
+
+After every query interval, once the capability querier has finished querying all endpoints and updating the fhir_endpoints_info table and subsequently the fhir_endpoints_info_history table, the fhir_endpoints_info_history pruning algorithm is run. The pruning algorithm will look at all fhir_endpoints_info_history entries for each distinct fhir endpoint url that are equal to or older than the time determined by the LANTERN_PRUNING_THRESHOLD environmental variable value, and remove any consecutive duplicate entries. A fhir_endpoints_info_history entry is considered a duplicate if there is an older consecutive entry that that has the same stored information for the endpoint's TLS version, MIME types, and SMARTResponse, and if the newer entry's stored capability statement only differs by the "date" field. If a fhir_endpoints_info_history is found to be a duplicate of an older consecutive entry, it is deleted from the table, and this continues until only the oldest of the consecutive duplicated entries remains. This pruning strategy is advantageous in that there will always at least a month’s worth of daily data in the history table for each endpoint, so that Lantern can archive monthly and see how every endpoint responded every day. It also saves storage space by removing old and redundant data, while still keeping one entry containing any distinct data, allowing Lantern to keep track of how each endpoint has changed over time. 
