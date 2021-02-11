@@ -42,6 +42,7 @@ backup_database:
 	@docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > "${BACKUP}"
 	@echo "Database was backed up to ${BACKUP}"
 
+# Example command: make create_archive start=2020-06-31 end=2021-06-31 file=archive_file.json
 create_archive:
 	cd endpointmanager/cmd/archivefile; go run main.go $(start) $(end) $(file)
 	

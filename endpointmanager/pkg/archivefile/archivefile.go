@@ -104,7 +104,7 @@ func CreateArchive(ctx context.Context,
 	numWorkers int,
 	workerDur int) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
-	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source from fhir_endpoints;"
+	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source FROM fhir_endpoints;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints: %s", err)
