@@ -29,6 +29,8 @@ var addFHIREndpointStatement *sql.Stmt
 var getIDStatement *sql.Stmt
 var ctStatement *sql.Stmt
 var idCount int = 0
+var workerDur int
+var numWorkers int
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:        "http://example.com/DTSU2/",
@@ -101,6 +103,9 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	numWorkers = viper.GetInt("export_numworkers")
+	workerDur = viper.GetInt("export_duration")
+
 	addFHIREndpointInfoHistoryStatement, err = store.DB.Prepare(`
 	INSERT INTO fhir_endpoints_info_history (
 		operation, 
@@ -167,7 +172,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Empty test, come back to this
 
-	entries, err := CreateArchive(ctx, store, formatToday, formatTomorrow)
+	entries, err := CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 0, fmt.Sprintf("There should have been no updates, instead there were %d updates", entries[0].NumberOfUpdates))
@@ -182,7 +187,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Metadata should exist without impacting the history fields
 
-	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow)
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 0, fmt.Sprintf("There should have been no updates, instead there were %d updates", entries[0].NumberOfUpdates))
@@ -196,7 +201,7 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 1, fmt.Sprintf("Should have got 1, intead got %d", count))
 
-	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow)
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 1, fmt.Sprintf("only 1 update should have been registered, instead there were %d updates", entries[0].NumberOfUpdates))
@@ -215,7 +220,7 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, fmt.Sprintf("Should have got 2, intead got %d", count))
 
-	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow)
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 2, fmt.Sprintf("2 updates should have been registered, instead there were %d updates", entries[0].NumberOfUpdates))
@@ -236,7 +241,7 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 3, fmt.Sprintf("Should have got 3, intead got %d", count))
 
-	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow)
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 3, fmt.Sprintf("3 updates should have been registered, instead there were %d updates", entries[0].NumberOfUpdates))
@@ -251,7 +256,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	twoDays := today.Add(time.Hour * 48).Format("2006-01-02")
 
-	entries, err = CreateArchive(ctx, store, formatTomorrow, twoDays)
+	entries, err = CreateArchive(ctx, store, formatTomorrow, twoDays, numWorkers, workerDur)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(entries) == 1, fmt.Sprintf("length of entries should have been 1, is instead %d", len(entries)))
 	th.Assert(t, entries[0].NumberOfUpdates == 0, fmt.Sprintf("There should have been no updates, instead there were %d updates", entries[0].NumberOfUpdates))

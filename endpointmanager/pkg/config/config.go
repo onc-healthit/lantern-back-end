@@ -104,8 +104,8 @@ func SetupConfig() error {
 
 	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
 
-	viper.SetDefault("export_numworkers", 50)
-	viper.SetDefault("export_duration", 120)
+	viper.SetDefault("export_numworkers", 25)
+	viper.SetDefault("export_duration", 240)
 
 	return nil
 }

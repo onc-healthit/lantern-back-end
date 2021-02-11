@@ -44,7 +44,10 @@ func main() {
 
 	ctx := context.Background()
 
-	entries, err := archivefile.CreateArchive(ctx, store, dateStart, dateEnd)
+	// Get worker environment variables
+	numWorkers := viper.GetInt("export_numworkers")
+	workerDur := viper.GetInt("export_duration")
+	entries, err := archivefile.CreateArchive(ctx, store, dateStart, dateEnd, numWorkers, workerDur)
 	helpers.FailOnError("", err)
 
 	// Format as JSON

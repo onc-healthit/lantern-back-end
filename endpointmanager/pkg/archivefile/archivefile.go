@@ -13,7 +13,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 // totalSummary is the format of a given URL's JSON object for the archive file
@@ -98,7 +97,12 @@ type metadataEntry struct {
 
 // CreateArchive gets all data from fhir_endpoints, fhir_endpoints_info and vendors between
 // the given start and end date and summarizes the data
-func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart string, dateEnd string) ([]totalSummary, error) {
+func CreateArchive(ctx context.Context,
+	store *postgresql.Store,
+	dateStart string,
+	dateEnd string,
+	numWorkers int,
+	workerDur int) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
 	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source from fhir_endpoints;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
@@ -133,15 +137,9 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		}
 	}
 
-	errs := make(chan error)
-	numWorkers := viper.GetInt("export_numworkers")
-	// If numWorkers not set, default to 10 workers
-	if numWorkers == 0 {
-		numWorkers = 10
-	}
-	allWorkers := workers.NewWorkers()
-
 	// Start workers
+	errs := make(chan error)
+	allWorkers := workers.NewWorkers()
 	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
 		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
@@ -149,7 +147,7 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 
 	// Get history data using workers
 	resultCh := make(chan Result)
-	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, "history", store, allWorkers)
+	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, "history", workerDur, store, allWorkers)
 
 	// Add the results from createJobs to allData
 	count := 0
@@ -165,7 +163,7 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 		u.TLSVersion = res.Summary.TLSVersion
 		u.MIMETypes = res.Summary.MIMETypes
 		allData[res.URL] = u
-		if count == len(urls)-1 {
+		if count >= len(urls)-1 {
 			close(resultCh)
 		}
 		count++
@@ -218,7 +216,7 @@ func CreateArchive(ctx context.Context, store *postgresql.Store, dateStart strin
 
 	// Get history data using workers
 	metaResultCh := make(chan Result)
-	go createJobs(ctx, metaResultCh, urls, dateStart, dateEnd, "metadata", store, allWorkers)
+	go createJobs(ctx, metaResultCh, urls, dateStart, dateEnd, "metadata", workerDur, store, allWorkers)
 
 	// Add the results from metadata to allData
 	count = 0
@@ -265,6 +263,7 @@ func createJobs(ctx context.Context,
 	dateStart string,
 	dateEnd string,
 	jobType string,
+	workerDur int,
 	store *postgresql.Store,
 	allWorkers *workers.Workers) {
 	for index := range urls {
@@ -275,12 +274,6 @@ func createJobs(ctx context.Context,
 			dateEnd:   dateEnd,
 			store:     store,
 			result:    ch,
-		}
-
-		workerDur := viper.GetInt("export_duration")
-		// If duration not set, default to 120 seconds
-		if workerDur == 0 {
-			workerDur = 120
 		}
 
 		job := workers.Job{
