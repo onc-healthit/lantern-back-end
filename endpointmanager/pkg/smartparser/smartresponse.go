@@ -108,19 +108,7 @@ func (resp *Response) EqualIgnore(resp2 SMARTResponse) bool {
 		}
 	}
 
-	j1, err := respCopy.GetJSON()
-	if err != nil {
-		return false
-	}
-	j2, err := resp2Copy.GetJSON()
-	if err != nil {
-		return false
-	}
-	if !bytes.Equal(j1, j2) {
-		return false
-	}
-
-	return true
+	return respCopy.Equal(resp2Copy)
 }
 
 // GetJSON returns the JSON representation of a smart response
