@@ -13,6 +13,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/spf13/viper"
 )
@@ -183,7 +184,7 @@ func setup() error {
 		"fhirVersion": "4.0.1",
 		"kind": "instance"
 	}`))
-	smartResp, _ := endpointmanager.NewSMARTResp([]byte(
+	smartResp, _ := smartparser.NewSMARTResp([]byte(
 		`{
 			"authorization_endpoint": "https://ehr.example.com/auth/authorize",
 			"token_endpoint": "https://ehr.example.com/auth/token"
