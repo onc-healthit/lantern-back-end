@@ -15,6 +15,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -85,13 +86,13 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
-	var smartResponse endpointmanager.SMARTResponse
+	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
 		if !ok {
 			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
 		}
-		smartResponse = endpointmanager.NewSMARTRespFromInterface(smartInt)
+		smartResponse = smartparser.NewSMARTRespFromInterface(smartInt)
 	}
 
 	responseTime, ok := msgJSON["responseTime"].(float64)

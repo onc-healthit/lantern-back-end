@@ -1,4 +1,4 @@
-package endpointmanager
+package smartparser
 
 import (
 	"io/ioutil"

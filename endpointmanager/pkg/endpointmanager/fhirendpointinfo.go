@@ -6,6 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 )
 
 // FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
@@ -23,7 +24,7 @@ type FHIREndpointInfo struct {
 	Validation          Validation
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-	SMARTResponse       SMARTResponse
+	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
 	Metadata            *FHIREndpointMetadata
