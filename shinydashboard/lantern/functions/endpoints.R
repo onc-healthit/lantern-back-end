@@ -352,7 +352,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
-    ON f.id = e.id
+    ON f.url = e.url
     WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
@@ -384,7 +384,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
-    ON f.id = e.id
+    ON f.url = e.url
     WHERE m.smart_http_response = 200
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
