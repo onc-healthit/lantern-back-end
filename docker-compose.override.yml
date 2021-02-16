@@ -29,9 +29,7 @@ services:
       - LANTERN_TEST_QNAME=${LANTERN_TEST_QNAME}
       - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
     volumes:
-      - ./resources/dev_resources/:/etc/lantern/resources
-      - ./resources/prod_resources/linkerMatchesWhitelist.json:/go/src/app/resources/linkerMatchesWhitelist.json:ro
-      - ./resources/prod_resources/linkerMatchesBlacklist.json:/go/src/app/resources/linkerMatchesBlacklist.json:ro
+      - ./resources/prod_resources/:/etc/lantern/resources
 
   capability_querier:
     build:

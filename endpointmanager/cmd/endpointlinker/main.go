@@ -26,7 +26,7 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("Error creating store", err)
 
-	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "/go/src/app/resources/linkerMatchesWhitelist.json", "/go/src/app/resources/linkerMatchesBlacklist.json", verbose)
+	err = endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "/etc/lantern/resources/linkerMatchesWhitelist.json", "/etc/lantern/resources/linkerMatchesBlacklist.json", verbose)
 	helpers.FailOnError("Error linking all orgs and enpoints", err)
 
 }
