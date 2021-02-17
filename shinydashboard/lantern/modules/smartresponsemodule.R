@@ -35,12 +35,25 @@ smartresponsemodule <- function(
 
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
   # can we show a summary table of how many endpoints supporting /.well-known/smart-configuration ?
+
+  selected_smart_capabilities <- reactive ({
+    res <- isolate(app_data$smart_response_capabilities())
+    req(sel_fhir_version(), sel_vendor())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+    res
+  })
+
   output$smart_capability_count_table <- renderTable(
-    get_smart_response_capability_count(isolate(app_data$smart_response_capabilities()))
+    get_smart_response_capability_count(selected_smart_capabilities())
   )
 
   output$smart_vendor_table <- renderTable({
-    isolate(app_data$smart_response_capabilities()) %>%
+    selected_smart_capabilities() %>%
       distinct(id, .keep_all = TRUE) %>%
       group_by(id, fhir_version, vendor_name) %>%
       count() %>%
