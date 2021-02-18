@@ -36,7 +36,7 @@ smartresponsemodule <- function(
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
   # can we show a summary table of how many endpoints supporting /.well-known/smart-configuration ?
 
-  selected_smart_capabilities <- reactive ({
+  selected_smart_capabilities <- reactive({
     res <- isolate(app_data$smart_response_capabilities())
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -48,7 +48,7 @@ smartresponsemodule <- function(
     res
   })
 
-  selected_smart_count_total <- reactive ({
+  selected_smart_count_total <- reactive({
     all <- endpoint_export_tbl
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -61,7 +61,7 @@ smartresponsemodule <- function(
     all
   })
 
-  selected_smart_count_200 <- reactive ({
+  selected_smart_count_200 <- reactive({
     res <- isolate(app_data$http_pct())
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -74,11 +74,11 @@ smartresponsemodule <- function(
       group_by(http_response) %>%
       filter(http_response == 200) %>%
       tally()
-    
-    max((res %>% filter(http_response == 200)) %>% pull(n), 0)
+    max((res %>% filter(http_response == 200)) %>% 
+    pull(n), 0)
   })
 
-  selected_well_known_count_doc <- reactive ({
+  selected_well_known_count_doc <- reactive({
     res <- app_data$well_known_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -90,7 +90,7 @@ smartresponsemodule <- function(
     res
   })
 
-  selected_well_known_count_no_doc <- reactive ({
+  selected_well_known_count_no_doc <- reactive({
     res <- app_data$well_known_endpoints_no_doc()
     req(sel_fhir_version(), sel_vendor())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -102,7 +102,7 @@ smartresponsemodule <- function(
     res
   })
 
-  selected_well_known_endpoints_count <- reactive ({
+  selected_well_known_endpoints_count <- reactive({
     res <- endpoint_export_tbl
       req(sel_fhir_version(), sel_vendor())
       if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -116,7 +116,7 @@ smartresponsemodule <- function(
     res
   })
 
-  selected_well_known_endpoint_counts <- reactive ({
+  selected_well_known_endpoint_counts <- reactive({
     res <- tribble(
       ~Status, ~Endpoints,
       "Total Indexed Endpoints", as.integer(selected_smart_count_total()),
