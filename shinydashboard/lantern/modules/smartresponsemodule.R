@@ -70,12 +70,13 @@ smartresponsemodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>% select(http_response) %>%
+    res <- res %>%
+      select(http_response) %>%
       group_by(http_response) %>%
       filter(http_response == 200) %>%
       tally()
-    max((res %>% filter(http_response == 200)) %>% 
-    pull(n), 0)
+
+    max((res %>% filter(http_response == 200)) %>% pull(n), 0)
   })
 
   selected_well_known_count_doc <- reactive({
