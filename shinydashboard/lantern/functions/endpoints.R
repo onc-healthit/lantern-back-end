@@ -68,10 +68,10 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     left_join(endpoint_export_tbl %>%
-      select(url, vendor_name, http_response), by = c("url" = "url")) %>%
-      select(url, id, http_response, vendor_name) %>%
+      select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
+      select(url, id, http_response, vendor_name, fhir_version) %>%
       mutate(code = as.character(http_response)) %>%
-      group_by(id, url, code, http_response, vendor_name) %>%
+      group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
       summarise(Percentage = n()) %>%
       ungroup() %>%
       group_by(id) %>%
@@ -360,17 +360,6 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     tidyr::replace_na(list(fhir_version = "Unknown"))
 }
 
-# get count of well known endpoints returning http 200 (but not
-# checking if valid SMART core capability doc returned)
-get_well_known_endpoints_count <- function(db_connection) {
-  res <- tbl(db_connection,
-      sql("SELECT count(*) from fhir_endpoints_info, fhir_endpoints_metadata
-          WHERE fhir_endpoints_info.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_metadata.smart_http_response = 200")) %>%
-      collect() %>%
-      pull(count)
-  as.integer(res)
-}
-
 # Find any endpoints which have returned a smart_http_response of 200
 # at the well known endpoint url /.well-known/smart-configuration
 # but did NOT return a valid JSON document when queried
@@ -390,18 +379,6 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     tidyr::replace_na(list(fhir_version = "Unknown"))
-}
-
-# Return a summary table of information about endpoint security statements
-get_well_known_endpoint_counts <- function(db_connection) {
-  res <- tribble(
-    ~Status, ~Endpoints,
-    "Total Indexed Endpoints", as.integer(isolate(app_data$fhir_endpoint_totals()$all_endpoints)),
-    "Endpoints with successful response (HTTP 200)", as.integer(isolate(app_data$response_tally()$http_200)),
-    "Well Known URI Endpoints with successful response (HTTP 200)", get_well_known_endpoints_count(db_connection),
-    "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(isolate(app_data$well_known_endpoints_tbl()))),
-    "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(isolate(app_data$well_known_endpoints_no_doc())))
-  )
 }
 
 # Get counts of authorization types supported by FHIR Version

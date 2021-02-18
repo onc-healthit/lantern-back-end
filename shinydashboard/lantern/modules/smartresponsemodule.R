@@ -48,6 +48,85 @@ smartresponsemodule <- function(
     res
   })
 
+  selected_smart_count_total <- reactive ({
+    all <- endpoint_export_tbl
+    req(sel_fhir_version(), sel_vendor())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      all <- all %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      all <- all %>% filter(vendor_name == sel_vendor())
+    }
+    all <- all %>% distinct(url) %>% count() %>% pull(n)
+    all
+  })
+
+  selected_smart_count_200 <- reactive ({
+    res <- isolate(app_data$http_pct())
+    req(sel_fhir_version(), sel_vendor())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+    res <- res %>% select(http_response) %>%
+      group_by(http_response) %>%
+      filter(http_response == 200) %>%
+      tally()
+    
+    max((res %>% filter(http_response == 200)) %>% pull(n), 0)
+  })
+
+  selected_well_known_count_doc <- reactive ({
+    res <- app_data$well_known_endpoints_tbl()
+    req(sel_fhir_version(), sel_vendor())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+    res
+  })
+
+  selected_well_known_count_no_doc <- reactive ({
+    res <- app_data$well_known_endpoints_no_doc()
+    req(sel_fhir_version(), sel_vendor())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+    res
+  })
+
+  selected_well_known_endpoints_count <- reactive ({
+    res <- endpoint_export_tbl
+      req(sel_fhir_version(), sel_vendor())
+      if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+        res <- res %>% filter(fhir_version == sel_fhir_version())
+      }
+      if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+        res <- res %>% filter(vendor_name == sel_vendor())
+      }
+    res <- res %>% filter(smart_http_response == 200)
+    res <- res %>% distinct(url) %>% count() %>% pull(n)
+    res
+  })
+
+  selected_well_known_endpoint_counts <- reactive ({
+    res <- tribble(
+      ~Status, ~Endpoints,
+      "Total Indexed Endpoints", as.integer(selected_smart_count_total()),
+      "Endpoints with successful response (HTTP 200)", as.integer(selected_smart_count_200()),
+      "Well Known URI Endpoints with successful response (HTTP 200)", as.integer(selected_well_known_endpoints_count()),
+      "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(selected_well_known_count_doc())),
+      "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(selected_well_known_count_no_doc()))
+    )
+})
+
   output$smart_capability_count_table <- renderTable(
     get_smart_response_capability_count(selected_smart_capabilities())
   )
@@ -63,7 +142,7 @@ smartresponsemodule <- function(
   })
 
   output$well_known_summary_table <- renderTable(
-    isolate(app_data$well_known_endpoint_counts())
+    selected_well_known_endpoint_counts()
   )
 
   selected_endpoints <- reactive({
