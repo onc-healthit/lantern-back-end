@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -27,6 +28,7 @@ type FHIREndpointInfo struct {
 	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
+	OperationResource   map[string][]string
 	Metadata            *FHIREndpointMetadata
 }
 
@@ -82,6 +84,10 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	}
 
 	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
+		return false
+	}
+
+	if !reflect.DeepEqual(e.OperationResource, e2.OperationResource) {
 		return false
 	}
 	return true
