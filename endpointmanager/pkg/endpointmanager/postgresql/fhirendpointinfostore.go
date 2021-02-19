@@ -28,6 +28,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var operResourceJSON []byte
 	var metadataID int
 
 	sqlStatementInfo := `
@@ -45,6 +46,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		smart_response,
 		included_fields,
 		supported_resources,
+		operation_resource,
 		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
@@ -63,6 +65,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
+		&operResourceJSON,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -85,6 +88,12 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if operResourceJSON != nil {
+		err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
 		if err != nil {
 			return nil, err
 		}
@@ -112,6 +121,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var operResourceJSON []byte
 	var metadataID int
 
 	sqlStatementInfo := `
@@ -129,6 +139,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		smart_response,
 		included_fields,
 		supported_resources,
+		operation_resource,
 		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
@@ -148,6 +159,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		pq.Array(&endpointInfo.SupportedResources),
+		&operResourceJSON,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -170,6 +182,13 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if operResourceJSON != nil {
+		err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
 		if err != nil {
 			return nil, err
 		}
@@ -211,6 +230,11 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
+	operResourceJSON, err := json.Marshal(e.OperationResource)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -234,6 +258,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
+		operResourceJSON,
 		metadataID)
 
 	err = row.Scan(&e.ID)
@@ -264,6 +289,11 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
+	operResourceJSON, err := json.Marshal(e.OperationResource)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -287,6 +317,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		pq.Array(e.SupportedResources),
+		operResourceJSON,
 		metadataID,
 		e.ID)
 
