@@ -28,7 +28,7 @@ type totalSummary struct {
 	TLSVersion         map[string]interface{} `json:"tls_version"`
 	MIMETypes          firstLastStrArr        `json:"mime_types"`
 	Vendor             map[string]interface{} `json:"certified_api_developer_name"`
-	ResponseTimeSecond interface{}            `json:"response_time_second"`
+	ResponseTimeSecond interface{}            `json:"median_response_time"`
 	HTTPResponse       []httpResponse         `json:"http_response"`
 	SmartHTTPResponse  []smartHTTPResponse    `json:"smart_http_response"`
 	Errors             []responseErrors       `json:"errors"`
