@@ -105,8 +105,8 @@ func SetupConfig() error {
 	viper.SetDefault("dbsslmode", "disable")
 
 	viper.SetDefault("exportfile_wait", 300)
-	viper.SetDefault("export_numworkers", 50)
-	viper.SetDefault("export_duration", 120)
+	viper.SetDefault("export_numworkers", 25)
+	viper.SetDefault("export_duration", 240)
 
 	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
 

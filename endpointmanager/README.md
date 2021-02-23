@@ -59,13 +59,13 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: endpoints-to-capability
 
-* **LANTERN_EXPORT_NUMWORKERS**: The number of workers to use to parallelize creating the JSON export file.
+* **LANTERN_EXPORT_NUMWORKERS**: The number of workers to use to parallelize creating the JSON export file and the JSON archive file.
 
-  Default value: 50
+  Default value: 25
 
-* **LANTERN_EXPORT_DURATION**: The amount of time given to a worker (in seconds) to get a URL's history data from the database for the JSON export file.
+* **LANTERN_EXPORT_DURATION**: The amount of time given to a worker (in seconds) to get a URL's history data from the database for the JSON export file and the JSON archive file.
 
-  Default value: 120
+  Default value: 240
 
 ### Test Configuration
 
