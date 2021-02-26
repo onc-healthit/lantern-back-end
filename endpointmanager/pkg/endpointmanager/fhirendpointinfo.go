@@ -28,8 +28,9 @@ type FHIREndpointInfo struct {
 	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
-	OperationResource   map[string][]string
-	Metadata            *FHIREndpointMetadata
+	// OperationResource   map[string][]string
+	OperationResource []OperationAndResource
+	Metadata          *FHIREndpointMetadata
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -121,6 +122,11 @@ type IncludedField struct {
 	Field     string
 	Exists    bool
 	Extension bool
+}
+
+type OperationAndResource struct {
+	Operation string `json:"operation"`
+	Resource  string `json:"resource"`
 }
 
 // Validation holds all of the errors and warnings from running the validation checks
