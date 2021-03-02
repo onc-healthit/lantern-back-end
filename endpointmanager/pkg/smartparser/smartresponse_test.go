@@ -217,7 +217,4 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 	ignoredFields = append(ignoredFields, "authorization_endpoint")
 	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
 	th.Assert(t, equal, "expected equality comparison of SMART responses to be true since they only differ by ignored fields")
-
-	SMARTResponse2 = SMARTResponseOriginal2
-	ignoredFields = []string{}
 }
