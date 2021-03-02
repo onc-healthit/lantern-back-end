@@ -36,40 +36,34 @@ smartresponsemodule <- function(
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
   # can we show a summary table of how many endpoints supporting /.well-known/smart-configuration ?
 
+  get_filtered_data <- function(table_val) {
+  res <- table_val
+  req(sel_fhir_version(), sel_vendor())
+  if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+    res <- res %>% filter(fhir_version == sel_fhir_version())
+  }
+  if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+    res <- res %>% filter(vendor_name == sel_vendor())
+  }
+  res
+}
+
   selected_smart_capabilities <- reactive({
     res <- isolate(app_data$smart_response_capabilities())
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    res <- get_filtered_data(res)
     res
   })
 
   selected_smart_count_total <- reactive({
     all <- endpoint_export_tbl
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      all <- all %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      all <- all %>% filter(vendor_name == sel_vendor())
-    }
+    all <- get_filtered_data(all)
     all <- all %>% distinct(url) %>% count() %>% pull(n)
     all
   })
 
   selected_smart_count_200 <- reactive({
     res <- isolate(app_data$http_pct())
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    res <- get_filtered_data(res)
     res <- res %>%
       select(http_response) %>%
       group_by(http_response) %>%
@@ -81,37 +75,19 @@ smartresponsemodule <- function(
 
   selected_well_known_count_doc <- reactive({
     res <- app_data$well_known_endpoints_tbl()
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    res <- get_filtered_data(res)
     res
   })
 
   selected_well_known_count_no_doc <- reactive({
     res <- app_data$well_known_endpoints_no_doc()
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    res <- get_filtered_data(res)
     res
   })
 
   selected_well_known_endpoints_count <- reactive({
     res <- endpoint_export_tbl
-      req(sel_fhir_version(), sel_vendor())
-      if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-        res <- res %>% filter(fhir_version == sel_fhir_version())
-      }
-      if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-        res <- res %>% filter(vendor_name == sel_vendor())
-      }
+      res <- get_filtered_data(res)
     res <- res %>% filter(smart_http_response == 200)
     res <- res %>% distinct(url) %>% count() %>% pull(n)
     res
@@ -148,13 +124,7 @@ smartresponsemodule <- function(
 
   selected_endpoints <- reactive({
     res <- isolate(app_data$well_known_endpoints_tbl())
-    req(sel_fhir_version(), sel_vendor())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    res <- get_filtered_data(res)
     res
   })
 
