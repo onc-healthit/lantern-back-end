@@ -133,11 +133,18 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 	SMARTResponse2, err = NewSMARTResp(smartResponseJSON2)
 	th.Assert(t, err == nil, err)
 
-	if !SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields) {
-		t.Errorf("Expect SMARTResponse1 to equal SMARTResponse2, but they were not equal.")
-	}
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "Expect SMARTResponse1 to equal SMARTResponse2, but they were not equal.")
 
-	// test not equal
+	// test still equal when field added to ignored field list
+	ignoredFields = append(ignoredFields, "capabilities")
+
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "Expect SMARTResponse1 to equal SMARTResponse2, but they were not equal.")
+
+	ignoredFields = []string{}
+
+	// test not equal when deleting capabilities field
 	SMARTResponseOriginal2 := SMARTResponse2
 	SMARTResponse2, err = deleteFieldFromSmartResponse(SMARTResponse2, "capabilities")
 	th.Assert(t, err == nil, err)
@@ -145,7 +152,30 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
 	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
 
+	// test equal when deleted capabilities field added to ignored field list
+	ignoredFields = append(ignoredFields, "capabilities")
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "expected equality comparison of SMART responses to be true since they only differ by ignored field")
+
 	SMARTResponse2 = SMARTResponseOriginal2
+	ignoredFields = []string{}
+
+	// test not equal when deleting authorization_endpoint field
+	SMARTResponse2, err = deleteFieldFromSmartResponse(SMARTResponse2, "authorization_endpoint")
+	th.Assert(t, err == nil, err)
+
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
+
+	// test equal when deleted authorization_endpoint field added to ignored field list
+	ignoredFields = append(ignoredFields, "authorization_endpoint")
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "expected equality comparison of SMART responses to be true since they only differ by ignored field")
+
+	SMARTResponse2 = SMARTResponseOriginal2
+	ignoredFields = []string{}
+
+	// test altering fields
 	SMARTResponse2Int, _, err := getRespFormats(SMARTResponse2)
 	th.Assert(t, err == nil, err)
 
@@ -168,7 +198,26 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 
 	SMARTResponse2 = NewSMARTRespFromInterface(SMARTResponse2Int)
 
+	// test not equal when capabilities field not in ignoredFields list
 	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
 	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
 
+	// test equal when capabilities field is added to ignoredFields list
+	ignoredFields = append(ignoredFields, "capabilities")
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "expected equality comparison of SMART responses to be true since they only differ by ignored field")
+
+	// test more than one ignored field
+	SMARTResponse2Int["authorization_endpoint"] = "fake_authorization_endpoint"
+	SMARTResponse2 = NewSMARTRespFromInterface(SMARTResponse2Int)
+
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, !equal, "expected equality comparison of unequal SMART responses to be false")
+
+	ignoredFields = append(ignoredFields, "authorization_endpoint")
+	equal = SMARTResponse1.EqualIgnore(SMARTResponse2, ignoredFields)
+	th.Assert(t, equal, "expected equality comparison of SMART responses to be true since they only differ by ignored fields")
+
+	SMARTResponse2 = SMARTResponseOriginal2
+	ignoredFields = []string{}
 }
