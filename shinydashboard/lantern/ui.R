@@ -42,6 +42,7 @@ ui <- dashboardPage(
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_checkboxes"),
+    uiOutput("show_operation_checkboxes"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")

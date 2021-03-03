@@ -82,7 +82,8 @@ function(input, output, session) { #nolint
         "capability_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
-        reactive(input$resources))
+        reactive(input$resources),
+        reactive(input$operations))
 
       callModule(
         fieldsmodule,
@@ -127,6 +128,8 @@ function(input, output, session) { #nolint
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
+
+  show_operation_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
 
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
@@ -287,6 +290,90 @@ function(input, output, session) { #nolint
     }
     else{
       updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  #                     #
+  # Operations Checkbox #
+  #                     #
+
+  # @TODO Clean this up
+  # checkbox_operations <- reactive({
+  #   res <- isolate(app_data$endpoint_resource_types())
+  #   req(input$fhir_version, input$vendor)
+  #   if (input$fhir_version != ui_special_values$ALL_FHIR_VERSIONS) {
+  #     res <- res %>% filter(fhir_version == input$fhir_version)
+  #   }
+  #   if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+  #     res <- res %>% filter(vendor_name == input$vendor)
+  #   }
+
+  #   res <- res %>%
+  #          distinct(type) %>%
+  #          arrange(type) %>%
+  #          split(.$type) %>%
+  #          purrr::map(~ .$type)
+
+  #   return(res)
+  # })
+
+  output$show_operation_checkboxes <- renderUI({
+    if (show_operation_checkbox()) {
+      fluidPage(
+        fluidRow(
+          actionButton("removeallops", "Clear All Operations"),
+          selectizeInput("operations", "Choose or type in any resource from the list below:",
+          choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type"),
+          selected = c(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+        )
+      )
+    }
+  })
+
+  current_op_selection <- reactiveVal(NULL)
+
+  observeEvent(input$operations, {
+    current_op_selection(input$operations)
+  })
+
+  observe({
+    req(input$side_menu)
+    if (show_operation_checkbox()) {
+      updateSelectInput(session, "operations",
+            label = "Choose or type in any operation from the list below:",
+            choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type"),
+            selected = c())
+    }
+  })
+
+  observe({
+    # req(input$fhir_version, input$vendor)
+    updateSelectInput(session, "operations", label = "Choose or type in any operation from the list below:",
+            choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type"),
+            selected = current_op_selection())
+  })
+
+  # observeEvent(input$selectallops, {
+  #   if (input$selectallops == 0) {
+  #     return(NULL)
+  #   }
+  #   else{
+  #     updateSelectizeInput(session, "operations",
+  #           label = "Choose or type in any operation from the list below:",
+  #           choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type"),
+  #           selected = c(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+  #   }
+  # })
+
+  observeEvent(input$removeallops, {
+    if (input$removeallops == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectizeInput(session, "operations",
+              label = "Choose or type in any operation from the list below:",
+              choices = c("all", "read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type"),
+              options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 }

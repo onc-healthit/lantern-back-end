@@ -141,6 +141,45 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
+# @TODO Comment and fix below
+get_fhir_resource_by_op <- function(db_connection) {
+  # LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
+  res <- tbl(db_connection,
+    sql("SELECT a.endpoint_id,
+        a.vendor_id,
+        b.vendor_name,
+        a.fhir_version,
+        a.operation,
+        a.resource
+      FROM
+        (SELECT f.id as endpoint_id,
+          vendor_id,
+          capability_statement->>'fhirVersion' as fhir_version,
+          x.operation,
+          x.resource
+        FROM fhir_endpoints_info as f,
+        json_to_recordset(operation_resource::json) as x(operation text, resource text)
+        WHERE operation_resource != 'null') a
+      LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
+      ON a.vendor_id = b.id")) %>%
+    collect() %>%
+    # left_join(db_tables$vendors %>% select(id, name),
+    #   by = c("vendor_id" = "id")) %>%
+    tidyr::replace_na(list(vendor_name = "Unknown"))
+}
+
+get_operations <- function(db_tables) {
+  res <- tbl(db_connection,
+    sql("SELECT url,
+      x.operation,
+	    x.resource
+      FROM fhir_endpoints_info,
+      json_to_recordset(operation_resource::json) as x(operation text, resource text)
+      WHERE operation_resource != 'null'")) %>%
+    collect()
+    #  %>% tidyr::replace_na(list(vendor_name = "Unknown"))
+}
+
 # Return list of FHIR Resources
 get_resource_list <- function(endpoint_tbl) {
   rl <- endpoint_tbl %>%
@@ -480,6 +519,10 @@ database_fetcher <- reactive({
   app_data$vendor_count_tbl(get_fhir_version_vendor_count(endpoint_export_tbl))
 
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
+
+  app_data$endpoint_resource_by_op(get_fhir_resource_by_op(db_connection))
+
+  app_data$endpoint_operations(get_operations(db_tables))
 
   app_data$capstat_fields(get_capstat_fields(db_connection))
 

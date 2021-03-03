@@ -5,6 +5,9 @@ capabilitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+    # @TODO Temporary
+    textOutput(ns("display_operations")),
+    tableOutput(ns("resource_op_table")),
     h1("FHIR Resource Types"),
     p("This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list."),
     fluidRow(
@@ -32,13 +35,52 @@ capabilitymodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_resources
+  sel_resources,
+  sel_operations
 ) {
 
   ns <- session$ns
 
+  # Start Operation checkbox #
+
+  op <- reactive({
+    sel_operations()
+  })
+
+  # @TODO Remove: displays the currently selected operations
+  output$display_operations <- renderText(paste(op()))
+
+  # @TODO In progress
+
+  # select_operations <- reactive({
+  #   ops <- isolate(app_data$endpoint_operations())
+  #   if (length(sel_operations()) > 0) {
+  #     res <- ops %>% filter(operation %in% sel_operations()) %>%
+  #       group_by(url, resource) %>%
+  #       count() %>%
+  #       filter(n == length(sel_operations())) %>%
+  #       ungroup() %>%
+  #       select(-n) %>%
+  #       group_by(resource) %>%
+  #       count()
+  #   } else {
+  #     res <- ops
+  #   }
+  # })
+
+  select_operations <- reactive({
+    ops <- isolate(app_data$endpoint_resource_by_op())
+  })
+  
+  output$resource_op_table <- renderTable(
+    select_operations()
+  )
+
+  # End Operation checkbox #
+
   selected_fhir_endpoints <- reactive({
     res <- isolate(app_data$endpoint_resource_types())
+    # req(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations())
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
