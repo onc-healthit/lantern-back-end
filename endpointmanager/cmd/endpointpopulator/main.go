@@ -55,6 +55,7 @@ func main() {
 		var endpointTotal int
 		endpointCountQuery := "SELECT COUNT(*) from fhir_endpoints;"
 		err = store.DB.QueryRow(endpointCountQuery).Scan(&endpointTotal)
+		helpers.FailOnError("", err)
 
 		if endpointTotal >= maxEndpoints {
 			log.Warn("The current number of endpoints exceeds the amount that can be queried in the given Lantern query interval. Make sure to either scale out query interval as defined in the README, or define a longer query threshold.")
