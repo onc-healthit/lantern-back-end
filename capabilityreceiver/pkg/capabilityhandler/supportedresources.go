@@ -1,6 +1,9 @@
 package capabilityhandler
 
-func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[string][]string) {
+import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+
+// func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[string][]string) {
+func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []endpointmanager.OperationAndResource) {
 	if capInt == nil {
 		return nil, nil
 	}
@@ -18,6 +21,7 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[s
 	resourceArr := restInt["resource"].([]interface{})
 
 	opToRes := make(map[string][]string)
+	var opAndRes []endpointmanager.OperationAndResource
 	for _, resource := range resourceArr {
 		resourceInt := resource.(map[string]interface{})
 		if resourceInt["type"] == nil {
@@ -55,6 +59,11 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[s
 				} else {
 					opToRes[code] = []string{resourceType}
 				}
+				item := endpointmanager.OperationAndResource{
+					Operation: code,
+					Resource:  resourceType,
+				}
+				opAndRes = append(opAndRes, item)
 			}
 		}
 		// If the interaction field was not specified or has no given codes
@@ -65,6 +74,11 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[s
 			} else {
 				opToRes["not specified"] = []string{resourceType}
 			}
+			item := endpointmanager.OperationAndResource{
+				Operation: "not specified",
+				Resource:  resourceType,
+			}
+			opAndRes = append(opAndRes, item)
 		}
 	}
 
@@ -75,5 +89,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[s
 	// }
 	// log.Infof("The Operations: %+v", opToRes)
 
-	return supportedResources, opToRes
+	// return supportedResources, opToRes
+	return supportedResources, opAndRes
 }
