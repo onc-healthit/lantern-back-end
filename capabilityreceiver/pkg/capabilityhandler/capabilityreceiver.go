@@ -162,23 +162,23 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
 		if err != nil {
-			return err
+			return fmt.Errorf("Doesn't exist, match endpoint to vendor failed, %s", err)
 		}
 		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 		if err != nil {
-			return err
+			return fmt.Errorf("Doesn't exist, match endpoint to product failed, %s", err)
 		}
 
 		metadataID, err := store.AddFHIREndpointMetadata(ctx, fhirEndpoint.Metadata)
 		if err != nil {
-			return err
+			return fmt.Errorf("Doesn't exist, add endpoint metadata failed, %s", err)
 		}
 		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 		if err != nil {
-			return err
+			return fmt.Errorf("Doesn't exist, add to fhir_endpoints_info failed, %s", err)
 		}
 	} else if err != nil {
-		return err
+		return fmt.Errorf("Error getting data from fhir_endpoints_info, %s", err)
 	} else {
 
 		fhirEndpoint.VendorID = existingEndpt.VendorID
@@ -203,32 +203,32 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
 			if err != nil {
-				return err
+				return fmt.Errorf("Does exist, match endpoint to vendor failed, %s", err)
 			}
 
 			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 			if err != nil {
-				return err
+				return fmt.Errorf("Does exist, match endpoint to product failed, %s", err)
 			}
 
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
-				return err
+				return fmt.Errorf("Does exist, add endpoint metadata failed, %s", err)
 			}
 
 			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID)
 			if err != nil {
-				return err
+				return fmt.Errorf("Does exist, add to fhir_endpoints_info failed, %s", err)
 			}
 		} else {
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
-				return err
+				return fmt.Errorf("Just adding endpoint metadata failed, %s", err)
 			}
 
 			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.URL)
 			if err != nil {
-				return err
+				return fmt.Errorf("Just adding the Metadata ID failed, %s", err)
 			}
 		}
 	}
