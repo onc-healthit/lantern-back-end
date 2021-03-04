@@ -18,7 +18,7 @@ func main() {
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
-	log.Info("Successfully connected to DB!")
+	log.Info("Running data validation check")
 
 	queryInterval := viper.GetInt("capquery_qryintvl")
 	maxEndpoints := int(math.Round(float64(queryInterval*60) / float64(1.5)))
