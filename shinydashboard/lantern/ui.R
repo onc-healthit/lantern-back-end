@@ -24,6 +24,7 @@ ui <- dashboardPage(
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
+      menuItem("Capability Statement Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
       menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
@@ -53,6 +54,9 @@ ui <- dashboardPage(
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")
+      ),
+      tabItem("capabilitystatementsize_tab",
+              capabilitystatementsize_UI("capabilitystatementsize_page")
       ),
       tabItem("capability_tab",
               capabilitymodule_UI("capability_page")

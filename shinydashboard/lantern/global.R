@@ -68,7 +68,8 @@ app_data <<- list(
   well_known_endpoints_no_doc = reactiveVal(NULL), # well known endpoints reached, but no JSON doc returned
   well_known_endpoint_counts = reactiveVal(NULL),  # summary table of well known URI endpoints
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
-  implementation_guide = reactiveVal(NULL)         # implementation_guide table
+  implementation_guide = reactiveVal(NULL),        # implementation_guide table
+  capstat_sizes_tbl = reactiveVal(NULL)            # capability statement size by vendor, fhir_version
 )
 
 # Define observer based on a refresh_timeout to refetch data from the database
