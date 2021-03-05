@@ -253,8 +253,8 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, date.average AS avg
-                    FROM (SELECT floor(extract(epoch from updated_at)/82800)*82800 AS datetime, AVG(response_time_seconds) as average FROM fhir_endpoints_metadata GROUP BY datetime) as date,
-                    (SELECT max(floor(extract(epoch from updated_at)/82800)*82800) AS maximum FROM fhir_endpoints_metadata) as maxdate
+                    FROM (SELECT floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800 AS datetime, AVG(fhir_endpoints_metadata.response_time_seconds) as average FROM fhir_endpoints_info_history, fhir_endpoints_metadata WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id GROUP BY datetime) as date,
+                    (SELECT max(floor(extract(epoch from fhir_endpoints_info_history.entered_at)/82800)*82800) AS maximum FROM fhir_endpoints_info_history) as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time, average
                     ORDER BY time"))
