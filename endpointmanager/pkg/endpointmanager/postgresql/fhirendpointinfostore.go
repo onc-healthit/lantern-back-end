@@ -8,6 +8,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -90,7 +91,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	}
 
 	if smartResponseJSON != nil {
-		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
+		endpointInfo.SMARTResponse, err = smartparser.NewSMARTResp(smartResponseJSON)
 		if err != nil {
 			return nil, err
 		}
@@ -175,7 +176,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	}
 
 	if smartResponseJSON != nil {
-		endpointInfo.SMARTResponse, err = capabilityparser.NewSMARTResp(smartResponseJSON)
+		endpointInfo.SMARTResponse, err = smartparser.NewSMARTResp(smartResponseJSON)
 		if err != nil {
 			return nil, err
 		}

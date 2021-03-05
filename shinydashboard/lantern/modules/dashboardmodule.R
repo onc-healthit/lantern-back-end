@@ -145,8 +145,7 @@ dashboard <- function(
       labs(fill = "FHIR Version",
            x = NULL,
            y = "Number of Endpoints",
-           title = "Endpoints by Developer and FHIR Version") +
-      scale_fill_manual(values = c("#66C2A5", "#8DA0CB", "#EFA182", "#E78AC3", "#A6D854"))
+           title = "Endpoints by Developer and FHIR Version")
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 333,
                                   growthRate = 1.2),

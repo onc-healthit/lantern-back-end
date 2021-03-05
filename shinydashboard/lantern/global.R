@@ -66,7 +66,6 @@ app_data <<- list(
   smart_response_capabilities = reactiveVal(NULL), # smart core capabilities by endpoint, vendor, fhir_version
   well_known_endpoints_tbl = reactiveVal(NULL),    # endpoints returning smart core capabilities JSON doc
   well_known_endpoints_no_doc = reactiveVal(NULL), # well known endpoints reached, but no JSON doc returned
-  well_known_endpoint_counts = reactiveVal(NULL),  # summary table of well known URI endpoints
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
   implementation_guide = reactiveVal(NULL)         # implementation_guide table
 )
