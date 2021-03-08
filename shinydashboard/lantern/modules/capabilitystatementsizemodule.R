@@ -12,7 +12,7 @@ capabilitystatementsize_UI <- function(id) {
         plotOutput(ns("vendor_share_plot2")),
         htmlOutput(ns("notes_text"))
       ),
-        column( width = 4,
+        column(width = 4,
         h4("Capability Statement Size Statistics"),
         tableOutput(ns("stats_table"))
       )
@@ -45,13 +45,13 @@ capabilitystatementsizemodule <- function(
   })
 
   selected_fhir_endpoints_stats <- reactive({
-    res <- summarise(selected_fhir_endpoints(), count=length(size), max=max(size), min=min(size), mean=mean(size), sd=sd(size))
+    res <- summarise(selected_fhir_endpoints(), count = length(size), max = max(size), min = min(size), mean = mean(size), sd = sd(size))
     res
   })
 
   output$vendor_share_plot2 <- renderCachedPlot({
-   ggplot(selected_fhir_endpoints(),aes(fhir_version, size)) +
-   geom_boxplot(aes(fill=factor(vendor_name))) +
+   ggplot(selected_fhir_endpoints(), aes(fhir_version, size)) +
+   geom_boxplot(aes(fill = factor(vendor_name))) +
    scale_y_continuous(labels = scales::comma) +
    labs(fill = "Developer",
           x = "FHIR Version",
