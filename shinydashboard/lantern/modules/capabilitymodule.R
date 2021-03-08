@@ -70,6 +70,20 @@ capabilitymodule <- function(
 
   select_operations <- reactive({
     ops <- isolate(app_data$endpoint_resource_by_op())
+    req(sel_fhir_version(), sel_vendor(), sel_resources())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      ops <- ops %>% filter(fhir_version == sel_fhir_version())
+    }
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      ops <- ops %>% filter(vendor_name == sel_vendor())
+    }
+
+    if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
+      # list <- get_resource_list(res)
+      # req(sel_resources() %in% list)
+      ops <- ops %>% filter(resource %in% sel_resources())
+    }
+    ops
   })
   
   output$resource_op_table <- renderTable(
