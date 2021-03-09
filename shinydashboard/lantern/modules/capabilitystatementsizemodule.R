@@ -9,7 +9,7 @@ capabilitystatementsize_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 8,
-        plotOutput(ns("vendor_share_plot2")),
+        plotOutput(ns("cap_stat_size_plot")),
         htmlOutput(ns("notes_text"))
       ),
         column(width = 4,
@@ -44,12 +44,18 @@ capabilitystatementsizemodule <- function(
     res
   })
 
+  sanitize_numbers <- function(input) {
+    if (is.infinite(input)) {
+      return(NA)
+    }
+  }
+
   selected_fhir_endpoints_stats <- reactive({
-    res <- summarise(selected_fhir_endpoints(), count = length(size), max = max(size), min = min(size), mean = mean(size), sd = sd(size))
+    res <- summarise(selected_fhir_endpoints(), count = length(size), max = ifelse(all(is.na(size)), NA, max(size, na.rm = T)), min = ifelse(all(is.na(size)), NA, min(size, na.rm = T)), mean = mean(size), sd = sd(size))
     res
   })
 
-  output$vendor_share_plot2 <- renderCachedPlot({
+  output$cap_stat_size_plot <- renderCachedPlot({
    ggplot(selected_fhir_endpoints(), aes(fhir_version, size)) +
    geom_boxplot(aes(fill = factor(vendor_name))) +
    scale_y_continuous(labels = scales::comma) +
