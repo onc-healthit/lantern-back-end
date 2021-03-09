@@ -143,7 +143,6 @@ get_fhir_resource_types <- function(db_connection) {
 
 # @TODO Comment and fix below
 get_fhir_resource_by_op <- function(db_connection) {
-  # LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
   res <- tbl(db_connection,
     sql("SELECT a.endpoint_id,
         a.vendor_id,
@@ -163,24 +162,11 @@ get_fhir_resource_by_op <- function(db_connection) {
       LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
       ON a.vendor_id = b.id")) %>%
     collect() %>%
-    # left_join(db_tables$vendors %>% select(id, name),
-    #   by = c("vendor_id" = "id")) %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-get_operations <- function(db_tables) {
-  res <- tbl(db_connection,
-    sql("SELECT url,
-      x.operation,
-	    x.resource
-      FROM fhir_endpoints_info,
-      json_to_recordset(operation_resource::json) as x(operation text, resource text)
-      WHERE operation_resource != 'null'")) %>%
-    collect()
-    #  %>% tidyr::replace_na(list(vendor_name = "Unknown"))
-}
-
 # Return list of FHIR Resources
+# @TODO Get rid of this?
 get_resource_list <- function(endpoint_tbl) {
   rl <- endpoint_tbl %>%
            distinct(type) %>%
@@ -521,8 +507,6 @@ database_fetcher <- reactive({
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
 
   app_data$endpoint_resource_by_op(get_fhir_resource_by_op(db_connection))
-
-  app_data$endpoint_operations(get_operations(db_tables))
 
   app_data$capstat_fields(get_capstat_fields(db_connection))
 
