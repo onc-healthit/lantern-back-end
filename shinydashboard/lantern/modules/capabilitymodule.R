@@ -69,25 +69,47 @@ capabilitymodule <- function(
   # })
 
   select_operations <- reactive({
-    ops <- isolate(app_data$endpoint_resource_by_op())
+    res <- isolate(app_data$endpoint_resource_by_op())
     req(sel_fhir_version(), sel_vendor(), sel_resources())
+    # Filter data by selected FHIR version
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      ops <- ops %>% filter(fhir_version == sel_fhir_version())
+      res <- res %>% filter(fhir_version == sel_fhir_version())
     }
+    # Then filter data by selected vendor
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      ops <- ops %>% filter(vendor_name == sel_vendor())
+      res <- res %>% filter(vendor_name == sel_vendor())
     }
-
+    # Then filter by the current resources selected
     if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
-      # list <- get_resource_list(res)
-      # req(sel_resources() %in% list)
-      ops <- ops %>% filter(resource %in% sel_resources())
+      res <- res %>% filter(resource %in% sel_resources())
     }
-    ops
+    # Filter by the current operations selected, then group by and count the resource
+    # per endpoint. If the count of the resource is equal to the number of selected
+    # operations, then the resource exists for all operations and we keep that resource
+    # Then group by and count all resources left
+    if (length(sel_operations()) > 0) {
+      res <- res %>% filter(operation %in% sel_operations()) %>%
+        group_by(endpoint_id, resource) %>%
+        count() %>%
+        filter(n == length(sel_operations())) %>%
+        ungroup() %>%
+        select(-n) %>%
+        group_by(resource) %>%
+        count()
+    } else {
+      res <- res %>% group_by(endpoint_id, resource) %>%
+        count() %>%
+        ungroup() %>%
+        select(-n) %>%
+        group_by(resource) %>%
+        count()
+    }
+    res
   })
   
   output$resource_op_table <- renderTable(
-    select_operations()
+    select_operations() %>%
+    rename("Endpoints" = n, "Resource" = resource)
   )
 
   # End Operation checkbox #
