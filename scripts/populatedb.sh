@@ -35,3 +35,8 @@ go run main.go /etc/lantern/resources/npidata_pfile.csv
 cd ../endpointlinker
 go run main.go
 cd ..
+
+# run data validation to ensure number of endpoints does not exceed maximum for query interval
+cd datavalidation
+go run main.go
+cd ..
