@@ -252,19 +252,19 @@ get_avg_response_time <- function(db_connection, date) {
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
-        sql(paste0("SELECT date.datetime AS time, date.average AS avg
-                    FROM (SELECT floor(extract(epoch from updated_at)/82800)*82800 AS datetime, AVG(response_time_seconds) as average FROM fhir_endpoints_metadata GROUP BY datetime) as date,
+        sql(paste0("SELECT date.datetime AS time, date.average AS avg, date.maximum AS max, date.minimum AS min
+                    FROM (SELECT floor(extract(epoch from updated_at)/82800)*82800 AS datetime, AVG(response_time_seconds) as average, MAX(response_time_seconds) as maximum, MIN(response_time_seconds) as minimum FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 GROUP BY datetime) as date,
                     (SELECT max(floor(extract(epoch from updated_at)/82800)*82800) AS maximum FROM fhir_endpoints_metadata) as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
-                    GROUP BY time, average
+                    GROUP BY time, average, date.maximum, date.minimum
                     ORDER BY time"))
         )
     ) %>%
     mutate(date = as_datetime(time)) %>%
-    select(date, avg)
+    select(date, avg, max, min)
 
   # convert to xts format for use in dygraph
-  xts(x = all_endpoints_response_time$avg,
+  xts(x = cbind(all_endpoints_response_time$max, all_endpoints_response_time$avg, all_endpoints_response_time$min),
       order.by = all_endpoints_response_time$date
   )
 }
