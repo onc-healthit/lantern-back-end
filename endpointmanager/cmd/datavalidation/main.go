@@ -24,16 +24,16 @@ func main() {
 	queryInterval := viper.GetInt("capquery_qryintvl")
 
 	// Divide query interval (in seconds) by an average of 1.5 seconds per request to get the maximum number of endpoints that can be queried within query interval
-	maxEndpoints := int(math.Ceil(float64(queryInterval*60) / float64(1.5)))
+	maxEndpoints := int(math.Floor(float64(queryInterval*60) / float64(1.5)))
 
 	var endpointTotal int
 	endpointCountQuery := "SELECT COUNT(*) from fhir_endpoints;"
 	err = store.DB.QueryRow(endpointCountQuery).Scan(&endpointTotal)
 	helpers.FailOnError("", err)
-
+	endpointTotal = 70000
 	if endpointTotal >= maxEndpoints {
 		querierScale := int(math.Ceil(float64(endpointTotal) / float64(maxEndpoints)))
 		queryIntervalIncrease := int(math.Ceil(float64(float64(endpointTotal)*float64(1.5)) / float64(60)))
-		log.Warn(fmt.Sprintf("The current number of endpoints (%d) exceeds the maximum amount of endpoints that can be queried within the given Lantern query interval. Make sure to either scale out the capability querier service as defined in the README, or define a longer query threshold. With current query interval make sure you have at least %d querier instances, or with one querier instance make sure you increase query interval to at least %d minutes", endpointTotal, querierScale, queryIntervalIncrease))
+		log.Warn(fmt.Sprintf("The current number of endpoints (%d) exceeds the maximum amount of endpoints that can be queried within the given Lantern query interval (%d minutes). Make sure to either scale out the capability querier service as defined in the README, or define a longer query threshold. With current query interval make sure you have at least %d querier instances, or with one querier instance make sure you increase query interval to at least %d minutes", endpointTotal, queryInterval, querierScale, queryIntervalIncrease))
 	}
 }
