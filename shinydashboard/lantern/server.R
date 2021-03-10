@@ -59,6 +59,12 @@ function(input, output, session) { #nolint
         reactive(input$date))
 
       callModule(
+        capabilitystatementsizemodule,
+        "capabilitystatementsize_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
+
+      callModule(
         securitymodule,
         "security_page",
         reactive(input$fhir_version),
@@ -106,11 +112,12 @@ function(input, output, session) { #nolint
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
-     "performance_tab" = "Response Time Performance"
+     "performance_tab" = "Response Time Performance",
+     "capabilitystatementsize_tab" = "Capability Statement Size"
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab")
   )
 
   show_availability_filter <- reactive(

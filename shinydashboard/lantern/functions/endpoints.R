@@ -457,6 +457,20 @@ get_implementation_guide <- function(db_connection) {
     tidyr::replace_na(list(implementation_guide = "None"))
 }
 
+get_cap_stat_sizes <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT
+          f.url as url,
+          pg_column_size(capability_statement::text) as size,
+          capability_statement->>'fhirVersion' as fhir_version,
+          vendors.name as vendor_name
+          FROM fhir_endpoints_info f
+          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_statement->>'fhirVersion' IS NOT NULL")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
 database_fetcher <- reactive({
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
 
@@ -499,4 +513,7 @@ database_fetcher <- reactive({
   app_data$implementation_guide(get_implementation_guide(db_connection))
 
   app_data$endpoint_locations(get_endpoint_locations(db_connection))
+
+  app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection))
+
 })
