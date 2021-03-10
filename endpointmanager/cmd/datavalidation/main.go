@@ -30,7 +30,7 @@ func main() {
 	endpointCountQuery := "SELECT COUNT(*) from fhir_endpoints;"
 	err = store.DB.QueryRow(endpointCountQuery).Scan(&endpointTotal)
 	helpers.FailOnError("", err)
-	endpointTotal = 70000
+
 	if endpointTotal >= maxEndpoints {
 		querierScale := int(math.Ceil(float64(endpointTotal) / float64(maxEndpoints)))
 		queryIntervalIncrease := int(math.Ceil(float64(float64(endpointTotal)*float64(1.5)) / float64(60)))
