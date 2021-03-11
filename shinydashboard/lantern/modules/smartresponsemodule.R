@@ -102,7 +102,7 @@ smartresponsemodule <- function(
       "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(selected_well_known_count_doc())),
       "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(selected_well_known_count_no_doc()))
     )
-})
+  })
 
   output$smart_capability_count_table <- renderTable(
     get_smart_response_capability_count(selected_smart_capabilities())

@@ -10,7 +10,7 @@ import (
 // SMARTResponse interface wraps the smart response so users don't need to worry about the smart response version.
 type SMARTResponse interface {
 	Equal(SMARTResponse) bool
-	EqualIgnore(SMARTResponse) bool
+	EqualIgnore(SMARTResponse, []string) bool
 	GetJSON() ([]byte, error)
 }
 
@@ -82,9 +82,7 @@ func (resp *Response) Equal(resp2 SMARTResponse) bool {
 }
 
 // EqualIgnore checks if the smart response body is equal to the given smart response body while ignoring certain fields that may differ.
-func (resp *Response) EqualIgnore(resp2 SMARTResponse) bool {
-	ignoredFields := []string{}
-
+func (resp *Response) EqualIgnore(resp2 SMARTResponse, ignoredFields []string) bool {
 	if resp2 == nil {
 		return false
 	}

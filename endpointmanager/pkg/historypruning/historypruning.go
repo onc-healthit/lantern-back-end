@@ -50,7 +50,8 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 					if equalFhirEntries {
 						// If smartresponse is not null check if current entry that was passed in has smartresponse equal to smartresponse of old entry being checked from history table, otherwise check they are both null
 						if smartResponse1 != nil {
-							equalFhirEntries = smartResponse1.EqualIgnore(smartResponse2)
+							ignoredFields := []string{}
+							equalFhirEntries = smartResponse1.EqualIgnore(smartResponse2, ignoredFields)
 						} else {
 							equalFhirEntries = (smartResponse2 == nil)
 						}
