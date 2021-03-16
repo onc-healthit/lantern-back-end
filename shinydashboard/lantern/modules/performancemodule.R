@@ -58,10 +58,11 @@ performancemodule <- function(
             main = "Endpoint Mean Response Time",
             ylab = "seconds",
             xlab = "Date") %>% 
+      dyAxis("y", valueRange = c(-1.30, NA)) %>%
       dySeries("V1", label = "Maximum") %>%
       dySeries("V2", label = "Average") %>%
       dySeries("V3", label = "Minimum") %>%
-      dyLegend(width = 450)
+      dyLegend(width = 400)
     }
   })
 
