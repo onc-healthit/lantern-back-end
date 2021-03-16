@@ -253,20 +253,15 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, date.average AS avg, date.maximum AS max, date.minimum AS min
-                    FROM (SELECT floor(extract(epoch from updated_at)/82800)*82800 AS datetime, AVG(response_time_seconds) as average, MAX(response_time_seconds) as maximum, MIN(response_time_seconds) as minimum FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 GROUP BY datetime) as date,
+                    FROM (SELECT floor(extract(epoch from updated_at)/82800)*82800 AS datetime, ROUND(AVG(response_time_seconds), 4) as average, MAX(response_time_seconds) as maximum, MIN(response_time_seconds) as minimum FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 GROUP BY datetime) as date,
                     (SELECT max(floor(extract(epoch from updated_at)/82800)*82800) AS maximum FROM fhir_endpoints_metadata) as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time, average, date.maximum, date.minimum
                     ORDER BY time"))
         )
     ) %>%
-    mutate(date = as_datetime(time)) %>%
+    mutate(date = as.Date(as.POSIXct(time, origin="1970-01-01"))) %>%
     select(date, avg, max, min)
-
-  # convert to xts format for use in dygraph
-  xts(x = cbind(all_endpoints_response_time$max, all_endpoints_response_time$avg, all_endpoints_response_time$min),
-      order.by = all_endpoints_response_time$date
-  )
 }
 
 # get tibble of endpoints which include a security service attribute
