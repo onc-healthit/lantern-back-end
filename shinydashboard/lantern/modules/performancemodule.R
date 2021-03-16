@@ -57,7 +57,7 @@ performancemodule <- function(
       dygraph(response_time_xts(),
             main = "Endpoint Mean Response Time",
             ylab = "seconds",
-            xlab = "Date") %>% 
+            xlab = "Date") %>%
       dyAxis("y", valueRange = c(-1.30, NA)) %>%
       dySeries("V1", label = "Maximum") %>%
       dySeries("V2", label = "Average") %>%

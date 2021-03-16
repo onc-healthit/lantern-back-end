@@ -260,7 +260,7 @@ get_avg_response_time <- function(db_connection, date) {
                     ORDER BY time"))
         )
     ) %>%
-    mutate(date = as.Date(as.POSIXct(time, origin="1970-01-01"))) %>%
+    mutate(date = as.Date(as.POSIXct(time, origin = "1970-01-01"))) %>%
     select(date, avg, max, min)
 }
 
