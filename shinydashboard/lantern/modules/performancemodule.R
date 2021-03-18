@@ -62,7 +62,7 @@ performancemodule <- function(
       dySeries("V1", label = "Maximum") %>%
       dySeries("V2", label = "Average") %>%
       dySeries("V3", label = "Minimum") %>%
-      dyLegend(width = 400)
+      dyLegend(width = 450)
     }
   })
 
