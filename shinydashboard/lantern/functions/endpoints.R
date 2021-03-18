@@ -323,7 +323,9 @@ get_smart_response_capabilities <- function(db_connection) {
       v.name as vendor_name,
       f.capability_statement->>'fhirVersion' as fhir_version,
       json_array_elements_text((smart_response->'capabilities')::json) as capability
-    FROM fhir_endpoints_info f, vendors v, fhir_endpoints_metadata m
+    FROM fhir_endpoints_info f
+    LEFT JOIN vendors v ON f.vendor_id = v.id
+    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     WHERE vendor_id = v.id AND f.metadata_id = m.id
     AND m.smart_http_response=200")) %>%
     collect() %>%
