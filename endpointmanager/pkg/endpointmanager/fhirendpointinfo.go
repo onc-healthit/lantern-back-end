@@ -1,7 +1,7 @@
 package endpointmanager
 
 import (
-	"reflect"
+	"sort"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -28,9 +28,8 @@ type FHIREndpointInfo struct {
 	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
 	SupportedResources  []string
-	// OperationResource   map[string][]string
-	OperationResource []OperationAndResource
-	Metadata          *FHIREndpointMetadata
+	OperationResource   []OperationAndResource
+	Metadata            *FHIREndpointMetadata
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -84,11 +83,8 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
-		return false
-	}
-
-	if !reflect.DeepEqual(e.OperationResource, e2.OperationResource) {
+	sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
+	if !cmp.Equal(sortedE1, sortedE2) {
 		return false
 	}
 	return true
@@ -169,3 +165,27 @@ const (
 	UniqueResourcesRule RuleOption = "uniqueResourcesRule"
 	SearchParamsRule    RuleOption = "searchParamsRule"
 )
+
+// Sort by Resource, if there are multiple of the same resource, then
+// sort by Operation
+func sortOperations(e1 []OperationAndResource, e2 []OperationAndResource) ([]OperationAndResource, []OperationAndResource) {
+	sort.Slice(e1, func(i, j int) bool {
+		if e1[i].Resource < e1[j].Resource {
+			return true
+		}
+		if e1[i].Resource > e1[j].Resource {
+			return false
+		}
+		return e1[i].Operation < e1[j].Operation
+	})
+	sort.Slice(e2, func(i, j int) bool {
+		if e2[i].Resource < e2[j].Resource {
+			return true
+		}
+		if e2[i].Resource > e2[j].Resource {
+			return false
+		}
+		return e2[i].Operation < e2[j].Operation
+	})
+	return e1, e2
+}
