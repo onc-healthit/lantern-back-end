@@ -83,6 +83,9 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
+	// If the two endpoints have the same values in a different order, the Equal
+	// function will return false, so the resources need to be sorted for the Equal
+	// function to work as expected
 	sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
 	if !cmp.Equal(sortedE1, sortedE2) {
 		return false
