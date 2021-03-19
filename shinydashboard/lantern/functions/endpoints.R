@@ -141,7 +141,8 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# @TODO Comment and fix below
+# Return list of a resource and an operation implemented by that resource by
+# endpoint_id, vendor and fhir_version
 get_fhir_resource_by_op <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT a.endpoint_id,
@@ -165,17 +166,6 @@ get_fhir_resource_by_op <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Return list of FHIR Resources
-# @TODO Get rid of this?
-get_resource_list <- function(endpoint_tbl) {
-  rl <- endpoint_tbl %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-  return(rl)
-}
-
 get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
@@ -191,14 +181,6 @@ get_capstat_fields <- function(db_connection) {
       ORDER BY field")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
-}
-
-# Summarize count of resource types by type, fhir_version
-get_fhir_resource_count <- function(fhir_resources_tbl) {
-  res <- fhir_resources_tbl %>%
-    group_by(type, fhir_version) %>%
-    count() %>%
-    rename(Resource = type, Endpoints = n)
 }
 
 # Summarize count of implementation guides by implementation_guide, fhir_version

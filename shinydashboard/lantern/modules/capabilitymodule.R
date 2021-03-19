@@ -5,12 +5,11 @@ capabilitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    tableOutput(ns("resource_op_table")),
     h1("FHIR Resource Types"),
     p("This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list."),
     fluidRow(
       column(width = 5,
-             tableOutput(ns("resource_type_table"))),
+             tableOutput(ns("resource_op_table"))),
       column(width = 7,
              h4("Resource Count"),
              uiOutput(ns("resource_plot"))
@@ -60,19 +59,19 @@ capabilitymodule <- function(
     # Then group by and count all resources left
     if (length(sel_operations()) > 0) {
       res <- res %>% filter(operation %in% sel_operations()) %>%
-        group_by(endpoint_id, resource) %>%
+        group_by(endpoint_id, fhir_version, resource) %>%
         count() %>%
         filter(n == length(sel_operations())) %>%
         ungroup() %>%
         select(-n) %>%
-        group_by(resource) %>%
+        group_by(resource, fhir_version) %>%
         count()
     } else {
-      res <- res %>% group_by(endpoint_id, resource) %>%
+      res <- res %>% group_by(endpoint_id, fhir_version, resource) %>%
         count() %>%
         ungroup() %>%
         select(-n) %>%
-        group_by(resource) %>%
+        group_by(resource, fhir_version) %>%
         count()
     }
     res
@@ -80,40 +79,17 @@ capabilitymodule <- function(
   
   output$resource_op_table <- renderTable(
     select_operations() %>%
-    rename("Endpoints" = n, "Resource" = resource)
+    rename("Endpoints" = n, "Resource" = resource, "FHIR Version" = fhir_version)
   )
 
-  selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$endpoint_resource_types())
-    req(sel_fhir_version(), sel_vendor(), sel_resources())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-
-    if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
-      list <- get_resource_list(res)
-      req(sel_resources() %in% list)
-      res <- res %>% filter(type %in% sel_resources())
-    }
-
-    res
-  })
-
-  endpoint_resource_count <- reactive({
-    get_fhir_resource_count(selected_fhir_endpoints())
+  select_operations_count <- reactive({
+    select_operations() %>%
+    rename("Endpoints" = n, "Resource" = resource)
   })
 
   implementation_count <- reactive({
     get_implementation_guide_count(selected_implementation_guide())
   })
-
-  output$resource_type_table <- renderTable(
-    endpoint_resource_count() %>%
-    rename("FHIR Version" = fhir_version)
-  )
 
   vendor <- reactive({
     sel_vendor()
@@ -134,7 +110,7 @@ capabilitymodule <- function(
   # Default plot heights are not good for large number of bars, so base on
   # number of rows in the result
   plot_height <- reactive({
-    max(nrow(endpoint_resource_count()) * 25, 400)
+    max(nrow(select_operations()) * 25, 400)
   })
 
   plot_height_implementation <- reactive({
@@ -161,7 +137,7 @@ capabilitymodule <- function(
   })
 
   output$resource_bar_plot <- renderCachedPlot({
-    ggplot(endpoint_resource_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
+    ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
@@ -176,7 +152,7 @@ capabilitymodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), app_data$last_updated())
     })
 
   output$implementation_guide_plot <- renderCachedPlot({
