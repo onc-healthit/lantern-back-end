@@ -365,6 +365,201 @@ var testSupportedResources = []string{
 	"Slot",
 	"StructureDefinition"}
 
+var testOperations = []endpointmanager.OperationAndResource{
+	{
+		Resource:  "Conformance",
+		Operation: "read",
+	},
+	{
+		Resource:  "AllergyIntolerance",
+		Operation: "read",
+	},
+	{
+		Resource:  "AllergyIntolerance",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Appointment",
+		Operation: "read",
+	},
+	{
+		Resource:  "Appointment",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Binary",
+		Operation: "read",
+	},
+	{
+		Resource:  "CarePlan",
+		Operation: "read",
+	},
+	{
+		Resource:  "CarePlan",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Condition",
+		Operation: "read",
+	},
+	{
+		Resource:  "Condition",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Contract",
+		Operation: "read",
+	},
+	{
+		Resource:  "Contract",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Device",
+		Operation: "read",
+	},
+	{
+		Resource:  "Device",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "DiagnosticReport",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "DocumentReference",
+		Operation: "read",
+	},
+	{
+		Resource:  "DocumentReference",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Encounter",
+		Operation: "read",
+	},
+	{
+		Resource:  "Encounter",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Goal",
+		Operation: "read",
+	},
+	{
+		Resource:  "Goal",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Immunization",
+		Operation: "read",
+	},
+	{
+		Resource:  "Immunization",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "MedicationAdministration",
+		Operation: "read",
+	},
+	{
+		Resource:  "MedicationAdministration",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "MedicationOrder",
+		Operation: "read",
+	},
+	{
+		Resource:  "MedicationOrder",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "MedicationStatement",
+		Operation: "read",
+	},
+	{
+		Resource:  "MedicationStatement",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Observation",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "OperationDefinition",
+		Operation: "read",
+	},
+	{
+		Resource:  "Patient",
+		Operation: "read",
+	},
+	{
+		Resource:  "Patient",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Person",
+		Operation: "read",
+	},
+	{
+		Resource:  "Person",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Practitioner",
+		Operation: "read",
+	},
+	{
+		Resource:  "Practitioner",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Procedure",
+		Operation: "read",
+	},
+	{
+		Resource:  "Procedure",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "ProcedureRequest",
+		Operation: "read",
+	},
+	{
+		Resource:  "ProcedureRequest",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "RelatedPerson",
+		Operation: "read",
+	},
+	{
+		Resource:  "RelatedPerson",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Schedule",
+		Operation: "read",
+	},
+	{
+		Resource:  "Schedule",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "Slot",
+		Operation: "read",
+	},
+	{
+		Resource:  "Slot",
+		Operation: "search-type",
+	},
+	{
+		Resource:  "StructureDefinition",
+		Operation: "read",
+	},
+}
+
 var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
 	URL:               "http://example.com/DTSU2/",
 	HTTPResponse:      200,
@@ -382,6 +577,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	Validation:         testValidationObj,
 	IncludedFields:     testIncludedFields,
 	SupportedResources: testSupportedResources,
+	OperationResource:  testOperations,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -423,7 +619,7 @@ func Test_formatMessage(t *testing.T) {
 	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
 	endpt.Metadata.Availability = 1.0
-	th.Assert(t, expectedEndpt.Equal(endpt), "An error was thrown because the endpoints are not equal")
+	th.Assert(t, expectedEndpt.Equal(endpt), fmt.Sprintf("An error was thrown because the endpoints are not equal, \n endpoint 1 %+v, \n endpoint 2 %+v", expectedEndpt, endpt))
 
 	// should not throw error if metadata is not in the URL
 	tmpMessage["url"] = "http://example.com/DTSU2/"
@@ -578,9 +774,11 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 func Test_RunSupportedResourcesChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
-	supportedResources := RunSupportedResourcesChecks(capInt)
+	supportedResources, _ := RunSupportedResourcesChecks(capInt)
 	th.Assert(t, len(supportedResources) == 27, fmt.Sprintf("Expected there to be 27 supported resources in supportedResources array, were %v", len(supportedResources)))
 	th.Assert(t, helpers.StringArrayContains(supportedResources, "ProcedureRequest"), "Expected supportedResources to contain ProcedureRequest resource type")
 	th.Assert(t, helpers.StringArrayContains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
 	th.Assert(t, !helpers.StringArrayContains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
+	// @TODO update the testOperations so that they match what's in the cerner_capabililty_statement
+	// @TODO write the tests that I specified
 }
