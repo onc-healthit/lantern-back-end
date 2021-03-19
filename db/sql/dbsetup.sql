@@ -370,3 +370,4 @@ CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metada
 CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
 
 CREATE INDEX healthit_product_name_version_idx ON healthit_products (name, version);
+CREATE INDEX metadata_response_time_idx ON fhir_endpoints_metadata(response_time_seconds);

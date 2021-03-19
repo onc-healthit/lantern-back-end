@@ -21,7 +21,7 @@ performancemodule <- function(
 ) {
   ns <- session$ns
 
-  response_time_xts <- reactive({
+  get_range <- function() {
     if (all(sel_date() == "Past 7 days")) {
       range <- "604800"
     }
@@ -34,8 +34,16 @@ performancemodule <- function(
     else{
       range <- "maxdate.maximum"
     }
+    range
+  }
+
+  response_time_xts <- reactive({
+    range <- get_range()
     res <- get_avg_response_time(db_connection, range)
-    res
+    # convert to xts format for use in dygraph
+    xts(x = cbind(res$max, res$avg, res$min),
+        order.by = res$date
+    )
   })
 
   output$no_graph <- renderText({
@@ -49,7 +57,12 @@ performancemodule <- function(
       dygraph(response_time_xts(),
             main = "Endpoint Mean Response Time",
             ylab = "seconds",
-            xlab = "Date")
+            xlab = "Date") %>%
+      dyAxis("y", valueRange = c(-1.30, NA)) %>%
+      dySeries("V1", label = "Maximum") %>%
+      dySeries("V2", label = "Average") %>%
+      dySeries("V3", label = "Minimum") %>%
+      dyLegend(width = 450)
     }
   })
 
