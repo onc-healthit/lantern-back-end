@@ -2,14 +2,15 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
-// func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, map[string][]string) {
+// RunSupportedResourcesChecks  @TODO update this
 func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []endpointmanager.OperationAndResource) {
 	if capInt == nil {
 		return nil, nil
 	}
-	// @TODO Remove?
+	// @TODO Remove
 	var supportedResources []string
 
+	// Get the resource field from the Capability Statement, which is a list of resources
 	if capInt["rest"] == nil {
 		return nil, nil
 	}
@@ -20,7 +21,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 	}
 	resourceArr := restInt["resource"].([]interface{})
 
-	opToRes := make(map[string][]string)
 	var opAndRes []endpointmanager.OperationAndResource
 	for _, resource := range resourceArr {
 		resourceInt := resource.(map[string]interface{})
@@ -31,19 +31,19 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 		// @TODO Remove?
 		supportedResources = append(supportedResources, resourceType)
 
-		// Keep track of each resource type's given operations specified in the
-		// capability statement
+		// Keep track of the operations defined by each resource
 		notSpec := false
 		hasCodes := false
 		operations, ok := resourceInt["interaction"].([]interface{})
+		// if there is no interaction field, or the list is empty,
+		// then no operations were specified
 		if !ok {
 			notSpec = true
 		} else if len(operations) == 0 {
 			notSpec = true
 		} else {
-			// Add the above resourceType to each specified code in the map
-			// e.g. { "read": ["AllergyIntolerance", "Conformance"],
-			// "write": ["AllergyIntolerance"] }
+			// For each given operation, make sure it's valid and then
+			// add it to the list of operation and resource pairs
 			for _, op := range operations {
 				opMap, ok := op.(map[string]interface{})
 				if !ok {
@@ -54,11 +54,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 					continue
 				}
 				hasCodes = true
-				if c, ok := opToRes[code]; ok {
-					opToRes[code] = append(c, resourceType)
-				} else {
-					opToRes[code] = []string{resourceType}
-				}
 				item := endpointmanager.OperationAndResource{
 					Operation: code,
 					Resource:  resourceType,
@@ -66,14 +61,8 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 				opAndRes = append(opAndRes, item)
 			}
 		}
-		// If the interaction field was not specified or has no given codes
-		// Then add the resource to the "not specified" key in the map
+		// If the interaction field was not specified or it has no valid operations
 		if notSpec || !hasCodes {
-			if c, ok := opToRes["not specified"]; ok {
-				opToRes["not specified"] = append(c, resourceType)
-			} else {
-				opToRes["not specified"] = []string{resourceType}
-			}
 			item := endpointmanager.OperationAndResource{
 				Operation: "not specified",
 				Resource:  resourceType,
@@ -82,13 +71,5 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 		}
 	}
 
-	// @TODO Remove
-	// url, ok := capInt["url"].(string)
-	// if ok {
-	// 	log.Infof("THE URL (hopefully), %s", url)
-	// }
-	// log.Infof("The Operations: %+v", opToRes)
-
-	// return supportedResources, opToRes
 	return supportedResources, opAndRes
 }
