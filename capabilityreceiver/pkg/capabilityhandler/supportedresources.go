@@ -3,33 +3,29 @@ package capabilityhandler
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
 // RunSupportedResourcesChecks  @TODO update this
-func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []endpointmanager.OperationAndResource) {
+func RunSupportedResourcesChecks(capInt map[string]interface{}) []endpointmanager.OperationAndResource {
+	var opAndRes []endpointmanager.OperationAndResource
 	if capInt == nil {
-		return nil, nil
+		return opAndRes
 	}
-	// @TODO Remove
-	var supportedResources []string
 
 	// Get the resource field from the Capability Statement, which is a list of resources
 	if capInt["rest"] == nil {
-		return nil, nil
+		return opAndRes
 	}
 	restArr := capInt["rest"].([]interface{})
 	restInt := restArr[0].(map[string]interface{})
 	if restInt["resource"] == nil {
-		return nil, nil
+		return opAndRes
 	}
 	resourceArr := restInt["resource"].([]interface{})
 
-	var opAndRes []endpointmanager.OperationAndResource
 	for _, resource := range resourceArr {
 		resourceInt := resource.(map[string]interface{})
 		if resourceInt["type"] == nil {
-			return nil, nil
+			continue
 		}
 		resourceType := resourceInt["type"].(string)
-		// @TODO Remove?
-		supportedResources = append(supportedResources, resourceType)
 
 		// Keep track of the operations defined by each resource
 		notSpec := false
@@ -71,5 +67,5 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) ([]string, []end
 		}
 	}
 
-	return supportedResources, opAndRes
+	return opAndRes
 }
