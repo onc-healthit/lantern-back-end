@@ -176,7 +176,7 @@ func getFHIRVersion(capStat []byte) string {
 func getSMARTResponse(smartRsp []byte) map[string]interface{} {
 	var defaultInt map[string]interface{}
 	var smartInt map[string]interface{}
-	if smartRsp != nil && len(smartRsp) > 0 {
+	if len(smartRsp) > 0 {
 		err := json.Unmarshal(smartRsp, &smartInt)
 		if err != nil {
 			return defaultInt
@@ -191,7 +191,7 @@ func getSupportedResources(opRes []byte) []string {
 	var defaultInt []string
 	var opResInt []endpointmanager.OperationAndResource
 	checkResource := make(map[string]bool)
-	if opRes != nil && len(opRes) > 0 {
+	if len(opRes) > 0 {
 		err := json.Unmarshal(opRes, &opResInt)
 		if err != nil {
 			return defaultInt

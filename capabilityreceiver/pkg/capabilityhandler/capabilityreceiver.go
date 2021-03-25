@@ -97,7 +97,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	responseTime, ok := msgJSON["responseTime"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("Response time is not a float")
+		return nil, fmt.Errorf("response time is not a float")
 	}
 
 	fhirVersion := ""
@@ -108,7 +108,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
-	supportedResources, operationResource := RunSupportedResourcesChecks(capInt)
+	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:               url,
@@ -126,7 +126,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		CapabilityStatement: capStat,
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
-		SupportedResources:  supportedResources,
 		OperationResource:   operationResource,
 		Metadata:            FHIREndpointMetadata,
 	}
@@ -198,7 +197,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.Validation = fhirEndpoint.Validation
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
-			existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
 
 			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)

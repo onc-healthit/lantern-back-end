@@ -335,35 +335,6 @@ var testIncludedFields = []endpointmanager.IncludedField{
 	},
 }
 
-var testSupportedResources = []string{
-	"Conformance",
-	"AllergyIntolerance",
-	"Appointment",
-	"Binary",
-	"CarePlan",
-	"Condition",
-	"Contract",
-	"Device",
-	"DiagnosticReport",
-	"DocumentReference",
-	"Encounter",
-	"Goal",
-	"Immunization",
-	"MedicationAdministration",
-	"MedicationOrder",
-	"MedicationStatement",
-	"Observation",
-	"OperationDefinition",
-	"Patient",
-	"Person",
-	"Practitioner",
-	"Procedure",
-	"ProcedureRequest",
-	"RelatedPerson",
-	"Schedule",
-	"Slot",
-	"StructureDefinition"}
-
 var testOperations = []endpointmanager.OperationAndResource{
 	{
 		Resource:  "Conformance",
@@ -569,14 +540,13 @@ var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:                "http://example.com/DTSU2/",
-	MIMETypes:          []string{"application/json+fhir"},
-	TLSVersion:         "TLS 1.2",
-	SMARTResponse:      nil,
-	Validation:         testValidationObj,
-	IncludedFields:     testIncludedFields,
-	SupportedResources: testSupportedResources,
-	OperationResource:  testOperations,
+	URL:               "http://example.com/DTSU2/",
+	MIMETypes:         []string{"application/json+fhir"},
+	TLSVersion:        "TLS 1.2",
+	SMARTResponse:     nil,
+	Validation:        testValidationObj,
+	IncludedFields:    testIncludedFields,
+	OperationResource: testOperations,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
