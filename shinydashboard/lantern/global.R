@@ -25,6 +25,7 @@ version_string <- read_file("VERSION")
 version_number <- strsplit(version_string, "=")[[1]][2]
 version_title <- paste("Version ", version_number)
 devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
+qry_interval_seconds <- (strtoi(Sys.getenv("LANTERN_CAPQUERY_QRYINTVL")) * 60)
 database_fetch <- reactiveVal(0)
 
 # Define magic numbers for user interface

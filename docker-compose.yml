@@ -118,6 +118,7 @@ services:
         LANTERN_DBHOST: ${LANTERN_DBHOST}
         LANTERN_DBPORT: ${LANTERN_DBPORT}
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}
+        LANTERN_CAPQUERY_QRYINTVL: "${LANTERN_CAPQUERY_QRYINTVL}"
         LANTERN_BANNER_TEXT: ""     
     image: lantern_shinydashboard:current
     depends_on:
