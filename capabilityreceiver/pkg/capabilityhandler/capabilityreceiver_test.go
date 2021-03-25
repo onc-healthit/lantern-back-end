@@ -9,7 +9,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
@@ -774,11 +773,119 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 func Test_RunSupportedResourcesChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
-	supportedResources, _ := RunSupportedResourcesChecks(capInt)
-	th.Assert(t, len(supportedResources) == 27, fmt.Sprintf("Expected there to be 27 supported resources in supportedResources array, were %v", len(supportedResources)))
-	th.Assert(t, helpers.StringArrayContains(supportedResources, "ProcedureRequest"), "Expected supportedResources to contain ProcedureRequest resource type")
-	th.Assert(t, helpers.StringArrayContains(supportedResources, "MedicationStatement"), "Expected supportedResources to contain MedicationStatement resource type")
-	th.Assert(t, !helpers.StringArrayContains(supportedResources, "other"), "Did not expect supportedResources to contain other resource type")
-	// @TODO update the testOperations so that they match what's in the cerner_capabililty_statement
-	// @TODO write the tests that I specified
+	operationResource := RunSupportedResourcesChecks(capInt)
+	th.Assert(t, len(operationResource) == 48, fmt.Sprintf("Expected there to be 48 operation resources in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "read", fmt.Sprintf("Expected the Operation to equal 'read', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "Conformance", fmt.Sprintf("Expected the Resource to equal 'Conformance', is instead %s", operationResource[0].Resource))
+
+	// If there is no interaction field in the resource, the operationresource should have
+	// one returned value with "not specified"
+	capStat1, err := generateTestCapStat("noInteraction")
+	th.Assert(t, capStat1 != nil, fmt.Sprintf("Error generating noInteraction capability statement, %s", err))
+	operationResource = RunSupportedResourcesChecks(capStat1)
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+
+	// If there is an interaction field in the resource but it's empty, the operationresource
+	// should have one returned value with "not specified"
+	capStat2, _ := generateTestCapStat("emptyInteraction")
+	th.Assert(t, capStat2 != nil, "Error generating emptyInteraction capability statement")
+	operationResource = RunSupportedResourcesChecks(capStat2)
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+
+	// If there is an interaction field in the resource but no code value, the operationresource
+	// should have one returned value with "not specified"
+	capStat3, _ := generateTestCapStat("noCode")
+	th.Assert(t, capStat3 != nil, "Error generating noCode capability statement")
+	operationResource = RunSupportedResourcesChecks(capStat3)
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+
+	// If there is an interaction field in the resource and at least one valid code, the
+	// operationresource will only include values that have the valid code
+	capStat4, _ := generateTestCapStat("manyCode")
+	th.Assert(t, capStat3 != nil, "Error generating manyCode capability statement")
+	operationResource = RunSupportedResourcesChecks(capStat4)
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "search-type", fmt.Sprintf("Expected the Operation to equal 'search-type', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+
+	// If one of the resources is missing a type, it just skips over it
+	capStat5, _ := generateTestCapStat("missingType")
+	th.Assert(t, capStat5 != nil, "Error generating missingType capability statement")
+	operationResource = RunSupportedResourcesChecks(capStat5)
+	th.Assert(t, len(operationResource) == 2, fmt.Sprintf("Expected there to be 2 operation resources in OperationAndResource array, were %v", len(operationResource)))
+	th.Assert(t, operationResource[0].Operation == "read", fmt.Sprintf("Expected the Operation to equal 'read', is instead %s", operationResource[0].Operation))
+	th.Assert(t, operationResource[0].Resource == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource[0].Resource))
+	th.Assert(t, operationResource[1].Operation == "search-type", fmt.Sprintf("Expected the Operation to equal 'search-type', is instead %s", operationResource[1].Operation))
+	th.Assert(t, operationResource[1].Resource == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource[1].Resource))
+}
+
+func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
+	var capStatBytes []byte
+	var capInt map[string]interface{}
+	if whichCapStat == "noInteraction" {
+		capStatBytes = []byte(`{
+		"rest": [{
+			"resource": [{"type": "AllergyIntolerance"}]
+		}]}`)
+	} else if whichCapStat == "emptyInteraction" {
+		capStatBytes = []byte(`{
+		"rest": [{
+			"resource": [{
+				"type": "AllergyIntolerance",
+				"interaction": []
+			}]
+		}]}`)
+	} else if whichCapStat == "noCode" {
+		capStatBytes = []byte(`{
+		"rest": [{
+			"resource": [{
+				"type": "AllergyIntolerance",
+				"interaction": [{
+					"notCode": "read"
+				}]
+			}]
+		}]}`)
+	} else if whichCapStat == "manyCode" {
+		capStatBytes = []byte(`{
+		"rest": [{
+			"resource": [{
+				"type": "AllergyIntolerance",
+				"interaction": [{
+					"notCode": "read"
+				}, {
+					"code": "search-type"
+				}]
+			}]
+		}]}`)
+	} else if whichCapStat == "missingType" {
+		capStatBytes = []byte(`{
+		"rest": [{
+			"resource": [{
+				"notType": "AllergyIntolerance"
+			},{
+				"type": "DocumentReference",
+				"interaction": [{
+					"code": "read"
+				}, {
+					"code": "search-type"
+				}]
+			}]
+		}]}`)
+	}
+
+	if len(capStatBytes) == 0 {
+		return nil, fmt.Errorf("cap stat bytes is empty")
+	}
+
+	err := json.Unmarshal(capStatBytes, &capInt)
+	if err != nil {
+		return nil, fmt.Errorf("failure in unmarshalling, %s", err)
+	}
+	return capInt, fmt.Errorf("somehow skipped over everything")
 }
