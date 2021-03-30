@@ -312,6 +312,64 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	return nil
 }
 
+func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) error {
+	var err error
+	var existingEndpts []*endpointmanager.FHIREndpoint
+	var msgJSON map[string]interface{}
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(versionsQueryArgs)
+	if !ok {
+		return fmt.Errorf("unable to parse args into versionsQueryArgs")
+	}
+
+	err = json.Unmarshal(message, &msgJSON)
+	if err != nil {
+		return err
+	}
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast message URL to string")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	store := qa.store
+	ctx := qa.ctx
+
+	existingEndpts, err = store.GetFHIREndpointUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	for _, endpt := range existingEndpts {
+		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
+		var vsr versionsoperatorparser.VersionsResponse
+		vsr.Response = resp
+		// Only update if versions have changed
+		if !endpt.VersionsResponse.Equal(vsr) {
+			endpt.VersionsResponse = vsr
+			err = store.UpdateFHIREndpoint(ctx, endpt)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Dispatch query for CapabilityStatement here
+	// Set up the queue for sending messages to capabilityquerier
+	mq := qa.capQueryQueue
+	channelID := qa.capQueryChannelID
+	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
+	err = accessqueue.SendToQueue(ctx, url, &mq, &channelID, capQueryEndptQName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
 // statements from it. It then adds the capability statements to the given store.
 func ReceiveCapabilityStatements(ctx context.Context,
