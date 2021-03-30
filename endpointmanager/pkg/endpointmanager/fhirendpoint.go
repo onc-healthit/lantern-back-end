@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperation"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -18,6 +19,7 @@ type FHIREndpoint struct {
 	OrganizationNames []string
 	NPIIDs            []string
 	ListSource        string
+	VersionsResponse  versionsoperation.VersionsResponse
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 }
@@ -96,6 +98,19 @@ func NormalizeWellKnownURL(url string) string {
 			normalized = normalized + "/"
 		}
 		normalized = normalized + ".well-known/smart-configuration"
+	}
+	return normalized
+}
+
+// Prepends url with https:// and appends with $versions if needed
+func NormalizeVersionsURL(url string) string {
+	normalized := NormalizeURL(url)
+
+	if !strings.HasSuffix(url, "/$versions") && !strings.HasSuffix(url, "/$versions/") {
+		if !strings.HasSuffix(url, "/") {
+			normalized = normalized + "/"
+		}
+		normalized = normalized + "$versions"
 	}
 	return normalized
 }

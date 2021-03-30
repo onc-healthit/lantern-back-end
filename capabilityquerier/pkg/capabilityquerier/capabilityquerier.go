@@ -54,6 +54,11 @@ type Message struct {
 	SMARTResp           interface{} `json:"smartResp"`
 	ResponseTime        float64     `json:"responseTime"`
 }
+type VersionsMessage struct {
+	URL                 string      `json:"url"`
+	Err                 string      `json:"err"`
+	VersionsResponse interface{} 	`json:"versionsResponse"`
+}
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
 // the Client and FhirURL for querying
@@ -65,6 +70,60 @@ type QuerierArgs struct {
 	QueueName    string
 	UserAgent    string
 	Store        *postgresql.Store
+}
+
+
+func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
+	var jsonResponse interface{}
+
+	qa, ok := (*args)["querierArgs"].(QuerierArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
+	}
+	// Cast string url to type url then cast back to string to ensure url string in correct url format
+	castURL, err := url.Parse(qa.FhirURL)
+	if err != nil {
+		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
+	}
+	versionsURL := endpointmanager.NormalizeVersionsURL(castURL.String())
+	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
+	time.Sleep(time.Duration(500 * time.Millisecond))
+	req, err := http.NewRequest("GET", versionsURL, nil)
+	if err != nil {
+		return errors.Wrap(err, "unable to create new GET request from URL: "+ versionsURL)
+	}
+	req.Header.Set("User-Agent", qa.UserAgent)
+	trace := &httptrace.ClientTrace{}
+	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
+	httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+
+	message := VersionsMessage{
+		URL:       qa.FhirURL,
+	}
+
+	if httpResponseCode == 200 && versionsResponse != nil {
+		err = json.Unmarshal(versionsResponse, &(jsonResponse))
+		if err != nil {
+			return err
+		}
+	}else {
+		jsonResponse = nil
+	}
+
+	message.VersionsResponse = jsonResponse
+
+	msgBytes, err := json.Marshal(message)
+	if err != nil {
+		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURL)
+	}
+	msgStr := string(msgBytes)
+	// Blank context passed in to SendToQueue to prevent terminating error due to an endpoint timeout
+	tempCtx := context.Background()
+	err = aq.SendToQueue(tempCtx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
+	if err != nil {
+		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL, qa.QueueName)
+	}
+
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability

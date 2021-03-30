@@ -234,6 +234,47 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
+func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) error {
+	var err error
+	var existingEndpts []*endpointmanager.FHIREndpoint
+	var msgJSON map[string]interface{}
+
+	err = json.Unmarshal(message, &msgJSON)
+	if err != nil {
+		return err
+	}
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast message URL to string")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	store, ok := (*args)["store"].(*postgresql.Store)
+	if !ok {
+		return fmt.Errorf("unable to cast postgresql store from arguments")
+	}
+	ctx, ok := (*args)["ctx"].(context.Context)
+	if !ok {
+		return fmt.Errorf("unable to cast context from arguments")
+	}
+
+	existingEndpts, err = store.GetFHIREndpointUsingURL(ctx, url)
+
+	for _, endpt := range existingEndpts {
+		// Only update if versions have changed
+		// if msgJSON["versionsResponse"] != endpt.VersionsResponse {
+		// }
+		endpt.VersionResponse = msgJSON["versionsResponse"]
+		store.AddOrUpdateFHIREndpoint(ctx, endpt)
+	}
+
+	return nil
+}
+
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
 // statements from it. It then adds the capability statements to the given store.
 func ReceiveCapabilityStatements(ctx context.Context,
@@ -261,3 +302,29 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	return nil
 }
+
+func ReceiveVersionResponses(ctx context.Context,
+	store *postgresql.Store,
+	messageQueue lanternmq.MessageQueue,
+	channelID lanternmq.ChannelID,
+	qName string) error {
+
+	args := make(map[string]interface{})
+	args["store"] = store
+	args["ctx"] = ctx
+
+	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
+	if err != nil {
+		return err
+	}
+
+	errs := make(chan error)
+	go messageQueue.ProcessMessages(ctx, messages, saveVersionResponseMsgInDB, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
+	return nil
+}
+
