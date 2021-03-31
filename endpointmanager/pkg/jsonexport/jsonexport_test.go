@@ -72,8 +72,8 @@ func Test_getSupportedResources(t *testing.T) {
 	]`)
 	supRes := getSupportedResources(testSupportedResources)
 	th.Assert(t, len(supRes) == 4, fmt.Sprintf("There should be 4 supported resources, is instead %d", len(supRes)))
-	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), fmt.Sprintf("The supported resources should include the 'Device' resource"))
-	th.Assert(t, helpers.StringArrayContains(supRes, "DocumentReference"), fmt.Sprintf("The supported resources should include the 'DocumentReference' resource"))
+	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), "The supported resources should include the 'Device' resource")
+	th.Assert(t, helpers.StringArrayContains(supRes, "DocumentReference"), "The supported resources should include the 'DocumentReference' resource")
 
 	// Base case : there are repeated resources
 	testSupportedResources = []byte(`[
@@ -96,7 +96,7 @@ func Test_getSupportedResources(t *testing.T) {
 	]`)
 	supRes = getSupportedResources(testSupportedResources)
 	th.Assert(t, len(supRes) == 2, fmt.Sprintf("There should be 2 supported resources, is instead %d", len(supRes)))
-	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), fmt.Sprintf("The supported resources should include the 'Device' resource"))
+	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), "The supported resources should include the 'Device' resource")
 	th.Assert(t, helpers.StringArrayContains(supRes, "DocumentReference"), fmt.Sprintf("The supported resources should include the 'DocumentReference' resource"))
 
 	// If the value is nonsense, return an empty array
