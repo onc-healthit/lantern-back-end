@@ -86,10 +86,7 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	// function will return false, so the resources need to be sorted for the Equal
 	// function to work as expected
 	sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
-	if !cmp.Equal(sortedE1, sortedE2) {
-		return false
-	}
-	return true
+	return cmp.Equal(sortedE1, sortedE2)
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.

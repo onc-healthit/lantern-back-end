@@ -2,7 +2,11 @@ package capabilityhandler
 
 import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 
-// RunSupportedResourcesChecks  @TODO update this
+// RunSupportedResourcesChecks takes the given capability statement and creates an array
+// of the resources and their specified operations in OperationAndResource format. Example:
+// [ { Resource: "AllergyInformation", Operation: "read" },
+//   { Resource: "AllergyInforamtion", Operation: "search-type" },
+//   { Resource: "Medication": Operation: "read" }, ...]
 func RunSupportedResourcesChecks(capInt map[string]interface{}) []endpointmanager.OperationAndResource {
 	var opAndRes []endpointmanager.OperationAndResource
 	if capInt == nil {

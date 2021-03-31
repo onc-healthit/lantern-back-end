@@ -115,7 +115,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	args["ctx"] = testCtx
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
-	th.Assert(t, errors.Cause(err) == context.Canceled, fmt.Sprintf("should have errored out with root cause that the context was canceled, instead was %s", err))
+	th.Assert(t, errors.Cause(err) == context.Canceled, fmt.Sprintf("should have errored out with root cause that the context was canceled, instead was %s and %s", err, errors.Cause(err)))
 
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
