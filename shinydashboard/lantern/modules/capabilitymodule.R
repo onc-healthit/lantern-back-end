@@ -12,7 +12,7 @@ capabilitymodule_UI <- function(id) {
              tableOutput(ns("resource_op_table"))),
       column(width = 7,
              h4("Resource Count"),
-             uiOutput(ns("resource_plot"))
+             uiOutput(ns("resource_full_plot"))
       )
     ),
     h1("FHIR Implementation Guides"),
@@ -58,7 +58,8 @@ capabilitymodule <- function(
     # operations, then the resource exists for all operations and we keep that resource
     # Then group by and count all resources left
     if (length(sel_operations()) > 0) {
-      res <- res %>% filter(operation %in% sel_operations()) %>%
+      res <- res %>%
+        filter(operation %in% sel_operations()) %>%
         group_by(endpoint_id, fhir_version, resource) %>%
         count() %>%
         filter(n == length(sel_operations())) %>%
@@ -67,7 +68,8 @@ capabilitymodule <- function(
         group_by(resource, fhir_version) %>%
         count()
     } else {
-      res <- res %>% group_by(endpoint_id, fhir_version, resource) %>%
+      res <- res %>%
+        group_by(endpoint_id, fhir_version, resource) %>%
         count() %>%
         ungroup() %>%
         select(-n) %>%
@@ -76,10 +78,17 @@ capabilitymodule <- function(
     }
     res
   })
-  
+
+  select_table_format <- reactive({
+    op_table <- select_operations()
+    if ("resource" %in% colnames(op_table)) {
+      op_table <- op_table %>% rename("Endpoints" = n, "Resource" = resource, "FHIR Version" = fhir_version)
+    }
+    op_table
+  })
+
   output$resource_op_table <- renderTable(
-    select_operations() %>%
-    rename("Endpoints" = n, "Resource" = resource, "FHIR Version" = fhir_version)
+    select_table_format()
   )
 
   select_operations_count <- reactive({
@@ -136,8 +145,24 @@ capabilitymodule <- function(
     }
   })
 
+  output$resource_full_plot <- renderUI({
+    if (nrow(select_operations_count()) != 0) {
+      tagList(
+        plotOutput(ns("resource_bar_plot"), height = plot_height())
+      )
+    }
+  })
+
+  get_fill <- function(fhir_version) {
+    res <- fhir_version
+    if (length(fhir_version) == 0) {
+      res <- "No fill"
+    }
+    res
+  }
+
   output$resource_bar_plot <- renderCachedPlot({
-    ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = fhir_version)) +
+    ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = get_fill(fhir_version))) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
