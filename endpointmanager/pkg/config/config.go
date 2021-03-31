@@ -64,6 +64,16 @@ func SetupConfig() error {
 		return err
 	}
 
+	// Version Response Queue Setup
+	err = viper.BindEnv("versionsquery_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("versionsquery_response_qname")
+	if err != nil {
+		return err
+	}
+
 	// Info History Pruning
 	err = viper.BindEnv("pruning_threshold") // in minutes
 	if err != nil {
@@ -92,6 +102,8 @@ func SetupConfig() error {
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
 	viper.SetDefault("endptinfo_capquery_qname", "endpoints-to-capability")
+	viper.SetDefault("versionsquery_qname", "version-responses")
+	viper.SetDefault("versionsquery_response_qname", "endpoints-to-version-responses")
 	viper.SetDefault("capquery_qryintvl", 1380) // 1380 minutes -> 23 hours.
 
 	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
