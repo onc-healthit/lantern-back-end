@@ -75,7 +75,7 @@ type QuerierArgs struct {
 
 
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
-	var jsonResponse interface{}
+	var jsonResponse versionsoperation.VersionsResponse
 
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
@@ -107,8 +107,6 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		if err != nil {
 			return err
 		}
-	}else {
-		jsonResponse = nil
 	}
 
 	message.VersionsResponse = jsonResponse
@@ -124,7 +122,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	if err != nil {
 		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL, qa.QueueName)
 	}
-
+	return nil
 }
 
 // GetAndSendCapabilityStatement gets a capability statement from a FHIR API endpoint and then puts the capability
