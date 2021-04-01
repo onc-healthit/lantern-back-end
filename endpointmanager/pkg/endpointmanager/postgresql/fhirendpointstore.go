@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/lib/pq"
@@ -136,6 +137,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("here")
 		if len(versionsResponseJSON) == 0 {
 			endpoint.VersionsResponse = nil
 		}else{
@@ -283,7 +285,7 @@ func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndp
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
-
+	fmt.Println(e.VersionsResponse)
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,
 		pq.Array(e.OrganizationNames),

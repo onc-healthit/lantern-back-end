@@ -270,6 +270,8 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		// }
 		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
 		endpt.VersionsResponse = resp
+		fmt.Println("resp")
+		fmt.Println(resp)
 		store.UpdateFHIREndpoint(ctx, endpt)
 	}
 
