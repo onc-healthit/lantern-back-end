@@ -133,11 +133,11 @@ func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	capQName := viper.GetString("versionsquery_qname")
+	capQName := viper.GetString("capquery_qname")
 	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
 	helpers.FailOnError("", err)
 
-	endptQName := viper.GetString("versionsquery_response_qname")
+	endptQName := viper.GetString("endptinfo_capquery_qname")
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
 	helpers.FailOnError("", err)
 
@@ -181,11 +181,11 @@ func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, clie
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	capQName := viper.GetString("versionsquery_qname")
+	capQName := viper.GetString("versionsquery_response_qname")
 	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
 	helpers.FailOnError("", err)
 
-	endptQName := viper.GetString("versionsquery_response_qname")
+	endptQName := viper.GetString("versionsquery_qname")
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
 	helpers.FailOnError("", err)
 
