@@ -16,7 +16,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperation"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/pkg/errors"
@@ -58,7 +57,7 @@ type Message struct {
 type VersionsMessage struct {
 	URL                 string      `json:"url"`
 	Err                 string      `json:"err"`
-	VersionsResponse versionsoperation.VersionsResponse	`json:"versionsResponse"`
+	VersionsResponse 	interface{}	`json:"versionsResponse"`
 }
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
@@ -75,7 +74,7 @@ type QuerierArgs struct {
 
 
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
-	var jsonResponse versionsoperation.VersionsResponse
+	var jsonResponse string
 
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
@@ -103,7 +102,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	}
 
 	if httpResponseCode == 200 && versionsResponse != nil {
-		err = json.Unmarshal(versionsResponse, &(jsonResponse))
+		jsonResponse = string(versionsResponse)
 		if err != nil {
 			return err
 		}

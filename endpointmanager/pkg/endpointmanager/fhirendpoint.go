@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperation"
 )
 
 // FHIREndpoint represents a fielded FHIR API endpoint hosted by a
@@ -19,7 +18,7 @@ type FHIREndpoint struct {
 	OrganizationNames []string
 	NPIIDs            []string
 	ListSource        string
-	VersionsResponse  versionsoperation.VersionsResponse
+	VersionsResponse  map[string]interface{}
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 }
