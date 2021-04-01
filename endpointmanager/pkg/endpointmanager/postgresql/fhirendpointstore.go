@@ -229,6 +229,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		pq.Array(e.OrganizationNames),
 		pq.Array(e.NPIIDs),
 		e.ListSource,
+		e.VersionsResponse,
 		e.ID)
 
 	return err
@@ -258,8 +259,9 @@ func prepareFHIREndpointStatements(s *Store) error {
 		SET url = $1,
 			organization_names = $2,
 			npi_ids = $3,
-			list_source = $4
-		WHERE id = $5`)
+			list_source = $4,
+			versions_response = $5
+		WHERE id = $6`)
 	if err != nil {
 		return err
 	}

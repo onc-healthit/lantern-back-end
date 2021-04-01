@@ -268,7 +268,8 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		// Only update if versions have changed
 		// if msgJSON["versionsResponse"] != endpt.VersionsResponse {
 		// }
-		endpt.VersionsResponse = msgJSON["versionsResponse"].(map[string]interface{})
+		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
+		endpt.VersionsResponse = resp
 		store.AddOrUpdateFHIREndpoint(ctx, endpt)
 	}
 
