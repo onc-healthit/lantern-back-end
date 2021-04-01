@@ -89,7 +89,8 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 		url,
 		organization_names,
 		npi_ids,
-		list_source
+		list_source,
+		versions_response
 	FROM fhir_endpoints WHERE url=$1`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement, url)
 	if err != nil {
@@ -105,7 +106,8 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 			&endpoint.URL,
 			pq.Array(&endpoint.OrganizationNames),
 			pq.Array(&endpoint.NPIIDs),
-			&endpoint.ListSource)
+			&endpoint.ListSource,
+			&endpoint.VersionsResponse)
 		if err != nil {
 			return nil, err
 		}
