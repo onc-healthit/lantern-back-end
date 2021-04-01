@@ -75,6 +75,7 @@ type QuerierArgs struct {
 
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
 	var jsonResponse interface{}
+	var versionsResponse []byte
 
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
@@ -102,7 +103,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	}
 
 	if httpResponseCode == 200 && versionsResponse != nil {
-		jsonResponse = versionsResponse
+		err = json.Unmarshal(versionsResponse, &(jsonResponse))
 		if err != nil {
 			return err
 		}
