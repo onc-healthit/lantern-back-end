@@ -59,6 +59,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		organization_names,
 		npi_ids,
 		list_source,
+		versions_response,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE id=$1`
@@ -70,6 +71,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		pq.Array(&endpoint.OrganizationNames),
 		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
+		&endpoint.VersionsResponse,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
