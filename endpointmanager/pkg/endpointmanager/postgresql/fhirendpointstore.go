@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/lib/pq"
@@ -18,6 +19,8 @@ var deleteFHIREndpointStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
+	var versionsResponseJSON []byte
+
 	sqlStatement := `
 	SELECT
 		id,
@@ -40,9 +43,17 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 			&endpoint.URL,
 			pq.Array(&endpoint.OrganizationNames),
 			pq.Array(&endpoint.NPIIDs),
-			&endpoint.VersionsResponse)
+			versionsResponseJSON)
 		if err != nil {
 			return nil, err
+		}
+		if len(versionsResponseJSON) == 0 {
+			endpoint.VersionsResponse = nil
+		}else{
+			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
+			if err != nil {
+				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
+			}
 		}
 		endpoints = append(endpoints, &endpoint)
 	}
@@ -53,6 +64,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
+	var versionsResponseJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -73,11 +85,20 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		pq.Array(&endpoint.OrganizationNames),
 		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
-		&endpoint.VersionsResponse,
+		versionsResponseJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(versionsResponseJSON) == 0 {
+		endpoint.VersionsResponse = nil
+	}else{
+		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
+		if err != nil {
+			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
+		}
 	}
 
 	return &endpoint, err
@@ -85,6 +106,8 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 
 // GetFHIREndpointUsingURL returns all FHIREndpoint from the database using the given url as a key.
 func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*endpointmanager.FHIREndpoint, error) {
+	var versionsResponseJSON []byte
+
 	sqlStatement := `
 	SELECT
 		id,
@@ -109,9 +132,17 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 			pq.Array(&endpoint.OrganizationNames),
 			pq.Array(&endpoint.NPIIDs),
 			&endpoint.ListSource,
-			&endpoint.VersionsResponse)
+			versionsResponseJSON)
 		if err != nil {
 			return nil, err
+		}
+		if len(versionsResponseJSON) == 0 {
+			endpoint.VersionsResponse = nil
+		}else{
+			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
+			if err != nil {
+				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
+			}
 		}
 		endpoints = append(endpoints, &endpoint)
 	}
@@ -122,6 +153,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url string, listSource string) (*endpointmanager.FHIREndpoint, error) {
 	var endpoint endpointmanager.FHIREndpoint
+	var versionsResponseJSON []byte
 
 	sqlStatement := `
 	SELECT
@@ -130,6 +162,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 		organization_names,
 		npi_ids,
 		list_source,
+		versions_response,
 		created_at,
 		updated_at
 	FROM fhir_endpoints WHERE url=$1 AND list_source=$2`
@@ -142,10 +175,19 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 		pq.Array(&endpoint.OrganizationNames),
 		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
+		versionsResponseJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
 		return nil, err
+	}
+	if len(versionsResponseJSON) == 0 {
+		endpoint.VersionsResponse = nil
+	}else{
+		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
+		if err != nil {
+			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
+		}
 	}
 
 	return &endpoint, err
@@ -154,12 +196,15 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 // GetFHIREndpointsUsingListSourceAndUpdateTime retrieves all fhir endpoints from the database from the given
 // listsource that update time is before the given update time.
 func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context, updateTime time.Time, listSource string) ([]*endpointmanager.FHIREndpoint, error) {
+	var versionsResponseJSON []byte
+
 	sqlStatement := `
 	SELECT
 		id,
 		url,
 		organization_names,
-		npi_ids
+		npi_ids,
+		versions_response
 	FROM fhir_endpoints WHERE list_source=$1 AND updated_at<$2`
 
 	rows, err := s.DB.QueryContext(ctx, sqlStatement, listSource, updateTime)
@@ -178,6 +223,14 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 			pq.Array(&endpoint.NPIIDs))
 		if err != nil {
 			return nil, err
+		}
+		if len(versionsResponseJSON) == 0 {
+			endpoint.VersionsResponse = nil
+		}else{
+			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
+			if err != nil {
+				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
+			}
 		}
 		endpoints = append(endpoints, &endpoint)
 	}
