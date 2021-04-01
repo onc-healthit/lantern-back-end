@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/lib/pq"
@@ -286,10 +285,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	var err error
 	var versionsResponseJSON []byte
 
-	fmt.Println("here")
-
 	if e.VersionsResponse != nil {
-		err = json.Unmarshal(versionsResponseJSON, &e.VersionsResponse)
+		versionsResponseJSON, err = json.Marshal(e.VersionsResponse)
 		if err != nil {
 			return err
 		}
