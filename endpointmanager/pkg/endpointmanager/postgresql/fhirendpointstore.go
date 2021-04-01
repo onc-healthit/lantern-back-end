@@ -23,7 +23,8 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 		id,
 		url,
 		organization_names,
-		npi_ids
+		npi_ids,
+		versions_response
 	FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
@@ -38,7 +39,8 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 			&endpoint.ID,
 			&endpoint.URL,
 			pq.Array(&endpoint.OrganizationNames),
-			pq.Array(&endpoint.NPIIDs))
+			pq.Array(&endpoint.NPIIDs),
+			&endpoint.VersionsResponse)
 		if err != nil {
 			return nil, err
 		}
