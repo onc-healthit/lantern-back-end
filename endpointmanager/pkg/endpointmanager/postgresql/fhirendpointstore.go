@@ -43,7 +43,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 			&endpoint.URL,
 			pq.Array(&endpoint.OrganizationNames),
 			pq.Array(&endpoint.NPIIDs),
-			versionsResponseJSON)
+			&versionsResponseJSON)
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +85,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		pq.Array(&endpoint.OrganizationNames),
 		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
-		versionsResponseJSON,
+		&versionsResponseJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -132,7 +132,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 			pq.Array(&endpoint.OrganizationNames),
 			pq.Array(&endpoint.NPIIDs),
 			&endpoint.ListSource,
-			versionsResponseJSON)
+			&versionsResponseJSON)
 		if err != nil {
 			return nil, err
 		}
@@ -175,7 +175,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 		pq.Array(&endpoint.OrganizationNames),
 		pq.Array(&endpoint.NPIIDs),
 		&endpoint.ListSource,
-		versionsResponseJSON,
+		&versionsResponseJSON,
 		&endpoint.CreatedAt,
 		&endpoint.UpdatedAt)
 	if err != nil {
@@ -220,7 +220,8 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 			&endpoint.ID,
 			&endpoint.URL,
 			pq.Array(&endpoint.OrganizationNames),
-			pq.Array(&endpoint.NPIIDs))
+			pq.Array(&endpoint.NPIIDs),
+			&versionsResponseJSON)
 		if err != nil {
 			return nil, err
 		}
