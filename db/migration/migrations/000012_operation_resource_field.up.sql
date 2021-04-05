@@ -29,4 +29,7 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
+CREATE INDEX operation_idx ON fhir_endpoints_info ((operation_resource->> 'operation'));
+CREATE INDEX resource_idx ON fhir_endpoints_info ((operation_resource->> 'resource'));
+
 COMMIT;

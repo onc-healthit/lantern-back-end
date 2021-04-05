@@ -145,23 +145,15 @@ get_fhir_resource_types <- function(db_connection) {
 # endpoint_id, vendor and fhir_version
 get_fhir_resource_by_op <- function(db_connection) {
   res <- tbl(db_connection,
-    sql("SELECT a.endpoint_id,
-        a.vendor_id,
-        b.vendor_name,
-        a.fhir_version,
-        a.operation,
-        a.resource
-      FROM
-        (SELECT f.id as endpoint_id,
-          vendor_id,
-          capability_statement->>'fhirVersion' as fhir_version,
-          x.operation,
-          x.resource
-        FROM fhir_endpoints_info as f,
-        json_to_recordset(operation_resource::json) as x(operation text, resource text)
-        WHERE operation_resource != 'null') a
-      LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
-      ON a.vendor_id = b.id")) %>%
+    sql("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      json_array_elements(operation_resource::json) ->> 'operation' as operation,
+      json_array_elements(operation_resource::json) ->> 'resource' as resource
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE operation_resource != 'null'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
