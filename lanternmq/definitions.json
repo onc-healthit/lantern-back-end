@@ -86,7 +86,21 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
-        }
+        },
+        {
+            "name": "version-responses",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "endpoints-to-version-responses",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
     ],
     "exchanges": [],
     "bindings": []

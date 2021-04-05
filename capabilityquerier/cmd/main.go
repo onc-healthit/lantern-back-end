@@ -33,6 +33,7 @@ type queryArgs struct {
 	mq          *lanternmq.MessageQueue
 	ch          *lanternmq.ChannelID
 	qName       string
+	capQName	string
 	userAgent   string
 	store       *postgresql.Store
 }
@@ -181,8 +182,8 @@ func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, clie
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	capQName := viper.GetString("versionsquery_response_qname")
-	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
+	versionResponseQQName := viper.GetString("versionsquery_response_qname")
+	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, versionResponseQQName)
 	helpers.FailOnError("", err)
 
 	endptQName := viper.GetString("versionsquery_qname")
@@ -208,7 +209,7 @@ func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, clie
 		jobDuration: 30 * time.Second,
 		mq:          &mq,
 		ch:          &ch,
-		qName:       capQName,
+		qName:       versionResponseQQName,
 		userAgent:   userAgent,
 		store:       store,
 	}
@@ -245,7 +246,7 @@ func main() {
 
 	ctx := context.Background()
 
-	setupVersionsOperationQueue(store, userAgent, client, ctx)
+	go setupVersionsOperationQueue(store, userAgent, client, ctx)
 	setupCapQueryQueue(store, userAgent, client, ctx)
 
 }

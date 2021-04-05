@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
+
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -273,7 +275,19 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		store.UpdateFHIREndpoint(ctx, endpt)
 	}
 
+	// Dispatch query for CapabilityStatement here
+	// Set up the queue for sending messages to capabilityquerier
+	mq := (*args)["capQueryQueue"].(lanternmq.MessageQueue)
+	channelID := (*args)["capQueryChannelID"].(lanternmq.ChannelID)
+	err = accessqueue.SendToQueue(ctx, url, &mq, &channelID, "endpoints-to-capability")
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func queryCapabilityStatmentsForEndpoint(url string) {
+
 }
 
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
@@ -308,11 +322,15 @@ func ReceiveVersionResponses(ctx context.Context,
 	store *postgresql.Store,
 	messageQueue lanternmq.MessageQueue,
 	channelID lanternmq.ChannelID,
-	qName string) error {
+	qName string,
+	capQueryQueue lanternmq.MessageQueue,
+	capQueryChannelID lanternmq.ChannelID) error {
 
 	args := make(map[string]interface{})
 	args["store"] = store
 	args["ctx"] = ctx
+	args["capQueryQueue"] = capQueryQueue
+	args["capQueryChannelID"] = capQueryChannelID
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {

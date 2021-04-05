@@ -15,6 +15,35 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
+func setupCapStatReception(ctx context.Context, store *postgresql.Store ){
+	// Set up the queue for sending messages
+	qName := viper.GetString("capquery_qname")
+	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
+	helpers.FailOnError("", err)
+	log.Info("Successfully connected to Capability Statemsnts Queue!")
+	defer messageQueue.Close()
+
+	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, messageQueue, channelID, qName)
+	helpers.FailOnError("", err)
+}
+
+func setupVersionsReception(ctx context.Context, store *postgresql.Store ){
+	// Set up the queue for sending messages
+	qName := viper.GetString("versionsquery_response_qname")
+	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
+	helpers.FailOnError("", err)
+	log.Info("Successfully connected to Versions Response Queue!")
+	defer messageQueue.Close()
+
+	capQueryQueue, capQueryChannelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), "endpoints-to-capability")
+	helpers.FailOnError("", err)
+	log.Info("Successfully connected to capabilityquerier Queue!")
+	defer capQueryQueue.Close()
+
+	err = capabilityhandler.ReceiveVersionResponses(ctx, store, messageQueue, channelID, qName, capQueryQueue, capQueryChannelID)
+	helpers.FailOnError("", err)
+}
+
 func main() {
 	err := config.SetupConfig()
 	helpers.FailOnError("", err)
@@ -23,15 +52,9 @@ func main() {
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
-	// Set up the queue for sending messages
-	qName := viper.GetString("capquery_qname")
-	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
-	helpers.FailOnError("", err)
-	log.Info("Successfully connected to Queue!")
-	defer messageQueue.Close()
-
 	ctx := context.Background()
 
-	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, messageQueue, channelID, qName)
-	helpers.FailOnError("", err)
+	go setupVersionsReception(ctx, store)
+	setupCapStatReception(ctx, store)
+
 }
