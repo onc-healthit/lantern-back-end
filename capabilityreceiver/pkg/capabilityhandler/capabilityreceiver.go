@@ -265,6 +265,9 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	}
 
 	existingEndpts, err = store.GetFHIREndpointUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
 
 	for _, endpt := range existingEndpts {
 		// Only update if versions have changed
@@ -272,7 +275,10 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		// }
 		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
 		endpt.VersionsResponse = resp
-		store.UpdateFHIREndpoint(ctx, endpt)
+		err = store.UpdateFHIREndpoint(ctx, endpt)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Dispatch query for CapabilityStatement here
@@ -284,10 +290,6 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		return err
 	}
 	return nil
-}
-
-func queryCapabilityStatmentsForEndpoint(url string) {
-
 }
 
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
@@ -346,4 +348,3 @@ func ReceiveVersionResponses(ctx context.Context,
 
 	return nil
 }
-

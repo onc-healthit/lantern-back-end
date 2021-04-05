@@ -49,7 +49,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 		}
 		if len(versionsResponseJSON) == 0 {
 			endpoint.VersionsResponse = nil
-		}else{
+		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -94,7 +94,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 
 	if len(versionsResponseJSON) == 0 {
 		endpoint.VersionsResponse = nil
-	}else{
+	} else {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
 			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -138,7 +138,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 		}
 		if len(versionsResponseJSON) == 0 {
 			endpoint.VersionsResponse = nil
-		}else{
+		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -183,7 +183,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	}
 	if len(versionsResponseJSON) == 0 {
 		endpoint.VersionsResponse = nil
-	}else{
+	} else {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
 			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -227,7 +227,7 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 		}
 		if len(versionsResponseJSON) == 0 {
 			endpoint.VersionsResponse = nil
-		}else{
+		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -290,7 +290,7 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		if err != nil {
 			return err
 		}
-	}else{
+	} else {
 		versionsResponseJSON = []byte("null")
 	}
 

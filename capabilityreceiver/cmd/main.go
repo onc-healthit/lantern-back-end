@@ -15,7 +15,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-func setupCapStatReception(ctx context.Context, store *postgresql.Store ){
+func setupCapStatReception(ctx context.Context, store *postgresql.Store) {
 	// Set up the queue for sending messages
 	qName := viper.GetString("capquery_qname")
 	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
@@ -27,7 +27,7 @@ func setupCapStatReception(ctx context.Context, store *postgresql.Store ){
 	helpers.FailOnError("", err)
 }
 
-func setupVersionsReception(ctx context.Context, store *postgresql.Store ){
+func setupVersionsReception(ctx context.Context, store *postgresql.Store) {
 	// Set up the queue for sending messages
 	qName := viper.GetString("versionsquery_response_qname")
 	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
