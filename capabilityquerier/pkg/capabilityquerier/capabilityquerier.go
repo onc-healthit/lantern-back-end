@@ -55,9 +55,9 @@ type Message struct {
 	ResponseTime        float64     `json:"responseTime"`
 }
 type VersionsMessage struct {
-	URL                 string      `json:"url"`
-	Err                 string      `json:"err"`
-	VersionsResponse 	interface{}	`json:"versionsResponse"`
+	URL              string      `json:"url"`
+	Err              string      `json:"err"`
+	VersionsResponse interface{} `json:"versionsResponse"`
 }
 
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
@@ -71,7 +71,6 @@ type QuerierArgs struct {
 	UserAgent    string
 	Store        *postgresql.Store
 }
-
 
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
 	var jsonResponse interface{}
@@ -91,15 +90,18 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	time.Sleep(time.Duration(500 * time.Millisecond))
 	req, err := http.NewRequest("GET", versionsURL, nil)
 	if err != nil {
-		return errors.Wrap(err, "unable to create new GET request from URL: "+ versionsURL)
+		return errors.Wrap(err, "unable to create new GET request from URL: "+versionsURL)
 	}
 	req.Header.Set("User-Agent", qa.UserAgent)
 	trace := &httptrace.ClientTrace{}
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 	httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+	if err != nil {
+		return fmt.Errorf("Error requesting versions response: %s", err.Error())
+	}
 
 	message := VersionsMessage{
-		URL:       qa.FhirURL,
+		URL: qa.FhirURL,
 	}
 
 	if httpResponseCode == 200 && versionsResponse != nil {

@@ -33,7 +33,6 @@ type queryArgs struct {
 	mq          *lanternmq.MessageQueue
 	ch          *lanternmq.ChannelID
 	qName       string
-	capQName	string
 	userAgent   string
 	store       *postgresql.Store
 }
@@ -128,7 +127,7 @@ func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{
 	return nil
 }
 
-func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context){
+func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context) {
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
@@ -176,7 +175,7 @@ func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.
 	}
 }
 
-func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context){
+func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context) {
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
