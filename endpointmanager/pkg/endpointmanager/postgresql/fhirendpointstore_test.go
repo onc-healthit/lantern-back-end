@@ -24,10 +24,12 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Example Inc."},
 		NPIIDs:            []string{"1"},
-		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+		ListSource:        "https://github.com/cerner/ignite-endpoints",
+		VersionsResponse:	{default: "4.0", versions: ["4.0"]} }
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:               "other.example.com/FHIR/DSTU2/",
-		OrganizationNames: []string{"Other Example Inc."}}
+		OrganizationNames: []string{"Other Example Inc."},
+		VersionsResponse: nil}
 
 	// add endpoints
 
