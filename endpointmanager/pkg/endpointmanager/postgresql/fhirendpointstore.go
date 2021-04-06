@@ -47,9 +47,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 		if err != nil {
 			return nil, err
 		}
-		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse.Response = nil
-		} else {
+		if versionsResponseJSON != nil {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -92,9 +90,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 		return nil, err
 	}
 
-	if len(versionsResponseJSON) == 0 {
-		endpoint.VersionsResponse.Response = nil
-	} else {
+	if versionsResponseJSON != nil {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
 			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -136,9 +132,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 		if err != nil {
 			return nil, err
 		}
-		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse.Response = nil
-		} else {
+		if versionsResponseJSON != nil {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -181,9 +175,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	if err != nil {
 		return nil, err
 	}
-	if len(versionsResponseJSON) == 0 {
-		endpoint.VersionsResponse.Response = nil
-	} else {
+	if versionsResponseJSON != nil {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
 			return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
@@ -225,9 +217,7 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 		if err != nil {
 			return nil, err
 		}
-		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse.Response = nil
-		} else {
+		if versionsResponseJSON != nil {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
 				return nil, errors.Wrap(err, "error unmarshalling JSON versions response")
