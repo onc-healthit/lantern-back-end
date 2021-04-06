@@ -74,14 +74,6 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("export_numworkers")
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("export_duration")
-	if err != nil {
-		return err
-	}
 
 	// Info History Pruning
 	err = viper.BindEnv("pruning_threshold") // in minutes
@@ -105,8 +97,6 @@ func SetupConfig() error {
 	viper.SetDefault("dbsslmode", "disable")
 
 	viper.SetDefault("exportfile_wait", 300)
-	viper.SetDefault("export_numworkers", 25)
-	viper.SetDefault("export_duration", 240)
 
 	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
 

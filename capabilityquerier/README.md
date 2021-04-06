@@ -31,9 +31,33 @@ The capability querier reads the following environment variables:
 
   Default value: 10
 
-* **LANTERN_CAPQUERY_QRYINTVL**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
+* **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
 
-  Default value: 1380 (23 hours)
+  Default value: endpoints-to-capability
+
+* **LANTERN_DBHOST**: The hostname where the database is hosted.
+
+  Default value: localhost
+
+* **LANTERN_DBPORT**: The port where the database is hosted.
+
+  Default value: 5432
+
+* **LANTERN_DBUSER**: The database user that the application will use to read and write from the database.
+
+  Default value: lantern
+
+* **LANTERN_DBPASSWORD**: The password for accessing the database as user LANTERN_DBUSER.
+
+  Default value: postgrespassword
+
+* **LANTERN_DBNAME**: The name of the database being accessed.
+
+  Default value: lantern
+
+* **LANTERN_DBSSLMODE**: The level of SSL certificate verification that is performed. For a production system, this should be set to 'verify-full'.
+
+  Default value: disable
 
 * **LANTERN_EXPORTFILE_WAIT**: The length of time between getting the final endpoints off of the queue and creating the JSON export file of data. This is in seconds.
 
@@ -59,9 +83,21 @@ When testing, the capability querier uses the following environment variables:
 
   Default value: test-queue
 
-* **LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME** instead of LANTERN_ENDPTINFO_CAPQUERY_QNAME: The name of the queue being accessed.
+* **LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME** instead of LANTERN_ENDPTINFO_CAPQUERY_QNAME: The name of the queue used by the endpointmanager and the capabilityquerier.
 
   Default value: test-endpoints-to-capability
+
+* **LANTERN_TEST_DBUSER** instead of LANTERN_DBUSER: The database user that the application will use to read and write from the database.
+
+  Default value: lantern
+
+* **LANTERN_TEST_DBPASSWORD** instead of LANTERN_DBPASSWORD: The password for accessing the database as user LANTERN_TEST_DBUSER.
+
+  Default value: postgrespassword
+
+* **LANTERN_TEST_DBNAME** instead of LANTERN_DBNAME: The name of the database being accessed.
+
+  Default value: lantern_test
 
 ## Building and Running
 
