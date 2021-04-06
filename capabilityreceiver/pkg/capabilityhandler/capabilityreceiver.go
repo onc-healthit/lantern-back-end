@@ -274,7 +274,7 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		// if msgJSON["versionsResponse"] != endpt.VersionsResponse {
 		// }
 		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
-		endpt.VersionsResponse = resp
+		endpt.VersionsResponse.Response = resp
 		err = store.UpdateFHIREndpoint(ctx, endpt)
 		if err != nil {
 			return err
