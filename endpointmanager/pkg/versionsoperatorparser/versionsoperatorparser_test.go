@@ -7,7 +7,6 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
-
 func Test_Equal(t *testing.T) {
 	var vr1 VersionsResponse
 	var vr2 VersionsResponse
@@ -22,8 +21,7 @@ func Test_Equal(t *testing.T) {
 	th.Assert(t, equal, "expected equality nil to nil to be true")
 
 	// test one nil, other not
-	var resp map[string]interface{}
-	resp = make(map[string]interface{})
+	var resp map[string]interface{} = make(map[string]interface{})
 	resp["versions"] = "[\"4.0\"]"
 	resp["default"] = "4.0"
 	vr2 = VersionsResponse{Response: resp}
@@ -31,8 +29,7 @@ func Test_Equal(t *testing.T) {
 	th.Assert(t, !equal, "expected equality nil to not nil to be false")
 
 	// test two same non-nil
-	var resp1 map[string]interface{}
-	resp1 = make(map[string]interface{})
+	var resp1 map[string]interface{} = make(map[string]interface{})
 	resp1["versions"] = "[\"4.0\"]"
 	resp1["default"] = "4.0"
 	vr1 = VersionsResponse{Response: resp1}
@@ -52,8 +49,7 @@ func Test_GetDefaultVersion(t *testing.T) {
 
 	var equal bool
 
-	var resp map[string]interface{}
-	resp = make(map[string]interface{})
+	var resp map[string]interface{} = make(map[string]interface{})
 	resp["versions"] = "[\"1.0\"]"
 	resp["default"] = "4.0"
 	vr1 = VersionsResponse{Response: resp}
@@ -75,8 +71,7 @@ func Test_GetSupportedVersions(t *testing.T) {
 
 	var equal bool
 
-	var resp map[string]interface{}
-	resp = make(map[string]interface{})
+	var resp map[string]interface{} = make(map[string]interface{})
 	resp["versions"] = []string{"4.0"}
 	resp["default"] = "4.0"
 	vr1 = VersionsResponse{Response: resp}
