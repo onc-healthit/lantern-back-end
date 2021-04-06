@@ -48,7 +48,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 			return nil, err
 		}
 		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse = nil
+			endpoint.VersionsResponse.Response = nil
 		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
@@ -93,7 +93,7 @@ func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.F
 	}
 
 	if len(versionsResponseJSON) == 0 {
-		endpoint.VersionsResponse = nil
+		endpoint.VersionsResponse.Response = nil
 	} else {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
@@ -137,7 +137,7 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 			return nil, err
 		}
 		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse = nil
+			endpoint.VersionsResponse.Response = nil
 		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
@@ -182,7 +182,7 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 		return nil, err
 	}
 	if len(versionsResponseJSON) == 0 {
-		endpoint.VersionsResponse = nil
+		endpoint.VersionsResponse.Response = nil
 	} else {
 		err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 		if err != nil {
@@ -226,7 +226,7 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 			return nil, err
 		}
 		if len(versionsResponseJSON) == 0 {
-			endpoint.VersionsResponse = nil
+			endpoint.VersionsResponse.Response = nil
 		} else {
 			err = json.Unmarshal(versionsResponseJSON, &endpoint.VersionsResponse)
 			if err != nil {
@@ -285,8 +285,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	var err error
 	var versionsResponseJSON []byte
 
-	if e.VersionsResponse != nil {
-		versionsResponseJSON, err = json.Marshal(e.VersionsResponse)
+	if e.VersionsResponse.Response != nil {
+		versionsResponseJSON, err = e.VersionsResponse.GetJSON()
 		if err != nil {
 			return err
 		}
