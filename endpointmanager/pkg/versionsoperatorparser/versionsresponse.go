@@ -32,7 +32,7 @@ func (vr1 *VersionsResponse) Equal(vr2 VersionsResponse) bool {
 
 // GetJSON returns the JSON representation of the versions response
 func (vr *VersionsResponse) GetJSON() ([]byte, error) {
-	return json.Marshal(vr.Response)
+	return json.Marshal(vr)
 }
 
 // GetDefaultVersion gets the default FHIR version out of the versions response
