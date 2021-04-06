@@ -337,6 +337,8 @@ CREATE INDEX implementation_guide_idx ON fhir_endpoints_info ((capability_statem
 CREATE INDEX field_idx ON fhir_endpoints_info ((included_fields->> 'Field'));
 CREATE INDEX exists_idx ON fhir_endpoints_info ((included_fields->> 'Exists'));
 CREATE INDEX extension_idx ON fhir_endpoints_info ((included_fields->> 'Extension'));
+CREATE INDEX operation_idx ON fhir_endpoints_info ((operation_resource->> 'operation'));
+CREATE INDEX resource_idx ON fhir_endpoints_info ((operation_resource->> 'resource'));
 
 CREATE INDEX resource_type_idx ON fhir_endpoints_info (((capability_statement::json#>'{rest,0,resource}') ->> 'type'));
 
