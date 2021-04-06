@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -24,12 +25,11 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Example Inc."},
 		NPIIDs:            []string{"1"},
-		ListSource:        "https://github.com/cerner/ignite-endpoints",
-		VersionsResponse:	{default: "4.0", versions: ["4.0"]} }
+		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:               "other.example.com/FHIR/DSTU2/",
-		OrganizationNames: []string{"Other Example Inc."},
-		VersionsResponse: nil}
+		OrganizationNames: []string{"Other Example Inc."}}
 
 	// add endpoints
 
@@ -62,8 +62,13 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 
 	// update endpoint
-
 	e1.ListSource = "Unknown"
+
+	var vsr versionsoperatorparser.VersionsResponse
+	vsr.Response = make(map[string]interface{})
+	vsr.Response["default"] = "4.0"
+	vsr.Response["versions"] = []string{"4.0"}
+	e1.VersionsResponse = vsr
 
 	err = store.UpdateFHIREndpoint(ctx, e1)
 	if err != nil {
