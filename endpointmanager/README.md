@@ -55,6 +55,34 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: disable
 
+* **LANTERN_QHOST**: The hostname where the queue is hosted.
+
+  Default value: localhost
+
+* **LANTERN_QPORT**: The port where the queue is hosted.
+
+  Default value: 5672
+
+* **LANTERN_QUSER**: The user that the application will use to read and write from the queue.
+
+  Default value: capabilityquerier
+
+* **LANTERN_QPASSWORD**: The password for accessing the database as user LANTERN_QUSER.
+
+  Default value: capabilityquerier
+
+* **LANTERN_CAPQUERY_QNAME**: The name of the queue being accessed.
+
+  Default value: capability-statements
+
+* **LANTERN_CAPQUERY_NUMWORKERS**: The number of workers to use to parallelize processing of the capability statements.
+
+  Default value: 10
+
+* **LANTERN_CAPQUERY_QRYINTVL**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
+
+  Default value: 1380 (23 hours)
+
 * **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
 
   Default value: endpoints-to-capability
@@ -145,17 +173,6 @@ cd endpointmanager/cmd
 go run main.go
 ```
 
-### Capability Receiver
-
-Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/capabilityreceiver
-go run main.go
-```
-
 The commands below assume that you are starting in the root directory of the Lantern backend project.
 
 ### CHPL Querier
@@ -184,9 +201,9 @@ cd endpointmanager/cmd/endpointpopulator
 go run main.go <path to endpoint json file>
 ```
 
-### NPPES Populator
+### NPPES Org Populator
 
-Reads in a CSV file of NPPES data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
+Reads in a CSV file of NPPES organization data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
 
 Primarily uses the `nppesquerier` package.
 
@@ -195,7 +212,102 @@ To run, perform the following commands:
 
 ```bash
 cd endpointmanager/cmd/nppesorgpopulator
-go run main.go <path to nppes csv file>
+go run main.go <path to nppes org csv file>
+```
+
+### NPPES Contact Populator
+
+Reads in a CSV file of NPPES contact (endpoint) data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
+
+Primarily uses the `nppesquerier` package.
+
+To run, perform the following commands:
+
+
+```bash
+cd endpointmanager/cmd/nppescontactpopulator
+go run main.go <path to nppes contact csv file>
+```
+
+### Endpoint Linker
+
+Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
+
+Primarily uses the `endpointlinker` package.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointlinker 
+go run main.go
+```
+
+Or to run with printed linker results and information:
+```bash
+cd endpointmanager/cmd/endpointlinker
+go run main.go --verbose
+```
+
+### Send Endpoints
+Gets current list of endpoints sends each one to the capabilityquerier queue. It continues to repeat this action every time the query interval period has passed.
+
+Primarily uses the `sendendpoints` package.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/sendendpoints 
+go run main.go
+```
+
+### Endpoint Exporter
+Copies the entire contents of endpoint_export view into a csv which will be written to /tmp.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointexporter 
+go run main.go
+```
+
+### Data Validation
+Checks if the number of endpoints in the fhir_endpoints table is greater than what could be queried in the query interval and displays a warning if it is.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/datavalidation 
+go run main.go
+```
+
+### JSON Exporter
+Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
+
+Primarily uses the `jsonexport` package.
+
+```bash
+cd endpointmanager/cmd/jsonexport 
+go run main.go <export JSON file name>
+```
+
+### History Pruning
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environmental variable.
+
+Primarily uses the `historypruning` package.
+
+```bash
+cd endpointmanager/cmd/historypruning 
+go run main.go <export JSON file name>
+```
+
+### Archive File
+Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables between the given dates in a JSON format and saves it to the given 'file' name.
+
+Primarily uses the `archivefile` package.
+
+```bash
+cd endpointmanager/cmd/archivefile
+go run main.go <start date> <end date> <file name>
 ```
 
 ### Expected Endpoint Source Formatting

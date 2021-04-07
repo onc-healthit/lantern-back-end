@@ -63,7 +63,7 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("enptinfo_capquery_qname")
+	err = viper.BindEnv("endptinfo_capquery_qname")
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func SetupConfig() error {
 	viper.SetDefault("qhost", "localhost")
 	viper.SetDefault("qport", "5672")
 	viper.SetDefault("capquery_qname", "capability-statements")
-	viper.SetDefault("enptinfo_capquery_qname", "endpoints-to-capability")
+	viper.SetDefault("endptinfo_capquery_qname", "endpoints-to-capability")
 	viper.SetDefault("capquery_qryintvl", 1380) // 1380 minutes -> 23 hours.
 
 	viper.SetDefault("pruning_threshold", 43800) // 43800 minutes -> 1 month.
