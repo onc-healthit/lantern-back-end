@@ -247,6 +247,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 		for _, npiID := range e.NPIIDs {
 			existingEndpt.AddNPIID(npiID)
 		}
+		existingEndpt.VersionsResponse = e.VersionsResponse
 		err = s.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
