@@ -74,45 +74,48 @@ type QuerierArgs struct {
 
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
 	var jsonResponse interface{}
-	var versionsResponse []byte
 
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
-	}
-	// Cast string url to type url then cast back to string to ensure url string in correct url format
-	castURL, err := url.Parse(qa.FhirURL)
-	if err != nil {
-		return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
-	}
-	versionsURL := endpointmanager.NormalizeVersionsURL(castURL.String())
-	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
-	time.Sleep(time.Duration(500 * time.Millisecond))
-	req, err := http.NewRequest("GET", versionsURL, nil)
-	if err != nil {
-		return errors.Wrap(err, "unable to create new GET request from URL: "+versionsURL)
-	}
-	req.Header.Set("User-Agent", qa.UserAgent)
-	trace := &httptrace.ClientTrace{}
-	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
-	httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
-	if err != nil {
-		return fmt.Errorf("Error requesting versions response: %s", err.Error())
 	}
 
 	message := VersionsMessage{
 		URL: qa.FhirURL,
 	}
 
-	if httpResponseCode == 200 && versionsResponse != nil {
-		err = json.Unmarshal(versionsResponse, &(jsonResponse))
+	// If Finished message, pass on to capability query queue
+	if qa.FhirURL != "FINISHED" {
+		// Cast string url to type url then cast back to string to ensure url string in correct url format
+		castURL, err := url.Parse(qa.FhirURL)
 		if err != nil {
-			return err
+			return fmt.Errorf("endpoint URL parsing error: %s", err.Error())
 		}
+		versionsURL := endpointmanager.NormalizeVersionsURL(castURL.String())
+		// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
+		time.Sleep(time.Duration(500 * time.Millisecond))
+		req, err := http.NewRequest("GET", versionsURL, nil)
+		if err != nil {
+			return errors.Wrap(err, "unable to create new GET request from URL: "+versionsURL)
+		}
+		req.Header.Set("User-Agent", qa.UserAgent)
+		trace := &httptrace.ClientTrace{}
+		req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
+
+		httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+		if err != nil {
+			return fmt.Errorf("Error requesting versions response: %s", err.Error())
+		}
+
+		if httpResponseCode == 200 && versionsResponse != nil {
+			err = json.Unmarshal(versionsResponse, &(jsonResponse))
+			if err != nil {
+				return err
+			}
+		}
+
+		message.VersionsResponse = jsonResponse
 	}
-
-	message.VersionsResponse = jsonResponse
-
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
 		return errors.Wrapf(err, "error marshalling json message for request to %s", qa.FhirURL)
