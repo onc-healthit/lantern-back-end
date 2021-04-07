@@ -1,7 +1,6 @@
 package endpointmanager
 
 import (
-	"sort"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -85,8 +84,10 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	// If the two endpoints have the same values in a different order, the Equal
 	// function will return false, so the resources need to be sorted for the Equal
 	// function to work as expected
-	sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
-	return cmp.Equal(sortedE1, sortedE2)
+	// @TODO Come back to this
+	// sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
+	// return cmp.Equal(sortedE1, sortedE2)
+	return true
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -166,26 +167,27 @@ const (
 	SearchParamsRule    RuleOption = "searchParamsRule"
 )
 
+// @TODO Come back to this
 // Sort by Resource, if there are multiple of the same resource, then
 // sort by Operation
-func sortOperations(e1 []OperationAndResource, e2 []OperationAndResource) ([]OperationAndResource, []OperationAndResource) {
-	sort.Slice(e1, func(i, j int) bool {
-		if e1[i].Resource < e1[j].Resource {
-			return true
-		}
-		if e1[i].Resource > e1[j].Resource {
-			return false
-		}
-		return e1[i].Operation < e1[j].Operation
-	})
-	sort.Slice(e2, func(i, j int) bool {
-		if e2[i].Resource < e2[j].Resource {
-			return true
-		}
-		if e2[i].Resource > e2[j].Resource {
-			return false
-		}
-		return e2[i].Operation < e2[j].Operation
-	})
-	return e1, e2
-}
+// func sortOperations(e1 []OperationAndResource, e2 []OperationAndResource) ([]OperationAndResource, []OperationAndResource) {
+// 	sort.Slice(e1, func(i, j int) bool {
+// 		if e1[i].Resource < e1[j].Resource {
+// 			return true
+// 		}
+// 		if e1[i].Resource > e1[j].Resource {
+// 			return false
+// 		}
+// 		return e1[i].Operation < e1[j].Operation
+// 	})
+// 	sort.Slice(e2, func(i, j int) bool {
+// 		if e2[i].Resource < e2[j].Resource {
+// 			return true
+// 		}
+// 		if e2[i].Resource > e2[j].Resource {
+// 			return false
+// 		}
+// 		return e2[i].Operation < e2[j].Operation
+// 	})
+// 	return e1, e2
+// }
