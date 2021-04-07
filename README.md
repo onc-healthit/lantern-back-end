@@ -21,7 +21,6 @@ To run Lantern, several environment variables need to be set. These are defined 
   * [Endpoint Manager](endpointmanager/README.md)
   * [Capability Querier](capabilityquerier/README.md)
   * [Capability Receiver](capabilityreceiver/README.md)
-  * [Lantern Message Queue](lanternmq/README.md)
 
 ## Clean your environment
 
