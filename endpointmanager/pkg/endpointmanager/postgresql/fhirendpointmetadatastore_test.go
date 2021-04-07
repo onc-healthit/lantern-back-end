@@ -48,17 +48,21 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
-		URL:                 "example.com/FHIR/DSTU2/",
-		TLSVersion:          "TLS 1.1",
-		MIMETypes:           []string{"application/json+fhir"},
-		CapabilityStatement: cs,
-		SMARTResponse:       nil,
-		Metadata:            endpointMetadata1}
+		URL:                   "example.com/FHIR/DSTU2/",
+		TLSVersion:            "TLS 1.1",
+		MIMETypes:             []string{"application/json+fhir"},
+		CapabilityStatement:   cs,
+		RequestedFhirVersion:  "",
+		CapabilityFhirVersion: "1.0.2",
+		SMARTResponse:         nil,
+		Metadata:              endpointMetadata1}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
-		URL:        "other.example.com/FHIR/DSTU2/",
-		TLSVersion: "TLS 1.2",
-		MIMETypes:  []string{"application/fhir+json"},
-		Metadata:   endpointMetadata2}
+		URL:                   "other.example.com/FHIR/DSTU2/",
+		TLSVersion:            "TLS 1.2",
+		RequestedFhirVersion:  "",
+		CapabilityFhirVersion: "",
+		MIMETypes:             []string{"application/fhir+json"},
+		Metadata:              endpointMetadata2}
 
 	// add endpointMetadata
 
@@ -111,7 +115,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 
 	// retrieve endpointInfos
 
-	e1, err := store.GetFHIREndpointInfoUsingURL(ctx, endpointInfo1.URL)
+	e1, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpointInfo1.URL, endpointInfo1.RequestedFhirVersion)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -119,7 +123,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
 
-	e2, err := store.GetFHIREndpointInfoUsingURL(ctx, endpointInfo2.URL)
+	e2, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpointInfo2.URL, endpointInfo2.RequestedFhirVersion)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -154,12 +158,12 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}
 
-	err = store.UpdateMetadataIDInfo(ctx, metadataID1, endpointInfo1.URL)
+	err = store.UpdateMetadataIDInfo(ctx, metadataID1, endpointInfo1.ID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo metadata ID: %s", err.Error())
 	}
 
-	e1, err = store.GetFHIREndpointInfoUsingURL(ctx, endpointInfo1.URL)
+	e1, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpointInfo1.URL, endpointInfo1.RequestedFhirVersion)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}
@@ -168,7 +172,6 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	}
 
 	// check history table
-
 	var count int
 
 	// check insertions
@@ -233,7 +236,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}
 
-	e1, err = store.GetFHIREndpointInfoUsingURL(ctx, endpointInfo1.URL)
+	e1, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpointInfo1.URL, endpointInfo1.RequestedFhirVersion)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfo: %s", err.Error())
 	}

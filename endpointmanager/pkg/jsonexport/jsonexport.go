@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	log "github.com/sirupsen/logrus"
@@ -152,25 +151,6 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	return finalFormatJSON, err
 }
 
-// Get the FHIR Version from the capability statement
-func getFHIRVersion(capStat []byte) string {
-	// Get the FHIR Version from the capability statement
-	if capStat != nil {
-		formatCapStat, err := capabilityparser.NewCapabilityStatement(capStat)
-		if err != nil {
-			return ""
-		}
-		if formatCapStat != nil {
-			fhirVersion, err := formatCapStat.GetFHIRVersion()
-			if err != nil {
-				return ""
-			}
-			return fhirVersion
-		}
-	}
-	return ""
-}
-
 // Format the SMART Response into JSON
 func getSMARTResponse(smartRsp []byte) map[string]interface{} {
 	var defaultInt map[string]interface{}
@@ -256,7 +236,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	selectHistory := `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
-		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at
+		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1;`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
@@ -289,7 +269,8 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			&opRes,
 			&op.SMARTHTTPResponse,
 			&smartRsp,
-			&op.UpdatedAt)
+			&op.UpdatedAt,
+			&op.FHIRVersion)
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
 			result := Result{
@@ -300,7 +281,6 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			return nil
 		}
 
-		op.FHIRVersion = getFHIRVersion(capStat)
 		op.SMARTResponse = getSMARTResponse(smartRsp)
 		op.SupportedResources = getSupportedResources(opRes)
 

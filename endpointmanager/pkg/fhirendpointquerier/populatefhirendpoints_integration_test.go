@@ -383,7 +383,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")
 	// Test that endpoint is not removed from fhir_endpoints_info because it still exist in
 	// fhir_endpoints but from different listsource
-	FHIREndpointInfo, err := store.GetFHIREndpointInfoUsingURL(ctx, endpt2.URL)
+	FHIREndpointInfo, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpt2.URL, "")
 	th.Assert(t, err == nil, "Expected endpoint to still persist in fhir_endpoints_info")
 	// Test that endpoint is not removed from fhir_endpoints_metadata because it still exist in
 	// fhir_endpoints but from different listsource
