@@ -27,7 +27,7 @@ type FHIREndpointInfo struct {
 	UpdatedAt           time.Time
 	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
-	OperationResource   []OperationAndResource
+	OperationResource   map[string][]string
 	Metadata            *FHIREndpointMetadata
 }
 
@@ -119,10 +119,11 @@ type IncludedField struct {
 	Extension bool
 }
 
-type OperationAndResource struct {
-	Operation string `json:"operation"`
-	Resource  string `json:"resource"`
-}
+// @TODO Remove?
+// type OperationAndResource struct {
+// 	Operation string `json:"operation"`
+// 	Resource  string `json:"resource"`
+// }
 
 // Validation holds all of the errors and warnings from running the validation checks
 // it is saved in JSON format to the fhir_endpoints_info database table
