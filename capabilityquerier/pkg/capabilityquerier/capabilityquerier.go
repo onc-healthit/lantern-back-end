@@ -72,6 +72,8 @@ type QuerierArgs struct {
 	Store        *postgresql.Store
 }
 
+// GetAndSendVersionsResponse gets a $versions response from a FHIR API endpoint and then puts the versions
+// response and accompanying data on a receiving queue.
 func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{}) error {
 	var jsonResponse interface{}
 
