@@ -168,10 +168,22 @@ func SetupConfigForTests() error {
 		return err
 	}
 
+	// Version Response Queue Setup
+	err = viper.BindEnv("versionsquery_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("versionsquery_response_qname")
+	if err != nil {
+		return err
+	}
+
 	viper.SetDefault("quser", "capabilityquerier")
 	viper.SetDefault("qpassword", "capabilityquerier")
 	viper.SetDefault("qname", "test-queue")
 	viper.SetDefault("endptinfo_capquery_qname", "test-endpoints-to-capability")
+	viper.SetDefault("versionsquery_qname", "test-version-responses")
+	viper.SetDefault("versionsquery_response_qname", "test-endpoints-to-version-responses")
 
 	if prevQName == viper.GetString("qname") {
 		panic("Test queue and dev/prod queue must be different. Test queue: " + viper.GetString("qname") + ". Prod/Dev queue: " + prevQName)
