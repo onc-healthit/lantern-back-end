@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
