@@ -291,13 +291,13 @@ go run main.go <export JSON file name>
 ```
 
 ### History Pruning
-Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environmental variable.
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environment variable.
 
 Primarily uses the `historypruning` package.
 
 ```bash
 cd endpointmanager/cmd/historypruning 
-go run main.go <export JSON file name>
+go run main.go
 ```
 
 ### Archive File
