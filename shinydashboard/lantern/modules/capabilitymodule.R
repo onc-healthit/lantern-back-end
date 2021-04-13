@@ -39,7 +39,27 @@ capabilitymodule <- function(
   ns <- session$ns
 
   select_operations <- reactive({
-    res <- isolate(app_data$endpoint_resource_by_op())
+    if (length(sel_operations()) >= 1) {
+      # get the selected operation
+      first_elem <- sel_operations()[1]
+      res <- get_fhir_resource_by_op(db_connection, first_elem)
+      # get the data for each selected operation and then bind them together
+      # in one data frame
+      loopList <- isolate(as.list(sel_operations()))
+      count <- 0
+      for (op in loopList) {
+        if (count != 0) {
+          item <- get_fhir_resource_by_op(db_connection, op)
+          res <- rbind(res, item)
+        }
+        count <- count + 1
+      }
+    } else {
+       # If no operation is selected, then just get the resource list since it's
+      # too complicated to get it with the operation_resource field
+      res <- isolate(app_data$endpoint_resource_types())
+    }
+
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     # Filter data by selected FHIR version
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
@@ -49,40 +69,48 @@ capabilitymodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    # Then filter by the current resources selected
-    if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
-      res <- res %>% filter(resource %in% sel_resources())
-    }
-    # Filter by the current operations selected, then group by and count the resource
-    # per endpoint. If the count of the resource is equal to the number of selected
-    # operations, then the resource exists for all operations and we keep that resource
-    # Then group by and count all resources left
-    if (length(sel_operations()) > 0) {
+    if (length(sel_operations()) >= 1) {
+      # e.g. type is a string, it equals ["Allergy", "Binary", etc.]
+      # The type array is formatted as a string, so remove the []
+      # then split the string by `, `
+      # then remove the " " around each element in the array
       res <- res %>%
-        filter(operation %in% sel_operations()) %>%
-        group_by(endpoint_id, fhir_version, resource) %>%
+        mutate(type = str_sub(type, 2, -2)) %>%
+        separate_rows(type, sep = ", ") %>%
+        mutate(type = str_sub(type, 2, -2))
+      # Then filter by the current resources selected
+      if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
+        res <- res %>% filter(type %in% sel_resources())
+      }
+
+      # Filter by the current operations selected, then group by and count the resource
+      # per endpoint. If the count of the resource is equal to the number of selected
+      # operations, then the resource exists for all operations and we keep that resource
+      # Then group by and count all resources left
+      res <- res %>%
+        group_by(endpoint_id, fhir_version, type) %>%
         count() %>%
         filter(n == length(sel_operations())) %>%
         ungroup() %>%
         select(-n) %>%
-        group_by(resource, fhir_version) %>%
+        group_by(type, fhir_version) %>%
         count()
     } else {
-      res <- res %>%
-        group_by(endpoint_id, fhir_version, resource) %>%
-        count() %>%
-        ungroup() %>%
-        select(-n) %>%
-        group_by(resource, fhir_version) %>%
+      # Then filter by the current resources selected
+      if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
+        res <- res %>% filter(type %in% sel_resources())
+      }
+        res <- res %>% group_by(type, fhir_version) %>%
         count()
     }
+
     res
   })
 
   select_table_format <- reactive({
     op_table <- select_operations()
-    if ("resource" %in% colnames(op_table)) {
-      op_table <- op_table %>% rename("Endpoints" = n, "Resource" = resource, "FHIR Version" = fhir_version)
+    if ("type" %in% colnames(op_table)) {
+      op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
   })
@@ -93,7 +121,7 @@ capabilitymodule <- function(
 
   select_operations_count <- reactive({
     select_operations() %>%
-    rename("Endpoints" = n, "Resource" = resource)
+    rename("Endpoints" = n, "Resource" = type)
   })
 
   implementation_count <- reactive({

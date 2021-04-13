@@ -55,7 +55,6 @@ app_data <<- list(
   http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
   vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
-  endpoint_resource_by_op = reactiveVal(NULL),     # Resource types from capability statement by endpoint and operation
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
   capstat_fields_list = reactiveVal(NULL),         # the list of fields we keep track of in a capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement

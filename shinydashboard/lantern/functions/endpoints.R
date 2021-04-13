@@ -141,19 +141,18 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Return list of a resource and an operation implemented by that resource by
+# Return list of resources for the given operation field by
 # endpoint_id, vendor and fhir_version
-get_fhir_resource_by_op <- function(db_connection) {
+get_fhir_resource_by_op <- function(db_connection, field) {
   res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
+    sql(paste0("SELECT f.id as endpoint_id,
       vendor_id,
       vendors.name as vendor_name,
       capability_statement->>'fhirVersion' as fhir_version,
-      json_array_elements(operation_resource::json) ->> 'operation' as operation,
-      json_array_elements(operation_resource::json) ->> 'resource' as resource
+      operation_resource->>'", field, "' as type
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE operation_resource != 'null'")) %>%
+      WHERE operation_resource != 'null'"))) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
@@ -479,8 +478,6 @@ database_fetcher <- reactive({
   app_data$vendor_count_tbl(get_fhir_version_vendor_count(endpoint_export_tbl))
 
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
-
-  app_data$endpoint_resource_by_op(get_fhir_resource_by_op(db_connection))
 
   app_data$capstat_fields(get_capstat_fields(db_connection))
 
