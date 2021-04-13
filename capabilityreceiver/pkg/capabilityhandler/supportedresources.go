@@ -1,26 +1,29 @@
 package capabilityhandler
 
-import "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
-
 // RunSupportedResourcesChecks takes the given capability statement and creates an array
 // of the resources and their specified operations in OperationAndResource format. Example:
 // [ { Resource: "AllergyInformation", Operation: "read" },
 //   { Resource: "AllergyInforamtion", Operation: "search-type" },
 //   { Resource: "Medication": Operation: "read" }, ...]
-func RunSupportedResourcesChecks(capInt map[string]interface{}) []endpointmanager.OperationAndResource {
-	var opAndRes []endpointmanager.OperationAndResource
+// @TODO go through commented out stuff
+func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]string {
+	// var opAndRes []endpointmanager.OperationAndResource
+	var mapOpToResList = make(map[string][]string)
 	if capInt == nil {
-		return opAndRes
+		// return opAndRes
+		return mapOpToResList
 	}
 
 	// Get the resource field from the Capability Statement, which is a list of resources
 	if capInt["rest"] == nil {
-		return opAndRes
+		// return opAndRes
+		return mapOpToResList
 	}
 	restArr := capInt["rest"].([]interface{})
 	restInt := restArr[0].(map[string]interface{})
 	if restInt["resource"] == nil {
-		return opAndRes
+		// return opAndRes
+		return mapOpToResList
 	}
 	resourceArr := restInt["resource"].([]interface{})
 
@@ -54,22 +57,33 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) []endpointmanage
 					continue
 				}
 				hasCodes = true
-				item := endpointmanager.OperationAndResource{
-					Operation: code,
-					Resource:  resourceType,
+				// item := endpointmanager.OperationAndResource{
+				// 	Operation: code,
+				// 	Resource:  resourceType,
+				// }
+				// opAndRes = append(opAndRes, item)
+				if mapOpToResList[code] == nil {
+					mapOpToResList[code] = []string{resourceType}
+				} else {
+					mapOpToResList[code] = append(mapOpToResList[code], resourceType)
 				}
-				opAndRes = append(opAndRes, item)
 			}
 		}
 		// If the interaction field was not specified or it has no valid operations
 		if notSpec || !hasCodes {
-			item := endpointmanager.OperationAndResource{
-				Operation: "not specified",
-				Resource:  resourceType,
+			// item := endpointmanager.OperationAndResource{
+			// 	Operation: "not specified",
+			// 	Resource:  resourceType,
+			// }
+			// opAndRes = append(opAndRes, item)
+			if mapOpToResList["not specified"] == nil {
+				mapOpToResList["not specified"] = []string{resourceType}
+			} else {
+				mapOpToResList["not specified"] = append(mapOpToResList["not specified"], resourceType)
 			}
-			opAndRes = append(opAndRes, item)
 		}
 	}
 
-	return opAndRes
+	// return opAndRes
+	return mapOpToResList
 }

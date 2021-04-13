@@ -740,6 +740,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[56].Field == "conformance-prohibited", fmt.Sprintf("Expected field to be conformance-prohibited extension, was %s", includedFields[56].Field))
 }
 
+// @TODO Update
 func Test_RunSupportedResourcesChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
