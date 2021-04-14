@@ -31,9 +31,25 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: disable
 
-* **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
+* **LANTERN_QHOST**: The hostname where the queue is hosted.
 
-  Default value: endpoints-to-capability
+  Default value: localhost
+
+* **LANTERN_QPORT**: The port where the queue is hosted.
+
+  Default value: 5672
+
+* **LANTERN_QUSER**: The user that the application will use to read and write from the queue.
+
+  Default value: capabilityquerier
+
+* **LANTERN_QPASSWORD**: The password for accessing the database as user LANTERN_QUSER.
+
+  Default value: capabilityquerier
+
+* **LANTERN_CAPQUERY_QNAME**: The name of the queue being accessed.
+
+  Default value: capability-statements
 
 ### Test Configuration
 
