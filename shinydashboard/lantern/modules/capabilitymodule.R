@@ -42,14 +42,14 @@ capabilitymodule <- function(
     if (length(sel_operations()) >= 1) {
       # get the selected operation
       first_elem <- sel_operations()[1]
-      res <- get_fhir_resource_by_op(db_connection, first_elem)
+      res <- isolate(get_fhir_resource_by_op(db_connection, first_elem))
       # get the data for each selected operation and then bind them together
       # in one data frame
       loopList <- isolate(as.list(sel_operations()))
       count <- 0
       for (op in loopList) {
         if (count != 0) {
-          item <- get_fhir_resource_by_op(db_connection, op)
+          item <- isolate(get_fhir_resource_by_op(db_connection, op))
           res <- rbind(res, item)
         }
         count <- count + 1
@@ -100,23 +100,20 @@ capabilitymodule <- function(
       if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
         res <- res %>% filter(type %in% sel_resources())
       }
-        res <- res %>% group_by(type, fhir_version) %>%
+        res <- res %>%
+        group_by(type, fhir_version) %>%
         count()
     }
 
     res
   })
 
-  select_table_format <- reactive({
+  output$resource_op_table <- renderTable(
     op_table <- select_operations()
     if ("type" %in% colnames(op_table)) {
       op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
-  })
-
-  output$resource_op_table <- renderTable(
-    select_table_format()
   )
 
   select_operations_count <- reactive({
