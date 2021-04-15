@@ -84,10 +84,7 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	// If the two endpoints have the same values in a different order, the Equal
 	// function will return false, so the resources need to be sorted for the Equal
 	// function to work as expected
-	// @TODO Come back to this
-	// sortedE1, sortedE2 := sortOperations(e.OperationResource, e2.OperationResource)
-	// return cmp.Equal(sortedE1, sortedE2)
-	return true
+	return compareOperations(e.OperationResource, e2.OperationResource)
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -119,12 +116,6 @@ type IncludedField struct {
 	Exists    bool
 	Extension bool
 }
-
-// @TODO Remove?
-// type OperationAndResource struct {
-// 	Operation string `json:"operation"`
-// 	Resource  string `json:"resource"`
-// }
 
 // Validation holds all of the errors and warnings from running the validation checks
 // it is saved in JSON format to the fhir_endpoints_info database table
@@ -167,27 +158,23 @@ const (
 	SearchParamsRule    RuleOption = "searchParamsRule"
 )
 
-// @TODO Come back to this
-// Sort by Resource, if there are multiple of the same resource, then
-// sort by Operation
-// func sortOperations(e1 []OperationAndResource, e2 []OperationAndResource) ([]OperationAndResource, []OperationAndResource) {
-// 	sort.Slice(e1, func(i, j int) bool {
-// 		if e1[i].Resource < e1[j].Resource {
-// 			return true
-// 		}
-// 		if e1[i].Resource > e1[j].Resource {
-// 			return false
-// 		}
-// 		return e1[i].Operation < e1[j].Operation
-// 	})
-// 	sort.Slice(e2, func(i, j int) bool {
-// 		if e2[i].Resource < e2[j].Resource {
-// 			return true
-// 		}
-// 		if e2[i].Resource > e2[j].Resource {
-// 			return false
-// 		}
-// 		return e2[i].Operation < e2[j].Operation
-// 	})
-// 	return e1, e2
-// }
+// compareOperations compares the operation resource fields for an endpoint
+// and returns whether or not they are equivalent
+func compareOperations(e1 map[string][]string, e2 map[string][]string) bool {
+	// If they don't have the same number of keys then they're not equal
+	if len(e1) != len(e2) {
+		return false
+	}
+	for key, e1val := range e1 {
+		// If they both have the given key, check to see if their values are equal
+		// If e1 has a key that e2 doesn't have, then they're not equal
+		if e2val, ok := e2[key]; ok {
+			if !helpers.StringArraysEqual(e1val, e2val) {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	return true
+}

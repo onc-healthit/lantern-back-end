@@ -1,28 +1,22 @@
 package capabilityhandler
 
-// RunSupportedResourcesChecks takes the given capability statement and creates an array
-// of the resources and their specified operations in OperationAndResource format. Example:
-// [ { Resource: "AllergyInformation", Operation: "read" },
-//   { Resource: "AllergyInforamtion", Operation: "search-type" },
-//   { Resource: "Medication": Operation: "read" }, ...]
-// @TODO go through commented out stuff
+// RunSupportedResourcesChecks takes the given capability statement and creates a map
+// of the operations to the endpoint's resources that specified that operation. Example:
+// { "read": ["AllergyInformation", "Medication"...],
+//   "search-type": ["Medication", "Document"...], ...}
 func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]string {
-	// var opAndRes []endpointmanager.OperationAndResource
 	var mapOpToResList = make(map[string][]string)
 	if capInt == nil {
-		// return opAndRes
 		return mapOpToResList
 	}
 
 	// Get the resource field from the Capability Statement, which is a list of resources
 	if capInt["rest"] == nil {
-		// return opAndRes
 		return mapOpToResList
 	}
 	restArr := capInt["rest"].([]interface{})
 	restInt := restArr[0].(map[string]interface{})
 	if restInt["resource"] == nil {
-		// return opAndRes
 		return mapOpToResList
 	}
 	resourceArr := restInt["resource"].([]interface{})
@@ -57,11 +51,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]str
 					continue
 				}
 				hasCodes = true
-				// item := endpointmanager.OperationAndResource{
-				// 	Operation: code,
-				// 	Resource:  resourceType,
-				// }
-				// opAndRes = append(opAndRes, item)
 				if mapOpToResList[code] == nil {
 					mapOpToResList[code] = []string{resourceType}
 				} else {
@@ -71,11 +60,6 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]str
 		}
 		// If the interaction field was not specified or it has no valid operations
 		if notSpec || !hasCodes {
-			// item := endpointmanager.OperationAndResource{
-			// 	Operation: "not specified",
-			// 	Resource:  resourceType,
-			// }
-			// opAndRes = append(opAndRes, item)
 			if mapOpToResList["not specified"] == nil {
 				mapOpToResList["not specified"] = []string{resourceType}
 			} else {
@@ -84,6 +68,5 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]str
 		}
 	}
 
-	// return opAndRes
 	return mapOpToResList
 }

@@ -186,25 +186,26 @@ func getSMARTResponse(smartRsp []byte) map[string]interface{} {
 }
 
 // Format the Operation Resource Object into the Supported Resources format
-// @TODO Come back to this
 func getSupportedResources(opRes []byte) []string {
 	var defaultInt []string
-	// var opResInt []endpointmanager.OperationAndResource
-	// checkResource := make(map[string]bool)
-	// if len(opRes) > 0 {
-	// 	err := json.Unmarshal(opRes, &opResInt)
-	// 	if err != nil {
-	// 		return defaultInt
-	// 	}
-	// 	// convert operation and resource object to supported resources format
-	// 	// (list of every resource)
-	// 	for _, obj := range opResInt {
-	// 		if _, ok := checkResource[obj.Resource]; !ok {
-	// 			checkResource[obj.Resource] = true
-	// 			defaultInt = append(defaultInt, obj.Resource)
-	// 		}
-	// 	}
-	// }
+	var opResInt map[string][]string
+	checkResource := make(map[string]bool)
+	if len(opRes) > 0 {
+		err := json.Unmarshal(opRes, &opResInt)
+		if err != nil {
+			return defaultInt
+		}
+		// convert operation and resource object to supported resources format
+		// (list of every resource)
+		for _, resArr := range opResInt {
+			for _, resource := range resArr {
+				if _, ok := checkResource[resource]; !ok {
+					checkResource[resource] = true
+					defaultInt = append(defaultInt, resource)
+				}
+			}
+		}
+	}
 	return defaultInt
 }
 
