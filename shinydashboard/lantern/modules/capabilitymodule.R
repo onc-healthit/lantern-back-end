@@ -26,7 +26,7 @@ capabilitymodule_UI <- function(id) {
   )
 }
 
-capabilitymodule <- function(
+capabilitymodule <- function(  #nolint
   input,
   output,
   session,
@@ -108,12 +108,16 @@ capabilitymodule <- function(
     res
   })
 
-  output$resource_op_table <- renderTable(
+  select_table_format <- reactive({
     op_table <- select_operations()
     if ("type" %in% colnames(op_table)) {
       op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
+  })
+
+  output$resource_op_table <- renderTable(
+    select_table_format()
   )
 
   select_operations_count <- reactive({
