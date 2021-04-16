@@ -338,7 +338,7 @@ function(input, output, session) { #nolint
     else{
       updateSelectizeInput(session, "operations",
               label = "Choose or type in any operation from the list below:",
-              choices = c("all", "read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+              choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
               options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })

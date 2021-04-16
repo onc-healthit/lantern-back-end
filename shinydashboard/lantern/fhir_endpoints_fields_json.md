@@ -23,7 +23,7 @@ The operation field is an array where an element is an instance of the informati
 * **tls_verison:** Transport Layer Security (TLS) version of the endpoint  
 * **mime_types:** MIME types supported by this endpoint  
 * **updated:** Timestamp of when this endpoint record was updated  
-* **operation_resource:** An array of pairs of a supported resource and one of it's supported operations.
+* **supported_resources:** All of the FHIR resources this endpoint supports  
 * **smart_http_response:** HTTP response received from querying the endpoint's SMART url  
 * **smart_response:** See [below](#smart-response).  
 &nbsp;

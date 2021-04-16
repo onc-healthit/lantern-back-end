@@ -151,8 +151,7 @@ get_fhir_resource_by_op <- function(db_connection, field) {
       capability_statement->>'fhirVersion' as fhir_version,
       operation_resource->>'", field, "' as type
       from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE operation_resource != 'null'"))) %>%
+      LEFT JOIN vendors on f.vendor_id = vendors.id"))) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }

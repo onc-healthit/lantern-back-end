@@ -34,9 +34,7 @@ func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]str
 		operations, ok := resourceInt["interaction"].([]interface{})
 		// if there is no interaction field, or the list is empty,
 		// then no operations were specified
-		if !ok {
-			notSpec = true
-		} else if len(operations) == 0 {
+		if !ok || len(operations) == 0 {
 			notSpec = true
 		} else {
 			// For each given operation, make sure it's valid and then
