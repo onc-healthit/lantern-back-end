@@ -27,10 +27,6 @@ The capability querier reads the following environment variables:
 
   Default value: 10
 
-* **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
-
-  Default value: endpoints-to-capability
-
 * **LANTERN_DBHOST**: The hostname where the database is hosted.
 
   Default value: localhost

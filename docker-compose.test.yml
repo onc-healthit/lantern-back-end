@@ -5,16 +5,12 @@ services:
     command: ["postgres"]
   capability_querier:
     environment:
-      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
-      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
       - LANTERN_DBHOST=postgres
 
   capability_receiver:
     environment:
       - LANTERN_DBHOST=postgres
       - LANTERN_QHOST=lantern-mq
-      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
-      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
 
   endpoint_manager:
     environment:
@@ -22,8 +18,6 @@ services:
       - LANTERN_QHOST=lantern-mq
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
-      - LANTERN_CAPQUERY_QNAME=${LANTERN_TEST_QNAME}
-      - LANTERN_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
 
   lantern-e2e:
     container_name: lantern-e2e
@@ -31,7 +25,6 @@ services:
       - LANTERN_DBHOST=postgres
       - LANTERN_QHOST=lantern-mq
       - LANTERN_CHPLAPIKEY=${LANTERN_CHPLAPIKEY}
-      - LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME=${LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME}
     build:
       args:
         cert_dir: ./certs
