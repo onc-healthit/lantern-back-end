@@ -59,14 +59,6 @@ func SetupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = viper.BindEnv("capquery_qname")
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("endptinfo_capquery_qname")
-	if err != nil {
-		return err
-	}
 	err = viper.BindEnv("capquery_qryintvl") // in minutes
 	if err != nil {
 		return err
@@ -160,14 +152,6 @@ func SetupConfigForTests() error {
 		return err
 	}
 	err = viper.BindEnv("qpassword")
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("qname")
-	if err != nil {
-		return err
-	}
-	err = viper.BindEnv("endptinfo_capquery_qname")
 	if err != nil {
 		return err
 	}

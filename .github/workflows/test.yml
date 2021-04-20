@@ -34,14 +34,11 @@ jobs:
           LANTERN_QUSER: capabilityquerier
           LANTERN_QPASSWORD: capabilityquerier
           LANTERN_QPORT: 5672
-          LANTERN_CAPQUERY_QNAME: capability-statements
           LANTERN_CAPQUERY_NUMWORKERS: 10
           LANTERN_ENDPTQRY_NUMWORKERS: 10
           LANTERN_CAPQUERY_QRYINTVL: 1380
           LANTERN_TEST_QUSER: capabilityquerier
           LANTERN_TEST_QPASSWORD: capabilityquerier
-          LANTERN_TEST_QNAME: test-queue
-          LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
           LANTERN_QHOST: localhost
           LANTERN_EXPORTFILE_WAIT: 300
           LANTERN_EXPORT_NUMWORKERS: 25
@@ -76,14 +73,11 @@ jobs:
           LANTERN_QUSER: capabilityquerier
           LANTERN_QPASSWORD: capabilityquerier
           LANTERN_QPORT: 5672
-          LANTERN_CAPQUERY_QNAME: capability-statements
           LANTERN_CAPQUERY_NUMWORKERS: 10
           LANTERN_ENDPTQRY_NUMWORKERS: 10
           LANTERN_CAPQUERY_QRYINTVL: 1380
           LANTERN_TEST_QUSER: capabilityquerier
           LANTERN_TEST_QPASSWORD: capabilityquerier
-          LANTERN_TEST_QNAME: test-queue
-          LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME: test-endpoints-to-capability
           LANTERN_QHOST: lantern-mq
           LANTERN_EXPORTFILE_WAIT: 300
           LANTERN_EXPORT_NUMWORKERS: 25

@@ -71,10 +71,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_CAPQUERY_QNAME**: The name of the queue being accessed.
-
-  Default value: capability-statements
-
 * **LANTERN_CAPQUERY_NUMWORKERS**: The number of workers to use to parallelize processing of the capability statements.
 
   Default value: 10
@@ -82,10 +78,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 * **LANTERN_CAPQUERY_QRYINTVL**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
 
   Default value: 1380 (23 hours)
-
-* **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
-
-  Default value: endpoints-to-capability
 
 * **LANTERN_EXPORT_NUMWORKERS**: The number of workers to use to parallelize creating the JSON export file and the JSON archive file.
 

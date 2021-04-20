@@ -23,7 +23,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq/mock"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 
-	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	"github.com/spf13/viper"
 )

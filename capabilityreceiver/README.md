@@ -47,10 +47,6 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_CAPQUERY_QNAME**: The name of the queue being accessed.
-
-  Default value: capability-statements
-
 ### Test Configuration
 
 When testing, the FHIR Endpoint Manager uses the following environment variables:

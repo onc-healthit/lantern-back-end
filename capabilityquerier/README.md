@@ -23,17 +23,9 @@ The capability querier reads the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_CAPQUERY_QNAME**: The name of the queue being accessed.
-
-  Default value: capability-statements
-
 * **LANTERN_CAPQUERY_NUMWORKERS**: The number of workers to use to parallelize processing of the capability statements.
 
   Default value: 10
-
-* **LANTERN_ENDPTINFO_CAPQUERY_QNAME**: The name of the queue used by the endpointmanager and the capabilityquerier.
-
-  Default value: endpoints-to-capability
 
 * **LANTERN_DBHOST**: The hostname where the database is hosted.
 
@@ -79,13 +71,6 @@ When testing, the capability querier uses the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_TEST_QNAME** instead of LANTERN_CAPQUERY_QNAME: The name of the queue being accessed.
-
-  Default value: test-queue
-
-* **LANTERN_TEST_ENDPTINFO_CAPQUERY_QNAME** instead of LANTERN_ENDPTINFO_CAPQUERY_QNAME: The name of the queue used by the endpointmanager and the capabilityquerier.
-
-  Default value: test-endpoints-to-capability
 
 * **LANTERN_TEST_DBUSER** instead of LANTERN_DBUSER: The database user that the application will use to read and write from the database.
 
