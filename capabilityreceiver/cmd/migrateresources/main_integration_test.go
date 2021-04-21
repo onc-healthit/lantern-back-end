@@ -13,7 +13,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/spf13/viper"
@@ -104,11 +103,15 @@ func Test_updateOperationResource(t *testing.T) {
 	for historyRows.Next() {
 		th.Assert(t, count <= 1, fmt.Sprintf("should only be one item in the database for this URL"))
 		var receivedTime time.Time
-		var operationResource []endpointmanager.OperationAndResource
+		var operationResource map[string][]string
 		err = historyRows.Scan(&receivedTime, &operationResource)
 		th.Assert(t, err == nil, fmt.Sprintf("Error while scanning the rows of the history table for URL %s. Error: %s", url1, err))
 		th.Assert(t, receivedTime == firstTime, fmt.Sprintf("The time was updated to %+v", receivedTime))
-		th.Assert(t, len(operationResource) == 48, fmt.Sprintf("The number of operation resources should have been 48. Is instead %d", len(operationResource)))
+		th.Assert(t, len(operationResource) == 2, fmt.Sprintf("The number of operation resources should have been 2. Is instead %d", len(operationResource)))
+		th.Assert(t, operationResource["read"] != nil, "There should be a read resource defined, instead is nil")
+		th.Assert(t, operationResource["search-type"] != nil, "There should be a search-type resource defined, instead is nil")
+		th.Assert(t, len(operationResource["read"]) == 25, fmt.Sprintf("The number of operation resources for read should have been 25. Is instead %d", len(operationResource["read"])))
+		th.Assert(t, len(operationResource["search-type"]) == 23, fmt.Sprintf("The number of operation resources should have been 23. Is instead %d", len(operationResource["search-type"])))
 		count++
 	}
 
@@ -140,10 +143,14 @@ func Test_updateOperationResource(t *testing.T) {
 	for historyRows.Next() {
 		th.Assert(t, count <= 2, fmt.Sprintf("should be two items in the database for this URL"))
 		var receivedTime time.Time
-		var operationResource []endpointmanager.OperationAndResource
+		var operationResource map[string][]string
 		err = historyRows.Scan(&receivedTime, &operationResource)
 		th.Assert(t, err == nil, fmt.Sprintf("Error while scanning the rows of the history table for URL %s. Error: %s", url1, err))
-		th.Assert(t, len(operationResource) == 32, fmt.Sprintf("The number of operation resources should have been 48. Is instead %d", len(operationResource)))
+		th.Assert(t, len(operationResource) == 2, fmt.Sprintf("The number of operation resources should have been 2. Is instead %d", len(operationResource)))
+		th.Assert(t, operationResource["read"] != nil, "There should be a read resource defined, instead is nil")
+		th.Assert(t, operationResource["search-type"] != nil, "There should be a search-type resource defined, instead is nil")
+		th.Assert(t, len(operationResource["read"]) == 16, fmt.Sprintf("The number of operation resources for read should have been 16. Is instead %d", len(operationResource["read"])))
+		th.Assert(t, len(operationResource["search-type"]) == 16, fmt.Sprintf("The number of operation resources should have been 16. Is instead %d", len(operationResource["search-type"])))
 		count++
 	}
 }

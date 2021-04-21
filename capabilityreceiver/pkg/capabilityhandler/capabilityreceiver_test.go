@@ -336,12 +336,12 @@ var testIncludedFields = []endpointmanager.IncludedField{
 }
 
 var testOperations = map[string][]string{
-	"read": []string{"Conformance", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "Condition", "Contract", "Device",
+	"read": {"Conformance", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "Condition", "Contract", "Device",
 		"DocumentReference", "Encounter", "Goal", "Immunization", "MedicationAdministration", "MedicationOrder", "MedicationStatement",
 		"OperationDefinition", "Patient", "Person", "Practitioner", "Procedure", "ProcedureRequest", "RelatedPerson", "Schedule",
 		"Slot", "StructureDefinition",
 	},
-	"search-type": []string{"AllergyIntolerance", "Appointment", "CarePlan", "Condition", "Contract", "Device", "DiagnosticReport",
+	"search-type": {"AllergyIntolerance", "Appointment", "CarePlan", "Condition", "Contract", "Device", "DiagnosticReport",
 		"DocumentReference", "Encounter", "Goal", "Immunization", "MedicationAdministration", "MedicationOrder", "MedicationStatement",
 		"Observation", "Patient", "Person", "Practitioner", "Procedure", "ProcedureRequest", "RelatedPerson", "Schedule", "Slot",
 	},
