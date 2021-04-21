@@ -37,19 +37,9 @@ var testEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:        "www.testURL.com",
 	TLSVersion: "TLS 1.3",
 	MIMETypes:  []string{"application/fhir+json"},
-	OperationResource: []endpointmanager.OperationAndResource{
-		{
-			Resource:  "Conformance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "search-type",
-		},
+	OperationResource: map[string][]string{
+		"read":        []string{"AllergyIntolerance", "Conformance"},
+		"search-type": []string{"AllergyIntolerance"},
 	},
 	Metadata: &testEndpointMetadata,
 }

@@ -63,11 +63,11 @@ lint:
 	make lint_R || exit $?
 
 lint_go:
-	cd ./capabilityquerier; golangci-lint run -E gofmt --deadline=2m
-	cd ./lanternmq; golangci-lint run -E gofmt --deadline=2m
-	cd ./fhir; golangci-lint run -E gofmt --deadline=2m
-	cd ./endpointmanager; golangci-lint run -E gofmt --deadline=2m
-	cd ./capabilityreceiver; golangci-lint run -E gofmt --deadline=2m
+	cd ./capabilityquerier; golangci-lint run -E gofmt --deadline=3m
+	cd ./lanternmq; golangci-lint run -E gofmt --deadline=3m
+	cd ./fhir; golangci-lint run -E gofmt --deadline=3m
+	cd ./endpointmanager; golangci-lint run -E gofmt --deadline=3m
+	cd ./capabilityreceiver; golangci-lint run -E gofmt --deadline=3m
 
 lint_R:
 	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1

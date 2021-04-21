@@ -52,48 +52,20 @@ func Test_getSMARTResponse(t *testing.T) {
 
 func Test_getSupportedResources(t *testing.T) {
 	// Base case : all resources are different
-	testSupportedResources := []byte(`[
-		{
-			"Resource":  "Device",
-			"Operation": "read"
-		},
-		{
-			"Resource":  "DiagnosticReport",
-			"Operation": "search-type"
-		},
-		{
-			"Resource":  "DocumentReference",
-			"Operation": "search-type"
-		},
-		{
-			"Resource":  "Encounter",
-			"Operation": "read"
-		}
-	]`)
+	testSupportedResources := []byte(`{
+		"read": ["Device", "Encounter"],
+		"search-type": ["DiagnosticReport", "DocumentReference"]
+	}`)
 	supRes := getSupportedResources(testSupportedResources)
 	th.Assert(t, len(supRes) == 4, fmt.Sprintf("There should be 4 supported resources, is instead %d", len(supRes)))
 	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), "The supported resources should include the 'Device' resource")
 	th.Assert(t, helpers.StringArrayContains(supRes, "DocumentReference"), "The supported resources should include the 'DocumentReference' resource")
 
 	// Base case : there are repeated resources
-	testSupportedResources = []byte(`[
-		{
-			"Resource":  "Device",
-			"Operation": "read"
-		},
-		{
-			"Resource":  "Device",
-			"Operation": "search-type"
-		},
-		{
-			"Resource":  "DocumentReference",
-			"Operation": "search-type"
-		},
-		{
-			"Resource":  "DocumentReference",
-			"Operation": "read"
-		}
-	]`)
+	testSupportedResources = []byte(`{
+		"read": ["Device", "DocumentReference"],
+		"search-type": ["Device", "DocumentReference"]
+	}`)
 	supRes = getSupportedResources(testSupportedResources)
 	th.Assert(t, len(supRes) == 2, fmt.Sprintf("There should be 2 supported resources, is instead %d", len(supRes)))
 	th.Assert(t, helpers.StringArrayContains(supRes, "Device"), "The supported resources should include the 'Device' resource")

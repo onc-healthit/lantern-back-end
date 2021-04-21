@@ -335,198 +335,15 @@ var testIncludedFields = []endpointmanager.IncludedField{
 	},
 }
 
-var testOperations = []endpointmanager.OperationAndResource{
-	{
-		Resource:  "Conformance",
-		Operation: "read",
+var testOperations = map[string][]string{
+	"read": []string{"Conformance", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "Condition", "Contract", "Device",
+		"DocumentReference", "Encounter", "Goal", "Immunization", "MedicationAdministration", "MedicationOrder", "MedicationStatement",
+		"OperationDefinition", "Patient", "Person", "Practitioner", "Procedure", "ProcedureRequest", "RelatedPerson", "Schedule",
+		"Slot", "StructureDefinition",
 	},
-	{
-		Resource:  "AllergyIntolerance",
-		Operation: "read",
-	},
-	{
-		Resource:  "AllergyIntolerance",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Appointment",
-		Operation: "read",
-	},
-	{
-		Resource:  "Appointment",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Binary",
-		Operation: "read",
-	},
-	{
-		Resource:  "CarePlan",
-		Operation: "read",
-	},
-	{
-		Resource:  "CarePlan",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Condition",
-		Operation: "read",
-	},
-	{
-		Resource:  "Condition",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Contract",
-		Operation: "read",
-	},
-	{
-		Resource:  "Contract",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Device",
-		Operation: "read",
-	},
-	{
-		Resource:  "Device",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "DiagnosticReport",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "DocumentReference",
-		Operation: "read",
-	},
-	{
-		Resource:  "DocumentReference",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Encounter",
-		Operation: "read",
-	},
-	{
-		Resource:  "Encounter",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Goal",
-		Operation: "read",
-	},
-	{
-		Resource:  "Goal",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Immunization",
-		Operation: "read",
-	},
-	{
-		Resource:  "Immunization",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "MedicationAdministration",
-		Operation: "read",
-	},
-	{
-		Resource:  "MedicationAdministration",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "MedicationOrder",
-		Operation: "read",
-	},
-	{
-		Resource:  "MedicationOrder",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "MedicationStatement",
-		Operation: "read",
-	},
-	{
-		Resource:  "MedicationStatement",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Observation",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "OperationDefinition",
-		Operation: "read",
-	},
-	{
-		Resource:  "Patient",
-		Operation: "read",
-	},
-	{
-		Resource:  "Patient",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Person",
-		Operation: "read",
-	},
-	{
-		Resource:  "Person",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Practitioner",
-		Operation: "read",
-	},
-	{
-		Resource:  "Practitioner",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Procedure",
-		Operation: "read",
-	},
-	{
-		Resource:  "Procedure",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "ProcedureRequest",
-		Operation: "read",
-	},
-	{
-		Resource:  "ProcedureRequest",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "RelatedPerson",
-		Operation: "read",
-	},
-	{
-		Resource:  "RelatedPerson",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Schedule",
-		Operation: "read",
-	},
-	{
-		Resource:  "Schedule",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "Slot",
-		Operation: "read",
-	},
-	{
-		Resource:  "Slot",
-		Operation: "search-type",
-	},
-	{
-		Resource:  "StructureDefinition",
-		Operation: "read",
+	"search-type": []string{"AllergyIntolerance", "Appointment", "CarePlan", "Condition", "Contract", "Device", "DiagnosticReport",
+		"DocumentReference", "Encounter", "Goal", "Immunization", "MedicationAdministration", "MedicationOrder", "MedicationStatement",
+		"Observation", "Patient", "Person", "Practitioner", "Procedure", "ProcedureRequest", "RelatedPerson", "Schedule", "Slot",
 	},
 }
 
@@ -745,55 +562,58 @@ func Test_RunSupportedResourcesChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
 	operationResource := RunSupportedResourcesChecks(capInt)
-	th.Assert(t, len(operationResource) == 48, fmt.Sprintf("Expected there to be 48 operation resources in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "read", fmt.Sprintf("Expected the Operation to equal 'read', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "Conformance", fmt.Sprintf("Expected the Resource to equal 'Conformance', is instead %s", operationResource[0].Resource))
+	th.Assert(t, len(operationResource) == 2, fmt.Sprintf("Expected there to be 2 operation resources in map, were %d", len(operationResource)))
+	th.Assert(t, operationResource["read"] != nil, "Expected the Operation to include read, is instead nil")
+	th.Assert(t, operationResource["search-type"] != nil, "Expected the Operation to include search-type, is instead nil")
+	th.Assert(t, len(operationResource["read"]) == 25, fmt.Sprintf("Expected there to be 25 resources with read operation, were %d", len(operationResource["read"])))
+	th.Assert(t, len(operationResource["search-type"]) == 23, fmt.Sprintf("Expected there to be 23 resources with search-type operation, were %d", len(operationResource["read"])))
 
 	// If there is no interaction field in the resource, the operationresource should have
 	// one returned value with "not specified"
 	capStat1, err := generateTestCapStat("noInteraction")
 	th.Assert(t, capStat1 != nil, fmt.Sprintf("Error generating noInteraction capability statement, %s", err))
 	operationResource = RunSupportedResourcesChecks(capStat1)
-	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %d", len(operationResource)))
+	th.Assert(t, operationResource["not specified"] != nil, "Expected the Operation to include 'not specified', is instead nil")
+	th.Assert(t, operationResource["not specified"][0] == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource["not specified"][0]))
 
 	// If there is an interaction field in the resource but it's empty, the operationresource
 	// should have one returned value with "not specified"
 	capStat2, _ := generateTestCapStat("emptyInteraction")
 	th.Assert(t, capStat2 != nil, "Error generating emptyInteraction capability statement")
 	operationResource = RunSupportedResourcesChecks(capStat2)
-	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %d", len(operationResource)))
+	th.Assert(t, operationResource["not specified"] != nil, "Expected the Operation to include 'not specified', is instead nil")
+	th.Assert(t, operationResource["not specified"][0] == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource["not specified"][0]))
 
 	// If there is an interaction field in the resource but no code value, the operationresource
 	// should have one returned value with "not specified"
 	capStat3, _ := generateTestCapStat("noCode")
 	th.Assert(t, capStat3 != nil, "Error generating noCode capability statement")
 	operationResource = RunSupportedResourcesChecks(capStat3)
-	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "not specified", fmt.Sprintf("Expected the Operation to equal 'not specified', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %d", len(operationResource)))
+	th.Assert(t, operationResource["not specified"] != nil, "Expected the Operation to include 'not specified', is instead nil")
+	th.Assert(t, operationResource["not specified"][0] == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource["not specified"][0]))
 
 	// If there is an interaction field in the resource and at least one valid code, the
 	// operationresource will only include values that have the valid code
 	capStat4, _ := generateTestCapStat("manyCode")
 	th.Assert(t, capStat3 != nil, "Error generating manyCode capability statement")
 	operationResource = RunSupportedResourcesChecks(capStat4)
-	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "search-type", fmt.Sprintf("Expected the Operation to equal 'search-type', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource[0].Resource))
+	th.Assert(t, len(operationResource) == 1, fmt.Sprintf("Expected there to be 1 operation resource in OperationAndResource array, were %d", len(operationResource)))
+	th.Assert(t, operationResource["search-type"] != nil, "Expected the Operation to include 'search-type', is instead nil")
+	th.Assert(t, operationResource["search-type"][0] == "AllergyIntolerance", fmt.Sprintf("Expected the Resource to equal 'AllergyIntolerance', is instead %s", operationResource["search-type"][0]))
+	// th.Assert(t, operationResource["search-type"] == nil, fmt.Sprintf("%+v", operationResource["not specified"][0]))
 
 	// If one of the resources is missing a type, it just skips over it
 	capStat5, _ := generateTestCapStat("missingType")
 	th.Assert(t, capStat5 != nil, "Error generating missingType capability statement")
 	operationResource = RunSupportedResourcesChecks(capStat5)
-	th.Assert(t, len(operationResource) == 2, fmt.Sprintf("Expected there to be 2 operation resources in OperationAndResource array, were %v", len(operationResource)))
-	th.Assert(t, operationResource[0].Operation == "read", fmt.Sprintf("Expected the Operation to equal 'read', is instead %s", operationResource[0].Operation))
-	th.Assert(t, operationResource[0].Resource == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource[0].Resource))
-	th.Assert(t, operationResource[1].Operation == "search-type", fmt.Sprintf("Expected the Operation to equal 'search-type', is instead %s", operationResource[1].Operation))
-	th.Assert(t, operationResource[1].Resource == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource[1].Resource))
+	th.Assert(t, len(operationResource) == 2, fmt.Sprintf("Expected there to be 2 operation resources in OperationAndResource array, were %d", len(operationResource)))
+	th.Assert(t, operationResource["read"] != nil, "Expected the Operation to include 'read', is instead nil")
+	th.Assert(t, operationResource["search-type"] != nil, "Expected the Operation to include 'search-type', is instead nil")
+	th.Assert(t, operationResource["read"][0] == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource["read"][0]))
+	th.Assert(t, operationResource["search-type"][0] == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource["search-type"][0]))
 }
 
 func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {

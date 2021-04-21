@@ -225,20 +225,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			},
 		},
 		IncludedFields: testIncludedFields,
-		OperationResource: []OperationAndResource{
-			{
-				Resource:  "Conformance",
-				Operation: "read",
-			},
-			{
-				Resource:  "AllergyIntolerance",
-				Operation: "read",
-			},
-			{
-				Resource:  "AllergyIntolerance",
-				Operation: "search-type",
-			},
-		},
+		OperationResource: map[string][]string{
+			"read": []string{"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
 		Metadata:            endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
@@ -264,20 +252,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 			},
 		},
 		IncludedFields: includedFieldsCopy,
-		OperationResource: []OperationAndResource{
-			{
-				Resource:  "Conformance",
-				Operation: "read",
-			},
-			{
-				Resource:  "AllergyIntolerance",
-				Operation: "read",
-			},
-			{
-				Resource:  "AllergyIntolerance",
-				Operation: "search-type",
-			},
-		},
+		OperationResource: map[string][]string{
+			"read": []string{"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
 		Metadata:            endpointMetadata2}
 
@@ -428,71 +404,15 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
 
-	// check operation difference
-	endpointInfo2.OperationResource = []OperationAndResource{
-		{
-			Resource:  "Conformance",
-			Operation: "search-type",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "search-type",
-		},
-	}
+	endpointInfo2.OperationResource = map[string][]string{"write": []string{"AllergyIntolerance", "Binary", "CarePlan"}}
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. OperationResource should be different. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
-	// check resource difference
-	endpointInfo2.OperationResource = []OperationAndResource{
-		{
-			Resource:  "Conformance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "read",
-		},
-		{
-			Resource:  "Binary",
-			Operation: "search-type",
-		},
-	}
+	endpointInfo2.OperationResource = map[string][]string{"read": []string{"AllergyIntolerance", "Binary", "other"}}
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. OperationResource should be different. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
-	// check missing resource
-	endpointInfo2.OperationResource = []OperationAndResource{
-		{
-			Resource:  "Conformance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "read",
-		},
-	}
-	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. OperationResource should be different. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
-	}
-	// check objects in a different order
-	endpointInfo2.OperationResource = []OperationAndResource{
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "read",
-		},
-		{
-			Resource:  "Conformance",
-			Operation: "read",
-		},
-		{
-			Resource:  "AllergyIntolerance",
-			Operation: "search-type",
-		},
-	}
+	endpointInfo2.OperationResource = map[string][]string{"read": []string{"Binary", "AllergyIntolerance", "CarePlan"}}
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. OperationResource are same but in different order. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
