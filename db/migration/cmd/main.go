@@ -29,12 +29,12 @@ func main() {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Error("endpoint URL parsing error: ", err.Error())
+		log.Error("endpoint URL parsing error (open postgres): ", err.Error())
 	}
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		log.Error("endpoint URL parsing error: ", err.Error())
+		log.Error("endpoint URL parsing error (with instance postgres): ", err.Error())
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(

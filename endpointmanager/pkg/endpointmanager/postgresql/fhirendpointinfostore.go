@@ -28,6 +28,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var operResourceJSON []byte
 	var metadataID int
 
 	sqlStatementInfo := `
@@ -44,7 +45,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		updated_at,
 		smart_response,
 		included_fields,
-		supported_resources,
+		operation_resource,
 		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
@@ -62,7 +63,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
 		&includedFieldsJSON,
-		pq.Array(&endpointInfo.SupportedResources),
+		&operResourceJSON,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -85,6 +86,12 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if operResourceJSON != nil {
+		err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
 		if err != nil {
 			return nil, err
 		}
@@ -112,6 +119,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
+	var operResourceJSON []byte
 	var metadataID int
 
 	sqlStatementInfo := `
@@ -128,7 +136,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		updated_at,
 		smart_response,
 		included_fields,
-		supported_resources,
+		operation_resource,
 		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
@@ -147,7 +155,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
 		&includedFieldsJSON,
-		pq.Array(&endpointInfo.SupportedResources),
+		&operResourceJSON,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -170,6 +178,13 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if operResourceJSON != nil {
+		err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
 		if err != nil {
 			return nil, err
 		}
@@ -211,6 +226,11 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
+	operResourceJSON, err := json.Marshal(e.OperationResource)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -233,7 +253,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		validationJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
-		pq.Array(e.SupportedResources),
+		operResourceJSON,
 		metadataID)
 
 	err = row.Scan(&e.ID)
@@ -264,6 +284,11 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
+	operResourceJSON, err := json.Marshal(e.OperationResource)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
 	if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
@@ -286,7 +311,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		validationJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
-		pq.Array(e.SupportedResources),
+		operResourceJSON,
 		metadataID,
 		e.ID)
 
@@ -330,7 +355,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation,
 			smart_response,
 			included_fields,
-			supported_resources,
+			operation_resource,
 			metadata_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id`)
@@ -349,8 +374,8 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			validation = $7,
 			smart_response = $8,
 			included_fields = $9,
-			supported_resources = $10,
-			metadata_id = $11		
+			operation_resource = $10,
+			metadata_id = $11
 		WHERE id = $12`)
 	if err != nil {
 		return err

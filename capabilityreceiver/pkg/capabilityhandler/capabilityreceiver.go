@@ -97,7 +97,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	responseTime, ok := msgJSON["responseTime"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("Response time is not a float")
+		return nil, fmt.Errorf("response time is not a float")
 	}
 
 	fhirVersion := ""
@@ -108,7 +108,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
-	supportedResources := RunSupportedResourcesChecks(capInt)
+	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:               url,
@@ -126,7 +126,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		CapabilityStatement: capStat,
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
-		SupportedResources:  supportedResources,
+		OperationResource:   operationResource,
 		Metadata:            FHIREndpointMetadata,
 	}
 
@@ -161,20 +161,20 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// If the endpoint info entry doesn't exist, add it to the DB
 		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
 		if err != nil {
-			return err
+			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
 		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 		if err != nil {
-			return err
+			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
 
 		metadataID, err := store.AddFHIREndpointMetadata(ctx, fhirEndpoint.Metadata)
 		if err != nil {
-			return err
+			return fmt.Errorf("doesn't exist, add endpoint metadata failed, %s", err)
 		}
 		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 		if err != nil {
-			return err
+			return fmt.Errorf("doesn't exist, add to fhir_endpoints_info failed, %s", err)
 		}
 	} else if err != nil {
 		return err
@@ -197,36 +197,36 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.Validation = fhirEndpoint.Validation
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
-			existingEndpt.SupportedResources = fhirEndpoint.SupportedResources
+			existingEndpt.OperationResource = fhirEndpoint.OperationResource
 
 			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
 			if err != nil {
-				return err
+				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
 			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
 			if err != nil {
-				return err
+				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
 
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
-				return err
+				return fmt.Errorf("does exist, add endpoint metadata failed, %s", err)
 			}
 
 			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID)
 			if err != nil {
-				return err
+				return fmt.Errorf("does exist, add to fhir_endpoints_info failed, %s", err)
 			}
 		} else {
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
-				return err
+				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
 			}
 
 			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.URL)
 			if err != nil {
-				return err
+				return fmt.Errorf("just adding the Metadata ID failed, %s", err)
 			}
 		}
 	}

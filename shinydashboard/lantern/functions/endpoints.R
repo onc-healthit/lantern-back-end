@@ -29,8 +29,8 @@ get_endpoint_totals_list <- function(db_tables) {
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
-    distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, supported_resources, response_time_seconds, smart_http_response, errors, availability) %>%
+    distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, .keep_all = TRUE) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, response_time_seconds, smart_http_response, errors, availability) %>%
     mutate(updated = as.Date(info_updated)) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
@@ -141,14 +141,19 @@ get_fhir_resource_types <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Return list of FHIR Resources
-get_resource_list <- function(endpoint_tbl) {
-  rl <- endpoint_tbl %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-  return(rl)
+# Return list of resources for the given operation field by
+# endpoint_id, vendor and fhir_version
+get_fhir_resource_by_op <- function(db_connection, field) {
+  res <- tbl(db_connection,
+    sql(paste0("SELECT f.id as endpoint_id,
+      vendor_id,
+      vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as fhir_version,
+      operation_resource->>'", field, "' as type
+      from fhir_endpoints_info f
+      LEFT JOIN vendors on f.vendor_id = vendors.id"))) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 get_capstat_fields <- function(db_connection) {
@@ -166,14 +171,6 @@ get_capstat_fields <- function(db_connection) {
       ORDER BY field")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
-}
-
-# Summarize count of resource types by type, fhir_version
-get_fhir_resource_count <- function(fhir_resources_tbl) {
-  res <- fhir_resources_tbl %>%
-    group_by(type, fhir_version) %>%
-    count() %>%
-    rename(Resource = type, Endpoints = n)
 }
 
 # Summarize count of implementation guides by implementation_guide, fhir_version

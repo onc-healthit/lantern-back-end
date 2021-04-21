@@ -175,13 +175,35 @@ func getFHIRVersion(capStat []byte) string {
 func getSMARTResponse(smartRsp []byte) map[string]interface{} {
 	var defaultInt map[string]interface{}
 	var smartInt map[string]interface{}
-	if smartRsp != nil {
-		if len(smartRsp) > 0 {
-			err := json.Unmarshal(smartRsp, &smartInt)
-			if err != nil {
-				return defaultInt
+	if len(smartRsp) > 0 {
+		err := json.Unmarshal(smartRsp, &smartInt)
+		if err != nil {
+			return defaultInt
+		}
+		return smartInt
+	}
+	return defaultInt
+}
+
+// Format the Operation Resource Object into the Supported Resources format
+func getSupportedResources(opRes []byte) []string {
+	var defaultInt []string
+	var opResInt map[string][]string
+	checkResource := make(map[string]bool)
+	if len(opRes) > 0 {
+		err := json.Unmarshal(opRes, &opResInt)
+		if err != nil {
+			return defaultInt
+		}
+		// convert operation and resource object to supported resources format
+		// (list of every resource)
+		for _, resArr := range opResInt {
+			for _, resource := range resArr {
+				if _, ok := checkResource[resource]; !ok {
+					checkResource[resource] = true
+					defaultInt = append(defaultInt, resource)
+				}
 			}
-			return smartInt
 		}
 	}
 	return defaultInt
@@ -233,7 +255,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
-		capability_statement, tls_version, mime_types, supported_resources,
+		capability_statement, tls_version, mime_types, operation_resource,
 		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1;`
@@ -255,6 +277,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		var url string
 		var capStat []byte
 		var smartRsp []byte
+		var opRes []byte
 		err = historyRows.Scan(
 			&url,
 			&op.HTTPResponse,
@@ -263,7 +286,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			&capStat,
 			&op.TLSVersion,
 			pq.Array(&op.MIMETypes),
-			pq.Array(&op.SupportedResources),
+			&opRes,
 			&op.SMARTHTTPResponse,
 			&smartRsp,
 			&op.UpdatedAt)
@@ -279,6 +302,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 
 		op.FHIRVersion = getFHIRVersion(capStat)
 		op.SMARTResponse = getSMARTResponse(smartRsp)
+		op.SupportedResources = getSupportedResources(opRes)
 
 		resultRows = append(resultRows, op)
 	}

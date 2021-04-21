@@ -224,8 +224,9 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 				},
 			},
 		},
-		IncludedFields:      testIncludedFields,
-		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
+		IncludedFields: testIncludedFields,
+		OperationResource: map[string][]string{
+			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
 		Metadata:            endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
@@ -250,8 +251,9 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 				},
 			},
 		},
-		IncludedFields:      includedFieldsCopy,
-		SupportedResources:  []string{"AllergyIntolerance", "Binary", "CarePlan"},
+		IncludedFields: includedFieldsCopy,
+		OperationResource: map[string][]string{
+			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
 		Metadata:            endpointMetadata2}
 
@@ -402,19 +404,19 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo1.IncludedFields = endpointInfo2.IncludedFields
 
-	endpointInfo2.SupportedResources = []string{"other"}
+	endpointInfo2.OperationResource = map[string][]string{"write": {"AllergyIntolerance", "Binary", "CarePlan"}}
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedResources should be different. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. OperationResource should be different. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
-	endpointInfo2.SupportedResources = []string{"AllergyIntolerance", "Binary", "other"}
+	endpointInfo2.OperationResource = map[string][]string{"read": {"AllergyIntolerance", "Binary", "other"}}
 	if endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedResources should be different. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. OperationResource should be different. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
-	endpointInfo2.SupportedResources = []string{"Binary", "CarePlan", "AllergyIntolerance"}
+	endpointInfo2.OperationResource = map[string][]string{"read": {"Binary", "AllergyIntolerance", "CarePlan"}}
 	if !endpointInfo1.Equal(endpointInfo2) {
-		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. SupportedResources are same but in different order. %s vs %s", endpointInfo1.SupportedResources, endpointInfo2.SupportedResources)
+		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. OperationResource are same but in different order. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
-	endpointInfo2.SupportedResources = endpointInfo1.SupportedResources
+	endpointInfo2.OperationResource = endpointInfo1.OperationResource
 
 	endpointInfo2.Metadata = nil
 	if endpointInfo1.Equal(endpointInfo2) {

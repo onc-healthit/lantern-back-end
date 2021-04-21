@@ -82,7 +82,8 @@ function(input, output, session) { #nolint
         "capability_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
-        reactive(input$resources))
+        reactive(input$resources),
+        reactive(input$operations))
 
       callModule(
         fieldsmodule,
@@ -127,6 +128,8 @@ function(input, output, session) { #nolint
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
+
+  show_operation_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
 
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
@@ -287,6 +290,56 @@ function(input, output, session) { #nolint
     }
     else{
       updateSelectizeInput(session, "resources", label = "Choose or type in any resource from the list below:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  #                     #
+  # Operations Checkbox #
+  #                     #
+
+  # Operations checkbox display
+  output$show_operation_checkboxes <- renderUI({
+    if (show_operation_checkbox()) {
+      fluidPage(
+        fluidRow(
+          actionButton("removeallops", "Clear All Operations"),
+          selectizeInput("operations", "Choose or type in any resource from the list below:",
+          choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+          selected = c(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+          p("Note: Selecting multiple operations will only display the resources that implement all selected operations.", style = "font-size:13px; margin-top:-15px")
+        )
+      )
+    }
+  })
+
+  current_op_selection <- reactiveVal(NULL)
+
+  # Updates what the user has currently selected
+  observeEvent(input$operations, {
+    current_op_selection(input$operations)
+  })
+
+  # Resets the display if the user is navigating to this page
+  observe({
+    req(input$side_menu)
+    if (show_operation_checkbox()) {
+      updateSelectInput(session, "operations",
+            label = "Choose or type in any operation from the list below:",
+            choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+            selected = c())
+    }
+  })
+
+  # Resets the display if the user clicks the "Remove All Operations" button
+  observeEvent(input$removeallops, {
+    if (input$removeallops == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectizeInput(session, "operations",
+              label = "Choose or type in any operation from the list below:",
+              choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+              options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 }

@@ -26,7 +26,7 @@ type FHIREndpointInfo struct {
 	UpdatedAt           time.Time
 	SMARTResponse       smartparser.SMARTResponse
 	IncludedFields      []IncludedField
-	SupportedResources  []string
+	OperationResource   map[string][]string
 	Metadata            *FHIREndpointMetadata
 }
 
@@ -81,10 +81,10 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !helpers.StringArraysEqual(e.SupportedResources, e2.SupportedResources) {
-		return false
-	}
-	return true
+	// If the two endpoints have the same values in a different order, the Equal
+	// function will return false, so the resources need to be sorted for the Equal
+	// function to work as expected
+	return compareOperations(e.OperationResource, e2.OperationResource)
 }
 
 // Equal checks each field of the two FHIREndpointInfos except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -157,3 +157,24 @@ const (
 	UniqueResourcesRule RuleOption = "uniqueResourcesRule"
 	SearchParamsRule    RuleOption = "searchParamsRule"
 )
+
+// compareOperations compares the operation resource fields for an endpoint
+// and returns whether or not they are equivalent
+func compareOperations(e1 map[string][]string, e2 map[string][]string) bool {
+	// If they don't have the same number of keys then they're not equal
+	if len(e1) != len(e2) {
+		return false
+	}
+	for key, e1val := range e1 {
+		// If they both have the given key, check to see if their values are equal
+		// If e1 has a key that e2 doesn't have, then they're not equal
+		if e2val, ok := e2[key]; ok {
+			if !helpers.StringArraysEqual(e1val, e2val) {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	return true
+}

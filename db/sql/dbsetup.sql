@@ -173,7 +173,7 @@ CREATE TABLE fhir_endpoints_info (
     capability_statement    JSONB,
     validation              JSONB,
     included_fields         JSONB,
-    supported_resources     VARCHAR(500)[],
+    operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     smart_response          JSONB,
@@ -193,7 +193,7 @@ CREATE TABLE fhir_endpoints_info_history (
     capability_statement    JSONB,
     validation              JSONB,
     included_fields         JSONB,
-    supported_resources     VARCHAR(500)[],
+    operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     smart_response          JSONB, 
@@ -311,8 +311,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
-    links.confidence AS MATCH_SCORE, endpts_info.supported_resources,
-    endpts_metadata.availability
+    links.confidence AS MATCH_SCORE, endpts_metadata.availability
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
