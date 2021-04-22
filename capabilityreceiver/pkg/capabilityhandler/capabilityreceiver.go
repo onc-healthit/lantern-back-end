@@ -11,6 +11,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/pkg/errors"
@@ -270,14 +271,16 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	}
 
 	for _, endpt := range existingEndpts {
-		// Only update if versions have changed
-		// if msgJSON["versionsResponse"] != endpt.VersionsResponse {
-		// }
 		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
-		endpt.VersionsResponse.Response = resp
-		err = store.UpdateFHIREndpoint(ctx, endpt)
-		if err != nil {
-			return err
+		var vsr versionsoperatorparser.VersionsResponse
+		vsr.Response = resp
+		// Only update if versions have changed
+		if !endpt.VersionsResponse.Equal(vsr) {
+			endpt.VersionsResponse = vsr
+			err = store.UpdateFHIREndpoint(ctx, endpt)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
