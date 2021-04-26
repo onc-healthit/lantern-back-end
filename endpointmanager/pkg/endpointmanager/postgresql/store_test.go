@@ -21,25 +21,19 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	err = setup()
-	if err != nil {
-		panic(err)
-	}
-
-	hap := th.HostAndPort{Host: viper.GetString("dbhost"), Port: viper.GetString("dbport")}
-	err = th.CheckResources(hap)
-	if err != nil {
-		panic(err)
-	}
-
 	code := m.Run()
 
 	teardown()
 	os.Exit(code)
 }
 
-func setup() error {
+func SetupStore() error {
 	var err error
+	hap := th.HostAndPort{Host: viper.GetString("dbhost"), Port: viper.GetString("dbport")}
+	err = th.CheckResources(hap)
+	if err != nil {
+		panic(err)
+	}
 	store, err = NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	if err != nil {
 		return err
