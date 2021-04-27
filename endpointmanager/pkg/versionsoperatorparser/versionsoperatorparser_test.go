@@ -59,10 +59,9 @@ func Test_GetDefaultVersion(t *testing.T) {
 	th.Assert(t, equal, "expected default version to be 4.0")
 
 	vr1 = VersionsResponse{Response: nil}
-	var emptySlice []string
-	// test not populated VerrsionsResponse
-	equal = helpers.StringArraysEqual(vr1.GetSupportedVersions(), emptySlice)
-	th.Assert(t, equal, "expected non-empty versions to not be empty")
+
+	equal = vr1.GetDefaultVersion() == ""
+	th.Assert(t, equal, "expected default version to be empty string")
 
 }
 

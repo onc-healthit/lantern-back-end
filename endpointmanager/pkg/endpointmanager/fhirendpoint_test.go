@@ -88,6 +88,28 @@ func Test_FHIREndpoinNormalizeURL(t *testing.T) {
 		t.Errorf("Expected https://foobar.com/ to be normalized to https://foobar.com/")
 	}
 }
+
+func Test_NormalizeVersionsURLL(t *testing.T) {
+	if NormalizeVersionsURL("foobar.com") != "https://foobar.com/$versions" {
+		t.Errorf("Expected foobar.com to be normalized to https://foobar.com/$versions")
+	}
+	if NormalizeVersionsURL("http://foobar.com") != "http://foobar.com/$versions" {
+		t.Errorf("Expected http://foobar.com to be normalized to http://foobar.com/$versions")
+	}
+	if NormalizeVersionsURL("https://foobar.com") != "https://foobar.com/$versions" {
+		t.Errorf("Expected https://foobar.com to be normalized to https://foobar.com/$versions")
+	}
+	if NormalizeVersionsURL("foobar.com/") != "https://foobar.com/$versions" {
+		t.Errorf("Expected foobar.com/ to be normalized to https://foobar.com/$versions")
+	}
+	if NormalizeVersionsURL("http://foobar.com/") != "http://foobar.com/$versions" {
+		t.Errorf("Expected http://foobar.com/ to be normalized to http://foobar.com/$versions")
+	}
+	if NormalizeVersionsURL("https://foobar.com/") != "https://foobar.com/$versions" {
+		t.Errorf("Expected https://foobar.com/ to be normalized to https://foobar.com/$versions")
+	}
+}
+
 func Test_FHIREndpointEqual(t *testing.T) {
 	// endpoints
 	var endpoint1 = &FHIREndpoint{

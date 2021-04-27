@@ -146,7 +146,7 @@ func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, 
 	numWorkers := viper.GetInt("capquery_numworkers")
 	workers := workers.NewWorkers()
 
-	// Start workers and have then always running
+	// Start workers and have them always running
 	err = workers.Start(ctx, numWorkers, errs)
 	helpers.FailOnError("", err)
 

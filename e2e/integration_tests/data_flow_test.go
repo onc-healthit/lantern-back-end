@@ -566,7 +566,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		"https://webproxy.comhs.org/FHIR/api/FHIR/DSTU2/",
 		"https://rwebproxy.elcaminohospital.org/FHIR/api/FHIR/DSTU2/",
 		"https://lmcrcs.lexmed.com/FHIR/api/FHIR/DSTU2/",
-		"https://dev-eagle.azurehealthcareapis.com/"}
+		"https://proxy.cfmedicalcenter.com/FHIRProxyPRD/api/FHIR/DSTU2/"}
 
 	expected_deleted_endpt := 6
 	rows, err := store.DB.Query("SELECT url FROM fhir_endpoints_info_history WHERE operation='D';")

@@ -20,7 +20,7 @@ func setupCapStatReception(ctx context.Context, store *postgresql.Store) {
 	qName := viper.GetString("capquery_qname")
 	messageQueue, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), qName)
 	helpers.FailOnError("", err)
-	log.Info("Successfully connected to Capability Statemsnts Queue!")
+	log.Info("Successfully connected to Capability Statements Queue!")
 	defer messageQueue.Close()
 
 	err = capabilityhandler.ReceiveCapabilityStatements(ctx, store, messageQueue, channelID, qName)
@@ -35,7 +35,8 @@ func setupVersionsReception(ctx context.Context, store *postgresql.Store) {
 	log.Info("Successfully connected to Versions Response Queue!")
 	defer messageQueue.Close()
 
-	capQueryQueue, capQueryChannelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), "endpoints-to-capability")
+	capQname := viper.GetString("endptinfo_capquery_qname") 
+	capQueryQueue, capQueryChannelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQname)
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
 	defer capQueryQueue.Close()
