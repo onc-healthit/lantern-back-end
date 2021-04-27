@@ -26,20 +26,19 @@ import (
 // versionsQueryArgs is a struct to hold the args that will be consumed by the
 // saveVersionResponseMsgInDB function
 type versionsQueryArgs struct {
-	store      			*postgresql.Store
-	ctx         		context.Context
-	capQueryChannelID	lanternmq.ChannelID
-	capQueryQueue       lanternmq.MessageQueue
+	store             *postgresql.Store
+	ctx               context.Context
+	capQueryChannelID lanternmq.ChannelID
+	capQueryQueue     lanternmq.MessageQueue
 }
 
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
 // saveMsgInDB function
 type capStatQueryArgs struct {
-	store      			*postgresql.Store
-	ctx         		context.Context
-	chplMatchFile		string
+	store         *postgresql.Store
+	ctx           context.Context
+	chplMatchFile string
 }
-
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	var msgJSON map[string]interface{}
@@ -323,9 +322,9 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:			store,
-		ctx: 			ctx,
-		chplMatchFile:	"/etc/lantern/resources/CHPLProductMapping.json",
+		store:         store,
+		ctx:           ctx,
+		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
@@ -355,10 +354,10 @@ func ReceiveVersionResponses(ctx context.Context,
 	args := make(map[string]interface{})
 
 	args["queryArgs"] = versionsQueryArgs{
-		ctx:         				ctx,
-		capQueryChannelID:          capQueryChannelID,
-		capQueryQueue:       		capQueryQueue,
-		store:       				store,
+		ctx:               ctx,
+		capQueryChannelID: capQueryChannelID,
+		capQueryQueue:     capQueryQueue,
+		store:             store,
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
