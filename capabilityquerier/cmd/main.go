@@ -86,7 +86,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	return nil
 }
 
-// queryEndpointsCapabilityStatement gets an endpoint from the queue message and queries it to get the Capability Statement.
+// queryEndpointsVersionsOperation gets an endpoint from the queue message and queries it to get supported versions
 // This function is expected to be called by the lanternmq ProcessMessages function.
 // parameter message:  the queue message that is being processed by this function, which is just an endpoint.
 // parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
@@ -127,17 +127,15 @@ func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{
 	return nil
 }
 
-func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context) {
+func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context, qName string, endptQName string, processFunc lanternmq.MessageHandler) {
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
 	qPort := viper.GetString("qport")
-	capQName := viper.GetString("capquery_qname")
-	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
+	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
 	helpers.FailOnError("", err)
 
-	endptQName := viper.GetString("endptinfo_capquery_qname")
 	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
 	helpers.FailOnError("", err)
 
@@ -160,7 +158,7 @@ func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.
 		jobDuration: 30 * time.Second,
 		mq:          &mq,
 		ch:          &ch,
-		qName:       capQName,
+		qName:       qName,
 		userAgent:   userAgent,
 		store:       store,
 	}
@@ -168,55 +166,7 @@ func setupCapQueryQueue(store *postgresql.Store, userAgent string, client *http.
 	messages, err := mq.ConsumeFromQueue(ch, endptQName)
 	helpers.FailOnError("", err)
 
-	go mq.ProcessMessages(ctx, messages, queryEndpointsCapabilityStatement, &args, errs)
-
-	for elem := range errs {
-		log.Warn(elem)
-	}
-}
-
-func setupVersionsOperationQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context) {
-	// Set up the queue for sending messages
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	versionResponseQQName := viper.GetString("versionsquery_response_qname")
-	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, versionResponseQQName)
-	helpers.FailOnError("", err)
-
-	endptQName := viper.GetString("versionsquery_qname")
-	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
-	helpers.FailOnError("", err)
-
-	defer mq.Close()
-
-	errs := make(chan error)
-
-	numWorkers := viper.GetInt("capquery_numworkers")
-	workers := workers.NewWorkers()
-
-	// Start workers and have then always running
-	err = workers.Start(ctx, numWorkers, errs)
-	helpers.FailOnError("", err)
-
-	args := make(map[string]interface{})
-	args["queryArgs"] = queryArgs{
-		workers:     workers,
-		ctx:         ctx,
-		client:      client,
-		jobDuration: 30 * time.Second,
-		mq:          &mq,
-		ch:          &ch,
-		qName:       versionResponseQQName,
-		userAgent:   userAgent,
-		store:       store,
-	}
-
-	messages, err := mq.ConsumeFromQueue(ch, endptQName)
-	helpers.FailOnError("", err)
-
-	go mq.ProcessMessages(ctx, messages, queryEndpointsVersionsOperation, &args, errs)
+	go mq.ProcessMessages(ctx, messages, processFunc, &args, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
@@ -245,7 +195,11 @@ func main() {
 
 	ctx := context.Background()
 
-	go setupVersionsOperationQueue(store, userAgent, client, ctx)
-	setupCapQueryQueue(store, userAgent, client, ctx)
+	versionResponseQQName := viper.GetString("versionsquery_response_qname")
+	versionEndptQName := viper.GetString("versionsquery_qname")
+	go setupQueue(store, userAgent, client, ctx, versionResponseQQName, versionEndptQName, queryEndpointsVersionsOperation)
+	capQName := viper.GetString("capquery_qname")
+	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
+	setupQueue(store, userAgent, client, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
 
 }
