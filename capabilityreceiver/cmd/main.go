@@ -35,7 +35,7 @@ func setupVersionsReception(ctx context.Context, store *postgresql.Store) {
 	log.Info("Successfully connected to Versions Response Queue!")
 	defer messageQueue.Close()
 
-	capQname := viper.GetString("endptinfo_capquery_qname") 
+	capQname := viper.GetString("endptinfo_capquery_qname")
 	capQueryQueue, capQueryChannelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQname)
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to capabilityquerier Queue!")
