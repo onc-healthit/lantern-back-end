@@ -61,37 +61,37 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
 $fhir_endpoints_availability$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
-    id               SERIAL PRIMARY KEY,
-    npi_id			 VARCHAR(500) UNIQUE,
-    name             VARCHAR(500),
-    secondary_name   VARCHAR(500),
-    location         JSONB,
-    taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
-    normalized_name      VARCHAR(500),
+    id                          SERIAL PRIMARY KEY,
+    npi_id                      VARCHAR(500) UNIQUE,
+    name                        VARCHAR(500),
+    secondary_name              VARCHAR(500),
+    location                    JSONB,
+    taxonomy                    VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+    normalized_name             VARCHAR(500),
     normalized_secondary_name   VARCHAR(500),
-    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE npi_contacts (
-    id               SERIAL PRIMARY KEY,
-    npi_id			     VARCHAR(500),
-	endpoint_type   VARCHAR(500),
-	endpoint_type_description   VARCHAR(500),
-	endpoint   VARCHAR(500),
-    valid_url BOOLEAN,
-	affiliation   VARCHAR(500),
-	endpoint_description   VARCHAR(500),
-	affiliation_legal_business_name   VARCHAR(500),
-	use_code   VARCHAR(500),
-	use_description   VARCHAR(500),
-	other_use_description   VARCHAR(500),
-	content_type   VARCHAR(500),
-	content_description   VARCHAR(500),
-	other_content_description   VARCHAR(500),
-    location                JSONB,
-    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id                                  SERIAL PRIMARY KEY,
+    npi_id                              VARCHAR(500),
+    endpoint_type                       VARCHAR(500),
+    endpoint_type_description           VARCHAR(500),
+    endpoint                            VARCHAR(500),
+    valid_url                           BOOLEAN,
+    affiliation                         VARCHAR(500),
+    endpoint_description                VARCHAR(500),
+    affiliation_legal_business_name     VARCHAR(500),
+    use_code                            VARCHAR(500),
+    use_description                     VARCHAR(500),
+    other_use_description               VARCHAR(500),
+    content_type                        VARCHAR(500),
+    content_description                 VARCHAR(500),
+    other_content_description           VARCHAR(500),
+    location                            JSONB,
+    created_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE vendors (
@@ -201,9 +201,9 @@ CREATE TABLE fhir_endpoints_info_history (
 );
 
 CREATE TABLE endpoint_organization (
-    url             VARCHAR(500),
-    organization_npi_id VARCHAR(500),
-    confidence NUMERIC (5, 3),
+    url                     VARCHAR(500),
+    organization_npi_id     VARCHAR(500),
+    confidence              NUMERIC (5, 3),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
@@ -219,9 +219,9 @@ CREATE TABLE product_criteria (
 );
 
 CREATE TABLE fhir_endpoints_availability (
-    url             VARCHAR(500),
-    http_200_count       BIGINT,
-    http_all_count       BIGINT,
+    url                     VARCHAR(500),
+    http_200_count          BIGINT,
+    http_all_count          BIGINT,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
