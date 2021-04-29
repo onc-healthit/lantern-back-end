@@ -163,6 +163,11 @@ CREATE TABLE fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
+CREATE TABLE validation_results (
+    id                      SERIAL PRIMARY KEY
+);
+
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
     healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
@@ -172,6 +177,7 @@ CREATE TABLE fhir_endpoints_info (
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
     validation              JSONB,
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -192,6 +198,7 @@ CREATE TABLE fhir_endpoints_info_history (
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
     validation              JSONB,
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -224,6 +231,17 @@ CREATE TABLE fhir_endpoints_availability (
     http_all_count          BIGINT,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE validations (
+    rule_name               VARCHAR(500),
+    valid                   BOOLEAN,
+    expected                VARCHAR(500),
+    actual                  VARCHAR(500),
+    comment                 VARCHAR(500),
+    reference               VARCHAR(500),
+    implementation_guide    VARCHAR(500),
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL
 );
 
 
