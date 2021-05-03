@@ -127,7 +127,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	tempCtx := context.Background()
 	err = aq.SendToQueue(tempCtx, msgStr, qa.MessageQueue, qa.ChannelID, qa.QueueName)
 	if err != nil {
-		return errors.Wrapf(err, "error sending capability statement for FHIR endpoint %s to queue '%s'", qa.FhirURL, qa.QueueName)
+		return errors.Wrapf(err, "error sending versions response for FHIR endpoint %s to queue '%s'", qa.FhirURL, qa.QueueName)
 	}
 	return nil
 }
