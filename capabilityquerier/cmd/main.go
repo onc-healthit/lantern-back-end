@@ -195,9 +195,9 @@ func main() {
 
 	ctx := context.Background()
 
-	versionResponseQQName := viper.GetString("versionsquery_response_qname")
+	versionResponseQName := viper.GetString("versionsquery_response_qname")
 	versionEndptQName := viper.GetString("versionsquery_qname")
-	go setupQueue(store, userAgent, client, ctx, versionResponseQQName, versionEndptQName, queryEndpointsVersionsOperation)
+	go setupQueue(store, userAgent, client, ctx, versionResponseQName, versionEndptQName, queryEndpointsVersionsOperation)
 	capQName := viper.GetString("capquery_qname")
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
 	setupQueue(store, userAgent, client, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
