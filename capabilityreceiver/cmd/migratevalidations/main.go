@@ -60,7 +60,7 @@ func createJobs(ctx context.Context,
 
 		handlerFunction := addToValidationTable
 		if migrateDirection == "down" {
-			handlerFunction = updateSupportedResources
+			handlerFunction = addToValidationField
 		}
 
 		job := workers.Job{
@@ -198,6 +198,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		}
 
 		// Get the FHIR Version from that
+		// @TODO update this based on Emily's PR
 		fhirVersion := ""
 		if capStat != nil {
 			fhirVersion, _ = capStat.GetFHIRVersion()
@@ -260,9 +261,9 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 	return nil
 }
 
-// updateSupportedResources gets the history data for a given URL and creates the
-// supported_resources field data based on each row's capability statement
-func updateSupportedResources(ctx context.Context, args *map[string]interface{}) error {
+// addToValidationField gets the history data for a given URL and creates the
+// validation field data based on each row's capability statement
+func addToValidationField(ctx context.Context, args *map[string]interface{}) error {
 	ha, ok := (*args)["historyArgs"].(historyArgs)
 	if !ok {
 		log.Warnf("unable to cast arguments to type historyArgs")
@@ -278,10 +279,11 @@ func updateSupportedResources(ctx context.Context, args *map[string]interface{})
 		databaseTable = "fhir_endpoints_info_history"
 	}
 
+	// @TODO Update based on Emily's PR
 	updateFHIREndpointInfoHistoryStatement, err := ha.store.DB.Prepare(`
 		UPDATE ` + databaseTable + `
 		SET
-			supported_resources = $1
+			validation = $1
 		WHERE updated_at = $2 AND url = $3;`)
 	if err != nil {
 		log.Warnf("unable to prepare FHIR Endpoint History Update statement %s. Error: %s", ha.fhirURL, err)
@@ -294,9 +296,13 @@ func updateSupportedResources(ctx context.Context, args *map[string]interface{})
 	defer updateFHIREndpointInfoHistoryStatement.Close()
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
-	selectHistory := `SELECT updated_at, capability_statement
-		FROM ` + databaseTable + `
-		WHERE url=$1;`
+	selectHistory := `SELECT endpts_info.capability_statement,
+			endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
+			endpts_metadata.smart_http_response,
+			endpts_info.updated_at AS INFO_UPDATED
+		FROM ` + databaseTable + ` AS endpts_info
+		LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+		WHERE endpts_info.url=$1;`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
@@ -308,31 +314,67 @@ func updateSupportedResources(ctx context.Context, args *map[string]interface{})
 	}
 
 	defer historyRows.Close()
+	var validationVals []validationArgs
 	for historyRows.Next() {
-		var updatedTime time.Time
-		var capStat []byte
-		err = historyRows.Scan(&updatedTime, &capStat)
+		// @TODO Change this?
+		var val validationArgs
+		err = historyRows.Scan(&val.capStatByte,
+			&val.tlsVersion,
+			pq.Array(&val.mimeTypes),
+			&val.httpResponse,
+			&val.smartHttpResponse,
+			&val.updatedTime)
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
 			continue
 		}
+		validationVals = append(validationVals, val)
+	}
 
-		// Unmarshal the capStat, we continue if there's an error because createSupportedResources
-		// handles a nil value and it makes more sense to put an empty array in the database than
-		// a nil value
+	for _, val := range validationVals {
+		// Create the capability statement object
+		var capStat capabilityparser.CapabilityStatement
 		var capInt map[string]interface{}
-		if len(capStat) > 0 {
-			err = json.Unmarshal(capStat, &capInt)
+		if len(val.capStatByte) > 0 {
+			err = json.Unmarshal(val.capStatByte, &capInt)
 			if err != nil {
 				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
 			}
+
+			capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
+			if err != nil {
+				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", ha.fhirURL, err)
+			}
 		}
-		supportedResources := createSupportedResources(capInt)
-		_, err = updateFHIREndpointInfoHistoryStatement.ExecContext(ctx, pq.Array(supportedResources), updatedTime, ha.fhirURL)
+
+		// Get the FHIR Version from that
+		// @TODO update this based on Emily's PR
+		fhirVersion := ""
+		if capStat != nil {
+			fhirVersion, _ = capStat.GetFHIRVersion()
+		}
+		// Create validator
+		validator := validation.ValidatorForFHIRVersion(fhirVersion)
+		// RunValidation
+		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
+
+		// convert object to JSON?
+		validationJSON, err := json.Marshal(validationObj)
 		if err != nil {
-			log.Warnf("Error while updating the row of the history table for URL %s at %s. Error: %s", ha.fhirURL, updatedTime.String(), err)
+			log.Warnf("Error marshalling object to JSON. Error: %s", err)
+			continue
+		}
+
+		// Then add the object to the fhir_endpoint_info row
+		_, err = updateFHIREndpointInfoHistoryStatement.QueryContext(ctx,
+			validationJSON,
+			val.updatedTime,
+			ha.fhirURL)
+		if err != nil {
+			log.Warnf("Failed to add validation for URL %s. Error: %s", ha.fhirURL, err)
 		}
 	}
+
 	result := Result{
 		URL: ha.fhirURL,
 	}
