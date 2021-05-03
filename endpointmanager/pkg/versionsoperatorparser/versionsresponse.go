@@ -13,7 +13,7 @@ type VersionsResponse struct {
 	Response map[string]interface{}
 }
 
-// Equal checks if the conformance/capability statement is equal to the given conformance/capability statement.
+// Equal checks if the versions response is equal to the given versionsresponse statement.
 func (vr1 *VersionsResponse) Equal(vr2 VersionsResponse) bool {
 	j1, err := vr1.GetJSON()
 	if err != nil {
