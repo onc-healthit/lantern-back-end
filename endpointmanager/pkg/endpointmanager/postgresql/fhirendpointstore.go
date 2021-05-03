@@ -240,7 +240,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
 		// Merge new data with old data
-		// Org names and NPI IDs only possible new data
+		// Org names NPI IDs and VersionsResponse only possible new data
 		for _, name := range e.OrganizationNames {
 			existingEndpt.AddOrganizationName(name)
 		}
