@@ -143,7 +143,7 @@ func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, 
 
 	errs := make(chan error)
 
-	numWorkers := viper.GetInt("capquery_numworkers")
+	numWorkers := viper.GetInt("query_numworkers")
 	workers := workers.NewWorkers()
 
 	// Start workers and have them always running
