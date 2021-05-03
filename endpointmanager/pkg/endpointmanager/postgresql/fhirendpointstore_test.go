@@ -104,11 +104,8 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	e1.OrganizationNames = []string{"Org 1", "Org 2"}
 	e1.NPIIDs = []string{"2", "3"}
-	var modvsr versionsoperatorparser.VersionsResponse
-	modvsr.Response = make(map[string]interface{})
-	modvsr.Response["default"] = "4.0"
-	modvsr.Response["versions"] = []string{"4.0","2.0"}
-	e1.VersionsResponse = modvsr
+	vsr.Response["versions"] = []string{"4.0","2.0"}
+	e1.VersionsResponse = vsr
 	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
 	if err != nil {
 		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
@@ -123,9 +120,9 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	if !helpers.StringArraysEqual(e1.NPIIDs, []string{"1", "2", "3"}) {
 		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
 	}
-	if !e1.VersionsResponse.Equal(modvsr) {
+	if !e1.VersionsResponse.Equal(vsr) {
 		fmt.Println(e1.VersionsResponse)
-		fmt.Println(modvsr)
+		fmt.Println(vsr)
 		t.Errorf("Expected VersionsResponse to be updated with new value")
 	}
 
