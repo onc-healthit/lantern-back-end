@@ -8,7 +8,7 @@ import (
 // VersionsResponse is a wrapper struct for a response to the $versions FHIR operation
 // this implementation assumes that we are requesting and receiving the application/json response
 // future support for the FHIR representation of this will require making the VersionsResponse an
-// interface follo
+// interface following the same pattern used for the CapabilityStatement
 type VersionsResponse struct {
 	Response map[string]interface{}
 }
