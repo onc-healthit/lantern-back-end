@@ -27,7 +27,7 @@ func main() {
 
 	var channel *amqp.Channel
 
-	capQName := viper.GetString("enptinfo_capquery_qname")
+	capQName := viper.GetString("endptinfo_capquery_qname")
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
 	qHost := viper.GetString("qhost")
