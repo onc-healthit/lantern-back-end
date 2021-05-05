@@ -71,7 +71,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: capabilityquerier
 
-* **LANTERN_CAPQUERY_NUMWORKERS**: The number of workers to use to parallelize processing of the capability statements.
+* **LANTERN_QUERY_NUMWORKERS**: The number of workers to use to parallelize processing of the capability statements and version responses.
 
   Default value: 10
 

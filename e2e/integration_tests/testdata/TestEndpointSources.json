@@ -1,6 +1,10 @@
 {
   "Entries": [
     {
+      "OrganizationName": "EndpointThatSupportsVersions",
+      "FHIRPatientFacingURI": "https://dev-eagle.azurehealthcareapis.com/"
+    },
+    {
       "OrganizationName": "Cape Fear Valley Health",
       "FHIRPatientFacingURI": "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
     },

@@ -63,9 +63,6 @@ func TestMain(m *testing.M) {
 
 	populateTestNPIData()
 	populateTestEndpointData(endptList, "Test")
-	go setupTestServer()
-	// Give time for the querier to query the test server we just setup
-	time.Sleep(30 * time.Second)
 
 	code := m.Run()
 
@@ -104,29 +101,6 @@ func populateTestEndpointData(testEndpointList string, source string) {
 
 	dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
 	helpers.FailOnError("", dbErr)
-}
-
-func metadataHandler(w http.ResponseWriter, r *http.Request) {
-	contents, err := ioutil.ReadFile("testdata/DSTU2CapabilityStatement.xml")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/fhir+xml")
-	_, err = w.Write(contents)
-	// Don't fail on error in this case since test connection will drop out when test ends
-	if err != nil {
-		log.Printf("%s", err)
-	}
-}
-
-func setupTestServer() {
-	http.HandleFunc("/metadata", metadataHandler)
-	var err = http.ListenAndServe(":80", nil)
-	if err != nil {
-		log.Fatal("HTTP Server Creation Error: ", err.Error())
-	}
 }
 
 func testQueueSetup() {
@@ -185,7 +159,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	err = response_time_row.Scan(&link_count)
 	helpers.FailOnError("", err)
 
-	if link_count != 30 {
+	if link_count != 31 {
 		t.Fatalf("Only 30 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
@@ -452,7 +426,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	var err error
 	queueIsEmpty(t, testQName)
 	defer checkCleanQueue(t, testQName, channel)
-	capQName := viper.GetString("endptinfo_capquery_qname")
+	capQName := viper.GetString("versionsquery_qname")
 
 	var mq lanternmq.MessageQueue
 	var chID lanternmq.ChannelID
@@ -479,6 +453,14 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	helpers.FailOnError("", err)
 	if capability_statement_count == 0 {
 		t.Fatalf("Fhir_endpoints_info db should have capability statements")
+	}
+
+	query_str = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints where versions_response is not null;")
+	var versions_response_count int
+	err = query_str.Scan(&capability_statement_count)
+	helpers.FailOnError("", err)
+	if versions_response_count == 0 {
+		t.Fatalf("Fhir_endpoints db should have endpoints with versions_response")
 	}
 
 	query_str = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata;")

@@ -37,12 +37,12 @@ type queryArgs struct {
 	store       *postgresql.Store
 }
 
-// queryEndpoints gets an endpoint from the queue message and queries it to get the Capability Statement.
+// queryEndpointsCapabilityStatement gets an endpoint from the queue message and queries it to get the Capability Statement.
 // This function is expected to be called by the lanternmq ProcessMessages function.
 // parameter message:  the queue message that is being processed by this function, which is just an endpoint.
 // parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
 // 					   this way because queue processing is generalized.
-func queryEndpoints(message []byte, args *map[string]interface{}) error {
+func queryEndpointsCapabilityStatement(message []byte, args *map[string]interface{}) error {
 	// Get arguments
 	qa, ok := (*args)["queryArgs"].(queryArgs)
 	if !ok {
@@ -86,6 +86,93 @@ func queryEndpoints(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
+// queryEndpointsVersionsOperation gets an endpoint from the queue message and queries it to get supported versions
+// This function is expected to be called by the lanternmq ProcessMessages function.
+// parameter message:  the queue message that is being processed by this function, which is just an endpoint.
+// parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
+// 					   this way because queue processing is generalized.
+func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{}) error {
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(queryArgs)
+	if !ok {
+		return fmt.Errorf("unable to cast queryArgs from arguments")
+	}
+
+	urlString := string(message)
+
+	jobArgs := make(map[string]interface{})
+
+	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
+		FhirURL:      urlString,
+		Client:       qa.client,
+		MessageQueue: qa.mq,
+		ChannelID:    qa.ch,
+		QueueName:    qa.qName,
+		UserAgent:    qa.userAgent,
+		Store:        qa.store,
+	}
+
+	job := workers.Job{
+		Context:     qa.ctx,
+		Duration:    qa.jobDuration,
+		Handler:     (capabilityquerier.GetAndSendVersionsResponse),
+		HandlerArgs: &jobArgs,
+	}
+
+	err := qa.workers.Add(&job)
+	if err != nil {
+		return fmt.Errorf("error adding job to workers: %s", err.Error())
+	}
+
+	return nil
+}
+
+func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context, qName string, endptQName string, processFunc lanternmq.MessageHandler) {
+	// Set up the queue for sending messages
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	helpers.FailOnError("", err)
+
+	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
+	helpers.FailOnError("", err)
+
+	defer mq.Close()
+
+	errs := make(chan error)
+
+	numWorkers := viper.GetInt("query_numworkers")
+	workers := workers.NewWorkers()
+
+	// Start workers and have them always running
+	err = workers.Start(ctx, numWorkers, errs)
+	helpers.FailOnError("", err)
+
+	args := make(map[string]interface{})
+	args["queryArgs"] = queryArgs{
+		workers:     workers,
+		ctx:         ctx,
+		client:      client,
+		jobDuration: 30 * time.Second,
+		mq:          &mq,
+		ch:          &ch,
+		qName:       qName,
+		userAgent:   userAgent,
+		store:       store,
+	}
+
+	messages, err := mq.ConsumeFromQueue(ch, endptQName)
+	helpers.FailOnError("", err)
+
+	go mq.ProcessMessages(ctx, messages, processFunc, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+}
+
 func main() {
 	err := config.SetupConfig()
 	helpers.FailOnError("", err)
@@ -93,21 +180,6 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
-
-	// Set up the queue for sending messages
-	qUser := viper.GetString("quser")
-	qPassword := viper.GetString("qpassword")
-	qHost := viper.GetString("qhost")
-	qPort := viper.GetString("qport")
-	capQName := viper.GetString("capquery_qname")
-	mq, ch, err := aq.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, capQName)
-	helpers.FailOnError("", err)
-
-	endptQName := viper.GetString("endptinfo_capquery_qname")
-	mq, ch, err = aq.ConnectToQueue(mq, ch, endptQName)
-	helpers.FailOnError("", err)
-
-	defer mq.Close()
 
 	// Read version file that is mounted
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
@@ -121,35 +193,13 @@ func main() {
 		Timeout: time.Second * 35,
 	}
 
-	errs := make(chan error)
-
-	numWorkers := viper.GetInt("capquery_numworkers")
-	workers := workers.NewWorkers()
 	ctx := context.Background()
 
-	// Start workers and have then always running
-	err = workers.Start(ctx, numWorkers, errs)
-	helpers.FailOnError("", err)
+	versionResponseQName := viper.GetString("versionsquery_response_qname")
+	versionEndptQName := viper.GetString("versionsquery_qname")
+	go setupQueue(store, userAgent, client, ctx, versionResponseQName, versionEndptQName, queryEndpointsVersionsOperation)
+	capQName := viper.GetString("capquery_qname")
+	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
+	setupQueue(store, userAgent, client, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
 
-	args := make(map[string]interface{})
-	args["queryArgs"] = queryArgs{
-		workers:     workers,
-		ctx:         ctx,
-		client:      client,
-		jobDuration: 30 * time.Second,
-		mq:          &mq,
-		ch:          &ch,
-		qName:       capQName,
-		userAgent:   userAgent,
-		store:       store,
-	}
-
-	messages, err := mq.ConsumeFromQueue(ch, endptQName)
-	helpers.FailOnError("", err)
-
-	go mq.ProcessMessages(ctx, messages, queryEndpoints, &args, errs)
-
-	for elem := range errs {
-		log.Warn(elem)
-	}
 }

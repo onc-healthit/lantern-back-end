@@ -12,6 +12,7 @@ import (
 )
 
 func Test_PersistCriteria(t *testing.T) {
+	SetupStore()
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 

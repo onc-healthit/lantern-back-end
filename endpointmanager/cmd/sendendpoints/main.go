@@ -22,7 +22,7 @@ func main() {
 	log.Info("Successfully connected to DB!")
 
 	// Set up the queue for sending messages to capabilityquerier
-	capQName := viper.GetString("endptinfo_capquery_qname")
+	capQName := viper.GetString("versionsquery_qname")
 	mq, channelID, err := accessqueue.ConnectToServerAndQueue(viper.GetString("quser"), viper.GetString("qpassword"), viper.GetString("qhost"), viper.GetString("qport"), capQName)
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to capabilityquerier Queue!")

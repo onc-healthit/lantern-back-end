@@ -146,6 +146,7 @@ CREATE TABLE fhir_endpoints (
     organization_names      VARCHAR(500)[],
     npi_ids                 VARCHAR(500)[],
     list_source             VARCHAR(500),
+    versions_response       JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)

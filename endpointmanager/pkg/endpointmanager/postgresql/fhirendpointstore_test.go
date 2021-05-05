@@ -4,15 +4,18 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_PersistFHIREndpoint(t *testing.T) {
+	SetupStore()
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -25,6 +28,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		OrganizationNames: []string{"Example Inc."},
 		NPIIDs:            []string{"1"},
 		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:               "other.example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Other Example Inc."}}
@@ -60,8 +64,13 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 
 	// update endpoint
-
 	e1.ListSource = "Unknown"
+
+	var vsr versionsoperatorparser.VersionsResponse
+	vsr.Response = make(map[string]interface{})
+	vsr.Response["default"] = "4.0"
+	vsr.Response["versions"] = []string{"4.0"}
+	e1.VersionsResponse = vsr
 
 	err = store.UpdateFHIREndpoint(ctx, e1)
 	if err != nil {
@@ -95,6 +104,8 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	e1.OrganizationNames = []string{"Org 1", "Org 2"}
 	e1.NPIIDs = []string{"2", "3"}
+	vsr.Response["versions"] = []string{"4.0","2.0"}
+	e1.VersionsResponse = vsr
 	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
 	if err != nil {
 		t.Errorf("Error adding/updating fhir endpoint: %s", err.Error())
@@ -108,6 +119,11 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 	if !helpers.StringArraysEqual(e1.NPIIDs, []string{"1", "2", "3"}) {
 		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
+	}
+	if !e1.VersionsResponse.Equal(vsr) {
+		fmt.Println(e1.VersionsResponse)
+		fmt.Println(vsr)
+		t.Errorf("Expected VersionsResponse to be updated with new value")
 	}
 
 	// retreive all endpoints

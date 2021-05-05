@@ -1,6 +1,10 @@
 {
   "Entries": [
     {
+      "OrganizationName": "EndpointThatSupportsVersions",
+      "FHIRPatientFacingURI": "https://dev-eagle.azurehealthcareapis.com/"
+    },
+    {
       "OrganizationName": "Englewood Hospital and Medical Center",
       "FHIRPatientFacingURI": "https://epicproxy.et1073.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
     },
