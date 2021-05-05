@@ -15,6 +15,7 @@ import (
 )
 
 func Test_PersistFHIREndpointInfo(t *testing.T) {
+	SetupStore()
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 

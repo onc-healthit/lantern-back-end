@@ -81,12 +81,14 @@ func Test_saveMsgInDB(t *testing.T) {
 	ctStmt, err := store.DB.Prepare("SELECT COUNT(*) FROM fhir_endpoints_info;")
 	th.Assert(t, err == nil, err)
 	defer ctStmt.Close()
+	ctx := context.Background()
 
 	args := make(map[string]interface{})
-	args["store"] = store
-	args["chplMatchFile"] = "../../testdata/test_chpl_product_mapping.json"
-
-	ctx := context.Background()
+	args["queryArgs"] = capStatQueryArgs{
+		store:			store,
+		ctx: 			ctx,
+		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+	}
 
 	// populate vendors
 	for _, vendor := range vendors {
@@ -112,7 +114,11 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// check that nothing is stored and that saveMsgInDB throws an error if the context is canceled
 	testCtx, cancel := context.WithCancel(context.Background())
-	args["ctx"] = testCtx
+	args["queryArgs"] = capStatQueryArgs{
+		store:			store,
+		ctx: 			testCtx,
+		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+	}
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, errors.Cause(err) == context.Canceled, fmt.Sprintf("should have errored out with root cause that the context was canceled, instead was %s and %s", err, errors.Cause(err)))
@@ -122,8 +128,11 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, ct == 0, "should not have stored data")
 
 	// reset context
-	args["ctx"] = context.Background()
-
+	args["queryArgs"] = capStatQueryArgs{
+		store:			store,
+		ctx: 			context.Background(),
+		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+	}
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
 	th.Assert(t, err == nil, errors.Wrap(err, "error"))

@@ -6,9 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
+	"github.com/spf13/viper"
+
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/pkg/errors"
@@ -18,6 +22,23 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 	log "github.com/sirupsen/logrus"
 )
+
+// versionsQueryArgs is a struct to hold the args that will be consumed by the
+// saveVersionResponseMsgInDB function
+type versionsQueryArgs struct {
+	store             *postgresql.Store
+	ctx               context.Context
+	capQueryChannelID lanternmq.ChannelID
+	capQueryQueue     lanternmq.MessageQueue
+}
+
+// capStatQueryArgs is a struct to hold the args that will be consumed by the
+// saveMsgInDB function
+type capStatQueryArgs struct {
+	store         *postgresql.Store
+	ctx           context.Context
+	chplMatchFile string
+}
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	var msgJSON map[string]interface{}
@@ -139,20 +160,19 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var err error
 	var fhirEndpoint *endpointmanager.FHIREndpointInfo
 	var existingEndpt *endpointmanager.FHIREndpointInfo
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(capStatQueryArgs)
+	if !ok {
+		return fmt.Errorf("unable to parse args into capStatQueryArgs")
+	}
 
 	fhirEndpoint, err = formatMessage(message)
 	if err != nil {
 		return err
 	}
 
-	store, ok := (*args)["store"].(*postgresql.Store)
-	if !ok {
-		return fmt.Errorf("unable to cast postgresql store from arguments")
-	}
-	ctx, ok := (*args)["ctx"].(context.Context)
-	if !ok {
-		return fmt.Errorf("unable to cast context from arguments")
-	}
+	store := qa.store
+	ctx := qa.ctx
 
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
 
@@ -163,7 +183,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile))
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -204,7 +224,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile))
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
@@ -234,6 +254,64 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
+func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) error {
+	var err error
+	var existingEndpts []*endpointmanager.FHIREndpoint
+	var msgJSON map[string]interface{}
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(versionsQueryArgs)
+	if !ok {
+		return fmt.Errorf("unable to parse args into versionsQueryArgs")
+	}
+
+	err = json.Unmarshal(message, &msgJSON)
+	if err != nil {
+		return err
+	}
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast message URL to string")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	store := qa.store
+	ctx := qa.ctx
+
+	existingEndpts, err = store.GetFHIREndpointUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	for _, endpt := range existingEndpts {
+		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
+		var vsr versionsoperatorparser.VersionsResponse
+		vsr.Response = resp
+		// Only update if versions have changed
+		if !endpt.VersionsResponse.Equal(vsr) {
+			endpt.VersionsResponse = vsr
+			err = store.UpdateFHIREndpoint(ctx, endpt)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Dispatch query for CapabilityStatement here
+	// Set up the queue for sending messages to capabilityquerier
+	mq := qa.capQueryQueue
+	channelID := qa.capQueryChannelID
+	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
+	err = accessqueue.SendToQueue(ctx, url, &mq, &channelID, capQueryEndptQName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ReceiveCapabilityStatements connects to the given message queue channel and receives the capability
 // statements from it. It then adds the capability statements to the given store.
 func ReceiveCapabilityStatements(ctx context.Context,
@@ -243,9 +321,11 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	qName string) error {
 
 	args := make(map[string]interface{})
-	args["store"] = store
-	args["ctx"] = ctx
-	args["chplMatchFile"] = "/etc/lantern/resources/CHPLProductMapping.json"
+	args["queryArgs"] = capStatQueryArgs{
+		store:         store,
+		ctx:           ctx,
+		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {
@@ -254,6 +334,39 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	errs := make(chan error)
 	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
+	return nil
+}
+
+// ReceiveVersionResponses connects to the given message queue channel (qname) and receives the
+// versions response from it. It then saves the versions response and queries the versions advertized
+func ReceiveVersionResponses(ctx context.Context,
+	store *postgresql.Store,
+	messageQueue lanternmq.MessageQueue,
+	channelID lanternmq.ChannelID,
+	qName string,
+	capQueryQueue lanternmq.MessageQueue,
+	capQueryChannelID lanternmq.ChannelID) error {
+	args := make(map[string]interface{})
+
+	args["queryArgs"] = versionsQueryArgs{
+		ctx:               ctx,
+		capQueryChannelID: capQueryChannelID,
+		capQueryQueue:     capQueryQueue,
+		store:             store,
+	}
+
+	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
+	if err != nil {
+		return err
+	}
+
+	errs := make(chan error)
+	go messageQueue.ProcessMessages(ctx, messages, saveVersionResponseMsgInDB, &args, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
