@@ -77,7 +77,7 @@ func createJobs(ctx context.Context,
 	}
 }
 
-// addToValidationTable gets the history data for a given URL and creates the
+// addToValidationTable gets the table data for a given URL and creates the
 // validation table rows based on each row's capability statement
 func addToValidationTable(ctx context.Context, args *map[string]interface{}) error {
 	ha, ok := (*args)["historyArgs"].(historyArgs)
@@ -136,7 +136,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			validation_result_id = $1
 		WHERE updated_at = $2 AND url = $3;`)
 	if err != nil {
-		log.Warnf("unable to prepare FHIR Endpoint History Update statement %s. Error: %s", ha.fhirURL, err)
+		log.Warnf("unable to prepare FHIR Endpoint table Update statement %s. Error: %s", ha.fhirURL, err)
 		result := Result{
 			URL: ha.fhirURL,
 		}
@@ -145,8 +145,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 	}
 	defer updateFHIREndpointValResStatement.Close()
 
-	// Get everything from the fhir_endpoints_info_history table for the given URL
-	// @TODO Could change this to endpoint_export for fhir_endpoints_info
+	// Get validation information from the specified table table for the given URL
 	selectHistory := `SELECT endpts_info.capability_statement,
 			endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
 			endpts_metadata.smart_http_response,
@@ -166,7 +165,6 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 	defer historyRows.Close()
 	var validationVals []validationArgs
 	for historyRows.Next() {
-		// @TODO Change this?
 		var val validationArgs
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
@@ -197,17 +195,15 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			}
 		}
 
-		// Get the FHIR Version from that
 		// @TODO update this based on Emily's PR
 		fhirVersion := ""
 		if capStat != nil {
 			fhirVersion, _ = capStat.GetFHIRVersion()
 		}
-		// Create validator
+
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		// RunValidation
 		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
-		// Somehow have to get an ID from the validation_results table
+		// Create ID in validation_results table and then get the ID
 		var valResID int
 		valRow, err := addValidationResultStatement.QueryContext(ctx)
 		if err == nil {
@@ -230,11 +226,9 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			ha.result <- result
 			return nil
 		}
-		log.Infof("ID: %d", valResID)
-		log.Infof("url: %s", ha.fhirURL)
-		// Then add each element of this array as a row to the table with that id
+		// Then add each element of the validationObj array as a row to the table with that id
 		for _, ruleInfo := range validationObj.Results {
-			_, err = addValidationStatement.QueryContext(ctx,
+			_, err = addValidationStatement.ExecContext(ctx,
 				ruleInfo.RuleName,
 				ruleInfo.Valid,
 				ruleInfo.Expected,
@@ -245,13 +239,22 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 				valResID)
 			if err != nil {
 				log.Warnf("Failed to add validation for URL %s. Error: %s", ha.fhirURL, err)
+				result := Result{
+					URL: ha.fhirURL,
+				}
+				ha.result <- result
+				return nil
 			}
 		}
 		// Then have to update the row in the history table with that id
-		log.Infof("---------------")
 		_, err = updateFHIREndpointValResStatement.ExecContext(ctx, valResID, val.updatedTime, ha.fhirURL)
 		if err != nil {
 			log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", ha.fhirURL, val.updatedTime.String(), err)
+			result := Result{
+				URL: ha.fhirURL,
+			}
+			ha.result <- result
+			return nil
 		}
 	}
 	result := Result{
@@ -261,7 +264,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 	return nil
 }
 
-// addToValidationField gets the history data for a given URL and creates the
+// addToValidationField gets the table data for a given URL and creates the
 // validation field data based on each row's capability statement
 func addToValidationField(ctx context.Context, args *map[string]interface{}) error {
 	ha, ok := (*args)["historyArgs"].(historyArgs)
@@ -279,7 +282,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		databaseTable = "fhir_endpoints_info_history"
 	}
 
-	// @TODO Update based on Emily's PR
+	// @TODO Update based on Emily's PR, can't rely on just url & updated_at
 	updateFHIREndpointInfoHistoryStatement, err := ha.store.DB.Prepare(`
 		UPDATE ` + databaseTable + `
 		SET
@@ -295,7 +298,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 	}
 	defer updateFHIREndpointInfoHistoryStatement.Close()
 
-	// Get everything from the fhir_endpoints_info_history table for the given URL
+	// Get all necessary validation data from the specified table for the given URL
 	selectHistory := `SELECT endpts_info.capability_statement,
 			endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
 			endpts_metadata.smart_http_response,
@@ -347,18 +350,13 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			}
 		}
 
-		// Get the FHIR Version from that
 		// @TODO update this based on Emily's PR
 		fhirVersion := ""
 		if capStat != nil {
 			fhirVersion, _ = capStat.GetFHIRVersion()
 		}
-		// Create validator
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		// RunValidation
 		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
-
-		// convert object to JSON?
 		validationJSON, err := json.Marshal(validationObj)
 		if err != nil {
 			log.Warnf("Error marshalling object to JSON. Error: %s", err)
@@ -366,12 +364,17 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		}
 
 		// Then add the object to the fhir_endpoint_info row
-		_, err = updateFHIREndpointInfoHistoryStatement.QueryContext(ctx,
+		_, err = updateFHIREndpointInfoHistoryStatement.ExecContext(ctx,
 			validationJSON,
 			val.updatedTime,
 			ha.fhirURL)
 		if err != nil {
 			log.Warnf("Failed to add validation for URL %s. Error: %s", ha.fhirURL, err)
+			result := Result{
+				URL: ha.fhirURL,
+			}
+			ha.result <- result
+			return nil
 		}
 	}
 
@@ -382,39 +385,9 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 	return nil
 }
 
-// createSupportedResources creates the supported_resources field data based on the
-// given capability statement
-func createSupportedResources(capInt map[string]interface{}) []string {
-	if capInt == nil {
-		return nil
-	}
-	var supportedResources []string
-
-	if capInt["rest"] == nil {
-		return nil
-	}
-	restArr := capInt["rest"].([]interface{})
-	restInt := restArr[0].(map[string]interface{})
-	if restInt["resource"] == nil {
-		return nil
-	}
-	resourceArr := restInt["resource"].([]interface{})
-
-	for _, resource := range resourceArr {
-		resourceInt := resource.(map[string]interface{})
-		if resourceInt["type"] == nil {
-			return nil
-		}
-		resourceType := resourceInt["type"].(string)
-		supportedResources = append(supportedResources, resourceType)
-	}
-
-	return supportedResources
-}
-
 // Migrate the fhir_endpoints_info table and fhir_endpoints_info_history table based
 // on the given migration direction, either populating the validation table if
-// it's an "up" migration or validation field in fhir_endpoints_info if it's a "down" migration
+// it's an "up" migration or validation field in the table if it's a "down" migration
 func main() {
 	var migrateDirection string
 
@@ -449,7 +422,7 @@ func main() {
 	}
 
 	errs := make(chan error)
-	numWorkers := 1
+	numWorkers := 10
 	allWorkers := workers.NewWorkers()
 
 	// Start workers
