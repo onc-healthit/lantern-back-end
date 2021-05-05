@@ -2,15 +2,17 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 	endptQuerier "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fhirendpointquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/streadway/amqp"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
@@ -19,6 +21,32 @@ func main() {
 	var endpointsFile string
 	var source string
 	var listURL string
+
+	err := config.SetupConfig()
+	helpers.FailOnError("Error setting up config", err)
+
+	var channel *amqp.Channel
+
+	capQName := viper.GetString("enptinfo_capquery_qname")
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+
+	// setup specific queue info so we can test what's in the queue
+	s := fmt.Sprintf("amqp://%s:%s@%s:%s/", qUser, qPassword, qHost, qPort)
+	conn, err := amqp.Dial(s)
+	helpers.FailOnError("", err)
+
+	channel, err = conn.Channel()
+	helpers.FailOnError("", err)
+
+	count, err := accessqueue.QueueCount(capQName, channel)
+	helpers.FailOnError("", err)
+
+	if count != 0 {
+		log.Fatalf("There are %d messages on the queue. Queue must be empty to run the endpoint populator.", count)
+	}
 
 	if len(os.Args) == 3 {
 		endpointsFile = os.Args[1]
