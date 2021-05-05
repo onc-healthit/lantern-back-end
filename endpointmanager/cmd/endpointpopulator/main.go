@@ -45,7 +45,7 @@ func main() {
 	helpers.FailOnError("", err)
 
 	if count != 0 {
-		log.Fatalf("There are %d messages on the queue. Queue must be empty to run the endpoint populator.", count)
+		log.Fatalf("There are %d messages in the queue. Queue must be empty to run the endpoint populator.", count)
 	}
 
 	if len(os.Args) == 3 {
