@@ -163,7 +163,6 @@ CREATE TABLE fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-
 CREATE TABLE validation_results (
     id                      SERIAL PRIMARY KEY
 );
@@ -176,7 +175,6 @@ CREATE TABLE fhir_endpoints_info (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
-    validation              JSONB,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
@@ -197,7 +195,6 @@ CREATE TABLE fhir_endpoints_info_history (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
-    validation              JSONB,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
