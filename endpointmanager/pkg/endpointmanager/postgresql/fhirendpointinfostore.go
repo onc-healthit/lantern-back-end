@@ -18,12 +18,14 @@ var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
+// @TODO - Validation - Removed all references to validation field, even though it's still
+// included in the FHIREndpointInfo struct
+
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
-	var validationJSON []byte
 	var includedFieldsJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
@@ -40,7 +42,6 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		tls_version,
 		mime_types,
 		capability_statement,
-		validation,
 		created_at,
 		updated_at,
 		smart_response,
@@ -58,7 +59,6 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&capabilityStatementJSON,
-		&validationJSON,
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
@@ -80,10 +80,6 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	endpointInfo.HealthITProductID = ints[0]
 	endpointInfo.VendorID = ints[1]
 
-	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
-	if err != nil {
-		return nil, err
-	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 		if err != nil {
@@ -114,7 +110,6 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
-	var validationJSON []byte
 	var includedFieldsJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
@@ -131,7 +126,6 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		tls_version,
 		mime_types,
 		capability_statement,
-		validation,
 		created_at,
 		updated_at,
 		smart_response,
@@ -150,7 +144,6 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&endpointInfo.TLSVersion,
 		pq.Array(&endpointInfo.MIMETypes),
 		&capabilityStatementJSON,
-		&validationJSON,
 		&endpointInfo.CreatedAt,
 		&endpointInfo.UpdatedAt,
 		&smartResponseJSON,
@@ -172,10 +165,6 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	endpointInfo.HealthITProductID = ints[0]
 	endpointInfo.VendorID = ints[1]
 
-	err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
-	if err != nil {
-		return nil, err
-	}
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 		if err != nil {
@@ -216,10 +205,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
-	validationJSON, err := json.Marshal(e.Validation)
-	if err != nil {
-		return err
-	}
 
 	includedFieldsJSON, err := json.Marshal(e.IncludedFields)
 	if err != nil {
@@ -250,7 +235,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		capabilityStatementJSON,
-		validationJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
@@ -273,10 +257,6 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		}
 	} else {
 		capabilityStatementJSON = []byte("null")
-	}
-	validationJSON, err := json.Marshal(e.Validation)
-	if err != nil {
-		return err
 	}
 
 	includedFieldsJSON, err := json.Marshal(e.IncludedFields)
@@ -308,7 +288,6 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		capabilityStatementJSON,
-		validationJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
@@ -352,12 +331,11 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			tls_version,
 			mime_types,
 			capability_statement,
-			validation,
 			smart_response,
 			included_fields,
 			operation_resource,
 			metadata_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -371,12 +349,11 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			tls_version = $4,
 			mime_types = $5,
 			capability_statement = $6,
-			validation = $7,
-			smart_response = $8,
-			included_fields = $9,
-			operation_resource = $10,
-			metadata_id = $11
-		WHERE id = $12`)
+			smart_response = $7,
+			included_fields = $8,
+			operation_resource = $9,
+			metadata_id = $10
+		WHERE id = $11`)
 	if err != nil {
 		return err
 	}
