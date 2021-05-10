@@ -319,7 +319,6 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 	defer historyRows.Close()
 	var validationVals []validationArgs
 	for historyRows.Next() {
-		// @TODO Change this?
 		var val validationArgs
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
