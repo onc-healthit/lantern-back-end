@@ -211,7 +211,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			count := 0
 			for valRow.Next() {
 				if count > 0 {
-					log.Warnf("More than 1 ID added for URL", ha.fhirURL)
+					log.Warnf("More than 1 ID added for URL %s", ha.fhirURL)
 					break
 				}
 				err = valRow.Scan(&valResID)
