@@ -144,7 +144,6 @@ func Test_addToValidationTable(t *testing.T) {
 		err = historyRows.Scan(&receivedTime, &valID)
 		th.Assert(t, err == nil, fmt.Sprintf("Error while scanning the rows of the history table for URL %s. Error: %s", url1, err))
 		th.Assert(t, receivedTime.Equal(firstTime), fmt.Sprintf("The time was updated to %+v from %+v", receivedTime, firstTime))
-		th.Assert(t, valID != 1, fmt.Sprintf("The validationID should have been 1, is instead %d, for URL %s", valID, url1))
 		count++
 	}
 	th.Assert(t, count == 1, "should be one item in the database, instead is 0")
