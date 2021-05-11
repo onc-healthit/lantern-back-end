@@ -106,12 +106,12 @@ func Test_addToValidationTable(t *testing.T) {
 	// Put two FHIR endpoints in the history table
 	tlsVersion := "1.3"
 	mimeTypes := []string{"application/json+fhir"}
-	firstTime := time.Now().UTC()
+	firstTime := time.Now().UTC().Round(time.Microsecond)
 	url1 := "www.testurl.com/cerner/DSTU2"
 	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url1, "I", capStat1, tlsVersion, pq.Array(mimeTypes), metadataID1, firstTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database %s", err))
 
-	secondTime := time.Now().UTC()
+	secondTime := time.Now().UTC().Round(time.Microsecond)
 	url2 := "www.testurl.com/epic/DSTU2"
 	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url2, "I", capStat2, tlsVersion, pq.Array(mimeTypes), metadataID2, secondTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database again %s", err))
@@ -174,7 +174,7 @@ func Test_addToValidationTable(t *testing.T) {
 	}
 
 	// Add another instance of the second URL
-	thirdTime := time.Now().UTC()
+	thirdTime := time.Now().UTC().Round(time.Microsecond)
 	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url2, "U", capStat2, tlsVersion, pq.Array(mimeTypes), metadataID2, thirdTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database third time %s", err))
 

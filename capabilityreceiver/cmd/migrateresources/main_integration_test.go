@@ -71,12 +71,12 @@ func Test_updateOperationResource(t *testing.T) {
 		WHERE url=$1
 	`
 	// Put two FHIR endpoints in the history table
-	firstTime := time.Now().UTC()
+	firstTime := time.Now().UTC().Round(time.Microsecond)
 	url1 := "www.testurl.com/cerner/DSTU2"
 	_, err := store.DB.ExecContext(ctx, addFHIREndpointInfoHistoryStatement, url1, capStat1, "I", firstTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database %s", err))
 
-	secondTime := time.Now().UTC()
+	secondTime := time.Now().UTC().Round(time.Microsecond)
 	url2 := "www.testurl.com/epic/DSTU2"
 	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoHistoryStatement, url2, capStat2, "I", secondTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database again %s", err))
@@ -124,7 +124,7 @@ func Test_updateOperationResource(t *testing.T) {
 	th.Assert(t, count == 1, "should be one item in the database, instead is 0")
 
 	// Add another instance of the second URL
-	thirdTime := time.Now().UTC()
+	thirdTime := time.Now().UTC().Round(time.Microsecond)
 	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoHistoryStatement, url2, capStat2, "U", thirdTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database third time %s", err))
 
