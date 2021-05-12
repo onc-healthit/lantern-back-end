@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -49,7 +50,14 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 		return fmt.Errorf("unable to cast queryArgs from arguments")
 	}
 
-	urlString := string(message)
+	var msgJSON map[string]string
+	err := json.Unmarshal(message, &msgJSON)
+	if err != nil {
+		return fmt.Errorf("Error parsing queryEndpointsCapabilityStatement message JSON: %s", err.Error())
+	}
+
+	urlString := msgJSON["url"]
+	requestVersion := msgJSON["requestVersion"]
 	exportFileWait := viper.GetInt("exportfile_wait")
 
 	if urlString == "FINISHED" {
@@ -63,6 +71,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 
 	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
 		FhirURL:      urlString,
+		RequestVersion: requestVersion,
 		Client:       qa.client,
 		MessageQueue: qa.mq,
 		ChannelID:    qa.ch,
@@ -78,7 +87,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 		HandlerArgs: &jobArgs,
 	}
 
-	err := qa.workers.Add(&job)
+	err = qa.workers.Add(&job)
 	if err != nil {
 		return fmt.Errorf("error adding job to workers: %s", err.Error())
 	}

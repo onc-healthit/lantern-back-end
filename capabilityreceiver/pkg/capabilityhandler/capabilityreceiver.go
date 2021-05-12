@@ -294,10 +294,10 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		return err
 	}
 
+	resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
+	var vsr versionsoperatorparser.VersionsResponse
+	vsr.Response = resp
 	for _, endpt := range existingEndpts {
-		resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
-		var vsr versionsoperatorparser.VersionsResponse
-		vsr.Response = resp
 		// Only update if versions have changed
 		if !endpt.VersionsResponse.Equal(vsr) {
 			endpt.VersionsResponse = vsr
@@ -313,10 +313,24 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	mq := qa.capQueryQueue
 	channelID := qa.capQueryChannelID
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
-	err = accessqueue.SendToQueue(ctx, url, &mq, &channelID, capQueryEndptQName)
-	if err != nil {
-		return err
+	var supportedVersions []string
+	supportedVersions = vsr.GetSupportedVersions()
+	for _, version := range supportedVersions {
+		// send URL and version of FHIR version to request
+		var message map[string]string
+		message["url"] = url
+		message["requestVersion"] = version
+		var msgBytes []byte
+		msgBytes, err = json.Marshal(message)
+		if err != nil {
+			return err
+		}
+		err = accessqueue.SendToQueue(ctx, string(msgBytes), &mq, &channelID, capQueryEndptQName)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
