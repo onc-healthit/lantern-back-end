@@ -227,8 +227,10 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		IncludedFields: testIncludedFields,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
-		CapabilityStatement: cs,
-		Metadata:            endpointMetadata1}
+		CapabilityStatement:   cs,
+		RequestedFhirVersion:  "",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
 	copy(includedFieldsCopy, testIncludedFields)
 	var endpointInfo2 = &FHIREndpointInfo{
@@ -254,8 +256,10 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		IncludedFields: includedFieldsCopy,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
-		CapabilityStatement: cs,
-		Metadata:            endpointMetadata2}
+		CapabilityStatement:   cs,
+		RequestedFhirVersion:  "",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadata2}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo2. They are not equal.")
@@ -266,6 +270,18 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expect endpointInfo 1 to equal endpointInfo 2. ids should be ignored. %d vs %d", endpointInfo1.ID, endpointInfo2.ID)
 	}
 	endpointInfo2.ID = endpointInfo1.ID
+
+	endpointInfo2.CapabilityFhirVersion = "3.0.2"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. capability fhir versions should be different. %s vs %s", endpointInfo1.CapabilityFhirVersion, endpointInfo2.CapabilityFhirVersion)
+	}
+	endpointInfo2.CapabilityFhirVersion = endpointInfo1.CapabilityFhirVersion
+
+	endpointInfo2.RequestedFhirVersion = "3.0.2"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. requested fhir versions should be different. %s vs %s", endpointInfo1.RequestedFhirVersion, endpointInfo2.RequestedFhirVersion)
+	}
+	endpointInfo2.RequestedFhirVersion = endpointInfo1.RequestedFhirVersion
 
 	endpointInfo2.URL = "other"
 	if endpointInfo1.Equal(endpointInfo2) {

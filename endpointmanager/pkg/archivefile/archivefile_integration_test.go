@@ -115,8 +115,9 @@ func TestMain(m *testing.M) {
 		tls_version,
 		mime_types,
 		vendor_id,
-		capability_statement)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`)
+		capability_statement,
+		capability_fhir_version)			
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
 	if err != nil {
 		panic(err)
 	}
@@ -295,6 +296,7 @@ func Test_getHistory(t *testing.T) {
 	cs, err := capabilityparser.NewCapabilityStatement(emptyCap)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityFhirVersion = ""
 
 	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
@@ -515,6 +517,8 @@ func setupCapabilityStatement(t *testing.T, path string) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	fhirVersion, err := cs.GetFHIRVersion()
+	testFhirEndpointInfo.CapabilityFhirVersion = fhirVersion
 }
 
 // addFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
@@ -546,7 +550,8 @@ func addFHIREndpointInfoHistory(ctx context.Context,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		vendorID,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		e.CapabilityFhirVersion)
 	if err != nil {
 		return err
 	}
