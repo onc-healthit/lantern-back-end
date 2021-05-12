@@ -471,7 +471,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 		t.Fatalf("Fhir_endpoints_metadata db should have at least one entry for every endpoint")
 	}
 
-	query_str = store.DB.QueryRow("SELECT COUNT(capability_statement->>'fhirVersion') FROM fhir_endpoints_info;")
+	query_str = store.DB.QueryRow("SELECT COUNT(capability_fhir_version) FROM fhir_endpoints_info;")
 	var fhir_version_count int
 	expected_fhir_version_count := 30
 	err = query_str.Scan(&fhir_version_count)

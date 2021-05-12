@@ -13,15 +13,16 @@ import (
 )
 
 var testQueueMsg = map[string]interface{}{
-	"url":               "http://example.com/DTSU2/",
-	"err":               "",
-	"mimeTypes":         []string{"application/json+fhir"},
-	"httpResponse":      200,
-	"tlsVersion":        "TLS 1.2",
-	"smarthttpResponse": 0,
-	"smartResp":         nil,
-	"responseTime":      0.1234,
-	"availability":      1.0,
+	"url":                  "http://example.com/DTSU2/",
+	"err":                  "",
+	"mimeTypes":            []string{"application/json+fhir"},
+	"httpResponse":         200,
+	"tlsVersion":           "TLS 1.2",
+	"smarthttpResponse":    0,
+	"smartResp":            nil,
+	"responseTime":         0.1234,
+	"availability":         1.0,
+	"requestedFhirVersion": "",
 }
 
 var testIncludedFields = []endpointmanager.IncludedField{
@@ -344,12 +345,15 @@ var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:               "http://example.com/DTSU2/",
-	MIMETypes:         []string{"application/json+fhir"},
-	TLSVersion:        "TLS 1.2",
-	SMARTResponse:     nil,
-	IncludedFields:    testIncludedFields,
-	OperationResource: testOperations,
+	URL:                   "http://example.com/DTSU2/",
+	MIMETypes:             []string{"application/json+fhir"},
+	TLSVersion:            "TLS 1.2",
+	RequestedFhirVersion:  "",
+	CapabilityFhirVersion: "1.0.2",
+	SMARTResponse:         nil,
+	Validation:            testValidationObj,
+	IncludedFields:        testIncludedFields,
+	OperationResource:     testOperations,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -379,7 +383,9 @@ func Test_formatMessage(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedMetadata := testFhirEndpointMetadata
 	expectedEndpt.Metadata = &expectedMetadata
+	expectedEndpt.RequestedFhirVersion = "1.0.2"
 	tmpMessage := testQueueMsg
+	tmpMessage["requestedFhirVersion"] = "1.0.2"
 
 	message, err := convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
@@ -455,6 +461,26 @@ func Test_formatMessage(t *testing.T) {
 	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect responseTime")
 	tmpMessage["responseTime"] = 0.1234
+
+	// test incorrect requested version
+	tmpMessage["requestedFhirVersion"] = 1
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect requestedFhirVersion")
+	tmpMessage["requestedFhirVersion"] = "1.0.2"
+
+	// test incorrect capability version
+	capStat, ok := tmpMessage["capabilityStatement"].(map[string]interface{})
+	th.Assert(t, ok, err)
+	capStat["fhirVersion"] = 1
+	tmpMessage["capabilityStatement"] = capStat
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect capability fhir version")
+	capStat["fhirVersion"] = "1.0.2"
+	tmpMessage["capabilityStatement"] = capStat
 }
 
 func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {

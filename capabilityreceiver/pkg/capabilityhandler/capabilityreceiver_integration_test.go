@@ -85,9 +85,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:			store,
-		ctx: 			ctx,
-		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+		store:         store,
+		ctx:           ctx,
+		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
 	}
 
 	// populate vendors
@@ -115,9 +115,9 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that nothing is stored and that saveMsgInDB throws an error if the context is canceled
 	testCtx, cancel := context.WithCancel(context.Background())
 	args["queryArgs"] = capStatQueryArgs{
-		store:			store,
-		ctx: 			testCtx,
-		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+		store:         store,
+		ctx:           testCtx,
+		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
 	}
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
@@ -129,9 +129,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// reset context
 	args["queryArgs"] = capStatQueryArgs{
-		store:			store,
-		ctx: 			context.Background(),
-		chplMatchFile:	"../../testdata/test_chpl_product_mapping.json",
+		store:         store,
+		ctx:           context.Background(),
+		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
 	}
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
@@ -148,7 +148,8 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	expectedEndpt.ValidationID = valID1
 
-	storedEndpt, err := store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	storedEndpt, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
@@ -194,7 +195,8 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	expectedEndpt.ValidationID = valID2
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint2.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint2.URL, "")
+	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt.URL = testFhirEndpoint1.URL
@@ -227,7 +229,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
 	th.Assert(t, storedEndpt.Metadata.HTTPResponse == 404, "The http response was not updated")
@@ -276,7 +278,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
 	th.Assert(t, err == nil, err)
 
 	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
@@ -294,7 +296,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, storedEndpt.ValidationID == oldValidationID, fmt.Sprintf("The selective update should not have updated the old endpoint validation id for same values, %+v, %d", storedEndpt, oldValidationID))
@@ -317,7 +319,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, storedEndpt.ValidationID == oldValidationID, "The selective update should not have updated the old endpoint validation id for same values minus metadata")

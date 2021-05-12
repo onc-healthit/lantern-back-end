@@ -63,6 +63,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		return nil, nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
+	requestedFhirVersion, ok := msgJSON["requestedFhirVersion"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: unable to cast Requested Fhir Version to string", url)
+	}
+
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
 	// Could be investigated further
 	var mimeTypes []string
@@ -125,6 +130,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	if capStat != nil {
 		fhirVersion, _ = capStat.GetFHIRVersion()
 	}
+
 	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
 	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse)
@@ -140,14 +146,17 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:                 url,
-		TLSVersion:          tlsVersion,
-		MIMETypes:           mimeTypes,
-		CapabilityStatement: capStat,
-		SMARTResponse:       smartResponse,
-		IncludedFields:      includedFields,
-		OperationResource:   operationResource,
-		Metadata:            FHIREndpointMetadata,
+		URL:                   url,
+		TLSVersion:            tlsVersion,
+		MIMETypes:             mimeTypes,
+		Validation:            validationObj,
+		CapabilityStatement:   capStat,
+		SMARTResponse:         smartResponse,
+		IncludedFields:        includedFields,
+		OperationResource:     operationResource,
+		Metadata:              FHIREndpointMetadata,
+		RequestedFhirVersion:  requestedFhirVersion,
+		CapabilityFhirVersion: fhirVersion,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
@@ -175,7 +184,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	store := qa.store
 	ctx := qa.ctx
 
-	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
+	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
 	if err == sql.ErrNoRows {
 
@@ -270,7 +279,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
 			}
 
-			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.URL)
+			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
 			if err != nil {
 				return fmt.Errorf("just adding the Metadata ID failed, %s", err)
 			}

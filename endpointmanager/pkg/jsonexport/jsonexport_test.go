@@ -8,30 +8,6 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
-func Test_getFHIRVersion(t *testing.T) {
-	// Base case
-
-	testCapStat := []byte(`
-	{
-		"fhirVersion": "4.0.1",
-		"kind": "instance"
-	}`)
-	fhirVersion := getFHIRVersion(testCapStat)
-	th.Assert(t, fhirVersion == "4.0.1", fmt.Sprintf("FHIR Version in capability statement should be 4.0.1. It is instead %s", fhirVersion))
-
-	// If capability statement is nonsense, fhirVersion should be an empty string
-
-	testCapStat = []byte("this is not JSON")
-	fhirVersion = getFHIRVersion(testCapStat)
-	th.Assert(t, fhirVersion == "", fmt.Sprintf("FHIR Version should be an empty string. It is instead %s", fhirVersion))
-
-	// If capability statement is null, fhirVersion should be an empty string
-	testCapStat = []byte("null")
-	fhirVersion = getFHIRVersion(testCapStat)
-	th.Assert(t, fhirVersion == "", fmt.Sprintf("FHIR Version should be an empty string. It is instead %s", fhirVersion))
-
-}
-
 func Test_getSMARTResponse(t *testing.T) {
 	// Base case
 

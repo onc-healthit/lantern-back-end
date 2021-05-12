@@ -2,7 +2,6 @@ package archivefile
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"math"
 	"sort"
@@ -313,7 +312,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	historyQuery := `SELECT url, updated_at, operation, capability_statement->>'fhirVersion', tls_version, mime_types FROM fhir_endpoints_info_history
+	historyQuery := `SELECT url, updated_at, operation, capability_fhir_version, tls_version, mime_types FROM fhir_endpoints_info_history
 		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
 	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL)
 	if err != nil {
@@ -329,7 +328,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	defer historyRows.Close()
 	for historyRows.Next() {
 		var e historyEntry
-		var fhirVersion sql.NullString
+		var fhirVersion string
 		var err = historyRows.Scan(
 			&e.URL,
 			&e.UpdatedAt,
@@ -347,11 +346,11 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 			return nil
 		}
 
-		if !fhirVersion.Valid {
-			e.FHIRVersion = ""
+		if fhirVersion == "" {
+			e.FHIRVersion = fhirVersion
 			e.FHIRVersionError = fmt.Errorf("received NULL FHIR version")
 		} else {
-			e.FHIRVersion = fhirVersion.String
+			e.FHIRVersion = fhirVersion
 			e.FHIRVersionError = nil
 		}
 

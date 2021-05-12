@@ -104,7 +104,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	e1.OrganizationNames = []string{"Org 1", "Org 2"}
 	e1.NPIIDs = []string{"2", "3"}
-	vsr.Response["versions"] = []string{"4.0","2.0"}
+	vsr.Response["versions"] = []string{"4.0", "2.0"}
 	e1.VersionsResponse = vsr
 	err = store.AddOrUpdateFHIREndpoint(ctx, e1)
 	if err != nil {

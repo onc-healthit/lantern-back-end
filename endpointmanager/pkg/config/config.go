@@ -74,6 +74,16 @@ func SetupConfig() error {
 		return err
 	}
 
+	// Version Response Queue Setup
+	err = viper.BindEnv("versionsquery_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("versionsquery_response_qname")
+	if err != nil {
+		return err
+	}
+
 	// Info History Pruning
 	err = viper.BindEnv("pruning_threshold") // in minutes
 	if err != nil {
@@ -164,6 +174,16 @@ func SetupConfigForTests() error {
 		return err
 	}
 	err = viper.BindEnv("qpassword")
+	if err != nil {
+		return err
+	}
+
+	// Version Response Queue Setup
+	err = viper.BindEnv("versionsquery_qname")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("versionsquery_response_qname")
 	if err != nil {
 		return err
 	}
