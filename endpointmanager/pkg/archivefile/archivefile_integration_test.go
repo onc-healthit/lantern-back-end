@@ -167,7 +167,9 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	loc, err := time.LoadLocation("UTC")
+	th.Assert(t, err == nil, err)
+	today := time.Now().In(loc)
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
@@ -196,7 +198,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 1 endpoint and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "I", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().In(loc).Format("2006-01-02 15:04:05.000000000"), idCount, "I", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -215,7 +217,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 2nd endpoint (with same data) and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().In(loc).Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -236,7 +238,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 3rd endpoint (with different data) and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 2)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().In(loc).Format("2006-01-02 15:04:05.000000000"), idCount, "U", 2)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -286,7 +288,9 @@ func Test_getHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	loc, err := time.LoadLocation("UTC")
+	th.Assert(t, err == nil, err)
+	today := time.Now().In(loc)
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
@@ -298,7 +302,7 @@ func Test_getHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = cs
 	testFhirEndpointInfo.CapabilityFhirVersion = ""
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().In(loc).Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -326,7 +330,7 @@ func Test_getHistory(t *testing.T) {
 	// Base Case
 
 	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().In(loc).Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -394,7 +398,9 @@ func Test_getMetadata(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	loc, err := time.LoadLocation("UTC")
+	th.Assert(t, err == nil, err)
+	today := time.Now().In(loc)
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
