@@ -249,10 +249,10 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          p("By default, the list of resources below contains all of the endpoints' supported resources. 
-            Changing the FHIR Version or Developer filtering criteria will cause the items that were in the list at the time of change to be filtered in accordance with the selected criteria. 
-            Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource. 
-            Resources that are filtered out of the selected list will not re-appear in the list unless they are explicitly selected from the resources drop down, which contains all resources supported by the endpoints passing the selected criteria. 
+          p("By default, the list of resources below contains all of the endpoints' supported resources.
+            Changing the FHIR Version or Developer filtering criteria will cause the items that were in the list at the time of change to be filtered in accordance with the selected criteria.
+            Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
+            Resources that are filtered out of the selected list will not re-appear in the list unless they are explicitly selected from the resources drop down, which contains all resources supported by the endpoints passing the selected criteria.
             The 'Reset to All Resources' button can also be pressed, which will add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
           p("Note: This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
           selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
