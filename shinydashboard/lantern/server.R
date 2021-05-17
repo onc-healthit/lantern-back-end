@@ -302,11 +302,11 @@ function(input, output, session) { #nolint
     if (show_operation_checkbox()) {
       fluidPage(
         fluidRow(
-          actionButton("removeallops", "Clear All Operations"),
-          selectizeInput("operations", "Choose or type in any resource from the list below:",
+          selectizeInput("operations", "Click in the box below to add or remove operations:",
           choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
           selected = c(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          p("Note: Selecting multiple operations will only display the resources that implement all selected operations.", style = "font-size:13px; margin-top:-15px")
+          actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
+          p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
         )
       )
     }
@@ -324,7 +324,7 @@ function(input, output, session) { #nolint
     req(input$side_menu)
     if (show_operation_checkbox()) {
       updateSelectInput(session, "operations",
-            label = "Choose or type in any operation from the list below:",
+            label = "Click in the box below to add or remove operations:",
             choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
             selected = c())
     }
@@ -337,7 +337,7 @@ function(input, output, session) { #nolint
     }
     else{
       updateSelectizeInput(session, "operations",
-              label = "Choose or type in any operation from the list below:",
+              label = "Click in the box below to add or remove operations:",
               choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
               options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
