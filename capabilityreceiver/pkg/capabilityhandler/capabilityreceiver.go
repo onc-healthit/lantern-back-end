@@ -315,9 +315,12 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
 	var supportedVersions []string
 	supportedVersions = vsr.GetSupportedVersions()
+	supportedVersions = append(supportedVersions, "")
+	// If there is a requestedVersion for a URL in fhir_endpoints_info that is no longer in supportedVersions
+	// then we need to remove those fhir_endpoint_info entries
 	for _, version := range supportedVersions {
 		// send URL and version of FHIR version to request
-		var message map[string]string
+		var message map[string]string = make(map[string]string)
 		message["url"] = url
 		message["requestVersion"] = version
 		var msgBytes []byte

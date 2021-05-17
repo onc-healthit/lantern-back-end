@@ -188,6 +188,35 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		}
 	}
 
+	// GetFHIREndpointInfosByURLWithDifferentRequestedVersion using URL and all existing requestedVersions
+	// Should not return any entries as all requestedVersions will exist
+	supportedVersions := []string{"", "1.0.0"}
+	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
+	}
+	if len(eArr) != 0 {
+		t.Errorf("There should not be any endpoint info entries not matching the supplied requested versions , got %d", len(eArr))
+	}
+
+	supportedVersions = []string{"1.0.0"}
+	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
+	}
+	if len(eArr) != 1 {
+		t.Errorf("There should be one endpoint info entry not matching the supplied requested versions , got %d", len(eArr))
+	}
+
+	supportedVersions = []string{"2.0.0"}
+	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
+	}
+	if len(eArr) != 2 {
+		t.Errorf("There should be two entries not matching the supplied requested versions , got %d", len(eArr))
+	}
+
 	// update endpointInfo and add update to metadata table
 
 	e1.Metadata.HTTPResponse = 700

@@ -17,6 +17,7 @@ var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoMetadataStatement *sql.Stmt
+var getFHIREndpointsByURLAndDifferentRequestedVersion *sql.Stmt
 
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
@@ -462,6 +463,98 @@ func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	return err
 }
 
+// GetFHIREndpointInfosByURLWithDifferentRequestedVersion
+func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error)  {
+	var endpointInfos []*endpointmanager.FHIREndpointInfo
+	var operResourceJSON []byte
+
+	versionsString := ""
+
+	for i, ver := range versions {
+		if i != 0 {
+			versionsString = versionsString + ","
+		}
+		versionsString = versionsString + ver
+	}
+
+	rows, err := getFHIREndpointsByURLAndDifferentRequestedVersion.QueryContext(ctx, url, versionsString)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var endpointInfo endpointmanager.FHIREndpointInfo
+		var capabilityStatementJSON []byte
+		var validationJSON []byte
+		var includedFieldsJSON []byte
+		var healthitProductIDNullable sql.NullInt64
+		var vendorIDNullable sql.NullInt64
+		var smartResponseJSON []byte
+		var metadataID int
+
+		err := rows.Scan(
+			&endpointInfo.ID,
+			&endpointInfo.URL,
+			&healthitProductIDNullable,
+			&vendorIDNullable,
+			&endpointInfo.TLSVersion,
+			pq.Array(&endpointInfo.MIMETypes),
+			&capabilityStatementJSON,
+			&validationJSON,
+			&endpointInfo.CreatedAt,
+			&endpointInfo.UpdatedAt,
+			&smartResponseJSON,
+			&includedFieldsJSON,
+			&operResourceJSON,
+			&metadataID,
+			&endpointInfo.RequestedFhirVersion,
+			&endpointInfo.CapabilityFhirVersion)
+		if err != nil {
+			return nil, err
+		}
+
+		if capabilityStatementJSON != nil {
+			endpointInfo.CapabilityStatement, err = capabilityparser.NewCapabilityStatement(capabilityStatementJSON)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
+		endpointInfo.HealthITProductID = ints[0]
+		endpointInfo.VendorID = ints[1]
+
+		err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
+		if err != nil {
+			return nil, err
+		}
+		if includedFieldsJSON != nil {
+			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if smartResponseJSON != nil {
+			endpointInfo.SMARTResponse, err = smartparser.NewSMARTResp(smartResponseJSON)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
+		if err != nil {
+			return nil, err
+		}
+		endpointInfo.Metadata = endpointMetadata
+
+		endpointInfos = append(endpointInfos, &endpointInfo)
+
+	}
+
+	return endpointInfos, err
+}
+
 func prepareFHIREndpointInfoStatements(s *Store) error {
 	var err error
 	addFHIREndpointInfoStatement, err = s.DB.Prepare(`
@@ -515,6 +608,28 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
         WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	getFHIREndpointsByURLAndDifferentRequestedVersion, err = s.DB.Prepare(`
+		SELECT
+		id,
+		url,
+		healthit_product_id,
+		vendor_id,
+		tls_version,
+		mime_types,
+		capability_statement,
+		validation,
+		created_at,
+		updated_at,
+		smart_response,
+		included_fields,
+		operation_resource,
+		metadata_id,
+		requested_fhir_version,
+		capability_fhir_version
+		FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND NOT (fhir_endpoints_info.requested_fhir_version = ANY (string_to_array($2,',','')))`)
 	if err != nil {
 		return err
 	}

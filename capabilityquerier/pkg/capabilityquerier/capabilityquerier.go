@@ -232,7 +232,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	trace := &httptrace.ClientTrace{}
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-	if endptType == metadata && message.RequestedFhirVersion != "" {
+	// If there is a requested fhir version, set the fhirVersion in the request header
+	if message.RequestedFhirVersion != "" {
 		req.Header.Set("fhirVersion", message.RequestedFhirVersion)
 	} 
 
