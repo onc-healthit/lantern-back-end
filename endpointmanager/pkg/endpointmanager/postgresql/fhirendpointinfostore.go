@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -468,14 +469,8 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 	var endpointInfos []*endpointmanager.FHIREndpointInfo
 	var operResourceJSON []byte
 
-	versionsString := ""
-
-	for i, ver := range versions {
-		if i != 0 {
-			versionsString = versionsString + ","
-		}
-		versionsString = versionsString + ver
-	}
+	// Convert array of strings to a string that postgres can convert back to an sql ARRAY
+	versionsString := strings.Join(versions, ",")
 
 	rows, err := getFHIREndpointsByURLAndDifferentRequestedVersion.QueryContext(ctx, url, versionsString)
 	if err != nil {
