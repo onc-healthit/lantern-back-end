@@ -30,7 +30,7 @@ type Result struct {
 	URL string
 }
 
-type historyArgs struct {
+type workerArgs struct {
 	fhirURL   string
 	store     *postgresql.Store
 	result    chan Result
@@ -110,7 +110,7 @@ func createJobs(ctx context.Context,
 	isHistory bool) {
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
-		jobArgs["historyArgs"] = historyArgs{
+		jobArgs["workerArgs"] = workerArgs{
 			fhirURL:   urls[index],
 			store:     store,
 			result:    ch,
@@ -139,18 +139,18 @@ func createJobs(ctx context.Context,
 // addToValidationTable gets the table data for a given URL and creates the
 // validation table rows based on each row's capability statement
 func addToValidationTable(ctx context.Context, args *map[string]interface{}) error {
-	ha, ok := (*args)["historyArgs"].(historyArgs)
+	wa, ok := (*args)["workerArgs"].(workerArgs)
 	if !ok {
-		log.Warnf("unable to cast arguments to type historyArgs")
+		log.Warnf("unable to cast arguments to type workerArgs")
 		result := Result{
 			URL: "unknown",
 		}
-		ha.result <- result
+		wa.result <- result
 		return nil
 	}
 
 	databaseTable := "fhir_endpoints_info"
-	if ha.isHistory {
+	if wa.isHistory {
 		databaseTable = "fhir_endpoints_info_history"
 	}
 
@@ -162,14 +162,10 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		FROM ` + databaseTable + ` AS endpts_info
 		LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 		WHERE endpts_info.url=$1;`
-	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
+	historyRows, err := wa.store.DB.QueryContext(ctx, selectHistory, wa.fhirURL)
 	if err != nil {
-		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
+		log.Warnf("Failed getting the history rows for URL %s. Error: %s", wa.fhirURL, err)
+		return returnResult(wa)
 	}
 	defer historyRows.Close()
 	var validationVals []validationArgs
@@ -182,7 +178,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			&val.smartHttpResponse,
 			&val.updatedTime)
 		if err != nil {
-			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
 			continue
 		}
 		validationVals = append(validationVals, val)
@@ -195,12 +191,12 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		if len(val.capStatByte) > 0 {
 			err = json.Unmarshal(val.capStatByte, &capInt)
 			if err != nil {
-				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
 			}
 
 			capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 			if err != nil {
-				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", ha.fhirURL, err)
+				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
 			}
 		}
 
@@ -218,11 +214,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		err = valResRow.Scan(&valResID)
 		if err != nil {
 			log.Warnf("Failed to add a new ID. Error: %s", err)
-			result := Result{
-				URL: ha.fhirURL,
-			}
-			ha.result <- result
-			return nil
+			return returnResult(wa)
 		}
 		// Then add each element of the validationObj array as a row to the table with that id
 		for _, ruleInfo := range validationObj.Results {
@@ -236,12 +228,8 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 				ruleInfo.ImplGuide,
 				valResID)
 			if err != nil {
-				log.Warnf("Failed to add validation for URL %s. Error: %s", ha.fhirURL, err)
-				result := Result{
-					URL: ha.fhirURL,
-				}
-				ha.result <- result
-				return nil
+				log.Warnf("Failed to add validation for URL %s. Error: %s", wa.fhirURL, err)
+				return returnResult(wa)
 			}
 		}
 		// Then have to update the row in the history table with that id
@@ -251,36 +239,28 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			_, err = updateInfoValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
 		}
 		if err != nil {
-			log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", ha.fhirURL, val.updatedTime.String(), err)
-			result := Result{
-				URL: ha.fhirURL,
-			}
-			ha.result <- result
-			return nil
+			log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", wa.fhirURL, val.updatedTime.String(), err)
+			return returnResult(wa)
 		}
 	}
-	result := Result{
-		URL: ha.fhirURL,
-	}
-	ha.result <- result
-	return nil
+	return returnResult(wa)
 }
 
 // addToValidationField gets the table data for a given URL and creates the
 // validation field data based on each row's capability statement
 func addToValidationField(ctx context.Context, args *map[string]interface{}) error {
-	ha, ok := (*args)["historyArgs"].(historyArgs)
+	wa, ok := (*args)["workerArgs"].(workerArgs)
 	if !ok {
-		log.Warnf("unable to cast arguments to type historyArgs")
+		log.Warnf("unable to cast arguments to type workerArgs")
 		result := Result{
 			URL: "unknown",
 		}
-		ha.result <- result
+		wa.result <- result
 		return nil
 	}
 
 	databaseTable := "fhir_endpoints_info"
-	if ha.isHistory {
+	if wa.isHistory {
 		databaseTable = "fhir_endpoints_info_history"
 	}
 
@@ -299,14 +279,10 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		FROM ` + databaseTable + ` AS endpts_info
 		LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 		WHERE endpts_info.url=$1;`
-	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
+	historyRows, err := wa.store.DB.QueryContext(ctx, selectHistory, wa.fhirURL)
 	if err != nil {
-		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
+		log.Warnf("Failed getting the history rows for URL %s. Error: %s", wa.fhirURL, err)
+		return returnResult(wa)
 	}
 
 	defer historyRows.Close()
@@ -320,7 +296,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			&val.smartHttpResponse,
 			&val.updatedTime)
 		if err != nil {
-			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
 			continue
 		}
 		validationVals = append(validationVals, val)
@@ -333,12 +309,12 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		if len(val.capStatByte) > 0 {
 			err = json.Unmarshal(val.capStatByte, &capInt)
 			if err != nil {
-				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
 			}
 
 			capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 			if err != nil {
-				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", ha.fhirURL, err)
+				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
 			}
 		}
 
@@ -359,22 +335,14 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		_, err = wa.store.DB.ExecContext(ctx, updateValidationStatement,
 			validationJSON,
 			val.updatedTime,
-			ha.fhirURL)
+			wa.fhirURL)
 		if err != nil {
-			log.Warnf("Failed to add validation for URL %s. Error: %s", ha.fhirURL, err)
-			result := Result{
-				URL: ha.fhirURL,
-			}
-			ha.result <- result
-			return nil
+			log.Warnf("Failed to add validation for URL %s. Error: %s", wa.fhirURL, err)
+			return returnResult(wa)
 		}
 	}
 
-	result := Result{
-		URL: ha.fhirURL,
-	}
-	ha.result <- result
-	return nil
+	return returnResult(wa)
 }
 
 // Migrate the fhir_endpoints_info table and fhir_endpoints_info_history table based
@@ -406,7 +374,7 @@ func main() {
 	// Get all URLs from the fhir_endpoints_info_history table
 	sqlQuery := "SELECT DISTINCT url FROM fhir_endpoints_info_history;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
-	helpers.FailOnError("Make sure that the database is not empty. Error:", err)
+	helpers.FailOnError("Make sure that the database is not empty. Error: ", err)
 
 	var urls []string
 	defer rows.Close()

@@ -120,7 +120,7 @@ func Test_addToValidationTable(t *testing.T) {
 
 	// Check that data only updates the first URL
 	defaultArgs := make(map[string]interface{})
-	defaultArgs["historyArgs"] = historyArgs{
+	defaultArgs["workerArgs"] = workerArgs{
 		fhirURL:   url1,
 		store:     store,
 		result:    resultCh,
@@ -172,7 +172,7 @@ func Test_addToValidationTable(t *testing.T) {
 
 	// Check that data only updates the second URL
 	defaultArgs2 := make(map[string]interface{})
-	defaultArgs2["historyArgs"] = historyArgs{
+	defaultArgs2["workerArgs"] = workerArgs{
 		fhirURL:   url2,
 		store:     store,
 		result:    resultCh2,
