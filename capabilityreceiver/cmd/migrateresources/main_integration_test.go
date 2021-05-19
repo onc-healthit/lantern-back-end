@@ -104,7 +104,6 @@ func Test_updateOperationResource(t *testing.T) {
 	defer historyRows.Close()
 	count := 0
 	for historyRows.Next() {
-		th.Assert(t, count < 1, fmt.Sprintf("should only be one item in the database for this URL"))
 		var receivedTime time.Time
 		var operationResJSON []byte
 		err = historyRows.Scan(&receivedTime, &operationResJSON)
@@ -151,7 +150,6 @@ func Test_updateOperationResource(t *testing.T) {
 	defer historyRows.Close()
 	count = 0
 	for historyRows.Next() {
-		th.Assert(t, count <= 2, fmt.Sprintf("should be two items in the database for this URL"))
 		var receivedTime time.Time
 		var operationResJSON []byte
 		err = historyRows.Scan(&receivedTime, &operationResJSON)

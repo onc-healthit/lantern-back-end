@@ -137,7 +137,7 @@ func Test_addToValidationTable(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("error getting data from fhir_endpoints_info: %s", err))
 	// Check to make sure exactly 1 ID was updated
 	count := 0
-	var valID int
+	valID := 0
 	for historyRows.Next() {
 		th.Assert(t, count < 1, fmt.Sprintf("should only be one item in the database for this URL"))
 		var receivedTime time.Time
@@ -149,28 +149,18 @@ func Test_addToValidationTable(t *testing.T) {
 	th.Assert(t, count == 1, "should be one item in the database, instead is 0")
 
 	// Make sure that ID was added to the validation results table
-	valResRows, err := store.DB.QueryContext(ctx, getValidationResultStatement, valID)
-	th.Assert(t, err == nil, fmt.Sprintf("error getting data from validation_results: %s", err))
-	defer valResRows.Close()
-
-	for valResRows.Next() {
-		var valResCount int
-		err = valResRows.Scan(&valResCount)
-		th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, valID))
-		count++
-	}
+	valResRow := store.DB.QueryRowContext(ctx, getValidationResultStatement, valID)
+	valResCount := 0
+	err = valResRow.Scan(&valResCount)
+	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
+	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, valID))
 
 	// Make sure that 5 entries were added to the validation table with that ID
-	valRows, err := store.DB.QueryContext(ctx, getValidationStatement, valID)
-	th.Assert(t, err == nil, fmt.Sprintf("error getting data from validations: %s", err))
-	defer valRows.Close()
-
-	for valRows.Next() {
-		var valCount int
-		err = valRows.Scan(&valCount)
-		th.Assert(t, valCount == 5, fmt.Sprintf("there should be 5 entries in the validations table with id %d, instead there are %d", valID, valCount))
-		count++
-	}
+	valRow := store.DB.QueryRowContext(ctx, getValidationStatement, valID)
+	valCount := 0
+	err = valRow.Scan(&valCount)
+	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
+	th.Assert(t, valCount == 5, fmt.Sprintf("there should be 5 entries in the validations table with id %d, instead there are %d", valID, valCount))
 
 	// Add another instance of the second URL
 	thirdTime := time.Now().UTC().Round(time.Microsecond)
@@ -202,7 +192,7 @@ func Test_addToValidationTable(t *testing.T) {
 	for historyRows.Next() {
 		th.Assert(t, count < 2, fmt.Sprintf("should be two items in the database for this URL"))
 		var receivedTime time.Time
-		var currentValID int
+		currentValID := 0
 		err = historyRows.Scan(&receivedTime, &currentValID)
 		th.Assert(t, err == nil, fmt.Sprintf("Error while scanning the rows of the history table for URL %s. Error: %s", url1, err))
 		th.Assert(t, currentValID != 0, fmt.Sprintf("The validation ID was not set for this history table entry %s", url1))
@@ -216,28 +206,16 @@ func Test_addToValidationTable(t *testing.T) {
 	th.Assert(t, count == 2, "should be two items in the database, instead is 1")
 
 	// Just check the first validation ID to make sure it's in validation_results
-	valResRows, err = store.DB.QueryContext(ctx, getValidationResultStatement, firstValID)
-	th.Assert(t, err == nil, fmt.Sprintf("error getting data from validation_results: %s", err))
-	defer valResRows.Close()
-
-	for valResRows.Next() {
-		var valResCount int
-		err = valResRows.Scan(&valResCount)
-		th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, firstValID))
-		count++
-	}
+	valResRow = store.DB.QueryRowContext(ctx, getValidationResultStatement, firstValID)
+	err = valResRow.Scan(&valResCount)
+	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
+	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, firstValID))
 
 	// Then check that it's 5 validation entries were added to the validation table
-	valRows, err = store.DB.QueryContext(ctx, getValidationStatement, valID)
-	th.Assert(t, err == nil, fmt.Sprintf("error getting data from validations: %s", err))
-	defer valRows.Close()
-
-	for valRows.Next() {
-		var valCount int
-		err = valRows.Scan(&valCount)
-		th.Assert(t, valCount == 5, fmt.Sprintf("there should only be 5 entries in the validations table with id %d, instead there are %d", valID, valCount))
-		count++
-	}
+	valRow = store.DB.QueryRowContext(ctx, getValidationStatement, valID)
+	err = valRow.Scan(&valCount)
+	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
+	th.Assert(t, valCount == 5, fmt.Sprintf("there should only be 5 entries in the validations table with id %d, instead there are %d", valID, valCount))
 }
 
 func setupCapabilityStatements(t *testing.T, path1 string, path2 string) {

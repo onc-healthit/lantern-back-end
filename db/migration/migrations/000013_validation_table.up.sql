@@ -1,6 +1,6 @@
 BEGIN;
 
-CREATE TABLE validation_results (
+CREATE TABLE IF NOT EXISTS validation_results (
     id                      SERIAL PRIMARY KEY
 );
 
