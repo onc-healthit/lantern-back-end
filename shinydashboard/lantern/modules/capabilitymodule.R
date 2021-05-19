@@ -5,8 +5,6 @@ capabilitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    h1("FHIR Resource Types"),
-    p("This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list."),
     fluidRow(
       column(width = 5,
              tableOutput(ns("resource_op_table"))),
@@ -15,7 +13,7 @@ capabilitymodule_UI <- function(id) {
              uiOutput(ns("resource_full_plot"))
       )
     ),
-    h1("FHIR Implementation Guides"),
+    h2("FHIR Implementation Guides"),
     p("This is the list of FHIR implementation guides reported by the capability statements from the endpoints."),
     fluidRow(
       column(width = 12,
