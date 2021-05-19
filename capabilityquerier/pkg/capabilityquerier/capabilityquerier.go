@@ -100,21 +100,23 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		time.Sleep(time.Duration(500 * time.Millisecond))
 		req, err := http.NewRequest("GET", versionsURL, nil)
 		if err != nil {
-			return errors.Wrap(err, "unable to create new GET request from URL: "+versionsURL)
-		}
-		req.Header.Set("User-Agent", qa.UserAgent)
-		trace := &httptrace.ClientTrace{}
-		req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
+			log.Errorf("unable to create new GET request from URL: "+versionsURL)
+		}else{
+			req.Header.Set("User-Agent", qa.UserAgent)
+			trace := &httptrace.ClientTrace{}
+			req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-		httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
-		if err != nil {
-			return fmt.Errorf("Error requesting versions response: %s", err.Error())
-		}
-
-		if httpResponseCode == 200 && versionsResponse != nil {
-			err = json.Unmarshal(versionsResponse, &(jsonResponse))
+			httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+			// If an error occurs with the version request we still want to proceed with the capability request
 			if err != nil {
-				return err
+				log.Errorf("Error requesting versions response: %s", err.Error())
+			}else{
+				if httpResponseCode == 200 && versionsResponse != nil {
+					err = json.Unmarshal(versionsResponse, &(jsonResponse))
+					if err != nil {
+						log.Errorf("Error unmarshalling versions response: %s", err.Error())
+					}
+				}
 			}
 		}
 
