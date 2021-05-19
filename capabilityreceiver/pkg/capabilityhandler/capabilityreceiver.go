@@ -179,6 +179,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		return err
 	}
 
+	// This is a safety check to make sure the RequestedFhirVersion will always be populated
+	if fhirEndpoint.RequestedFhirVersion == "" {
+		fhirEndpoint.RequestedFhirVersion = "None"
+	}
+
 	store := qa.store
 	ctx := qa.ctx
 
@@ -262,6 +267,22 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
+func removeNoLongerExistingVersionsInfos(ctx context.Context, store *postgresql.Store, url string, supportedVersions []string) error{
+	// If there is a requestedVersion for a URL in fhir_endpoints_info that is no longer in supportedVersions
+	// then we need to remove those fhir_endpoint_info entries
+	endptInfos, err := store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, url, supportedVersions)
+	if err != nil {
+		return err
+	}
+	for _, infoEntry := range endptInfos {
+		err = store.DeleteFHIREndpointInfo(ctx, infoEntry)
+		if err != nil {
+			return err
+		}	
+	}
+	return nil
+}
+
 func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) error {
 	var err error
 	var existingEndpts []*endpointmanager.FHIREndpoint
@@ -315,9 +336,13 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
 	var supportedVersions []string
 	supportedVersions = vsr.GetSupportedVersions()
-	supportedVersions = append(supportedVersions, "")
-	// If there is a requestedVersion for a URL in fhir_endpoints_info that is no longer in supportedVersions
-	// then we need to remove those fhir_endpoint_info entries
+	supportedVersions = append(supportedVersions, "None")
+
+	err = removeNoLongerExistingVersionsInfos(ctx, store, url, supportedVersions)
+	if err != nil {
+		return err
+	}
+
 	for _, version := range supportedVersions {
 		// send URL and version of FHIR version to request
 		var message map[string]string = make(map[string]string)
