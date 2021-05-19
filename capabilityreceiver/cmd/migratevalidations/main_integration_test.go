@@ -242,6 +242,8 @@ func setup() error {
 		return err
 	}
 
+	prepareUpStatements(store)
+
 	return nil
 }
 

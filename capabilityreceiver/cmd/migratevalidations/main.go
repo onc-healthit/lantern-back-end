@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"os"
 	"time"
@@ -17,6 +18,11 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 )
+
+var addValidationResultStatement *sql.Stmt
+var addValidationStatement *sql.Stmt
+var updateInfoValResStatement *sql.Stmt
+var updateHistoryValResStatement *sql.Stmt
 
 // Result is the value that is returned from getting the history data from the
 // given URL
@@ -38,6 +44,59 @@ type validationArgs struct {
 	mimeTypes         []string
 	httpResponse      int
 	smartHttpResponse int
+}
+
+// prepares the statements used in the "up" migration
+func prepareUpStatements(s *postgresql.Store) error {
+	var err error
+
+	addValidationResultStatement, err = s.DB.Prepare(`
+		INSERT INTO validation_results (id)
+		VALUES (DEFAULT)
+		RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	addValidationStatement, err = s.DB.Prepare(`
+	INSERT INTO validations (
+		rule_name,
+		valid,
+		expected,
+		actual,
+		comment,
+		reference,
+		implementation_guide,
+		validation_result_id)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`)
+	if err != nil {
+		return err
+	}
+	updateInfoValResStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints_info
+		SET
+			validation_result_id = $1
+		WHERE updated_at = $2 AND url = $3;`)
+	if err != nil {
+		return err
+	}
+	updateHistoryValResStatement, err = s.DB.Prepare(`
+		UPDATE fhir_endpoints_info_history
+		SET
+			validation_result_id = $1
+		WHERE updated_at = $2 AND url = $3;`)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func returnResult(wa workerArgs) error {
+	result := Result{
+		URL: wa.fhirURL,
+	}
+	wa.result <- result
+	return nil
 }
 
 // creates jobs for the workers so that each worker updates the correct object based
@@ -94,56 +153,6 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 	if ha.isHistory {
 		databaseTable = "fhir_endpoints_info_history"
 	}
-
-	addValidationResultStatement, err := ha.store.DB.Prepare(`
-		Insert into validation_results (id)
-		VALUES (DEFAULT)
-		RETURNING id;`)
-	if err != nil {
-		log.Warnf("unable to prepare Add Validation Result statement %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
-	}
-	defer addValidationResultStatement.Close()
-
-	addValidationStatement, err := ha.store.DB.Prepare(`
-		INSERT INTO validations (
-			rule_name,
-			valid,
-			expected,
-			actual,
-			comment,
-			reference,
-			implementation_guide,
-			validation_result_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`)
-	if err != nil {
-		log.Warnf("unable to prepare Add Validation statement %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
-	}
-	defer addValidationStatement.Close()
-
-	updateFHIREndpointValResStatement, err := ha.store.DB.Prepare(`
-		UPDATE ` + databaseTable + `
-		SET
-			validation_result_id = $1
-		WHERE updated_at = $2 AND url = $3;`)
-	if err != nil {
-		log.Warnf("unable to prepare FHIR Endpoint table Update statement %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
-	}
-	defer updateFHIREndpointValResStatement.Close()
 
 	// Get validation information from the specified table table for the given URL
 	selectHistory := `SELECT endpts_info.capability_statement,
@@ -204,20 +213,9 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
 		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
 		// Create ID in validation_results table and then get the ID
-		var valResID int
-		valRow, err := addValidationResultStatement.QueryContext(ctx)
-		if err == nil {
-			defer valRow.Close()
-			count := 0
-			for valRow.Next() {
-				if count > 0 {
-					log.Warnf("More than 1 ID added for URL %s", ha.fhirURL)
-					break
-				}
-				err = valRow.Scan(&valResID)
-				count++
-			}
-		}
+		valResRow := addValidationResultStatement.QueryRowContext(ctx)
+		valResID := 0
+		err = valResRow.Scan(&valResID)
 		if err != nil {
 			log.Warnf("Failed to add a new ID. Error: %s", err)
 			result := Result{
@@ -247,7 +245,11 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			}
 		}
 		// Then have to update the row in the history table with that id
-		_, err = updateFHIREndpointValResStatement.ExecContext(ctx, valResID, val.updatedTime, ha.fhirURL)
+		if wa.isHistory {
+			_, err = updateHistoryValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
+		} else {
+			_, err = updateInfoValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
+		}
 		if err != nil {
 			log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", ha.fhirURL, val.updatedTime.String(), err)
 			result := Result{
@@ -283,20 +285,11 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 	}
 
 	// @TODO Update based on Emily's PR, can't rely on just url & updated_at
-	updateFHIREndpointInfoHistoryStatement, err := ha.store.DB.Prepare(`
+	updateValidationStatement := `
 		UPDATE ` + databaseTable + `
 		SET
 			validation = $1
-		WHERE updated_at = $2 AND url = $3;`)
-	if err != nil {
-		log.Warnf("unable to prepare FHIR Endpoint History Update statement %s. Error: %s", ha.fhirURL, err)
-		result := Result{
-			URL: ha.fhirURL,
-		}
-		ha.result <- result
-		return nil
-	}
-	defer updateFHIREndpointInfoHistoryStatement.Close()
+		WHERE updated_at = $2 AND url = $3;`
 
 	// Get all necessary validation data from the specified table for the given URL
 	selectHistory := `SELECT endpts_info.capability_statement,
@@ -362,8 +355,8 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			continue
 		}
 
-		// Then add the object to the fhir_endpoint_info row
-		_, err = updateFHIREndpointInfoHistoryStatement.ExecContext(ctx,
+		// Add the validation object to the specified table
+		_, err = wa.store.DB.ExecContext(ctx, updateValidationStatement,
 			validationJSON,
 			val.updatedTime,
 			ha.fhirURL)
@@ -402,6 +395,11 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
+
+	if migrateDirection == "up" {
+		err = prepareUpStatements(store)
+		helpers.FailOnError("Error when preparing database statements. Error: ", err)
+	}
 
 	ctx := context.Background()
 
