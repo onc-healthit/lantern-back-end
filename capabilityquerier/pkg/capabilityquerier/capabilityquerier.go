@@ -109,7 +109,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 			httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
 			// If an error occurs with the version request we still want to proceed with the capability request
 			if err != nil {
-				log.Errorf("Error requesting versions response: %s", err.Error())
+				log.Infof("Error requesting versions response: %s", err.Error())
 			}else{
 				if httpResponseCode == 200 && versionsResponse != nil {
 					err = json.Unmarshal(versionsResponse, &(jsonResponse))
@@ -142,6 +142,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 // this way in order for it to be able to be called by a worker (see endpointmanager/pkg/workers)
 func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interface{}) error {
 	// Get arguments
+
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
@@ -149,7 +150,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	var err error
 
-	endpt, err := qa.Store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, qa.FhirURL, "None")
+	endpt, err := qa.Store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, qa.FhirURL, qa.RequestVersion)
 	var mimeTypes []string
 	if err == sql.ErrNoRows {
 		mimeTypes = []string{}
@@ -242,8 +243,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	firstMIME := fhir3PlusJSONMIMEType
 	randomMimeIdx := 0
 
-	// If there are mime types saved in the database for this URL and we are requesting the default FHIR version
-	if endptType == metadata && len(message.MIMETypes) > 0 && message.RequestedFhirVersion == "None" {
+	// If there are mime types saved in the database for this URL
+	if endptType == metadata && len(message.MIMETypes) > 0 {
 		// Choose a random mime type in the list if there's more than one
 		if len(message.MIMETypes) == 2 {
 			rand.Seed(time.Now().UnixNano())
@@ -269,8 +270,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		}
 	}
 
-	// We will only do the MIME-Type failure fallbacks for the default FHIR version request
-	if endptType == metadata && message.RequestedFhirVersion == "None" {
+	if endptType == metadata {
 		otherMime := fhir2LessJSONMIMEType
 		if httpResponseCode != http.StatusOK || !mimeTypeWorked {
 			// Try the other mime type and remove the mime type that was initially saved
