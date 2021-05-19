@@ -24,21 +24,24 @@ func Test_Equal(t *testing.T) {
 	// test one nil, other not
 	resp := "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
 	var jsonResponse interface{}
-	json.Unmarshal([]byte(resp), &(jsonResponse))
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
 	vr2 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, !equal, "expected equality nil to not nil to be false")
 
 	// test two same non-nil
 	resp = "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
-	json.Unmarshal([]byte(resp), &(jsonResponse))
+	err = json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
 	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, equal, "expected equality for same Response to be true")
 
 	// test two different non-nil
 	resp = "{\"versions\": [\"4.0\"],\"default\": \"4.0\"}"
-	json.Unmarshal([]byte(resp), &(jsonResponse))
+	err = json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
 	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, !equal, "expected equality for different Response to be false")
@@ -51,7 +54,8 @@ func Test_GetDefaultVersion(t *testing.T) {
 
 	resp := "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
 	var jsonResponse interface{}
-	json.Unmarshal([]byte(resp), &(jsonResponse))
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
 	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 
 	// test populated versions Response
@@ -72,7 +76,8 @@ func Test_GetSupportedVersions(t *testing.T) {
 
 	resp := "{\"versions\": [\"4.0\"],\"default\": \"4.0\"}"
 	var jsonResponse interface{}
-	json.Unmarshal([]byte(resp), &(jsonResponse))
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
 	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 
 	var populatedSlice []string

@@ -64,14 +64,14 @@ type VersionsMessage struct {
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
 // the Client and FhirURL for querying
 type QuerierArgs struct {
-	FhirURL      string
+	FhirURL        string
 	RequestVersion string
-	Client       *http.Client
-	MessageQueue *lanternmq.MessageQueue
-	ChannelID    *lanternmq.ChannelID
-	QueueName    string
-	UserAgent    string
-	Store        *postgresql.Store
+	Client         *http.Client
+	MessageQueue   *lanternmq.MessageQueue
+	ChannelID      *lanternmq.ChannelID
+	QueueName      string
+	UserAgent      string
+	Store          *postgresql.Store
 }
 
 // GetAndSendVersionsResponse gets a $versions response from a FHIR API endpoint and then puts the versions
@@ -166,9 +166,9 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	userAgent := qa.UserAgent
 	message := Message{
-		URL:       qa.FhirURL,
+		URL:                  qa.FhirURL,
 		RequestedFhirVersion: qa.RequestVersion,
-		MIMETypes: mimeTypes,
+		MIMETypes:            mimeTypes,
 	}
 	// Cast string url to type url then cast back to string to ensure url string in correct url format
 	castURL, err := url.Parse(qa.FhirURL)
@@ -235,7 +235,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	// If there is a requested fhir version, set the fhirVersion in the request header
 	if message.RequestedFhirVersion != "None" {
 		req.Header.Set("fhirVersion", message.RequestedFhirVersion)
-	} 
+	}
 
 	firstMIME := fhir3PlusJSONMIMEType
 	randomMimeIdx := 0

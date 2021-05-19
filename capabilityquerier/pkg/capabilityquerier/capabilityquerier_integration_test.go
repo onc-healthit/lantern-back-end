@@ -156,6 +156,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 		HTTPResponse:      200,
 		SMARTHTTPResponse: 200,
 		ResponseTime:      0,
+		RequestedFhirVersion: "None",
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
@@ -171,6 +172,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	querierArgs := QuerierArgs{
 		FhirURL:      sampleURL,
 		Client:       &(tc.Client),
+		RequestVersion: "None",
 		MessageQueue: &mq,
 		ChannelID:    &ch,
 		QueueName:    queueName,
@@ -189,6 +191,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	err = json.Unmarshal(message, &messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when unmarshalling message")
 	messageStruct.ResponseTime = 0
+	messageStruct.RequestedFhirVersion = "None"
 	message, err = json.Marshal(messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when marshalling message")
 

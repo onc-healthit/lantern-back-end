@@ -70,14 +70,14 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	jobArgs := make(map[string]interface{})
 
 	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
-		FhirURL:      urlString,
+		FhirURL:        urlString,
 		RequestVersion: requestVersion,
-		Client:       qa.client,
-		MessageQueue: qa.mq,
-		ChannelID:    qa.ch,
-		QueueName:    qa.qName,
-		UserAgent:    qa.userAgent,
-		Store:        qa.store,
+		Client:         qa.client,
+		MessageQueue:   qa.mq,
+		ChannelID:      qa.ch,
+		QueueName:      qa.qName,
+		UserAgent:      qa.userAgent,
+		Store:          qa.store,
 	}
 
 	job := workers.Job{

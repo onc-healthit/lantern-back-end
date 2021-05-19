@@ -267,7 +267,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
-func removeNoLongerExistingVersionsInfos(ctx context.Context, store *postgresql.Store, url string, supportedVersions []string) error{
+func removeNoLongerExistingVersionsInfos(ctx context.Context, store *postgresql.Store, url string, supportedVersions []string) error {
 	// If there is a requestedVersion for a URL in fhir_endpoints_info that is no longer in supportedVersions
 	// then we need to remove those fhir_endpoint_info entries
 	endptInfos, err := store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, url, supportedVersions)
@@ -278,7 +278,7 @@ func removeNoLongerExistingVersionsInfos(ctx context.Context, store *postgresql.
 		err = store.DeleteFHIREndpointInfo(ctx, infoEntry)
 		if err != nil {
 			return err
-		}	
+		}
 	}
 	return nil
 }

@@ -465,7 +465,7 @@ func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 }
 
 // GetFHIREndpointInfosByURLWithDifferentRequestedVersion
-func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error)  {
+func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfos []*endpointmanager.FHIREndpointInfo
 	var operResourceJSON []byte
 

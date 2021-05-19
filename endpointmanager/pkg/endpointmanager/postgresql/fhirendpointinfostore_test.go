@@ -72,7 +72,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		MIMETypes:             []string{"application/json+fhir"},
 		CapabilityStatement:   cs,
 		SMARTResponse:         nil,
-		RequestedFhirVersion:  "",
+		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadata1}
 
@@ -90,7 +90,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:                   endpoint2.URL,
 		TLSVersion:            "TLS 1.2",
-		RequestedFhirVersion:  "",
+		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "",
 		MIMETypes:             []string{"application/fhir+json"},
 		Metadata:              endpointMetadata2}
@@ -190,7 +190,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// GetFHIREndpointInfosByURLWithDifferentRequestedVersion using URL and all existing requestedVersions
 	// Should not return any entries as all requestedVersions will exist
-	supportedVersions := []string{"", "1.0.0"}
+	supportedVersions := []string{"None", "1.0.0"}
 	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
@@ -200,6 +200,18 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	supportedVersions = []string{"1.0.0"}
+	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
+	if err != nil {
+		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
+	}
+	if len(eArr) != 1 {
+		t.Errorf("There should be one endpoint info entry not matching the supplied requested versions , got %d", len(eArr))
+	}
+	if eArr[0].RequestedFhirVersion != "None" {
+		t.Errorf("Returned info entry is incorrect")
+	}
+
+	supportedVersions = []string{"None"}
 	eArr, err = store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, endpoint1.URL, supportedVersions)
 	if err != nil {
 		t.Errorf("Error getting fhir endpointInfos: %s", err.Error())
