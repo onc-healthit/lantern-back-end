@@ -100,8 +100,8 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		time.Sleep(time.Duration(500 * time.Millisecond))
 		req, err := http.NewRequest("GET", versionsURL, nil)
 		if err != nil {
-			log.Errorf("unable to create new GET request from URL: "+versionsURL)
-		}else{
+			log.Errorf("unable to create new GET request from URL: " + versionsURL)
+		} else {
 			req.Header.Set("User-Agent", qa.UserAgent)
 			trace := &httptrace.ClientTrace{}
 			req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
@@ -110,7 +110,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 			// If an error occurs with the version request we still want to proceed with the capability request
 			if err != nil {
 				log.Infof("Error requesting versions response: %s", err.Error())
-			}else{
+			} else {
 				if httpResponseCode == 200 && versionsResponse != nil {
 					err = json.Unmarshal(versionsResponse, &(jsonResponse))
 					if err != nil {
