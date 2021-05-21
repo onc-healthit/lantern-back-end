@@ -36,7 +36,6 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	tlsVersion string,
 	smartHTTPRsp int) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
-	validationWarnings := make([]endpointmanager.Rule, 0)
 
 	returnedRule := v.CapStatExists(capStat)
 	validationResults = append(validationResults, returnedRule)
@@ -84,8 +83,7 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	validationResults = append(validationResults, returnedRule)
 
 	validations := endpointmanager.Validation{
-		Results:  validationResults,
-		Warnings: validationWarnings,
+		Results: validationResults,
 	}
 
 	return validations

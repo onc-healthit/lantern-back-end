@@ -118,23 +118,20 @@ type IncludedField struct {
 	Extension bool
 }
 
-// Validation holds all of the errors and warnings from running the validation checks
-// it is saved in JSON format to the fhir_endpoints_info database table
+// Validation holds all of the validation results from running the validation checks
 type Validation struct {
-	Results  []Rule `json:"results"`
-	Warnings []Rule `json:"warnings"`
+	Results []Rule
 }
 
-// Rule is the structure for both validation errors and warnings that are saved in
-// the Validations struct
+// Rule is the information returned from running the validation rule given by RuleName
 type Rule struct {
-	RuleName  RuleOption `json:"ruleName"`
-	Valid     bool       `json:"valid"`
-	Expected  string     `json:"expected"`
-	Actual    string     `json:"actual"`
-	Comment   string     `json:"comment"`
-	Reference string     `json:"reference"`
-	ImplGuide string     `json:"implGuide"`
+	RuleName  RuleOption
+	Valid     bool
+	Expected  string
+	Actual    string
+	Comment   string
+	Reference string
+	ImplGuide string
 }
 
 // RuleOption is an enum of the names given to the rule validation checks
