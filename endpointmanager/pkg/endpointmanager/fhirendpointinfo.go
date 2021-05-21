@@ -73,9 +73,10 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
-	if !cmp.Equal(e.Validation, e2.Validation) {
-		return false
-	}
+	// @TODO - Validation - This will need to be updated
+	// if !cmp.Equal(e.Validation, e2.Validation) {
+	// 	return false
+	// }
 
 	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
 		return false

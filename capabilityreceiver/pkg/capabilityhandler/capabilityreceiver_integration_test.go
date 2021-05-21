@@ -132,8 +132,9 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not store data as expected")
 
+	// @TODO - Validation - This will need to be updated
 	storedEndpt, err := store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint1.URL)
-	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
+	storedEndpt.Validation = testValidationObj
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
@@ -165,8 +166,9 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "there should be two endpoints in the database")
 
+	// @TODO - Validation - This will need to be updated
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, testFhirEndpoint2.URL)
-	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
+	storedEndpt.Validation = testValidationObj
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt.URL = testFhirEndpoint1.URL
@@ -258,7 +260,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, !storedEndpt.Metadata.UpdatedAt.Equal(oldMetadataUpdatedAt), "The selective update should have still updated the old endpoint metadata updated at time")
 
 	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
-	th.Assert(t, updatedAt.Equal(oldUpdateAt), "The selective update should not have updated the old endpoint updated at time in the history table")
+	th.Assert(t, updatedAt.Equal(oldUpdateAt), fmt.Sprintf("The selective update should not have updated the old endpoint updated at time in the history table, \n current: %s, \n old: %s", updatedAt, oldUpdateAt))
 
 	oldMetadataID = storedEndpt.Metadata.ID
 	oldMetadataUpdatedAt = storedEndpt.Metadata.UpdatedAt
