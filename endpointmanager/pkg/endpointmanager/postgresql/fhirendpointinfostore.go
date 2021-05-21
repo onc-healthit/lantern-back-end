@@ -18,6 +18,9 @@ var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
+// @TODO - Validation - Removed all references to validation field, even though it's still
+// included in the FHIREndpointInfo struct
+
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
@@ -351,7 +354,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			operation_resource,
 			validation_result_id,
 			metadata_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id`)
 	if err != nil {
 		return err
