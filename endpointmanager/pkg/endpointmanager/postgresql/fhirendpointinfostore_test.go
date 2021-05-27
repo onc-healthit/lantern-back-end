@@ -115,7 +115,6 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	// Add endpointInfo1 again but with different requested version
-	// TODO: Metadata must be added right now, but after this is fixed remove the metadata insert below:
 	metadataIDRV, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1RequestedVersion.Metadata)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
