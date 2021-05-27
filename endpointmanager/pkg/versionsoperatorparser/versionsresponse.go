@@ -43,7 +43,7 @@ func (vr *VersionsResponse) GetDefaultVersion() string {
 	return vr.Response["default"].(string)
 }
 
-// GetDefaultVersion gets the default FHIR version out of the versions response
+// GetSupportedVersions gets the supported FHIR versions out of the versions response
 func (vr *VersionsResponse) GetSupportedVersions() []string {
 	if vr.Response == nil || vr.Response["versions"] == nil {
 		var empty []string
