@@ -117,10 +117,6 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadataRequestVersion1}
 
-	err := setup()
-	if err != nil {
-		panic(err)
-	}	
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
