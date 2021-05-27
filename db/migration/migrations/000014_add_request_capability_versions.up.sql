@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION populate_capability_fhir_version_info() RETURNS VOID 
     BEGIN
         FOR t_row in t_curs LOOP
             SELECT cast(coalesce(nullif(t_row.capability_statement->>'fhirVersion',NULL),'') as varchar(500)) INTO capStatVersion;
-            UPDATE fhir_endpoints_info SET requested_fhir_version = '', capability_fhir_version = capStatVersion WHERE current of t_curs; 
+            UPDATE fhir_endpoints_info SET requested_fhir_version = 'None', capability_fhir_version = capStatVersion WHERE current of t_curs;
         END LOOP;
     END;
 $$ LANGUAGE plpgsql;
@@ -44,7 +44,7 @@ CREATE OR REPLACE FUNCTION populate_capability_fhir_version_info_history() RETUR
     BEGIN
         FOR t_row in t_curs LOOP
             SELECT cast(coalesce(nullif(t_row.capability_statement->>'fhirVersion',NULL),'') as varchar(500)) INTO capStatVersion;
-            UPDATE fhir_endpoints_info_history SET requested_fhir_version = '', capability_fhir_version = capStatVersion WHERE current of t_curs; 
+            UPDATE fhir_endpoints_info_history SET requested_fhir_version = 'None', capability_fhir_version = capStatVersion WHERE current of t_curs;
         END LOOP;
     END;
 $$ LANGUAGE plpgsql;
@@ -78,8 +78,7 @@ RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
-LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id
-WHERE endpts_info.requested_fhir_version = '';
+LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
 CREATE INDEX capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
 CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
