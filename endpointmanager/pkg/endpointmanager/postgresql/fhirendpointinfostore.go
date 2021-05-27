@@ -193,7 +193,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 }
 
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
-func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
+func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int, valResID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -238,6 +238,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		valResID,
 		metadataID)
 
 	err = row.Scan(&e.ID)
@@ -246,7 +247,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 }
 
 // UpdateFHIREndpointInfo updates the FHIREndpointInfo in the database using the FHIREndpointInfo's database id as the key.
-func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
+func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int, valResID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -291,6 +292,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		valResID,
 		metadataID,
 		e.ID)
 
@@ -334,8 +336,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response,
 			included_fields,
 			operation_resource,
+			validation_result_id,
 			metadata_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -352,8 +355,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response = $7,
 			included_fields = $8,
 			operation_resource = $9,
-			metadata_id = $10
-		WHERE id = $11`)
+			validation_result_id = $10,
+			metadata_id = $11
+		WHERE id = $12`)
 	if err != nil {
 		return err
 	}

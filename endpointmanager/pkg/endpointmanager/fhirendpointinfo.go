@@ -139,13 +139,12 @@ type RuleOption string
 
 const (
 	GeneralMimeTypeRule RuleOption = "generalMimeType"
-	HTTPResponseRule    RuleOption = "httpResponse"
 	CapStatExistRule    RuleOption = "capStatExist"
 	FHIRVersion         RuleOption = "fhirVersion"
 	TLSVersion          RuleOption = "tlsVersion"
 	PatResourceExists   RuleOption = "patResourceExists"
 	OtherResourceExists RuleOption = "otherResourceExists"
-	SmartHTTPRespRule   RuleOption = "smartHttpResponse"
+	SmartRespExistsRule RuleOption = "smartResponse"
 	KindRule            RuleOption = "kindRule"
 	InstanceRule        RuleOption = "instanceRule"
 	MessagingEndptRule  RuleOption = "messagingEndptRule"
