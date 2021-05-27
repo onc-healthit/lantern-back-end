@@ -464,7 +464,7 @@ func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	return err
 }
 
-// GetFHIREndpointInfosByURLWithDifferentRequestedVersion
+// GetFHIREndpointInfosByURLWithDifferentRequestedVersion gets all FHIREndpointInfo rows for the given url whose RequestedFhirVersion does not exist in the versions list
 func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error) {
 	var endpointInfos []*endpointmanager.FHIREndpointInfo
 	var operResourceJSON []byte
