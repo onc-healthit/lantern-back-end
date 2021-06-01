@@ -12,6 +12,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -42,8 +43,7 @@ type validationArgs struct {
 	capStatByte       []byte
 	tlsVersion        string
 	mimeTypes         []string
-	httpResponse      int
-	smartHttpResponse int
+	smartResponseByte []byte
 }
 
 // prepares the statements used in the "up" migration
@@ -117,7 +117,10 @@ func createJobs(ctx context.Context,
 			isHistory: isHistory,
 		}
 
-		handlerFunction := addToValidationTable
+		handlerFunction := addToValidationTableInfo
+		if isHistory {
+			handlerFunction = addToValidationTableHistory
+		}
 		if migrateDirection == "down" {
 			handlerFunction = addToValidationField
 		}
@@ -136,9 +139,9 @@ func createJobs(ctx context.Context,
 	}
 }
 
-// addToValidationTable gets the table data for a given URL and creates the
+// addToValidationTable gets the history table data for a given URL and creates the
 // validation table rows based on each row's capability statement
-func addToValidationTable(ctx context.Context, args *map[string]interface{}) error {
+func addToValidationTableHistory(ctx context.Context, args *map[string]interface{}) error {
 	wa, ok := (*args)["workerArgs"].(workerArgs)
 	if !ok {
 		log.Warnf("unable to cast arguments to type workerArgs")
@@ -149,19 +152,11 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		return nil
 	}
 
-	databaseTable := "fhir_endpoints_info"
-	if wa.isHistory {
-		databaseTable = "fhir_endpoints_info_history"
-	}
-
 	// Get validation information from the specified table table for the given URL
-	selectHistory := `SELECT endpts_info.capability_statement,
-			endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
-			endpts_metadata.smart_http_response,
-			endpts_info.updated_at AS INFO_UPDATED
-		FROM ` + databaseTable + ` AS endpts_info
-		LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
-		WHERE endpts_info.url=$1;`
+	selectHistory := `SELECT capability_statement, tls_version, mime_types,
+			smart_response, updated_at AS INFO_UPDATED
+		FROM fhir_endpoints_info_history
+		WHERE url=$1;`
 	historyRows, err := wa.store.DB.QueryContext(ctx, selectHistory, wa.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", wa.fhirURL, err)
@@ -174,8 +169,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
 			pq.Array(&val.mimeTypes),
-			&val.httpResponse,
-			&val.smartHttpResponse,
+			&val.smartResponseByte,
 			&val.updatedTime)
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
@@ -186,18 +180,15 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 
 	for _, val := range validationVals {
 		// Create the capability statement object
-		var capStat capabilityparser.CapabilityStatement
-		var capInt map[string]interface{}
-		if len(val.capStatByte) > 0 {
-			err = json.Unmarshal(val.capStatByte, &capInt)
-			if err != nil {
-				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
-			}
+		capStat, err := capabilityparser.NewCapabilityStatement(val.capStatByte)
+		if err != nil {
+			log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
+		}
 
-			capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
-			if err != nil {
-				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
-			}
+		// Create smart response object
+		smartResp, err := smartparser.NewSMARTResp(val.smartResponseByte)
+		if err != nil {
+			log.Warnf("Error while unmarshalling the smart response for URL %s. Error: %s", wa.fhirURL, err)
 		}
 
 		// @TODO update this based on Emily's PR
@@ -207,7 +198,7 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 		}
 
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
+		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp)
 		// Create ID in validation_results table and then get the ID
 		valResRow := addValidationResultStatement.QueryRowContext(ctx)
 		valResID := 0
@@ -233,15 +224,46 @@ func addToValidationTable(ctx context.Context, args *map[string]interface{}) err
 			}
 		}
 		// Then have to update the row in the history table with that id
-		if wa.isHistory {
-			_, err = updateHistoryValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
-		} else {
-			_, err = updateInfoValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
-		}
+		_, err = updateHistoryValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
 		if err != nil {
 			log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", wa.fhirURL, val.updatedTime.String(), err)
 			return returnResult(wa)
 		}
+	}
+	return returnResult(wa)
+}
+
+// since the current data in info table is also in the history table, get the ID
+// that was generated for the associated history table row and use that for the
+// info table
+func addToValidationTableInfo(ctx context.Context, args *map[string]interface{}) error {
+	wa, ok := (*args)["workerArgs"].(workerArgs)
+	if !ok {
+		log.Warnf("unable to cast arguments to type workerArgs")
+		result := Result{
+			URL: "unknown",
+		}
+		wa.result <- result
+		return nil
+	}
+
+	selectHistory := `SELECT endpt_history.validation_result_id,
+		endpts_info.updated_at
+	FROM fhir_endpoints_info_history AS endpt_history
+	LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts_info.updated_at = endpt_history.updated_at
+	AND endpts_info.url = endpt_history.url
+	WHERE endpts_info.url=$1`
+	valResRow := wa.store.DB.QueryRowContext(ctx, selectHistory, wa.fhirURL)
+	valResID := 0
+	var updatedTime time.Time
+	err := valResRow.Scan(&valResID, &updatedTime)
+	if err != nil {
+		log.Warnf("Failed to get the validation_result_id. Error: %s", err)
+		return returnResult(wa)
+	}
+	_, err = updateInfoValResStatement.ExecContext(ctx, valResID, updatedTime, wa.fhirURL)
+	if err != nil {
+		log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", wa.fhirURL, updatedTime.String(), err)
 	}
 	return returnResult(wa)
 }
@@ -272,13 +294,10 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		WHERE updated_at = $2 AND url = $3;`
 
 	// Get all necessary validation data from the specified table for the given URL
-	selectHistory := `SELECT endpts_info.capability_statement,
-			endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
-			endpts_metadata.smart_http_response,
-			endpts_info.updated_at AS INFO_UPDATED
-		FROM ` + databaseTable + ` AS endpts_info
-		LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
-		WHERE endpts_info.url=$1;`
+	selectHistory := `SELECT capability_statement, tls_version, mime_types,
+		smart_response, updated_at AS INFO_UPDATED
+		FROM ` + databaseTable + `
+		WHERE url=$1;`
 	historyRows, err := wa.store.DB.QueryContext(ctx, selectHistory, wa.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", wa.fhirURL, err)
@@ -292,8 +311,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
 			pq.Array(&val.mimeTypes),
-			&val.httpResponse,
-			&val.smartHttpResponse,
+			&val.smartResponseByte,
 			&val.updatedTime)
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
@@ -304,18 +322,15 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 
 	for _, val := range validationVals {
 		// Create the capability statement object
-		var capStat capabilityparser.CapabilityStatement
-		var capInt map[string]interface{}
-		if len(val.capStatByte) > 0 {
-			err = json.Unmarshal(val.capStatByte, &capInt)
-			if err != nil {
-				log.Warnf("Error while unmarshalling the rows of the history table for URL %s. Error: %s", wa.fhirURL, err)
-			}
+		capStat, err := capabilityparser.NewCapabilityStatement(val.capStatByte)
+		if err != nil {
+			log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
+		}
 
-			capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
-			if err != nil {
-				log.Warnf("unable to parse CapabilityStatement out of message with url %s. Error: %s", wa.fhirURL, err)
-			}
+		// Create smart response object
+		smartResp, err := smartparser.NewSMARTResp(val.smartResponseByte)
+		if err != nil {
+			log.Warnf("Error while unmarshalling the smart response for URL %s. Error: %s", wa.fhirURL, err)
 		}
 
 		// @TODO update this based on Emily's PR
@@ -324,7 +339,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			fhirVersion, _ = capStat.GetFHIRVersion()
 		}
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		validationObj := validator.RunValidation(capStat, val.httpResponse, val.mimeTypes, fhirVersion, val.tlsVersion, val.smartHttpResponse)
+		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp)
 		validationJSON, err := json.Marshal(validationObj)
 		if err != nil {
 			log.Warnf("Error marshalling object to JSON. Error: %s", err)
