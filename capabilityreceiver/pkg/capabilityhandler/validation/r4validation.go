@@ -2,11 +2,11 @@ package validation
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 )
 
 var tls12 = "TLS 1.2"
@@ -30,20 +30,16 @@ func newR4Val() *r4Validation {
 
 // RunValidation runs all of the defined validation checks
 func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatement,
-	httpResponse int,
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartHTTPRsp int) endpointmanager.Validation {
+	smartRsp smartparser.SMARTResponse) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 
 	returnedRule := v.CapStatExists(capStat)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
-	validationResults = append(validationResults, returnedRule)
-
-	returnedRule = v.HTTPResponseValid(httpResponse)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRule = v.baseVal.FhirVersion(fhirVersion)
@@ -58,7 +54,7 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	returnedRule = v.OtherResourceExists(capStat)
 	validationResults = append(validationResults, returnedRule)
 
-	returnedRule = v.SmartHTTPResponseValid(smartHTTPRsp)
+	returnedRule = v.SmartResponseExists(smartRsp)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRules := v.KindValid(capStat)
@@ -105,16 +101,6 @@ func (v *r4Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) end
 	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
 	baseRule.Reference = "http://hl7.org/fhir/http.html"
 	baseRule.ImplGuide = "USCore 3.1"
-	return baseRule
-}
-
-// HTTPResponseValid checks if the given response code is 200 using the base function, and then
-// adds specific R4 reference information
-func (v *r4Validation) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
-	baseRule := v.baseVal.HTTPResponseValid(httpResponse)
-	baseRule.Reference = "http://hl7.org/fhir/http.html"
-	baseRule.ImplGuide = "USCore 3.1"
-	baseRule.Comment = baseRule.Comment + "Applications SHALL return a resource that describes the functionality of the server end-point."
 	return baseRule
 }
 
@@ -242,18 +228,25 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 
 // SmartHTTPResponseValid checks if the SMART-on-FHIR response code is 200 using the base
 // HTTPResponse function, and then adds specific R4 reference information
-func (v *r4Validation) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule {
-	baseComment := "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL."
-	baseRule := v.baseVal.HTTPResponseValid(smartHTTPRsp)
-	baseRule.RuleName = endpointmanager.SmartHTTPRespRule
-	baseRule.Comment = baseComment
-	baseRule.Reference = "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html"
-	baseRule.ImplGuide = "USCore 3.1"
-	if (smartHTTPRsp != 0) && (smartHTTPRsp != 200) {
-		strResp := strconv.Itoa(smartHTTPRsp)
-		baseRule.Comment = "The HTTP response code was " + strResp + " instead of 200. " + baseComment
+func (v *r4Validation) SmartResponseExists(smartRsp smartparser.SMARTResponse) endpointmanager.Rule {
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.SmartRespExistsRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
+		Comment:   "The Smart Response exists.",
+		Reference: "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html",
+		ImplGuide: "USCore 3.1",
 	}
-	return baseRule
+
+	if smartRsp != nil {
+		return ruleError
+	}
+
+	ruleError.Valid = false
+	ruleError.Actual = "false"
+	ruleError.Comment = `The Smart Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
+	return ruleError
 }
 
 // KindValid checks 2 Rules: The first, which is the baseVal rule, is that kind = instance since all of the
