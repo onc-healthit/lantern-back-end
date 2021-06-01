@@ -34,7 +34,6 @@ var testValidationObj = endpointmanager.Validation{
 			Comment:  "The Capability Statement exists.",
 		},
 	},
-	Warnings: []endpointmanager.Rule{},
 }
 
 var testIncludedFields = []endpointmanager.IncludedField{

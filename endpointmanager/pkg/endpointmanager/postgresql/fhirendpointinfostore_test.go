@@ -5,6 +5,7 @@ package postgresql
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -83,7 +84,9 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID, valResID1)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
@@ -92,7 +95,9 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID, valResID2)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
 	}
@@ -139,7 +144,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
 	}
-	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID, valResID1)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}
@@ -165,7 +170,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
 	}
-	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID)
+	err = store.UpdateFHIREndpointInfo(ctx, e1, metadataID, valResID1)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}

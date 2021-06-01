@@ -84,13 +84,17 @@ func Test_createJSON(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding a FHIR Endpoint. Error: %s", err))
 
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
-	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID, valResID1)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding the FHIR Endpoint Info. Error: %s", err))
 
 	secondEndpoint.ID = firstEndpoint.ID
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, secondEndpoint.Metadata)
-	err = store.UpdateFHIREndpointInfo(ctx, &secondEndpoint, metadataID)
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	err = store.UpdateFHIREndpointInfo(ctx, &secondEndpoint, metadataID, valResID2)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while updating the FHIR Endpoint Info. Error: %s", err))
 
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
@@ -120,7 +124,9 @@ func Test_getHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
-	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID, valResID1)
 	th.Assert(t, err == nil, err)
 
 	rows := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
