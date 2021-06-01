@@ -172,7 +172,18 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add endpoint metadata failed, %s", err)
 		}
-		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
+
+		valResID, err := store.AddValidationResult(ctx)
+		if err != nil {
+			return fmt.Errorf("adding new validation result ID failed, %s", err)
+		}
+
+		err = store.AddValidation(ctx, &fhirEndpoint.Validation, valResID)
+		if err != nil {
+			return fmt.Errorf("error adding validation rows to table, %s", err)
+		}
+
+		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID, valResID)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add to fhir_endpoints_info failed, %s", err)
 		}
@@ -214,7 +225,17 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("does exist, add endpoint metadata failed, %s", err)
 			}
 
-			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID)
+			valResID, err := store.AddValidationResult(ctx)
+			if err != nil {
+				return fmt.Errorf("adding new validation result ID failed, %s", err)
+			}
+
+			err = store.AddValidation(ctx, &fhirEndpoint.Validation, valResID)
+			if err != nil {
+				return fmt.Errorf("error adding validation rows to table, %s", err)
+			}
+
+			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID, valResID)
 			if err != nil {
 				return fmt.Errorf("does exist, add to fhir_endpoints_info failed, %s", err)
 			}
