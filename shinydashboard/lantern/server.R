@@ -269,18 +269,6 @@ function(input, output, session) { #nolint
     current_selection(input$resources)
   })
 
-  observe({
-    req(input$side_menu)
-    if (show_resource_checkbox()) {
-      updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources())
-    }
-  })
-
-  observe({
-    req(input$fhir_version, input$vendor)
-    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
-  })
-
   observeEvent(input$selectall, {
     if (input$selectall == 0) {
       return(NULL)
