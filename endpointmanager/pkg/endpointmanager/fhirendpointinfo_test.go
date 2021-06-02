@@ -211,20 +211,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		VendorID:          2,
-		Validation: Validation{
-			Results: []Rule{
-				{
-					RuleName:  "httpResponse",
-					Valid:     false,
-					Expected:  "200",
-					Actual:    "404",
-					Comment:   "Not 200",
-					Reference: "reference.com",
-					ImplGuide: "Guide",
-				},
-			},
-		},
-		IncludedFields: testIncludedFields,
+		IncludedFields:    testIncludedFields,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
@@ -238,20 +225,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		VendorID:          2,
-		Validation: Validation{
-			Results: []Rule{
-				{
-					RuleName:  "httpResponse",
-					Valid:     false,
-					Expected:  "200",
-					Actual:    "404",
-					Comment:   "Not 200",
-					Reference: "reference.com",
-					ImplGuide: "Guide",
-				},
-			},
-		},
-		IncludedFields: includedFieldsCopy,
+		IncludedFields:    includedFieldsCopy,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement: cs,
@@ -370,19 +344,6 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
 	}
 	endpointInfo1.CapabilityStatement = endpointInfo2.CapabilityStatement
-
-	// @TODO - Validation - This will need to be updated
-	// endpointInfo2.Validation = Validation{}
-	// if endpointInfo1.Equal(endpointInfo2) {
-	// 	t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
-	// }
-	// endpointInfo2.Validation = endpointInfo1.Validation
-
-	// endpointInfo1.Validation = Validation{}
-	// if endpointInfo1.Equal(endpointInfo2) {
-	// 	t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Validation should be different. %+v vs %+v", endpointInfo1.Validation, endpointInfo2.Validation)
-	// }
-	// endpointInfo1.Validation = endpointInfo2.Validation
 
 	endpointInfo1.IncludedFields[0] = IncludedField{
 		Field:  "url",
