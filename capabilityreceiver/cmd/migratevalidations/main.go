@@ -75,7 +75,7 @@ func prepareUpStatements(s *postgresql.Store) error {
 		UPDATE fhir_endpoints_info
 		SET
 			validation_result_id = $1
-		WHERE updated_at = $2 AND url = $3;`)
+		WHERE url = $2;`)
 	if err != nil {
 		return err
 	}
@@ -247,23 +247,20 @@ func addToValidationTableInfo(ctx context.Context, args *map[string]interface{})
 		return nil
 	}
 
-	selectHistory := `SELECT endpt_history.validation_result_id,
-		endpts_info.updated_at
-	FROM fhir_endpoints_info_history AS endpt_history
-	LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts_info.updated_at = endpt_history.updated_at
-	AND endpts_info.url = endpt_history.url
-	WHERE endpts_info.url=$1`
+	selectHistory := `SELECT validation_result_id FROM fhir_endpoints_info_history
+		WHERE url = $1
+		ORDER BY entered_at DESC
+		LIMIT 1;`
 	valResRow := wa.store.DB.QueryRowContext(ctx, selectHistory, wa.fhirURL)
 	valResID := 0
-	var updatedTime time.Time
-	err := valResRow.Scan(&valResID, &updatedTime)
+	err := valResRow.Scan(&valResID)
 	if err != nil {
 		log.Warnf("Failed to get the validation_result_id. Error: %s", err)
 		return returnResult(wa)
 	}
-	_, err = updateInfoValResStatement.ExecContext(ctx, valResID, updatedTime, wa.fhirURL)
+	_, err = updateInfoValResStatement.ExecContext(ctx, valResID, wa.fhirURL)
 	if err != nil {
-		log.Warnf("Error while updating the row of the table for URL %s at %s. Error: %s", wa.fhirURL, updatedTime.String(), err)
+		log.Warnf("Error while updating the row of fhir_endpoints_info table for URL %s. Error: %s", wa.fhirURL, err)
 	}
 	return returnResult(wa)
 }

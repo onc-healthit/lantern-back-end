@@ -242,7 +242,7 @@ func Test_addToValidationTableInfo(t *testing.T) {
 			tls_version,
 			mime_types,
 			validation_result_id,
-			updated_at
+			entered_at
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
@@ -251,10 +251,9 @@ func Test_addToValidationTableInfo(t *testing.T) {
 			url,
 			capability_statement,
 			tls_version,
-			mime_types,
-			updated_at
+			mime_types
 		)
-		VALUES ($1, $2, $3, $4, $5)`
+		VALUES ($1, $2, $3, $4)`
 
 	getFHIREndpointInfoStatement := `
 		SELECT validation_result_id
@@ -282,7 +281,7 @@ func Test_addToValidationTableInfo(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database again %s", err))
 
 	// Put an entry into the info table with the same information minus the id
-	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url1, capStat2, tlsVersion, pq.Array(mimeTypes), secondTime)
+	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url1, capStat2, tlsVersion, pq.Array(mimeTypes))
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database again %s", err))
 
 	// Check that the info entry is updated to the same ID as the second history entry
