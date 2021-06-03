@@ -64,13 +64,14 @@ type VersionsMessage struct {
 // QuerierArgs is a struct of the queue connection information (MessageQueue, ChannelID, and QueueName) as well as
 // the Client and FhirURL for querying
 type QuerierArgs struct {
-	FhirURL      string
-	Client       *http.Client
-	MessageQueue *lanternmq.MessageQueue
-	ChannelID    *lanternmq.ChannelID
-	QueueName    string
-	UserAgent    string
-	Store        *postgresql.Store
+	FhirURL        string
+	RequestVersion string
+	Client         *http.Client
+	MessageQueue   *lanternmq.MessageQueue
+	ChannelID      *lanternmq.ChannelID
+	QueueName      string
+	UserAgent      string
+	Store          *postgresql.Store
 }
 
 // GetAndSendVersionsResponse gets a $versions response from a FHIR API endpoint and then puts the versions
@@ -99,21 +100,23 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		time.Sleep(time.Duration(500 * time.Millisecond))
 		req, err := http.NewRequest("GET", versionsURL, nil)
 		if err != nil {
-			return errors.Wrap(err, "unable to create new GET request from URL: "+versionsURL)
-		}
-		req.Header.Set("User-Agent", qa.UserAgent)
-		trace := &httptrace.ClientTrace{}
-		req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
+			log.Errorf("unable to create new GET request from URL: " + versionsURL)
+		} else {
+			req.Header.Set("User-Agent", qa.UserAgent)
+			trace := &httptrace.ClientTrace{}
+			req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-		httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
-		if err != nil {
-			return fmt.Errorf("Error requesting versions response: %s", err.Error())
-		}
-
-		if httpResponseCode == 200 && versionsResponse != nil {
-			err = json.Unmarshal(versionsResponse, &(jsonResponse))
+			httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+			// If an error occurs with the version request we still want to proceed with the capability request
 			if err != nil {
-				return err
+				log.Infof("Error requesting versions response: %s", err.Error())
+			} else {
+				if httpResponseCode == 200 && versionsResponse != nil {
+					err = json.Unmarshal(versionsResponse, &(jsonResponse))
+					if err != nil {
+						log.Errorf("Error unmarshalling versions response: %s", err.Error())
+					}
+				}
 			}
 		}
 
@@ -139,6 +142,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 // this way in order for it to be able to be called by a worker (see endpointmanager/pkg/workers)
 func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interface{}) error {
 	// Get arguments
+
 	qa, ok := (*args)["querierArgs"].(QuerierArgs)
 	if !ok {
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
@@ -146,7 +150,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	var err error
 
-	endpt, err := qa.Store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, qa.FhirURL, "")
+	endpt, err := qa.Store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, qa.FhirURL, qa.RequestVersion)
 	var mimeTypes []string
 	if err == sql.ErrNoRows {
 		mimeTypes = []string{}
@@ -165,8 +169,9 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	userAgent := qa.UserAgent
 	message := Message{
-		URL:       qa.FhirURL,
-		MIMETypes: mimeTypes,
+		URL:                  qa.FhirURL,
+		RequestedFhirVersion: qa.RequestVersion,
+		MIMETypes:            mimeTypes,
 	}
 	// Cast string url to type url then cast back to string to ensure url string in correct url format
 	castURL, err := url.Parse(qa.FhirURL)
@@ -230,8 +235,13 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	trace := &httptrace.ClientTrace{}
 	req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-	randomMimeIdx := 0
+	// If there is a requested fhir version, set the fhirVersion in the request header
+	if message.RequestedFhirVersion != "None" {
+		req.Header.Set("fhirVersion", message.RequestedFhirVersion)
+	}
+
 	firstMIME := fhir3PlusJSONMIMEType
+	randomMimeIdx := 0
 
 	// If there are mime types saved in the database for this URL
 	if endptType == metadata && len(message.MIMETypes) > 0 {
@@ -240,11 +250,10 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 			rand.Seed(time.Now().UnixNano())
 			randomMimeIdx = rand.Intn(2)
 			firstMIME = message.MIMETypes[randomMimeIdx]
-			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
 		} else {
 			firstMIME = message.MIMETypes[randomMimeIdx]
-			httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
 		}
+		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
 		if err != nil {
 			return err
 		}
@@ -261,8 +270,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		}
 	}
 
-	otherMime := fhir2LessJSONMIMEType
 	if endptType == metadata {
+		otherMime := fhir2LessJSONMIMEType
 		if httpResponseCode != http.StatusOK || !mimeTypeWorked {
 			// Try the other mime type and remove the mime type that was initially saved
 			// but no longer works
