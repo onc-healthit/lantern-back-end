@@ -1,6 +1,7 @@
 package versionsoperatorparser
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
@@ -21,25 +22,27 @@ func Test_Equal(t *testing.T) {
 	th.Assert(t, equal, "expected equality nil to nil to be true")
 
 	// test one nil, other not
-	var resp map[string]interface{} = make(map[string]interface{})
-	resp["versions"] = "[\"4.0\"]"
-	resp["default"] = "4.0"
-	vr2 = VersionsResponse{Response: resp}
+	resp := "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
+	var jsonResponse interface{}
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
+	vr2 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, !equal, "expected equality nil to not nil to be false")
 
 	// test two same non-nil
-	var resp1 map[string]interface{} = make(map[string]interface{})
-	resp1["versions"] = "[\"4.0\"]"
-	resp1["default"] = "4.0"
-	vr1 = VersionsResponse{Response: resp1}
+	resp = "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
+	err = json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
+	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, equal, "expected equality for same Response to be true")
 
 	// test two different non-nil
-	resp1["versions"] = "[\"1.0\"]"
-	resp1["default"] = "1.0"
-	vr1 = VersionsResponse{Response: resp1}
+	resp = "{\"versions\": [\"4.0\"],\"default\": \"4.0\"}"
+	err = json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
+	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 	equal = vr1.Equal(vr2)
 	th.Assert(t, !equal, "expected equality for different Response to be false")
 }
@@ -49,10 +52,11 @@ func Test_GetDefaultVersion(t *testing.T) {
 
 	var equal bool
 
-	var resp map[string]interface{} = make(map[string]interface{})
-	resp["versions"] = "[\"1.0\"]"
-	resp["default"] = "4.0"
-	vr1 = VersionsResponse{Response: resp}
+	resp := "{\"versions\": [\"4.0\",\"1.0\"],\"default\": \"4.0\"}"
+	var jsonResponse interface{}
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
+	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 
 	// test populated versions Response
 	equal = vr1.GetDefaultVersion() == "4.0"
@@ -70,20 +74,21 @@ func Test_GetSupportedVersions(t *testing.T) {
 
 	var equal bool
 
-	var resp map[string]interface{} = make(map[string]interface{})
-	resp["versions"] = []string{"4.0"}
-	resp["default"] = "4.0"
-	vr1 = VersionsResponse{Response: resp}
+	resp := "{\"versions\": [\"4.0\"],\"default\": \"4.0\"}"
+	var jsonResponse interface{}
+	err := json.Unmarshal([]byte(resp), &(jsonResponse))
+	th.Assert(t, err == nil, err)
+	vr1 = VersionsResponse{Response: jsonResponse.(map[string]interface{})}
 
 	var populatedSlice []string
 	populatedSlice = append(populatedSlice, "4.0")
-	// test not populated VerrsionsResponse
+	// test not populated VersionsResponse
 	equal = helpers.StringArraysEqual(vr1.GetSupportedVersions(), populatedSlice)
 	th.Assert(t, equal, "expected versions Response to include version")
 
 	vr1 = VersionsResponse{Response: nil}
 	var emptySlice []string
-	// test not populated VerrsionsResponse
+	// test not populated VersionsResponse
 	equal = helpers.StringArraysEqual(vr1.GetSupportedVersions(), emptySlice)
 	th.Assert(t, equal, "expected empty versions to be empty")
 

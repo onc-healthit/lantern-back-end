@@ -216,7 +216,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement:   cs,
-		RequestedFhirVersion:  "",
+		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
@@ -233,7 +233,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
 		CapabilityStatement:   cs,
-		RequestedFhirVersion:  "",
+		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadata2}
 

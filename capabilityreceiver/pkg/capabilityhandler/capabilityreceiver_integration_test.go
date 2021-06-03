@@ -71,7 +71,153 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
+	var ctx = context.Background()
+	var endpointURL = "https://example.com"
+	// add vendor that can later be referenced
+	fakeVendor := &endpointmanager.Vendor{
+		Name:          "Fake Vendor",
+		DeveloperCode: "12345",
+		CHPLID:        222,
+	}
+	var endpointMetadataDefaultRequest = &endpointmanager.FHIREndpointMetadata{
+		URL:               endpointURL,
+		HTTPResponse:      200,
+		Errors:            "",
+		SMARTHTTPResponse: 0,
+		Availability:      1.0}
+
+	var endpointMetadataRequestVersion1 = &endpointmanager.FHIREndpointMetadata{
+		URL:               endpointURL,
+		HTTPResponse:      200,
+		Errors:            "",
+		SMARTHTTPResponse: 0,
+		Availability:      1.0}
+
+	// endpointInfos
+	var endpointInfoDefaultRequest = &endpointmanager.FHIREndpointInfo{
+		URL:                   "https://example.com",
+		VendorID:              fakeVendor.ID,
+		TLSVersion:            "TLS 1.1",
+		MIMETypes:             []string{"application/json+fhir"},
+		CapabilityStatement:   nil,
+		SMARTResponse:         nil,
+		RequestedFhirVersion:  "None",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadataDefaultRequest}
+
+	var endpointInfo1RequestedVersion1 = &endpointmanager.FHIREndpointInfo{
+		URL:                   "https://example.com",
+		VendorID:              fakeVendor.ID,
+		TLSVersion:            "TLS 1.1",
+		MIMETypes:             []string{"application/json+fhir"},
+		CapabilityStatement:   nil,
+		SMARTResponse:         nil,
+		RequestedFhirVersion:  "1.0.0",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadataRequestVersion1}
+
+	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
+	defer teardown(t, store.DB)
+
+	// add endpointInfos and Metadata
+	metadataID, err := store.AddFHIREndpointMetadata(ctx, endpointInfoDefaultRequest.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfoDefaultRequest, metadataID)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
+	}
+
+	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo1RequestedVersion1.Metadata)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
+	}
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1RequestedVersion1, metadataID)
+	if err != nil {
+		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
+	}
+
+	var count int
+	// check insertions in info table
+	row := store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 entries in info table . Got %d.", count)
+	}
+	// check insertions in info history table
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 entries in info table . Got %d.", count)
+	}
+
+	// If the supported versions array matches all entries in the info table, nothing should be deleted
+	removeNoLongerExistingVersionsInfos(ctx, store, "https://example.com", []string{"None", "1.0.0"})
+	// make sure nothing was removed
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE requested_fhir_version='1.0.0';")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 2 entries in info table . Got %d.", count)
+	}
+	// check insertions in info history table
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 entries in info table . Got %d.", count)
+	}
+
+	// This simulates a change in advertised supported versions from ["None","1.0.0"] to ["None","2.0.0"]
+	// This means we expect the existing 1.0.0 entry to be removed
+	removeNoLongerExistingVersionsInfos(ctx, store, "https://example.com", []string{"None", "2.0.0"})
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 1 {
+		t.Errorf("expected 1 entries in info table . Got %d.", count)
+	}
+	// Make sure the specific info entry was removed
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE fhir_endpoints_info.requested_fhir_version='1.0.0';")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	if count != 0 {
+		t.Errorf("expected 0 entries in info table . Got %d.", count)
+	}
+	// check deletion in info history table
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE operation='D' AND requested_fhir_version='1.0.0';")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info count for insertions: %s", err.Error())
+	}
+	// There should now be a deletion entry
+	if count != 1 {
+		t.Errorf("expected 1 entries in info table . Got %d.", count)
+	}
+
+}
+
 func Test_saveMsgInDB(t *testing.T) {
+	err := setup()
+	if err != nil {
+		panic(err)
+	}
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -148,7 +294,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	expectedEndpt.ValidationID = valID1
 
-	storedEndpt, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
 	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
@@ -195,7 +341,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	expectedEndpt.ValidationID = valID2
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint2.URL, "")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint2.URL, "None")
 	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
@@ -229,7 +375,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.TLSVersion == "TLS 1.3", "The TLS Version was not updated")
 	th.Assert(t, storedEndpt.Metadata.HTTPResponse == 404, "The http response was not updated")
@@ -278,7 +424,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
 	th.Assert(t, err == nil, err)
 
 	store.DB.QueryRow(historySQLStatement, storedEndpt.URL).Scan(&updatedAt)
@@ -296,7 +442,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	err = ctStmt.QueryRow().Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, storedEndpt.ValidationID == oldValidationID, fmt.Sprintf("The selective update should not have updated the old endpoint validation id for same values, %+v, %d", storedEndpt, oldValidationID))
@@ -319,7 +465,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not store data as expected")
 
-	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "")
+	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, storedEndpt.Metadata.ID != oldMetadataID, "The selective update should have still updated the old endpoint info metadata id")
 	th.Assert(t, storedEndpt.ValidationID == oldValidationID, "The selective update should not have updated the old endpoint validation id for same values minus metadata")
