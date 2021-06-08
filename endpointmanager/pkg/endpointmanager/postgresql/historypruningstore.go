@@ -11,6 +11,7 @@ import (
 var pruningStatementQueryInterval *sql.Stmt
 var pruningStatementNoQueryInterval *sql.Stmt
 var pruningDeleteStatement *sql.Stmt
+var pruningDeleteValStatement *sql.Stmt
 
 // PruningGetInfoHistory gets info history entries for pruning
 func (s *Store) PruningGetInfoHistory(ctx context.Context, queryInterval bool) (*sql.Rows, error) {
@@ -33,6 +34,12 @@ func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryD
 	return err
 }
 
+// @TODO move this to the validation store?
+func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) error {
+	_, err := pruningDeleteValStatement.ExecContext(ctx, valResID)
+	return err
+}
+
 func prepareHistoryPruningStatements(s *Store) error {
 	var err error
 
@@ -43,7 +50,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 	queryIntString := strconv.Itoa(pruningThreshold + (3 * queryInterval))
 
 	pruningStatementQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id FROM fhir_endpoints_info_history
 		WHERE (operation='U' OR operation='I') 
 			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - INTERVAL '` + thresholdString + ` minute'))
 			AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - INTERVAL '` + queryIntString + ` minute'))
@@ -52,7 +59,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 		return err
 	}
 	pruningStatementNoQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response FROM fhir_endpoints_info_history 
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id FROM fhir_endpoints_info_history
 		WHERE (operation='U' OR operation='I') 
 			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - INTERVAL '` + thresholdString + ` minute')) 
 		ORDER BY url, entered_at ASC;`)
@@ -61,6 +68,11 @@ func prepareHistoryPruningStatements(s *Store) error {
 	}
 	pruningDeleteStatement, err = s.DB.Prepare(`
 		DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;`)
+	if err != nil {
+		return err
+	}
+	pruningDeleteValStatement, err = s.DB.Prepare(`
+		DELETE FROM validations WHERE validation_result_id = $1;`)
 	if err != nil {
 		return err
 	}

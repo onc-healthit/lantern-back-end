@@ -14,7 +14,6 @@ import (
 
 // PruneInfoHistory checks info table and prunes any repetitive entries
 func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterval bool) {
-
 	var rows *sql.Rows
 	var err error
 
@@ -25,11 +24,11 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 		return
 	}
 
-	_, fhirURL1, _, capStat1, tlsVersion1, mimeTypes1, smartResponse1 := getRowInfo(rows)
+	_, fhirURL1, _, capStat1, tlsVersion1, mimeTypes1, smartResponse1, _ := getRowInfo(rows)
 
 	for rows.Next() {
 
-		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2 := getRowInfo(rows)
+		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2, valResID2 := getRowInfo(rows)
 
 		equalFhirEntries := fhirURL1 == fhirURL2
 
@@ -63,6 +62,9 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 		if equalFhirEntries && operation2 == "U" {
 			err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
 			helpers.FailOnError("", err)
+			// Delete the validation table entries for the history table row
+			err = store.PruningDeleteValidationTable(ctx, valResID2)
+			helpers.FailOnError("", err)
 		} else {
 			fhirURL1 = fhirURL2
 			capStat1 = capStat2
@@ -74,7 +76,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 	}
 }
 
-func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, smartparser.SMARTResponse) {
+func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, smartparser.SMARTResponse, int) {
 	var capInt map[string]interface{}
 	var fhirURL string
 	var operation string
@@ -84,8 +86,9 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	var mimeTypes []string
 	var smartResponseJSON []byte
 	var smartResponseInt map[string]interface{}
+	var valResID int
 
-	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON)
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON, &valResID)
 	helpers.FailOnError("", err)
 
 	err = json.Unmarshal(capStatJSON, &capInt)
@@ -97,5 +100,5 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	helpers.FailOnError("", err)
 	smartResponse := smartparser.NewSMARTRespFromInterface(smartResponseInt)
 
-	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse
+	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse, valResID
 }
