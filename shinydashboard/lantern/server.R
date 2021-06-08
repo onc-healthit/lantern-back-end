@@ -287,11 +287,11 @@ function(input, output, session) { #nolint
     }
   })
 
-  observeEvent(input$fhir_version,{
+  observeEvent(input$fhir_version, {
     updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
   })
 
-  observeEvent(input$vendor,{
+  observeEvent(input$vendor, {
     updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
   })
 
