@@ -256,7 +256,7 @@ function(input, output, session) { #nolint
             You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
           p("Note: This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
           selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("selectall", "Reset to All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
+          actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
           actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
         )
       )
