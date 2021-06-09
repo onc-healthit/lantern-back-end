@@ -249,14 +249,14 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          p("By default, the list of resources below contains all of the endpoints' supported resources.
-            Changing the FHIR Version or Developer filtering criteria will cause the items that were in the list at the time of change to be filtered in accordance with the selected criteria.
+          p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Remove a resource from the list by clicking the 'x' in each box.
+            You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
             Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
-            Resources that are filtered out of the selected list will not re-appear in the list unless they are explicitly selected from the resources drop down, which contains all resources supported by the endpoints passing the selected criteria.
-            The 'Reset to All Resources' button can also be pressed, which will add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
+            Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.
+            You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
           p("Note: This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
           selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("selectall", "Reset to All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
+          actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
           actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
         )
       )
@@ -287,6 +287,14 @@ function(input, output, session) { #nolint
     }
   })
 
+  observeEvent(input$fhir_version, {
+    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+  })
+
+  observeEvent(input$vendor, {
+    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+  })
+
   #                     #
   # Operations Checkbox #
   #                     #
@@ -298,9 +306,10 @@ function(input, output, session) { #nolint
         fluidRow(
           selectizeInput("operations", "Click in the box below to add or remove operations:",
           choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
-          selected = c(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+          selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
           actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
-          p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
+          p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
+          Choosing the 'not specified' option will display resources where no operation was defined in the Capability Statement.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
         )
       )
     }
@@ -320,7 +329,7 @@ function(input, output, session) { #nolint
       updateSelectInput(session, "operations",
             label = "Click in the box below to add or remove operations:",
             choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
-            selected = c())
+            selected = c("read"))
     }
   })
 
