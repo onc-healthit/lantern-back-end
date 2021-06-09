@@ -186,21 +186,23 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 
 	var endpointMetadata1 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	var endpointMetadata2 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	// endpointInfos

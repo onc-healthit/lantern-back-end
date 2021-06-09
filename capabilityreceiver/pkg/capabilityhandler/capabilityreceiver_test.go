@@ -349,12 +349,13 @@ var testOperations = map[string][]string{
 }
 
 var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
-	URL:               "http://example.com/DTSU2/",
-	HTTPResponse:      200,
-	Errors:            "",
-	SMARTHTTPResponse: 0,
-	ResponseTime:      0.1234,
-	Availability:      1.0,
+	URL:                  "http://example.com/DTSU2/",
+	HTTPResponse:         200,
+	Errors:               "",
+	SMARTHTTPResponse:    0,
+	ResponseTime:         0.1234,
+	Availability:         1.0,
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
@@ -410,6 +411,7 @@ func Test_formatMessage(t *testing.T) {
 	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
 	endpt.Metadata.Availability = 1.0
+	endpt.Metadata.RequestedFhirVersion = "None"
 	th.Assert(t, expectedEndpt.Equal(endpt), fmt.Sprintf("An error was thrown because the endpoints are not equal, \n endpoint 1 %+v, \n endpoint 2 %+v", expectedEndpt, endpt))
 
 	// should not throw error if metadata is not in the URL

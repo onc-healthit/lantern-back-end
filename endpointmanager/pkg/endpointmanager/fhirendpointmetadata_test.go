@@ -9,23 +9,25 @@ import (
 func Test_FHIREndpointMetadataEqual(t *testing.T) {
 
 	var endpointMetadata1 = &FHIREndpointMetadata{
-		ID:                1,
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		ID:                   1,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	var endpointMetadata2 = &FHIREndpointMetadata{
-		ID:                1,
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		ID:                   1,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	if !endpointMetadata1.Equal(endpointMetadata2) {

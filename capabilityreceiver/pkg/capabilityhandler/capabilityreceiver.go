@@ -138,11 +138,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
-		URL:               url,
-		HTTPResponse:      httpResponse,
-		Errors:            errs,
-		SMARTHTTPResponse: smarthttpResponse,
-		ResponseTime:      responseTime,
+		URL:                  url,
+		HTTPResponse:         httpResponse,
+		Errors:               errs,
+		SMARTHTTPResponse:    smarthttpResponse,
+		ResponseTime:         responseTime,
+		RequestedFhirVersion: requestedFhirVersion,
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{

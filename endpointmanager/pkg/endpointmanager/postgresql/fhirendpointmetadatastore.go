@@ -24,6 +24,7 @@ func (s *Store) GetFHIREndpointMetadata(ctx context.Context, metadataID int) (*e
 		errors,
 		response_time_seconds,
 		smart_http_response,
+		requested_fhir_version,
 		updated_at,
 		created_at 
 	FROM fhir_endpoints_metadata WHERE id=$1;`
@@ -37,6 +38,7 @@ func (s *Store) GetFHIREndpointMetadata(ctx context.Context, metadataID int) (*e
 		&endpointMetadata.Errors,
 		&endpointMetadata.ResponseTime,
 		&endpointMetadata.SMARTHTTPResponse,
+		&endpointMetadata.RequestedFhirVersion,
 		&endpointMetadata.UpdatedAt,
 		&endpointMetadata.CreatedAt)
 	if err != nil {
@@ -57,7 +59,8 @@ func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.
 		e.Availability,
 		e.Errors,
 		e.ResponseTime,
-		e.SMARTHTTPResponse)
+		e.SMARTHTTPResponse,
+		e.RequestedFhirVersion)
 
 	err = row.Scan(&metadataID)
 
@@ -73,8 +76,9 @@ func prepareFHIREndpointMetadataStatements(s *Store) error {
 			availability,
 			errors,
 			response_time_seconds,
-			smart_http_response)
-		VALUES ($1, $2, $3, $4, $5, $6)
+			smart_http_response,
+			requested_fhir_version)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id`)
 	return err
 }

@@ -57,12 +57,16 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		HTTPResponse:      200,
 		Errors:            "Example Error",
 		SMARTHTTPResponse: 0,
-		Availability:      1.0}
+		Availability:      1.0,
+		RequestedFhirVersion: "None",
+	}
 
 	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
 		URL:          endpoint2.URL,
 		HTTPResponse: 404,
-		Errors:       "Example Error 2"}
+		Errors:       "Example Error 2",
+		RequestedFhirVersion: "None",
+	}
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
