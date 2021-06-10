@@ -109,7 +109,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	mimeTypes := []string{"application/json+fhir"}
 	firstTime := time.Now().UTC().Round(time.Microsecond)
 	url1 := "www.testurl.com/cerner/DSTU2"
-	_, err := store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url1, "I", capStat1, tlsVersion, pq.Array(mimeTypes), metadataID1, firstTime)
+	_, err = store.DB.ExecContext(ctx, addFHIREndpointInfoStatement, url1, "I", capStat1, tlsVersion, pq.Array(mimeTypes), metadataID1, firstTime)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the database %s", err))
 
 	secondTime := time.Now().UTC().Round(time.Microsecond)
