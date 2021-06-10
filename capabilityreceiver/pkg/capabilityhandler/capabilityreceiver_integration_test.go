@@ -296,7 +296,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	var http_200_ct int
 	var http_all_ct int
 	var endpt_availability_ct int
-	query_str := "SELECT http_200_count, http_all_count from fhir_endpoints_availability WHERE url=$1;"
+	query_str := "SELECT http_200_count, http_all_count from fhir_endpoints_availability WHERE url=$1 AND requested_fhir_version='None';"
 	ct_availability_str := "SELECT COUNT(*) from fhir_endpoints_availability;"
 
 	err = store.DB.QueryRow(ct_availability_str).Scan(&endpt_availability_ct)
