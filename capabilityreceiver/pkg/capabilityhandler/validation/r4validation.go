@@ -226,15 +226,14 @@ func checkResourceList(capStat capabilityparser.CapabilityStatement, rule endpoi
 	return ruleError
 }
 
-// SmartHTTPResponseValid checks if the SMART-on-FHIR response code is 200 using the base
-// HTTPResponse function, and then adds specific R4 reference information
+// SmartResponseExists checks if the SMART-on-FHIR response exists
 func (v *r4Validation) SmartResponseExists(smartRsp smartparser.SMARTResponse) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.SmartRespExistsRule,
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Comment:   "The Smart Response exists.",
+		Comment:   "The SMART Response exists.",
 		Reference: "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html",
 		ImplGuide: "USCore 3.1",
 	}
@@ -245,7 +244,7 @@ func (v *r4Validation) SmartResponseExists(smartRsp smartparser.SMARTResponse) e
 
 	ruleError.Valid = false
 	ruleError.Actual = "false"
-	ruleError.Comment = `The Smart Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
+	ruleError.Comment = `The SMART Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
 	return ruleError
 }
 

@@ -416,7 +416,7 @@ func Test_SmartResponseExists(t *testing.T) {
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Comment:   "The Smart Response exists.",
+		Comment:   "The SMART Response exists.",
 		Reference: "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html",
 		ImplGuide: "USCore 3.1",
 	}
@@ -429,7 +429,7 @@ func Test_SmartResponseExists(t *testing.T) {
 
 	expectedVal.Valid = false
 	expectedVal.Actual = "false"
-	expectedVal.Comment = `The Smart Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
+	expectedVal.Comment = `The SMART Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
 
 	actualVal = validator.SmartResponseExists(nil)
 	eq = reflect.DeepEqual(actualVal, expectedVal)

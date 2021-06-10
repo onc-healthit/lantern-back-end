@@ -20,8 +20,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 )
 
-var addValidationResultStatement *sql.Stmt
-var addValidationStatement *sql.Stmt
 var updateInfoValResStatement *sql.Stmt
 var updateHistoryValResStatement *sql.Stmt
 
@@ -50,27 +48,6 @@ type validationArgs struct {
 func prepareUpStatements(s *postgresql.Store) error {
 	var err error
 
-	addValidationResultStatement, err = s.DB.Prepare(`
-		INSERT INTO validation_results (id)
-		VALUES (DEFAULT)
-		RETURNING id;`)
-	if err != nil {
-		return err
-	}
-	addValidationStatement, err = s.DB.Prepare(`
-	INSERT INTO validations (
-		rule_name,
-		valid,
-		expected,
-		actual,
-		comment,
-		reference,
-		implementation_guide,
-		validation_result_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`)
-	if err != nil {
-		return err
-	}
 	updateInfoValResStatement, err = s.DB.Prepare(`
 		UPDATE fhir_endpoints_info
 		SET
@@ -199,30 +176,18 @@ func addToValidationTableHistory(ctx context.Context, args *map[string]interface
 
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
 		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp)
-		// Create ID in validation_results table and then get the ID
-		valResRow := addValidationResultStatement.QueryRowContext(ctx)
-		valResID := 0
-		err = valResRow.Scan(&valResID)
+		valResID, err := wa.store.AddValidationResult(ctx)
 		if err != nil {
 			log.Warnf("Failed to add a new ID. Error: %s", err)
 			return returnResult(wa)
 		}
 		// Then add each element of the validationObj array as a row to the table with that id
-		for _, ruleInfo := range validationObj.Results {
-			_, err = addValidationStatement.ExecContext(ctx,
-				ruleInfo.RuleName,
-				ruleInfo.Valid,
-				ruleInfo.Expected,
-				ruleInfo.Actual,
-				ruleInfo.Comment,
-				ruleInfo.Reference,
-				ruleInfo.ImplGuide,
-				valResID)
-			if err != nil {
-				log.Warnf("Failed to add validation for URL %s. Error: %s", wa.fhirURL, err)
-				return returnResult(wa)
-			}
+		err = wa.store.AddValidation(ctx, &validationObj, valResID)
+		if err != nil {
+			log.Warnf("Failed to add validation for URL %s. Error: %s", wa.fhirURL, err)
+			return returnResult(wa)
 		}
+
 		// Then have to update the row in the history table with that id
 		_, err = updateHistoryValResStatement.ExecContext(ctx, valResID, val.updatedTime, wa.fhirURL)
 		if err != nil {
