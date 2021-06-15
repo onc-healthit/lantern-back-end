@@ -11,6 +11,45 @@ import (
 var addValidationStatement *sql.Stmt
 var addValidationResultStatement *sql.Stmt
 
+// GetValidationByID gets the rows of the validation table that have the given validation_result_id
+func (s *Store) GetValidationByID(ctx context.Context, id int) (*[]endpointmanager.Rule, error) {
+	var validationRows []endpointmanager.Rule
+
+	sqlStatementInfo := `
+	SELECT
+		rule_name,
+		valid,
+		expected,
+		actual,
+		comment,
+		reference,
+		implementation_guide
+	FROM validations WHERE validation_result_id=$1`
+
+	rows, err := s.DB.QueryContext(ctx, sqlStatementInfo, id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var ruleInfo endpointmanager.Rule
+
+		err := rows.Scan(
+			&ruleInfo.RuleName,
+			&ruleInfo.Valid,
+			&ruleInfo.Expected,
+			&ruleInfo.Actual,
+			&ruleInfo.Comment,
+			&ruleInfo.Reference,
+			&ruleInfo.ImplGuide)
+		if err != nil {
+			return nil, err
+		}
+		validationRows = append(validationRows, ruleInfo)
+	}
+	return &validationRows, nil
+}
+
 // AddValidationResult creates a new ID for the validation data and returns it
 func (s *Store) AddValidationResult(ctx context.Context) (int, error) {
 	var err error

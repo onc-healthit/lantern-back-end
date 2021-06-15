@@ -193,6 +193,18 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	return &endpointInfo, err
 }
 
+// GetFHIREndpointInfoValidation gets the validation object for the given FhirEndpointInfo object
+func (s *Store) GetFHIREndpointInfoValidation(ctx context.Context, e *endpointmanager.FHIREndpointInfo) (*endpointmanager.Validation, error) {
+	validationRows, err := s.GetValidationByID(ctx, e.ValidationID)
+	if err != nil {
+		return nil, err
+	}
+	validationObj := endpointmanager.Validation{
+		Results: *validationRows,
+	}
+	return &validationObj, nil
+}
+
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
 func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
