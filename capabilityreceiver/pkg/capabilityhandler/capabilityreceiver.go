@@ -19,27 +19,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
+func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
 	var msgJSON map[string]interface{}
 
 	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	url, ok := msgJSON["url"].(string)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast message URL to string")
+		return nil, nil, fmt.Errorf("unable to cast message URL to string")
 	}
 
 	errs, ok := msgJSON["err"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast message Error to string", url)
+		return nil, nil, fmt.Errorf("%s: unable to cast message Error to string", url)
 	}
 
 	tlsVersion, ok := msgJSON["tlsVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
+		return nil, nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
 	}
 
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
@@ -48,12 +48,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	if msgJSON["mimeTypes"] != nil {
 		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})
 		if !ok {
-			return nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
+			return nil, nil, fmt.Errorf("%s: unable to cast MIME Types to []interface{}", url)
 		}
 		for _, mimeTypeInt := range mimeTypesInt {
 			mimeType, ok := mimeTypeInt.(string)
 			if !ok {
-				return nil, fmt.Errorf("unable to cast mime type to string")
+				return nil, nil, fmt.Errorf("unable to cast mime type to string")
 			}
 			mimeTypes = append(mimeTypes, mimeType)
 		}
@@ -62,13 +62,13 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	// JSON numbers are golang float64s
 	httpResponseFloat, ok := msgJSON["httpResponse"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast http response to int")
+		return nil, nil, fmt.Errorf("unable to cast http response to int")
 	}
 	httpResponse := int(httpResponseFloat)
 
 	smarthttpResponseFloat, ok := msgJSON["smarthttpResponse"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("unable to cast smart http response to int")
+		return nil, nil, fmt.Errorf("unable to cast smart http response to int")
 	}
 	smarthttpResponse := int(smarthttpResponseFloat)
 
@@ -78,26 +78,26 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		capInt, ok = msgJSON["capabilityStatement"].(map[string]interface{})
 
 		if !ok {
-			return nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
+			return nil, nil, fmt.Errorf("%s: unable to cast capability statement to map[string]interface{}", url)
 		}
 
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
+			return nil, nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
 	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
+			return nil, nil, fmt.Errorf("%s: unable to cast smart response body to map[string]interface{}", url)
 		}
 		smartResponse = smartparser.NewSMARTRespFromInterface(smartInt)
 	}
 
 	responseTime, ok := msgJSON["responseTime"].(float64)
 	if !ok {
-		return nil, fmt.Errorf("response time is not a float")
+		return nil, nil, fmt.Errorf("response time is not a float")
 	}
 
 	fhirVersion := ""
@@ -122,7 +122,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		URL:                 url,
 		TLSVersion:          tlsVersion,
 		MIMETypes:           mimeTypes,
-		Validation:          validationObj,
 		CapabilityStatement: capStat,
 		SMARTResponse:       smartResponse,
 		IncludedFields:      includedFields,
@@ -130,7 +129,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		Metadata:            FHIREndpointMetadata,
 	}
 
-	return &fhirEndpoint, nil
+	return &fhirEndpoint, &validationObj, nil
 }
 
 // saveMsgInDB formats the message data for the database and either adds a new entry to the database or
@@ -139,8 +138,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var err error
 	var fhirEndpoint *endpointmanager.FHIREndpointInfo
 	var existingEndpt *endpointmanager.FHIREndpointInfo
+	var validation *endpointmanager.Validation
 
-	fhirEndpoint, err = formatMessage(message)
+	fhirEndpoint, validation, err = formatMessage(message)
 	if err != nil {
 		return err
 	}
@@ -177,13 +177,14 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("adding new validation result ID failed, %s", err)
 		}
+		fhirEndpoint.ValidationID = valResID
 
-		err = store.AddValidation(ctx, &fhirEndpoint.Validation, valResID)
+		err = store.AddValidation(ctx, validation, valResID)
 		if err != nil {
 			return fmt.Errorf("error adding validation rows to table, %s", err)
 		}
 
-		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID, valResID)
+		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add to fhir_endpoints_info failed, %s", err)
 		}
@@ -205,7 +206,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
-			existingEndpt.Validation = fhirEndpoint.Validation
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
@@ -229,13 +229,14 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			if err != nil {
 				return fmt.Errorf("adding new validation result ID failed, %s", err)
 			}
+			existingEndpt.ValidationID = valResID
 
-			err = store.AddValidation(ctx, &fhirEndpoint.Validation, valResID)
+			err = store.AddValidation(ctx, validation, valResID)
 			if err != nil {
 				return fmt.Errorf("error adding validation rows to table, %s", err)
 			}
 
-			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID, valResID)
+			err = store.UpdateFHIREndpointInfo(ctx, existingEndpt, metadataID)
 			if err != nil {
 				return fmt.Errorf("does exist, add to fhir_endpoints_info failed, %s", err)
 			}
