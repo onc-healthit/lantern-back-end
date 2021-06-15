@@ -211,6 +211,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		VendorID:          2,
+		ValidationID:      1,
 		IncludedFields:    testIncludedFields,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
@@ -225,6 +226,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		TLSVersion:        "TLS 1.1",
 		MIMETypes:         []string{"application/json+fhir", "application/fhir+json"},
 		VendorID:          2,
+		ValidationID:      1,
 		IncludedFields:    includedFieldsCopy,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
@@ -258,6 +260,12 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. Vendor should be different. %d vs %d", endpointInfo1.VendorID, endpointInfo2.VendorID)
 	}
 	endpointInfo2.VendorID = endpointInfo1.VendorID
+
+	endpointInfo2.ValidationID = 4
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. ValidationID should be different. %d vs %d", endpointInfo1.ValidationID, endpointInfo2.ValidationID)
+	}
+	endpointInfo2.ValidationID = endpointInfo1.ValidationID
 
 	endpointInfo2.TLSVersion = "other"
 	if endpointInfo1.Equal(endpointInfo2) {

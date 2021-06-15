@@ -360,7 +360,6 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	MIMETypes:         []string{"application/json+fhir"},
 	TLSVersion:        "TLS 1.2",
 	SMARTResponse:     nil,
-	Validation:        testValidationObj,
 	IncludedFields:    testIncludedFields,
 	OperationResource: testOperations,
 }
@@ -398,10 +397,10 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// basic test
-	endpt, returnErr := formatMessage(message)
+	endpt, validation, returnErr := formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
 	// Just check that the first validation field is valid
-	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
+	validation.Results = []endpointmanager.Rule{validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
 	endpt.Metadata.Availability = 1.0
 	th.Assert(t, expectedEndpt.Equal(endpt), fmt.Sprintf("An error was thrown because the endpoints are not equal, \n endpoint 1 %+v, \n endpoint 2 %+v", expectedEndpt, endpt))
@@ -410,14 +409,14 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = "http://example.com/DTSU2/"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, "An error was thrown because metadata was not included in the url")
 
 	// test incorrect error message
 	tmpMessage["err"] = nil
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect error message")
 	tmpMessage["err"] = ""
 
@@ -425,7 +424,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["url"] = nil
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect URL")
 
 	tmpMessage["url"] = "http://example.com/DTSU2/"
@@ -433,7 +432,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["tlsVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect TLS Version")
 	tmpMessage["tlsVersion"] = "TLS 1.2"
 
@@ -441,7 +440,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["mimeTypes"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to incorrect MIME Types")
 	tmpMessage["mimeTypes"] = []string{"application/json+fhir"}
 
@@ -449,7 +448,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["httpResponse"] = "200"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect HTTP response")
 	tmpMessage["httpResponse"] = 200
 
@@ -457,7 +456,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["smarthttpResponse"] = "200"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect smart HTTP response")
 	tmpMessage["smarthttpResponse"] = 200
 
@@ -465,7 +464,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["responseTime"] = "0.1234"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect responseTime")
 	tmpMessage["responseTime"] = 0.1234
 }

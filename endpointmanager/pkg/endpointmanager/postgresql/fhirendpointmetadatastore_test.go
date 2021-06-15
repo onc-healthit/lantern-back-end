@@ -97,7 +97,8 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	}
 	valResID1, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID, valResID1)
+	endpointInfo1.ValidationID = valResID1
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
@@ -108,6 +109,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	}
 	valResID2, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo2.ValidationID = valResID2
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID, valResID2)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
@@ -232,7 +234,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("Error adding update to fhir endpointMetadata: %s", err.Error())
 	}
 
-	err = store.UpdateFHIREndpointInfo(ctx, endpointInfo1, metadataID, valResID1)
+	err = store.UpdateFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error updating fhir endpointInfo: %s", err.Error())
 	}

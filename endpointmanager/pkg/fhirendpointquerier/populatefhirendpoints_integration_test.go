@@ -359,7 +359,8 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, endptInfo.Metadata)
 	valResID1, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
-	err = store.AddFHIREndpointInfo(ctx, &endptInfo, metadataID, valResID1)
+	endpointInfo.ValidationID = valResID1
+	err = store.AddFHIREndpointInfo(ctx, &endptInfo, metadataID)
 	th.Assert(t, err == nil, err)
 
 	// Add third endpoint
