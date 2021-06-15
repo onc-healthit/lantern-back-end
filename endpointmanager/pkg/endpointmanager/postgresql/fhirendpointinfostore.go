@@ -44,6 +44,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		smart_response,
 		included_fields,
 		operation_resource,
+		validation_result_id,
 		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
@@ -61,6 +62,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&endpointInfo.ValidationID,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -128,6 +130,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		smart_response,
 		included_fields,
 		operation_resource,
+		validation_result_id,
 		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
@@ -146,6 +149,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&endpointInfo.ValidationID,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -190,7 +194,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 }
 
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
-func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int, valResID int) error {
+func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -235,7 +239,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-		valResID,
+		e.ValidationID,
 		metadataID)
 
 	err = row.Scan(&e.ID)
@@ -244,7 +248,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 }
 
 // UpdateFHIREndpointInfo updates the FHIREndpointInfo in the database using the FHIREndpointInfo's database id as the key.
-func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int, valResID int) error {
+func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -289,7 +293,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-		valResID,
+		e.ValidationID,
 		metadataID,
 		e.ID)
 

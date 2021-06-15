@@ -21,7 +21,7 @@ type FHIREndpointInfo struct {
 	MIMETypes           []string
 	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	Validation          Validation
+	ValidationID        int
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	SMARTResponse       smartparser.SMARTResponse
@@ -64,6 +64,9 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
+	if e.ValidationID != e2.ValidationID {
 		return false
 	}
 	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
