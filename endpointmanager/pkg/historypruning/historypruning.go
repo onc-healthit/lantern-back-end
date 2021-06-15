@@ -65,6 +65,8 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 			// Delete the validation table entries for the history table row
 			err = store.PruningDeleteValidationTable(ctx, valResID2)
 			helpers.FailOnError("", err)
+			err = store.PruningDeleteValidationResultEntry(ctx, valResID2)
+			helpers.FailOnError("", err)
 		} else {
 			fhirURL1 = fhirURL2
 			capStat1 = capStat2

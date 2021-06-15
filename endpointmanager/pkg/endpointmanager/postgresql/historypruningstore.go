@@ -12,6 +12,7 @@ var pruningStatementQueryInterval *sql.Stmt
 var pruningStatementNoQueryInterval *sql.Stmt
 var pruningDeleteStatement *sql.Stmt
 var pruningDeleteValStatement *sql.Stmt
+var pruningDeleteValResStatement *sql.Stmt
 
 // PruningGetInfoHistory gets info history entries for pruning
 func (s *Store) PruningGetInfoHistory(ctx context.Context, queryInterval bool) (*sql.Rows, error) {
@@ -37,6 +38,12 @@ func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryD
 // @TODO move this to the validation store?
 func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) error {
 	_, err := pruningDeleteValStatement.ExecContext(ctx, valResID)
+	return err
+}
+
+// @TODO move this to the validation store?
+func (s *Store) PruningDeleteValidationResultEntry(ctx context.Context, valResID int) error {
+	_, err := pruningDeleteValResStatement.ExecContext(ctx, valResID)
 	return err
 }
 
@@ -73,6 +80,11 @@ func prepareHistoryPruningStatements(s *Store) error {
 	}
 	pruningDeleteValStatement, err = s.DB.Prepare(`
 		DELETE FROM validations WHERE validation_result_id = $1;`)
+	if err != nil {
+		return err
+	}
+	pruningDeleteValResStatement, err = s.DB.Prepare(`
+		DELETE FROM validation_results WHERE id = $1;`)
 	if err != nil {
 		return err
 	}
