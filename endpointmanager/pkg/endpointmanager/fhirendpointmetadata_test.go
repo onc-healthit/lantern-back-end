@@ -76,6 +76,18 @@ func Test_FHIREndpointMetadataEqual(t *testing.T) {
 	}
 	endpointMetadata2.ResponseTime = endpointMetadata1.ResponseTime
 
+	endpointMetadata2.ResponseTime = 0.234567
+	if endpointMetadata1.Equal(endpointMetadata2) {
+		t.Errorf("Did not expect endpointMetadata1 to equal endpointMetadata2. ResponseTime should be different. %f vs %f", endpointMetadata1.ResponseTime, endpointMetadata2.ResponseTime)
+	}
+	endpointMetadata2.ResponseTime = endpointMetadata1.ResponseTime
+
+	endpointMetadata2.RequestedFhirVersion = "other"
+	if endpointMetadata1.Equal(endpointMetadata2) {
+		t.Errorf("Did not expect endpointMetadata1 to equal endpointMetadata2. RequestedFhirVersion should be different. %s vs %s", endpointMetadata1.RequestedFhirVersion, endpointMetadata2.RequestedFhirVersion)
+	}
+	endpointMetadata2.RequestedFhirVersion = endpointMetadata1.RequestedFhirVersion
+
 	endpointMetadata2 = nil
 	if endpointMetadata1.Equal(endpointMetadata2) {
 		t.Errorf("Did not expect endpointMetadata1 to equal nil endpointMetadata2.")

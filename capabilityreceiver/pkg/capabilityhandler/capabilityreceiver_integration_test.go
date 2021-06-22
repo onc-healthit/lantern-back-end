@@ -85,14 +85,16 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 		HTTPResponse:      200,
 		Errors:            "",
 		SMARTHTTPResponse: 0,
-		Availability:      1.0}
+		Availability:      1.0,
+		RequestedFhirVersion: "None"}
 
 	var endpointMetadataRequestVersion1 = &endpointmanager.FHIREndpointMetadata{
 		URL:               endpointURL,
 		HTTPResponse:      200,
 		Errors:            "",
 		SMARTHTTPResponse: 0,
-		Availability:      1.0}
+		Availability:      1.0,
+		RequestedFhirVersion: "None"}
 
 	// endpointInfos
 	var endpointInfoDefaultRequest = &endpointmanager.FHIREndpointInfo{

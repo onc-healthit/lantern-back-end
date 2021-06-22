@@ -377,6 +377,15 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.Metadata.URL = endpointMetadata1.URL
 
+	endpointInfo2.Metadata.RequestedFhirVersion = "other"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Metadata RequestedFhirVersion should be different. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata RequestedFhirVersion should be ignored. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	endpointInfo2.Metadata.RequestedFhirVersion = endpointMetadata1.RequestedFhirVersion
+
 	endpointInfo2.CapabilityStatement = nil
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. CapabilityStatement should be different. %s vs %s", endpointInfo1.CapabilityStatement, endpointInfo2.CapabilityStatement)
