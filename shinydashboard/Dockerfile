@@ -12,7 +12,7 @@ ARG LANTERN_CAPQUERY_QRYINTVL
 COPY ${cert_dir}/ /usr/local/share/ca-certificates
 RUN update-ca-certificates
 
-ENV RENV_VERSION 0.9.3
+ENV RENV_VERSION 0.13.2
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
 RUN R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
 
