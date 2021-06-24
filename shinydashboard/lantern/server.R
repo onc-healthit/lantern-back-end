@@ -283,16 +283,25 @@ function(input, output, session) { #nolint
       return(NULL)
     }
     else{
+      current_selection(NULL)
       updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 
   observeEvent(input$fhir_version, {
-    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+    if (is.null(current_selection())) {
+      return(NULL)
+    } else {
+      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
   })
 
   observeEvent(input$vendor, {
-    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+    if (is.null(current_selection())) {
+      return(NULL)
+    } else {
+      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
   })
 
   #                     #
