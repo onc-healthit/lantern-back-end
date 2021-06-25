@@ -301,7 +301,7 @@ function(input, output, session) { #nolint
   })
 
   observeEvent(input$fhir_version, {
-    if (!show_resource_checkbox() || is.null(current_selection() )) {
+    if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
       updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
