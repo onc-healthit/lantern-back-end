@@ -131,9 +131,16 @@ fieldsmodule <- function(
   })
 
   output$fields_plot <- renderUI({
-    tagList(
-      plotOutput(ns("fields_bar_plot"), height = plot_height())
-    )
+    if (nrow(capstat_field_count()) != 0) {
+      tagList(
+        plotOutput(ns("fields_bar_plot"), height = plot_height())
+      )
+    }
+    else {
+      tagList(
+        plotOutput(ns("fields_bar_empty_plot"), height = plot_height())
+      )
+    }
   })
   output$fields_bar_plot <- renderCachedPlot({
     ggplot(capstat_field_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
@@ -154,13 +161,31 @@ fieldsmodule <- function(
       list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
     }
   )
-
-
+  output$fields_bar_empty_plot <- renderPlot({
+    ggplot(capstat_field_count()) +
+      geom_col(width = 0.8) +
+      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
+      theme(legend.position = "top") +
+      theme(text = element_text(size = 14)) +
+      labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      theme(axis.text.x = element_blank(),
+      axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
+      coord_flip() +
+      annotate("text", label = "There are no FHIR Capability Statement fields supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+  })
 
   output$extensions_plot <- renderUI({
-    tagList(
-      plotOutput(ns("extensions_bar_plot"), height = plot_height())
-    )
+    if (nrow(capstat_extension_count()) != 0) {
+      tagList(
+        plotOutput(ns("extensions_bar_plot"), height = plot_height())
+      )
+    }
+    else {
+      tagList(
+        plotOutput(ns("extensions_bar_empty_plot"), height = plot_height())
+      )
+    }
   })
   output$extensions_bar_plot <- renderCachedPlot({
     ggplot(capstat_extension_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
@@ -181,4 +206,17 @@ fieldsmodule <- function(
       list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
     }
   )
+  output$extensions_bar_empty_plot <- renderPlot({
+    ggplot(capstat_extension_count()) +
+      geom_col(width = 0.8) +
+      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
+      theme(legend.position = "top") +
+      theme(text = element_text(size = 14)) +
+      labs(x = "", y = "Number of Endpoints", fill = "FHIR Version", title = vendor()) +
+      theme(axis.text.x = element_blank(),
+      axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
+      coord_flip() +
+      annotate("text", label = "There are no FHIR Capability Extensions supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+  })
 }
