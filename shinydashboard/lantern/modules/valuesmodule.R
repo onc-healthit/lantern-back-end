@@ -139,9 +139,16 @@ valuesmodule <- function(
   })
 
   output$values_chart <- renderUI({
-    tagList(
-      plotOutput(ns("values_chart_plot"), height = 600)
-    )
+    if (nrow(subset(percent_used_chart(), value != 0))) {
+      tagList(
+        plotOutput(ns("values_chart_plot"), height = 600)
+      )
+    }
+    else {
+      tagList(
+        plotOutput(ns("values_chart_empty_plot"), height = 600)
+      )
+    }
   })
 
   # Pie chart of the percent of the endpoints that use the given field
@@ -176,4 +183,24 @@ valuesmodule <- function(
     }
   )
 
+  # Pie chart of the percent of the endpoints that use the given field without the labels to support null data
+  output$values_chart_empty_plot <-  renderPlot({
+      ggplot(percent_used_chart(), aes(x = "", y = value, fill = group)) +
+      geom_col(width = 0.8) +
+      geom_bar(stat = "identity") +
+      # Turns the plot into a Pie Chart
+      coord_polar("y", start = 0) +
+      # Change Legend label
+      labs(fill = "Includes a Value \nfor the Given Field") +
+      # Increase label size
+      theme(legend.text = element_text(size = 20),
+            legend.title = element_text(size = 20),
+            # remove axes labels
+            axis.text = element_blank(),
+            # remove line around pie chart
+            panel.grid = element_blank(),
+            # remove x & y axis labels
+            axis.title.y = element_blank(),
+            axis.title.x = element_blank())
+    })
 }
