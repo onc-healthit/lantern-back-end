@@ -35,7 +35,7 @@ valuesmodule <- function(
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
+      res <- res %>% filter(fhirversion == sel_fhir_version())
     }
     # Same as above but with the vendor dropdown
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -43,9 +43,9 @@ valuesmodule <- function(
     }
     # Repeat with filtering fields to see values
     res <- res %>%
-      group_by_at(vars("vendor_name", "fhir_version", sel_capstat_values())) %>%
+      group_by_at(vars("vendor_name", "fhirversion", sel_capstat_values())) %>%
       count() %>%
-      rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = fhir_version) %>%
+      rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = fhirversion) %>%
       rename(field_value = sel_capstat_values()) %>%
       # If the field is empty then put an "[Empty]" string
       tidyr::replace_na(list(field_value = "[Empty]"))
