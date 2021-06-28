@@ -110,7 +110,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	valResID2, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
 	endpointInfo2.ValidationID = valResID2
-	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID, valResID2)
+	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)
 	}
