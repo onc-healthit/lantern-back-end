@@ -76,7 +76,7 @@ func NewCapabilityStatementFromInterface(capStat map[string]interface{}) (Capabi
 		return newSTU3(capStat), nil
 	} else if helpers.StringArrayContains(r4, fhirVersion) {
 		return newR4(capStat), nil
-	}
-
-	return nil, fmt.Errorf("unknown FHIR version %s", fhirVersion)
+	} 
+	
+	return newDSTU2(capStat), fmt.Errorf("unknown FHIR version, %s, defaulting to DSTU2", fhirVersion)
 }

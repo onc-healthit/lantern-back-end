@@ -83,7 +83,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 		capStat, err = capabilityparser.NewCapabilityStatementFromInterface(capInt)
 		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
+			if (capStat != nil) {
+				log.Warn(err)
+			} else {
+				return nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
+			}
 		}
 	}
 	var smartResponse smartparser.SMARTResponse
