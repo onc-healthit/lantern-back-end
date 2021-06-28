@@ -24,18 +24,6 @@ var testQueueMsg = map[string]interface{}{
 	"availability":      1.0,
 }
 
-var testValidationObj = endpointmanager.Validation{
-	Results: []endpointmanager.Rule{
-		{
-			RuleName: endpointmanager.CapStatExistRule,
-			Valid:    true,
-			Expected: "true",
-			Actual:   "true",
-			Comment:  "The Capability Statement exists.",
-		},
-	},
-}
-
 var testIncludedFields = []endpointmanager.IncludedField{
 	{
 		Field:     "url",
