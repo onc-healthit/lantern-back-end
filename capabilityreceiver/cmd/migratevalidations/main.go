@@ -116,7 +116,7 @@ func createJobs(ctx context.Context,
 	}
 }
 
-// addToValidationTable gets the history table data for a given URL and creates the
+// addToValidationTableHistory gets the history table data for a given URL and creates the
 // validation table rows based on each row's capability statement
 func addToValidationTableHistory(ctx context.Context, args *map[string]interface{}) error {
 	wa, ok := (*args)["workerArgs"].(workerArgs)

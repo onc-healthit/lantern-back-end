@@ -233,7 +233,7 @@ func (v *r4Validation) SmartResponseExists(smartRsp smartparser.SMARTResponse) e
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Comment:   "The SMART Response exists.",
+		Comment:   "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.",
 		Reference: "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html",
 		ImplGuide: "USCore 3.1",
 	}
