@@ -9,15 +9,16 @@ import (
 // FHIREndpointMetadata represents information about the request made
 // to the FHIR endpoint's capability statement and it's SMART on FHIR well-known configuration
 type FHIREndpointMetadata struct {
-	ID                int
-	URL               string
-	HTTPResponse      int
-	Errors            string
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-	SMARTHTTPResponse int
-	ResponseTime      float64
-	Availability      float64
+	ID                   int
+	URL                  string
+	HTTPResponse         int
+	Errors               string
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
+	SMARTHTTPResponse    int
+	ResponseTime         float64
+	Availability         float64
+	RequestedFhirVersion string
 }
 
 // Equal checks each field of the two FHIREndpointMetadatass except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -46,6 +47,9 @@ func (e *FHIREndpointMetadata) Equal(e2 *FHIREndpointMetadata) bool {
 		return false
 	}
 	if !cmp.Equal(e.ResponseTime, e2.ResponseTime) {
+		return false
+	}
+	if e.RequestedFhirVersion != e2.RequestedFhirVersion {
 		return false
 	}
 

@@ -35,24 +35,24 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
         -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
         -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
         -- endpoint availability precentage
-        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url;
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
         IF  NOT FOUND THEN
             IF NEW.http_response = 200 THEN
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1);
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
                 NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1);
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
                 NEW.availability = 0.00;
                 RETURN NEW;
             END IF;
         ELSE
             IF NEW.http_response = 200 THEN
-                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
                 NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
                 RETURN NEW;
             ELSE
-                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
                 NEW.availability := (okay_count) / (all_count + 1.0);
                 RETURN NEW;
             END IF;
@@ -160,6 +160,7 @@ CREATE TABLE fhir_endpoints_metadata (
     errors                  VARCHAR(500),
     response_time_seconds   DECIMAL(7,4),
     smart_http_response     INTEGER,
+    requested_fhir_version VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -228,6 +229,7 @@ CREATE TABLE fhir_endpoints_availability (
     url             VARCHAR(500),
     http_200_count       BIGINT,
     http_all_count       BIGINT,
+    requested_fhir_version  VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

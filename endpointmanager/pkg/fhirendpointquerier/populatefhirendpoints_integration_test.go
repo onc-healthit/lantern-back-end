@@ -355,6 +355,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 		Metadata: &endpointmanager.FHIREndpointMetadata{
 			URL:          endpt2.URL,
 			HTTPResponse: 200,
+			RequestedFhirVersion: "None",
 		},
 	}
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, endptInfo.Metadata)

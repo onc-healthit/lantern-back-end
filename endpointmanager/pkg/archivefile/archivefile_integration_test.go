@@ -56,6 +56,7 @@ var testMetadata = endpointmanager.FHIREndpointMetadata{
 	Errors:            "Smart Response Failed",
 	ResponseTime:      0.8,
 	SMARTHTTPResponse: 400,
+	RequestedFhirVersion: "None",
 }
 
 var testMetadata2 = endpointmanager.FHIREndpointMetadata{
@@ -64,6 +65,7 @@ var testMetadata2 = endpointmanager.FHIREndpointMetadata{
 	Errors:            "Smart Response Failed",
 	ResponseTime:      1.0,
 	SMARTHTTPResponse: 0,
+	RequestedFhirVersion: "None",
 }
 
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{

@@ -66,9 +66,7 @@ func parseNPIContactdataLine(line []string) NPIContactCsvLine {
 
 func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIContact {
 	validURL := isValidURL(data.Endpoint)
-	if strings.Contains(data.Endpoint, "/metadata") {
-		data.Endpoint = strings.Replace(data.Endpoint, "/metadata", "", 1)
-	}
+	data.Endpoint = strings.Replace(data.Endpoint, "/metadata", "", 1)
 	npiContact := &endpointmanager.NPIContact{
 		NPI_ID:                       data.NPI,
 		EndpointType:                 data.EndpointType,
