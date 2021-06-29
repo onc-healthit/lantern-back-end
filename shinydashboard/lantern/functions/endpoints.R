@@ -212,13 +212,14 @@ get_capstat_extensions_list <- function(capstat_fields_tbl) {
 
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
+# this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
 get_capstat_values <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
       vendor_id,
       vendors.name as vendor_name,
+      capability_statement->>'fhirVersion' as filter_fhir_version,
       capability_statement->>'fhirVersion' as fhir_version,
-      capability_statement->>'fhirVersion' as fhirversion,
       capability_statement->>'url' as url,
       capability_statement->>'version' as version,
       capability_statement->>'name' as name,
