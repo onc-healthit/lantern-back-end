@@ -22,7 +22,7 @@ ui <- dashboardPage(
       menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
       menuItem("Capability Statement Fields", icon = icon("list-alt"), tabName = "fields_tab"),
-      menuItem("Values", icon = icon("table"), tabName = "values_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("Capability Statement Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
