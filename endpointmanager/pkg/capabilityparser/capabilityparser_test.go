@@ -142,8 +142,10 @@ func Test_NewCapabilityStatement(t *testing.T) {
 	csJSON, err = json.Marshal(csInt)
 	th.Assert(t, err == nil, err)
 
-	_, err = NewCapabilityStatement(csJSON)
-	th.Assert(t, err != nil, "expected error due to unknown FHIR version")
+	cs, err = NewCapabilityStatement(csJSON)
+	th.Assert(t, err == nil, "expected no error due to unknown FHIR version defaulting to DSTU2")
+	_, ok = cs.(*dstu2CapabilityParser)
+	th.Assert(t, ok, "expected to be able to convert to dstu2CapabilityParser type")
 
 	// test empty byte string
 	cs, err = NewCapabilityStatement([]byte{})
