@@ -200,7 +200,7 @@ function(input, output, session) { #nolint
           selectInput(
             inputId = "field",
             label = "Field",
-            choices = list("url", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
+            choices = list("url", "fhir_version", "version", "name", "title", "date", "publisher", "description", "purpose", "copyright", "software_name", "software_version", "software_release_date", "implementation_description", "implementation_url", "implementation_custodian"),
             selected = "url",
             size = 1,
             selectize = FALSE)

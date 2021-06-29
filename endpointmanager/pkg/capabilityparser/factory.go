@@ -6,6 +6,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // from https://www.hl7.org/fhir/codesystem-FHIR-version.html
@@ -78,5 +79,6 @@ func NewCapabilityStatementFromInterface(capStat map[string]interface{}) (Capabi
 		return newR4(capStat), nil
 	}
 
-	return nil, fmt.Errorf("unknown FHIR version %s", fhirVersion)
+	log.Warn(fmt.Errorf("unknown FHIR version, %s, defaulting to DSTU2", fhirVersion))
+	return newDSTU2(capStat), nil
 }
