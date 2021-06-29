@@ -1,10 +1,10 @@
 package validation
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -21,21 +21,16 @@ type baseVal struct {
 
 // RunValidation runs all of the defined validation checks
 func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
-	httpResponse int,
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartHTTPRsp int) endpointmanager.Validation {
+	smartRsp smartparser.SMARTResponse) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
-	validationWarnings := make([]endpointmanager.Rule, 0)
 
 	returnedRule := bv.CapStatExists(capStat)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRule = bv.MimeTypeValid(mimeTypes, fhirVersion)
-	validationResults = append(validationResults, returnedRule)
-
-	returnedRule = bv.HTTPResponseValid(httpResponse)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRule = bv.FhirVersion(fhirVersion)
@@ -45,8 +40,7 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	validationResults = append(validationResults, returnedRules[0])
 
 	validations := endpointmanager.Validation{
-		Results:  validationResults,
-		Warnings: validationWarnings,
+		Results: validationResults,
 	}
 
 	return validations
@@ -124,32 +118,6 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 	return ruleError
 }
 
-// HTTPResponseValid checks if the given response code is 200
-func (bv *baseVal) HTTPResponseValid(httpResponse int) endpointmanager.Rule {
-	strResp := strconv.Itoa(httpResponse)
-	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.HTTPResponseRule,
-		Valid:    true,
-		Expected: "200",
-		Actual:   strResp,
-		Comment:  "",
-	}
-
-	if httpResponse == 200 {
-		return ruleError
-	}
-
-	if httpResponse == 0 {
-		ruleError.Comment = "The GET request failed with no returned HTTP response status code."
-	} else {
-		strResp := strconv.Itoa(httpResponse)
-		ruleError.Comment = "The HTTP response code was " + strResp + " instead of 200. "
-	}
-
-	ruleError.Valid = false
-	return ruleError
-}
-
 // FhirVersion checks if the given verison is 4.0.1, which is the current requirement for all
 // implemented FHIR endpoints
 func (bv *baseVal) FhirVersion(fhirVersion string) endpointmanager.Rule {
@@ -185,7 +153,7 @@ func (bv *baseVal) OtherResourceExists(capStat capabilityparser.CapabilityStatem
 	return ruleError
 }
 
-func (bv *baseVal) SmartHTTPResponseValid(smartHTTPRsp int) endpointmanager.Rule {
+func (bv *baseVal) SmartResponseExists(smartRsp smartparser.SMARTResponse) endpointmanager.Rule {
 	var ruleError endpointmanager.Rule
 	return ruleError
 }

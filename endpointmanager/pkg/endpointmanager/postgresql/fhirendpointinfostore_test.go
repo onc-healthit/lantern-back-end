@@ -5,8 +5,10 @@ package postgresql
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
@@ -77,25 +79,38 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		TLSVersion: "TLS 1.2",
 		MIMETypes:  []string{"application/fhir+json"},
 		Metadata:   endpointMetadata2}
-
+	var testValidationObj = endpointmanager.Validation{
+		Results: []endpointmanager.Rule{
+			{
+				RuleName: endpointmanager.CapStatExistRule,
+				Valid:    true,
+				Expected: "true",
+				Actual:   "true",
+				Comment:  "The Capability Statement exists.",
+			},
+		},
+	}
 	// add endpointInfos and Metadata
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1.Metadata)
-	if err != nil {
-		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
-	}
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding fhir endpointMetadata: %s", err))
+
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo1.ValidationID = valResID1
+	err = store.AddValidation(ctx, &testValidationObj, valResID1)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation: %s", err))
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
-	if err != nil {
-		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
-	}
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding fhir endpointInfo: %s", err))
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, endpointInfo2.Metadata)
-	if err != nil {
-		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
-	}
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding fhir endpointMetadata: %s", err))
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo2.ValidationID = valResID2
+	err = store.AddValidation(ctx, &testValidationObj, valResID2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation: %s", err))
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
-	if err != nil {
-		t.Errorf("Error adding fhir endpointInfo: %+v", err)
-	}
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding fhir endpointInfo: %s", err))
 
 	// retrieve endpointInfos
 
@@ -130,6 +145,18 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	if !eID2.Equal(endpointInfo2) {
 		t.Errorf("retrieved endpointInfo is not equal to saved endpointInfo.")
 	}
+
+	// get validation
+
+	actualValObj, err := store.GetFHIREndpointInfoValidation(ctx, e1)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when getting validation, %s", err))
+	isEqual := reflect.DeepEqual(testValidationObj, *actualValObj)
+	th.Assert(t, isEqual, fmt.Sprintf("The objects are not equal, testObj is %+v while actual obj is %+v", testValidationObj, actualValObj))
+
+	actualValObj2, err := store.GetFHIREndpointInfoValidation(ctx, e2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when getting validation, %s", err))
+	isEqual = reflect.DeepEqual(testValidationObj, *actualValObj2)
+	th.Assert(t, isEqual, fmt.Sprintf("The objects are not equal, testObj is %+v while actual obj is %+v", testValidationObj, actualValObj2))
 
 	// update endpointInfo and add update to metadata table
 

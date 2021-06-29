@@ -18,9 +18,6 @@ var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 
-// @TODO - Validation - Removed all references to validation field, even though it's still
-// included in the FHIREndpointInfo struct
-
 // GetFHIREndpointInfo gets a FHIREndpointInfo from the database using the database id as a key.
 // If the FHIREndpointInfo does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanager.FHIREndpointInfo, error) {
@@ -47,6 +44,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		smart_response,
 		included_fields,
 		operation_resource,
+		validation_result_id,
 		metadata_id
 	FROM fhir_endpoints_info WHERE id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
@@ -64,6 +62,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&endpointInfo.ValidationID,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -131,6 +130,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		smart_response,
 		included_fields,
 		operation_resource,
+		validation_result_id,
 		metadata_id
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
 
@@ -149,6 +149,7 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&endpointInfo.ValidationID,
 		&metadataID)
 	if err != nil {
 		return nil, err
@@ -190,6 +191,18 @@ func (s *Store) GetFHIREndpointInfoUsingURL(ctx context.Context, url string) (*e
 	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
+}
+
+// GetFHIREndpointInfoValidation gets the validation object for the given FhirEndpointInfo object
+func (s *Store) GetFHIREndpointInfoValidation(ctx context.Context, e *endpointmanager.FHIREndpointInfo) (*endpointmanager.Validation, error) {
+	validationRows, err := s.GetValidationByID(ctx, e.ValidationID)
+	if err != nil {
+		return nil, err
+	}
+	validationObj := endpointmanager.Validation{
+		Results: *validationRows,
+	}
+	return &validationObj, nil
 }
 
 // AddFHIREndpointInfo adds the FHIREndpointInfo to the database.
@@ -238,6 +251,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		e.ValidationID,
 		metadataID)
 
 	err = row.Scan(&e.ID)
@@ -291,6 +305,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		e.ValidationID,
 		metadataID,
 		e.ID)
 
@@ -334,8 +349,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response,
 			included_fields,
 			operation_resource,
+			validation_result_id,
 			metadata_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -352,8 +368,9 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response = $7,
 			included_fields = $8,
 			operation_resource = $9,
-			metadata_id = $10
-		WHERE id = $11`)
+			validation_result_id = $10,
+			metadata_id = $11
+		WHERE id = $12`)
 	if err != nil {
 		return err
 	}

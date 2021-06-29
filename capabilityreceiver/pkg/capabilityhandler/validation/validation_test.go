@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -20,6 +21,9 @@ func Test_RunValidation(t *testing.T) {
 	// base test
 
 	cs, err := getDSTU2CapStat()
+	th.Assert(t, err == nil, err)
+
+	sr, err := getSmartResponse()
 	th.Assert(t, err == nil, err)
 
 	validator, err := getValidator(cs, dstu2)
@@ -40,11 +44,11 @@ func Test_RunValidation(t *testing.T) {
 		Actual:   "instance",
 	}
 
-	actualVal := validator.RunValidation(cs, 200, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", 200)
-	th.Assert(t, len(actualVal.Results) == 5, fmt.Sprintf("RunValidation should have returned 5 validation checks, instead it returned %d", len(actualVal.Results)))
+	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr)
+	th.Assert(t, len(actualVal.Results) == 4, fmt.Sprintf("RunValidation should have returned 4 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
-	th.Assert(t, eq == true, "RunValidation's first returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[4], expectedLastVal)
+	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
+	eq = reflect.DeepEqual(actualVal.Results[3], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 
 	// r4 test
@@ -57,7 +61,7 @@ func Test_RunValidation(t *testing.T) {
 
 	// choose two random validation values in the list to check
 
-	expectedFifthVal := endpointmanager.Rule{
+	expectedFourthVal := endpointmanager.Rule{
 		RuleName:  endpointmanager.TLSVersion,
 		Valid:     true,
 		Expected:  "TLS 1.2, TLS 1.3",
@@ -76,11 +80,11 @@ func Test_RunValidation(t *testing.T) {
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 	}
 
-	actualVal = validator2.RunValidation(cs2, 200, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", 200)
-	th.Assert(t, len(actualVal.Results) == 16, fmt.Sprintf("RunValidation should have returned 16 validation checks, instead it returned %d", len(actualVal.Results)))
-	eq = reflect.DeepEqual(actualVal.Results[4], expectedFifthVal)
-	th.Assert(t, eq == true, "RunValidation's first returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[15], expectedLastVal)
+	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr)
+	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
+	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
+	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
+	eq = reflect.DeepEqual(actualVal.Results[14], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }
 
@@ -209,64 +213,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	actualVal = validator2.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "4.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version R4 should be valid, returned value is instead %+v", actualVal))
-}
-
-func Test_HTTPResponseValid(t *testing.T) {
-	cs, err := getDSTU2CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator, err := getValidator(cs, dstu2)
-	th.Assert(t, err == nil, err)
-
-	// base test
-
-	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.HTTPResponseRule,
-		Valid:    true,
-		Expected: "200",
-		Actual:   "200",
-		Comment:  "",
-	}
-
-	actualVal := validator.HTTPResponseValid(200)
-	eq := reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The http response is 200 and should be valid, is instead %+v", actualVal))
-
-	// httpResponse is 0
-
-	expectedVal.Valid = false
-	expectedVal.Actual = "0"
-	expectedVal.Comment = "The GET request failed with no returned HTTP response status code."
-
-	actualVal = validator.HTTPResponseValid(0)
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The http response is 0 and should be valid, is instead %+v", actualVal))
-
-	// httpResponse is 404
-
-	expectedVal.Actual = "404"
-	expectedVal.Comment = "The HTTP response code was 404 instead of 200. "
-
-	actualVal = validator.HTTPResponseValid(404)
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The http response is 404 and should be validd, is instead %+v", actualVal))
-
-	// r4 test
-
-	cs2, err := getR4CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator2, err := getValidator(cs2, r4)
-	th.Assert(t, err == nil, err)
-
-	expectedVal.Valid = true
-	expectedVal.Actual = "200"
-	expectedVal.Comment = "Applications SHALL return a resource that describes the functionality of the server end-point."
-	expectedVal.Reference = "http://hl7.org/fhir/http.html"
-	expectedVal.ImplGuide = "USCore 3.1"
-	actualVal = validator2.HTTPResponseValid(200)
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The http response for R4 validator is 200 and should be valid, returned value is instead %+v", actualVal))
 }
 
 func Test_FhirVersion(t *testing.T) {
@@ -453,8 +399,11 @@ func Test_OtherResourceExists(t *testing.T) {
 	th.Assert(t, eq == true, fmt.Sprintf("Another resource does not exist and the check should be invalid, is instead %+v", actualVal))
 }
 
-func Test_SmartHTTPResponseValid(t *testing.T) {
+func Test_SmartResponseExists(t *testing.T) {
 	cs, err := getR4CapStat()
+	th.Assert(t, err == nil, err)
+
+	sr, err := getSmartResponse()
 	th.Assert(t, err == nil, err)
 
 	validator, err := getValidator(cs, r4)
@@ -462,38 +411,29 @@ func Test_SmartHTTPResponseValid(t *testing.T) {
 
 	// base test
 
-	baseComment := "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL."
 	expectedVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.SmartHTTPRespRule,
+		RuleName:  endpointmanager.SmartRespExistsRule,
 		Valid:     true,
-		Expected:  "200",
-		Actual:    "200",
-		Comment:   baseComment,
+		Expected:  "true",
+		Actual:    "true",
+		Comment:   "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.",
 		Reference: "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html",
 		ImplGuide: "USCore 3.1",
 	}
 
-	actualVal := validator.SmartHTTPResponseValid(200)
+	actualVal := validator.SmartResponseExists(sr)
 	eq := reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("SMART-on-FHIR response is 200 so it should be valid, is instead %+v", actualVal))
+	th.Assert(t, eq == true, fmt.Sprintf("SMART-on-FHIR response exists so it should be valid, is instead %+v", actualVal))
 
-	// httpResponse is 0
+	// no SMART-on-FHIR response
 
 	expectedVal.Valid = false
-	expectedVal.Actual = "0"
+	expectedVal.Actual = "false"
+	expectedVal.Comment = `The SMART Response does not exist. FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.`
 
-	actualVal = validator.SmartHTTPResponseValid(0)
+	actualVal = validator.SmartResponseExists(nil)
 	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("SMART-on-FHIR response is 0 so it should be invalid, is instead %+v", actualVal))
-
-	// httpResponse is 404
-
-	expectedVal.Actual = "404"
-	expectedVal.Comment = "The HTTP response code was 404 instead of 200. " + baseComment
-
-	actualVal = validator.SmartHTTPResponseValid(404)
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("SMART-on-FHIR response is 404 so it should be invalid, is instead %+v", actualVal))
+	th.Assert(t, eq == true, fmt.Sprintf("SMART-on-FHIR response does not exist so it should be invalid, is instead %+v", actualVal))
 }
 
 func Test_KindValid(t *testing.T) {
@@ -1045,6 +985,19 @@ func getR4CapStat() (capabilityparser.CapabilityStatement, error) {
 		return nil, err
 	}
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	if err != nil {
+		return nil, err
+	}
+	return cs, nil
+}
+
+func getSmartResponse() (smartparser.SMARTResponse, error) {
+	path := filepath.Join("../../../testdata", "authorization_cerner_smart_response.json")
+	srJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	cs, err := smartparser.NewSMARTResp(srJSON)
 	if err != nil {
 		return nil, err
 	}
