@@ -21,7 +21,7 @@ type FHIREndpointInfo struct {
 	MIMETypes           []string
 	VendorID            int
 	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	Validation          Validation
+	ValidationID        int
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	SMARTResponse       smartparser.SMARTResponse
@@ -66,17 +66,15 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
 		return false
 	}
+	if e.ValidationID != e2.ValidationID {
+		return false
+	}
 	if e.SMARTResponse != nil && !e.SMARTResponse.Equal(e2.SMARTResponse) {
 		return false
 	}
 	if e.SMARTResponse == nil && e2.SMARTResponse != nil {
 		return false
 	}
-
-	// @TODO - Validation - This will need to be updated
-	// if !cmp.Equal(e.Validation, e2.Validation) {
-	// 	return false
-	// }
 
 	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
 		return false
@@ -118,23 +116,20 @@ type IncludedField struct {
 	Extension bool
 }
 
-// Validation holds all of the errors and warnings from running the validation checks
-// it is saved in JSON format to the fhir_endpoints_info database table
+// Validation holds all of the validation results from running the validation checks
 type Validation struct {
-	Results  []Rule `json:"results"`
-	Warnings []Rule `json:"warnings"`
+	Results []Rule
 }
 
-// Rule is the structure for both validation errors and warnings that are saved in
-// the Validations struct
+// Rule is the information returned from running the validation rule given by RuleName
 type Rule struct {
-	RuleName  RuleOption `json:"ruleName"`
-	Valid     bool       `json:"valid"`
-	Expected  string     `json:"expected"`
-	Actual    string     `json:"actual"`
-	Comment   string     `json:"comment"`
-	Reference string     `json:"reference"`
-	ImplGuide string     `json:"implGuide"`
+	RuleName  RuleOption
+	Valid     bool
+	Expected  string
+	Actual    string
+	Comment   string
+	Reference string
+	ImplGuide string
 }
 
 // RuleOption is an enum of the names given to the rule validation checks
@@ -142,13 +137,12 @@ type RuleOption string
 
 const (
 	GeneralMimeTypeRule RuleOption = "generalMimeType"
-	HTTPResponseRule    RuleOption = "httpResponse"
 	CapStatExistRule    RuleOption = "capStatExist"
 	FHIRVersion         RuleOption = "fhirVersion"
 	TLSVersion          RuleOption = "tlsVersion"
 	PatResourceExists   RuleOption = "patResourceExists"
 	OtherResourceExists RuleOption = "otherResourceExists"
-	SmartHTTPRespRule   RuleOption = "smartHttpResponse"
+	SmartRespExistsRule RuleOption = "smartResponse"
 	KindRule            RuleOption = "kindRule"
 	InstanceRule        RuleOption = "instanceRule"
 	MessagingEndptRule  RuleOption = "messagingEndptRule"
