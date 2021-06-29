@@ -266,17 +266,6 @@ func Test_AvailabilityUsesMetadataRequestedVersion(t *testing.T) {
 	var err error
 	ctx := context.Background()
 
-	// capability statement
-	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Error(err)
-	}
-	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		t.Error(err)
-	}
-
 	var endpointMetadata1 = &endpointmanager.FHIREndpointMetadata{
 		URL:               "example.com/FHIR/DSTU2/",
 		HTTPResponse:      200,
