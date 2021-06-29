@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"testing"
 
+  	"github.com/sirupsen/logrus/hooks/test"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
@@ -142,7 +143,13 @@ func Test_NewCapabilityStatement(t *testing.T) {
 	csJSON, err = json.Marshal(csInt)
 	th.Assert(t, err == nil, err)
 
+	hook := test.NewGlobal()
+
 	cs, err = NewCapabilityStatement(csJSON)
+
+	th.Assert(t, len(hook.Entries) == 1, fmt.Sprintf("expected hook entries to be 1, was %d", len(hook.Entries)))
+	th.Assert(t, hook.LastEntry().Message == "unknown FHIR version, 5.3.2, defaulting to DSTU2", "did not get expected log warning message for unknown FHIR version")
+	
 	th.Assert(t, err == nil, "expected no error due to unknown FHIR version defaulting to DSTU2")
 	_, ok = cs.(*dstu2CapabilityParser)
 	th.Assert(t, ok, "expected to be able to convert to dstu2CapabilityParser type")
