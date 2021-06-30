@@ -35,13 +35,14 @@ func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryD
 	return err
 }
 
-// @TODO move this to the validation store?
+// PruningDeleteValidationTable deletes validation table entries based on the given ID
 func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) error {
 	_, err := pruningDeleteValStatement.ExecContext(ctx, valResID)
 	return err
 }
 
-// @TODO move this to the validation store?
+// PruningDeleteValidationResultEntry deletes an entry from the validation_results table based
+// on the given ID
 func (s *Store) PruningDeleteValidationResultEntry(ctx context.Context, valResID int) error {
 	_, err := pruningDeleteValResStatement.ExecContext(ctx, valResID)
 	return err
