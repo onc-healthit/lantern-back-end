@@ -244,6 +244,18 @@ function(input, output, session) { #nolint
     return(res)
   })
 
+  checkbox_resources_no_filter <- reactive({
+    res <- isolate(app_data$endpoint_resource_types())
+
+    res <- res %>%
+           distinct(type) %>%
+           arrange(type) %>%
+           split(.$type) %>%
+           purrr::map(~ .$type)
+
+    return(res)
+  })
+
   output$show_resource_checkboxes <- renderUI({
     if (show_resource_checkbox()) {
       fluidPage(
@@ -255,7 +267,7 @@ function(input, output, session) { #nolint
             Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.
             You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
           p("Note: This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
-          selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+          selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources_no_filter(), selected = checkbox_resources_no_filter(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
           actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
           actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
         )
@@ -283,16 +295,25 @@ function(input, output, session) { #nolint
       return(NULL)
     }
     else{
+      current_selection(NULL)
       updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
 
   observeEvent(input$fhir_version, {
-    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+    if (!show_resource_checkbox() || is.null(current_selection())) {
+      return(NULL)
+    } else {
+      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
   })
 
   observeEvent(input$vendor, {
-    updateSelectInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+    if (!show_resource_checkbox() || is.null(current_selection())) {
+      return(NULL)
+    } else {
+      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
   })
 
   #                     #
