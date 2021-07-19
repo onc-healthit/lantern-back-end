@@ -4,7 +4,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "values_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -97,6 +97,13 @@ function(input, output, session) { #nolint
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$field))
+
+      callModule(
+        validationsmodule,
+        "validations_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$validation_group))
     }
   })
 
@@ -114,15 +121,20 @@ function(input, output, session) { #nolint
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "performance_tab" = "Response Time Performance",
-     "capabilitystatementsize_tab" = "Capability Statement Size"
+     "capabilitystatementsize_tab" = "Capability Statement Size",
+     "validations_tab" = "Validations Page"
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
   )
 
   show_availability_filter <- reactive(
     input$side_menu %in% c("endpoints_tab")
+  )
+
+  show_validations_filter <- reactive(
+    input$side_menu %in% c("validations_tab")
   )
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
@@ -147,11 +159,18 @@ function(input, output, session) { #nolint
       fhirDropdown <- selectInput(inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list()), selected = ui_special_values$ALL_FHIR_VERSIONS, size = 1, selectize = FALSE)
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
+      validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 4, fhirDropdown),
           column(width = 4, developerDropdown),
           column(width = 4, availabilityDropdown)
+        )
+      } else if (show_validations_filter()) {
+        fluidRow(
+          column(width = 4, validationsDropdown),
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown)
         )
       } else {
         fluidRow(
