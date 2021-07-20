@@ -175,12 +175,11 @@ func Test_PruneInfoHistory(t *testing.T) {
 	idExpectedArr = nil
 	var idExpectedArr2 []int
 
-	// Add two extra validation entries
+	// Add four extra validation entries
 	valRes3, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 3 %s", err))
 	valRes4, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
-	// Add testValidation using the IDs
 	valRes5, err := store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
 	valRes6, err := store.AddValidationResult(ctx)
@@ -195,7 +194,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	err = store.AddValidation(ctx, &testValidation, valRes6)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 6 %s", err))
 
-	// // Add four fhir endpoint info history entries with old entered at date, first and second to last I operations
+	// Add six fhir endpoint info history entries with old entered at date, first and second to last I operations
 	idExpectedArr = append(idExpectedArr, idCount)
 	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I", valRes1)
 	th.Assert(t, err == nil, err)
