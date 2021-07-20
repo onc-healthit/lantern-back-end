@@ -45,15 +45,19 @@ validationsmodule <- function(
   })
 
   validation_rules <- reactive ({
-    res <- isolate(app_data$validation_tbl())
+    res <- selected_validations()
     res <- res %>%
            filter(reference != "") %>%
+           distinct(rule_name, comment)
+           
+    res <- res %>%
            mutate(rule_name = paste("Name:", rule_name)) %>%
            mutate(comment = paste("Comment:", comment)) %>%
-           mutate(num = row_number()) %>%
-           distinct(num, rule_name, comment)
-    x <- data.frame("validation_details" = c(rbind(res$num, res$rule_name, res$comment)))
-    x
+           mutate(num = paste(row_number(), ".")) %>%
+           distinct(num, rule_name, comment) %>%
+           mutate(entry = paste(num,  rule_name, comment, sep="<br>")) %>%
+           select(entry)
+    res
   })
 
   selected_validations <- reactive({
@@ -102,9 +106,10 @@ validationsmodule <- function(
   })
 
   output$validation_details_table <- DT::renderDataTable({
-    datatable(validation_rules() %>% select(validation_details),
-              colnames = c("Rules"),
+    datatable(validation_rules() %>% select(entry),
+              colnames = "",
               rownames = FALSE,
+              escape = FALSE,
               options = list(scrollX = TRUE, scrollY = 700, paging = FALSE, dom = 't', ordering = FALSE)
             )
   })
