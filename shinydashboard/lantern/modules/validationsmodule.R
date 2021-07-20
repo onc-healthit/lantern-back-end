@@ -8,12 +8,10 @@ validationsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 4,
-            "sidebar",
              h3("Validation Details"),
              DT::dataTableOutput(ns("validation_details_table"))
             ),
       column(width = 8,
-          "main",
           fluidRow(
             column(width = 12,
                 h3("Validation Results Count"),
