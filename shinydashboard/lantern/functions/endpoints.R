@@ -468,6 +468,27 @@ get_cap_stat_sizes <- function(db_connection) {
     tidyr::replace_na(list(fhir_version = "Unknown"))
 }
 
+get_validation_results <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT vendors.name as vendor_name,
+          f.url as url,
+          capability_statement->>'fhirVersion' as fhir_version,
+          rule_name, 
+          valid,
+          expected,
+          actual, 
+          comment, 
+          reference,
+          validations.validation_result_id as id
+        FROM fhir_endpoints_info f
+          LEFT JOIN vendors on f.vendor_id = vendors.id 
+		      INNER JOIN validations on f.validation_result_id = validations.validation_result_id
+        ORDER BY validations.validation_result_id, rule_name")) %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    tidyr::replace_na(list(fhir_version = "Unknown"))
+}
+
 database_fetcher <- reactive({
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
 
@@ -512,5 +533,7 @@ database_fetcher <- reactive({
   app_data$endpoint_locations(get_endpoint_locations(db_connection))
 
   app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection))
+
+  app_data$validation_tbl(get_validation_results(db_connection))
 
 })
