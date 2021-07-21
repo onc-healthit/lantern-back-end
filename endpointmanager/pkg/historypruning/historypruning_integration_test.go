@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -40,6 +41,18 @@ var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	MIMETypes:     []string{"application/json+fhir"},
 	TLSVersion:    "TLS 1.2",
 	SMARTResponse: nil,
+}
+
+var testValidation = endpointmanager.Validation{
+	Results: []endpointmanager.Rule{
+		{
+			RuleName: endpointmanager.CapStatExistRule,
+			Valid:    true,
+			Expected: "true",
+			Actual:   "true",
+			Comment:  "The Capability Statement exists.",
+		},
+	},
 }
 
 func TestMain(m *testing.M) {
@@ -85,9 +98,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 		url,
 		tls_version,
 		mime_types,
-		smart_response, 
-		capability_statement)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`)
+		smart_response,
+		capability_statement,
+		validation_result_id)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
 	th.Assert(t, err == nil, err)
 	defer addFHIREndpointInfoHistoryStatement.Close()
 
@@ -116,11 +130,24 @@ func Test_PruneInfoHistory(t *testing.T) {
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 
+	// Put two entries in the validation_result table so that they can be referenced by
+	// the history entries
+	valRes1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table %s", err))
+	valRes2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table again %s", err))
+	// Add testValidation using the IDs
+	err = store.AddValidation(ctx, &testValidation, valRes1)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table again %s", err))
+	// use the validation ID in the below functions
+
 	// Add two endpoint entries to info history table with current entered_at dates
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -136,31 +163,56 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
+	// Check that the validation table also still has its entries
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 1)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 	var idExpectedArr2 []int
 
-	// Add four fhir endpoint info history entries with old entered at date, first and second to last I operations
+	// Add four extra validation entries
+	valRes3, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 3 %s", err))
+	valRes4, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
+	valRes5, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
+	valRes6, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 6 %s", err))
+	// Add testValidation using the IDs
+	err = store.AddValidation(ctx, &testValidation, valRes3)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 3 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes4)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes5)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 5 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes6)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 6 %s", err))
+
+	// Add six fhir endpoint info history entries with old entered at date, first and second to last I operations
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I", valRes1)
 	th.Assert(t, err == nil, err)
 
 	idExpectedArr2 = append(idExpectedArr2, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "I", valRes2)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes5)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes6)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -193,20 +245,45 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
+	// Check that the associated validation rows were also deleted
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes5, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes6, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 2)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	_, err = clearStatement.ExecContext(ctx, testFhirEndpointInfo2.URL)
+	th.Assert(t, err == nil, err)
+
+	// Just add another validation entry since there should still be two in the database
+	valRes7, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 7 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes7)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 7 %s", err))
+
 	// Add three fhir endpoint info history entries with old entered at date
 	expectedID := idCount
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes7)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -227,16 +304,40 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
 
+	// check the right entry still exists in the validation table (and validation_results)
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes7, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 1)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 
+	// Add 3 validation entries
+	valRes8, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 8 %s", err))
+	valRes9, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 9 %s", err))
+	valRes10, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 10 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes8)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 8 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes9)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 9 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes10)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 10 %s", err))
+
 	// Add endpoint entries to info history table with old dates and non-modified capability statement date fields
 	expectedID = idCount
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes8)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -259,10 +360,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = capStatDate
 
 	// Add two endpoint entries to info history table with old dates and modified capability statement date fields
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes9)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes10)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -283,17 +384,43 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
 
+	// check the right entry still exists in the validation table (and validation_results)
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes8, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes9, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes10, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 1)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 3 validation entries
+	valRes11, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 11 %s", err))
+	valRes12, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 12 %s", err))
+	valRes13, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 13 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes11)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 11 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes12)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 12 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes13)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 13 %s", err))
+
 	// Add endpoint entries to info history table with old dates and non-modified capability statement date fields
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes11)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -316,10 +443,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	// Add two endpoint entries to info history table with old dates and modified capability statement description fields
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes12)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes13)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -340,19 +467,45 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
+	// check validation
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes11, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes12, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes13, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 2)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 3 validation entries (5 entries total, 2 leftover in database from previous test)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	valRes3, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 3 %s", err))
+	valRes4, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes3)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 3 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes4)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
+
 	// Add two endpoint entries to info history table with non-modified capability statement description fields
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes12)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -365,7 +518,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	// Add one endpoint entries to info history table with old dates and modified capability statement description fields
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure entry was added to info history table correctly
@@ -377,10 +530,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -401,6 +554,20 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
+	// check validation
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes12, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 3)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -410,10 +577,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	expectedID = idCount
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -434,17 +601,34 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
 
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 2) // one + one leftover from previous test
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Create 2 validations (need 4, two already exist in the database)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	valRes4, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes4)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
+
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -456,10 +640,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -480,19 +664,45 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
+	// Check validations
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 2)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 3 validations (need 5 validations, 2 already in database)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	valRes4, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
+	valRes5, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes4)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes5)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 5 %s", err))
+
 	// Add two endpoint entries to info history table with old dates and null capability statement
 	testFhirEndpointInfo.CapabilityStatement = nil
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -504,7 +714,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
 	// Ensure entry was added to info history table correctly
@@ -516,10 +726,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.CapabilityStatement = nil
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes5)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -540,19 +750,47 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
+	// Check validations
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes5, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 3)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 3 validations (need 6 validations, 3 already in database)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	valRes5, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
+	valRes6, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 6 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes5)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 5 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes6)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 6 %s", err))
+
 	// Add two endpoint entries to info history table with old dates
 	testFhirEndpointInfo.CapabilityStatement = originalCapStat
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -564,10 +802,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir", "application/fhir+json"}
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -579,10 +817,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.MIMETypes = []string{}
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes5)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes6)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -605,17 +843,39 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir"}
 
+	// Check validations
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes5, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes6, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 3)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 1 validation (need 4 validations, 3 already in database)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+
 	// Add two endpoint entries to info history table with old dates
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -627,10 +887,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.TLSVersion = "TLS 1.3"
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes5)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -653,17 +913,47 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.TLSVersion = "TLS 1.2"
 
+	// Check validations
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes5, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 2)
+	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
+	// Add 4 validations (need 6 validations, 2 already in database)
+	valRes2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
+	valRes4, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 4 %s", err))
+	valRes5, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
+	valRes6, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 6 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes2)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes4)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes5)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 5 %s", err))
+	err = store.AddValidation(ctx, &testValidation, valRes6)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 6 %s", err))
+
 	// Add two endpoint entries to info history table with old dates
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes2)
 	th.Assert(t, err == nil, err)
 
 	// Ensure both entries were added to info history table correctly
@@ -680,10 +970,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.SMARTResponse = smartResp
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes4)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -700,10 +990,10 @@ func Test_PruneInfoHistory(t *testing.T) {
 	testFhirEndpointInfo.SMARTResponse = smartResp2
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes5)
 	th.Assert(t, err == nil, err)
 
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes6)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly
@@ -726,10 +1016,31 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.SMARTResponse = nil
 
+	// Check validations
+	err = checkValidationCount(ctx, store, valRes1, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes2, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes3, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes4, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes5, 1)
+	th.Assert(t, err == nil, err)
+	err = checkValidationCount(ctx, store, valRes6, 0)
+	th.Assert(t, err == nil, err)
+	err = checkValidationResultCount(ctx, store, 3)
+	th.Assert(t, err == nil, err)
 }
 
 // AddFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
-func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e endpointmanager.FHIREndpointInfo, createdAt string, id int, operation string) error {
+func AddFHIREndpointInfoHistory(ctx context.Context,
+	store *postgresql.Store,
+	e endpointmanager.FHIREndpointInfo,
+	createdAt string,
+	id int,
+	operation string,
+	valResID int) error {
 	var err error
 	var capabilityStatementJSON []byte
 
@@ -760,7 +1071,8 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		smartResponseJSON,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		valResID)
 	if err != nil {
 		return err
 	}
@@ -798,6 +1110,41 @@ func checkCorrect(idArr []int, testEndpointURL string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func checkValidationCount(ctx context.Context, store *postgresql.Store, valID int, totalCheck int) error {
+	getValidationStatement := `
+		SELECT COUNT(*)
+		FROM validations
+		WHERE validation_result_id=$1;
+	`
+	valResRow := store.DB.QueryRowContext(ctx, getValidationStatement, valID)
+	valResCount := 0
+	err := valResRow.Scan(&valResCount)
+	if err != nil {
+		return err
+	}
+	if valResCount != totalCheck {
+		return fmt.Errorf("There should be %d validations, are instead %d", totalCheck, valResCount)
+	}
+	return nil
+}
+
+func checkValidationResultCount(ctx context.Context, store *postgresql.Store, totalCheck int) error {
+	getValidationStatement := `
+		SELECT COUNT(*)
+		FROM validations;
+	`
+	valResRow := store.DB.QueryRowContext(ctx, getValidationStatement)
+	valResCount := 0
+	err := valResRow.Scan(&valResCount)
+	if err != nil {
+		return err
+	}
+	if valResCount != totalCheck {
+		return fmt.Errorf("There should be %d validation results, are instead %d", totalCheck, valResCount)
+	}
+	return nil
 }
 
 func setupCapabilityStatement(t *testing.T, path string) {
