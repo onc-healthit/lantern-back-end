@@ -7,11 +7,11 @@ validationsmodule_UI <- function(id) {
 
   tagList(
     fluidRow(
-      column(width = 4,
+      column(width = 3,
              h3("Validation Details"),
              DT::dataTableOutput(ns("validation_details_table"))
             ),
-      column(width = 8,
+      column(width = 9,
           fluidRow(
             column(width = 12,
                 h3("Validation Results Count"),
@@ -137,7 +137,7 @@ validationsmodule <- function(
       theme(text = element_text(size = 14)) +
       labs(x = "", y = "", fill = "Valid") +
       scale_y_continuous(sec.axis = sec_axis(~.)) +
-      scale_fill_manual(values = c("red", "seagreen3")) +
+      scale_fill_manual(values = c("FALSE" = "red", "TRUE" = "seagreen3"), limits = c("FALSE", "TRUE")) +
       guides(fill = guide_legend(reverse = TRUE)) +
       coord_flip()
   },
