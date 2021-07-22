@@ -90,9 +90,10 @@ validationsmodule <- function(
   failed_validation_results <- reactive({
     res <- selected_validations()
     if (length(input$validation_details_table_rows_selected) > 0) {
-      selected_details <- validation_rule_comment()[input$validation_details_table_rows_selected,]
+      selected_rules <- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "rule_name"])
+      selected_comments<- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "comment"])
       res <- res %>%
-        filter(rule_name == selected_details$rule_name | comment == selected_details$comment)
+        filter(rule_name %in% selected_rules & comment %in% selected_comments)
     }
     res <- res %>%
         filter(valid == FALSE)
