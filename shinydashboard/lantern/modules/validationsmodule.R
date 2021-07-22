@@ -42,19 +42,23 @@ validationsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
   })
 
-  validation_rules <- reactive ({
+  validation_rule_comment <- reactive ({
     res <- selected_validations()
     res <- res %>%
            distinct(rule_name, comment) %>%
            arrange(rule_name)
-           
+    res
+  })
+
+  validation_details <- reactive ({
+    res <- validation_rule_comment()
     res <- res %>%
-           mutate(rule_name = paste("Name:", rule_name)) %>%
-           mutate(comment = paste("Comment:", comment)) %>%
-           mutate(num = paste(row_number(), ".")) %>%
-           distinct(num, rule_name, comment) %>%
-           mutate(entry = paste(num,  rule_name, comment, sep="<br>")) %>%
-           select(entry)
+      mutate(rule_name = paste("Name:", rule_name)) %>%
+      mutate(comment = paste("Comment:", comment)) %>%
+      mutate(num = paste(row_number(), ".")) %>%
+      distinct(num, rule_name, comment) %>%
+      mutate(entry = paste(num,  rule_name, comment, sep="<br>")) %>%
+      select(entry)
     res
   })
 
@@ -86,13 +90,18 @@ validationsmodule <- function(
 
   failed_validation_results <- reactive ({
     res <- selected_validations()
+    if (length(input$validation_details_table_rows_selected) > 0) {
+      selected_details <- validation_rule_comment()[input$validation_details_table_rows_selected,]
+      res <- res %>%
+          filter(rule_name == selected_details$rule_name & comment == selected_details$comment)
+    }
     res <- res %>% 
           filter(valid == FALSE)
     res 
   })
 
   output$validation_details_table <- DT::renderDataTable({
-    datatable(validation_rules() %>% select(entry),
+    datatable(validation_details() %>% select(entry),
               colnames = "",
               rownames = FALSE,
               escape = FALSE,
