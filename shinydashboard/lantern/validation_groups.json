@@ -1,0 +1,20 @@
+{
+    "HTTP": [
+        "http://hl7.org/fhir/http.html"
+     ],
+    "Capability Statements": [
+        "http://hl7.org/fhir/capabilitystatement.html"
+    ],
+    "SMART": [
+        "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html"
+    ],
+    "US-CORE": [
+        "https://www.hl7.org/fhir/us/core/CapabilityStatement-us-core-server.html",
+        "https://www.hl7.org/fhir/us/core/security.html"
+    ], 
+    "Certification Criteria": [
+        "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf"
+    ], "Other": [
+        ""
+    ]
+}

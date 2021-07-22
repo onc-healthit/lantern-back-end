@@ -45,8 +45,8 @@ validationsmodule <- function(
   validation_rules <- reactive ({
     res <- selected_validations()
     res <- res %>%
-           filter(reference != "") %>%
-           distinct(rule_name, comment)
+           distinct(rule_name, comment) %>%
+           arrange(rule_name)
            
     res <- res %>%
            mutate(rule_name = paste("Name:", rule_name)) %>%
@@ -64,20 +64,8 @@ validationsmodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    if (sel_validation_group() != "All Groups") {
-      if (sel_validation_group() == "Other") {
-        res <- res %>% filter(reference == "")
-      } else if (sel_validation_group() == "HTTP") {
-        res <- res %>% filter(reference == "http://hl7.org/fhir/http.html")
-      } else if (sel_validation_group() == "Capability Statements") {
-        res <- res %>% filter(reference == "http://hl7.org/fhir/capabilitystatement.html")
-      } else if (sel_validation_group() == "SMART") {
-        res <- res %>% filter(reference == "http://www.hl7.org/fhir/smart-app-launch/conformance/index.html")
-      } else if (sel_validation_group() == "US-CORE") {
-        res <- res %>% filter(reference == "https://www.hl7.org/fhir/us/core/CapabilityStatement-us-core-server.html" | reference == "https://www.hl7.org/fhir/us/core/security.html")
-      } else if (sel_validation_group() == "Certification Criteria") {
-        res <- res %>% filter(reference == "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf")
-      }
+    if (sel_validation_group() != "All Groups") {      
+      res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
     }
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
