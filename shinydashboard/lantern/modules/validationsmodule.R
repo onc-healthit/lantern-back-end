@@ -105,7 +105,7 @@ validationsmodule <- function(
       colnames = "",
       rownames = FALSE,
       escape = FALSE,
-      options = list(scrollX = TRUE, scrollY = 750, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
+      options = list(scrollX = TRUE, scrollY = 800, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
     )
   })
 
