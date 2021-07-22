@@ -68,7 +68,7 @@ validationsmodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    if (sel_validation_group() != "All Groups") {      
+    if (sel_validation_group() != "All Groups") {
       res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
     }
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -79,13 +79,12 @@ validationsmodule <- function(
 
   select_validation_results <- reactive ({
     res <- selected_validations()
-    res <- res %>% 
+    res <- res %>%
             group_by(rule_name, valid) %>%
             count() %>%
             rename(count = n) %>%
             select(rule_name, valid, count)
     res
-
   })
 
   failed_validation_results <- reactive ({
@@ -95,18 +94,18 @@ validationsmodule <- function(
       res <- res %>%
           filter(rule_name == selected_details$rule_name & comment == selected_details$comment)
     }
-    res <- res %>% 
+    res <- res %>%
           filter(valid == FALSE)
-    res 
+    res
   })
 
   output$validation_details_table <- DT::renderDataTable({
     datatable(validation_details() %>% select(entry),
-              colnames = "",
-              rownames = FALSE,
-              escape = FALSE,
-              options = list(scrollX = TRUE, scrollY = 750, scrollCollapse = TRUE, paging = FALSE, dom = 't', ordering = FALSE)
-            )
+      colnames = "",
+      rownames = FALSE,
+      escape = FALSE,
+      options = list(scrollX = TRUE, scrollY = 750, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
+    )
   })
 
   validation_plot_height <- reactive({
@@ -163,5 +162,4 @@ validationsmodule <- function(
               options = list(scrollX = TRUE)
             )
   })
-
 }
