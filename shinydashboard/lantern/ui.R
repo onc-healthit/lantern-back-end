@@ -70,7 +70,7 @@ ui <- dashboardPage(
               valuesmodule_UI("values_page")
       ),
       tabItem("validations_tab",
-	  		  validationsmodule_UI("validations_page")
+              validationsmodule_UI("validations_page")
       ),
       tabItem("security_tab",
               securitymodule_UI("security_page")

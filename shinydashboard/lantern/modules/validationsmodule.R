@@ -57,7 +57,7 @@ validationsmodule <- function(
       mutate(comment = paste("Comment:", comment)) %>%
       mutate(num = paste(row_number(), ".")) %>%
       distinct(num, rule_name, comment) %>%
-      mutate(entry = paste(num,  rule_name, comment, sep="<br>")) %>%
+      mutate(entry = paste(num,  rule_name, comment, sep = "<br>")) %>%
       select(entry)
     res
   })
@@ -91,7 +91,7 @@ validationsmodule <- function(
     res <- selected_validations()
     if (length(input$validation_details_table_rows_selected) > 0) {
       selected_rules <- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "rule_name"])
-      selected_comments<- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "comment"])
+      selected_comments <- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "comment"])
       res <- res %>%
         filter(rule_name %in% selected_rules & comment %in% selected_comments)
     }

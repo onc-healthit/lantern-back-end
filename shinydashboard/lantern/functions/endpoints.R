@@ -473,16 +473,16 @@ get_validation_results <- function(db_connection) {
     sql("SELECT vendors.name as vendor_name,
           f.url as url,
           capability_statement->>'fhirVersion' as fhir_version,
-          rule_name, 
+          rule_name,
           valid,
           expected,
-          actual, 
-          comment, 
+          actual,
+          comment,
           reference,
           validations.validation_result_id as id
         FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id 
-		      INNER JOIN validations on f.validation_result_id = validations.validation_result_id
+          LEFT JOIN vendors on f.vendor_id = vendors.id
+          INNER JOIN validations on f.validation_result_id = validations.validation_result_id
         ORDER BY validations.validation_result_id, rule_name")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
