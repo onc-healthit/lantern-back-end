@@ -33,7 +33,7 @@ validationsmodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor, 
+  sel_vendor,
   sel_validation_group
 ) {
   ns <- session$ns
@@ -42,7 +42,7 @@ validationsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
   })
 
-  validation_rule_comment <- reactive ({
+  validation_rule_comment <- reactive({
     res <- selected_validations()
     res <- res %>%
            distinct(rule_name, comment) %>%
@@ -50,7 +50,7 @@ validationsmodule <- function(
     res
   })
 
-  validation_details <- reactive ({
+  validation_details <- reactive({
     res <- validation_rule_comment()
     res <- res %>%
       mutate(rule_name = paste("Name:", rule_name)) %>%
@@ -77,25 +77,25 @@ validationsmodule <- function(
     res
   })
 
-  select_validation_results <- reactive ({
+  select_validation_results <- reactive({
     res <- selected_validations()
     res <- res %>%
-            group_by(rule_name, valid) %>%
-            count() %>%
-            rename(count = n) %>%
-            select(rule_name, valid, count)
+      group_by(rule_name, valid) %>%
+      count() %>%
+      rename(count = n) %>%
+      select(rule_name, valid, count)
     res
   })
 
-  failed_validation_results <- reactive ({
+  failed_validation_results <- reactive({
     res <- selected_validations()
     if (length(input$validation_details_table_rows_selected) > 0) {
       selected_details <- validation_rule_comment()[input$validation_details_table_rows_selected,]
       res <- res %>%
-          filter(rule_name == selected_details$rule_name & comment == selected_details$comment)
+        filter(rule_name == selected_details$rule_name | comment == selected_details$comment)
     }
     res <- res %>%
-          filter(valid == FALSE)
+        filter(valid == FALSE)
     res
   })
 
