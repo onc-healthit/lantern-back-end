@@ -29,6 +29,7 @@ qry_interval_seconds <- (strtoi(Sys.getenv("LANTERN_CAPQUERY_QRYINTVL")) * 60)
 database_fetch <- reactiveVal(0)
 
 validation_group_list <- fromJSON(here(root, "validation_groups.json"))
+validation_rules_descriptions <- fromJSON(here(root, "rule_descriptions.json"))
 validation_group_names <- names(validation_group_list)
 
 # Define magic numbers for user interface

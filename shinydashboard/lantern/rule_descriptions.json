@@ -1,0 +1,17 @@
+{
+    "capStatExist": "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported.",
+    "generalMimeType": "FHIR Versions 1.0.2 requires the Mime Type to be application/json+fhir, and FHIR Versions 3.0.1 to 4.0.1 requires the Mime Type to be application/fhir+json.",
+    "describeEndpointRule": "A Capability Statement SHALL have at least one of description, software, or implementation element.",
+    "documentValidRule": "The set of documents must be unique by the combination of profile and mode.",
+    "endpointFunctionRule": "A Capability Statement SHALL have at least one of REST, messaging or document element.",
+    "instanceRule": "If kind = instance, implementation must be present. This endpoint must be an instance.",
+    "kindRule": "Kind value should be set to 'instance' because this is a specific system instance.",
+    "messagingEndptRule": "Messaging end-point is required (and is only permitted) when a statement is for an implementation. This endpoint must be an implementation.",
+    "searchParamsRule": "Search parameter names must be unique in the context of a resource.",
+    "uniqueResourcesRule": "A given resource can only be described once per RESTful mode.",
+    "smartResponse": "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.",
+    "otherResourceExists": "The US Core Server SHALL support at least one additional resource profile (besides Patient) from the list of US Core Profiles.",
+    "patResourceExists": "The US Core Server SHALL support the US Core Patient resource profile.",
+    "tlsVersion": "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection.",
+    "fhirVersion": "ONC Certification Criteria requires support of FHIR Version 4.0.1"
+}

@@ -42,22 +42,22 @@ validationsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
   })
 
-  validation_rule_comment <- reactive({
+  validation_rules <- reactive({
     res <- selected_validations()
     res <- res %>%
-           distinct(rule_name, comment) %>%
+           distinct(rule_name) %>%
            arrange(rule_name)
     res
   })
 
   validation_details <- reactive({
-    res <- validation_rule_comment()
+    res <- validation_rules()
     res <- res %>%
-      mutate(rule_name = paste("Name:", rule_name)) %>%
-      mutate(comment = paste("Comment:", comment)) %>%
+      mutate(comment_line = paste("Comment:", validation_rules_descriptions[rule_name])) %>%
+      mutate(rule_name_line = paste("Name:", rule_name)) %>%
       mutate(num = paste(row_number(), ".")) %>%
-      distinct(num, rule_name, comment) %>%
-      mutate(entry = paste(num,  rule_name, comment, sep = "<br>")) %>%
+      distinct(num, rule_name_line, comment_line) %>%
+      mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%
       select(entry)
     res
   })
@@ -90,10 +90,9 @@ validationsmodule <- function(
   failed_validation_results <- reactive({
     res <- selected_validations()
     if (length(input$validation_details_table_rows_selected) > 0) {
-      selected_rules <- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "rule_name"])
-      selected_comments <- deframe(validation_rule_comment()[input$validation_details_table_rows_selected, "comment"])
+      selected_rule <- deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])
       res <- res %>%
-        filter(rule_name %in% selected_rules & comment %in% selected_comments)
+        filter(rule_name == selected_rule)
     }
     res <- res %>%
         filter(valid == FALSE)
@@ -105,6 +104,7 @@ validationsmodule <- function(
       colnames = "",
       rownames = FALSE,
       escape = FALSE,
+      selection = "single",
       options = list(scrollX = TRUE, scrollY = 800, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
     )
   })
@@ -160,6 +160,7 @@ validationsmodule <- function(
     datatable(failed_validation_results() %>% select(url, expected, actual, vendor_name, fhir_version),
               colnames = c("URL", "Expected Value", "Actual Value", "Certified API Developer Name", "FHIR Version"),
               rownames = FALSE,
+              caption = paste("Rule: ", if (length(input$validation_details_table_rows_selected) > 0) (deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])) else "All Rules"),
               options = list(scrollX = TRUE)
             )
   })
