@@ -1,8 +1,8 @@
 BEGIN;
 
-ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500);
+ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500) SET DEFAULT 'None';
 
-ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500);
+ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500) SET DEFAULT 'None';
 
 CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
     DECLARE
@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
                 NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1), NEW.requested_fhir_version;
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
                 NEW.availability = 0.00;
                 RETURN NEW;
             END IF;

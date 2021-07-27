@@ -160,7 +160,7 @@ CREATE TABLE fhir_endpoints_metadata (
     errors                  VARCHAR(500),
     response_time_seconds   DECIMAL(7,4),
     smart_http_response     INTEGER,
-    requested_fhir_version VARCHAR(500),
+    requested_fhir_version VARCHAR(500) DEFAULT 'None',
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -229,7 +229,7 @@ CREATE TABLE fhir_endpoints_availability (
     url             VARCHAR(500),
     http_200_count       BIGINT,
     http_all_count       BIGINT,
-    requested_fhir_version  VARCHAR(500),
+    requested_fhir_version  VARCHAR(500) DEFAULT 'None',
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
