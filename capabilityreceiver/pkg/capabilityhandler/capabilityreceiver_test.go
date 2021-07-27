@@ -397,9 +397,9 @@ func Test_formatMessage(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedMetadata := testFhirEndpointMetadata
 	expectedEndpt.Metadata = &expectedMetadata
-	expectedEndpt.RequestedFhirVersion = "1.0.2"
+	expectedEndpt.RequestedFhirVersion = "None"
 	tmpMessage := testQueueMsg
-	tmpMessage["requestedFhirVersion"] = "1.0.2"
+	tmpMessage["requestedFhirVersion"] = "None"
 
 	message, err := convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
@@ -411,7 +411,6 @@ func Test_formatMessage(t *testing.T) {
 	endpt.Validation.Results = []endpointmanager.Rule{endpt.Validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
 	endpt.Metadata.Availability = 1.0
-	endpt.Metadata.RequestedFhirVersion = "None"
 	th.Assert(t, expectedEndpt.Equal(endpt), fmt.Sprintf("An error was thrown because the endpoints are not equal, \n endpoint 1 %+v, \n endpoint 2 %+v", expectedEndpt, endpt))
 
 	// should not throw error if metadata is not in the URL
