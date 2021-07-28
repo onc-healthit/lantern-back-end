@@ -7,22 +7,20 @@ validationsmodule_UI <- function(id) {
 
   tagList(
     fluidRow(
+      column(width = 12,
+        h3("Validation Results Count"),
+        uiOutput(ns("validation_results_plot"))
+      )
+    ),
+    fluidRow(
       column(width = 3,
-             h3("Validation Details"),
-             DT::dataTableOutput(ns("validation_details_table"))
-            ),
+        h3("Validation Details"),
+        p("Click on a rule below to filter the validation failure details table."),
+        DT::dataTableOutput(ns("validation_details_table"))
+      ),
       column(width = 9,
-          fluidRow(
-            column(width = 12,
-                h3("Validation Results Count"),
-                uiOutput(ns("validation_results_plot"))
-            )
-          ), fluidRow(
-            column(width = 12,
-              h3("Validation Failure Details"),
-              DT::dataTableOutput(ns("validation_failure_table"))
-            )
-          )
+        h3("Validation Failure Details"),
+        DT::dataTableOutput(ns("validation_failure_table"))
       )
     )
   )
@@ -37,10 +35,6 @@ validationsmodule <- function(
   sel_validation_group
 ) {
   ns <- session$ns
-
-  output$endpoint_count <- renderText({
-    paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
-  })
 
   validation_rules <- reactive({
     res <- selected_validations()
@@ -93,6 +87,9 @@ validationsmodule <- function(
       selected_rule <- deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])
       res <- res %>%
         filter(rule_name == selected_rule)
+    } else {
+      res <- res %>%
+        filter(rule_name == "NO_RULES")
     }
     res <- res %>%
         filter(valid == FALSE)
@@ -104,8 +101,8 @@ validationsmodule <- function(
       colnames = "",
       rownames = FALSE,
       escape = FALSE,
-      selection = "single",
-      options = list(scrollX = TRUE, scrollY = 800, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
+      selection = list(mode = 'single', selected = c(1), target="row"),
+      options = list(scrollX = TRUE, scrollY = 500, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
     )
   })
 
@@ -160,7 +157,8 @@ validationsmodule <- function(
     datatable(failed_validation_results() %>% select(url, expected, actual, vendor_name, fhir_version),
               colnames = c("URL", "Expected Value", "Actual Value", "Certified API Developer Name", "FHIR Version"),
               rownames = FALSE,
-              caption = paste("Rule: ", if (length(input$validation_details_table_rows_selected) > 0) (deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])) else "All Rules"),
+              selection = "none",
+              caption = paste("Rule: ", deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])),
               options = list(scrollX = TRUE)
             )
   })
