@@ -101,7 +101,7 @@ validationsmodule <- function(
       colnames = "",
       rownames = FALSE,
       escape = FALSE,
-      selection = list(mode = 'single', selected = c(1), target="row"),
+      selection = list(mode = "single", selected = c(1), target = "row"),
       options = list(scrollX = TRUE, scrollY = 500, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
     )
   })
