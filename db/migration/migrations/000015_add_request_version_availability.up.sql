@@ -1,8 +1,12 @@
 BEGIN;
 
-ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500) SET DEFAULT 'None';
+ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500);
 
-ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500) SET DEFAULT 'None';
+ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500);
+
+ALTER TABLE fhir_endpoints_metadata ALTER COLUMN requested_fhir_version SET DEFAULT 'None';
+
+ALTER TABLE fhir_endpoints_availability ALTER COLUMN requested_fhir_version SET DEFAULT 'None';
 
 CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
     DECLARE
