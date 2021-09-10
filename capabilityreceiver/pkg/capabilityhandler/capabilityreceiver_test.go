@@ -349,12 +349,13 @@ var testOperations = map[string][]string{
 }
 
 var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
-	URL:               "http://example.com/DTSU2/",
-	HTTPResponse:      200,
-	Errors:            "",
-	SMARTHTTPResponse: 0,
-	ResponseTime:      0.1234,
-	Availability:      1.0,
+	URL:                  "http://example.com/DTSU2/",
+	HTTPResponse:         200,
+	Errors:               "",
+	SMARTHTTPResponse:    0,
+	ResponseTime:         0.1234,
+	Availability:         1.0,
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
@@ -396,9 +397,9 @@ func Test_formatMessage(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedMetadata := testFhirEndpointMetadata
 	expectedEndpt.Metadata = &expectedMetadata
-	expectedEndpt.RequestedFhirVersion = "1.0.2"
+	expectedEndpt.RequestedFhirVersion = "None"
 	tmpMessage := testQueueMsg
-	tmpMessage["requestedFhirVersion"] = "1.0.2"
+	tmpMessage["requestedFhirVersion"] = "None"
 
 	message, err := convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)

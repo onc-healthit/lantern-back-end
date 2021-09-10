@@ -138,11 +138,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
-		URL:               url,
-		HTTPResponse:      httpResponse,
-		Errors:            errs,
-		SMARTHTTPResponse: smarthttpResponse,
-		ResponseTime:      responseTime,
+		URL:                  url,
+		HTTPResponse:         httpResponse,
+		Errors:               errs,
+		SMARTHTTPResponse:    smarthttpResponse,
+		ResponseTime:         responseTime,
+		RequestedFhirVersion: requestedFhirVersion,
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
@@ -221,6 +222,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
 		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
 		existingEndpt.Metadata.SMARTHTTPResponse = fhirEndpoint.Metadata.SMARTHTTPResponse
+		existingEndpt.Metadata.RequestedFhirVersion = fhirEndpoint.Metadata.RequestedFhirVersion
 
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {

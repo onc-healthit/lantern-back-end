@@ -186,21 +186,23 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 
 	var endpointMetadata1 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	var endpointMetadata2 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	// endpointInfos
@@ -374,6 +376,15 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata URL should be ignored. %s vs %s", endpointInfo1.Metadata.URL, endpointInfo2.Metadata.URL)
 	}
 	endpointInfo2.Metadata.URL = endpointMetadata1.URL
+
+	endpointInfo2.Metadata.RequestedFhirVersion = "other"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Metadata RequestedFhirVersion should be different. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata RequestedFhirVersion should be ignored. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	endpointInfo2.Metadata.RequestedFhirVersion = endpointMetadata1.RequestedFhirVersion
 
 	endpointInfo2.CapabilityStatement = nil
 	if endpointInfo1.Equal(endpointInfo2) {
