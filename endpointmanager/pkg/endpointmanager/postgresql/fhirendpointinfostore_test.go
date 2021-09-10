@@ -59,12 +59,25 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		HTTPResponse:      200,
 		Errors:            "Example Error",
 		SMARTHTTPResponse: 0,
-		Availability:      1.0}
+		Availability:      1.0,
+		RequestedFhirVersion: "None",
+	}
+
+	var endpointMetadata1RequestedVersion = &endpointmanager.FHIREndpointMetadata{
+		URL:               endpoint1.URL,
+		HTTPResponse:      200,
+		Errors:            "",
+		SMARTHTTPResponse: 0,
+		Availability:      1.0,
+		RequestedFhirVersion: "1.0.0",
+	}
 
 	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
 		URL:          endpoint2.URL,
 		HTTPResponse: 404,
-		Errors:       "Example Error 2"}
+		Errors:       "Example Error 2",
+		RequestedFhirVersion: "None",
+	}
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
@@ -87,7 +100,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		SMARTResponse:         nil,
 		RequestedFhirVersion:  "1.0.0",
 		CapabilityFhirVersion: "1.0.2",
-		Metadata:              endpointMetadata1}
+		Metadata:              endpointMetadata1RequestedVersion}
 
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:                   endpoint2.URL,
@@ -131,7 +144,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Error adding fhir endpointInfo: %s", err))
 
 	// Add endpointInfo1 again but with different requested version
-	metadataIDRV, err := store.AddFHIREndpointMetadata(ctx, endpointInfo1RequestedVersion.Metadata)
+	metadataIDRV, err := store.AddFHIREndpointMetadata(ctx, endpointMetadata1RequestedVersion)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}

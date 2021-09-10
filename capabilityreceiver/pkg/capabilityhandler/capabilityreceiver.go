@@ -138,11 +138,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
-		URL:               url,
-		HTTPResponse:      httpResponse,
-		Errors:            errs,
-		SMARTHTTPResponse: smarthttpResponse,
-		ResponseTime:      responseTime,
+		URL:                  url,
+		HTTPResponse:         httpResponse,
+		Errors:               errs,
+		SMARTHTTPResponse:    smarthttpResponse,
+		ResponseTime:         responseTime,
+		RequestedFhirVersion: requestedFhirVersion,
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
@@ -234,6 +235,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
 		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
 		existingEndpt.Metadata.SMARTHTTPResponse = fhirEndpoint.Metadata.SMARTHTTPResponse
+		existingEndpt.Metadata.RequestedFhirVersion = fhirEndpoint.Metadata.RequestedFhirVersion
 
 		// Set fhirEndpoint.ValidationID to existingEndpt value because they should have the same ValidationID
 		// until there's a reason to update it
