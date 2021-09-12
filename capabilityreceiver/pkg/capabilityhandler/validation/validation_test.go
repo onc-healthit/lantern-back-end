@@ -215,38 +215,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version R4 should be valid, returned value is instead %+v", actualVal))
 }
 
-func Test_FhirVersion(t *testing.T) {
-	cs, err := getDSTU2CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator, err := getValidator(cs, dstu2)
-	th.Assert(t, err == nil, err)
-
-	// base test
-
-	expectedVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.FHIRVersion,
-		Valid:     true,
-		Expected:  "4.0.1",
-		Comment:   "ONC Certification Criteria requires support of FHIR Version 4.0.1",
-		Reference: "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf",
-		ImplGuide: "USCore 3.1",
-	}
-	expectedVal.Actual = "4.0.1"
-
-	actualVal := validator.FhirVersion("4.0.1")
-	eq := reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("Fhir version 4.0.1 should be valid, is instead %+v", actualVal))
-
-	// fhirVersion is not 4.0.1
-
-	expectedVal.Actual = "1.0.2"
-	expectedVal.Valid = false
-	actualVal = validator.FhirVersion("1.0.2")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("Fhir version 1.0.2 should be valid, is instead %+v", actualVal))
-}
-
 func Test_checkResourceList(t *testing.T) {
 	// checkResourceList is private and therefore cannot be accessed, but most of it's edge cases
 	// are not unique to each public function that calls it, so it'll be tested here

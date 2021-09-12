@@ -8,6 +8,11 @@ validationsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12,
+        p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference")
+      )
+    ),
+    fluidRow(
+      column(width = 12,
         h3("Validation Results Count"),
         uiOutput(ns("validation_results_plot"))
       )

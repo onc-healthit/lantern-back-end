@@ -19,7 +19,6 @@ type Validator interface {
 	RunValidation(capabilityparser.CapabilityStatement, []string, string, string, smartparser.SMARTResponse) endpointmanager.Validation
 	CapStatExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	MimeTypeValid([]string, string) endpointmanager.Rule
-	FhirVersion(string) endpointmanager.Rule
 	TLSVersion(string) endpointmanager.Rule
 	PatientResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	OtherResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
