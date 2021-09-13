@@ -4,8 +4,8 @@ go 1.14
 
 require (
 	github.com/lib/pq v1.3.0
-	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210912151854-2f71a33153b9
-	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20210912151854-2f71a33153b9
+	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20210913125012-095685930867
+	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20210913125012-095685930867
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
