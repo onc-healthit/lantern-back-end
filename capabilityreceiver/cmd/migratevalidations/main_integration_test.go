@@ -156,7 +156,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
 	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, valID))
 
-	// Make sure that 4 entries were added to the validation table with that ID
+	// Make sure that 3 entries were added to the validation table with that ID
 	valRow := store.DB.QueryRowContext(ctx, getValidationStatement, valID)
 	valCount := 0
 	err = valRow.Scan(&valCount)
@@ -212,7 +212,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
 	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, firstValID))
 
-	// Then check that its 4 validation entries were added to the validation table
+	// Then check that its 3 validation entries were added to the validation table
 	valRow = store.DB.QueryRowContext(ctx, getValidationStatement, valID)
 	err = valRow.Scan(&valCount)
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
