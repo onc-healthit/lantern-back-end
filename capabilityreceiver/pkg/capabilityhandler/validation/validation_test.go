@@ -30,19 +30,19 @@ func Test_RunValidation(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	expectedFirstVal := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "The Capability Statement exists.",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
+		Comment:   "The Capability Statement exists.",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 	expectedLastVal := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
-		Comment:  "Kind value should be set to 'instance' because this is a specific system instance.",
-		Actual:   "instance",
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
+		Comment:   "Kind value should be set to 'instance' because this is a specific system instance.",
+		Actual:    "instance",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 
@@ -100,12 +100,12 @@ func Test_CapStatExists(t *testing.T) {
 	// base test
 
 	expectedCap := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  "The Capability Statement exists.",
+		Comment:   "The Capability Statement exists.",
 	}
 
 	actualCap := validator.CapStatExists(cs)
@@ -115,12 +115,12 @@ func Test_CapStatExists(t *testing.T) {
 	// capability statement does not exist
 
 	expectedCap2 := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    false,
-		Expected: "true",
-		Actual:   "false",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     false,
+		Expected:  "true",
+		Actual:    "false",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  "The Capability Statement does not exist.",
+		Comment:   "The Capability Statement does not exist.",
 	}
 
 	actualCap = validator.CapStatExists(nil)
@@ -153,12 +153,12 @@ func Test_MimeTypeValid(t *testing.T) {
 	// base test
 
 	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.GeneralMimeTypeRule,
-		Valid:    true,
-		Expected: fhir2LessJSONMIMEType,
-		Actual:   fhir2LessJSONMIMEType,
+		RuleName:  endpointmanager.GeneralMimeTypeRule,
+		Valid:     true,
+		Expected:  fhir2LessJSONMIMEType,
+		Actual:    fhir2LessJSONMIMEType,
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
+		Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
 	}
 
 	actualVal := validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "1.0.2")
@@ -420,12 +420,12 @@ func Test_KindValid(t *testing.T) {
 
 	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
-		Comment:  baseComment,
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
+		Comment:   baseComment,
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Actual:   "instance",
+		Actual:    "instance",
 	}
 	expectedArray := []endpointmanager.Rule{
 		expectedVal,

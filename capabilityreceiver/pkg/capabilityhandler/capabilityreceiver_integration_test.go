@@ -29,17 +29,17 @@ var testFhirEndpoint2 = &endpointmanager.FHIREndpoint{
 }
 
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
-	&endpointmanager.Vendor{
+	{
 		Name:          "Epic Systems Corporation",
 		DeveloperCode: "A",
 		CHPLID:        1,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Corporation",
 		DeveloperCode: "B",
 		CHPLID:        2,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Health Services, Inc.",
 		DeveloperCode: "C",
 		CHPLID:        3,

@@ -46,12 +46,12 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 // CapStatExists checks if the capability statement exists
 func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  "The Capability Statement exists.",
+		Comment:   "The Capability Statement exists.",
 	}
 
 	if capStat != nil {
@@ -68,12 +68,12 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	mimeString := strings.Join(mimeTypes, ",")
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.GeneralMimeTypeRule,
-		Valid:    true,
-		Expected: "",
-		Actual:   mimeString,
+		RuleName:  endpointmanager.GeneralMimeTypeRule,
+		Valid:     true,
+		Expected:  "",
+		Actual:    mimeString,
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  "",
+		Comment:   "",
 	}
 
 	if len(mimeTypes) == 0 {
@@ -142,11 +142,11 @@ func (bv *baseVal) SmartResponseExists(smartRsp smartparser.SMARTResponse) endpo
 func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
 	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
-		Comment:  baseComment,
+		Comment:   baseComment,
 	}
 	if capStat == nil {
 		ruleError.Valid = false
