@@ -35,6 +35,7 @@ func Test_RunValidation(t *testing.T) {
 		Expected: "true",
 		Actual:   "true",
 		Comment:  "The Capability Statement exists.",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 	expectedLastVal := endpointmanager.Rule{
 		RuleName: endpointmanager.KindRule,
@@ -42,13 +43,14 @@ func Test_RunValidation(t *testing.T) {
 		Expected: "instance",
 		Comment:  "Kind value should be set to 'instance' because this is a specific system instance.",
 		Actual:   "instance",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 
 	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 4, fmt.Sprintf("RunValidation should have returned 4 validation checks, instead it returned %d", len(actualVal.Results)))
+	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
-	eq = reflect.DeepEqual(actualVal.Results[3], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 
 	// r4 test
@@ -81,10 +83,10 @@ func Test_RunValidation(t *testing.T) {
 	}
 
 	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
-	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
+	th.Assert(t, len(actualVal.Results) == 14, fmt.Sprintf("RunValidation should have returned 14 validation checks, instead it returned %d", len(actualVal.Results)))
+	eq = reflect.DeepEqual(actualVal.Results[2], expectedFourthVal)
 	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[14], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[13], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }
 
@@ -102,6 +104,7 @@ func Test_CapStatExists(t *testing.T) {
 		Valid:    true,
 		Expected: "true",
 		Actual:   "true",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		Comment:  "The Capability Statement exists.",
 	}
 
@@ -116,6 +119,7 @@ func Test_CapStatExists(t *testing.T) {
 		Valid:    false,
 		Expected: "true",
 		Actual:   "false",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		Comment:  "The Capability Statement does not exist.",
 	}
 
@@ -153,6 +157,7 @@ func Test_MimeTypeValid(t *testing.T) {
 		Valid:    true,
 		Expected: fhir2LessJSONMIMEType,
 		Actual:   fhir2LessJSONMIMEType,
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		Comment:  "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
 	}
 
@@ -419,6 +424,7 @@ func Test_KindValid(t *testing.T) {
 		Valid:    true,
 		Expected: "instance",
 		Comment:  baseComment,
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		Actual:   "instance",
 	}
 	expectedArray := []endpointmanager.Rule{

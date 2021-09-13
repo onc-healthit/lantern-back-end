@@ -161,7 +161,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	valCount := 0
 	err = valRow.Scan(&valCount)
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
-	th.Assert(t, valCount == 4, fmt.Sprintf("there should be 4 entries in the validations table with id %d, instead there are %d", valID, valCount))
+	th.Assert(t, valCount == 3, fmt.Sprintf("there should be 3 entries in the validations table with id %d, instead there are %d", valID, valCount))
 
 	// Add another instance of the second URL
 	thirdTime := time.Now().UTC().Round(time.Microsecond)
@@ -216,7 +216,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	valRow = store.DB.QueryRowContext(ctx, getValidationStatement, valID)
 	err = valRow.Scan(&valCount)
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
-	th.Assert(t, valCount == 4, fmt.Sprintf("there should only be 4 entries in the validations table with id %d, instead there are %d", valID, valCount))
+	th.Assert(t, valCount == 3, fmt.Sprintf("there should only be 3 entries in the validations table with id %d, instead there are %d", valID, valCount))
 }
 
 func Test_addToValidationTableInfo(t *testing.T) {
