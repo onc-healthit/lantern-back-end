@@ -170,7 +170,7 @@ func Test_QueueCount(t *testing.T) {
 	err = aq.SendToQueue(ctx, "queue count message", mq, &ch, qName)
 	th.Assert(t, err == nil, err)
 	// ack the message
-	_, deliveryOk, err = channel.Get(qName, true)
+	_, deliveryOk, err := channel.Get(qName, true)
 	th.Assert(t, err == nil, err)
 
 	count, err = aq.QueueCount(qName, channel)
