@@ -30,25 +30,27 @@ func Test_RunValidation(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	expectedFirstVal := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "The Capability Statement exists.",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
+		Comment:   "The Capability Statement exists.",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 	expectedLastVal := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
-		Comment:  "Kind value should be set to 'instance' because this is a specific system instance.",
-		Actual:   "instance",
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
+		Comment:   "Kind value should be set to 'instance' because this is a specific system instance.",
+		Actual:    "instance",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 
 	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 4, fmt.Sprintf("RunValidation should have returned 4 validation checks, instead it returned %d", len(actualVal.Results)))
+	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
-	eq = reflect.DeepEqual(actualVal.Results[3], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 
 	// r4 test
@@ -81,10 +83,10 @@ func Test_RunValidation(t *testing.T) {
 	}
 
 	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
-	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
+	th.Assert(t, len(actualVal.Results) == 14, fmt.Sprintf("RunValidation should have returned 14 validation checks, instead it returned %d", len(actualVal.Results)))
+	eq = reflect.DeepEqual(actualVal.Results[2], expectedFourthVal)
 	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[14], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[13], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }
 
@@ -98,11 +100,12 @@ func Test_CapStatExists(t *testing.T) {
 	// base test
 
 	expectedCap := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "The Capability Statement exists.",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   "The Capability Statement exists.",
 	}
 
 	actualCap := validator.CapStatExists(cs)
@@ -112,11 +115,12 @@ func Test_CapStatExists(t *testing.T) {
 	// capability statement does not exist
 
 	expectedCap2 := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    false,
-		Expected: "true",
-		Actual:   "false",
-		Comment:  "The Capability Statement does not exist.",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     false,
+		Expected:  "true",
+		Actual:    "false",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   "The Capability Statement does not exist.",
 	}
 
 	actualCap = validator.CapStatExists(nil)
@@ -149,11 +153,12 @@ func Test_MimeTypeValid(t *testing.T) {
 	// base test
 
 	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.GeneralMimeTypeRule,
-		Valid:    true,
-		Expected: fhir2LessJSONMIMEType,
-		Actual:   fhir2LessJSONMIMEType,
-		Comment:  "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
+		RuleName:  endpointmanager.GeneralMimeTypeRule,
+		Valid:     true,
+		Expected:  fhir2LessJSONMIMEType,
+		Actual:    fhir2LessJSONMIMEType,
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
 	}
 
 	actualVal := validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "1.0.2")
@@ -162,11 +167,18 @@ func Test_MimeTypeValid(t *testing.T) {
 
 	// fhirVersion 3+ test
 
+	cs, err = getSTU3CapStat()
+	th.Assert(t, err == nil, err)
+
+	stu3validator, err := getValidator(cs, stu3)
+	th.Assert(t, err == nil, err)
+
 	expectedVal.Expected = fhir3PlusJSONMIMEType
 	expectedVal.Actual = fhir3PlusJSONMIMEType
-	expectedVal.Comment = "FHIR Version 3.0.0 requires the Mime Type to be " + fhir3PlusJSONMIMEType
+	expectedVal.Comment = "FHIR Version 3.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
+	expectedVal.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 
-	actualVal = validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.0")
+	actualVal = stu3validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version STU3 should be valid, is instead %+v", actualVal))
 
@@ -176,6 +188,7 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Expected = "N/A"
 	expectedVal.Actual = ""
 	expectedVal.Comment = "No mime type given; cannot validate mime type."
+	expectedVal.Reference = "http://hl7.org/fhir/DSTU2/conformance.html"
 
 	actualVal = validator.MimeTypeValid([]string{}, "1.0.2")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
@@ -213,38 +226,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	actualVal = validator2.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "4.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version R4 should be valid, returned value is instead %+v", actualVal))
-}
-
-func Test_FhirVersion(t *testing.T) {
-	cs, err := getDSTU2CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator, err := getValidator(cs, dstu2)
-	th.Assert(t, err == nil, err)
-
-	// base test
-
-	expectedVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.FHIRVersion,
-		Valid:     true,
-		Expected:  "4.0.1",
-		Comment:   "ONC Certification Criteria requires support of FHIR Version 4.0.1",
-		Reference: "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf",
-		ImplGuide: "USCore 3.1",
-	}
-	expectedVal.Actual = "4.0.1"
-
-	actualVal := validator.FhirVersion("4.0.1")
-	eq := reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("Fhir version 4.0.1 should be valid, is instead %+v", actualVal))
-
-	// fhirVersion is not 4.0.1
-
-	expectedVal.Actual = "1.0.2"
-	expectedVal.Valid = false
-	actualVal = validator.FhirVersion("1.0.2")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("Fhir version 1.0.2 should be valid, is instead %+v", actualVal))
 }
 
 func Test_checkResourceList(t *testing.T) {
@@ -447,11 +428,12 @@ func Test_KindValid(t *testing.T) {
 
 	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
-		Comment:  baseComment,
-		Actual:   "instance",
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
+		Comment:   baseComment,
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Actual:    "instance",
 	}
 	expectedArray := []endpointmanager.Rule{
 		expectedVal,
@@ -966,6 +948,20 @@ func Test_SearchParamsUnique(t *testing.T) {
 // getDSTU2CapStat gets a DSTU2 Capability Statement
 func getDSTU2CapStat() (capabilityparser.CapabilityStatement, error) {
 	path := filepath.Join("../../../testdata", "test_dstu2_capability_statement.json")
+	csJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	if err != nil {
+		return nil, err
+	}
+	return cs, nil
+}
+
+// getSTU3CapStat gets a STU3 Capability Statement
+func getSTU3CapStat() (capabilityparser.CapabilityStatement, error) {
+	path := filepath.Join("../../../testdata", "advantagecare_physicians_stu3.json")
 	csJSON, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err

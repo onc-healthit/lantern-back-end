@@ -42,9 +42,6 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
-	returnedRule = v.baseVal.FhirVersion(fhirVersion)
-	validationResults = append(validationResults, returnedRule)
-
 	returnedRule = v.TLSVersion(tlsVersion)
 	validationResults = append(validationResults, returnedRule)
 

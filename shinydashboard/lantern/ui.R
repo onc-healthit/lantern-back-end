@@ -25,6 +25,7 @@ ui <- dashboardPage(
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("Capability Statement Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
+      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeLabel = "new", badgeColor = "green"),
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
       menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
@@ -67,6 +68,9 @@ ui <- dashboardPage(
       ),
       tabItem("values_tab",
               valuesmodule_UI("values_page")
+      ),
+      tabItem("validations_tab",
+              validationsmodule_UI("validations_page")
       ),
       tabItem("security_tab",
               securitymodule_UI("security_page")

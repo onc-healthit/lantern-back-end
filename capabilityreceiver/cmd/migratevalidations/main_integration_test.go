@@ -100,7 +100,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	// Add metadata
 	metadataID1, err := store.AddFHIREndpointMetadata(ctx, &testMetadata1)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding first metadata object: %s", err))
-
+	
 	metadataID2, err := store.AddFHIREndpointMetadata(ctx, &testMetadata2)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding first metadata object: %s", err))
 
@@ -156,12 +156,12 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
 	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, valID))
 
-	// Make sure that 4 entries were added to the validation table with that ID
+	// Make sure that 3 entries were added to the validation table with that ID
 	valRow := store.DB.QueryRowContext(ctx, getValidationStatement, valID)
 	valCount := 0
 	err = valRow.Scan(&valCount)
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
-	th.Assert(t, valCount == 4, fmt.Sprintf("there should be 4 entries in the validations table with id %d, instead there are %d", valID, valCount))
+	th.Assert(t, valCount == 3, fmt.Sprintf("there should be 3 entries in the validations table with id %d, instead there are %d", valID, valCount))
 
 	// Add another instance of the second URL
 	thirdTime := time.Now().UTC().Round(time.Microsecond)
@@ -212,11 +212,11 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
 	th.Assert(t, valResCount == 1, fmt.Sprintf("for URL %s, there should be one row with id %d", url1, firstValID))
 
-	// Then check that its 4 validation entries were added to the validation table
+	// Then check that its 3 validation entries were added to the validation table
 	valRow = store.DB.QueryRowContext(ctx, getValidationStatement, valID)
 	err = valRow.Scan(&valCount)
 	th.Assert(t, err == nil, fmt.Sprintf("Err should be nil, is instead %s", err))
-	th.Assert(t, valCount == 4, fmt.Sprintf("there should only be 4 entries in the validations table with id %d, instead there are %d", valID, valCount))
+	th.Assert(t, valCount == 3, fmt.Sprintf("there should only be 3 entries in the validations table with id %d, instead there are %d", valID, valCount))
 }
 
 func Test_addToValidationTableInfo(t *testing.T) {

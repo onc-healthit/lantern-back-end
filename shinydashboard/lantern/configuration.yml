@@ -36,6 +36,7 @@ module_files:
   - "modules/securitymodule.R"
   - "modules/smartresponsemodule.R"
   - "modules/valuesmodule.R"
+  - "modules/validationsmodule.R"
 
 refresh_timeout_minutes:
   - 1440

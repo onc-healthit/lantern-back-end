@@ -29,17 +29,17 @@ var testFhirEndpoint2 = &endpointmanager.FHIREndpoint{
 }
 
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
-	&endpointmanager.Vendor{
+	{
 		Name:          "Epic Systems Corporation",
 		DeveloperCode: "A",
 		CHPLID:        1,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Corporation",
 		DeveloperCode: "B",
 		CHPLID:        2,
 	},
-	&endpointmanager.Vendor{
+	{
 		Name:          "Cerner Health Services, Inc.",
 		DeveloperCode: "C",
 		CHPLID:        3,
@@ -163,7 +163,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	valResRows = store.DB.QueryRow("SELECT COUNT(*) FROM validations WHERE validation_result_id=$1", valID1)
 	err = valResRows.Scan(&validationCount)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, validationCount == 4, fmt.Sprintf("Should be 4 validation entries for ID %d, is instead %d", valID1, validationCount))
+	th.Assert(t, validationCount == 3, fmt.Sprintf("Should be 3 validation entries for ID %d, is instead %d", valID1, validationCount))
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
@@ -204,7 +204,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	valResRows = store.DB.QueryRow("SELECT COUNT(*) FROM validations WHERE validation_result_id=$1", valID2)
 	err = valResRows.Scan(&validationCount)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, validationCount == 4, fmt.Sprintf("Should be 4 validation entries for ID %d, is instead %d", valID2, validationCount))
+	th.Assert(t, validationCount == 3, fmt.Sprintf("Should be 3 validation entries for ID %d, is instead %d", valID2, validationCount))
 
 	// check that an item with the same URL updates the endpoint in the database
 	queueTmp["tlsVersion"] = "TLS 1.3"

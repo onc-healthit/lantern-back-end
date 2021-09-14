@@ -28,6 +28,10 @@ devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 qry_interval_seconds <- (strtoi(Sys.getenv("LANTERN_CAPQUERY_QRYINTVL")) * 60)
 database_fetch <- reactiveVal(0)
 
+validation_group_list <- fromJSON(here(root, "validation_groups.json"))
+validation_rules_descriptions <- fromJSON(here(root, "rule_descriptions.json"))
+validation_group_names <- names(validation_group_list)
+
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_FHIR_VERSIONS" = "All FHIR Versions",
@@ -69,7 +73,8 @@ app_data <<- list(
   well_known_endpoints_no_doc = reactiveVal(NULL), # well known endpoints reached, but no JSON doc returned
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
   implementation_guide = reactiveVal(NULL),        # implementation_guide table
-  capstat_sizes_tbl = reactiveVal(NULL)            # capability statement size by vendor, fhir_version
+  capstat_sizes_tbl = reactiveVal(NULL),           # capability statement size by vendor, fhir_version
+  validation_tbl = reactiveVal(NULL)               # validation rules and results
 )
 
 # Define observer based on a refresh_timeout to refetch data from the database

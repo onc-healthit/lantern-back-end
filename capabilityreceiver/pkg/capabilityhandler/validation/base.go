@@ -33,9 +33,6 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	returnedRule = bv.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
-	returnedRule = bv.FhirVersion(fhirVersion)
-	validationResults = append(validationResults, returnedRule)
-
 	returnedRules := bv.KindValid(capStat)
 	validationResults = append(validationResults, returnedRules[0])
 
@@ -49,11 +46,12 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 // CapStatExists checks if the capability statement exists
 func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.CapStatExistRule,
-		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "The Capability Statement exists.",
+		RuleName:  endpointmanager.CapStatExistRule,
+		Valid:     true,
+		Expected:  "true",
+		Actual:    "true",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   "The Capability Statement exists.",
 	}
 
 	if capStat != nil {
@@ -70,11 +68,12 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	mimeString := strings.Join(mimeTypes, ",")
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.GeneralMimeTypeRule,
-		Valid:    true,
-		Expected: "",
-		Actual:   mimeString,
-		Comment:  "",
+		RuleName:  endpointmanager.GeneralMimeTypeRule,
+		Valid:     true,
+		Expected:  "",
+		Actual:    mimeString,
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   "",
 	}
 
 	if len(mimeTypes) == 0 {
@@ -118,26 +117,6 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 	return ruleError
 }
 
-// FhirVersion checks if the given verison is 4.0.1, which is the current requirement for all
-// implemented FHIR endpoints
-func (bv *baseVal) FhirVersion(fhirVersion string) endpointmanager.Rule {
-	ruleError := endpointmanager.Rule{
-		RuleName:  endpointmanager.FHIRVersion,
-		Valid:     true,
-		Expected:  "4.0.1",
-		Actual:    fhirVersion,
-		Comment:   "ONC Certification Criteria requires support of FHIR Version 4.0.1",
-		Reference: "https://www.healthit.gov/cures/sites/default/files/cures/2020-03/APICertificationCriterion.pdf",
-		ImplGuide: "USCore 3.1",
-	}
-
-	if fhirVersion != "4.0.1" {
-		ruleError.Valid = false
-	}
-
-	return ruleError
-}
-
 func (bv *baseVal) TLSVersion(tlsVersion string) endpointmanager.Rule {
 	var ruleError endpointmanager.Rule
 	return ruleError
@@ -163,10 +142,11 @@ func (bv *baseVal) SmartResponseExists(smartRsp smartparser.SMARTResponse) endpo
 func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
 	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.KindRule,
-		Valid:    true,
-		Expected: "instance",
-		Comment:  baseComment,
+		RuleName:  endpointmanager.KindRule,
+		Valid:     true,
+		Expected:  "instance",
+		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Comment:   baseComment,
 	}
 	if capStat == nil {
 		ruleError.Valid = false
