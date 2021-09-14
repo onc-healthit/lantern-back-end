@@ -167,12 +167,18 @@ func Test_MimeTypeValid(t *testing.T) {
 
 	// fhirVersion 3+ test
 
+	cs, err = getSTU3CapStat()
+	th.Assert(t, err == nil, err)
+
+	stu3validator, err := getValidator(cs, stu3)
+	th.Assert(t, err == nil, err)
+
 	expectedVal.Expected = fhir3PlusJSONMIMEType
 	expectedVal.Actual = fhir3PlusJSONMIMEType
-	expectedVal.Comment = "FHIR Version 3.0.0 requires the Mime Type to be " + fhir3PlusJSONMIMEType
+	expectedVal.Comment = "FHIR Version 3.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
 	expectedVal.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 
-	actualVal = validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.0")
+	actualVal = stu3validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version STU3 should be valid, is instead %+v", actualVal))
 
@@ -182,6 +188,7 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Expected = "N/A"
 	expectedVal.Actual = ""
 	expectedVal.Comment = "No mime type given; cannot validate mime type."
+	expectedVal.Reference = "http://hl7.org/fhir/DSTU2/conformance.html"
 
 	actualVal = validator.MimeTypeValid([]string{}, "1.0.2")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
@@ -941,6 +948,20 @@ func Test_SearchParamsUnique(t *testing.T) {
 // getDSTU2CapStat gets a DSTU2 Capability Statement
 func getDSTU2CapStat() (capabilityparser.CapabilityStatement, error) {
 	path := filepath.Join("../../../testdata", "test_dstu2_capability_statement.json")
+	csJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
+	if err != nil {
+		return nil, err
+	}
+	return cs, nil
+}
+
+// getSTU3CapStat gets a STU3 Capability Statement
+func getSTU3CapStat() (capabilityparser.CapabilityStatement, error) {
+	path := filepath.Join("../../../testdata", "advantagecare_physicians_stu3.json")
 	csJSON, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err

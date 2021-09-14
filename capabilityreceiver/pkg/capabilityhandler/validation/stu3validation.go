@@ -40,7 +40,6 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 	return validations
 }
 
-
 // CapStatExists checks if the capability statement exists using the base function, and then
 // adds specific STU3 reference information
 func (v *stu3Validation) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
@@ -56,7 +55,6 @@ func (v *stu3Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) e
 	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 	return baseRule
 }
-
 
 // KindValid checks the rule that kind = instance since all of the endpoints we are looking
 // at are for server instances, and then adds specific STU3 reference information
