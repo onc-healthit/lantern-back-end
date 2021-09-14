@@ -170,6 +170,7 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Expected = fhir3PlusJSONMIMEType
 	expectedVal.Actual = fhir3PlusJSONMIMEType
 	expectedVal.Comment = "FHIR Version 3.0.0 requires the Mime Type to be " + fhir3PlusJSONMIMEType
+	expectedVal.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 
 	actualVal = validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.0")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
