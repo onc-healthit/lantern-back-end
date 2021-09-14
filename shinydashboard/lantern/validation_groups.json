@@ -2,7 +2,7 @@
     "HTTP": [
         "http://hl7.org/fhir/http.html"
      ],
-    "Capability Statements": [
+    "Capability Statement": [
         "http://hl7.org/fhir/capabilitystatement.html"
     ],
     "SMART": [
@@ -14,7 +14,11 @@
     ], 
     "Conformance Statement": [
         "http://hl7.org/fhir/DSTU2/conformance.html"
-    ], "Other": [
+    ], 
+    "STU3 Capability Statement": [
+        "http://hl7.org/fhir/STU3/capabilitystatement.html"
+    ],
+    "Other": [
         ""
     ]
 }
