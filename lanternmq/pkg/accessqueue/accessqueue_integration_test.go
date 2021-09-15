@@ -171,12 +171,12 @@ func Test_QueueCount(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// ack the message
-	msg, deliveryOk, err := channel.Get(qName, false)
+	msg, _, err := channel.Get(qName, false)
 	th.Assert(t, err == nil, err)
 	channel.Ack(msg.DeliveryTag, true)
 	count, err = aq.QueueCount(qName, channel)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count == 1, fmt.Sprintf("there should be one message in the queue, instead there are %d.", count))
+	th.Assert(t, count == 1, fmt.Sprintf("there should be one message in the queue, instead there are %d", count))
 }
 
 func queueIsEmpty(t *testing.T, queueName string) {
