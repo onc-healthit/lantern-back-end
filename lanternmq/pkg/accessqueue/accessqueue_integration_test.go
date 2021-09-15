@@ -182,7 +182,7 @@ func Test_QueueCount(t *testing.T) {
 		count, err = aq.QueueCount(qName, channel)
 		th.Assert(t, err == nil, err)
 		if (count == 1) {
-			th.Assert(t, count == 1, fmt.Sprintf("there should be one message in the queue, instead there are %d", count))
+			th.Assert(t, count != 1, fmt.Sprintf("there should be one message in the queue, instead there are %d. Had to loop through %v times", count, loops))
 		}
 	}
 }
