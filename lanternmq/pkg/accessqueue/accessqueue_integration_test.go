@@ -79,13 +79,17 @@ func Test_QueueCount(t *testing.T) {
 
 	time.Sleep(time.Duration(60) * time.Second)
 
-	// ack the message
+	/* ack the message
 	delivery, deliveryBool, err := channel.Get(qName, true)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, err)*/
 
 	count, err = aq.QueueCount(qName, channel)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, count != 1, fmt.Sprintf("There are %d messages in the queue. Message count is %v. Delivery bool is %v", count, delivery.MessageCount, deliveryBool))
+	th.Assert(t, count == 1, fmt.Sprintf("There are %d messages in the queue.", count))
+
+	// ack the message
+	delivery, deliveryBool, err := channel.Get(qName, true)
+	th.Assert(t, err == nil, err)
 		
 }
 
