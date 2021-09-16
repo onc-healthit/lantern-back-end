@@ -172,6 +172,7 @@ func Test_QueueCount(t *testing.T) {
 	err = aq.SendToQueue(ctx, "queue count message", mq, &ch, qName)
 	th.Assert(t, err == nil, err)
 
+	// Need to pause to ensure message is placed on the queue before calling QueueCount
 	time.Sleep(20 * time.Second)
 
 	count, err = aq.QueueCount(qName, channel)
