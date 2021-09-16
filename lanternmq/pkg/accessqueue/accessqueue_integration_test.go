@@ -88,7 +88,7 @@ func Test_QueueCount(t *testing.T) {
 	th.Assert(t, count == 1, fmt.Sprintf("There are %d messages in the queue.", count))
 
 	// ack the message
-	delivery, deliveryBool, err := channel.Get(qName, true)
+	_, _, err := channel.Get(qName, true)
 	th.Assert(t, err == nil, err)
 		
 }
