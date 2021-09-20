@@ -33,6 +33,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	MIMETypes:     []string{"application/json+fhir"},
 	TLSVersion:    "TLS 1.2",
 	SMARTResponse: nil,
+	RequestedFhirVersion: "1.0.2",
 }
 
 var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
@@ -40,6 +41,7 @@ var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	MIMETypes:     []string{"application/json+fhir"},
 	TLSVersion:    "TLS 1.2",
 	SMARTResponse: nil,
+	RequestedFhirVersion: "1.0.2",
 }
 
 func TestMain(m *testing.M) {
@@ -86,8 +88,9 @@ func Test_PruneInfoHistory(t *testing.T) {
 		tls_version,
 		mime_types,
 		smart_response, 
-		capability_statement)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`)
+		capability_statement,
+		requested_fhir_version)			
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
 	th.Assert(t, err == nil, err)
 	defer addFHIREndpointInfoHistoryStatement.Close()
 
@@ -760,7 +763,8 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		smartResponseJSON,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		e.RequestedFhirVersion)
 	if err != nil {
 		return err
 	}
