@@ -35,7 +35,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 
 		if equalFhirEntries {
 			equalFhirEntries = (requestedFhirVersion1 == requestedFhirVersion2)
-			
+
 			if equalFhirEntries {
 				equalFhirEntries = (tlsVersion1 == tlsVersion2)
 
