@@ -2,11 +2,11 @@ package archivefile
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"math"
 	"sort"
 	"time"
-	"database/sql"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -17,22 +17,22 @@ import (
 
 // totalSummary is the format of a given URL's JSON object for the archive file
 type totalSummary struct {
-	URL                string                 `json:"url"`
-	CreatedAt          time.Time              `json:"created_at"`
-	ListSource         []string               `json:"list_source"`
-	OrganizationNames  []string               `json:"api_information_source_name"`
-	Updated            map[string]interface{} `json:"updated_at"`
-	NumberOfUpdates    int                    `json:"number_of_updates"`
-	Operation          map[string]interface{} `json:"operation"`
-	FHIRVersion        map[string]interface{} `json:"fhir_version"`
-	TLSVersion         map[string]interface{} `json:"tls_version"`
-	MIMETypes          firstLastStrArr        `json:"mime_types"`
-	Vendor             map[string]interface{} `json:"certified_api_developer_name"`
-	ResponseTimeSecond interface{}            `json:"median_response_time"`
-	HTTPResponse       []httpResponse         `json:"http_response"`
-	SmartHTTPResponse  []smartHTTPResponse    `json:"smart_http_response"`
-	Errors             []responseErrors       `json:"errors"`
-	RequestedFhirVersion string				  `json:"requested_fhir_version"`
+	URL                  string                 `json:"url"`
+	CreatedAt            time.Time              `json:"created_at"`
+	ListSource           []string               `json:"list_source"`
+	OrganizationNames    []string               `json:"api_information_source_name"`
+	Updated              map[string]interface{} `json:"updated_at"`
+	NumberOfUpdates      int                    `json:"number_of_updates"`
+	Operation            map[string]interface{} `json:"operation"`
+	FHIRVersion          map[string]interface{} `json:"fhir_version"`
+	TLSVersion           map[string]interface{} `json:"tls_version"`
+	MIMETypes            firstLastStrArr        `json:"mime_types"`
+	Vendor               map[string]interface{} `json:"certified_api_developer_name"`
+	ResponseTimeSecond   interface{}            `json:"median_response_time"`
+	HTTPResponse         []httpResponse         `json:"http_response"`
+	SmartHTTPResponse    []smartHTTPResponse    `json:"smart_http_response"`
+	Errors               []responseErrors       `json:"errors"`
+	RequestedFhirVersion string                 `json:"requested_fhir_version"`
 }
 
 // formats for specific fields in the above totalSummary struct
@@ -56,30 +56,30 @@ type responseErrors struct {
 // Result is the value that is returned from getting the history data from the
 // given URL
 type Result struct {
-	URL     string
+	URL                  string
 	RequestedFhirVersion string
-	Summary totalSummary
+	Summary              totalSummary
 }
 
 // historyArgs is the format for the data passed to getHistory from a worker
 type historyArgs struct {
-	fhirURL   string
+	fhirURL              string
 	requestedFhirVersion string
-	dateStart string
-	dateEnd   string
-	store     *postgresql.Store
-	result    chan Result
+	dateStart            string
+	dateEnd              string
+	store                *postgresql.Store
+	result               chan Result
 }
 
 // historyEntry is the format of the data received from the history table for the given URL
 type historyEntry struct {
-	URL              string
-	UpdatedAt        time.Time
-	Operation        string
-	FHIRVersion      string
-	FHIRVersionError error
-	TLSVersion       string
-	MIMETypes        []string
+	URL                  string
+	UpdatedAt            time.Time
+	Operation            string
+	FHIRVersion          string
+	FHIRVersionError     error
+	TLSVersion           string
+	MIMETypes            []string
 	RequestedFhirVersion string
 }
 
@@ -92,11 +92,11 @@ type vendorEntry struct {
 // metadataEntry is the format of the data received from the fhir_endpoints_metadata for the
 // given URL
 type metadataEntry struct {
-	URL                 string
-	ResponseTimeSeconds float64
-	HTTPResponse        int
-	SMARTHTTPResponse   int
-	Errors              string
+	URL                  string
+	ResponseTimeSeconds  float64
+	HTTPResponse         int
+	SMARTHTTPResponse    int
+	Errors               string
 	RequestedFhirVersion string
 }
 
@@ -290,15 +290,15 @@ func createJobs(ctx context.Context,
 	store *postgresql.Store,
 	allWorkers *workers.Workers) {
 	for url, requested_versions := range urls_fhir_version {
-		for index := range requested_versions{
+		for index := range requested_versions {
 			jobArgs := make(map[string]interface{})
 			jobArgs["historyArgs"] = historyArgs{
-				fhirURL:   url,
-				requestedFhirVersion: requested_versions[index], 
-				dateStart: dateStart,
-				dateEnd:   dateEnd,
-				store:     store,
-				result:    ch,
+				fhirURL:              url,
+				requestedFhirVersion: requested_versions[index],
+				dateStart:            dateStart,
+				dateEnd:              dateEnd,
+				store:                store,
+				result:               ch,
 			}
 
 			job := workers.Job{
@@ -345,9 +345,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 		result := Result{
-			URL:     ha.fhirURL,
+			URL:                  ha.fhirURL,
 			RequestedFhirVersion: ha.requestedFhirVersion,
-			Summary: returnResult,
+			Summary:              returnResult,
 		}
 		ha.result <- result
 		return nil
@@ -368,9 +368,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 			result := Result{
-				URL:     ha.fhirURL,
+				URL:                  ha.fhirURL,
 				RequestedFhirVersion: ha.requestedFhirVersion,
-				Summary: returnResult,
+				Summary:              returnResult,
 			}
 			ha.result <- result
 			return nil
@@ -417,9 +417,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	result := Result{
-		URL:     ha.fhirURL,
+		URL:                  ha.fhirURL,
 		RequestedFhirVersion: ha.requestedFhirVersion,
-		Summary: returnResult,
+		Summary:              returnResult,
 	}
 	ha.result <- result
 	return nil
@@ -443,9 +443,9 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	if err != nil {
 		log.Warnf("Failed getting the metadata rows for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 		result := Result{
-			URL:     ha.fhirURL,
+			URL:                  ha.fhirURL,
 			RequestedFhirVersion: ha.requestedFhirVersion,
-			Summary: returnResult,
+			Summary:              returnResult,
 		}
 		ha.result <- result
 		return nil
@@ -464,9 +464,9 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the metadata table for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 			result := Result{
-				URL:     ha.fhirURL,
+				URL:                  ha.fhirURL,
 				RequestedFhirVersion: ha.requestedFhirVersion,
-				Summary: returnResult,
+				Summary:              returnResult,
 			}
 			ha.result <- result
 			return nil
@@ -548,9 +548,9 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	result := Result{
-		URL:     ha.fhirURL,
+		URL:                  ha.fhirURL,
 		RequestedFhirVersion: ha.requestedFhirVersion,
-		Summary: returnResult,
+		Summary:              returnResult,
 	}
 	ha.result <- result
 	return nil
