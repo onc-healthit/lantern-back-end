@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -142,6 +143,7 @@ func Test_CleanQueue(t *testing.T) {
 	th.Assert(t, err == nil, err)
 }
 
+
 func Test_QueueCount(t *testing.T) {
 	queueIsEmpty(t, qName)
 	defer checkCleanQueue(t, qName, channel)
@@ -169,13 +171,18 @@ func Test_QueueCount(t *testing.T) {
 	ctx := context.Background()
 	err = aq.SendToQueue(ctx, "queue count message", mq, &ch, qName)
 	th.Assert(t, err == nil, err)
-	// ack the message
-	_, _, err = channel.Get(qName, true)
-	th.Assert(t, err == nil, err)
+
+	// Need to pause to ensure message is placed on the queue before calling QueueCount
+	time.Sleep(20 * time.Second)
 
 	count, err = aq.QueueCount(qName, channel)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 1, fmt.Sprintf("there should be one message in the queue, instead there are %d", count))
+
+	// ack the message
+	_, _, err = channel.Get(qName, true)
+	th.Assert(t, err == nil, err)
+		
 }
 
 func queueIsEmpty(t *testing.T, queueName string) {
