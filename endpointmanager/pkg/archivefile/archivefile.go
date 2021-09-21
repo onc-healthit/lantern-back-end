@@ -109,7 +109,7 @@ func CreateArchive(ctx context.Context,
 	numWorkers int,
 	workerDur int) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
-	sqlQuery := "SELECT DISTINCT e.url, i.requested_fhir_version, e.organization_names, e.created_at, e.list_source FROM fhir_endpoints e LEFT JOIN fhir_endpoints_info i ON e.url = i.url;"
+	sqlQuery := "SELECT DISTINCT e.url, h.requested_fhir_version, e.organization_names, e.created_at, e.list_source FROM fhir_endpoints e LEFT JOIN fhir_endpoints_info_history h ON e.url = h.url;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints: %s", err)
@@ -139,7 +139,9 @@ func CreateArchive(ctx context.Context,
 			entry.RequestedFhirVersion = "None"
 		}
 
-		allData[entry.URL] = make(map[string]totalSummary)
+		if _, ok := allData[entry.URL]; !ok {
+			allData[entry.URL] = make(map[string]totalSummary)
+		}
 
 		// If the URL already exists, include the new list source and organization names
 		if val, ok := allData[entry.URL][entry.RequestedFhirVersion]; ok {
