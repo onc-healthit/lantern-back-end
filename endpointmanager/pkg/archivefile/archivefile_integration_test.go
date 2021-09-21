@@ -36,12 +36,14 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:        "http://example.com/DTSU2/",
 	MIMETypes:  []string{"application/json+fhir"},
 	TLSVersion: "TLS 1.2",
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	URL:        "http://example.com/DTSU2/",
 	MIMETypes:  []string{"application/fhir+json"},
 	TLSVersion: "TLS 1.3",
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
@@ -118,8 +120,9 @@ func TestMain(m *testing.M) {
 		mime_types,
 		vendor_id,
 		capability_statement,
-		capability_fhir_version)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
+		capability_fhir_version,
+		requested_fhir_version)			
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`)
 	if err != nil {
 		panic(err)
 	}
@@ -310,6 +313,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -338,6 +342,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -371,6 +376,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs4 := make(map[string]interface{})
 	jobArgs4["historyArgs"] = historyArgs{
 		fhirURL:   "thisurldoesntexist.com",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -410,6 +416,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -434,6 +441,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -461,6 +469,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs3 := make(map[string]interface{})
 	jobArgs3["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -496,6 +505,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs5 := make(map[string]interface{})
 	jobArgs5["historyArgs"] = historyArgs{
 		fhirURL:   "thisurldoesntexist.com",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -553,7 +563,8 @@ func addFHIREndpointInfoHistory(ctx context.Context,
 		pq.Array(e.MIMETypes),
 		vendorID,
 		capabilityStatementJSON,
-		e.CapabilityFhirVersion)
+		e.CapabilityFhirVersion, 
+		e.RequestedFhirVersion)
 	if err != nil {
 		return err
 	}
