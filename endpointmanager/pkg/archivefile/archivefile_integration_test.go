@@ -269,6 +269,22 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, len(entries[0].TLSVersion) == 2, fmt.Sprintf("TLS first and last should exist, is instead %+v", entries[0].TLSVersion))
 	th.Assert(t, entries[0].TLSVersion["first"] == nil, fmt.Sprint("TLS first should have been nil"))
 	th.Assert(t, entries[0].TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
+
+	// Test requested fhir version entries
+	testFhirEndpointInfo.RequestedFhirVersion = "1.0.2"
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	th.Assert(t, err == nil, err)
+	testFhirEndpointInfo.RequestedFhirVersion = "4.0.0"
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	th.Assert(t, err == nil, err)
+
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
+	th.Assert(t, err == nil, err)
+	// Test to make sure there are 3 different entries for each requested fhir version for the one endpoint in the DB
+	th.Assert(t, len(entries) == 3, fmt.Sprintf("length of entries should have been 3, is instead %d", len(entries)))
+
+	testFhirEndpointInfo.RequestedFhirVersion = "None"
+
 }
 
 func Test_getHistory(t *testing.T) {
