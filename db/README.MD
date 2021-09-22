@@ -11,6 +11,16 @@ Migration scripts should be placed in `db/migration/migrations`. For more inform
 ## Migrate Down
 If you find yourself in the unlikely scenario of needing to undo migrations, by way of the `down.sql` scripts in the `db/migration/migrations` directory, you can change the line that reads `m.Steps(1)` in `db/migration/cmd/main.go` to `m.Steps(-1)` and run `make migrate_database` from the base directory.
 
+## Migrate Validations
+To migrate how the validations are stored in the db, you must run the validation migrations, which will remove the validation field from fhir_endpoints_info and fhir_endpoints_info_history tables, create the validations and validation_result tables, and add a field to reference the validation_result table in the fhir_endpoints_info and fhir_endpoints_info_history tables. To do this, follow the steps outlined below:
+
+ * Follow the usual migration steps
+ * Once the database has been migrated, start up Lantern with `make run`
+ * Kill the endpoint manager: `docker stop lantern-back-end_endpoint_manager_1`
+ * To migrate the validation information into the validation table: from `capabilityreceiver/cmd/migratevalidations`, run `go run main.go up`
+    * You can run `go run main.go down` to do a down migration (putting the validation information into the validation field)
+
+
 
 # Database Schema
 

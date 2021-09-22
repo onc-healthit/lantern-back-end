@@ -55,6 +55,25 @@ var testValidation = endpointmanager.Validation{
 	},
 }
 
+var testValidation2 = endpointmanager.Validation{
+	Results: []endpointmanager.Rule{
+		{
+			RuleName: endpointmanager.CapStatExistRule,
+			Valid:    true,
+			Expected: "true",
+			Actual:   "true",
+			Comment:  "The Capability Statement exists.",
+		},
+		{
+			RuleName: endpointmanager.GeneralMimeTypeRule,
+			Valid: false, 
+			Expected: "application/json+fhir",
+			Actual: "application/fhir+json",
+			Comment: "FHIR Version 1.0.2 requires the Mime Type to be application/fhir+json",
+		},
+	},
+}
+
 func TestMain(m *testing.M) {
 	var err error
 
@@ -930,7 +949,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
-	// Add 4 validations (need 6 validations, 2 already in database)
+	// Add 4 validations (need 6 validations, 2 already in database). Use validation structure with two rules to ensure all validation entries removed 
 	valRes2, err = store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 2 %s", err))
 	valRes4, err = store.AddValidationResult(ctx)
@@ -939,13 +958,13 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 5 %s", err))
 	valRes6, err = store.AddValidationResult(ctx)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation_result table 6 %s", err))
-	err = store.AddValidation(ctx, &testValidation, valRes2)
+	err = store.AddValidation(ctx, &testValidation2, valRes2)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 2 %s", err))
-	err = store.AddValidation(ctx, &testValidation, valRes4)
+	err = store.AddValidation(ctx, &testValidation2, valRes4)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 4 %s", err))
-	err = store.AddValidation(ctx, &testValidation, valRes5)
+	err = store.AddValidation(ctx, &testValidation2, valRes5)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 5 %s", err))
-	err = store.AddValidation(ctx, &testValidation, valRes6)
+	err = store.AddValidation(ctx, &testValidation2, valRes6)
 	th.Assert(t, err == nil, fmt.Sprintf("Error when adding to the validation table 6 %s", err))
 
 	// Add two endpoint entries to info history table with old dates
@@ -1016,7 +1035,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.SMARTResponse = nil
 
-	// Check validations
+	// Check validations. Since validation 5 had two rules, validation count will be 2
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes2, 0)
@@ -1025,11 +1044,11 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes4, 0)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 1)
+	err = checkValidationCount(ctx, store, valRes5, 2)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes6, 0)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3)
+	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
 }
 
