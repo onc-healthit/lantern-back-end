@@ -168,7 +168,6 @@ func addToValidationTableHistory(ctx context.Context, args *map[string]interface
 			log.Warnf("Error while unmarshalling the smart response for URL %s. Error: %s", wa.fhirURL, err)
 		}
 
-		// @TODO update this based on Emily's PR
 		fhirVersion := ""
 		if capStat != nil {
 			fhirVersion, _ = capStat.GetFHIRVersion()
@@ -295,7 +294,6 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			log.Warnf("Error while unmarshalling the smart response for URL %s. Error: %s", wa.fhirURL, err)
 		}
 
-		// @TODO update this based on Emily's PR
 		fhirVersion := ""
 		if capStat != nil {
 			fhirVersion, _ = capStat.GetFHIRVersion()

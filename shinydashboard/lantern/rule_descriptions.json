@@ -12,6 +12,5 @@
     "smartResponse": "FHIR endpoints requiring authorization SHALL serve a JSON document at the location formed by appending /.well-known/smart-configuration to their base URL.",
     "otherResourceExists": "The US Core Server SHALL support at least one additional resource profile (besides Patient) from the list of US Core Profiles.",
     "patResourceExists": "The US Core Server SHALL support the US Core Patient resource profile.",
-    "tlsVersion": "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection.",
-    "fhirVersion": "ONC Certification Criteria requires support of FHIR Version 4.0.1"
+    "tlsVersion": "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection."
 }

@@ -11,12 +11,14 @@ validationsmodule_UI <- function(id) {
         p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference")
       )
     ),
+    # Row for validation results chart
     fluidRow(
       column(width = 12,
         h3("Validation Results Count"),
         uiOutput(ns("validation_results_plot"))
       )
     ),
+    # Row for validation rules table and validation failure chart
     fluidRow(
       column(width = 3,
         h3("Validation Details"),
@@ -41,6 +43,7 @@ validationsmodule <- function(
 ) {
   ns <- session$ns
 
+  # Create table with all the distinct validation rule names
   validation_rules <- reactive({
     res <- selected_validations()
     res <- res %>%
@@ -49,6 +52,7 @@ validationsmodule <- function(
     res
   })
 
+  # Create table for validation rule details table
   validation_details <- reactive({
     res <- validation_rules()
     res <- res %>%
@@ -61,6 +65,7 @@ validationsmodule <- function(
     res
   })
 
+  # Create table containing all the validations that pass current selected filtering criteria
   selected_validations <- reactive({
     res <- isolate(app_data$validation_tbl())
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
@@ -76,6 +81,7 @@ validationsmodule <- function(
     res
   })
 
+  # Creates table containing the filtered validation's rule name, if its valid, and it'c count
   select_validation_results <- reactive({
     res <- selected_validations()
     res <- res %>%
@@ -86,6 +92,7 @@ validationsmodule <- function(
     res
   })
 
+  # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   failed_validation_results <- reactive({
     res <- selected_validations()
     if (length(input$validation_details_table_rows_selected) > 0) {
@@ -101,6 +108,7 @@ validationsmodule <- function(
     res
   })
 
+  # Renders the validation details table which displays all the validation rules and comments and can be selected to filter the validation failure table
   output$validation_details_table <- DT::renderDataTable({
     datatable(validation_details() %>% select(entry),
       colnames = "",
@@ -111,10 +119,12 @@ validationsmodule <- function(
     )
   })
 
+  # Reactive to calculate the plot height for the validation tables based on how many rows are in the resulting selected validation results
   validation_plot_height <- reactive({
     max(nrow(select_validation_results()) * 25, 400)
   })
 
+  # Calls function to render the validation results count chart if there is data or an empty plot if no data
   output$validation_results_plot <- renderUI({
     if (nrow(select_validation_results()) != 0) {
       tagList(
@@ -126,6 +136,8 @@ validationsmodule <- function(
       )
     }
   })
+
+  # Renders the validation result count chart which displays the number of endpoints that failed or passed each validation test
   output$validation_bar_plot <- renderCachedPlot({
     ggplot(select_validation_results(), aes(x = fct_rev(as.factor(rule_name)), y = count, fill = valid)) +
       geom_col(width = 0.8) +
@@ -149,6 +161,7 @@ validationsmodule <- function(
       list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app_data$last_updated())
     })
 
+  # Renders an empty validation result count chart when no data available
   output$validation_bar_empty_plot <- renderPlot({
     ggplot(select_validation_results()) +
     geom_col(width = 0.8) +
@@ -158,6 +171,7 @@ validationsmodule <- function(
     annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
+    # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
     output$validation_failure_table <- DT::renderDataTable({
     datatable(failed_validation_results() %>% select(url, expected, actual, vendor_name, fhir_version),
               colnames = c("URL", "Expected Value", "Actual Value", "Certified API Developer Name", "FHIR Version"),

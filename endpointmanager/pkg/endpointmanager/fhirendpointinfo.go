@@ -138,7 +138,6 @@ type RuleOption string
 const (
 	GeneralMimeTypeRule RuleOption = "generalMimeType"
 	CapStatExistRule    RuleOption = "capStatExist"
-	FHIRVersion         RuleOption = "fhirVersion"
 	TLSVersion          RuleOption = "tlsVersion"
 	PatResourceExists   RuleOption = "patResourceExists"
 	OtherResourceExists RuleOption = "otherResourceExists"
