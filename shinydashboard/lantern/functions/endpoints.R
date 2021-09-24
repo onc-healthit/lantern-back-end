@@ -67,8 +67,8 @@ get_endpoint_last_updated <- function(db_tables) {
 # Compute the percentage of each response code for all responses received
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
-    filter(requested_fhir_version == "None") %>%
     collect() %>%
+    filter(requested_fhir_version == "None") %>%
     left_join(endpoint_export_tbl %>%
       select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name, fhir_version) %>%
