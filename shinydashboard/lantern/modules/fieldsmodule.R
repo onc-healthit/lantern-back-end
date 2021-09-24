@@ -130,6 +130,10 @@ fieldsmodule <- function(
     max(nrow(capstat_field_count()) * 25, 400)
   })
 
+  plot_height_extensions <- reactive({
+    max(nrow(capstat_extension_count()) * 25, 400)
+  })
+
   output$fields_plot <- renderUI({
     tagList(
       plotOutput(ns("fields_bar_plot"), height = plot_height())
@@ -159,7 +163,7 @@ fieldsmodule <- function(
 
   output$extensions_plot <- renderUI({
     tagList(
-      plotOutput(ns("extensions_bar_plot"), height = plot_height())
+      plotOutput(ns("extensions_bar_plot"), height = plot_height_extensions())
     )
   })
   output$extensions_bar_plot <- renderCachedPlot({
