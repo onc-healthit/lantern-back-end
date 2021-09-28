@@ -29,6 +29,26 @@ var testLantern = []byte(`{"Endpoints": [
         "NPIID": "1"
 	}]}`)
 
+var test1Up = []byte(`[
+    {
+		"id":4751,
+		"name":"Mercy Health System - WI",
+		"resource_url":"https://epicproxy.mhsjvl.org/FHIRproxy/api/FHIR/DSTU2",
+		"logo":"https://1uphealth-assets.s3-us-west-2.amazonaws.com/systems/mercy-health-system---wi.png",
+		"api_version":"FHIR DSTU2 1.0.2",
+		"status":"connection_working",
+		"ehr":"Epic",
+		"locations":[{
+			"name":"Mercy Health System - WI",
+			"address":{
+				"line":["N2950 WI-67",""],
+				"city":"Lake Geneva",
+				"postalCode":"53147",
+				"state":"WI"
+			}
+		}]
+	}]`)
+
 var testFHIR = []byte(`{"resourceType": "Bundle",
 		"entry": [
 			{
@@ -70,6 +90,12 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from lantern file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
+	// test 1up list
+	expectedEndpoints = 1580
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "1Up", "")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from 1up file incorrect, got: %v, want: %d.", endpointsCount, expectedEndpoints))
+
 	// test fhir list
 
 	expectedEndpoints = 14
@@ -105,6 +131,12 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	fhirResult, err := GetListOfEndpointsKnownSource(testFHIR, "FHIR", fhirListSource)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirResult.Entries[0].ListSource == fhirListSource, fmt.Sprintf("The list source should have been %s, it instead returned %s", fhirListSource, fhirResult.Entries[0].ListSource))
+
+	// test 1Up list
+	oneUpListSource := "https://api.1up.health/connect/system/clinical"
+	oneUpResult, err := GetListOfEndpointsKnownSource(test1Up, "1Up", oneUpListSource)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, oneUpResult.Entries[0].ListSource == oneUpListSource, fmt.Sprintf("The list source should have been 1Up, it instead returned %s", oneUpResult.Entries[0].ListSource))
 
 	// test empty values
 
