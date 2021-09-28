@@ -13,5 +13,10 @@
         "EndpointName":"Lantern",
         "FileName":"LanternEndpointSources.json",
         "URL": ""
+    },
+    {
+        "EndpointName": "1Up",
+        "FileName": "1UpEndpointSources.json",
+        "URL": "https://api.1up.health/connect/system/clinical"
     }
 ]

@@ -30,7 +30,7 @@ type ListOfEndpoints struct {
 }
 
 // Source is a slice of the known endpoint source lists
-var sources = []string{"Cerner", "Epic", "Lantern", "FHIR"}
+var sources = []string{"Cerner", "Epic", "1Up", "Lantern", "FHIR"}
 
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
@@ -64,15 +64,24 @@ func GetEndpointsFromFilepath(filePath string, source string, listURL string) (L
 func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 	var initialList map[string]interface{}
+	var initialListArr []interface{}
+	var err error
 
-	err := json.Unmarshal(rawendpts, &initialList)
+	if source != "1Up" {
+		err := json.Unmarshal(rawendpts, &initialList)
+		if err != nil {
+			return result, err
 
-	if err != nil {
-		return result, err
+		}
+	} else {
+		err := json.Unmarshal(rawendpts, &initialListArr)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// return nil if null or {} was passed in as the rawendpts byte array
-	if len(initialList) == 0 {
+	if len(initialList) == 0 && len(initialListArr) == 0 {
 		return result, nil
 	}
 
@@ -94,6 +103,12 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL stri
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, listURL)
+	} else if source == "1Up" {
+		oneUpList, err := convertInterfaceArrayToList(initialListArr)
+		if err != nil {
+			return result, fmt.Errorf("1Up list not given in 1Up format: %s", err)
+		}
+		result = OneUpList{}.GetEndpoints(oneUpList, listURL)
 	} else if source == "FHIR" {
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")
@@ -150,6 +165,19 @@ func convertInterfaceToList(list map[string]interface{}, ref string) ([]map[stri
 
 	for i := range intList {
 		elem, ok := intList[i].(map[string]interface{})
+		if !ok {
+			return formatList, fmt.Errorf("list element is not map[string]interface{}")
+		}
+		formatList = append(formatList, elem)
+	}
+	return formatList, nil
+}
+
+func convertInterfaceArrayToList(list []interface{}) ([]map[string]interface{}, error) {
+	var formatList []map[string]interface{}
+
+	for i := range list {
+		elem, ok := list[i].(map[string]interface{})
 		if !ok {
 			return formatList, fmt.Errorf("list element is not map[string]interface{}")
 		}
