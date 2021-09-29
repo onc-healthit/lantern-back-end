@@ -84,12 +84,18 @@ func Test_createJSON(t *testing.T) {
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding a FHIR Endpoint. Error: %s", err))
 
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	firstEndpoint.ValidationID = valResID1
 	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding the FHIR Endpoint Info. Error: %s", err))
 
 	secondEndpoint.ID = firstEndpoint.ID
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, secondEndpoint.Metadata)
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	secondEndpoint.ValidationID = valResID2
 	err = store.UpdateFHIREndpointInfo(ctx, &secondEndpoint, metadataID)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while updating the FHIR Endpoint Info. Error: %s", err))
 
@@ -120,6 +126,9 @@ func Test_getHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	metadataID, err := store.AddFHIREndpointMetadata(ctx, firstEndpoint.Metadata)
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	firstEndpoint.ValidationID = valResID1
 	err = store.AddFHIREndpointInfo(ctx, &firstEndpoint, metadataID)
 	th.Assert(t, err == nil, err)
 

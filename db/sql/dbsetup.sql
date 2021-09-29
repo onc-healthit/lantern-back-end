@@ -61,37 +61,37 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
 $fhir_endpoints_availability$ LANGUAGE plpgsql;
 
 CREATE TABLE npi_organizations (
-    id               SERIAL PRIMARY KEY,
-    npi_id			 VARCHAR(500) UNIQUE,
-    name             VARCHAR(500),
-    secondary_name   VARCHAR(500),
-    location         JSONB,
-    taxonomy 		     VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
-    normalized_name      VARCHAR(500),
+    id                          SERIAL PRIMARY KEY,
+    npi_id                      VARCHAR(500) UNIQUE,
+    name                        VARCHAR(500),
+    secondary_name              VARCHAR(500),
+    location                    JSONB,
+    taxonomy                    VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
+    normalized_name             VARCHAR(500),
     normalized_secondary_name   VARCHAR(500),
-    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE npi_contacts (
-    id               SERIAL PRIMARY KEY,
-    npi_id			     VARCHAR(500),
-	endpoint_type   VARCHAR(500),
-	endpoint_type_description   VARCHAR(500),
-	endpoint   VARCHAR(500),
-    valid_url BOOLEAN,
-	affiliation   VARCHAR(500),
-	endpoint_description   VARCHAR(500),
-	affiliation_legal_business_name   VARCHAR(500),
-	use_code   VARCHAR(500),
-	use_description   VARCHAR(500),
-	other_use_description   VARCHAR(500),
-	content_type   VARCHAR(500),
-	content_description   VARCHAR(500),
-	other_content_description   VARCHAR(500),
-    location                JSONB,
-    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id                                  SERIAL PRIMARY KEY,
+    npi_id                              VARCHAR(500),
+    endpoint_type                       VARCHAR(500),
+    endpoint_type_description           VARCHAR(500),
+    endpoint                            VARCHAR(500),
+    valid_url                           BOOLEAN,
+    affiliation                         VARCHAR(500),
+    endpoint_description                VARCHAR(500),
+    affiliation_legal_business_name     VARCHAR(500),
+    use_code                            VARCHAR(500),
+    use_description                     VARCHAR(500),
+    other_use_description               VARCHAR(500),
+    content_type                        VARCHAR(500),
+    content_description                 VARCHAR(500),
+    other_content_description           VARCHAR(500),
+    location                            JSONB,
+    created_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE vendors (
@@ -163,6 +163,10 @@ CREATE TABLE fhir_endpoints_metadata (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE validation_results (
+    id                      SERIAL PRIMARY KEY
+);
+
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
     healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
@@ -171,7 +175,7 @@ CREATE TABLE fhir_endpoints_info (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
-    validation              JSONB,
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -191,7 +195,7 @@ CREATE TABLE fhir_endpoints_info_history (
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
-    validation              JSONB,
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -201,9 +205,9 @@ CREATE TABLE fhir_endpoints_info_history (
 );
 
 CREATE TABLE endpoint_organization (
-    url             VARCHAR(500),
-    organization_npi_id VARCHAR(500),
-    confidence NUMERIC (5, 3),
+    url                     VARCHAR(500),
+    organization_npi_id     VARCHAR(500),
+    confidence              NUMERIC (5, 3),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
@@ -219,11 +223,22 @@ CREATE TABLE product_criteria (
 );
 
 CREATE TABLE fhir_endpoints_availability (
-    url             VARCHAR(500),
-    http_200_count       BIGINT,
-    http_all_count       BIGINT,
+    url                     VARCHAR(500),
+    http_200_count          BIGINT,
+    http_all_count          BIGINT,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE validations (
+    rule_name               VARCHAR(500),
+    valid                   BOOLEAN,
+    expected                VARCHAR(500),
+    actual                  VARCHAR(500),
+    comment                 VARCHAR(500),
+    reference               VARCHAR(500),
+    implementation_guide    VARCHAR(500),
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL
 );
 
 

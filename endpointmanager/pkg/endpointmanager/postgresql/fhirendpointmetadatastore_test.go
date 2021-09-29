@@ -4,6 +4,7 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -94,6 +95,9 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
+	valResID1, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo1.ValidationID = valResID1
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
@@ -103,6 +107,9 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
 	}
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo2.ValidationID = valResID2
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo2, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %+v", err)

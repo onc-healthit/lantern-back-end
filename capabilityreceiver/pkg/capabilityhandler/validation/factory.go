@@ -4,6 +4,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 )
 
 // from https://www.hl7.org/fhir/codesystem-FHIR-version.html
@@ -15,15 +16,13 @@ var r4 = []string{"3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1"}
 // Validator is an interface that can be implemented for each FHIR Version to run the correct
 // version's validation checks
 type Validator interface {
-	RunValidation(capabilityparser.CapabilityStatement, int, []string, string, string, int) endpointmanager.Validation
+	RunValidation(capabilityparser.CapabilityStatement, []string, string, string, smartparser.SMARTResponse) endpointmanager.Validation
 	CapStatExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	MimeTypeValid([]string, string) endpointmanager.Rule
-	HTTPResponseValid(int) endpointmanager.Rule
-	FhirVersion(string) endpointmanager.Rule
 	TLSVersion(string) endpointmanager.Rule
 	PatientResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	OtherResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
-	SmartHTTPResponseValid(int) endpointmanager.Rule
+	SmartResponseExists(smartparser.SMARTResponse) endpointmanager.Rule
 	KindValid(capabilityparser.CapabilityStatement) []endpointmanager.Rule
 	MessagingEndpointValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	EndpointFunctionValid(capabilityparser.CapabilityStatement) endpointmanager.Rule
