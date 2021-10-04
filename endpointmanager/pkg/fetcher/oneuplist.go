@@ -26,7 +26,7 @@ func (ul OneUpList) GetEndpoints(oneupList []map[string]interface{}, listURL str
 			fhirEntry.FHIRPatientFacingURI = uri
 		}
 
-		if !strings.Contains(uri, "https://api.") && !strings.Contains(uri, "https://fhir.healow.com/FHIRServer/fhir/") {
+		if !strings.Contains(uri, "https://fhir.healow.com/FHIRServer/fhir/") {
 			innerList = append(innerList, fhirEntry)
 		}
 	}
