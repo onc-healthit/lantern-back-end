@@ -341,7 +341,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	historyQuery := `SELECT url, updated_at, operation, capability_fhir_version, tls_version, mime_types, requested_fhir_version FROM fhir_endpoints_info_history
+	historyQuery := `SELECT updated_at, operation, capability_fhir_version, tls_version, mime_types FROM fhir_endpoints_info_history
 		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 AND requested_fhir_version=$2 ORDER BY updated_at`
 	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL, ha.requestedFhirVersion)
 	if err != nil {
@@ -359,14 +359,16 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	for historyRows.Next() {
 		var e historyEntry
 		var fhirVersion string
+
+		e.URL = ha.fhirURL
+		e.RequestedFhirVersion = ha.requestedFhirVersion
+
 		var err = historyRows.Scan(
-			&e.URL,
 			&e.UpdatedAt,
 			&e.Operation,
 			&fhirVersion,
 			&e.TLSVersion,
-			pq.Array(&e.MIMETypes),
-			&e.RequestedFhirVersion)
+			pq.Array(&e.MIMETypes))
 		if err != nil {
 			log.Warnf("Error while scanning the rows of the history table for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 			result := Result{
@@ -439,7 +441,7 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	metadataQuery := `SELECT url, requested_fhir_version, response_time_seconds, http_response, smart_http_response, errors FROM fhir_endpoints_metadata
+	metadataQuery := `SELECT response_time_seconds, http_response, smart_http_response, errors FROM fhir_endpoints_metadata
 		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 AND requested_fhir_version=$2 ORDER BY updated_at`
 	metadataRows, err := ha.store.DB.QueryContext(ctx, metadataQuery, ha.fhirURL, ha.requestedFhirVersion)
 	if err != nil {
@@ -456,9 +458,11 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	defer metadataRows.Close()
 	for metadataRows.Next() {
 		var e metadataEntry
+
+		e.URL = ha.fhirURL
+		e.RequestedFhirVersion = ha.requestedFhirVersion
+
 		err = metadataRows.Scan(
-			&e.URL,
-			&e.RequestedFhirVersion,
 			&e.ResponseTimeSeconds,
 			&e.HTTPResponse,
 			&e.SMARTHTTPResponse,
