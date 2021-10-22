@@ -18,6 +18,7 @@ import (
 // totalSummary is the format of a given URL's JSON object for the archive file
 type totalSummary struct {
 	URL                  string                 `json:"url"`
+	RequestedFhirVersion string                 `json:"requested_fhir_version"`
 	CreatedAt            time.Time              `json:"created_at"`
 	ListSource           []string               `json:"list_source"`
 	OrganizationNames    []string               `json:"api_information_source_name"`
@@ -32,7 +33,6 @@ type totalSummary struct {
 	HTTPResponse         []httpResponse         `json:"http_response"`
 	SmartHTTPResponse    []smartHTTPResponse    `json:"smart_http_response"`
 	Errors               []responseErrors       `json:"errors"`
-	RequestedFhirVersion string                 `json:"requested_fhir_version"`
 }
 
 // formats for specific fields in the above totalSummary struct
