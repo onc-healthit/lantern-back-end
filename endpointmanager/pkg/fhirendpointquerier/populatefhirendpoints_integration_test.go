@@ -351,11 +351,11 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, ct == 2, "did not persist second endpoint as expected")
 
 	endptInfo := endpointmanager.FHIREndpointInfo{
-		URL: endpt2.URL,
+		URL:                  endpt2.URL,
 		RequestedFhirVersion: "None",
 		Metadata: &endpointmanager.FHIREndpointMetadata{
-			URL:          endpt2.URL,
-			HTTPResponse: 200,
+			URL:                  endpt2.URL,
+			HTTPResponse:         200,
 			RequestedFhirVersion: "None",
 		},
 	}
@@ -373,7 +373,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, endpt3.Equal(savedEndpt), "stored data does not equal expected store data")
 
-	err = removeOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt3.ListSource)
+	err = RemoveOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt3.ListSource)
 	th.Assert(t, err == nil, err)
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
@@ -402,11 +402,11 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	endptInfo2 := endpointmanager.FHIREndpointInfo{
-		URL: endpt1.URL,
+		URL:                  endpt1.URL,
 		RequestedFhirVersion: "1.0.2",
 		Metadata: &endpointmanager.FHIREndpointMetadata{
-			URL:          endpt1.URL,
-			HTTPResponse: 200,
+			URL:                  endpt1.URL,
+			HTTPResponse:         200,
 			RequestedFhirVersion: "1.0.2",
 		},
 	}
@@ -420,7 +420,6 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	savedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, endpt1.Equal(savedEndpt), "stored data does not equal expected store data")
-
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, endptInfo2.Metadata)
 	err = store.AddFHIREndpointInfo(ctx, &endptInfo2, metadataID)
@@ -436,12 +435,12 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	endptInfo2.RequestedFhirVersion = "1.0.2"
 	endptInfo2.Metadata.RequestedFhirVersion = "1.0.2"
 
-	err = removeOldEndpoints(ctx, store, savedEndpt.UpdatedAt.Add(time.Hour * 1), endpt1.ListSource)
+	err = RemoveOldEndpoints(ctx, store, savedEndpt.UpdatedAt.Add(time.Hour*1), endpt1.ListSource)
 	th.Assert(t, err == nil, err)
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 0, "Expected the one endpoint to be deleted")
-	// Test that the two endpoints are removed from fhir_endpoints_info even though they have different 
+	// Test that the two endpoints are removed from fhir_endpoints_info even though they have different
 	// requested fhir versions
 	err = store.DB.QueryRow("SELECT count(*) FROM fhir_endpoints_info").Scan(&ct)
 	th.Assert(t, ct == 0, "Expected both endpoints to be removed from fhir endpoint info table")
@@ -450,7 +449,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// should not remove it from the metadata table
 	err = store.DB.QueryRow("SELECT count(*) FROM fhir_endpoints_metadata").Scan(&ct)
 	th.Assert(t, ct == 2, "Expected both endpoints to be removed from fhir endpoint metadata table")
-	
+
 }
 
 func setup() error {
