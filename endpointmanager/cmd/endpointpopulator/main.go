@@ -37,19 +37,25 @@ func main() {
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source, listURL)
 	helpers.FailOnError("Endpoint List Parsing Error: ", err)
 
+	err = config.SetupConfig()
+	helpers.FailOnError("", err)
+
 	ctx := context.Background()
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
 
 	if len(listOfEndpoints.Entries) != 0 {
-		err = config.SetupConfig()
-		helpers.FailOnError("", err)
-
 		dbErr := endptQuerier.AddEndpointData(ctx, store, &listOfEndpoints)
 		helpers.FailOnError("Saving in fhir_endpoints database error: ", dbErr)
 	} else {
-		dbErr := endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listURL)
+		var listSource string
+		if listURL != "" {
+			listSource = listURL
+		} else {
+			listSource = source
+		}
+		dbErr := endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listSource)
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
 }
