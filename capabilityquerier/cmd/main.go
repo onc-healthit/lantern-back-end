@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -189,6 +190,12 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
+
+	var emptyJSON []byte
+	if _, err := os.Stat("/etc/lantern/exportfolder/fhir_endpoints_fields.json"); os.IsNotExist(err) {
+		err = ioutil.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
+		helpers.FailOnError("Failed to create empty JSON export file", err)
+	}
 
 	// Read version file that is mounted
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
