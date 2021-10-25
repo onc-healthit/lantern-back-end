@@ -100,7 +100,7 @@ fieldsmodule <- function(
   })
 
   # Required Capability Statement fields that we are tracking
-  required_fields <- c("status", "kind", "fhirVersion", "format", "patchFormat")
+  required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 
   # Table of the required fields
   output$capstat_fields_table_required <- renderTable(
