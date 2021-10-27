@@ -261,25 +261,23 @@ func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion s
 	ruleError := endpointmanager.Rule{
 		RuleName: endpointmanager.VersionsResponseRule,
 		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "",
+		Expected: defaultFhirVersion,
+		Comment:  "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.",
 	}
 
 	if defaultFhirVersion == "None" {
 		ruleError.Valid = false
-		ruleError.Actual = "false"
+		ruleError.Actual = fhirVersion
+		ruleError.Expected = ""
 		ruleError.Comment = "Expected $versions operation to be supported, but no response was received"
 		return ruleError
 	}
 
-	if fhirVersion == defaultFhirVersion {
-		ruleError.Comment = "$versions operation is supported, and default fhir version " + defaultFhirVersion + " was returned from server when no version specified."
-	} else {
+	if fhirVersion != defaultFhirVersion {
 		ruleError.Valid = false
-		ruleError.Actual = "false"
-		ruleError.Comment = "$versions operation is supported, but default fhir version " + defaultFhirVersion + " was not returned from server when no version specified, fhir version " + fhirVersion + " returned instead."
 	}
+
+	ruleError.Actual = fhirVersion
 
 	return ruleError
 }

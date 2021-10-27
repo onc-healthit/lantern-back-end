@@ -518,7 +518,10 @@ func Test_formatMessage(t *testing.T) {
 	versionValidation := endpt.Validation.Results[4]
 	th.Assert(t, versionValidation.RuleName == endpointmanager.VersionsResponseRule, "Expected versions response rule to be included in validation since requestedFhirVersion is None")
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
-	th.Assert(t, versionValidation.Comment == "$versions operation is supported, and default fhir version 1.0.2 was returned from server when no version specified.", fmt.Sprintf("Unexpected version response rule comment, got %s", versionValidation.Comment))
+	th.Assert(t, versionValidation.Actual == "1.0.2", "Expected validation actual version to equal 1.0.2")
+	th.Assert(t, versionValidation.Actual == versionValidation.Expected, "Expected validation actual version to equal expected version.")
+	th.Assert(t, versionValidation.Actual == versionValidation.Expected, "Expected validation actual version to equal expected version.")
+	th.Assert(t, versionValidation.Comment == "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.", fmt.Sprintf("Version validation comment unexpected, got %s", versionValidation.Comment))
 
 	tmpMessage["requestedFhirVersion"] = "1.0.2"
 	message, err = convertInterfaceToBytes(tmpMessage)
@@ -530,7 +533,6 @@ func Test_formatMessage(t *testing.T) {
 	// Check that versions response validation is not included when requestedFhirVersion is not None
 	versionValidation = endpt.Validation.Results[4]
 	th.Assert(t, versionValidation.RuleName != endpointmanager.VersionsResponseRule, "Did not expect versions response rule to be included in validation since requestedFhirVersion is not None")
-
 }
 
 func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {

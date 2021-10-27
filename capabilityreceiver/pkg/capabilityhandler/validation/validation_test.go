@@ -1041,9 +1041,9 @@ func Test_VersionResponseValid(t *testing.T) {
 	expectedVal := endpointmanager.Rule{
 		RuleName: endpointmanager.VersionsResponseRule,
 		Valid:    true,
-		Expected: "true",
-		Actual:   "true",
-		Comment:  "$versions operation is supported, and default fhir version " + defaultFhirVersion + " was returned from server when no version specified.",
+		Expected: "1.0.2",
+		Actual:   "1.0.2",
+		Comment:  "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.",
 	}
 
 	actualVal := validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
@@ -1053,9 +1053,9 @@ func Test_VersionResponseValid(t *testing.T) {
 	// defaultVersion is not 1.0.2
 
 	defaultFhirVersion = "4.0.1"
-	expectedVal.Actual = "false"
+	expectedVal.Expected = "4.0.1"
 	expectedVal.Valid = false
-	expectedVal.Comment = "$versions operation is supported, but default fhir version " + defaultFhirVersion + " was not returned from server when no version specified, fhir version " + fhirVersion + " returned instead."
+	expectedVal.Comment = "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified."
 	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, but default version should not match fhir version, is instead %+v", actualVal))
@@ -1063,7 +1063,8 @@ func Test_VersionResponseValid(t *testing.T) {
 	// $version operation no response
 
 	defaultFhirVersion = "None"
-	expectedVal.Actual = "false"
+	expectedVal.Actual = "1.0.2"
+	expectedVal.Expected = ""
 	expectedVal.Valid = false
 	expectedVal.Comment = "Expected $versions operation to be supported, but no response was received"
 	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
