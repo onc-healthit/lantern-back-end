@@ -259,7 +259,7 @@ func (bv *baseVal) SearchParamsUnique(capStat capabilityparser.CapabilityStateme
 // VersionResponseValid checks if $versions operation is supported and that the default version is returned when no version requested
 func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion string) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
-		RuleName: "endpointmanager.VersionsResponseRule",
+		RuleName: endpointmanager.VersionsResponseRule,
 		Valid:    true,
 		Expected: "true",
 		Actual:   "true",
@@ -276,6 +276,8 @@ func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion s
 	if fhirVersion == defaultFhirVersion {
 		ruleError.Comment = "$versions operation is supported, and default fhir version " + defaultFhirVersion + " was returned from server when no version specified."
 	} else {
+		ruleError.Valid = false
+		ruleError.Actual = "false"
 		ruleError.Comment = "$versions operation is supported, but default fhir version " + defaultFhirVersion + " was not returned from server when no version specified, fhir version " + fhirVersion + " returned instead."
 	}
 

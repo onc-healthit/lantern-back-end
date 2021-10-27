@@ -20,6 +20,7 @@ type Validator interface {
 	MimeTypeValid([]string, string) endpointmanager.Rule
 	HTTPResponseValid(int) endpointmanager.Rule
 	FhirVersion(string) endpointmanager.Rule
+	VersionResponseValid(string, string) endpointmanager.Rule
 	TLSVersion(string) endpointmanager.Rule
 	PatientResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	OtherResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
