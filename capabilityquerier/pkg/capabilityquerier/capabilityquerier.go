@@ -54,6 +54,7 @@ type Message struct {
 	SMARTResp            interface{} `json:"smartResp"`
 	ResponseTime         float64     `json:"responseTime"`
 	RequestedFhirVersion string      `json:"requestedFhirVersion"`
+	DefaultFhirVersion   string      `json:"defaultFhirVersion"`
 }
 type VersionsMessage struct {
 	URL              string      `json:"url"`
@@ -66,6 +67,7 @@ type VersionsMessage struct {
 type QuerierArgs struct {
 	FhirURL        string
 	RequestVersion string
+	DefaultVersion string
 	Client         *http.Client
 	MessageQueue   *lanternmq.MessageQueue
 	ChannelID      *lanternmq.ChannelID
@@ -171,6 +173,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	message := Message{
 		URL:                  qa.FhirURL,
 		RequestedFhirVersion: qa.RequestVersion,
+		DefaultFhirVersion:   qa.DefaultVersion,
 		MIMETypes:            mimeTypes,
 	}
 	// Cast string url to type url then cast back to string to ensure url string in correct url format

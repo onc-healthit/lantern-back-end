@@ -68,6 +68,11 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 		return nil, fmt.Errorf("%s: unable to cast Requested Fhir Version to string", url)
 	}
 
+	defaultFhirVersion, ok := msgJSON["defaultFhirVersion"].(string)
+	if !ok {
+		return nil, fmt.Errorf("%s: unable to cast Default Fhir Version to string", url)
+	}
+
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
 	// Could be investigated further
 	var mimeTypes []string
@@ -133,7 +138,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, error) {
 
 	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
-	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse)
+	validationObj := validator.RunValidation(capStat, httpResponse, mimeTypes, fhirVersion, tlsVersion, smarthttpResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	operationResource := RunSupportedResourcesChecks(capInt)
 
@@ -339,6 +344,12 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
 	var supportedVersions []string
 	supportedVersions = vsr.GetSupportedVersions()
+
+	defaultVersion := vsr.GetDefaultVersion()
+	if len(supportedVersions) == 0 {
+		defaultVersion = "None"
+	}
+
 	supportedVersions = append(supportedVersions, "None")
 
 	err = removeNoLongerExistingVersionsInfos(ctx, store, url, supportedVersions)
@@ -351,6 +362,7 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		var message map[string]string = make(map[string]string)
 		message["url"] = url
 		message["requestVersion"] = version
+		message["defaultVersion"] = defaultVersion
 		var msgBytes []byte
 		msgBytes, err = json.Marshal(message)
 		if err != nil {

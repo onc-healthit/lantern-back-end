@@ -25,7 +25,9 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartHTTPRsp int) endpointmanager.Validation {
+	smartHTTPRsp int,
+	requestedFhirVersion string,
+	defaultFhirVersion string) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 	validationWarnings := make([]endpointmanager.Rule, 0)
 
@@ -40,6 +42,11 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 
 	returnedRule = bv.FhirVersion(fhirVersion)
 	validationResults = append(validationResults, returnedRule)
+
+	if requestedFhirVersion == "None" {
+		returnedRule = bv.VersionResponseValid(fhirVersion, defaultFhirVersion)
+		validationResults = append(validationResults, returnedRule)
+	}
 
 	returnedRules := bv.KindValid(capStat)
 	validationResults = append(validationResults, returnedRules[0])
@@ -246,5 +253,31 @@ func (bv *baseVal) UniqueResources(capStat capabilityparser.CapabilityStatement)
 
 func (bv *baseVal) SearchParamsUnique(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	var ruleError endpointmanager.Rule
+	return ruleError
+}
+
+// VersionResponseValid checks if $versions operation is supported and that the default version is returned when no version requested
+func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion string) endpointmanager.Rule {
+	ruleError := endpointmanager.Rule{
+		RuleName: "endpointmanager.VersionsResponseRule",
+		Valid:    true,
+		Expected: "true",
+		Actual:   "true",
+		Comment:  "",
+	}
+
+	if defaultFhirVersion == "None" {
+		ruleError.Valid = false
+		ruleError.Actual = "false"
+		ruleError.Comment = "Expected $versions operation to be supported, but no response was received"
+		return ruleError
+	}
+
+	if fhirVersion == defaultFhirVersion {
+		ruleError.Comment = "$versions operation is supported, and default fhir version " + defaultFhirVersion + " was returned from server when no version specified."
+	} else {
+		ruleError.Comment = "$versions operation is supported, but default fhir version " + defaultFhirVersion + " was not returned from server when no version specified, fhir version " + fhirVersion + " returned instead."
+	}
+
 	return ruleError
 }

@@ -34,7 +34,9 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartHTTPRsp int) endpointmanager.Validation {
+	smartHTTPRsp int,
+	requestedFhirVersion string,
+	defaultFhirVersion string) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 	validationWarnings := make([]endpointmanager.Rule, 0)
 
@@ -49,6 +51,11 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 
 	returnedRule = v.baseVal.FhirVersion(fhirVersion)
 	validationResults = append(validationResults, returnedRule)
+
+	if requestedFhirVersion == "None" {
+		returnedRule = v.baseVal.VersionResponseValid(fhirVersion, defaultFhirVersion)
+		validationResults = append(validationResults, returnedRule)
+	}
 
 	returnedRule = v.TLSVersion(tlsVersion)
 	validationResults = append(validationResults, returnedRule)
