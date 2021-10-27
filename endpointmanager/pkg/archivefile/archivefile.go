@@ -2,6 +2,7 @@ package archivefile
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"math"
 	"sort"
@@ -16,21 +17,22 @@ import (
 
 // totalSummary is the format of a given URL's JSON object for the archive file
 type totalSummary struct {
-	URL                string                 `json:"url"`
-	CreatedAt          time.Time              `json:"created_at"`
-	ListSource         []string               `json:"list_source"`
-	OrganizationNames  []string               `json:"api_information_source_name"`
-	Updated            map[string]interface{} `json:"updated_at"`
-	NumberOfUpdates    int                    `json:"number_of_updates"`
-	Operation          map[string]interface{} `json:"operation"`
-	FHIRVersion        map[string]interface{} `json:"fhir_version"`
-	TLSVersion         map[string]interface{} `json:"tls_version"`
-	MIMETypes          firstLastStrArr        `json:"mime_types"`
-	Vendor             map[string]interface{} `json:"certified_api_developer_name"`
-	ResponseTimeSecond interface{}            `json:"median_response_time"`
-	HTTPResponse       []httpResponse         `json:"http_response"`
-	SmartHTTPResponse  []smartHTTPResponse    `json:"smart_http_response"`
-	Errors             []responseErrors       `json:"errors"`
+	URL                  string                 `json:"url"`
+	RequestedFhirVersion string                 `json:"requested_fhir_version"`
+	CreatedAt            time.Time              `json:"created_at"`
+	ListSource           []string               `json:"list_source"`
+	OrganizationNames    []string               `json:"api_information_source_name"`
+	Updated              map[string]interface{} `json:"updated_at"`
+	NumberOfUpdates      int                    `json:"number_of_updates"`
+	Operation            map[string]interface{} `json:"operation"`
+	FHIRVersion          map[string]interface{} `json:"fhir_version"`
+	TLSVersion           map[string]interface{} `json:"tls_version"`
+	MIMETypes            firstLastStrArr        `json:"mime_types"`
+	Vendor               map[string]interface{} `json:"certified_api_developer_name"`
+	ResponseTimeSecond   interface{}            `json:"median_response_time"`
+	HTTPResponse         []httpResponse         `json:"http_response"`
+	SmartHTTPResponse    []smartHTTPResponse    `json:"smart_http_response"`
+	Errors               []responseErrors       `json:"errors"`
 }
 
 // formats for specific fields in the above totalSummary struct
@@ -54,28 +56,31 @@ type responseErrors struct {
 // Result is the value that is returned from getting the history data from the
 // given URL
 type Result struct {
-	URL     string
-	Summary totalSummary
+	URL                  string
+	RequestedFhirVersion string
+	Summary              totalSummary
 }
 
 // historyArgs is the format for the data passed to getHistory from a worker
 type historyArgs struct {
-	fhirURL   string
-	dateStart string
-	dateEnd   string
-	store     *postgresql.Store
-	result    chan Result
+	fhirURL              string
+	requestedFhirVersion string
+	dateStart            string
+	dateEnd              string
+	store                *postgresql.Store
+	result               chan Result
 }
 
 // historyEntry is the format of the data received from the history table for the given URL
 type historyEntry struct {
-	URL              string
-	UpdatedAt        time.Time
-	Operation        string
-	FHIRVersion      string
-	FHIRVersionError error
-	TLSVersion       string
-	MIMETypes        []string
+	URL                  string
+	UpdatedAt            time.Time
+	Operation            string
+	FHIRVersion          string
+	FHIRVersionError     error
+	TLSVersion           string
+	MIMETypes            []string
+	RequestedFhirVersion string
 }
 
 // vendorEntry is the format of the data received from the vendor table for the given URL
@@ -87,11 +92,12 @@ type vendorEntry struct {
 // metadataEntry is the format of the data received from the fhir_endpoints_metadata for the
 // given URL
 type metadataEntry struct {
-	URL                 string
-	ResponseTimeSeconds float64
-	HTTPResponse        int
-	SMARTHTTPResponse   int
-	Errors              string
+	URL                  string
+	ResponseTimeSeconds  float64
+	HTTPResponse         int
+	SMARTHTTPResponse    int
+	Errors               string
+	RequestedFhirVersion string
 }
 
 // CreateArchive gets all data from fhir_endpoints, fhir_endpoints_info and vendors between
@@ -103,20 +109,23 @@ func CreateArchive(ctx context.Context,
 	numWorkers int,
 	workerDur int) ([]totalSummary, error) {
 	// Get the fhir_endpoints specific information
-	sqlQuery := "SELECT DISTINCT url, organization_names, created_at, list_source FROM fhir_endpoints;"
+	sqlQuery := "SELECT DISTINCT e.url, h.requested_fhir_version, e.organization_names, e.created_at, e.list_source FROM fhir_endpoints e LEFT JOIN fhir_endpoints_info_history h ON e.url = h.url;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR getting data from fhir_endpoints: %s", err)
 	}
 
-	var urls []string
-	allData := make(map[string]totalSummary)
+	totalEntries := 0
+	urls_fhir_version := make(map[string][]string)
+	allData := make(map[string]map[string]totalSummary)
 	defer rows.Close()
 	for rows.Next() {
 		var entry totalSummary
 		var listSource string
+		var requestedFhirVersion sql.NullString
 		err = rows.Scan(
 			&entry.URL,
+			&requestedFhirVersion,
 			pq.Array(&entry.OrganizationNames),
 			&entry.CreatedAt,
 			&listSource)
@@ -124,15 +133,27 @@ func CreateArchive(ctx context.Context,
 			return nil, fmt.Errorf("ERROR getting row from fhir_endpoints: %s", err)
 		}
 
+		if requestedFhirVersion.Valid {
+			entry.RequestedFhirVersion = requestedFhirVersion.String
+		} else {
+			entry.RequestedFhirVersion = "None"
+		}
+
+		if _, ok := allData[entry.URL]; !ok {
+			allData[entry.URL] = make(map[string]totalSummary)
+		}
+
 		// If the URL already exists, include the new list source and organization names
-		if val, ok := allData[entry.URL]; ok {
+		if val, ok := allData[entry.URL][entry.RequestedFhirVersion]; ok {
 			val.ListSource = append(val.ListSource, listSource)
 			val.OrganizationNames = append(val.OrganizationNames, entry.OrganizationNames...)
-			allData[entry.URL] = val
+			allData[entry.URL][entry.RequestedFhirVersion] = val
+			totalEntries++
 		} else {
 			entry.ListSource = []string{listSource}
-			allData[entry.URL] = entry
-			urls = append(urls, entry.URL)
+			allData[entry.URL][entry.RequestedFhirVersion] = entry
+			urls_fhir_version[entry.URL] = append(urls_fhir_version[entry.URL], entry.RequestedFhirVersion)
+			totalEntries++
 		}
 	}
 
@@ -146,12 +167,12 @@ func CreateArchive(ctx context.Context,
 
 	// Get history data using workers
 	resultCh := make(chan Result)
-	go createJobs(ctx, resultCh, urls, dateStart, dateEnd, "history", workerDur, store, allWorkers)
+	go createJobs(ctx, resultCh, urls_fhir_version, dateStart, dateEnd, "history", workerDur, store, allWorkers)
 
 	// Add the results from createJobs to allData
 	count := 0
 	for res := range resultCh {
-		u, ok := allData[res.URL]
+		u, ok := allData[res.URL][res.RequestedFhirVersion]
 		if !ok {
 			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
 		}
@@ -161,8 +182,8 @@ func CreateArchive(ctx context.Context,
 		u.FHIRVersion = res.Summary.FHIRVersion
 		u.TLSVersion = res.Summary.TLSVersion
 		u.MIMETypes = res.Summary.MIMETypes
-		allData[res.URL] = u
-		if count >= len(urls)-1 {
+		allData[res.URL][res.RequestedFhirVersion] = u
+		if count >= totalEntries-1 {
 			close(resultCh)
 		}
 		count++
@@ -195,32 +216,35 @@ func CreateArchive(ctx context.Context,
 		}
 	}
 
-	for _, url := range urls {
-		u, ok := allData[url]
-		if !ok {
-			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
-		}
-		u.Vendor = makeDefaultMap()
-		if vResult, ok := vendorResults[url]; ok {
-			startElem := vResult[0]
-			endElem := vResult[len(vResult)-1]
-
-			u.Vendor["first"] = startElem.VendorName
-			if startElem.VendorName != endElem.VendorName {
-				u.Vendor["last"] = endElem.VendorName
+	for url, requested_versions := range urls_fhir_version {
+		for index := range requested_versions {
+			req_version := requested_versions[index]
+			u, ok := allData[url][req_version]
+			if !ok {
+				return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
 			}
+			u.Vendor = makeDefaultMap()
+			if vResult, ok := vendorResults[url]; ok {
+				startElem := vResult[0]
+				endElem := vResult[len(vResult)-1]
+
+				u.Vendor["first"] = startElem.VendorName
+				if startElem.VendorName != endElem.VendorName {
+					u.Vendor["last"] = endElem.VendorName
+				}
+			}
+			allData[url][req_version] = u
 		}
-		allData[url] = u
 	}
 
 	// Get history data using workers
 	metaResultCh := make(chan Result)
-	go createJobs(ctx, metaResultCh, urls, dateStart, dateEnd, "metadata", workerDur, store, allWorkers)
+	go createJobs(ctx, metaResultCh, urls_fhir_version, dateStart, dateEnd, "metadata", workerDur, store, allWorkers)
 
 	// Add the results from metadata to allData
 	count = 0
 	for res := range metaResultCh {
-		u, ok := allData[res.URL]
+		u, ok := allData[res.URL][res.RequestedFhirVersion]
 		if !ok {
 			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
 		}
@@ -228,16 +252,18 @@ func CreateArchive(ctx context.Context,
 		u.HTTPResponse = res.Summary.HTTPResponse
 		u.SmartHTTPResponse = res.Summary.SmartHTTPResponse
 		u.Errors = res.Summary.Errors
-		allData[res.URL] = u
-		if count == len(urls)-1 {
+		allData[res.URL][res.RequestedFhirVersion] = u
+		if count == totalEntries-1 {
 			close(metaResultCh)
 		}
 		count++
 	}
 
 	var entries []totalSummary
-	for _, e := range allData {
-		entries = append(entries, e)
+	for _, req_version_map := range allData {
+		for _, e := range req_version_map {
+			entries = append(entries, e)
+		}
 	}
 
 	return entries, nil
@@ -258,38 +284,41 @@ func makeDefaultMap() map[string]interface{} {
 // for a specified url
 func createJobs(ctx context.Context,
 	ch chan Result,
-	urls []string,
+	urls_fhir_version map[string][]string,
 	dateStart string,
 	dateEnd string,
 	jobType string,
 	workerDur int,
 	store *postgresql.Store,
 	allWorkers *workers.Workers) {
-	for index := range urls {
-		jobArgs := make(map[string]interface{})
-		jobArgs["historyArgs"] = historyArgs{
-			fhirURL:   urls[index],
-			dateStart: dateStart,
-			dateEnd:   dateEnd,
-			store:     store,
-			result:    ch,
-		}
+	for url, requested_versions := range urls_fhir_version {
+		for index := range requested_versions {
+			jobArgs := make(map[string]interface{})
+			jobArgs["historyArgs"] = historyArgs{
+				fhirURL:              url,
+				requestedFhirVersion: requested_versions[index],
+				dateStart:            dateStart,
+				dateEnd:              dateEnd,
+				store:                store,
+				result:               ch,
+			}
 
-		job := workers.Job{
-			Context:     ctx,
-			Duration:    time.Duration(workerDur) * time.Second,
-			HandlerArgs: &jobArgs,
-		}
+			job := workers.Job{
+				Context:     ctx,
+				Duration:    time.Duration(workerDur) * time.Second,
+				HandlerArgs: &jobArgs,
+			}
 
-		if jobType == "history" {
-			job.Handler = getHistory
-		} else {
-			job.Handler = getMetadata
-		}
+			if jobType == "history" {
+				job.Handler = getHistory
+			} else {
+				job.Handler = getMetadata
+			}
 
-		err := allWorkers.Add(&job)
-		if err != nil {
-			log.Warnf("Error while adding job for getting history for URL %s, %s", urls[index], err)
+			err := allWorkers.Add(&job)
+			if err != nil {
+				log.Warnf("Error while adding job for getting history for URL %s, %s", url, err)
+			}
 		}
 	}
 }
@@ -312,14 +341,15 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	historyQuery := `SELECT url, updated_at, operation, capability_fhir_version, tls_version, mime_types FROM fhir_endpoints_info_history
-		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
-	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL)
+	historyQuery := `SELECT updated_at, operation, capability_fhir_version, tls_version, mime_types FROM fhir_endpoints_info_history
+		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 AND requested_fhir_version=$2 ORDER BY updated_at`
+	historyRows, err := ha.store.DB.QueryContext(ctx, historyQuery, ha.fhirURL, ha.requestedFhirVersion)
 	if err != nil {
-		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
+		log.Warnf("Failed getting the history rows for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 		result := Result{
-			URL:     ha.fhirURL,
-			Summary: returnResult,
+			URL:                  ha.fhirURL,
+			RequestedFhirVersion: ha.requestedFhirVersion,
+			Summary:              returnResult,
 		}
 		ha.result <- result
 		return nil
@@ -329,18 +359,22 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	for historyRows.Next() {
 		var e historyEntry
 		var fhirVersion string
+
+		e.URL = ha.fhirURL
+		e.RequestedFhirVersion = ha.requestedFhirVersion
+
 		var err = historyRows.Scan(
-			&e.URL,
 			&e.UpdatedAt,
 			&e.Operation,
 			&fhirVersion,
 			&e.TLSVersion,
 			pq.Array(&e.MIMETypes))
 		if err != nil {
-			log.Warnf("Error while scanning the rows of the history table for URL %s. Error: %s", ha.fhirURL, err)
+			log.Warnf("Error while scanning the rows of the history table for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 			result := Result{
-				URL:     ha.fhirURL,
-				Summary: returnResult,
+				URL:                  ha.fhirURL,
+				RequestedFhirVersion: ha.requestedFhirVersion,
+				Summary:              returnResult,
 			}
 			ha.result <- result
 			return nil
@@ -387,8 +421,9 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	result := Result{
-		URL:     ha.fhirURL,
-		Summary: returnResult,
+		URL:                  ha.fhirURL,
+		RequestedFhirVersion: ha.requestedFhirVersion,
+		Summary:              returnResult,
 	}
 	ha.result <- result
 	return nil
@@ -406,14 +441,15 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Get all rows in the history table between given dates
-	metadataQuery := `SELECT url, response_time_seconds, http_response, smart_http_response, errors FROM fhir_endpoints_metadata
-		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 ORDER BY updated_at`
-	metadataRows, err := ha.store.DB.QueryContext(ctx, metadataQuery, ha.fhirURL)
+	metadataQuery := `SELECT response_time_seconds, http_response, smart_http_response, errors FROM fhir_endpoints_metadata
+		WHERE updated_at between '` + ha.dateStart + `' AND '` + ha.dateEnd + `' AND url=$1 AND requested_fhir_version=$2 ORDER BY updated_at`
+	metadataRows, err := ha.store.DB.QueryContext(ctx, metadataQuery, ha.fhirURL, ha.requestedFhirVersion)
 	if err != nil {
-		log.Warnf("Failed getting the metadata rows for URL %s. Error: %s", ha.fhirURL, err)
+		log.Warnf("Failed getting the metadata rows for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 		result := Result{
-			URL:     ha.fhirURL,
-			Summary: returnResult,
+			URL:                  ha.fhirURL,
+			RequestedFhirVersion: ha.requestedFhirVersion,
+			Summary:              returnResult,
 		}
 		ha.result <- result
 		return nil
@@ -422,17 +458,21 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	defer metadataRows.Close()
 	for metadataRows.Next() {
 		var e metadataEntry
+
+		e.URL = ha.fhirURL
+		e.RequestedFhirVersion = ha.requestedFhirVersion
+
 		err = metadataRows.Scan(
-			&e.URL,
 			&e.ResponseTimeSeconds,
 			&e.HTTPResponse,
 			&e.SMARTHTTPResponse,
 			&e.Errors)
 		if err != nil {
-			log.Warnf("Error while scanning the rows of the metadata table for URL %s. Error: %s", ha.fhirURL, err)
+			log.Warnf("Error while scanning the rows of the metadata table for URL %s with requested version %s. Error: %s", ha.fhirURL, ha.requestedFhirVersion, err)
 			result := Result{
-				URL:     ha.fhirURL,
-				Summary: returnResult,
+				URL:                  ha.fhirURL,
+				RequestedFhirVersion: ha.requestedFhirVersion,
+				Summary:              returnResult,
 			}
 			ha.result <- result
 			return nil
@@ -514,8 +554,9 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	result := Result{
-		URL:     ha.fhirURL,
-		Summary: returnResult,
+		URL:                  ha.fhirURL,
+		RequestedFhirVersion: ha.requestedFhirVersion,
+		Summary:              returnResult,
 	}
 	ha.result <- result
 	return nil

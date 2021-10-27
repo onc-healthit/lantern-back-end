@@ -130,6 +130,10 @@ fieldsmodule <- function(
     max(nrow(capstat_field_count()) * 25, 400)
   })
 
+  plot_height_extensions <- reactive({
+    max(nrow(capstat_extension_count()) * 25, 400)
+  })
+
   output$fields_plot <- renderUI({
     if (nrow(capstat_field_count()) != 0) {
       tagList(
@@ -178,15 +182,16 @@ fieldsmodule <- function(
   output$extensions_plot <- renderUI({
     if (nrow(capstat_extension_count()) != 0) {
       tagList(
-        plotOutput(ns("extensions_bar_plot"), height = plot_height())
+        plotOutput(ns("extensions_bar_plot"), height = plot_height_extensions())
       )
     }
     else {
       tagList(
-        plotOutput(ns("extensions_bar_empty_plot"), height = plot_height())
+        plotOutput(ns("extensions_bar_empty_plot"), height = plot_height_extensions())
       )
     }
   })
+
   output$extensions_bar_plot <- renderCachedPlot({
     ggplot(capstat_extension_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
