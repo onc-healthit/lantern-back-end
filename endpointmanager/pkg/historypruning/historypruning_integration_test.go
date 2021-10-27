@@ -33,6 +33,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	MIMETypes:     []string{"application/json+fhir"},
 	TLSVersion:    "TLS 1.2",
 	SMARTResponse: nil,
+	RequestedFhirVersion: "1.0.2",
 }
 
 var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
@@ -40,6 +41,7 @@ var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	MIMETypes:     []string{"application/json+fhir"},
 	TLSVersion:    "TLS 1.2",
 	SMARTResponse: nil,
+	RequestedFhirVersion: "1.0.2",
 }
 
 func TestMain(m *testing.M) {
@@ -86,8 +88,9 @@ func Test_PruneInfoHistory(t *testing.T) {
 		tls_version,
 		mime_types,
 		smart_response, 
-		capability_statement)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`)
+		capability_statement,
+		requested_fhir_version)			
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
 	th.Assert(t, err == nil, err)
 	defer addFHIREndpointInfoHistoryStatement.Close()
 
@@ -726,6 +729,42 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.SMARTResponse = nil
 
+	// Clear history table in database
+	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
+	th.Assert(t, err == nil, err)
+	idExpectedArr = nil
+	
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	// Change requested fhir version for same endpoint
+	testFhirEndpointInfo.RequestedFhirVersion = "4.0.0"
+
+	idExpectedArr = append(idExpectedArr, idCount)
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	th.Assert(t, err == nil, err)
+
+	// Ensure all entries were added to info history table correctly
+	err = ctStatement.QueryRow(testEndpointURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Call PruneInfoHistory function
+	PruneInfoHistory(ctx, store, false)
+
+	// Info history table should have 2 entries as history pruning will keep both entries for an endpoint if their requested version differs
+	err = ctStatement.QueryRow(testEndpointURL).Scan(&count)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
+
+	// Ensure correct entries were left in the database
+	checkCorrectness, err = checkCorrect(idExpectedArr, testEndpointURL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
+
+	testFhirEndpointInfo.RequestedFhirVersion = "1.0.2"
+	
 }
 
 // AddFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
@@ -760,7 +799,8 @@ func AddFHIREndpointInfoHistory(ctx context.Context, store *postgresql.Store, e 
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		smartResponseJSON,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		e.RequestedFhirVersion)
 	if err != nil {
 		return err
 	}

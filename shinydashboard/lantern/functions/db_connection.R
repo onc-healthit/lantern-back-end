@@ -40,6 +40,7 @@ db_tables <- list(
 # Get the Endpoint export table and clean up for UI
 endpoint_export_tbl <- db_tables$endpoint_export %>%
   collect() %>%
+  filter(requested_fhir_version == "None") %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
   tidyr::replace_na(list(vendor_name = "Unknown")) %>%
   mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))

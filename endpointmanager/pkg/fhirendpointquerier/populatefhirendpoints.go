@@ -46,7 +46,7 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		}
 	}
 
-	err := removeOldEndpoints(ctx, store, firstUpdate, listsource)
+	err := RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
@@ -88,9 +88,9 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	return &dbEntry, nil
 }
 
-// removeOldEndpoints removes fhir endpoints from fhir_endpoints and fhir_endpoints_info
+// RemoveOldEndpoints removes fhir endpoints from fhir_endpoints and fhir_endpoints_info
 // that are no longer in the given listsource
-func removeOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
+func RemoveOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
 	// get endpoints that are from this listsource and have an update time before this time
 	fhirEndpoints, err := store.GetFHIREndpointsUsingListSourceAndUpdateTime(ctx, updateTime, listSource)
 	if err != nil {

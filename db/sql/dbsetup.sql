@@ -309,6 +309,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
     endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
+    endpts_info.requested_fhir_version,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
     links.confidence AS MATCH_SCORE, endpts_metadata.availability

@@ -18,7 +18,7 @@ vendor_short_names <- data.frame(
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
   all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% distinct(url) %>% count() %>% pull(n)
+  indexed <- db_tables$fhir_endpoints_info %>% filter(requested_fhir_version == "None") %>% distinct(url) %>% count() %>% pull(n)
   fhir_endpoint_totals <- list(
     "all_endpoints"     = all,
     "indexed_endpoints" = indexed,
@@ -41,6 +41,7 @@ get_fhir_endpoints_tbl <- function() {
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
   curr_tally <- db_tables$fhir_endpoints_info %>%
+    filter(requested_fhir_version == "None") %>%
     select(metadata_id) %>%
     left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
       by = c("metadata_id" = "id")) %>%
@@ -67,6 +68,7 @@ get_endpoint_last_updated <- function(db_tables) {
 get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
+    filter(requested_fhir_version == "None") %>%
     left_join(endpoint_export_tbl %>%
       select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name, fhir_version) %>%
@@ -136,6 +138,7 @@ get_fhir_resource_types <- function(db_connection) {
       json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE requested_fhir_version = 'None'
       ORDER BY type")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
@@ -151,7 +154,8 @@ get_fhir_resource_by_op <- function(db_connection, field) {
       capability_statement->>'fhirVersion' as fhir_version,
       operation_resource->>'", field, "' as type
       from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id"))) %>%
+      LEFT JOIN vendors on f.vendor_id = vendors.id
+      WHERE requested_fhir_version = 'None'"))) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
@@ -167,7 +171,7 @@ get_capstat_fields <- function(db_connection) {
       json_array_elements(included_fields::json) ->> 'Extension' as extension
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE included_fields != 'null'
+      WHERE included_fields != 'null' AND requested_fhir_version = 'None'
       ORDER BY field")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown"))
@@ -234,7 +238,7 @@ get_capstat_values <- function(db_connection) {
       capability_statement->'implementation'->>'custodian' as implementation_custodian
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE capability_statement != 'null'")) %>%
+      WHERE capability_statement != 'null' AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
@@ -250,8 +254,8 @@ get_avg_response_time <- function(db_connection, date) {
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, date.average AS avg, date.maximum AS max, date.minimum AS min
-                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, ROUND(AVG(response_time_seconds), 4) as average, MAX(response_time_seconds) as maximum, MIN(response_time_seconds) as minimum FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 GROUP BY datetime) as date,
-                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata) as maxdate
+                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, ROUND(AVG(response_time_seconds), 4) as average, MAX(response_time_seconds) as maximum, MIN(response_time_seconds) as minimum FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND requested_fhir_version = 'None' GROUP BY datetime) as date,
+                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE requested_fhir_version = 'None') as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     GROUP BY time, average, date.maximum, date.minimum
                     ORDER BY time"))
@@ -273,7 +277,8 @@ get_security_endpoints <- function(db_connection) {
           json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code,
           json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' as text
         FROM fhir_endpoints_info f LEFT JOIN vendors v
-        ON f.vendor_id = v.id")) %>%
+        ON f.vendor_id = v.id
+        WHERE requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
@@ -298,7 +303,7 @@ get_security_endpoints_tbl <- function(db_connection) {
             f.vendor_id,
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
           FROM fhir_endpoints_info f,fhir_endpoints e
-          WHERE e.url = f.url) a
+          WHERE e.url = f.url AND requested_fhir_version = 'None') a
         LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
         ON a.vendor_id = b.id")) %>%
     collect() %>%
@@ -318,7 +323,7 @@ get_smart_response_capabilities <- function(db_connection) {
     FROM fhir_endpoints_info f
     LEFT JOIN vendors v ON f.vendor_id = v.id
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    WHERE vendor_id = v.id AND f.metadata_id = m.id
+    WHERE vendor_id = v.id AND f.metadata_id = m.id AND f.requested_fhir_version = 'None'
     AND m.smart_http_response=200")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -347,7 +352,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.url = e.url
-    WHERE m.smart_http_response = 200
+    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -368,7 +373,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     LEFT JOIN vendors v on f.vendor_id = v.id
     LEFT JOIN fhir_endpoints e
     ON f.url = e.url
-    WHERE m.smart_http_response = 200
+    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -390,7 +395,7 @@ get_auth_type_count <- function(security_endpoints) {
 # Get count of endpoints which have NOT returned a valid capability statement
 get_no_cap_statement_count <- function(db_connection) {
   res <- tbl(db_connection,
-             sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement) <> 'object'")
+             sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement) <> 'object' AND requested_fhir_version = 'None'")
   ) %>% pull(count)
 }
 
@@ -444,7 +449,8 @@ get_implementation_guide <- function(db_connection) {
           json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide,
           vendors.name as vendor_name
           FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id")) %>%
+          LEFT JOIN vendors on f.vendor_id = vendors.id
+          WHERE requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
@@ -459,7 +465,8 @@ get_cap_stat_sizes <- function(db_connection) {
           capability_fhir_version as fhir_version,
           vendors.name as vendor_name
           FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_fhir_version != ''")) %>%
+          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_fhir_version != ''
+          AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
