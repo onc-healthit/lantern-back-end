@@ -520,7 +520,6 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
 	th.Assert(t, versionValidation.Actual == "1.0.2", "Expected validation actual version to equal 1.0.2")
 	th.Assert(t, versionValidation.Actual == versionValidation.Expected, "Expected validation actual version to equal expected version.")
-	th.Assert(t, versionValidation.Actual == versionValidation.Expected, "Expected validation actual version to equal expected version.")
 	th.Assert(t, versionValidation.Comment == "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.", fmt.Sprintf("Version validation comment unexpected, got %s", versionValidation.Comment))
 
 	tmpMessage["requestedFhirVersion"] = "1.0.2"
