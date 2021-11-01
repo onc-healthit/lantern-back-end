@@ -272,8 +272,9 @@ func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion s
 		ruleError.Comment = "Expected $versions operation to be supported, but no response was received"
 		return ruleError
 	}
-
-	if fhirVersion != defaultFhirVersion {
+	fhirVersionSplit := strings.Split(fhirVersion, ".")
+	defaultVersionSplit := strings.Split(defaultFhirVersion, ".")
+	if fhirVersionSplit[0] != defaultVersionSplit[0] || fhirVersionSplit[1] != defaultVersionSplit[1] {
 		ruleError.Valid = false
 	}
 

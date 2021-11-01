@@ -1055,10 +1055,18 @@ func Test_VersionResponseValid(t *testing.T) {
 	defaultFhirVersion = "4.0.1"
 	expectedVal.Expected = "4.0.1"
 	expectedVal.Valid = false
-	expectedVal.Comment = "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified."
 	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, but default version should not match fhir version, is instead %+v", actualVal))
+
+	// defaultVersion is 1.0
+
+	defaultFhirVersion = "1.0"
+	expectedVal.Expected = "1.0"
+	expectedVal.Valid = true
+	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
+	eq = reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, and default version's publication and major components should match fhir version, is instead %+v", actualVal))
 
 	// $version operation no response
 
