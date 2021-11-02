@@ -43,11 +43,6 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	returnedRule = bv.FhirVersion(fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
-	if requestedFhirVersion == "None" {
-		returnedRule = bv.VersionResponseValid(fhirVersion, defaultFhirVersion)
-		validationResults = append(validationResults, returnedRule)
-	}
-
 	returnedRules := bv.KindValid(capStat)
 	validationResults = append(validationResults, returnedRules[0])
 
@@ -256,29 +251,7 @@ func (bv *baseVal) SearchParamsUnique(capStat capabilityparser.CapabilityStateme
 	return ruleError
 }
 
-// VersionResponseValid checks if $versions operation is supported and that the default version is returned when no version requested
 func (bv *baseVal) VersionResponseValid(fhirVersion string, defaultFhirVersion string) endpointmanager.Rule {
-	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.VersionsResponseRule,
-		Valid:    true,
-		Expected: defaultFhirVersion,
-		Comment:  "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.",
-	}
-
-	if defaultFhirVersion == "None" {
-		ruleError.Valid = false
-		ruleError.Actual = fhirVersion
-		ruleError.Expected = ""
-		ruleError.Comment = "Expected $versions operation to be supported, but no response was received"
-		return ruleError
-	}
-	fhirVersionSplit := strings.Split(fhirVersion, ".")
-	defaultVersionSplit := strings.Split(defaultFhirVersion, ".")
-	if fhirVersionSplit[0] != defaultVersionSplit[0] || fhirVersionSplit[1] != defaultVersionSplit[1] {
-		ruleError.Valid = false
-	}
-
-	ruleError.Actual = fhirVersion
-
+	var ruleError endpointmanager.Rule
 	return ruleError
 }
