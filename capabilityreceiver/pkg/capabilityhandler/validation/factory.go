@@ -16,9 +16,10 @@ var r4 = []string{"3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1"}
 // Validator is an interface that can be implemented for each FHIR Version to run the correct
 // version's validation checks
 type Validator interface {
-	RunValidation(capabilityparser.CapabilityStatement, []string, string, string, smartparser.SMARTResponse) endpointmanager.Validation
+	RunValidation(capabilityparser.CapabilityStatement, []string, string, string, smartparser.SMARTResponse, string, string) endpointmanager.Validation
 	CapStatExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	MimeTypeValid([]string, string) endpointmanager.Rule
+	VersionResponseValid(string, string) endpointmanager.Rule
 	TLSVersion(string) endpointmanager.Rule
 	PatientResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule
 	OtherResourceExists(capabilityparser.CapabilityStatement) endpointmanager.Rule

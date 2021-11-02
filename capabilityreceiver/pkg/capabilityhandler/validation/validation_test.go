@@ -46,8 +46,11 @@ func Test_RunValidation(t *testing.T) {
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 	}
 
-	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
+	requestedFhirVersion := "None"
+	defaultFhirVersion := "1.0.2"
+
+	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
+	th.Assert(t, len(actualVal.Results) == 5, fmt.Sprintf("RunValidation should have returned 5 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
 	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
@@ -63,7 +66,7 @@ func Test_RunValidation(t *testing.T) {
 
 	// choose two random validation values in the list to check
 
-	expectedFourthVal := endpointmanager.Rule{
+	expectedSixthVal := endpointmanager.Rule{
 		RuleName:  endpointmanager.TLSVersion,
 		Valid:     true,
 		Expected:  "TLS 1.2, TLS 1.3",
@@ -82,11 +85,11 @@ func Test_RunValidation(t *testing.T) {
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 	}
 
-	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr)
-	th.Assert(t, len(actualVal.Results) == 14, fmt.Sprintf("RunValidation should have returned 14 validation checks, instead it returned %d", len(actualVal.Results)))
-	eq = reflect.DeepEqual(actualVal.Results[2], expectedFourthVal)
-	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[13], expectedLastVal)
+	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
+	th.Assert(t, len(actualVal.Results) == 17, fmt.Sprintf("RunValidation should have returned 17 validation checks, instead it returned %d", len(actualVal.Results)))
+	eq = reflect.DeepEqual(actualVal.Results[5], expectedSixthVal)
+	th.Assert(t, eq == true, "RunValidation's first returned validation is not correct")
+	eq = reflect.DeepEqual(actualVal.Results[16], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }
 
@@ -943,6 +946,60 @@ func Test_SearchParamsUnique(t *testing.T) {
 	actualVal = validator6.SearchParamsUnique(cs6)
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("SearchParamsUnique check should be valid even though searchParams do not exist, is instead %+v", actualVal))
+}
+
+func Test_VersionResponseValid(t *testing.T) {
+	cs, err := getR4CapStat()
+	th.Assert(t, err == nil, err)
+
+	validator, err := getValidator(cs, r4)
+	th.Assert(t, err == nil, err)
+
+	fhirVersion := "4.0.1"
+	defaultFhirVersion := "4.0.1"
+
+	// base test
+
+	expectedVal := endpointmanager.Rule{
+		RuleName: endpointmanager.VersionsResponseRule,
+		Valid:    true,
+		Expected: "4.0.1",
+		Actual:   "4.0.1",
+		Comment:  "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.",
+	}
+
+	actualVal := validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
+	eq := reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("$version operation and default version should be valid, is instead %+v", actualVal))
+
+	// defaultVersion is not 4.0.1
+
+	defaultFhirVersion = "1.0.2"
+	expectedVal.Expected = "1.0.2"
+	expectedVal.Valid = false
+	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
+	eq = reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, but default version should not match fhir version, is instead %+v", actualVal))
+
+	// defaultVersion is 4.0
+
+	defaultFhirVersion = "4.0"
+	expectedVal.Expected = "4.0"
+	expectedVal.Valid = true
+	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
+	eq = reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, and default version's publication and major components should match fhir version, is instead %+v", actualVal))
+
+	// $version operation no response
+
+	defaultFhirVersion = "None"
+	expectedVal.Actual = "4.0.1"
+	expectedVal.Expected = ""
+	expectedVal.Valid = false
+	expectedVal.Comment = "Expected $versions operation to be supported, but no response was received"
+	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
+	eq = reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("$version operation should not be valid, is instead %+v", actualVal))
 }
 
 // getDSTU2CapStat gets a DSTU2 Capability Statement

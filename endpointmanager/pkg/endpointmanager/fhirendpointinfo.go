@@ -146,20 +146,20 @@ type Rule struct {
 type RuleOption string
 
 const (
-	GeneralMimeTypeRule RuleOption = "generalMimeType"
-	CapStatExistRule    RuleOption = "capStatExist"
-	TLSVersion          RuleOption = "tlsVersion"
-	PatResourceExists   RuleOption = "patResourceExists"
-	OtherResourceExists RuleOption = "otherResourceExists"
-	SmartRespExistsRule RuleOption = "smartResponse"
-	KindRule            RuleOption = "kindRule"
-	InstanceRule        RuleOption = "instanceRule"
-	MessagingEndptRule  RuleOption = "messagingEndptRule"
-	EndptFunctionRule   RuleOption = "endpointFunctionRule"
-	DescribeEndptRule   RuleOption = "describeEndpointRule"
-	DocumentValidRule   RuleOption = "documentValidRule"
-	UniqueResourcesRule RuleOption = "uniqueResourcesRule"
-	SearchParamsRule    RuleOption = "searchParamsRule"
+	GeneralMimeTypeRule  RuleOption = "generalMimeType"
+	CapStatExistRule     RuleOption = "capStatExist"
+	TLSVersion           RuleOption = "tlsVersion"
+	PatResourceExists    RuleOption = "patResourceExists"
+	OtherResourceExists  RuleOption = "otherResourceExists"
+	KindRule             RuleOption = "kindRule"
+	InstanceRule         RuleOption = "instanceRule"
+	MessagingEndptRule   RuleOption = "messagingEndptRule"
+	EndptFunctionRule    RuleOption = "endpointFunctionRule"
+	DescribeEndptRule    RuleOption = "describeEndpointRule"
+	DocumentValidRule    RuleOption = "documentValidRule"
+	UniqueResourcesRule  RuleOption = "uniqueResourcesRule"
+	SearchParamsRule     RuleOption = "searchParamsRule"
+	VersionsResponseRule RuleOption = "versionsResponseRule"
 )
 
 // compareOperations compares the operation resource fields for an endpoint

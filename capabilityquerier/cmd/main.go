@@ -59,6 +59,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 
 	urlString := msgJSON["url"]
 	requestVersion := msgJSON["requestVersion"]
+	defaultVersion := msgJSON["defaultVersion"]
 	exportFileWait := viper.GetInt("exportfile_wait")
 
 	if urlString == "FINISHED" {
@@ -73,6 +74,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
 		FhirURL:        urlString,
 		RequestVersion: requestVersion,
+		DefaultVersion: defaultVersion,
 		Client:         qa.client,
 		MessageQueue:   qa.mq,
 		ChannelID:      qa.ch,
