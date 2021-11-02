@@ -1,5 +1,6 @@
 library(DT)
 library(purrr)
+library(reactable)
 
 endpointsmodule_UI <- function(id) {
 
@@ -13,7 +14,7 @@ endpointsmodule_UI <- function(id) {
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)")
       ),
     ),
-    DT::dataTableOutput(ns("endpoints_table")),
+    reactable::reactableOutput(ns("endpoints_table")),
     htmlOutput(ns("note_text"))
   )
 }
@@ -80,12 +81,29 @@ endpointsmodule <- function(
     }
   )
 
-  output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
-              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
-              rownames = FALSE,
-              options = list(scrollX = TRUE)
-    )
+  output$endpoints_table <- reactable::renderReactable({
+     reactable(
+              selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability) %>% mutate_all(as.character),
+              groupBy ="url",
+              columns = list(
+                  url = colDef(name = "URL"),
+                  endpoint_names = colDef(name = "API Information Source Name"),
+                  updated = colDef(name = "Updated"),
+                  vendor_name = colDef(name = "Certified API Developer Name"),
+                  fhir_version = colDef(name = "FHIR Version"),
+                  tls_version = colDef(name = "TLS Version"),
+                  mime_types = colDef(name = "MIME Types"),
+                  status = colDef(name = "HTTP Response"),
+                  availability = colDef(name = "Availability")
+              ),
+              sortable = TRUE,
+              searchable = TRUE,
+              striped = TRUE,
+              compact = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = 5
+
+     )
   })
 
   # Create the format for the csv
