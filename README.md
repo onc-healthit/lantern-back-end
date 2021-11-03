@@ -2,6 +2,8 @@
 * [Running Lantern - Basic Flow](#running-lantern---basic-flow)
 * [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
 * [Make Commands](#make-commands)
+* [Configure Data Collection Failure System](#configure-data-collection-failure-system)
+* [Configure Backup System](#configure-backup-system)
 * [Running Lantern Services Individually](#running-lantern-services-individually)
 * [Using Docker Compose](#using-docker-compose)
 * [Testing - Details](#testing---details)
@@ -158,6 +160,25 @@ To configure this script to run using cron, do:
   * A `*` can be added to any field in the crontab expression to mean always
   * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
   * Example: Add `0 */23 * * * <Full Path to data_collection_checks.sh>` to run the script at minute 0 of every 23rd hour
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
+# Configure Backup System
+
+You can configure a backup system using cron and the backup.sh script located in the scripts directory to send an email notification whenever the current backup becomes available.
+
+To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the backup script. The DB_NAME and DB_USER variables used in the script should match their corresponding environmental variable (shown in parentheses below) defined in the .env file:
+  * Set the EMAIL variable to the email you want the failure system to send alerts to
+  * Set the DB_NAME variable to name of your database (LANTERN_DBNAME)
+  * Set the DB_USER variable to the name of the database user (LANTERN_DBUSER)
+  * Set the BACKUP_DIR variable to wherever you want to save the backup file
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) <Full Path to backup.sh>` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * <Full Path to backup.sh>` to run the script at minute 0 of every 23rd hour
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
