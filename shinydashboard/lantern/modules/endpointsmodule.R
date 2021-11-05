@@ -89,14 +89,14 @@ endpointsmodule <- function(
                 align = "center"
               ),
               columns = list(
-                  url = colDef(name = "URL", minWidth = 300, 
+                  url = colDef(name = "URL", minWidth = 300,
                             style = JS("function(rowInfo, colInfo, state) {
                                     var prevRow = state.pageRows[rowInfo.viewIndex - 1]
                                     if (prevRow && rowInfo.row['url'] === prevRow['url']) {
                                       return { visibility: 'hidden' }
                                     }
                                   }"
-                            ), 
+                            ),
                             sortable = TRUE),
                   endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
                   updated = colDef(name = "Updated", , sortable = FALSE),
