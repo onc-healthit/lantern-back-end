@@ -43,6 +43,7 @@ valuesmodule <- function(
     }
     # Repeat with filtering fields to see values
     res <- res %>%
+      rename(fhirVersion = fhir_version, software.name = software_name, software.version = software_version, software.releaseDate = software_release_date, implementation.description = implementation_description, implementation.url = implementation_url, implementation.custodian = implementation_custodian) %>%
       group_by_at(vars("vendor_name", "filter_fhir_version", sel_capstat_values())) %>%
       count() %>%
       rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = filter_fhir_version) %>%
