@@ -124,7 +124,7 @@ capabilitymodule <- function(  #nolint
                   format = list(aggregated = colFormat(prefix = "Total: "))
                 )
               ),
-              groupBy ="Resource",
+              groupBy = "Resource",
               sortable = TRUE,
               searchable = TRUE,
               striped = TRUE,

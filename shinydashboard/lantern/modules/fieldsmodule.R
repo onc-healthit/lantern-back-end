@@ -113,7 +113,7 @@ fieldsmodule <- function(
                   format = list(aggregated = colFormat(prefix = "Total: "))
                 )
               ),
-              groupBy ="Fields",
+              groupBy = "Fields",
               sortable = TRUE,
               searchable = TRUE,
               striped = TRUE,
@@ -132,7 +132,7 @@ fieldsmodule <- function(
                   format = list(aggregated = colFormat(prefix = "Total: "))
                 )
               ),
-              groupBy ="Fields",
+              groupBy = "Fields",
               sortable = TRUE,
               searchable = TRUE,
               striped = TRUE,
@@ -152,7 +152,7 @@ fieldsmodule <- function(
                   format = list(aggregated = colFormat(prefix = "Total: "))
                 )
               ),
-              groupBy ="Fields",
+              groupBy = "Fields",
               sortable = TRUE,
               searchable = TRUE,
               striped = TRUE,
@@ -162,7 +162,7 @@ fieldsmodule <- function(
      )
   })
 
-  
+
 
   vendor <- reactive({
     sel_vendor()
