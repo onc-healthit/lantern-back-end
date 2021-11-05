@@ -85,58 +85,35 @@ endpointsmodule <- function(
   output$endpoints_table <- reactable::renderReactable({
      reactable(
               selected_fhir_endpoints() %>% distinct(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              defaultColDef = colDef(
+                align = "center"
+              ),
               columns = list(
                   url = colDef(name = "URL", minWidth = 300, 
                             style = JS("function(rowInfo, colInfo, state) {
-                                    var firstSorted = state.sorted[0]
-                                    // Merge cells if unsorted or sorting by school
-                                    if (!firstSorted || firstSorted.id === 'url') {
-                                      var prevRow = state.pageRows[rowInfo.viewIndex - 1]
-                                      if (prevRow && rowInfo.row['url'] === prevRow['url']) {
-                                        return { visibility: 'hidden' }
-                                      }
+                                    var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+                                    if (prevRow && rowInfo.row['url'] === prevRow['url']) {
+                                      return { visibility: 'hidden' }
                                     }
                                   }"
-                            )),
-                  endpoint_names = colDef(name = "API Information Source Name"),
-                  updated = colDef(name = "Updated"),
-                  vendor_name = colDef(name = "Certified API Developer Name"),
-                  fhir_version = colDef(name = "FHIR Version"),
-                  tls_version = colDef(name = "TLS Version"),
-                  mime_types = colDef(name = "MIME Types", minWidth = 150),
-                  status = colDef(name = "HTTP Response"),
-                  availability = colDef(name = "Availability")
+                            ), 
+                            sortable = TRUE),
+                  endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
+                  updated = colDef(name = "Updated", , sortable = FALSE),
+                  vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
+                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+                  tls_version = colDef(name = "TLS Version", sortable = FALSE),
+                  mime_types = colDef(name = "MIME Types", minWidth = 150, sortable = FALSE),
+                  status = colDef(name = "HTTP Response", sortable = FALSE),
+                  availability = colDef(name = "Availability", sortable = FALSE)
               ),
-              sortable = TRUE,
               searchable = TRUE,
-              outlined = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = 5
+              highlight = TRUE,
+              defaultPageSize = 10
 
      )
   })
-
-#  output$endpoints_table <-
-#    gt::render_gt(
-#      expr = selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability) %>% 
-#      gt(id = "endpoints_table", groupname_col = "url", rowname_col = "fhir_version") %>% 
-#      tab_stubhead(label = "FHIR Version") %>% 
-#      cols_label(
-#        endpoint_names = md("API Information Source Name"),
-#        updated = md("Updated"),
-#        vendor_name = md("Certified API Developer Name"),
-#        tls_version = md("TLS Version"),
-#        mime_types = md("MIME Types"),
-#        status = md("HTTP Response"),
-#        availability = md("Availability")
-#      ) %>% 
-#      tab_options(row_group.background.color = "#c6dbef", column_labels.font.weight = "bold", row_group.font.weight = "lighter", container.overflow.y = TRUE),
-#      height = "600px",
-#      width = "100%"
-#    )
-
-
-
 
   # Create the format for the csv
   csv_format <- reactive({
