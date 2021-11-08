@@ -121,7 +121,7 @@ function(input, output, session) { #nolint
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "performance_tab" = "Response Time Performance",
-     "capabilitystatementsize_tab" = "Capability Statement Size",
+     "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
      "validations_tab" = "Validations Page"
   )
 
@@ -285,7 +285,7 @@ function(input, output, session) { #nolint
             Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
             Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.
             You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
-          p("Note: This is the list of FHIR resource types reported by the capability statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid capability statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
+          p("Note: This is the list of FHIR resource types reported by the CapabilityStatements / Conformance statements from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance statement, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
           selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources_no_filter(), selected = checkbox_resources_no_filter(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
           actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
           actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
@@ -349,7 +349,7 @@ function(input, output, session) { #nolint
           selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
           actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
           p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
-          Choosing the 'not specified' option will display resources where no operation was defined in the Capability Statement.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
+          Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance statement.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
         )
       )
     }

@@ -404,7 +404,7 @@ get_endpoint_security_counts <- function(db_connection) {
     "Total Indexed Endpoints", as.integer(isolate(app_data$fhir_endpoint_totals()$all_endpoints)),
     "Endpoints with successful response (HTTP 200)", as.integer(isolate(app_data$response_tally()$http_200)),
     "Endpoints with unsuccessful response", as.integer(isolate(app_data$response_tally()$http_non200)),
-    "Endpoints without valid capability statement", as.integer(get_no_cap_statement_count(db_connection)),
+    "Endpoints without valid capability statement / conformance statement", as.integer(get_no_cap_statement_count(db_connection)),
     "Endpoints with valid security resource", as.integer(nrow(isolate(app_data$security_endpoints()) %>% distinct(id)))
   )
 }
