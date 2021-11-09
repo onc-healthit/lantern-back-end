@@ -126,7 +126,13 @@ capabilitymodule <- function(  #nolint
                 Endpoints = colDef(
                   aggregate = "sum",
                   format = list(aggregated = colFormat(prefix = "Total: "))
-                )
+                ),
+                Resource = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
+                )                
               ),
               groupBy = "Resource",
               sortable = TRUE,

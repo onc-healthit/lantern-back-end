@@ -111,6 +111,12 @@ fieldsmodule <- function(
                 Endpoints = colDef(
                   aggregate = "sum",
                   format = list(aggregated = colFormat(prefix = "Total: "))
+                ),
+                Fields = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
                 )
               ),
               groupBy = "Fields",
@@ -130,6 +136,12 @@ fieldsmodule <- function(
                 Endpoints = colDef(
                   aggregate = "sum",
                   format = list(aggregated = colFormat(prefix = "Total: "))
+                ),
+                Fields = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
                 )
               ),
               groupBy = "Fields",
