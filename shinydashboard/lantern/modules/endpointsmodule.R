@@ -1,6 +1,5 @@
 library(DT)
 library(purrr)
-library(gt)
 library(reactable)
 
 endpointsmodule_UI <- function(id) {
