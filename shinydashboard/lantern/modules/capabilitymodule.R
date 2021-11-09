@@ -103,7 +103,11 @@ capabilitymodule <- function(  #nolint
         group_by(type, fhir_version) %>%
         count()
     }
+    res
+  })
 
+  number_resources <- reactive({
+    res <- isolate(app_data$endpoint_resource_types()) %>% distinct(type) %>% count()
     res
   })
 
@@ -129,7 +133,9 @@ capabilitymodule <- function(  #nolint
               searchable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = 100
+              defaultPageSize = number_resources()$n -1,
+              showPageSizeOptions = TRUE,
+              pageSizeOptions = c(25, 50, 100, number_resources()$n -1)
 
      )
   })
