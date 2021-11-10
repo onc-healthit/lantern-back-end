@@ -96,7 +96,8 @@ endpointsmodule <- function(
                                     }
                                   }"
                             ),
-                            sortable = TRUE),
+                            sortable = TRUE,
+                            align = "left"),
                   endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
                   updated = colDef(name = "Updated", , sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
