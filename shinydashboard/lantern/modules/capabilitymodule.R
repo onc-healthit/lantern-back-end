@@ -132,16 +132,16 @@ capabilitymodule <- function(  #nolint
                 ),
                 "FHIR Version" = colDef(
                   align = "center"
-                )                
+                )
               ),
               groupBy = "Resource",
               sortable = TRUE,
               searchable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = number_resources()$n -1,
+              defaultPageSize = number_resources()$n - 1,
               showPageSizeOptions = TRUE,
-              pageSizeOptions = c(25, 50, 100, number_resources()$n -1)
+              pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
 
      )
   })
