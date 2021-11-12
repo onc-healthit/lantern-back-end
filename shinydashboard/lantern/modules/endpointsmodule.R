@@ -1,5 +1,6 @@
 library(DT)
 library(purrr)
+library(reactable)
 
 endpointsmodule_UI <- function(id) {
 
@@ -13,7 +14,7 @@ endpointsmodule_UI <- function(id) {
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)")
       ),
     ),
-    DT::dataTableOutput(ns("endpoints_table")),
+    reactable::reactableOutput(ns("endpoints_table")),
     htmlOutput(ns("note_text"))
   )
 }
@@ -80,12 +81,38 @@ endpointsmodule <- function(
     }
   )
 
-  output$endpoints_table <- DT::renderDataTable({
-    datatable(selected_fhir_endpoints() %>% select(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability),
-              colnames = c("URL", "API Information Source Name", "Updated", "Certified API Developer Name", "FHIR Version", "TLS Version", "MIME Types", "HTTP Response", "Availability"),
-              rownames = FALSE,
-              options = list(scrollX = TRUE)
-    )
+  output$endpoints_table <- reactable::renderReactable({
+     reactable(
+              selected_fhir_endpoints() %>% distinct(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              defaultColDef = colDef(
+                align = "center"
+              ),
+              columns = list(
+                  url = colDef(name = "URL", minWidth = 300,
+                            style = JS("function(rowInfo, colInfo, state) {
+                                    var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+                                    if (prevRow && rowInfo.row['url'] === prevRow['url']) {
+                                      return { visibility: 'hidden' }
+                                    }
+                                  }"
+                            ),
+                            sortable = TRUE,
+                            align = "left"),
+                  endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
+                  updated = colDef(name = "Updated", , sortable = FALSE),
+                  vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
+                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+                  tls_version = colDef(name = "TLS Version", sortable = FALSE),
+                  mime_types = colDef(name = "MIME Types", minWidth = 150, sortable = FALSE),
+                  status = colDef(name = "HTTP Response", sortable = FALSE),
+                  availability = colDef(name = "Availability", sortable = FALSE)
+              ),
+              searchable = TRUE,
+              showSortIcon = TRUE,
+              highlight = TRUE,
+              defaultPageSize = 10
+
+     )
   })
 
   # Create the format for the csv
