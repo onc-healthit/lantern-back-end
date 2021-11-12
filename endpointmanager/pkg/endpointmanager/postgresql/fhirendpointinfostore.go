@@ -568,7 +568,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			included_fields = $8,
 			operation_resource = $9,
 			validation_result_id = $10,
-			metadata_id = $11
+			metadata_id = $11,
 			requested_fhir_version = $12,
 			capability_fhir_version = $13		
 		WHERE id = $14`)
@@ -598,7 +598,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		tls_version,
 		mime_types,
 		capability_statement,
-		validation,
+		validation_result_id,
 		created_at,
 		updated_at,
 		smart_response,
