@@ -548,6 +548,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			included_fields,
 			operation_resource,
 			validation_result_id,
+			metadata_id,
 			requested_fhir_version,
 			capability_fhir_version)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
