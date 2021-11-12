@@ -513,14 +513,14 @@ func (v *r4Validation) VersionResponseValid(fhirVersion string, defaultFhirVersi
 		RuleName: endpointmanager.VersionsResponseRule,
 		Valid:    true,
 		Expected: defaultFhirVersion,
-		Comment:  "Expected $versions operation to be supported, and expected default fhir version to be returned from server when no version specified.",
+		Comment:  "The $versions operation should be supported, and default fhir version should be returned from server when no version specified.",
 	}
 
 	if defaultFhirVersion == "None" {
 		ruleError.Valid = false
 		ruleError.Actual = fhirVersion
 		ruleError.Expected = ""
-		ruleError.Comment = "Expected $versions operation to be supported, but no response was received"
+		ruleError.Comment = "The $versions operation should be supported, but no response was received"
 		return ruleError
 	}
 	fhirVersionSplit := strings.Split(fhirVersion, ".")
