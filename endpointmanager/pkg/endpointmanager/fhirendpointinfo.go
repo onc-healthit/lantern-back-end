@@ -151,6 +151,7 @@ const (
 	TLSVersion           RuleOption = "tlsVersion"
 	PatResourceExists    RuleOption = "patResourceExists"
 	OtherResourceExists  RuleOption = "otherResourceExists"
+	SmartRespExistsRule  RuleOption = "smartResponse"
 	KindRule             RuleOption = "kindRule"
 	InstanceRule         RuleOption = "instanceRule"
 	MessagingEndptRule   RuleOption = "messagingEndptRule"
