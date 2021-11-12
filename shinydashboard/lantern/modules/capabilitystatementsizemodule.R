@@ -13,7 +13,7 @@ capabilitystatementsize_UI <- function(id) {
         htmlOutput(ns("notes_text"))
       ),
         column(width = 4,
-        h4("Capability Statement / Conformance Size Statistics"),
+        h4("CapabilityStatement / Conformance Size Statistics"),
         tableOutput(ns("stats_table"))
       )
     )
@@ -56,7 +56,7 @@ capabilitystatementsizemodule <- function(
    labs(fill = "Developer",
           x = "FHIR Version",
           y = "Size (Bytes)",
-          title = "Capability Statement / Conformance Sizes by Developer and FHIR Version")
+          title = "CapabilityStatement / Conformance Sizes by Developer and FHIR Version")
   },
     res = 72,
     cache = "app",

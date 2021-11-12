@@ -5,7 +5,7 @@ securitymodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    p("This is the list of security authorization types reported by the capability statements / conformance statements from the endpoints."),
+    p("This is the list of security authorization types reported by the CapabilityStatement / Conformance Resources from the endpoints."),
     fluidRow(
       column(width = 6,
              tableOutput(ns("endpoint_summary_table"))

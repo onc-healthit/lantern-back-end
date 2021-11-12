@@ -4,7 +4,7 @@ valuesmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
     h1("Values of FHIR CapabilityStatement / Conformance Fields"),
-    p("This is the set of values from the endpoints for a given field included in the FHIR capability statements / conformance statements."),
+    p("This is the set of values from the endpoints for a given field included in the FHIR CapabilityStatement / Conformance Resources."),
     fluidRow(
       column(width = 7,
              h4("Field Values"),

@@ -4,7 +4,7 @@ fieldsmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
     h1("FHIR CapabilityStatement / Conformance Fields"),
-    p("This is the list of fields included in the FHIR capability statements / conformance statements from the endpoints."),
+    p("This is the list of fields included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
       .field-list {
         display: grid;
@@ -21,12 +21,12 @@ fieldsmodule_UI <- function(id) {
              h4("Optional Fields"),
              tableOutput(ns("capstat_fields_table_optional"))),
       column(width = 7,
-             h4("Supported Capability Statement / Conformance Fields"),
+             h4("Supported CapabilityStatement / Conformance Fields"),
              uiOutput(ns("fields_plot"))
       )
     ),
-    h1("FHIR Capability Statement / Conformance Extensions"),
-    p("This is the list of extensions included in the FHIR capability statements / conformance statements from the endpoints."),
+    h1("FHIR CapabilityStatement / Conformance Extensions"),
+    p("This is the list of extensions included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
       .extension-list {
         display: grid;
@@ -41,7 +41,7 @@ fieldsmodule_UI <- function(id) {
              h4("Supported Extensions:"),
              tableOutput(ns("capstat_extensions_table"))),
       column(width = 7,
-             h4("Supported Capability Statement / Conformance Extensions"),
+             h4("Supported CapabilityStatement / Conformance Extensions"),
              uiOutput(ns("extensions_plot"))
       )
     )
