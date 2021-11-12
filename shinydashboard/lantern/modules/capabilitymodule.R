@@ -1,4 +1,5 @@
 # Capability Module
+library(reactable)
 
 capabilitymodule_UI <- function(id) {
 
@@ -7,7 +8,7 @@ capabilitymodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 5,
-             tableOutput(ns("resource_op_table"))),
+             reactable::reactableOutput(ns("resource_op_table"))),
       column(width = 7,
              h4("Resource Count"),
              uiOutput(ns("resource_full_plot"))
@@ -102,7 +103,11 @@ capabilitymodule <- function(  #nolint
         group_by(type, fhir_version) %>%
         count()
     }
+    res
+  })
 
+  number_resources <- reactive({
+    res <- isolate(app_data$endpoint_resource_types()) %>% distinct(type) %>% count()
     res
   })
 
@@ -114,9 +119,32 @@ capabilitymodule <- function(  #nolint
     op_table
   })
 
-  output$resource_op_table <- renderTable(
-    select_table_format()
-  )
+   output$resource_op_table <- reactable::renderReactable({
+     reactable(
+              select_table_format(),
+              columns = list(
+                Endpoints = colDef(
+                  aggregate = "sum",
+                  format = list(aggregated = colFormat(prefix = "Total: "))
+                ),
+                Resource = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
+                )
+              ),
+              groupBy = "Resource",
+              sortable = TRUE,
+              searchable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = number_resources()$n - 1,
+              showPageSizeOptions = TRUE,
+              pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
+
+     )
+  })
 
   select_operations_count <- reactive({
     select_operations() %>%

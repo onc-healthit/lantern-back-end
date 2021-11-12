@@ -1,4 +1,5 @@
 # Fields Module
+library(reactable)
 
 fieldsmodule_UI <- function(id) {
   ns <- NS(id)
@@ -17,9 +18,9 @@ fieldsmodule_UI <- function(id) {
     fluidRow(
       column(width = 5,
              h4("Required Fields"),
-             tableOutput(ns("capstat_fields_table_required")),
+             reactable::reactableOutput(ns("capstat_fields_table_required")),
              h4("Optional Fields"),
-             tableOutput(ns("capstat_fields_table_optional"))),
+             reactable::reactableOutput(ns("capstat_fields_table_optional"))),
       column(width = 7,
              h4("Supported Capability Statement Fields"),
              uiOutput(ns("fields_plot"))
@@ -39,7 +40,7 @@ fieldsmodule_UI <- function(id) {
     fluidRow(
       column(width = 5,
              h4("Supported Extensions:"),
-             tableOutput(ns("capstat_extensions_table"))),
+             reactable::reactableOutput(ns("capstat_extensions_table"))),
       column(width = 7,
              h4("Supported Capability Statement Extensions"),
              uiOutput(ns("extensions_plot"))
@@ -102,25 +103,78 @@ fieldsmodule <- function(
   # Required Capability Statement fields that we are tracking
   required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 
-  # Table of the required fields
-  output$capstat_fields_table_required <- renderTable(
-    capstat_field_count() %>%
-    filter(Fields %in% required_fields) %>%
-    rename("FHIR Version" = fhir_version)
-  )
 
-  # Table of the optional fields
-  output$capstat_fields_table_optional <- renderTable(
-    capstat_field_count() %>%
-    filter(!(Fields %in% required_fields)) %>%
-    rename("FHIR Version" = fhir_version)
-  )
+   output$capstat_fields_table_required <- reactable::renderReactable({
+     reactable(
+              capstat_field_count() %>% filter(Fields %in% required_fields) %>% rename("FHIR Version" = fhir_version),
+              columns = list(
+                Endpoints = colDef(
+                  aggregate = "sum",
+                  format = list(aggregated = colFormat(prefix = "Total: "))
+                ),
+                Fields = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
+                )
+              ),
+              groupBy = "Fields",
+              sortable = TRUE,
+              searchable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = 5
+
+     )
+  })
+
+   output$capstat_fields_table_optional <- reactable::renderReactable({
+     reactable(
+              capstat_field_count() %>% filter(!(Fields %in% required_fields)) %>% rename("FHIR Version" = fhir_version),
+              columns = list(
+                Endpoints = colDef(
+                  aggregate = "sum",
+                  format = list(aggregated = colFormat(prefix = "Total: "))
+                ),
+                Fields = colDef(
+                  minWidth = 150
+                ),
+                "FHIR Version" = colDef(
+                  align = "center"
+                )
+              ),
+              groupBy = "Fields",
+              sortable = TRUE,
+              searchable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = 50
+
+     )
+  })
 
   # Table of the extension counts
-  output$capstat_extensions_table <- renderTable(
-    capstat_extension_count() %>%
-    rename("FHIR Version" = fhir_version)
-  )
+   output$capstat_extensions_table <- reactable::renderReactable({
+     reactable(
+              capstat_extension_count() %>% rename("FHIR Version" = fhir_version),
+              columns = list(
+                Endpoints = colDef(
+                  aggregate = "sum",
+                  format = list(aggregated = colFormat(prefix = "Total: "))
+                )
+              ),
+              groupBy = "Fields",
+              sortable = TRUE,
+              searchable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = 10
+
+     )
+  })
+
+
 
   vendor <- reactive({
     sel_vendor()
