@@ -127,7 +127,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		tls_version,
 		mime_types,
 		capability_statement,
-		validation,
+		validation_result_id,
 		created_at,
 		updated_at,
 		smart_response,
@@ -146,7 +146,6 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 	for rows.Next() {
 		var endpointInfo endpointmanager.FHIREndpointInfo
 		var capabilityStatementJSON []byte
-		var validationJSON []byte
 		var includedFieldsJSON []byte
 		var healthitProductIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
@@ -161,7 +160,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			&endpointInfo.TLSVersion,
 			pq.Array(&endpointInfo.MIMETypes),
 			&capabilityStatementJSON,
-			&validationJSON,
+			&endpointInfo.ValidationID,
 			&endpointInfo.CreatedAt,
 			&endpointInfo.UpdatedAt,
 			&smartResponseJSON,
@@ -185,10 +184,6 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		endpointInfo.HealthITProductID = ints[0]
 		endpointInfo.VendorID = ints[1]
 
-		err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
-		if err != nil {
-			return nil, err
-		}
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 			if err != nil {
@@ -474,7 +469,6 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 	for rows.Next() {
 		var endpointInfo endpointmanager.FHIREndpointInfo
 		var capabilityStatementJSON []byte
-		var validationJSON []byte
 		var includedFieldsJSON []byte
 		var healthitProductIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
@@ -489,7 +483,7 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			&endpointInfo.TLSVersion,
 			pq.Array(&endpointInfo.MIMETypes),
 			&capabilityStatementJSON,
-			&validationJSON,
+			&endpointInfo.ValidationID,
 			&endpointInfo.CreatedAt,
 			&endpointInfo.UpdatedAt,
 			&smartResponseJSON,
@@ -513,10 +507,6 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 		endpointInfo.HealthITProductID = ints[0]
 		endpointInfo.VendorID = ints[1]
 
-		err = json.Unmarshal(validationJSON, &endpointInfo.Validation)
-		if err != nil {
-			return nil, err
-		}
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
 			if err != nil {

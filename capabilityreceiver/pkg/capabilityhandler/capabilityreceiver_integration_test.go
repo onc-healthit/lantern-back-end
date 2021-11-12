@@ -81,19 +81,19 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 		CHPLID:        222,
 	}
 	var endpointMetadataDefaultRequest = &endpointmanager.FHIREndpointMetadata{
-		URL:               endpointURL,
-		HTTPResponse:      200,
-		Errors:            "",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  endpointURL,
+		HTTPResponse:         200,
+		Errors:               "",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "None"}
 
 	var endpointMetadataRequestVersion1 = &endpointmanager.FHIREndpointMetadata{
-		URL:               endpointURL,
-		HTTPResponse:      200,
-		Errors:            "",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  endpointURL,
+		HTTPResponse:         200,
+		Errors:               "",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "None"}
 
 	// endpointInfos
@@ -297,7 +297,6 @@ func Test_saveMsgInDB(t *testing.T) {
 	expectedEndpt.ValidationID = valID1
 
 	storedEndpt, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint1.URL, "None")
-	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "stored data does not equal expected store data")
 
@@ -344,7 +343,6 @@ func Test_saveMsgInDB(t *testing.T) {
 	expectedEndpt.ValidationID = valID2
 
 	storedEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, testFhirEndpoint2.URL, "None")
-	storedEndpt.Validation.Results = []endpointmanager.Rule{storedEndpt.Validation.Results[0]}
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedEndpt.Equal(storedEndpt), "the second endpoint data does not equal expected store data")
 	expectedEndpt.URL = testFhirEndpoint1.URL
