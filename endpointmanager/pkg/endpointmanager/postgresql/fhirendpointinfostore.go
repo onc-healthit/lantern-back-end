@@ -551,7 +551,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			metadata_id,
 			requested_fhir_version,
 			capability_fhir_version)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		RETURNING id`)
 	if err != nil {
 		return err
