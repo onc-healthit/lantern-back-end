@@ -127,6 +127,11 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}
+
+	valResID, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfoDefaultRequest.ValidationID = valResID
+
 	err = store.AddFHIREndpointInfo(ctx, endpointInfoDefaultRequest, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())
@@ -136,6 +141,11 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error adding fhir endpointMetadata: %s", err.Error())
 	}
+
+	valResID, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endpointInfo1RequestedVersion1.ValidationID = valResID
+
 	err = store.AddFHIREndpointInfo(ctx, endpointInfo1RequestedVersion1, metadataID)
 	if err != nil {
 		t.Errorf("Error adding fhir endpointInfo: %s", err.Error())

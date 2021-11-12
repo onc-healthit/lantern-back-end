@@ -65,12 +65,12 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 
 	requestedFhirVersion, ok := msgJSON["requestedFhirVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast Requested Fhir Version to string", url)
+		return nil, nil, fmt.Errorf("%s: unable to cast Requested Fhir Version to string", url)
 	}
 
 	defaultFhirVersion, ok := msgJSON["defaultFhirVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("%s: unable to cast Default Fhir Version to string", url)
+		return nil, nil, fmt.Errorf("%s: unable to cast Default Fhir Version to string", url)
 	}
 
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
@@ -155,7 +155,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		URL:                   url,
 		TLSVersion:            tlsVersion,
 		MIMETypes:             mimeTypes,
-		Validation:            validationObj,
 		CapabilityStatement:   capStat,
 		SMARTResponse:         smartResponse,
 		IncludedFields:        includedFields,

@@ -50,7 +50,7 @@ func Test_RunValidation(t *testing.T) {
 	defaultFhirVersion := "1.0.2"
 
 	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
-	th.Assert(t, len(actualVal.Results) == 5, fmt.Sprintf("RunValidation should have returned 5 validation checks, instead it returned %d", len(actualVal.Results)))
+	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
 	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
@@ -66,7 +66,7 @@ func Test_RunValidation(t *testing.T) {
 
 	// choose two random validation values in the list to check
 
-	expectedSixthVal := endpointmanager.Rule{
+	expectedFourthVal := endpointmanager.Rule{
 		RuleName:  endpointmanager.TLSVersion,
 		Valid:     true,
 		Expected:  "TLS 1.2, TLS 1.3",
@@ -86,10 +86,10 @@ func Test_RunValidation(t *testing.T) {
 	}
 
 	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
-	th.Assert(t, len(actualVal.Results) == 17, fmt.Sprintf("RunValidation should have returned 17 validation checks, instead it returned %d", len(actualVal.Results)))
-	eq = reflect.DeepEqual(actualVal.Results[5], expectedSixthVal)
+	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
+	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
 	th.Assert(t, eq == true, "RunValidation's first returned validation is not correct")
-	eq = reflect.DeepEqual(actualVal.Results[16], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[14], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }
 

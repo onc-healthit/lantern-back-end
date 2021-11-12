@@ -174,7 +174,7 @@ func addToValidationTableHistory(ctx context.Context, args *map[string]interface
 		}
 
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp)
+		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp, "None", "None")
 		valResID, err := wa.store.AddValidationResult(ctx)
 		if err != nil {
 			log.Warnf("Failed to add a new ID. Error: %s", err)
@@ -299,7 +299,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 			fhirVersion, _ = capStat.GetFHIRVersion()
 		}
 		validator := validation.ValidatorForFHIRVersion(fhirVersion)
-		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp)
+		validationObj := validator.RunValidation(capStat, val.mimeTypes, fhirVersion, val.tlsVersion, smartResp, "None", "None")
 		validationJSON, err := json.Marshal(validationObj)
 		if err != nil {
 			log.Warnf("Error marshalling object to JSON. Error: %s", err)

@@ -21,7 +21,9 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartRsp smartparser.SMARTResponse) endpointmanager.Validation {
+	smartRsp smartparser.SMARTResponse,
+	requestedFhirVersion string,
+	defaultFhirVersion string) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 
 	returnedRule := v.CapStatExists(capStat)

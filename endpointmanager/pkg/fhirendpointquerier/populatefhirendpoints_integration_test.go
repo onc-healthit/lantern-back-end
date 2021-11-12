@@ -425,11 +425,17 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, endpt1.Equal(savedEndpt), "stored data does not equal expected store data")
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, endptInfo2.Metadata)
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endptInfo2.ValidationID = valResID2
 	err = store.AddFHIREndpointInfo(ctx, &endptInfo2, metadataID)
 	th.Assert(t, err == nil, err)
 
 	endptInfo2.RequestedFhirVersion = "4.0.0"
 	endptInfo2.Metadata.RequestedFhirVersion = "4.0.0"
+	valResID2, err = store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	endptInfo2.ValidationID = valResID2
 
 	metadataID, err = store.AddFHIREndpointMetadata(ctx, endptInfo2.Metadata)
 	err = store.AddFHIREndpointInfo(ctx, &endptInfo2, metadataID)

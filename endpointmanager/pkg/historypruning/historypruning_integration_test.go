@@ -123,7 +123,7 @@ func Test_PruneInfoHistory(t *testing.T) {
 		capability_statement,
 		validation_result_id,
 		requested_fhir_version)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`)
 	th.Assert(t, err == nil, err)
 	defer addFHIREndpointInfoHistoryStatement.Close()
 
@@ -1053,20 +1053,21 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
+
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	idExpectedArr = nil
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes1)
 	th.Assert(t, err == nil, err)
 
 	// Change requested fhir version for same endpoint
 	testFhirEndpointInfo.RequestedFhirVersion = "4.0.0"
 
 	idExpectedArr = append(idExpectedArr, idCount)
-	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U")
+	err = AddFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Add(time.Duration((-1)*pastDate)*time.Minute).Format("2006-01-02 15:04:05.000000000"), idCount, "U", valRes3)
 	th.Assert(t, err == nil, err)
 
 	// Ensure all entries were added to info history table correctly

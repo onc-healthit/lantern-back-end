@@ -353,7 +353,6 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion:  "None",
 	CapabilityFhirVersion: "1.0.2",
 	SMARTResponse:         nil,
-	Validation:            testValidationObj,
 	IncludedFields:        testIncludedFields,
 	OperationResource:     testOperations,
 }
@@ -469,7 +468,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["requestedFhirVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect requestedFhirVersion")
 	tmpMessage["requestedFhirVersion"] = "None"
 
@@ -477,7 +476,7 @@ func Test_formatMessage(t *testing.T) {
 	tmpMessage["defaultFhirVersion"] = 1
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
-	_, returnErr = formatMessage(message)
+	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect defaultFhirVersion")
 	tmpMessage["defaultFhirVersion"] = ""
 
@@ -500,11 +499,11 @@ func Test_formatMessage(t *testing.T) {
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 
-	endpt, validation, returnErr = formatMessage(message)
+	_, validation, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
 
 	// Check if versions response validation is included when requestedFhirVersion is None
-	versionValidation := validation.Results[4]
+	versionValidation := validation.Results[2]
 	th.Assert(t, versionValidation.RuleName == endpointmanager.VersionsResponseRule, "Expected versions response rule to be included in validation since requestedFhirVersion is None")
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
 	th.Assert(t, versionValidation.Actual == "4.0.1", "Expected validation actual version to equal 4.0.1")
@@ -515,7 +514,7 @@ func Test_formatMessage(t *testing.T) {
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 
-	endpt, validation, returnErr = formatMessage(message)
+	_, validation, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
 
 	// Check that versions response validation is not included when requestedFhirVersion is not None

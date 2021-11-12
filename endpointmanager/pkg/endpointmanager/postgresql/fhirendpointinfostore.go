@@ -237,7 +237,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		included_fields,
 		operation_resource,
 		validation_result_id,
-		metadata_id
+		metadata_id,
 		requested_fhir_version,
 		capability_fhir_version
 	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2`
