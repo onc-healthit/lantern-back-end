@@ -15,7 +15,7 @@ capabilitymodule_UI <- function(id) {
       )
     ),
     h2("FHIR Implementation Guides"),
-    p("This is the list of FHIR implementation guides reported by the capability statements from the endpoints."),
+    p("This is the list of FHIR implementation guides reported by the CapabilityStatement / Conformance Resources from the endpoints."),
     fluidRow(
       column(width = 12,
              h4("Implementation Guide Count"),

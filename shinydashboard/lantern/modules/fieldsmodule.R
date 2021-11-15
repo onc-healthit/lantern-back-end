@@ -4,8 +4,8 @@ library(reactable)
 fieldsmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    h1("FHIR Capability Statement Fields"),
-    p("This is the list of fields included in the FHIR capability statements from the endpoints."),
+    h1("FHIR CapabilityStatement / Conformance Fields"),
+    p("This is the list of fields included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
       .field-list {
         display: grid;
@@ -22,12 +22,12 @@ fieldsmodule_UI <- function(id) {
              h4("Optional Fields"),
              reactable::reactableOutput(ns("capstat_fields_table_optional"))),
       column(width = 7,
-             h4("Supported Capability Statement Fields"),
+             h4("Supported CapabilityStatement / Conformance Fields"),
              uiOutput(ns("fields_plot"))
       )
     ),
-    h1("FHIR Capability Statement Extensions"),
-    p("This is the list of extensions included in the FHIR capability statements from the endpoints."),
+    h1("FHIR CapabilityStatement / Conformance Extensions"),
+    p("This is the list of extensions included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
       .extension-list {
         display: grid;
@@ -42,7 +42,7 @@ fieldsmodule_UI <- function(id) {
              h4("Supported Extensions:"),
              reactable::reactableOutput(ns("capstat_extensions_table"))),
       column(width = 7,
-             h4("Supported Capability Statement Extensions"),
+             h4("Supported CapabilityStatement / Conformance Extensions"),
              uiOutput(ns("extensions_plot"))
       )
     )
@@ -226,7 +226,7 @@ fieldsmodule <- function(
       axis.text.y = element_blank(), axis.ticks = element_blank()) +
       scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip() +
-      annotate("text", label = "There are no FHIR Capability Statement fields supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+      annotate("text", label = "There are no FHIR CapabilityStatement / Conformance fields supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
   output$extensions_plot <- renderUI({

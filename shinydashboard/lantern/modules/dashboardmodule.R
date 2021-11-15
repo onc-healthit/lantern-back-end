@@ -173,7 +173,7 @@ dashboard <- function(
       title = "Information About Lantern",
       "Lantern takes a strict approach to showing FHIR Version and Developer information. If a given FHIR
       endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Developer information as 'Unknown'.
-      Other endpoints may fail to properly indicate FHIR Version or Developer information in their capability statement.",
+      Other endpoints may fail to properly indicate FHIR Version or Developer information in their CapabilityStatement / Conformance Resource.",
       easyClose = TRUE
     ))
   })
