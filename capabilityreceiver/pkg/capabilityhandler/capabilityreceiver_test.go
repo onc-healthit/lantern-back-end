@@ -511,15 +511,15 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, versionValidation.Comment == "The default fhir version as specified by the $versions operation should be returned from server when no version specified.", fmt.Sprintf("Version validation comment unexpected, got %s", versionValidation.Comment))
 
 	// Check that versions response validation is not included when requestedFhirVersion is not None
-	versionValidation = validation.Results[4]
-	th.Assert(t, versionValidation.RuleName != endpointmanager.VersionsResponseRule, "Did not expect versions response rule to be included in validation since requestedFhirVersion is not None")
-
 	tmpMessage["requestedFhirVersion"] = "4.0.1"
 	message, err = convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
 
 	_, validation, returnErr = formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
+
+	versionValidation = validation.Results[4]
+	th.Assert(t, versionValidation.RuleName != endpointmanager.VersionsResponseRule, "Did not expect versions response rule to be included in validation since requestedFhirVersion is not None")
 
 	// Check that versions response validation is not included when no versions response received
 
