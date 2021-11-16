@@ -510,10 +510,11 @@ func areSearchParamsValid(resource map[string]interface{}) (bool, error) {
 // VersionResponseValid checks if $versions operation is supported and that the default version is returned when no version requested
 func (v *r4Validation) VersionResponseValid(fhirVersion string, defaultFhirVersion string) endpointmanager.Rule {
 	ruleError := endpointmanager.Rule{
-		RuleName: endpointmanager.VersionsResponseRule,
-		Valid:    true,
-		Expected: defaultFhirVersion,
-		Comment:  "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
+		RuleName:  endpointmanager.VersionsResponseRule,
+		Valid:     true,
+		Expected:  defaultFhirVersion,
+		Reference: "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html",
+		Comment:   "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
 	}
 
 	fhirVersionSplit := strings.Split(fhirVersion, ".")

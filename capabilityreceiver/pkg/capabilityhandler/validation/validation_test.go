@@ -961,11 +961,12 @@ func Test_VersionResponseValid(t *testing.T) {
 	// base test
 
 	expectedVal := endpointmanager.Rule{
-		RuleName: endpointmanager.VersionsResponseRule,
-		Valid:    true,
-		Expected: "4.0.1",
-		Actual:   "4.0.1",
-		Comment:  "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
+		RuleName:  endpointmanager.VersionsResponseRule,
+		Valid:     true,
+		Expected:  "4.0.1",
+		Actual:    "4.0.1",
+		Reference: "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html",
+		Comment:   "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
 	}
 
 	actualVal := validator.VersionResponseValid(fhirVersion, defaultFhirVersion)

@@ -508,6 +508,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
 	th.Assert(t, versionValidation.Actual == "4.0.1", "Expected validation actual version to equal 4.0.1")
 	th.Assert(t, versionValidation.Expected == "4.0", "Expected validation expected version to be 4.0")
+	th.Assert(t, versionValidation.Reference == "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html", "Expected reference to be https://www.hl7.org/fhir/capabilitystatement-operation-versions.html")
 	th.Assert(t, versionValidation.Comment == "The default fhir version as specified by the $versions operation should be returned from server when no version specified.", fmt.Sprintf("Version validation comment unexpected, got %s", versionValidation.Comment))
 
 	// Check that versions response validation is not included when requestedFhirVersion is not None
