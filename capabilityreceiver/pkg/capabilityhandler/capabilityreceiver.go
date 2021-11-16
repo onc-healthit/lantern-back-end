@@ -372,9 +372,6 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	supportedVersions = vsr.GetSupportedVersions()
 
 	defaultVersion := vsr.GetDefaultVersion()
-	if len(supportedVersions) == 0 {
-		defaultVersion = "None"
-	}
 
 	supportedVersions = append(supportedVersions, "None")
 

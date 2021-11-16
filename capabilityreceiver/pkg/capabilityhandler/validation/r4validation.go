@@ -44,7 +44,7 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
-	if requestedFhirVersion == "None" {
+	if requestedFhirVersion == "None" && defaultFhirVersion != "" {
 		returnedRule = v.VersionResponseValid(fhirVersion, defaultFhirVersion)
 		validationResults = append(validationResults, returnedRule)
 	}
@@ -516,13 +516,6 @@ func (v *r4Validation) VersionResponseValid(fhirVersion string, defaultFhirVersi
 		Comment:  "The $versions operation should be supported, and default fhir version should be returned from server when no version specified.",
 	}
 
-	if defaultFhirVersion == "None" {
-		ruleError.Valid = false
-		ruleError.Actual = fhirVersion
-		ruleError.Expected = ""
-		ruleError.Comment = "The $versions operation should be supported, but no response was received"
-		return ruleError
-	}
 	fhirVersionSplit := strings.Split(fhirVersion, ".")
 	defaultVersionSplit := strings.Split(defaultFhirVersion, ".")
 	if fhirVersionSplit[0] != defaultVersionSplit[0] || fhirVersionSplit[1] != defaultVersionSplit[1] {

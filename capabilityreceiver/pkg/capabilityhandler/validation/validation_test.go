@@ -965,7 +965,7 @@ func Test_VersionResponseValid(t *testing.T) {
 		Valid:    true,
 		Expected: "4.0.1",
 		Actual:   "4.0.1",
-		Comment:  "The $versions operation should be supported, and default fhir version should be returned from server when no version specified.",
+		Comment:  "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
 	}
 
 	actualVal := validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
@@ -989,17 +989,6 @@ func Test_VersionResponseValid(t *testing.T) {
 	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("$version operation should be valid, and default version's publication and major components should match fhir version, is instead %+v", actualVal))
-
-	// $version operation no response
-
-	defaultFhirVersion = "None"
-	expectedVal.Actual = "4.0.1"
-	expectedVal.Expected = ""
-	expectedVal.Valid = false
-	expectedVal.Comment = "The $versions operation should be supported, but no response was received"
-	actualVal = validator.VersionResponseValid(fhirVersion, defaultFhirVersion)
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("$version operation should not be valid, is instead %+v", actualVal))
 }
 
 // getDSTU2CapStat gets a DSTU2 Capability Statement
