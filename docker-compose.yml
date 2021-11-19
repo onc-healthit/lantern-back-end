@@ -17,7 +17,6 @@ services:
   lantern-mq:
     image: rabbitmq:3-management
     volumes:
-      - ./lanternmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./lanternmq/definitions.json:/etc/rabbitmq/definitions.json:ro
       - rabbitmqdata:/var/lib/rabbitmq
 
