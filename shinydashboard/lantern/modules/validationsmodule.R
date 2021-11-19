@@ -8,7 +8,9 @@ validationsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12,
-        p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference")
+        p("For information about the validation rules that Lantern evaluates, including their descriptions and references, please see the",
+                a("documentation available here.", href = "Lantern_Validation_Rules_And_Descriptions.pdf", target = "_blank")
+        )
       )
     ),
     # Row for validation results chart
@@ -16,6 +18,11 @@ validationsmodule_UI <- function(id) {
       column(width = 12,
         h3("Validation Results Count"),
         uiOutput(ns("validation_results_plot"))
+      )
+    ),
+    fluidRow(
+      column(width = 12,
+        p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference")
       )
     ),
     # Row for validation rules table and validation failure chart
