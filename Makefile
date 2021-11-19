@@ -94,7 +94,7 @@ test_int:
 
 test_e2e:
 	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from lantern-e2e || docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down && exit 1
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from lantern-e2e || exit 1
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 test_all:
@@ -107,7 +107,7 @@ test_all:
 
 test_e2e_CI:
 	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from lantern-e2e postgres lantern-mq endpoint_manager capability_querier capability_receiver lantern-e2e || docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down && exit 1
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from lantern-e2e postgres lantern-mq endpoint_manager capability_querier capability_receiver lantern-e2e || exit 1
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 update_mods:
