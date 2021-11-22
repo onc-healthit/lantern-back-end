@@ -1,20 +1,10 @@
 BEGIN;
 
-ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS versions_response; 
-
 DROP VIEW IF EXISTS endpoint_export;
 DROP INDEX IF EXISTS capability_fhir_version_idx;
 DROP INDEX IF EXISTS requested_fhir_version_idx;
 
-ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS requested_fhir_version; 
-ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS requested_fhir_version; 
-ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS capability_fhir_version;
-ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS capability_fhir_version;
-
-
-ALTER TABLE fhir_endpoints_metadata DROP COLUMN IF EXISTS requested_fhir_version; 
-ALTER TABLE fhir_endpoints_availability DROP COLUMN IF EXISTS requested_fhir_version; 
-
+ALTER TABLE fhir_endpoints_info DROP CONSTRAINT fhir_endpoints_info_unique;
 ALTER TABLE fhir_endpoints_info ADD UNIQUE (url);
 
 CREATE OR REPLACE FUNCTION delete_requested_version_entries() RETURNS VOID as $$
@@ -25,6 +15,14 @@ CREATE OR REPLACE FUNCTION delete_requested_version_entries() RETURNS VOID as $$
 $$ LANGUAGE plpgsql;
 
 SELECT delete_requested_version_entries();
+
+ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS versions_response; 
+ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS capability_fhir_version;
+ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS capability_fhir_version;
+ALTER TABLE fhir_endpoints_metadata DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_availability DROP COLUMN IF EXISTS requested_fhir_version; 
 
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
@@ -91,6 +89,5 @@ LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
 CREATE INDEX fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
-ALTER TABLE fhir_endpoints_info DROP CONSTRAINT fhir_endpoints_info_unique;
 
 COMMIT;
