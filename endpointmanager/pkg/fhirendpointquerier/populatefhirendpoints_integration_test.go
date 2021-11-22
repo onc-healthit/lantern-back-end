@@ -457,7 +457,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Test that endpoints are not removed from fhir_endpoints_metadata since removing an endpoint from the info table
 	// should not remove it from the metadata table
 	err = store.DB.QueryRow("SELECT count(*) FROM fhir_endpoints_metadata").Scan(&ct)
-	th.Assert(t, ct == 2, "Expected both endpoints to be removed from fhir endpoint metadata table")
+	th.Assert(t, ct == 2, "Expected both endpoints to still be in the FHIR endpoint metadata table")
 
 }
 

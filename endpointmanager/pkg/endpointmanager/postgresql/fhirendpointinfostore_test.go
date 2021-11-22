@@ -341,8 +341,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		t.Errorf("did not expected endpoint in db")
 	}
 
-	// Need to do this now to pass tests, when requested version entries no longer have metadata entries, remove this delete statement
-	_, err = store.DB.Exec("DELETE FROM fhir_endpoints_metadata WHERE id=$1;", metadataIDRV)
+	_, err = store.DB.Exec("DELETE FROM fhir_endpoints_metadata WHERE id=$1;", metadataIDRV) // Delete the metadata entries for requested versions
 	if err != nil {
 		t.Errorf("Error deleting requested version metadata from metadata table")
 	}

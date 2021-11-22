@@ -165,31 +165,31 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
 	err = row.Scan(&count)
 	if err != nil {
-		t.Errorf("info count for insertions: %s", err.Error())
+		t.Errorf("info history count for insertions: %s", err.Error())
 	}
 	if count != 2 {
-		t.Errorf("expected 2 entries in info table . Got %d.", count)
+		t.Errorf("expected 2 entries in info history table . Got %d.", count)
 	}
 
 	// If the supported versions array matches all entries in the info table, nothing should be deleted
 	removeNoLongerExistingVersionsInfos(ctx, store, "https://example.com", []string{"None", "1.0.0"})
 	// make sure nothing was removed
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE requested_fhir_version='1.0.0';")
-	err = row.Scan(&count)
-	if err != nil {
-		t.Errorf("info count for insertions: %s", err.Error())
-	}
-	if count != 1 {
-		t.Errorf("expected 2 entries in info table . Got %d.", count)
-	}
-	// check insertions in info history table
-	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info;")
 	err = row.Scan(&count)
 	if err != nil {
 		t.Errorf("info count for insertions: %s", err.Error())
 	}
 	if count != 2 {
 		t.Errorf("expected 2 entries in info table . Got %d.", count)
+	}
+	// check that info history table still only has 2 entries
+	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = row.Scan(&count)
+	if err != nil {
+		t.Errorf("info history count for insertions: %s", err.Error())
+	}
+	if count != 2 {
+		t.Errorf("expected 2 entries in info history table . Got %d.", count)
 	}
 
 	// This simulates a change in advertised supported versions from ["None","1.0.0"] to ["None","2.0.0"]
@@ -201,7 +201,7 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 		t.Errorf("info count for insertions: %s", err.Error())
 	}
 	if count != 1 {
-		t.Errorf("expected 1 entries in info table . Got %d.", count)
+		t.Errorf("expected 1 entry in info table . Got %d.", count)
 	}
 	// Make sure the specific info entry was removed
 	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE fhir_endpoints_info.requested_fhir_version='1.0.0';")
@@ -216,7 +216,7 @@ func Test_removeNoLongerExistingVersionsInfos(t *testing.T) {
 	row = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE operation='D' AND requested_fhir_version='1.0.0';")
 	err = row.Scan(&count)
 	if err != nil {
-		t.Errorf("info count for insertions: %s", err.Error())
+		t.Errorf("info histry count for insertions: %s", err.Error())
 	}
 	// There should now be a deletion entry
 	if count != 1 {

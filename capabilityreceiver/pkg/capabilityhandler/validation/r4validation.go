@@ -517,6 +517,7 @@ func (v *r4Validation) VersionResponseValid(fhirVersion string, defaultFhirVersi
 		Comment:   "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
 	}
 
+	// As long as the major and minor versions of the returned FHIR version and default FHIR version are the same we don't need to worry about the 3rd number
 	fhirVersionSplit := strings.Split(fhirVersion, ".")
 	defaultVersionSplit := strings.Split(defaultFhirVersion, ".")
 	if fhirVersionSplit[0] != defaultVersionSplit[0] || fhirVersionSplit[1] != defaultVersionSplit[1] {

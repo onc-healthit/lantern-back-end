@@ -4,7 +4,6 @@ package postgresql
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
@@ -121,9 +120,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Expected NPI IDs array to be merged with new NPI IDs")
 	}
 	if !e1.VersionsResponse.Equal(vsr) {
-		fmt.Println(e1.VersionsResponse)
-		fmt.Println(vsr)
-		t.Errorf("Expected VersionsResponse to be updated with new value")
+		t.Errorf("Expected VersionsResponse %v to be updated with new value so that it equals %v", e1.VersionsResponse, vsr)
 	}
 
 	// retreive all endpoints

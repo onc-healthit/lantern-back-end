@@ -13,5 +13,5 @@
     "otherResourceExists": "The US Core Server SHALL support at least one additional resource profile (besides Patient) from the list of US Core Profiles.",
     "patResourceExists": "The US Core Server SHALL support the US Core Patient resource profile.",
     "tlsVersion": "Systems SHALL use TLS version 1.2 or higher for all transmissions not taking place over a secure network connection.",
-    "versionsResponseRule": "The default fhir version as specified by the $versions operation should be returned from server when no version specified."
+    "versionsResponseRule": "The default FHIR version as specified by the $versions operation should be returned from server when no version specified."
 }

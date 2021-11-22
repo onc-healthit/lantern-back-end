@@ -34,19 +34,19 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 	}
 
 	var endpointMetadata1 = &endpointmanager.FHIREndpointMetadata{
-		URL:               "example.com/FHIR/DSTU2/",
-		HTTPResponse:      200,
-		Errors:            "Example Error",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  "example.com/FHIR/DSTU2/",
+		HTTPResponse:         200,
+		Errors:               "Example Error",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "None"}
 
 	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
-		URL:               "other.example.com/FHIR/DSTU2/",
-		HTTPResponse:      404,
-		Errors:            "Example Error 2",
-		SMARTHTTPResponse: 0,
-		Availability:      0,
+		URL:                  "other.example.com/FHIR/DSTU2/",
+		HTTPResponse:         404,
+		Errors:               "Example Error 2",
+		SMARTHTTPResponse:    0,
+		Availability:         0,
 		RequestedFhirVersion: "None"}
 
 	// endpointInfos
@@ -274,35 +274,35 @@ func Test_AvailabilityUsesMetadataRequestedVersion(t *testing.T) {
 	ctx := context.Background()
 
 	var endpointMetadata1 = &endpointmanager.FHIREndpointMetadata{
-		URL:               "example.com/FHIR/DSTU2/",
-		HTTPResponse:      200,
-		Errors:            "Example Error",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  "example.com/FHIR/DSTU2/",
+		HTTPResponse:         200,
+		Errors:               "Example Error",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "None"}
 
 	var endpointMetadata1_404d = &endpointmanager.FHIREndpointMetadata{
-		URL:               "example.com/FHIR/DSTU2/",
-		HTTPResponse:      404,
-		Errors:            "Example Error",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  "example.com/FHIR/DSTU2/",
+		HTTPResponse:         404,
+		Errors:               "Example Error",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "None"}
 
 	var endpointMetadata1Versioned = &endpointmanager.FHIREndpointMetadata{
-		URL:               "example.com/FHIR/DSTU2/",
-		HTTPResponse:      404,
-		Errors:            "Example Error",
-		SMARTHTTPResponse: 0,
-		Availability:      1.0,
+		URL:                  "example.com/FHIR/DSTU2/",
+		HTTPResponse:         404,
+		Errors:               "Example Error",
+		SMARTHTTPResponse:    0,
+		Availability:         1.0,
 		RequestedFhirVersion: "4.0"}
 
 	var endpointMetadata2 = &endpointmanager.FHIREndpointMetadata{
-		URL:               "other.example.com/FHIR/DSTU2/",
-		HTTPResponse:      404,
-		Errors:            "Example Error 2",
-		SMARTHTTPResponse: 0,
-		Availability:      0,
+		URL:                  "other.example.com/FHIR/DSTU2/",
+		HTTPResponse:         404,
+		Errors:               "Example Error 2",
+		SMARTHTTPResponse:    0,
+		Availability:         0,
 		RequestedFhirVersion: "1.0.2"}
 
 	// add endpointMetadata
@@ -340,13 +340,12 @@ func Test_AvailabilityUsesMetadataRequestedVersion(t *testing.T) {
 	th.Assert(t, http_200_ct == 1, "endpoint with requested version None should have http 200 return count of 1")
 	err = store.DB.QueryRow(query_str, endpointMetadata1.URL, "4.0").Scan(&http_200_ct, &http_all_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 1, "endpoint with requested version None should have http return count of 1")
-	th.Assert(t, http_200_ct == 0, "endpoint with requested version None should have http 200 return count of 0")
+	th.Assert(t, http_all_ct == 1, "endpoint with requested version 4.0 should have http return count of 1")
+	th.Assert(t, http_200_ct == 0, "endpoint with requested version 4.0 should have http 200 return count of 0")
 	err = store.DB.QueryRow(query_str, endpointMetadata2.URL, "1.0.2").Scan(&http_200_ct, &http_all_ct)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, http_all_ct == 1, "endpoint with requested version None should have http return count of 1")
-	th.Assert(t, http_200_ct == 0, "endpoint with requested version None should have http 200 return count of 0")
-
+	th.Assert(t, http_all_ct == 1, "endpoint with requested version 1.0.2 should have http return count of 1")
+	th.Assert(t, http_200_ct == 0, "endpoint with requested version 1.0.2 should have http 200 return count of 0")
 
 	err = store.DB.QueryRow(most_recent_availability, endpointMetadata1_404d.URL, "None").Scan(&avail)
 	th.Assert(t, err == nil, err)

@@ -88,7 +88,7 @@ func Test_RunValidation(t *testing.T) {
 	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
 	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
-	th.Assert(t, eq == true, "RunValidation's first returned validation is not correct")
+	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
 	eq = reflect.DeepEqual(actualVal.Results[14], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 }

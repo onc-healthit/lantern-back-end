@@ -160,7 +160,7 @@ func Test_EndpointDataIsAvailable(t *testing.T) {
 	helpers.FailOnError("", err)
 
 	if link_count != 31 {
-		t.Fatalf("Only 30 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
+		t.Fatalf("Only 31 endpoint should have been parsed out of TestEndpointSources.json, Got: " + strconv.Itoa(link_count))
 	}
 }
 

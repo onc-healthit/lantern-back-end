@@ -56,6 +56,9 @@ type Message struct {
 	RequestedFhirVersion string      `json:"requestedFhirVersion"`
 	DefaultFhirVersion   string      `json:"defaultFhirVersion"`
 }
+
+// VersionMessage is the structure that gets sent on the queue with $versions response inforation. It includes the URL of
+// the FHIR API, any errors from making the FHIR $versions request, and the $versions response itself.
 type VersionsMessage struct {
 	URL              string      `json:"url"`
 	Err              string      `json:"err"`

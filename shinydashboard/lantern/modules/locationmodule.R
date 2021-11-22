@@ -8,7 +8,7 @@ locationmodule_UI <- function(id) {
     p("This map visualizes the locations of the API Information Sources which Lantern has associated with a FHIR endpoint by matching an API
     Information Source (organization name), as reported by a Certified API Developer, with an organization name in the National Payer and
     Provider Enumeration System (NPPES). An endpoint will have an entry on the map for each version of FHIR which it supports. Caution should be
-    taken whengathering insights from this map as linking an API Information Source to an organization name in NPPES based on reported organization
+    taken when gathering insights from this map as linking an API Information Source to an organization name in NPPES based on reported organization
     name may not be done with 100% confidence. See note below the map for more information."),
     p("The points on the map, below, represent the zip code associated with the primary address of matched organizations. The location reported by
      NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where
