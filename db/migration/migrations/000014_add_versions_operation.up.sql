@@ -6,6 +6,8 @@ DROP VIEW IF EXISTS org_mapping;
 
 DROP INDEX IF EXISTS fhir_version_idx;
 
+ALTER TABLE fhir_endpoints ADD COLUMN versions_response JSONB;
+
 ALTER TABLE fhir_endpoints_info 
 ADD COLUMN requested_fhir_version VARCHAR(500);
 
@@ -20,6 +22,9 @@ ADD COLUMN capability_fhir_version VARCHAR(500);
 
 ALTER TABLE fhir_endpoints_info DROP CONSTRAINT fhir_endpoints_info_url_key;
 ALTER TABLE fhir_endpoints_info ADD CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version);
+
+ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500) DEFAULT 'None';
+ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500) DEFAULT 'None';
 
 CREATE OR REPLACE FUNCTION populate_capability_fhir_version_info() RETURNS VOID as $$
     DECLARE
@@ -51,6 +56,40 @@ $$ LANGUAGE plpgsql;
 
 SELECT populate_capability_fhir_version_info_history();
 
+CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
+    DECLARE
+        okay_count       bigint;
+        all_count        bigint;
+    BEGIN
+        --
+        -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
+        -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
+        -- endpoint availability precentage
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
+        IF  NOT FOUND THEN
+            IF NEW.http_response = 200 THEN
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
+                NEW.availability = 1.00;
+                RETURN NEW;
+            ELSE
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
+                NEW.availability = 0.00;
+                RETURN NEW;
+            END IF;
+        ELSE
+            IF NEW.http_response = 200 THEN
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
+                NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
+                RETURN NEW;
+            ELSE
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
+                NEW.availability := (okay_count) / (all_count + 1.0);
+                RETURN NEW;
+            END IF;
+        END IF;
+    END;
+$fhir_endpoints_availability$ LANGUAGE plpgsql;
+
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
@@ -69,10 +108,10 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
     endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
+    endpts_info.requested_fhir_version,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
-    links.confidence AS MATCH_SCORE, endpts_info.operation_resource,
-    endpts_metadata.availability
+    links.confidence AS MATCH_SCORE, endpts_metadata.availability
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url

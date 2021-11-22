@@ -1,7 +1,21 @@
 BEGIN;
+
+ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS versions_response; 
+
 DROP VIEW IF EXISTS endpoint_export;
 DROP INDEX IF EXISTS capability_fhir_version_idx;
 DROP INDEX IF EXISTS requested_fhir_version_idx;
+
+ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS capability_fhir_version;
+ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS capability_fhir_version;
+
+
+ALTER TABLE fhir_endpoints_metadata DROP COLUMN IF EXISTS requested_fhir_version; 
+ALTER TABLE fhir_endpoints_availability DROP COLUMN IF EXISTS requested_fhir_version; 
+
+ALTER TABLE fhir_endpoints_info ADD UNIQUE (url);
 
 CREATE OR REPLACE FUNCTION delete_requested_version_entries() RETURNS VOID as $$
     BEGIN
@@ -12,13 +26,6 @@ $$ LANGUAGE plpgsql;
 
 SELECT delete_requested_version_entries();
 
-ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS requested_fhir_version; 
-ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS requested_fhir_version; 
-ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS capability_fhir_version;
-ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS capability_fhir_version;
-
-ALTER TABLE fhir_endpoints_info ADD UNIQUE (url);
-
 CREATE or REPLACE VIEW org_mapping AS
 SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
 FROM endpoint_organization AS links
@@ -26,6 +33,40 @@ LEFT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
+
+CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
+    DECLARE
+        okay_count       bigint;
+        all_count        bigint;
+    BEGIN
+        --
+        -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
+        -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
+        -- endpoint availability precentage
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url;
+        IF  NOT FOUND THEN
+            IF NEW.http_response = 200 THEN
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1);
+                NEW.availability = 1.00;
+                RETURN NEW;
+            ELSE
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1);
+                NEW.availability = 0.00;
+                RETURN NEW;
+            END IF;
+        ELSE
+            IF NEW.http_response = 200 THEN
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
+                RETURN NEW;
+            ELSE
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                NEW.availability := (okay_count) / (all_count + 1.0);
+                RETURN NEW;
+            END IF;
+        END IF;
+    END;
+$fhir_endpoints_availability$ LANGUAGE plpgsql;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
