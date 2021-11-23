@@ -545,7 +545,8 @@ func Test_formatMessage(t *testing.T) {
 func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "cerner_capability_dstu2.json"))
 	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
+	fhirVersion := "1.0.2"
+	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == true, "Expected name in includedFields to be true, was false")
 	th.Assert(t, includedFields[8].Exists == false, "Expected contact in includedFields to be false, was true")
@@ -560,7 +561,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 
 	th.Assert(t, includedFields[0].Exists == true, "Expected url in includedFields to be true, was false")
 	th.Assert(t, includedFields[2].Exists == false, "Expected name in includedFields to be false, was true")
@@ -579,7 +580,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	//Testing for R4 Capability Statement extensions where all extensions present
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_r4_capability_statement_extensions.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 
 	th.Assert(t, includedFields[46].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
 	th.Assert(t, includedFields[46].Field == "capabilities", fmt.Sprintf("Expected field to be capabilities, was %s", includedFields[46].Field))
@@ -614,7 +615,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	//Testing for DSTU2 Capability Statement extensions where all extensions present
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "test_cerner_capability_dstu2_extensions.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
-	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt)
+	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 
 	th.Assert(t, includedFields[43].Exists == true, "Expected conformance-supported-system extension in includedFields to be true, was false")
 	th.Assert(t, includedFields[43].Field == "conformance-supported-system", fmt.Sprintf("Expected field to be conformance-supported-system, was %s", includedFields[43].Field))
