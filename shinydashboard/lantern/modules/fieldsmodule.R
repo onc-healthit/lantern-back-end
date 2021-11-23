@@ -59,13 +59,58 @@ fieldsmodule <- function(
 
   ns <- session$ns
 
+  dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
+  stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
+  r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+
+  capstat_fields_list <- reactive({
+    res <- isolate(app_data$capstat_fields())
+    req(sel_fhir_version)
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+    fullHtml <- paste("Lantern checks for the following extensions: <br>")
+
+    dstu2List <- res %>% filter(fhir_version %in%  dstu2) %>% 
+    group_by(field) %>%
+    filter(extension == "false") %>%
+    count() %>%
+    select(field)
+    if (nrow(dstu2List) > 0) {
+      liElemDSTU2 <- paste("<li>", dstu2List %>% pull(1), "</li>", collapse = " ")
+      divElemDSTU2 <- paste("<div class='extension-list'>", liElemDSTU2, "</div>")
+      fullHtml <- paste(fullHtml, "DSTU2 Fields:", divElemDSTU2)
+    }
+
+    stu3List <- res %>% filter(fhir_version %in%  stu3) %>% 
+    group_by(field) %>%
+    filter(extension == "false") %>%
+    count() %>%
+    select(field)
+    if (nrow(stu3List) > 0 ) {
+      liElemSTU3 <- paste("<li>", stu3List %>% pull(1), "</li>", collapse = " ")
+      divElemSTU3 <- paste("<div class='extension-list'>", liElemSTU3, "</div>")
+      fullHtml <- paste(fullHtml, "STU3 Fields:", divElemSTU3)
+    }
+
+    r4List <- res %>% filter(fhir_version %in%  r4) %>% 
+    group_by(field) %>%
+    filter(extension == "false") %>%
+    count() %>%
+    select(field)
+    if (nrow(r4List) > 0) {
+      liElemR4 <- paste("<li>", r4List %>% pull(1), "</li>", collapse = " ")
+      divElemR4 <- paste("<div class='extension-list'>", liElemR4, "</div>")
+      fullHtml <- paste(fullHtml, "R4 Fields:", divElemR4)
+    }
+    fullHtml
+})
+
+
   capstat_extensions_list <- get_capstat_extensions_list(isolate(app_data$capstat_fields()))
 
   output$capstat_fields_text <- renderUI({
-    col <- isolate(app_data$capstat_fields_list()) %>% pull(1)
-    liElem <- paste("<li>", col, "</li>", collapse = " ")
-    divElem <- paste("<div class='field-list'>", liElem, "</div>")
-    fullHtml <- paste("Lantern checks for the following fields: ", divElem)
+    fullHtml <- capstat_fields_list()
     HTML(fullHtml)
   })
 

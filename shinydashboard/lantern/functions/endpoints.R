@@ -197,14 +197,6 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
-get_capstat_fields_list <- function(capstat_fields_tbl) {
-  res <- capstat_fields_tbl %>%
-    group_by(field) %>%
-    filter(extension == "false") %>%
-    count() %>%
-    select(field)
-}
-
 get_capstat_extensions_list <- function(capstat_fields_tbl) {
   res <- capstat_fields_tbl %>%
     group_by(field) %>%
@@ -509,8 +501,6 @@ database_fetcher <- reactive({
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
 
   app_data$capstat_fields(get_capstat_fields(db_connection))
-
-  app_data$capstat_fields_list(get_capstat_fields_list(isolate(app_data$capstat_fields())))
 
   app_data$capstat_values(get_capstat_values(db_connection))
 
