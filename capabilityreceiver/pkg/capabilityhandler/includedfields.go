@@ -22,7 +22,7 @@ func RunIncludedFieldsAndExtensionsChecks(capInt map[string]interface{}, fhirVer
 
 	var includedFields []endpointmanager.IncludedField
 	includedFields = RunIncludedFieldsChecks(capInt, includedFields, fhirVersion)
-	includedFields = RunIncludedExtensionsChecks(capInt, includedFields)
+	includedFields = RunIncludedExtensionsChecks(capInt, includedFields, fhirVersion)
 	return includedFields
 }
 
@@ -120,48 +120,8 @@ func checkFieldArr(fieldNames []string, fieldArr []interface{}) bool {
 }
 
 // RunIncludedExtensionsChecks stores whether each extension in capability statement is populated or not populated
-func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField) []endpointmanager.IncludedField {
-
-	extensionList := [][]string{
-		{"extension", "http://hl7.org/fhir/StructureDefinition/conformance-supported-system", "conformance-supported-system"},
-		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-search-parameter-combination", "conformance-search-parameter-combination"},
-		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
-		{"rest", "resource", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"rest", "resource", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
-		{"rest", "security", "extension", "http://DSTU2/fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "DSTU2-oauth-uris"},
-		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
-		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "capabilitystatement-search-parameter-combination"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "capabilitystatement-supported-system"},
-		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "capabilitystatement-websocket"},
-		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "oauth-uris"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces", "replaces"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "resource-approvalDate"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "resource-effectivePeriod"},
-		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "resource-lastReviewDate"},
-		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "resource", "_searchInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "resource", "_searchRevInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
-		{"rest", "resource", "interaction", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
-		{"rest", "resource", "searchParam", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
-		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
-		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
-		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
-		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
-	}
+func RunIncludedExtensionsChecks(capInt map[string]interface{}, includedFields []endpointmanager.IncludedField, fhirVersion string) []endpointmanager.IncludedField {
+	extensionList := getExtensionsList(fhirVersion)
 
 	// Get name of extension and create extensionObj with extension name, if the extension exists, and if it is an extension
 	for _, extensionPath := range extensionList {
@@ -359,5 +319,67 @@ func getFieldsList(fhirVersion string) [][]string {
 		return R4Fields
 	} else {
 		return baseFieldsList
+	}
+}
+
+func getExtensionsList(fhirVersion string) [][]string {
+	DSTU2ExtensionList := [][]string{
+		{"extension", "http://hl7.org/fhir/StructureDefinition/conformance-supported-system", "conformance-supported-system"},
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-search-parameter-combination", "conformance-search-parameter-combination"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "resource", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "security", "extension", "http://DSTU2/fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "DSTU2-oauth-uris"},
+	}
+
+	STU3ExtensionList := [][]string{
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "capabilitystatement-search-parameter-combination"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "capabilitystatement-supported-system"},
+		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "capabilitystatement-websocket"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "resource-approvalDate"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "resource-effectivePeriod"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "resource-lastReviewDate"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchRevInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "interaction", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "resource", "searchParam", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+	}
+
+	R4ExtensionList := [][]string{
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "oauth-uris"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces", "replaces"},
+	}
+
+	if helpers.StringArrayContains(dstu2, fhirVersion) {
+		return DSTU2ExtensionList
+	} else if helpers.StringArrayContains(stu3, fhirVersion) {
+		return STU3ExtensionList
+	} else if helpers.StringArrayContains(r4, fhirVersion) {
+		R4Extensions := append(STU3ExtensionList, R4ExtensionList...)
+		return R4Extensions
+	} else {
+		allExtensions := append(DSTU2ExtensionList, STU3ExtensionList...)
+		allExtensions = append(allExtensions, R4ExtensionList...)
+		return allExtensions
 	}
 }

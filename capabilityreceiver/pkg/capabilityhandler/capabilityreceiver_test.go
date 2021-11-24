@@ -204,62 +204,7 @@ var testIncludedFields = []endpointmanager.IncludedField{
 	},
 	{
 		Field:     "DSTU2-oauth-uris",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilities",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-search-parameter-combination",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-supported-system",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-websocket",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "oauth-uris",
 		Exists:    true,
-		Extension: true,
-	},
-	{
-		Field:     "replaces",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-approvalDate",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-effectivePeriod",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-lastReviewDate",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-expectation",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-prohibited",
-		Exists:    false,
 		Extension: true,
 	},
 }
@@ -496,8 +441,8 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[22].Exists == false, "Expected rest.resource.conditionalDelete in includedFields to be false, was true")
 	th.Assert(t, includedFields[23].Exists == true, "Expected rest.resource.searchParam.type in includedFields to be true, was false")
 	th.Assert(t, includedFields[33].Exists == false, "Expected conformance expectation extension in includedFields to be false, was true")
-	th.Assert(t, includedFields[40].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[38].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[35].Exists == true, "Expected DSTU2oauth-uris1 extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[31].Exists == false, "Expected conformance-supported-system extension in includedFields to be false, was true")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
@@ -512,10 +457,9 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[20].Exists == true, "Expected rest.resource.interaction.code in includedFields to be true, was false")
 	th.Assert(t, includedFields[22].Exists == true, "Expected rest.resource.conditionalDelete in includedFields to be true, was false")
 	th.Assert(t, includedFields[26].Exists == false, "Expected document.mode in includedFields to be false, was true")
-	th.Assert(t, includedFields[45].Exists == false, "Expected capabilitystatement expectation extension in includedFields to be false, was true")
-	th.Assert(t, includedFields[36].Exists == false, "Expected capabilities extension in includedFields to be false, was true")
-	th.Assert(t, includedFields[40].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[42].Exists == false, "Expected resource-approvalDate extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[33].Exists == false, "Expected capabilitystatement expectation extension in includedFields to be false, was true")
+	th.Assert(t, includedFields[35].Exists == true, "Expected DSTU2oauth-uris extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[34].Exists == false, "Expected conformance-prohibited extension in includedFields to be false, was true")
 
 	//Testing for R4 Capability Statement extensions where all extensions present
 	fhirVersion = "4.0.1"
@@ -523,28 +467,28 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
 	includedFields = RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 
-	th.Assert(t, includedFields[45].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[45].Field == "capabilities", fmt.Sprintf("Expected field to be capabilities, was %s", includedFields[45].Field))
-	th.Assert(t, includedFields[46].Exists == true, "Expected capabilitystatement-search-parameter-combination extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[46].Field == "capabilitystatement-search-parameter-combination", fmt.Sprintf("Expected field to be capabilitystatement-search-parameter-combination, was %s", includedFields[46].Field))
-	th.Assert(t, includedFields[47].Exists == true, "Expected capabilitystatement-supported-system extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[47].Field == "capabilitystatement-supported-system", fmt.Sprintf("Expected field to be capabilitystatement-supported-system, was %s", includedFields[47].Field))
-	th.Assert(t, includedFields[48].Exists == true, "Expected capabilitystatement-websocket extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[48].Field == "capabilitystatement-websocket", fmt.Sprintf("Expected field to be capabilitystatement-websocket extension, was %s", includedFields[48].Field))
+	th.Assert(t, includedFields[48].Exists == true, "Expected capabilities extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[48].Field == "capabilities", fmt.Sprintf("Expected field to be capabilities, was %s", includedFields[48].Field))
+	th.Assert(t, includedFields[40].Exists == true, "Expected capabilitystatement-search-parameter-combination extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[40].Field == "capabilitystatement-search-parameter-combination", fmt.Sprintf("Expected field to be capabilitystatement-search-parameter-combination, was %s", includedFields[40].Field))
+	th.Assert(t, includedFields[41].Exists == true, "Expected capabilitystatement-supported-system extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[41].Field == "capabilitystatement-supported-system", fmt.Sprintf("Expected field to be capabilitystatement-supported-system, was %s", includedFields[41].Field))
+	th.Assert(t, includedFields[42].Exists == true, "Expected capabilitystatement-websocket extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[42].Field == "capabilitystatement-websocket", fmt.Sprintf("Expected field to be capabilitystatement-websocket extension, was %s", includedFields[42].Field))
 	th.Assert(t, includedFields[49].Exists == true, "Expected oauth-uris extension in includedFields to be true, was false")
 	th.Assert(t, includedFields[49].Field == "oauth-uris", fmt.Sprintf("Expected field to be oauth-uris, was %s", includedFields[49].Field))
 	th.Assert(t, includedFields[50].Exists == true, "Expected replaces extension in includedFields to be true, was false")
 	th.Assert(t, includedFields[50].Field == "replaces", fmt.Sprintf("Expected field to be replaces, was %s", includedFields[50].Field))
-	th.Assert(t, includedFields[51].Exists == true, "Expected resource-approvalDate extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[51].Field == "resource-approvalDate", fmt.Sprintf("Expected field to be resource-approvalDate, was %s", includedFields[51].Field))
-	th.Assert(t, includedFields[52].Exists == true, "Expected resource-effectivePeriod extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[52].Field == "resource-effectivePeriod", fmt.Sprintf("Expected field to be resource-effectivePeriod, was %s", includedFields[52].Field))
-	th.Assert(t, includedFields[53].Exists == true, "Expected resource-lastReviewDate extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[53].Field == "resource-lastReviewDate", fmt.Sprintf("Expected field to be resource-lastReviewDate, was %s", includedFields[53].Field))
-	th.Assert(t, includedFields[54].Exists == true, "Expected capabilitystatement-expectation extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[54].Field == "capabilitystatement-expectation", fmt.Sprintf("Expected field to be capabilitystatement-expectation, was %s", includedFields[54].Field))
-	th.Assert(t, includedFields[55].Exists == true, "Expected capabilitystatement-prohibited extension in includedFields to be true, was false")
-	th.Assert(t, includedFields[55].Field == "capabilitystatement-prohibited", fmt.Sprintf("Expected field to be capabilitystatement-prohibited, was %s", includedFields[55].Field))
+	th.Assert(t, includedFields[43].Exists == true, "Expected resource-approvalDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[43].Field == "resource-approvalDate", fmt.Sprintf("Expected field to be resource-approvalDate, was %s", includedFields[43].Field))
+	th.Assert(t, includedFields[44].Exists == true, "Expected resource-effectivePeriod extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[44].Field == "resource-effectivePeriod", fmt.Sprintf("Expected field to be resource-effectivePeriod, was %s", includedFields[44].Field))
+	th.Assert(t, includedFields[45].Exists == true, "Expected resource-lastReviewDate extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[45].Field == "resource-lastReviewDate", fmt.Sprintf("Expected field to be resource-lastReviewDate, was %s", includedFields[45].Field))
+	th.Assert(t, includedFields[46].Exists == true, "Expected capabilitystatement-expectation extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[46].Field == "capabilitystatement-expectation", fmt.Sprintf("Expected field to be capabilitystatement-expectation, was %s", includedFields[46].Field))
+	th.Assert(t, includedFields[47].Exists == true, "Expected capabilitystatement-prohibited extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[47].Field == "capabilitystatement-prohibited", fmt.Sprintf("Expected field to be capabilitystatement-prohibited, was %s", includedFields[47].Field))
 
 	// Test for additional nested included fields that appear in r4_capability_statement
 	th.Assert(t, includedFields[21].Exists == true, "Expected rest.resource.versioning in includedFields to be true, was false")

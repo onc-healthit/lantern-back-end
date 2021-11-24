@@ -190,61 +190,6 @@ var testIncludedFields = []IncludedField{
 		Exists:    false,
 		Extension: true,
 	},
-	{
-		Field:     "capabilities",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-search-parameter-combination",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-supported-system",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-websocket",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "oauth-uris",
-		Exists:    true,
-		Extension: true,
-	},
-	{
-		Field:     "replaces",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-approvalDate",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-effectivePeriod",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "resource-lastReviewDate",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-expectation",
-		Exists:    false,
-		Extension: true,
-	},
-	{
-		Field:     "capabilitystatement-prohibited",
-		Exists:    false,
-		Extension: true,
-	},
 }
 
 func Test_FHIREndpointInfoEqual(t *testing.T) {
