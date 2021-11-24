@@ -143,22 +143,22 @@ var testIncludedFields = []IncludedField{
 	{
 		Field:     "document.mode",
 		Exists:    false,
-		Extension: false,
+		Extension: true,
 	},
 	{
 		Field:     "messaging",
 		Exists:    false,
-		Extension: false,
+		Extension: true,
 	},
 	{
 		Field:     "requirements",
 		Exists:    false,
-		Extension: false,
+		Extension: true,
 	},
 	{
 		Field:     "profile",
 		Exists:    false,
-		Extension: false,
+		Extension: true,
 	},
 	{
 		Field:     "acceptUnknown",
