@@ -65,13 +65,14 @@ fieldsmodule <- function(
 
   capstat_fields_list <- reactive({
     res <- isolate(app_data$capstat_fields())
-    req(sel_fhir_version)
+    req(sel_fhir_version())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     fullHtml <- paste("Lantern checks for the following extensions: <br>")
 
-    dstu2List <- res %>% filter(fhir_version %in%  dstu2) %>% 
+    dstu2List <- res %>%
+    filter(fhir_version %in%  dstu2) %>%
     group_by(field) %>%
     filter(extension == "false") %>%
     count() %>%
@@ -82,18 +83,20 @@ fieldsmodule <- function(
       fullHtml <- paste(fullHtml, "DSTU2 Fields:", divElemDSTU2)
     }
 
-    stu3List <- res %>% filter(fhir_version %in%  stu3) %>% 
+    stu3List <- res %>%
+    filter(fhir_version %in%  stu3) %>%
     group_by(field) %>%
     filter(extension == "false") %>%
     count() %>%
     select(field)
-    if (nrow(stu3List) > 0 ) {
+    if (nrow(stu3List) > 0) {
       liElemSTU3 <- paste("<li>", stu3List %>% pull(1), "</li>", collapse = " ")
       divElemSTU3 <- paste("<div class='extension-list'>", liElemSTU3, "</div>")
       fullHtml <- paste(fullHtml, "STU3 Fields:", divElemSTU3)
     }
 
-    r4List <- res %>% filter(fhir_version %in%  r4) %>% 
+    r4List <- res %>%
+    filter(fhir_version %in%  r4) %>%
     group_by(field) %>%
     filter(extension == "false") %>%
     count() %>%
