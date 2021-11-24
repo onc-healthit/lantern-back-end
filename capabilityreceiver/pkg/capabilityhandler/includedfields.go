@@ -385,3 +385,65 @@ func getExtensionsList(fhirVersion string) [][]string {
 		return DSTU2ExtensionList
 	}
 }
+
+func getExtensionsList(fhirVersion string) [][]string {
+	DSTU2ExtensionList := [][]string{
+		{"extension", "http://hl7.org/fhir/StructureDefinition/conformance-supported-system", "conformance-supported-system"},
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-search-parameter-combination", "conformance-search-parameter-combination"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/conformance-expectation", "conformance-expectation"},
+		{"rest", "resource", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "resource", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/conformance-prohibited", "conformance-prohibited"},
+		{"rest", "security", "extension", "http://DSTU2/fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "DSTU2-oauth-uris"},
+	}
+
+	STU3ExtensionList := [][]string{
+		{"rest", "resource", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination", "capabilitystatement-search-parameter-combination"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-supported-system", "capabilitystatement-supported-system"},
+		{"rest", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-websocket", "capabilitystatement-websocket"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-approvalDate", "resource-approvalDate"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-effectivePeriod", "resource-effectivePeriod"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/resource-lastReviewDate", "resource-lastReviewDate"},
+		{"rest", "resource", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "searchParam", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "operation", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"document", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "interaction", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "_searchRevInclude", "extension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation", "capabilitystatement-expectation"},
+		{"rest", "resource", "interaction", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "resource", "searchParam", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "modifierExtension", "capabilitystatement-prohibited"},
+		{"rest", "searchParam", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "operation", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"document", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+		{"rest", "interaction", "modifierExtension", "http://hl7.org/fhir/StructureDefinition/capabilitystatement-prohibited", "capabilitystatement-prohibited"},
+	}
+
+	R4ExtensionList := [][]string{
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/capabilities", "capabilities"},
+		{"rest", "security", "extension", "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris", "oauth-uris"},
+		{"extension", "http://hl7.org/fhir/StructureDefinition/replaces", "replaces"},
+	}
+
+	if helpers.StringArrayContains(dstu2, fhirVersion) {
+		return DSTU2ExtensionList
+	} else if helpers.StringArrayContains(stu3, fhirVersion) {
+		return STU3ExtensionList
+	} else if helpers.StringArrayContains(r4, fhirVersion) {
+		R4Extensions := append(STU3ExtensionList, R4ExtensionList...)
+		return R4Extensions
+	} else {
+		allExtensions := append(DSTU2ExtensionList, STU3ExtensionList...)
+		allExtensions = append(allExtensions, R4ExtensionList...)
+		return allExtensions
+	}
+}
