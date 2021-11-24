@@ -14,7 +14,11 @@ fieldsmodule_UI <- function(id) {
         padding-bottom: 15px;
       }
     ")),
-    htmlOutput(ns("capstat_fields_text")),
+    h5("Lantern checks for the following fields: "),
+    fluidRow(
+      column(width = 12,
+             reactable::reactableOutput(ns("capstat_fields_text"))),
+    ),
     fluidRow(
       column(width = 5,
              h4("Required Fields"),
@@ -69,53 +73,36 @@ fieldsmodule <- function(
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
-    fullHtml <- paste("Lantern checks for the following extensions: <br>")
 
-    dstu2List <- res %>%
-    filter(fhir_version %in%  dstu2) %>%
-    group_by(field) %>%
-    filter(extension == "false") %>%
-    count() %>%
-    select(field)
-    if (nrow(dstu2List) > 0) {
-      liElemDSTU2 <- paste("<li>", dstu2List %>% pull(1), "</li>", collapse = " ")
-      divElemDSTU2 <- paste("<div class='extension-list'>", liElemDSTU2, "</div>")
-      fullHtml <- paste(fullHtml, "DSTU2 Fields:", divElemDSTU2)
-    }
+    res <- res %>% mutate(fhir_version = case_when(
+    fhir_version %in% dstu2 ~ "DSTU2",
+    fhir_version %in% stu3 ~ "STU2",
+    fhir_version %in% r4 ~ "R4",
+    ))
 
-    stu3List <- res %>%
-    filter(fhir_version %in%  stu3) %>%
-    group_by(field) %>%
+    res <- res %>%
     filter(extension == "false") %>%
-    count() %>%
-    select(field)
-    if (nrow(stu3List) > 0) {
-      liElemSTU3 <- paste("<li>", stu3List %>% pull(1), "</li>", collapse = " ")
-      divElemSTU3 <- paste("<div class='extension-list'>", liElemSTU3, "</div>")
-      fullHtml <- paste(fullHtml, "STU3 Fields:", divElemSTU3)
-    }
+    group_by(field) %>%
+    summarize(fhir_versions = paste(sort(unique(fhir_version)),collapse=", ")) %>%
+    rename("Fields" = field, "Versions" = fhir_versions)
 
-    r4List <- res %>%
-    filter(fhir_version %in%  r4) %>%
-    group_by(field) %>%
-    filter(extension == "false") %>%
-    count() %>%
-    select(field)
-    if (nrow(r4List) > 0) {
-      liElemR4 <- paste("<li>", r4List %>% pull(1), "</li>", collapse = " ")
-      divElemR4 <- paste("<div class='extension-list'>", liElemR4, "</div>")
-      fullHtml <- paste(fullHtml, "R4 Fields:", divElemR4)
-    }
-    fullHtml
+    res
 })
 
+   output$capstat_fields_text <- reactable::renderReactable({
+     reactable(
+              capstat_fields_list(),
+              defaultSorted = c("Versions"),
+              sortable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              height = 215,
+              pagination = FALSE
+              
+     )
+  })
 
   capstat_extensions_list <- get_capstat_extensions_list(isolate(app_data$capstat_fields()))
-
-  output$capstat_fields_text <- renderUI({
-    fullHtml <- capstat_fields_list()
-    HTML(fullHtml)
-  })
 
   output$capstat_extension_text <- renderUI({
     col <- capstat_extensions_list %>% pull(1)
