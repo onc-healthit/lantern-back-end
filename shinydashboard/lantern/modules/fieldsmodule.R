@@ -17,7 +17,7 @@ fieldsmodule_UI <- function(id) {
     h5("Lantern checks for the following fields: "),
     fluidRow(
       column(width = 12,
-             reactable::reactableOutput(ns("capstat_fields_text"))),
+             reactable::reactableOutput(ns("capstat_fields_list"))),
     ),
     fluidRow(
       column(width = 5,
@@ -40,7 +40,10 @@ fieldsmodule_UI <- function(id) {
         padding-bottom: 15px;
       }
     ")),
-    htmlOutput(ns("capstat_extension_text")),
+    fluidRow(
+      column(width = 12,
+             reactable::reactableOutput(ns("capstat_extensions_list"))),
+    ),
     fluidRow(
       column(width = 5,
              h4("Supported Extensions:"),
@@ -83,33 +86,59 @@ fieldsmodule <- function(
     res <- res %>%
     filter(extension == "false") %>%
     group_by(field) %>%
-    summarize(fhir_versions = paste(sort(unique(fhir_version)),collapse=", ")) %>%
+    summarize(fhir_versions = paste(sort(unique(fhir_version)), collapse = ", ")) %>%
     rename("Fields" = field, "Versions" = fhir_versions)
 
     res
 })
 
-   output$capstat_fields_text <- reactable::renderReactable({
+capstat_extensions_list <- reactive({
+    res <- isolate(app_data$capstat_fields())
+    req(sel_fhir_version())
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      res <- res %>% filter(fhir_version == sel_fhir_version())
+    }
+
+
+    res <- res %>% mutate(fhir_version = case_when(
+    fhir_version %in% dstu2 ~ "DSTU2",
+    fhir_version %in% stu3 ~ "STU2",
+    fhir_version %in% r4 ~ "R4",
+    ))
+
+    res <- res %>%
+    filter(extension == "true") %>%
+    group_by(field) %>%
+    summarize(fhir_versions = paste(sort(unique(fhir_version)), collapse = ", ")) %>%
+    rename("Extensions" = field, "Versions" = fhir_versions)
+
+    res
+})
+
+   output$capstat_fields_list <- reactable::renderReactable({
      reactable(
               capstat_fields_list(),
               defaultSorted = c("Versions"),
               sortable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              height = 215,
+              height = 150,
               pagination = FALSE
-              
+
      )
   })
 
-  capstat_extensions_list <- get_capstat_extensions_list(isolate(app_data$capstat_fields()))
+     output$capstat_extensions_list <- reactable::renderReactable({
+     reactable(
+              capstat_extensions_list(),
+              defaultSorted = c("Versions"),
+              sortable = TRUE,
+              striped = TRUE,
+              showSortIcon = TRUE,
+              height = 150,
+              pagination = FALSE
 
-  output$capstat_extension_text <- renderUI({
-    col <- capstat_extensions_list %>% pull(1)
-    liElem <- paste("<li>", col, "</li>", collapse = " ")
-    divElem <- paste("<div class='extension-list'>", liElem, "</div>")
-    fullHtml <- paste("Lantern checks for the following extensions: ", divElem)
-    HTML(fullHtml)
+     )
   })
 
   selected_fhir_endpoints <- reactive({

@@ -197,14 +197,6 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
-get_capstat_extensions_list <- function(capstat_fields_tbl) {
-  res <- capstat_fields_tbl %>%
-    group_by(field) %>%
-    filter(extension == "true") %>%
-    count() %>%
-    select(field)
-}
-
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
 # this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
