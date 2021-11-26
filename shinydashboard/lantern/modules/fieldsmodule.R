@@ -15,11 +15,7 @@ fieldsmodule_UI <- function(id) {
         resize: none;
       }
     ")),
-    h5("Lantern checks for the following fields: "),
-    fluidRow(
-      column(width = 12,
-             reactable::reactableOutput(ns("capstat_fields_list"))),
-    ),
+    htmlOutput(ns("capstat_fields_text")),
     fluidRow(
       column(width = 5,
              h4("Required Fields"),
@@ -42,10 +38,7 @@ fieldsmodule_UI <- function(id) {
         resize: none;
       }
     ")),
-    fluidRow(
-      column(width = 12,
-             reactable::reactableOutput(ns("capstat_extensions_list"))),
-    ),
+    htmlOutput(ns("capstat_extension_text")),
     fluidRow(
       column(width = 5,
              h4("Supported Extensions:"),
