@@ -32,7 +32,7 @@ fieldsmodule_UI <- function(id) {
     tags$style(HTML("
       .extension-list {
         display: grid;
-        grid-template-columns: repeat(4, minmax(380px, auto));
+        grid-template-columns: repeat(3, minmax(480px, auto));
         overflow-x: scroll;
         padding-bottom: 15px;
         resize: none;
