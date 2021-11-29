@@ -318,7 +318,10 @@ func getFieldsList(fhirVersion string) [][]string {
 		R4Fields = append(R4Fields, R4FieldsList...)
 		return R4Fields
 	} else {
-		return baseFieldsList
+		// Default to DSTU2 fields list
+		DSTU2Fields := append(baseFieldsList, DSTU2OnlyFields...)
+		DSTU2Fields = append(DSTU2Fields, DSTU2FieldsList...)
+		return DSTU2Fields
 	}
 }
 
@@ -378,8 +381,7 @@ func getExtensionsList(fhirVersion string) [][]string {
 		R4Extensions := append(STU3ExtensionList, R4ExtensionList...)
 		return R4Extensions
 	} else {
-		allExtensions := append(DSTU2ExtensionList, STU3ExtensionList...)
-		allExtensions = append(allExtensions, R4ExtensionList...)
-		return allExtensions
+		// Default to DSTU2 extensions list
+		return DSTU2ExtensionList
 	}
 }
