@@ -35,24 +35,24 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
         -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
         -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
         -- endpoint availability precentage
-        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url;
+        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
         IF  NOT FOUND THEN
             IF NEW.http_response = 200 THEN
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1);
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
                 NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1);
+                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
                 NEW.availability = 0.00;
                 RETURN NEW;
             END IF;
         ELSE
             IF NEW.http_response = 200 THEN
-                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
                 NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
                 RETURN NEW;
             ELSE
-                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url;
+                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
                 NEW.availability := (okay_count) / (all_count + 1.0);
                 RETURN NEW;
             END IF;
@@ -146,6 +146,7 @@ CREATE TABLE fhir_endpoints (
     organization_names      VARCHAR(500)[],
     npi_ids                 VARCHAR(500)[],
     list_source             VARCHAR(500),
+    versions_response       JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
@@ -159,6 +160,7 @@ CREATE TABLE fhir_endpoints_metadata (
     errors                  VARCHAR(500),
     response_time_seconds   DECIMAL(7,4),
     smart_http_response     INTEGER,
+    requested_fhir_version VARCHAR(500) DEFAULT 'None',
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -171,7 +173,7 @@ CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
     healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
-    url                     VARCHAR(500) UNIQUE,
+    url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
     capability_statement    JSONB,
@@ -181,7 +183,10 @@ CREATE TABLE fhir_endpoints_info (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     smart_response          JSONB,
-    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL
+    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
+    requested_fhir_version  VARCHAR(500),
+    capability_fhir_version VARCHAR(500),
+    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version)
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -201,7 +206,9 @@ CREATE TABLE fhir_endpoints_info_history (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     smart_response          JSONB, 
-    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL
+    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
+    requested_fhir_version  VARCHAR(500),
+    capability_fhir_version VARCHAR(500)
 );
 
 CREATE TABLE endpoint_organization (
@@ -223,9 +230,10 @@ CREATE TABLE product_criteria (
 );
 
 CREATE TABLE fhir_endpoints_availability (
-    url                     VARCHAR(500),
-    http_200_count          BIGINT,
-    http_all_count          BIGINT,
+    url             VARCHAR(500),
+    http_200_count       BIGINT,
+    http_all_count       BIGINT,
+    requested_fhir_version  VARCHAR(500) DEFAULT 'None',
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -305,25 +313,18 @@ BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
-CREATE or REPLACE VIEW org_mapping AS
-SELECT endpts.url, endpts.list_source, vendors.name as vendor_name, endpts.organization_names AS endpoint_names, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME, orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, links.confidence AS MATCH_SCORE
-FROM endpoint_organization AS links
-LEFT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
-LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
-
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
-    endpts_info.capability_statement->>'fhirVersion' AS FHIR_VERSION,
+    endpts_info.capability_fhir_version AS FHIR_VERSION,
     endpts_info.capability_statement->>'publisher' AS PUBLISHER,
     endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
     endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
     endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
+    endpts_info.requested_fhir_version,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
     links.confidence AS MATCH_SCORE, endpts_metadata.availability
@@ -347,7 +348,6 @@ CREATE INDEX npi_organizations_npi_id_idx ON npi_organizations (npi_id);
 CREATE INDEX endpoint_organization_npi_id_idx ON endpoint_organization (organization_npi_id);
 
 CREATE INDEX vendor_name_idx ON vendors (name);
-CREATE INDEX fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
 CREATE INDEX implementation_guide_idx ON fhir_endpoints_info ((capability_statement->>'implementationGuide'));
 CREATE INDEX field_idx ON fhir_endpoints_info ((included_fields->> 'Field'));
 CREATE INDEX exists_idx ON fhir_endpoints_info ((included_fields->> 'Exists'));
@@ -371,6 +371,9 @@ CREATE INDEX capstat_software_releaseDate_idx ON fhir_endpoints_info ((capabilit
 CREATE INDEX capstat_implementation_description_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'description'));
 CREATE INDEX capstat_implementation_url_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'url'));
 CREATE INDEX capstat_implementation_custodian_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'custodian'));
+
+CREATE INDEX capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
+CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
 
 CREATE INDEX security_code_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security,service}'->'coding'->>'code'));
 CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security}' -> 'service' ->> 'text'));

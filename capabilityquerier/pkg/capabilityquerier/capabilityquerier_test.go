@@ -35,6 +35,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	// basic test: fhir2LessJSONMIMEType
 
 	message = Message{}
+	message.RequestedFhirVersion = "None"
 
 	expectedCapStat, err = capabilityStatement()
 	th.Assert(t, err == nil, err)
@@ -74,6 +75,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	// basic test: fhir3PlusJSONMIMEType
 
 	message = Message{}
+	message.RequestedFhirVersion = "None"
 
 	expectedCapStat, err = capabilityStatement()
 	th.Assert(t, err == nil, err)
@@ -169,6 +171,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 
 	// test situation where fhir2LessJSONMIMEType is saved but only fhir3PlusJSONMIMEType works
 	message = Message{}
+	message.RequestedFhirVersion = "None"
 	message.MIMETypes = []string{fhir2LessJSONMIMEType}
 	expectedCapStat, err = capabilityStatement()
 	th.Assert(t, err == nil, err)
@@ -191,6 +194,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 
 	// test with two mime types and they both don't work
 	message = Message{}
+	message.RequestedFhirVersion = "None"
 	message.MIMETypes = []string{"nonsense mimetype", "nonsense mimetype2"}
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)

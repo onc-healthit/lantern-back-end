@@ -24,35 +24,39 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 		return
 	}
 
-	_, fhirURL1, _, capStat1, tlsVersion1, mimeTypes1, smartResponse1, _ := getRowInfo(rows)
+	_, fhirURL1, _, capStat1, tlsVersion1, mimeTypes1, smartResponse1, _, requestedFhirVersion1 := getRowInfo(rows)
 
 	for rows.Next() {
 
-		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2, valResID2 := getRowInfo(rows)
+		operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2, valResID2, requestedFhirVersion2 := getRowInfo(rows)
 
 		equalFhirEntries := fhirURL1 == fhirURL2
 
 		if equalFhirEntries {
-			equalFhirEntries = (tlsVersion1 == tlsVersion2)
+			equalFhirEntries = (requestedFhirVersion1 == requestedFhirVersion2)
 
 			if equalFhirEntries {
-				equalFhirEntries = helpers.StringArraysEqual(mimeTypes1, mimeTypes2)
+				equalFhirEntries = (tlsVersion1 == tlsVersion2)
 
 				if equalFhirEntries {
-					// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
-					if capStat1 != nil {
-						equalFhirEntries = capStat1.EqualIgnore(capStat2)
-					} else {
-						equalFhirEntries = (capStat2 == nil)
-					}
+					equalFhirEntries = helpers.StringArraysEqual(mimeTypes1, mimeTypes2)
 
 					if equalFhirEntries {
-						// If smartresponse is not null check if current entry that was passed in has smartresponse equal to smartresponse of old entry being checked from history table, otherwise check they are both null
-						if smartResponse1 != nil {
-							ignoredFields := []string{}
-							equalFhirEntries = smartResponse1.EqualIgnore(smartResponse2, ignoredFields)
+						// If capstat is not null check if current entry that was passed in has capstat equal to capstat of old entry being checked from history table, otherwise check they are both null
+						if capStat1 != nil {
+							equalFhirEntries = capStat1.EqualIgnore(capStat2)
 						} else {
-							equalFhirEntries = (smartResponse2 == nil)
+							equalFhirEntries = (capStat2 == nil)
+						}
+
+						if equalFhirEntries {
+							// If smartresponse is not null check if current entry that was passed in has smartresponse equal to smartresponse of old entry being checked from history table, otherwise check they are both null
+							if smartResponse1 != nil {
+								ignoredFields := []string{}
+								equalFhirEntries = smartResponse1.EqualIgnore(smartResponse2, ignoredFields)
+							} else {
+								equalFhirEntries = (smartResponse2 == nil)
+							}
 						}
 					}
 				}
@@ -60,7 +64,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 		}
 
 		if equalFhirEntries && operation2 == "U" {
-			err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2)
+			err := store.PruningDeleteInfoHistory(ctx, fhirURL1, entryDate2, requestedFhirVersion1)
 			helpers.FailOnError("", err)
 			// Delete the validation table entries for the history table row
 			err = store.PruningDeleteValidationTable(ctx, valResID2)
@@ -73,12 +77,13 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 			tlsVersion1 = tlsVersion2
 			mimeTypes1 = mimeTypes2
 			smartResponse1 = smartResponse2
+			requestedFhirVersion1 = requestedFhirVersion2
 			continue
 		}
 	}
 }
 
-func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, smartparser.SMARTResponse, int) {
+func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.CapabilityStatement, string, []string, smartparser.SMARTResponse, int, string) {
 	var capInt map[string]interface{}
 	var fhirURL string
 	var operation string
@@ -89,8 +94,9 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	var smartResponseJSON []byte
 	var smartResponseInt map[string]interface{}
 	var valResID int
+	var requestedFhirVersion string
 
-	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON, &valResID)
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON, &valResID, &requestedFhirVersion)
 	helpers.FailOnError("", err)
 
 	err = json.Unmarshal(capStatJSON, &capInt)
@@ -102,5 +108,5 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	helpers.FailOnError("", err)
 	smartResponse := smartparser.NewSMARTRespFromInterface(smartResponseInt)
 
-	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse, valResID
+	return operation, fhirURL, entryDate, capStat, tlsVersion, mimeTypes, smartResponse, valResID, requestedFhirVersion
 }

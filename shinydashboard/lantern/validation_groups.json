@@ -18,6 +18,9 @@
     "STU3 Capability Statement": [
         "http://hl7.org/fhir/STU3/capabilitystatement.html"
     ],
+    "$versions Operation": [
+        "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html"
+    ],
     "Other": [
         ""
     ]

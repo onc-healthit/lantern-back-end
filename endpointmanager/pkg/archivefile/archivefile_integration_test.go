@@ -36,12 +36,14 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	URL:        "http://example.com/DTSU2/",
 	MIMETypes:  []string{"application/json+fhir"},
 	TLSVersion: "TLS 1.2",
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	URL:        "http://example.com/DTSU2/",
 	MIMETypes:  []string{"application/fhir+json"},
 	TLSVersion: "TLS 1.3",
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
@@ -56,6 +58,7 @@ var testMetadata = endpointmanager.FHIREndpointMetadata{
 	Errors:            "Smart Response Failed",
 	ResponseTime:      0.8,
 	SMARTHTTPResponse: 400,
+	RequestedFhirVersion: "None",
 }
 
 var testMetadata2 = endpointmanager.FHIREndpointMetadata{
@@ -64,6 +67,7 @@ var testMetadata2 = endpointmanager.FHIREndpointMetadata{
 	Errors:            "Smart Response Failed",
 	ResponseTime:      1.0,
 	SMARTHTTPResponse: 0,
+	RequestedFhirVersion: "None",
 }
 
 var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
@@ -115,8 +119,10 @@ func TestMain(m *testing.M) {
 		tls_version,
 		mime_types,
 		vendor_id,
-		capability_statement)			
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`)
+		capability_statement,
+		capability_fhir_version,
+		requested_fhir_version)			
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`)
 	if err != nil {
 		panic(err)
 	}
@@ -166,7 +172,7 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	today := time.Now().UTC()
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
@@ -195,7 +201,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 1 endpoint and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "I", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "I", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -214,7 +220,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 2nd endpoint (with same data) and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -235,7 +241,7 @@ func Test_CreateArchive(t *testing.T) {
 
 	// Add 3rd endpoint (with different data) and make sure values are correct
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 2)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo2, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 2)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -263,6 +269,22 @@ func Test_CreateArchive(t *testing.T) {
 	th.Assert(t, len(entries[0].TLSVersion) == 2, fmt.Sprintf("TLS first and last should exist, is instead %+v", entries[0].TLSVersion))
 	th.Assert(t, entries[0].TLSVersion["first"] == nil, fmt.Sprint("TLS first should have been nil"))
 	th.Assert(t, entries[0].TLSVersion["last"] == nil, fmt.Sprint("TLS last should have been nil"))
+
+	// Test requested fhir version entries
+	testFhirEndpointInfo.RequestedFhirVersion = "1.0.2"
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	th.Assert(t, err == nil, err)
+	testFhirEndpointInfo.RequestedFhirVersion = "4.0.0"
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	th.Assert(t, err == nil, err)
+
+	entries, err = CreateArchive(ctx, store, formatToday, formatTomorrow, numWorkers, workerDur)
+	th.Assert(t, err == nil, err)
+	// Test to make sure there are 3 different entries for each requested fhir version for the one endpoint in the DB
+	th.Assert(t, len(entries) == 3, fmt.Sprintf("length of entries should have been 3, is instead %d", len(entries)))
+
+	testFhirEndpointInfo.RequestedFhirVersion = "None"
+
 }
 
 func Test_getHistory(t *testing.T) {
@@ -285,7 +307,7 @@ func Test_getHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	today := time.Now().UTC()
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
@@ -295,8 +317,9 @@ func Test_getHistory(t *testing.T) {
 	cs, err := capabilityparser.NewCapabilityStatement(emptyCap)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityFhirVersion = ""
 
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -306,6 +329,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -324,7 +348,7 @@ func Test_getHistory(t *testing.T) {
 	// Base Case
 
 	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
-	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
+	err = addFHIREndpointInfoHistory(ctx, store, testFhirEndpointInfo, time.Now().UTC().Format("2006-01-02 15:04:05.000000000"), idCount, "U", 1)
 	th.Assert(t, err == nil, err)
 	err = ctStatement.QueryRow(testFhirEndpointInfo.URL).Scan(&count)
 	th.Assert(t, err == nil, err)
@@ -334,6 +358,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -367,6 +392,7 @@ func Test_getHistory(t *testing.T) {
 	jobArgs4 := make(map[string]interface{})
 	jobArgs4["historyArgs"] = historyArgs{
 		fhirURL:   "thisurldoesntexist.com",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -392,7 +418,7 @@ func Test_getMetadata(t *testing.T) {
 	setupCapabilityStatement(t, filepath.Join("../testdata", "cerner_capability_dstu2.json"))
 
 	// Get today and tomorrow's date
-	today := time.Now()
+	today := time.Now().UTC()
 	formatTomorrow := today.Add(time.Hour * 24).Format("2006-01-02")
 	formatToday := today.Format("2006-01-02")
 
@@ -406,6 +432,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -430,6 +457,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -457,6 +485,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs3 := make(map[string]interface{})
 	jobArgs3["historyArgs"] = historyArgs{
 		fhirURL:   "http://example.com/DTSU2/",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -492,6 +521,7 @@ func Test_getMetadata(t *testing.T) {
 	jobArgs5 := make(map[string]interface{})
 	jobArgs5["historyArgs"] = historyArgs{
 		fhirURL:   "thisurldoesntexist.com",
+		requestedFhirVersion: "None",
 		dateStart: formatToday,
 		dateEnd:   formatTomorrow,
 		store:     store,
@@ -515,6 +545,8 @@ func setupCapabilityStatement(t *testing.T, path string) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	fhirVersion, err := cs.GetFHIRVersion()
+	testFhirEndpointInfo.CapabilityFhirVersion = fhirVersion
 }
 
 // addFHIREndpointInfoHistory adds the FHIREndpointInfoHistory to the database.
@@ -546,7 +578,9 @@ func addFHIREndpointInfoHistory(ctx context.Context,
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		vendorID,
-		capabilityStatementJSON)
+		capabilityStatementJSON,
+		e.CapabilityFhirVersion, 
+		e.RequestedFhirVersion)
 	if err != nil {
 		return err
 	}

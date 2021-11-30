@@ -14,20 +14,22 @@ import (
 // Information about the FHIR API endpoint is populated by the FHIR
 // capability statement found at that endpoint.
 type FHIREndpointInfo struct {
-	ID                  int
-	HealthITProductID   int
-	URL                 string
-	TLSVersion          string
-	MIMETypes           []string
-	VendorID            int
-	CapabilityStatement capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	ValidationID        int
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	SMARTResponse       smartparser.SMARTResponse
-	IncludedFields      []IncludedField
-	OperationResource   map[string][]string
-	Metadata            *FHIREndpointMetadata
+	ID                    int
+	HealthITProductID     int
+	URL                   string
+	TLSVersion            string
+	MIMETypes             []string
+	VendorID              int
+	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	ValidationID          int
+	CreatedAt             time.Time
+	UpdatedAt             time.Time
+	SMARTResponse         smartparser.SMARTResponse
+	IncludedFields        []IncludedField
+	OperationResource     map[string][]string
+	Metadata              *FHIREndpointMetadata
+	RequestedFhirVersion  string
+	CapabilityFhirVersion string
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -56,6 +58,14 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	}
 
 	if e.VendorID != e2.VendorID {
+		return false
+	}
+
+	if e.RequestedFhirVersion != e2.RequestedFhirVersion {
+		return false
+	}
+
+	if e.CapabilityFhirVersion != e2.CapabilityFhirVersion {
 		return false
 	}
 	// because CapabilityStatement is an interface, we need to confirm it's not nil before using the Equal
@@ -136,20 +146,21 @@ type Rule struct {
 type RuleOption string
 
 const (
-	GeneralMimeTypeRule RuleOption = "generalMimeType"
-	CapStatExistRule    RuleOption = "capStatExist"
-	TLSVersion          RuleOption = "tlsVersion"
-	PatResourceExists   RuleOption = "patResourceExists"
-	OtherResourceExists RuleOption = "otherResourceExists"
-	SmartRespExistsRule RuleOption = "smartResponse"
-	KindRule            RuleOption = "kindRule"
-	InstanceRule        RuleOption = "instanceRule"
-	MessagingEndptRule  RuleOption = "messagingEndptRule"
-	EndptFunctionRule   RuleOption = "endpointFunctionRule"
-	DescribeEndptRule   RuleOption = "describeEndpointRule"
-	DocumentValidRule   RuleOption = "documentValidRule"
-	UniqueResourcesRule RuleOption = "uniqueResourcesRule"
-	SearchParamsRule    RuleOption = "searchParamsRule"
+	GeneralMimeTypeRule  RuleOption = "generalMimeType"
+	CapStatExistRule     RuleOption = "capStatExist"
+	TLSVersion           RuleOption = "tlsVersion"
+	PatResourceExists    RuleOption = "patResourceExists"
+	OtherResourceExists  RuleOption = "otherResourceExists"
+	SmartRespExistsRule  RuleOption = "smartResponse"
+	KindRule             RuleOption = "kindRule"
+	InstanceRule         RuleOption = "instanceRule"
+	MessagingEndptRule   RuleOption = "messagingEndptRule"
+	EndptFunctionRule    RuleOption = "endpointFunctionRule"
+	DescribeEndptRule    RuleOption = "describeEndpointRule"
+	DocumentValidRule    RuleOption = "documentValidRule"
+	UniqueResourcesRule  RuleOption = "uniqueResourcesRule"
+	SearchParamsRule     RuleOption = "searchParamsRule"
+	VersionsResponseRule RuleOption = "versionsResponseRule"
 )
 
 // compareOperations compares the operation resource fields for an endpoint

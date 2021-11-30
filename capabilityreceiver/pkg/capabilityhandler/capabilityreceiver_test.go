@@ -13,15 +13,17 @@ import (
 )
 
 var testQueueMsg = map[string]interface{}{
-	"url":               "http://example.com/DTSU2/",
-	"err":               "",
-	"mimeTypes":         []string{"application/json+fhir"},
-	"httpResponse":      200,
-	"tlsVersion":        "TLS 1.2",
-	"smarthttpResponse": 0,
-	"smartResp":         nil,
-	"responseTime":      0.1234,
-	"availability":      1.0,
+	"url":                  "http://example.com/DTSU2/",
+	"err":                  "",
+	"mimeTypes":            []string{"application/json+fhir"},
+	"httpResponse":         200,
+	"tlsVersion":           "TLS 1.2",
+	"smarthttpResponse":    0,
+	"smartResp":            nil,
+	"responseTime":         0.1234,
+	"availability":         1.0,
+	"requestedFhirVersion": "None",
+	"defaultFhirVersion":   "",
 }
 
 var testIncludedFields = []endpointmanager.IncludedField{
@@ -335,21 +337,24 @@ var testOperations = map[string][]string{
 }
 
 var testFhirEndpointMetadata = endpointmanager.FHIREndpointMetadata{
-	URL:               "http://example.com/DTSU2/",
-	HTTPResponse:      200,
-	Errors:            "",
-	SMARTHTTPResponse: 0,
-	ResponseTime:      0.1234,
-	Availability:      1.0,
+	URL:                  "http://example.com/DTSU2/",
+	HTTPResponse:         200,
+	Errors:               "",
+	SMARTHTTPResponse:    0,
+	ResponseTime:         0.1234,
+	Availability:         1.0,
+	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:               "http://example.com/DTSU2/",
-	MIMETypes:         []string{"application/json+fhir"},
-	TLSVersion:        "TLS 1.2",
-	SMARTResponse:     nil,
-	IncludedFields:    testIncludedFields,
-	OperationResource: testOperations,
+	URL:                   "http://example.com/DTSU2/",
+	MIMETypes:             []string{"application/json+fhir"},
+	TLSVersion:            "TLS 1.2",
+	RequestedFhirVersion:  "None",
+	CapabilityFhirVersion: "1.0.2",
+	SMARTResponse:         nil,
+	IncludedFields:        testIncludedFields,
+	OperationResource:     testOperations,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -379,7 +384,9 @@ func Test_formatMessage(t *testing.T) {
 	expectedEndpt := testFhirEndpointInfo
 	expectedMetadata := testFhirEndpointMetadata
 	expectedEndpt.Metadata = &expectedMetadata
+	expectedEndpt.RequestedFhirVersion = "None"
 	tmpMessage := testQueueMsg
+	tmpMessage["requestedFhirVersion"] = "None"
 
 	message, err := convertInterfaceToBytes(tmpMessage)
 	th.Assert(t, err == nil, err)
@@ -387,6 +394,7 @@ func Test_formatMessage(t *testing.T) {
 	// basic test
 	endpt, validation, returnErr := formatMessage(message)
 	th.Assert(t, returnErr == nil, returnErr)
+
 	// Just check that the first validation field is valid
 	validation.Results = []endpointmanager.Rule{validation.Results[0]}
 	// formatMessage does not check for availability field in JSON because availability is written by a trigger
@@ -455,6 +463,83 @@ func Test_formatMessage(t *testing.T) {
 	_, _, returnErr = formatMessage(message)
 	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect responseTime")
 	tmpMessage["responseTime"] = 0.1234
+
+	// test incorrect requested version
+	tmpMessage["requestedFhirVersion"] = 1
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, _, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect requestedFhirVersion")
+	tmpMessage["requestedFhirVersion"] = "None"
+
+	// test incorrect default version
+	tmpMessage["defaultFhirVersion"] = 1
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, _, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect defaultFhirVersion")
+	tmpMessage["defaultFhirVersion"] = ""
+
+	// test incorrect capability version
+	capStat, ok := tmpMessage["capabilityStatement"].(map[string]interface{})
+	th.Assert(t, ok, err)
+	capStat["fhirVersion"] = 1
+	tmpMessage["capabilityStatement"] = capStat
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+	_, _, returnErr = formatMessage(message)
+	th.Assert(t, returnErr != nil, "Expected an error to be thrown due to an incorrect capability fhir version")
+	capStat["fhirVersion"] = "1.0.2"
+	tmpMessage["capabilityStatement"] = capStat
+
+	// test versions response rule
+	capStat["fhirVersion"] = "4.0.1" // version must be an r4 version for versions response validation
+	tmpMessage["capabilityStatement"] = capStat
+	tmpMessage["defaultFhirVersion"] = "4.0"
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+
+	_, validation, returnErr = formatMessage(message)
+	th.Assert(t, returnErr == nil, returnErr)
+
+	// Check if versions response validation is included when requestedFhirVersion is None
+	versionValidation := validation.Results[2]
+	th.Assert(t, versionValidation.RuleName == endpointmanager.VersionsResponseRule, "Expected versions response rule to be included in validation since requestedFhirVersion is None")
+	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
+	th.Assert(t, versionValidation.Actual == "4.0.1", "Expected validation actual version to equal 4.0.1")
+	th.Assert(t, versionValidation.Expected == "4.0", "Expected validation expected version to be 4.0")
+	th.Assert(t, versionValidation.Reference == "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html", "Expected reference to be https://www.hl7.org/fhir/capabilitystatement-operation-versions.html")
+	th.Assert(t, versionValidation.Comment == "The default fhir version as specified by the $versions operation should be returned from server when no version specified.", fmt.Sprintf("Version validation comment unexpected, got %s", versionValidation.Comment))
+
+	// Check that versions response validation is not included when requestedFhirVersion is not None
+	tmpMessage["requestedFhirVersion"] = "4.0.1"
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+
+	_, validation, returnErr = formatMessage(message)
+	th.Assert(t, returnErr == nil, returnErr)
+
+	versionValidation = validation.Results[4]
+	th.Assert(t, versionValidation.RuleName != endpointmanager.VersionsResponseRule, "Did not expect versions response rule to be included in validation since requestedFhirVersion is not None")
+
+	// Check that versions response validation is not included when no versions response received
+
+	tmpMessage["requestedFhirVersion"] = "None"
+	tmpMessage["defaultFhirVersion"] = ""
+	message, err = convertInterfaceToBytes(tmpMessage)
+	th.Assert(t, err == nil, err)
+
+	_, validation, returnErr = formatMessage(message)
+	th.Assert(t, returnErr == nil, returnErr)
+
+	versionValidation = validation.Results[4]
+	th.Assert(t, versionValidation.RuleName != endpointmanager.VersionsResponseRule, "Did not expect versions response rule to be included in validation since requestedFhirVersion is not None")
+
+	// Reset all values
+	capStat["fhirVersion"] = "1.0.2"
+	tmpMessage["capabilityStatement"] = capStat
+	tmpMessage["requestedFhirVersion"] = "None"
+	tmpMessage["defaultFhirVersion"] = "4.0"
 }
 
 func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {

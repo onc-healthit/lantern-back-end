@@ -30,8 +30,8 @@ func (s *Store) PruningGetInfoHistory(ctx context.Context, queryInterval bool) (
 }
 
 // PruningDeleteInfoHistory deletes info history entry due to pruning
-func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryDate string) error {
-	_, err := pruningDeleteStatement.ExecContext(ctx, url, entryDate)
+func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryDate string, requested_fhir_version string) error {
+	_, err := pruningDeleteStatement.ExecContext(ctx, url, requested_fhir_version, entryDate)
 	return err
 }
 
@@ -58,7 +58,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 	queryIntString := strconv.Itoa(pruningThreshold + (3 * queryInterval))
 
 	pruningStatementQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id FROM fhir_endpoints_info_history
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id, requested_fhir_version FROM fhir_endpoints_info_history 
 		WHERE (operation='U' OR operation='I') 
 			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - INTERVAL '` + thresholdString + ` minute'))
 			AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - INTERVAL '` + queryIntString + ` minute'))
@@ -67,7 +67,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 		return err
 	}
 	pruningStatementNoQueryInterval, err = s.DB.Prepare(`
-		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id FROM fhir_endpoints_info_history
+		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id, requested_fhir_version FROM fhir_endpoints_info_history 
 		WHERE (operation='U' OR operation='I') 
 			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - INTERVAL '` + thresholdString + ` minute')) 
 		ORDER BY url, entered_at ASC;`)
@@ -75,7 +75,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 		return err
 	}
 	pruningDeleteStatement, err = s.DB.Prepare(`
-		DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND entered_at = $2;`)
+		DELETE FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U' AND requested_fhir_version=$2 AND entered_at = $3;`)
 	if err != nil {
 		return err
 	}

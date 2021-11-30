@@ -186,21 +186,23 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 
 	var endpointMetadata1 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	var endpointMetadata2 = &FHIREndpointMetadata{
-		URL:               "http://www.example.com",
-		HTTPResponse:      200,
-		Availability:      1.0,
-		Errors:            "Example Error",
-		ResponseTime:      0.123456,
-		SMARTHTTPResponse: 200,
+		URL:                  "http://www.example.com",
+		HTTPResponse:         200,
+		Availability:         1.0,
+		Errors:               "Example Error",
+		ResponseTime:         0.123456,
+		SMARTHTTPResponse:    200,
+		RequestedFhirVersion: "None",
 	}
 
 	// endpointInfos
@@ -215,8 +217,10 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		IncludedFields:    testIncludedFields,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
-		CapabilityStatement: cs,
-		Metadata:            endpointMetadata1}
+		CapabilityStatement:   cs,
+		RequestedFhirVersion:  "None",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadata1}
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
 	copy(includedFieldsCopy, testIncludedFields)
 	var endpointInfo2 = &FHIREndpointInfo{
@@ -230,8 +234,10 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		IncludedFields:    includedFieldsCopy,
 		OperationResource: map[string][]string{
 			"read": {"AllergyIntolerance", "Binary", "CarePlan"}},
-		CapabilityStatement: cs,
-		Metadata:            endpointMetadata2}
+		CapabilityStatement:   cs,
+		RequestedFhirVersion:  "None",
+		CapabilityFhirVersion: "1.0.2",
+		Metadata:              endpointMetadata2}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo2. They are not equal.")
@@ -242,6 +248,18 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expect endpointInfo 1 to equal endpointInfo 2. ids should be ignored. %d vs %d", endpointInfo1.ID, endpointInfo2.ID)
 	}
 	endpointInfo2.ID = endpointInfo1.ID
+
+	endpointInfo2.CapabilityFhirVersion = "3.0.2"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. capability fhir versions should be different. %s vs %s", endpointInfo1.CapabilityFhirVersion, endpointInfo2.CapabilityFhirVersion)
+	}
+	endpointInfo2.CapabilityFhirVersion = endpointInfo1.CapabilityFhirVersion
+
+	endpointInfo2.RequestedFhirVersion = "3.0.2"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expect endpointInfo 1 to not equal endpointInfo 2. requested fhir versions should be different. %s vs %s", endpointInfo1.RequestedFhirVersion, endpointInfo2.RequestedFhirVersion)
+	}
+	endpointInfo2.RequestedFhirVersion = endpointInfo1.RequestedFhirVersion
 
 	endpointInfo2.URL = "other"
 	if endpointInfo1.Equal(endpointInfo2) {
@@ -340,6 +358,15 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata URL should be ignored. %s vs %s", endpointInfo1.Metadata.URL, endpointInfo2.Metadata.URL)
 	}
 	endpointInfo2.Metadata.URL = endpointMetadata1.URL
+
+	endpointInfo2.Metadata.RequestedFhirVersion = "other"
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. Metadata RequestedFhirVersion should be different. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	if !endpointInfo1.EqualExcludeMetadata(endpointInfo2) {
+		t.Errorf("Expect endpointInfo1 to equal endpointInfo2 when excluding Metadata. Metadata RequestedFhirVersion should be ignored. %s vs %s", endpointInfo1.Metadata.RequestedFhirVersion, endpointInfo2.Metadata.RequestedFhirVersion)
+	}
+	endpointInfo2.Metadata.RequestedFhirVersion = endpointMetadata1.RequestedFhirVersion
 
 	endpointInfo2.CapabilityStatement = nil
 	if endpointInfo1.Equal(endpointInfo2) {

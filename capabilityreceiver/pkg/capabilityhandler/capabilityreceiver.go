@@ -6,9 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
+	"github.com/spf13/viper"
+
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/pkg/errors"
@@ -18,6 +22,23 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
 	log "github.com/sirupsen/logrus"
 )
+
+// versionsQueryArgs is a struct to hold the args that will be consumed by the
+// saveVersionResponseMsgInDB function
+type versionsQueryArgs struct {
+	store             *postgresql.Store
+	ctx               context.Context
+	capQueryChannelID lanternmq.ChannelID
+	capQueryQueue     lanternmq.MessageQueue
+}
+
+// capStatQueryArgs is a struct to hold the args that will be consumed by the
+// saveMsgInDB function
+type capStatQueryArgs struct {
+	store         *postgresql.Store
+	ctx           context.Context
+	chplMatchFile string
+}
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
 	var msgJSON map[string]interface{}
@@ -40,6 +61,16 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	tlsVersion, ok := msgJSON["tlsVersion"].(string)
 	if !ok {
 		return nil, nil, fmt.Errorf("%s: unable to cast TLS Version to string", url)
+	}
+
+	requestedFhirVersion, ok := msgJSON["requestedFhirVersion"].(string)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: unable to cast Requested Fhir Version to string", url)
+	}
+
+	defaultFhirVersion, ok := msgJSON["defaultFhirVersion"].(string)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: unable to cast Default Fhir Version to string", url)
 	}
 
 	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
@@ -104,29 +135,33 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	if capStat != nil {
 		fhirVersion, _ = capStat.GetFHIRVersion()
 	}
+
 	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
-	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse)
+	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt)
 	operationResource := RunSupportedResourcesChecks(capInt)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
-		URL:               url,
-		HTTPResponse:      httpResponse,
-		Errors:            errs,
-		SMARTHTTPResponse: smarthttpResponse,
-		ResponseTime:      responseTime,
+		URL:                  url,
+		HTTPResponse:         httpResponse,
+		Errors:               errs,
+		SMARTHTTPResponse:    smarthttpResponse,
+		ResponseTime:         responseTime,
+		RequestedFhirVersion: requestedFhirVersion,
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:                 url,
-		TLSVersion:          tlsVersion,
-		MIMETypes:           mimeTypes,
-		CapabilityStatement: capStat,
-		SMARTResponse:       smartResponse,
-		IncludedFields:      includedFields,
-		OperationResource:   operationResource,
-		Metadata:            FHIREndpointMetadata,
+		URL:                   url,
+		TLSVersion:            tlsVersion,
+		MIMETypes:             mimeTypes,
+		CapabilityStatement:   capStat,
+		SMARTResponse:         smartResponse,
+		IncludedFields:        includedFields,
+		OperationResource:     operationResource,
+		Metadata:              FHIREndpointMetadata,
+		RequestedFhirVersion:  requestedFhirVersion,
+		CapabilityFhirVersion: fhirVersion,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
@@ -140,21 +175,26 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	var existingEndpt *endpointmanager.FHIREndpointInfo
 	var validation *endpointmanager.Validation
 
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(capStatQueryArgs)
+	if !ok {
+		return fmt.Errorf("unable to parse args into capStatQueryArgs")
+	}
+
 	fhirEndpoint, validation, err = formatMessage(message)
 	if err != nil {
 		return err
 	}
 
-	store, ok := (*args)["store"].(*postgresql.Store)
-	if !ok {
-		return fmt.Errorf("unable to cast postgresql store from arguments")
-	}
-	ctx, ok := (*args)["ctx"].(context.Context)
-	if !ok {
-		return fmt.Errorf("unable to cast context from arguments")
+	// This is a safety check to make sure the RequestedFhirVersion will always be populated
+	if fhirEndpoint.RequestedFhirVersion == "" {
+		fhirEndpoint.RequestedFhirVersion = "None"
 	}
 
-	existingEndpt, err = store.GetFHIREndpointInfoUsingURL(ctx, fhirEndpoint.URL)
+	store := qa.store
+	ctx := qa.ctx
+
+	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
 	if err == sql.ErrNoRows {
 
@@ -163,7 +203,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile))
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -199,6 +239,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
 		existingEndpt.Metadata.ResponseTime = fhirEndpoint.Metadata.ResponseTime
 		existingEndpt.Metadata.SMARTHTTPResponse = fhirEndpoint.Metadata.SMARTHTTPResponse
+		existingEndpt.Metadata.RequestedFhirVersion = fhirEndpoint.Metadata.RequestedFhirVersion
 
 		// Set fhirEndpoint.ValidationID to existingEndpt value because they should have the same ValidationID
 		// until there's a reason to update it
@@ -212,13 +253,14 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
+			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
 			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", (*args)["chplMatchFile"]))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile))
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
@@ -249,10 +291,109 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
 			}
 
-			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.URL)
+			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
 			if err != nil {
 				return fmt.Errorf("just adding the Metadata ID failed, %s", err)
 			}
+		}
+	}
+
+	return nil
+}
+
+func removeNoLongerExistingVersionsInfos(ctx context.Context, store *postgresql.Store, url string, supportedVersions []string) error {
+	// If there is a requestedVersion for a URL in fhir_endpoints_info that is no longer in supportedVersions
+	// then we need to remove those fhir_endpoint_info entries
+	endptInfos, err := store.GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx, url, supportedVersions)
+	if err != nil {
+		return err
+	}
+	for _, infoEntry := range endptInfos {
+		err = store.DeleteFHIREndpointInfo(ctx, infoEntry)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) error {
+	var err error
+	var existingEndpts []*endpointmanager.FHIREndpoint
+	var msgJSON map[string]interface{}
+	// Get arguments
+	qa, ok := (*args)["queryArgs"].(versionsQueryArgs)
+	if !ok {
+		return fmt.Errorf("unable to parse args into versionsQueryArgs")
+	}
+
+	err = json.Unmarshal(message, &msgJSON)
+	if err != nil {
+		return err
+	}
+
+	url, ok := msgJSON["url"].(string)
+	if !ok {
+		return fmt.Errorf("unable to cast message URL to string")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	store := qa.store
+	ctx := qa.ctx
+
+	existingEndpts, err = store.GetFHIREndpointUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	resp, _ := msgJSON["versionsResponse"].(map[string]interface{})
+	var vsr versionsoperatorparser.VersionsResponse
+	vsr.Response = resp
+	for _, endpt := range existingEndpts {
+		// Only update if versions have changed
+		if !endpt.VersionsResponse.Equal(vsr) {
+			endpt.VersionsResponse = vsr
+			err = store.UpdateFHIREndpoint(ctx, endpt)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Dispatch query for CapabilityStatement here
+	// Set up the queue for sending messages to capabilityquerier
+	mq := qa.capQueryQueue
+	channelID := qa.capQueryChannelID
+	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
+	var supportedVersions []string
+	supportedVersions = vsr.GetSupportedVersions()
+
+	defaultVersion := vsr.GetDefaultVersion()
+
+	supportedVersions = append(supportedVersions, "None")
+
+	err = removeNoLongerExistingVersionsInfos(ctx, store, url, supportedVersions)
+	if err != nil {
+		return err
+	}
+
+	for _, version := range supportedVersions {
+		// send URL and version of FHIR version to request
+		var message map[string]string = make(map[string]string)
+		message["url"] = url
+		message["requestVersion"] = version
+		message["defaultVersion"] = defaultVersion
+		var msgBytes []byte
+		msgBytes, err = json.Marshal(message)
+		if err != nil {
+			return err
+		}
+		err = accessqueue.SendToQueue(ctx, string(msgBytes), &mq, &channelID, capQueryEndptQName)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -268,9 +409,11 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	qName string) error {
 
 	args := make(map[string]interface{})
-	args["store"] = store
-	args["ctx"] = ctx
-	args["chplMatchFile"] = "/etc/lantern/resources/CHPLProductMapping.json"
+	args["queryArgs"] = capStatQueryArgs{
+		store:         store,
+		ctx:           ctx,
+		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
 	if err != nil {
@@ -279,6 +422,39 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	errs := make(chan error)
 	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
+
+	for elem := range errs {
+		log.Warn(elem)
+	}
+
+	return nil
+}
+
+// ReceiveVersionResponses connects to the given message queue channel (qname) and receives the
+// versions response from it. It then saves the versions response and queries the versions advertized
+func ReceiveVersionResponses(ctx context.Context,
+	store *postgresql.Store,
+	messageQueue lanternmq.MessageQueue,
+	channelID lanternmq.ChannelID,
+	qName string,
+	capQueryQueue lanternmq.MessageQueue,
+	capQueryChannelID lanternmq.ChannelID) error {
+	args := make(map[string]interface{})
+
+	args["queryArgs"] = versionsQueryArgs{
+		ctx:               ctx,
+		capQueryChannelID: capQueryChannelID,
+		capQueryQueue:     capQueryQueue,
+		store:             store,
+	}
+
+	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
+	if err != nil {
+		return err
+	}
+
+	errs := make(chan error)
+	go messageQueue.ProcessMessages(ctx, messages, saveVersionResponseMsgInDB, &args, errs)
 
 	for elem := range errs {
 		log.Warn(elem)

@@ -33,7 +33,9 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
-	smartRsp smartparser.SMARTResponse) endpointmanager.Validation {
+	smartRsp smartparser.SMARTResponse,
+	requestedFhirVersion string,
+	defaultFhirVersion string) endpointmanager.Validation {
 	var validationResults []endpointmanager.Rule
 
 	returnedRule := v.CapStatExists(capStat)
@@ -41,6 +43,11 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 
 	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
+
+	if requestedFhirVersion == "None" && defaultFhirVersion != "" {
+		returnedRule = v.VersionResponseValid(fhirVersion, defaultFhirVersion)
+		validationResults = append(validationResults, returnedRule)
+	}
 
 	returnedRule = v.TLSVersion(tlsVersion)
 	validationResults = append(validationResults, returnedRule)
@@ -498,6 +505,28 @@ func areSearchParamsValid(resource map[string]interface{}) (bool, error) {
 		searchParams = append(searchParams, nameStr)
 	}
 	return true, nil
+}
+
+// VersionResponseValid checks if $versions operation is supported and that the default version is returned when no version requested
+func (v *r4Validation) VersionResponseValid(fhirVersion string, defaultFhirVersion string) endpointmanager.Rule {
+	ruleError := endpointmanager.Rule{
+		RuleName:  endpointmanager.VersionsResponseRule,
+		Valid:     true,
+		Expected:  defaultFhirVersion,
+		Reference: "https://www.hl7.org/fhir/capabilitystatement-operation-versions.html",
+		Comment:   "The default fhir version as specified by the $versions operation should be returned from server when no version specified.",
+	}
+
+	// As long as the major and minor versions of the returned FHIR version and default FHIR version are the same we don't need to worry about the 3rd number
+	fhirVersionSplit := strings.Split(fhirVersion, ".")
+	defaultVersionSplit := strings.Split(defaultFhirVersion, ".")
+	if fhirVersionSplit[0] != defaultVersionSplit[0] || fhirVersionSplit[1] != defaultVersionSplit[1] {
+		ruleError.Valid = false
+	}
+
+	ruleError.Actual = fhirVersion
+
+	return ruleError
 }
 
 func stringInList(str string, list []string) bool {
