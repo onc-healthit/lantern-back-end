@@ -29,6 +29,38 @@ valuesmodule <- function(
 
   ns <- session$ns
 
+  dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
+  stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
+  r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+
+  get_value_versions <- reactive ({
+    res <- isolate(app_data$capstat_fields())
+    req(sel_capstat_values())
+    res <- res %>% group_by(field) %>%
+    arrange(fhir_version, .by_group = TRUE) %>%
+    subset(field == sel_capstat_values())
+    versions <- c(unique(res$fhir_version))
+    versions
+  })
+
+  get_value_table_header <- reactive ({
+    res <- isolate(app_data$capstat_fields())
+    req(sel_capstat_values())
+    res <- res %>% group_by(field) %>%
+    arrange(fhir_version, .by_group = TRUE) %>%
+    subset(field == sel_capstat_values()) %>%
+    mutate(fhir_version_name = case_when(
+    fhir_version %in% dstu2 ~ "DSTU2",
+    fhir_version %in% stu3 ~ "STU3",
+    fhir_version %in% r4 ~ "R4",
+    TRUE ~ "DSTU2"
+    )) %>%
+    summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
+    versions <- res %>% pull(2)
+    header <- paste(sel_capstat_values(), " (", versions, ")", sep = "")
+    header
+  })
+
   selected_fhir_endpoints <- reactive({
     res <- isolate(app_data$capstat_values())
     req(sel_fhir_version(), sel_vendor())
@@ -41,6 +73,9 @@ valuesmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+    # Filter by the versions that the given field exists in
+    value_versions_list <- get_value_versions()
+    res <- res %>% filter(filter_fhir_version %in% value_versions_list)
     # Repeat with filtering fields to see values
     res <- res %>%
       rename(fhirVersion = fhir_version, software.name = software_name, software.version = software_version, software.releaseDate = software_release_date, implementation.description = implementation_description, implementation.url = implementation_url, implementation.custodian = implementation_custodian) %>%
@@ -59,7 +94,7 @@ valuesmodule <- function(
 
   output$capstat_values_table <- DT::renderDataTable({
     datatable(capstat_values_list(),
-              colnames = c("Developer", "FHIR Version", "Field Value", "Endpoints"),
+              colnames = c("Developer", "FHIR Version", get_value_table_header(), "Endpoints"),
               rownames = FALSE,
               options = list(scrollX = TRUE))
   })
