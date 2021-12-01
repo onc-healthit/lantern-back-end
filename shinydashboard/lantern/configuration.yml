@@ -26,6 +26,7 @@ function_files:
   
 module_files:
   - "modules/capabilitymodule.R"
+  - "modules/implementationmodule.R"
   - "modules/dashboardmodule.R"
   - "modules/downloadsmodule.R"
   - "modules/endpointsmodule.R"

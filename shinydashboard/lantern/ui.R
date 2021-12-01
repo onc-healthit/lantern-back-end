@@ -21,6 +21,7 @@ ui <- dashboardPage(
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
       menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
+      menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
@@ -63,6 +64,9 @@ ui <- dashboardPage(
       ),
       tabItem("capability_tab",
               capabilitymodule_UI("capability_page")
+      ),
+      tabItem("implementation_tab",
+              implementationmodule_UI("implementation_page")
       ),
       tabItem("fields_tab",
               fieldsmodule_UI("fields_page")

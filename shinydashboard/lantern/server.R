@@ -4,7 +4,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "fields_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "implementation_tab", "fields_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -86,6 +86,12 @@ function(input, output, session) { #nolint
         reactive(input$operations))
 
       callModule(
+        implementationmodule,
+        "implementation_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor))
+
+      callModule(
         fieldsmodule,
         "fields_page",
         reactive(input$fhir_version),
@@ -114,6 +120,7 @@ function(input, output, session) { #nolint
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads Page",
      "capability_tab" = "Capability Page",
+     "implementation_tab" = "Implmentation Page",
      "fields_tab" = "Fields Page",
      "values_tab" = "Values Page",
      "location_tab" = "Location Map",
@@ -126,7 +133,7 @@ function(input, output, session) { #nolint
   )
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
+    input$side_menu %in% c("endpoints_tab", "capability_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
   )
 
   show_availability_filter <- reactive(
