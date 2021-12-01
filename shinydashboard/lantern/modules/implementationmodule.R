@@ -46,11 +46,7 @@ implementationmodule <- function(  #nolint
   })
 
   # Default plot heights are not good for large number of bars, so base on
-  # number of rows in the result
-  plot_height <- reactive({
-    max(nrow(select_operations()) * 25, 400)
-  })
-
+  # number of rows in the result of implementation count
   plot_height_implementation <- reactive({
     max(nrow(implementation_count()) * 25, 400)
   })
