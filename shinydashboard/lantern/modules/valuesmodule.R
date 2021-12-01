@@ -33,20 +33,22 @@ valuesmodule <- function(
   stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
   r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 
-  get_value_versions <- reactive ({
+  get_value_versions <- reactive({
     res <- isolate(app_data$capstat_fields())
     req(sel_capstat_values())
-    res <- res %>% group_by(field) %>%
+    res <- res %>%
+    group_by(field) %>%
     arrange(fhir_version, .by_group = TRUE) %>%
     subset(field == sel_capstat_values())
     versions <- c(unique(res$fhir_version))
     versions
   })
 
-  get_value_table_header <- reactive ({
+  get_value_table_header <- reactive({
     res <- isolate(app_data$capstat_fields())
     req(sel_capstat_values())
-    res <- res %>% group_by(field) %>%
+    res <- res %>%
+    group_by(field) %>%
     arrange(fhir_version, .by_group = TRUE) %>%
     subset(field == sel_capstat_values()) %>%
     mutate(fhir_version_name = case_when(
