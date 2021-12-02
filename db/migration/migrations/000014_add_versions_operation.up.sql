@@ -68,11 +68,11 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
         SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
         IF  NOT FOUND THEN
             IF NEW.http_response = 200 THEN
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
+                INSERT INTO fhir_endpoints_availability(url, http_200_count, http_all_count, requested_fhir_version) VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
                 NEW.availability = 1.00;
                 RETURN NEW;
             ELSE
-                INSERT INTO fhir_endpoints_availability VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
+                INSERT INTO fhir_endpoints_availability(url, http_200_count, http_all_count, requested_fhir_version) VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
                 NEW.availability = 0.00;
                 RETURN NEW;
             END IF;
