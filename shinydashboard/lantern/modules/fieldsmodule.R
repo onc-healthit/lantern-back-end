@@ -65,7 +65,8 @@ fieldsmodule <- function(
   stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
   r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 
-  capstat_fields_list <- reactive({
+
+  get_capstat_values <- function(extension) {
     res <- isolate(app_data$capstat_fields())
     version_filter <- FALSE
 
@@ -75,8 +76,14 @@ fieldsmodule <- function(
       version_filter <- TRUE
     }
 
+    if (extension) {
+      res <- res %>%
+      filter(extension == "true")
+    } else {
+      res <- res %>%
+      filter(extension == "false")
+    }
     res <- res %>%
-    filter(extension == "false") %>%
     group_by(field) %>%
     arrange(fhir_version, .by_group = TRUE)
 
@@ -97,44 +104,10 @@ fieldsmodule <- function(
     }
 
     res
-})
-
-capstat_extensions_list <- reactive({
-    res <- isolate(app_data$capstat_fields())
-
-    version_filter <- FALSE
-
-    req(sel_fhir_version())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-      version_filter <- TRUE
-    }
-
-    res <- res %>%
-    filter(extension == "true") %>%
-    group_by(field) %>%
-    arrange(fhir_version, .by_group = TRUE)
-
-    res <- res %>% mutate(fhir_version_name = case_when(
-    fhir_version %in% dstu2 ~ "DSTU2",
-    fhir_version %in% stu3 ~ "STU3",
-    fhir_version %in% r4 ~ "R4",
-    TRUE ~ "DSTU2"
-    ))
-
-    res <- res %>% summarize(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
-
-    if (version_filter) {
-      res$extension_version <- res$field
-    } else {
-      res$extension_version <- paste(res$field, " (", res$fhir_version_names, ")", sep = "")
-    }
-
-    res
-})
+}
 
 output$capstat_fields_text <- renderUI({
-    col <- capstat_fields_list() %>% pull(3)
+    col <- get_capstat_values(FALSE) %>% pull(3)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='field-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following fields: ", divElem)
@@ -142,7 +115,7 @@ output$capstat_fields_text <- renderUI({
   })
 
 output$capstat_extension_text <- renderUI({
-    col <- capstat_extensions_list() %>% pull(3)
+    col <- get_capstat_values(TRUE) %>% pull(3)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='extension-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following extensions: ", divElem)
