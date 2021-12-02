@@ -441,7 +441,7 @@ func Test_RunIncludedFieldsAndExtensionsChecks(t *testing.T) {
 	th.Assert(t, includedFields[22].Exists == false, "Expected rest.resource.conditionalDelete in includedFields to be false, was true")
 	th.Assert(t, includedFields[23].Exists == true, "Expected rest.resource.searchParam.type in includedFields to be true, was false")
 	th.Assert(t, includedFields[33].Exists == false, "Expected conformance expectation extension in includedFields to be false, was true")
-	th.Assert(t, includedFields[35].Exists == true, "Expected DSTU2oauth-uris1 extension in includedFields to be true, was false")
+	th.Assert(t, includedFields[35].Exists == true, "Expected DSTU2-oauth-uris extension in includedFields to be true, was false")
 	th.Assert(t, includedFields[31].Exists == false, "Expected conformance-supported-system extension in includedFields to be false, was true")
 
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "wellstar_capability_tester.json"))
