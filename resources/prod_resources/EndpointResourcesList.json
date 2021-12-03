@@ -3,7 +3,7 @@
         "FormatType": "Epic",
         "EndpointName":"Epic",
         "FileName":"EpicEndpointSources.json",
-        "URL":"https://open.epic.com/MyApps/EndpointsJson"
+        "URL":"https://open.epic.com/Endpoints/DSTU2"
     },
     {
         "FormatType": "Cerner",
