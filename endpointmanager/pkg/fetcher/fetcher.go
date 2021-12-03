@@ -81,9 +81,9 @@ func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source strin
 		if err != nil {
 			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
-		result = CernerList{}.GetEndpoints(cernerList, source, listURL)
-	} else if format == "Epic" {
-		epicList, err := convertInterfaceToList(initialList, "Entries")
+		result = CernerList{}.GetEndpoints(cernerList, listURL)
+	} else if source == "Epic" {
+		epicList, err := convertInterfaceToList(initialList, "entry")
 		if err != nil {
 			return result, fmt.Errorf("epic list not given in EPIC format: %s", err)
 		}
