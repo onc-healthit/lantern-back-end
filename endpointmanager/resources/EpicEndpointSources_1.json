@@ -9886,48 +9886,6 @@
      {
        "resource": {
          "resourceType": "Endpoint",
-         "id": "019f0f4c-9813-e911-9126-001dd8b71f19",
-         "contained": [
-           {
-             "resourceType": "Organization",
-             "id": "+ajVikW9TEn4SqKpsYC6atYLc7kJl24iljFFnyeXx7w=",
-             "name": "AdvantageCare Physicians"
-           }
-         ],
-         "status": "active",
-         "connectionType": {
-           "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
-           "code": "hl7-fhir-rest"
-         },
-         "name": "AdvantageCare Physicians",
-         "managingOrganization": {
-           "reference": "+ajVikW9TEn4SqKpsYC6atYLc7kJl24iljFFnyeXx7w="
-         },
-         "period": {
-           "start": "2017-12-15T00:00:00-06:00"
-         },
-         "payloadType": [
-           {
-             "coding": [
-               {
-                 "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
-                 "code": "NA"
-               }
-             ]
-           }
-         ],
-         "payloadMimeType": [
-           "application/fhir+json",
-           "application/json+fhir",
-           "application/xml+fhir",
-           "application/fhir+xml"
-         ],
-         "address": "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
-       }
-     },
-     {
-       "resource": {
-         "resourceType": "Endpoint",
          "id": "039f0f4c-9813-e911-9126-001dd8b71f19",
          "contained": [
            {
@@ -16128,6 +16086,45 @@
          ],
          "address": "https://epicproxy.et1124.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
        }
-     }
+     },
+     {
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "0130a2f5-3044-ea11-912a-001dd8b71f1a",
+        "contained": [
+          {
+            "resourceType": "Organization",
+            "id": "HKrLwOGVWykflJ6tJJWu+T8ZcNTV43uScYm2utGsRhQ=",
+            "name": "Edward-Elmhurst Healthcare"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+          "code": "hl7-fhir-rest"
+        },
+        "name": "Edward-Elmhurst Healthcare",
+        "managingOrganization": {
+          "reference": "HKrLwOGVWykflJ6tJJWu+T8ZcNTV43uScYm2utGsRhQ="
+        },
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                "code": "NA"
+              }
+            ]
+          }
+        ],
+        "payloadMimeType": [
+          "application/fhir+json",
+          "application/json+fhir",
+          "application/xml+fhir",
+          "application/fhir+xml"
+        ],
+        "address": "https://fhirprd.edward.org/fhirprd/EEHOAUTH/api/FHIR/DSTU2/"
+      }
+    }
    ]
  }

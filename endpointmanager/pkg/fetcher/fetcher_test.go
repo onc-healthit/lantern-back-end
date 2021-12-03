@@ -24,7 +24,7 @@ var testEpic = []byte(`{"resourceType": "Bundle",
 				"managingOrganization": {
 					"reference": "fFuLYAY4j/IOtb2ckFX+pQO+68HC8vWsP6vkP62oX90="
 				},
-				"address": ""https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/""
+				"address": "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
 	}}]}`)
 
 var testLantern = []byte(`{"Endpoints": [

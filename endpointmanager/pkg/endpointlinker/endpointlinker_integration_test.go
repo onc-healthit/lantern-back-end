@@ -52,7 +52,7 @@ func Test_matchByID(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	ctx := context.Background()
 
@@ -118,7 +118,7 @@ func Test_addMatch(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR"},
 		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID := "1"
 	confidence := .6
 
@@ -162,7 +162,7 @@ func Test_manualLinkerCorrections(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR"},
 		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID1 := "1"
 	confidence1 := .6
 	ep2 := &endpointmanager.FHIREndpoint{
@@ -170,7 +170,7 @@ func Test_manualLinkerCorrections(t *testing.T) {
 		URL:               "example2.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO BAR BAR"},
 		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID2 := "2"
 	confidence2 := .8
 	ep3 := &endpointmanager.FHIREndpoint{
@@ -178,7 +178,7 @@ func Test_manualLinkerCorrections(t *testing.T) {
 		URL:               "example3.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO BAR FOO"},
 		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID3 := "3"
 	confidence3 := .5
 

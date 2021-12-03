@@ -300,7 +300,7 @@ func Test_matchByName(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	// test with no orgs
 	matches, confidences, err := matchByName(ep, orgs, false, tokenValues, .85)
@@ -435,21 +435,21 @@ func Test_countTokens(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM", "BLAH", "ONE TWO THREE FOUR FIVE"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO", "BAM BLAH", "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM", "SYSTEM SYSTEM SERVICES"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	var ep3 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"BLAH EIGHT", "EIGHT NINE TEN", "FOO NOTHING BAM BAM", "SYSTEM SERVICES BLAH SERVICES"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)
@@ -607,14 +607,14 @@ func Test_getTokenVals(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM", "BLAH", "ONE TWO THREE FOUR FIVE"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"FOO FOO", "BAM BLAH", "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM", "SYSTEM SYSTEM SERVICES"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)
