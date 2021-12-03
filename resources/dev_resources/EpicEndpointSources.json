@@ -1,28 +1,260 @@
 {
-   "Entries":[
+   "resourceType": "Bundle",
+   "type": "collection",
+   "timestamp": "2021-12-03T12:59:18.6344647-06:00",
+   "total": 6,
+   "entry": [
       {
-         "OrganizationName":"Access Community Health Network",
-         "FHIRPatientFacingURI":"https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
-      },
-      {
-         "OrganizationName":"AdvantageCare Physicians",
-         "FHIRPatientFacingURI":"https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
-      },
-      {
-         "OrganizationName":"Adventist Health West",
-         "FHIRPatientFacingURI":"https://epicescribe1.ah.org/ARR-FHIR-PRD/api/FHIR/DSTU2/"
-      },
-      {
-         "OrganizationName":"Akron Children\u0027s Hospital",
-         "FHIRPatientFacingURI":"https://haiku-canto-prod.chmca.org/ARR-FHIR-PRD/api/FHIR/DSTU2/"
-      },
-      {
-         "OrganizationName":"Alameda Health System",
-         "FHIRPatientFacingURI":"https://epicproxy.et1075.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
-      },
-      {
-         "OrganizationName":"Allegheny Health Network",
-         "FHIRPatientFacingURI":"https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/DSTU2/"
-      }
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "699c0f4c-9813-e911-9126-001dd8b71f19",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "FKCtMWPFSZssfgm52D0i+zLmIC8QGW5BiauNKSvNjzs=",
+               "name": "The Brooklyn Hospital Center"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "The Brooklyn Hospital Center",
+           "managingOrganization": {
+             "reference": "FKCtMWPFSZssfgm52D0i+zLmIC8QGW5BiauNKSvNjzs="
+           },
+           "period": {
+             "start": "2018-08-10T00:00:00-05:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://epicproxy.et1043.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
+         }
+       },
+       {
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "9a9c0f4c-9813-e911-9126-001dd8b71f19",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "x8wa0Afu4UCwSZeAYYrc9bFyYoBkyS6oRgYiGY4Jm5g=",
+               "name": "Penn Medicine"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "Penn Medicine",
+           "managingOrganization": {
+             "reference": "x8wa0Afu4UCwSZeAYYrc9bFyYoBkyS6oRgYiGY4Jm5g="
+           },
+           "period": {
+             "start": "2018-10-26T00:00:00-05:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://ssproxy.pennhealth.com/PRD-FHIR/api/FHIR/DSTU2/"
+         }
+       },
+       {
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "d19c0f4c-9813-e911-9126-001dd8b71f19",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "eIwSF77OkKIts+3CwtaR1e+gFclBPlkE5cKntWH4wMc=",
+               "name": "Ascension - Providence Healthcare Network"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "Ascension - Providence Healthcare Network",
+           "managingOrganization": {
+             "reference": "eIwSF77OkKIts+3CwtaR1e+gFclBPlkE5cKntWH4wMc="
+           },
+           "period": {
+             "start": "2018-06-11T00:00:00-05:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://stofo.providence-waco.org/FHIRProxy/api/FHIR/DSTU2/"
+         }
+       },
+       {
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "769e0f4c-9813-e911-9126-001dd8b71f19",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "LDr1k8M7CvaAEcfWfK9GKtyg0rPzdFgfTHG7RIlrqlw=",
+               "name": "Inova and Valley Health"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "Inova and Valley Health",
+           "managingOrganization": {
+             "reference": "LDr1k8M7CvaAEcfWfK9GKtyg0rPzdFgfTHG7RIlrqlw="
+           },
+           "period": {
+             "start": "2018-01-02T00:00:00-06:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://epicrpprd.inova.org/fhirrp/api/FHIR/DSTU2/"
+         }
+       },
+       {
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "0354bfbc-4d1b-e911-9126-001dd8b71f19",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "rgCaG72zsckjpLuGY+c7CYq7qOa9oXEaP1XO0Ah33eY=",
+               "name": "St. Joseph Hospital Health Center"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "St. Joseph Hospital Health Center",
+           "managingOrganization": {
+             "reference": "rgCaG72zsckjpLuGY+c7CYq7qOa9oXEaP1XO0Ah33eY="
+           },
+           "period": {
+             "start": "2019-02-11T00:00:00-06:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://mobileproxy.sjhsyr.org/FHIR/api/FHIR/DSTU2/"
+         }
+       },
+       {
+         "resource": {
+           "resourceType": "Endpoint",
+           "id": "68310cdf-cf54-ea11-912a-001dd8b71f1a",
+           "contained": [
+             {
+               "resourceType": "Organization",
+               "id": "Tb6uTV5niB8OuD0VF6UkLuIgncYxqYjHz/CFs236/88=",
+               "name": "Salinas Valley Memorial Healthcare Systems"
+             }
+           ],
+           "status": "active",
+           "connectionType": {
+             "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+             "code": "hl7-fhir-rest"
+           },
+           "name": "Salinas Valley Memorial Healthcare Systems",
+           "managingOrganization": {
+             "reference": "Tb6uTV5niB8OuD0VF6UkLuIgncYxqYjHz/CFs236/88="
+           },
+           "period": {
+             "start": "2020-03-31T00:00:00-05:00"
+           },
+           "payloadType": [
+             {
+               "coding": [
+                 {
+                   "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                   "code": "NA"
+                 }
+               ]
+             }
+           ],
+           "payloadMimeType": [
+             "application/fhir+json",
+             "application/json+fhir",
+             "application/xml+fhir",
+             "application/fhir+xml"
+           ],
+           "address": "https://epicproxy.et1146.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
+         }
+       }
    ]
 }
