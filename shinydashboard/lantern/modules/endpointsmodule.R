@@ -37,7 +37,7 @@ endpointsmodule <- function(
     res <- get_fhir_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor(), sel_availability())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version_condensed == sel_fhir_version())
+      res <- res %>% filter(fhir_version == sel_fhir_version())
     }
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
@@ -83,7 +83,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% distinct(url, endpoint_names, updated, vendor_name, fhir_version, tls_version, mime_types, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% distinct(url, endpoint_names, updated, vendor_name, capability_fhir_version, tls_version, mime_types, status, availability) %>% group_by(url) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -101,7 +101,7 @@ endpointsmodule <- function(
                   endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
                   updated = colDef(name = "Updated", , sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
-                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+                  capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   tls_version = colDef(name = "TLS Version", sortable = FALSE),
                   mime_types = colDef(name = "MIME Types", minWidth = 150, sortable = FALSE),
                   status = colDef(name = "HTTP Response", sortable = FALSE),

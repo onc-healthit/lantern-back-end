@@ -50,7 +50,9 @@ securitymodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>% filter(code == sel_auth_type_code())
+    res <- res %>%
+    filter(code == sel_auth_type_code()) %>%
+    select(url, organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })
 

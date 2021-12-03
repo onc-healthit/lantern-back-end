@@ -30,7 +30,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
     distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, fhir_version_condensed, tls_version, mime_types, http_response, response_time_seconds, smart_http_response, errors, availability) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, tls_version, mime_types, http_response, response_time_seconds, smart_http_response, errors, availability) %>%
     mutate(updated = as.Date(info_updated)) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
@@ -69,30 +69,28 @@ get_http_response_summary_tbl <- function(db_tables) {
     collect() %>%
     filter(requested_fhir_version == "None") %>%
     left_join(endpoint_export_tbl %>%
-      select(url, vendor_name, http_response, fhir_version_condensed), by = c("url" = "url")) %>%     
-      select(url, id, http_response, vendor_name, fhir_version_condensed) %>%
+      select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
+      select(url, id, http_response, vendor_name, fhir_version) %>%
       mutate(code = as.character(http_response)) %>%
-      group_by(id, url, code, http_response, vendor_name, fhir_version_condensed) %>%
+      group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
       summarise(Percentage = n()) %>%
       ungroup() %>%
       group_by(id) %>%
       mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
       ungroup() %>%
       collect() %>%
-      tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-      rename(fhir_version = fhir_version_condensed)
+      tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 # Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
   endpoint_tbl %>%
-    distinct(vendor_name, url, fhir_version_condensed) %>%
-    group_by(vendor_name, fhir_version_condensed) %>%
+    distinct(vendor_name, url, fhir_version) %>%
+    group_by(vendor_name, fhir_version) %>%
     tally() %>%
     ungroup() %>%
-    select(vendor_name, fhir_version_condensed, n) %>%
-    left_join(vendor_short_names) %>%
-    rename(fhir_version = fhir_version_condensed)
+    select(vendor_name, fhir_version, n) %>%
+    left_join(vendor_short_names)
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
@@ -108,8 +106,7 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
     "All Versions" = ui_special_values$ALL_FHIR_VERSIONS
   )
   fh <- endpoint_export_tbl %>%
-    distinct(fhir_version_condensed) %>%
-    rename(fhir_version = fhir_version_condensed) %>%
+    distinct(fhir_version) %>%
     split(.$fhir_version) %>%
     purrr::map(~ .$fhir_version)
   fhir_version_list <- c(fhir_version_list, fh)
@@ -292,7 +289,7 @@ get_security_endpoints <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
-    
+
 }
 
 # get tibble of endpoints which include a security service attribute
@@ -303,13 +300,13 @@ get_security_endpoints_tbl <- function(db_connection) {
     sql("SELECT a.url,
             a.organization_names,
             b.vendor_name,
-            a.fhir_version,
+            a.capability_fhir_version,
             a.tls_version,
             a.code
         FROM
           (SELECT e.url,
             e.organization_names,
-            capability_fhir_version as fhir_version,
+            capability_fhir_version as capability_fhir_version,
             f.tls_version,
             f.vendor_id,
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
@@ -319,8 +316,8 @@ get_security_endpoints_tbl <- function(db_connection) {
         ON a.vendor_id = b.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version))
 }
 
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
@@ -359,7 +356,7 @@ get_smart_response_capability_count <- function(endpoints_tbl) {
 get_well_known_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
-      f.capability_fhir_version as fhir_version
+      f.capability_fhir_version as capability_fhir_version
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
@@ -369,8 +366,8 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version))
 }
 
 # Find any endpoints which have returned a smart_http_response of 200
@@ -493,7 +490,7 @@ get_validation_results <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT vendors.name as vendor_name,
           f.url as url,
-          capability_statement->>'fhirVersion' as fhir_version,
+          capability_fhir_version as fhir_version,
           rule_name,
           valid,
           expected,
@@ -507,7 +504,8 @@ get_validation_results <- function(db_connection) {
         ORDER BY validations.validation_result_id, rule_name")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    tidyr::replace_na(list(fhir_version = "Unknown"))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
 }
 
 database_fetcher <- reactive({

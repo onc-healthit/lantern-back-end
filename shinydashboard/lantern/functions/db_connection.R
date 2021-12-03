@@ -43,4 +43,5 @@ endpoint_export_tbl <- db_tables$endpoint_export %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
   tidyr::replace_na(list(vendor_name = "Unknown")) %>%
   mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-  mutate(fhir_version_condensed = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+  rename(capability_fhir_version = fhir_version) %>%
+  mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version))
