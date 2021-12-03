@@ -178,7 +178,7 @@ func Test_EndpointLinksAreAvailable(t *testing.T) {
 
 	ctx := context.Background()
 	//This will add one link to the endpoint_organization table
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeAllowlist.json", "./testdata/fakeBlocklist.json", false)
 
 	endpoint_orgs_row = store.DB.QueryRow("SELECT COUNT(*) FROM endpoint_organization;")
 	err = endpoint_orgs_row.Scan(&link_count)
@@ -523,7 +523,7 @@ func Test_RetrieveCapabilityStatements(t *testing.T) {
 	}
 
 	//This will add one link to the endpoint_organization table
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeAllowlist.json", "./testdata/fakeBlocklist.json", false)
 
 	// Check that links were not deleted on update in order to maintain previous mappings from endpoints
 	// to organizations
@@ -630,7 +630,7 @@ func Test_LanternSource(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeWhitelist.json", "./testdata/fakeBlacklist.json", false)
+	endpointlinker.LinkAllOrgsAndEndpoints(ctx, store, "./testdata/fakeAllowlist.json", "./testdata/fakeBlocklist.json", false)
 
 	expected_link_count := 4
 	var link_count int
