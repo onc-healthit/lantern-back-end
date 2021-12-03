@@ -16,11 +16,16 @@ var testCerner = []byte(`{"endpoints": [
       "type": "prod"
 	}]}`)
 
-var testEpic = []byte(`{"Entries":[
-	{
-		"OrganizationName":"Access Community Health Network",
-		"FHIRPatientFacingURI":"https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
-	}]}`)
+var testEpic = []byte(`{"resourceType": "Bundle",
+	"entry": [
+		{
+			"resource": {
+				"name": "Access Community Health Network",
+				"managingOrganization": {
+					"reference": "fFuLYAY4j/IOtb2ckFX+pQO+68HC8vWsP6vkP62oX90="
+				},
+				"address": ""https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/""
+	}}]}`)
 
 var testLantern = []byte(`{"Endpoints": [
     {
@@ -70,8 +75,8 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 
 	// test epic list
 
-	expectedEndpoints = 364
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "Epic", "")
+	expectedEndpoints = 416
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 

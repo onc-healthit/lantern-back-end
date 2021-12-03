@@ -87,7 +87,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	var actualNumEndptsStored int
 
 	ctx := context.Background()
-	expectedNumEndptsStored := 340
+	expectedNumEndptsStored := 416
 
 	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "Epic", "https://open.epic.com/MyApps/EndpointsJson")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
@@ -110,15 +110,15 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
-	// This endpoint list has 10 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "Epic", "Epic", "https://open.epic.com/MyApps/EndpointsJson")
+	// This endpoint list has 30 endpoints removed from it
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "Epic", "https://open.epic.com/MyApps/EndpointsJson")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
 	th.Assert(t, err == nil, err)
 	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	err = rows.Scan(&actualNumEndptsStored)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-10, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
+	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-30, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
 	// This endpoint should be removed from table
 	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "https://open.epic.com/MyApps/EndpointsJson")
 	th.Assert(t, err == sql.ErrNoRows, err)

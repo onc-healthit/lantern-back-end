@@ -310,13 +310,16 @@ Epic Endpoint Sources (JSON):
 
 ```
 {
-  "Entries": [
-    {
-      "OrganizationName": <name of the organization>,
-      "FHIRPatientFacingURI": <location of the FHIR endpoint>
-    },
-    ...
-  ]
+   "resourceType": "Bundle",
+   "entry": [
+     {
+       "resource": {
+         "name": <name of the organization>,
+         "address": <location of the FHIR endpoint>
+       }
+     },
+     ...
+   ]
 }
 ```
 
