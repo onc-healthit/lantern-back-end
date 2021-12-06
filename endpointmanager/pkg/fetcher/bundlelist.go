@@ -5,6 +5,7 @@ import (
 )
 
 // GetBundleEndpoints takes the list of endpoints in FHIR Bundle format and formats it into a ListOfEndpoints
+// managingOrganization is set to true if the endpoint list contains an organization name in the managingOrganization field, otherwise false
 // Assumed Structure:
 /**
 { ... entry: [ {

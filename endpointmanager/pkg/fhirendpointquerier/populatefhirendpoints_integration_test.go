@@ -119,7 +119,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints;")
 	err = rows.Scan(&actualNumEndptsStored)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-30, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-10, actualNumEndptsStored))
+	th.Assert(t, actualNumEndptsStored >= expectedNumEndptsStored-30, fmt.Sprintf("Expected at least %d endpoints stored. Actually had %d endpoints stored.", expectedNumEndptsStored-30, actualNumEndptsStored))
 	// This endpoint should be removed from table
 	fhirEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "https://open.epic.com/Endpoints/DSTU2")
 	th.Assert(t, err == sql.ErrNoRows, err)
