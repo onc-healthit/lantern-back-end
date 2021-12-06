@@ -60,7 +60,6 @@ app_data <<- list(
   vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
-  capstat_fields_list = reactiveVal(NULL),         # the list of fields we keep track of in a capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement
   last_updated = reactiveVal(NULL),                # time app_data was last updated
   security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint

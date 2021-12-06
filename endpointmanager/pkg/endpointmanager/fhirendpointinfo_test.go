@@ -16,27 +16,12 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "date",
-		Exists:    true,
-		Extension: false,
-	},
-	{
-		Field:     "kind",
-		Exists:    true,
-		Extension: false,
-	},
-	{
-		Field:     "name",
-		Exists:    true,
-		Extension: false,
-	},
-	{
-		Field:     "title",
+		Field:     "version",
 		Exists:    false,
 		Extension: false,
 	},
 	{
-		Field:     "format",
+		Field:     "name",
 		Exists:    true,
 		Extension: false,
 	},
@@ -46,32 +31,7 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "contact",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "imports",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "profile",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "purpose",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "version",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "copyright",
+		Field:     "experimental",
 		Exists:    false,
 		Extension: false,
 	},
@@ -81,8 +41,13 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "useContext",
+		Field:     "contact",
 		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "date",
+		Exists:    true,
 		Extension: false,
 	},
 	{
@@ -91,37 +56,12 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "fhirVersion",
-		Exists:    true,
-		Extension: false,
-	},
-	{
-		Field:     "patchFormat",
+		Field:     "copyright",
 		Exists:    false,
 		Extension: false,
 	},
 	{
-		Field:     "experimental",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "instantiates",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "jurisdiction",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "requirements",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "acceptUnknown",
+		Field:     "kind",
 		Exists:    true,
 		Extension: false,
 	},
@@ -136,22 +76,7 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "implementation.url",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "implementationGuide",
-		Exists:    false,
-		Extension: false,
-	},
-	{
 		Field:     "software.releaseDate",
-		Exists:    false,
-		Extension: false,
-	},
-	{
-		Field:     "implementation.custodian",
 		Exists:    false,
 		Extension: false,
 	},
@@ -161,7 +86,52 @@ var testIncludedFields = []IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "messaging",
+		Field:     "implementation.url",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "fhirVersion",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "format",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "rest.mode",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "rest.resource.type",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "rest.resource.interaction.code",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "rest.resource.versioning",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "rest.resource.conditionalDelete",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "rest.resource.searchParam.type",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "rest.interaction.code",
 		Exists:    false,
 		Extension: false,
 	},
@@ -169,6 +139,56 @@ var testIncludedFields = []IncludedField{
 		Field:     "document",
 		Exists:    false,
 		Extension: false,
+	},
+	{
+		Field:     "document.mode",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "messaging",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "requirements",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "profile",
+		Exists:    false,
+		Extension: false,
+	},
+	{
+		Field:     "acceptUnknown",
+		Exists:    true,
+		Extension: false,
+	},
+	{
+		Field:     "conformance-supported-system",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-search-parameter-combination",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-expectation",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "conformance-prohibited",
+		Exists:    false,
+		Extension: true,
+	},
+	{
+		Field:     "DSTU2-oauth-uris",
+		Exists:    false,
+		Extension: true,
 	},
 }
 
