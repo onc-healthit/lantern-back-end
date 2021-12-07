@@ -12,7 +12,9 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
       echo "Downloading $NAME Endpoint Sources..."
       if [ "$NAME" = "CareEvolution" ] ||  [ "$NAME" = "1Up" ];
       then
-         go run ../../endpointmanager/cmd/endpointwebscraper/main.go $NAME $URL $FILENAME
+         cd ../../endpointmanager/cmd/endpointwebscraper
+         go run main.go $NAME $URL $FILENAME
+         cd ../../../resources/prod_resources
       else
          curl -s -o $FILENAME $URL
       fi

@@ -71,7 +71,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
