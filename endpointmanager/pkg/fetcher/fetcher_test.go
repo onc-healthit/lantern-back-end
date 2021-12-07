@@ -29,6 +29,18 @@ var testLantern = []byte(`{"Endpoints": [
         "NPIID": "1"
 	}]}`)
 
+var testCareEvolution = []byte(`{"Entries":[
+	{
+		"OrganizationName":"Holy Cross in Florida - Trinity Health",
+		"FHIRPatientFacingURI":"https://hcfl.patient.trinity-health.org/api/fhir"
+	}]}`)
+
+var test1Up = []byte(`{"Entries":[
+		{
+			"OrganizationName":"Spectrum Health",
+			"FHIRPatientFacingURI":"https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2"
+		}]}`)
+
 var testFHIR = []byte(`{"resourceType": "Bundle",
 		"entry": [
 			{
@@ -70,6 +82,20 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from lantern file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
+	// test CareEvolution list
+
+	expectedEndpoints = 10
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "CareEvolution", "")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from CareEvolution file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
+
+	// test 1Up list
+
+	expectedEndpoints = 472
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "1Up", "")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from 1Up file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
+
 	// test fhir list
 
 	expectedEndpoints = 14
@@ -99,7 +125,17 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, lanternResult.Entries[0].ListSource == "Lantern", fmt.Sprintf("The list source should have been Lantern, it instead returned %s", lanternResult.Entries[0].ListSource))
 
-	// test lantern list
+	// test CareEvolution list
+	careEvolutionResult, err := GetListOfEndpointsKnownSource(testCareEvolution, "CareEvolution", "")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "CareEvolution", fmt.Sprintf("The list source should have been CareEvolution, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
+
+	// test 1Up list
+	oneUpResult, err := GetListOfEndpointsKnownSource(test1Up, "1Up", "")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, oneUpResult.Entries[0].ListSource == "1Up", fmt.Sprintf("The list source should have been 1Up, it instead returned %s", oneUpResult.Entries[0].ListSource))
+
+	// test FHIR list
 
 	fhirListSource := "www.thisisafhirlist.com"
 	fhirResult, err := GetListOfEndpointsKnownSource(testFHIR, "FHIR", fhirListSource)
