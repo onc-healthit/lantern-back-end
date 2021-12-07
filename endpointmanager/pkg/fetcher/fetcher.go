@@ -95,13 +95,13 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL stri
 		}
 		result = LanternList{}.GetEndpoints(lanternList, listURL)
 	} else if source == "CareEvolution" {
-		careEvolutionList, err := convertInterfaceToList(initialList, "Endpoints")
+		careEvolutionList, err := convertInterfaceToList(initialList, "Entries")
 		if err != nil {
 			return result, fmt.Errorf("CareEvolution list not given in CareEvolution format: %s", err)
 		}
 		result = CareEvolutionList{}.GetEndpoints(careEvolutionList, listURL)
 	} else if source == "1Up" {
-		oneUpList, err := convertInterfaceToList(initialList, "Endpoints")
+		oneUpList, err := convertInterfaceToList(initialList, "Entries")
 		if err != nil {
 			return result, fmt.Errorf("1Up list not given in 1Up format: %s", err)
 		}

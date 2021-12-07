@@ -1,5 +1,5 @@
 {
-	"Endpoints": [
+	"Entries": [
 		{
 			"FHIRPatientFacingURI": "https://fhir.careevolution.com/Master.Adapter1.WebClient/api/fhir",
 			"OrganizationName": "CareEvolution Test Sandbox"
