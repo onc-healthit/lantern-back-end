@@ -9,7 +9,7 @@ validationsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12,
         p("For information about the validation rules that Lantern evaluates, including their descriptions and references, please see the",
-                a("documentation available here.", href = "Lantern_Validation_Rules_And_Descriptions.pdf", target = "_blank")
+                a("documentation available here.", href = "Lantern Validation Rules and Descriptions.pdf", target = "_blank")
         )
       )
     ),
