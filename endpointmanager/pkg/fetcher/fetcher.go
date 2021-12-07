@@ -30,7 +30,7 @@ type ListOfEndpoints struct {
 }
 
 // Source is a slice of the known endpoint source lists
-var sources = []string{"Cerner", "Epic", "Lantern", "FHIR"}
+var sources = []string{"Cerner", "Epic", "Lantern", "CareEvolution", "1Up", "FHIR"}
 
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
@@ -94,6 +94,18 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL stri
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, listURL)
+	} else if source == "CareEvolution" {
+		careEvolutionList, err := convertInterfaceToList(initialList, "Endpoints")
+		if err != nil {
+			return result, fmt.Errorf("CareEvolution list not given in CareEvolution format: %s", err)
+		}
+		result = CareEvolutionList{}.GetEndpoints(careEvolutionList, listURL)
+	} else if source == "1Up" {
+		oneUpList, err := convertInterfaceToList(initialList, "Endpoints")
+		if err != nil {
+			return result, fmt.Errorf("1Up list not given in 1Up format: %s", err)
+		}
+		result = OneUpList{}.GetEndpoints(oneUpList, listURL)
 	} else if source == "FHIR" {
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")

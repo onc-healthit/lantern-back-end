@@ -1,0 +1,1892 @@
+{
+	"Endpoints": [
+		{
+			"FHIRPatientFacingURI": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Spectrum Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arrprod.midmichigan.net/ProdFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "MidMichigan Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprescribe.sanfordhealth.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Sanford Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicsoap.readinghospital.org/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Tower Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://sfd.stanfordmed.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Stanford Health Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soapprod.multicare.org/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "MultiCare Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhirprod.smchospital.com/FHIR",
+			"OrganizationName": "Shenandoah Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.mhsjvl.org/FHIRproxy/api/FHIR/DSTU2",
+			"OrganizationName": "Mercy Health System - WI"
+		},
+		{
+			"FHIRPatientFacingURI": "https://proxy.eskenazihealth.edu/FHIR-Proxy/api/FHIR/DSTU2",
+			"OrganizationName": "Eskenazi Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/altx/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS St. Michael Hospital - Atlanta"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epic-arr.utmb.edu/fhir-prd/api/FHIR/DSTU2",
+			"OrganizationName": "University of Texas Medical Branch"
+		},
+		{
+			"FHIRPatientFacingURI": "https://esoap.mihs.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Valleywise Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Allegheny Health Network"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/BIGJBA",
+			"OrganizationName": "Connally Memorial Med. Ctr. (ECW)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.fmchosp.com/v1/argonaut/v1",
+			"OrganizationName": "Fort Madison Community Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.mainehealth.org/FHIRPRD/api/FHIR/DSTU2",
+			"OrganizationName": "MaineHealth"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.johnshopkins.edu/FHIR_PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Johns Hopkins Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://prodsoap1.tgh.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Tampa General Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haiku.wacofhc.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Heart of Texas Community Health Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://scproxy.gundersenhealth.org/FHIRARR/api/FHIR/DSTU2",
+			"OrganizationName": "Gundersen Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epproxy.bayhealth.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Bayhealth Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://myc.ochsner.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Ochsner Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.1uphealthdev.com/r4",
+			"OrganizationName": "Delaware DHSS"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.sutterhealth.org/ifs/api/FHIR/DSTU2",
+			"OrganizationName": "Sutter Health"
+		},
+		{
+			"FHIRPatientFacingURI": "http://epicproxy.et1055.epichosted.com/1UPHEALTH_PRD/api/FHIR/DSTU2",
+			"OrganizationName": "MWHC - system"
+		},
+		{
+			"FHIRPatientFacingURI": "https://interconapps.uchospitals.edu/PRD-FHIR-Proxy/api/FHIR/DSTU2",
+			"OrganizationName": "UChicago Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://ema.franciscanalliance.org/FHIR_PROXY/api/FHIR/DSTU2",
+			"OrganizationName": "Franciscan Alliance"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/92a4e86c-e688-4c39-bb87-72ca7592bd6b",
+			"OrganizationName": "Ogawa-Macomb Eye Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://greenfield-apis.meditech.com/v1/argonaut/v1",
+			"OrganizationName": "SMARTMeditech (demo)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arr.mysrhs.com/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Singing River Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprdsoap000.saintfrancis.Com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Saint Francis Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicrpprd.inova.org/fhirrp/api/FHIR/DSTU2",
+			"OrganizationName": "Inova and Valley Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7f0de0d8-bcc5-47dc-bc58-334bf92d43c0",
+			"OrganizationName": "David E Bank MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://cslinkmobile.csmc.edu/fhirproxy/api/FHIR/DSTU2",
+			"OrganizationName": "Cedars-Sinai Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.decaturmorganhospital.net/v1/argonaut/v1",
+			"OrganizationName": "Decatur Morgan Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a7aa9aab-d483-46b8-a9ed-f0103f079d3c",
+			"OrganizationName": "Steven F Stanowicz MD Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arrprd.metrohealth.net/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Metro Health - Michigan"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1d6c927a-8fe8-4114-911c-8498e2eb642e",
+			"OrganizationName": "Neurological Specialist"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ca67fc8f-ff4a-47c9-9a15-2350423c961c",
+			"OrganizationName": "David H Olson DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/P3K5yw8GMf20why_cGnqwmhZY7-3ViDb",
+			"OrganizationName": "Scott Nathan Rickoff"
+		},
+		{
+			"FHIRPatientFacingURI": "https://meritus-rev-prd.meritushealth.com/FHIRPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Meritus"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/051170f4-a2ae-4888-b0ee-e102f4444746",
+			"OrganizationName": "NAMI KHULUSI MD LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6f707b55-bbd5-4cb5-883c-4e7d55beafef",
+			"OrganizationName": "Redman and Gelinas SC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.petersonhealth.com/v1/argonaut/v1",
+			"OrganizationName": "Peterson Regional Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0a8cac94-1179-4d0e-b0c6-b85d991897d4",
+			"OrganizationName": "Southern Orthopedics and Sports Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/mX7hxwEYErARs9T3I5uOZJg78CvtCjXk",
+			"OrganizationName": "Southwest Foot Ankle Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicescribe1.ah.org/ARR-FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Adventist Health West"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2f26dc99-c358-4b2b-a63e-0bdfec0a9b98",
+			"OrganizationName": "Institute Neurology Neurosurgery"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.uhsystem.com/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "EMR Everywhere"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/685fe42d-fc55-43db-9f82-d66c673ec539",
+			"OrganizationName": "University of South Carolina"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/615a8998-a903-4555-ae9a-819c3a1a157c",
+			"OrganizationName": "Renaissance Medical Foundation"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/TUyiFVqGu97NCYEeMMXMqoG9I4Z_7eU4",
+			"OrganizationName": "Carol A Callahan DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/25641f20-a69b-41d6-9c60-3287d9431b57",
+			"OrganizationName": "Joel L Gellen DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/10fb83ac-c243-4cc7-a3b6-20c0ba117b89",
+			"OrganizationName": "Satilla Regional Medical"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/72841bd8-ca57-49a6-8481-3506c63da051",
+			"OrganizationName": "Douglas A Macleod MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://sandbox.bluebutton.cms.gov/v1/fhir",
+			"OrganizationName": "Medicare CMS Blue Button (demo)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://scripts.prevea.com/FHIR-ARR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Hospital Sisters Health System (HSHS)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epsoap.unch.unc.edu/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "UNC Health Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a2e55d9d-6e60-45c1-8f2f-fb6b0d44a9d7",
+			"OrganizationName": "William C Shelor MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7lpj6wwy7Il8biB_Gwjx7W7VV24ClQf_",
+			"OrganizationName": "Blair Surgical Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/f2d842ce-493a-4093-99fd-17ce5bfafb71",
+			"OrganizationName": "Roger Duber DO"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/setx/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Southeast Texas St. Elizabeth"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d7a9a6f7-da8c-47c3-88a4-819ad21c3206",
+			"OrganizationName": "Dermatology Associates of Huntsville"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.guthrie.org/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "The Guthrie Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/TGXWVOelATtk6ci_q_H9utj9QjU3VuOR",
+			"OrganizationName": "Sunnyside Pediatrics"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/U6RZJm5ZXggU0nM508ECB72LT9L_i0-0",
+			"OrganizationName": "Norwalk Pulmonary Consultants"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/34e9cf55-d4f0-4e9c-8676-4a0b3dc4bae0",
+			"OrganizationName": "Victor G Carabello MD Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/KmNnxc_o-jjgc47nzFb9IQmZOC4pgPKO",
+			"OrganizationName": "Cleveland Community Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/acd48832-2c61-46af-89fc-a48e69546675",
+			"OrganizationName": "Orthopedics Unlimited LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/AmdKvzR0cSu-Vj0a0eYvUtDCkebU90cM",
+			"OrganizationName": "Coastal Hospitalist Medical Associates Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicsoap.bmctotalcare.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Bend Memorial Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/5HKUQ3y5JIlMSB02bme0PPh4nsUfV6-w",
+			"OrganizationName": "Frank Reda MD PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/vHLmhTUEuZU9-C7EaUC6GMW9dKqEQxFt",
+			"OrganizationName": "Associates in Otolaryngology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mepic.hackensackumc.net/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Hackensack Meridian Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/YABuj1qyp0U_XWojJG2Hj5hEws9N2IN7",
+			"OrganizationName": "Family Foot and Ankle"
+		},
+		{
+			"FHIRPatientFacingURI": "https://reverseproxy.sfmc.net/fhirproxyprd/api/FHIR/DSTU2",
+			"OrganizationName": "Saint Francis Healthcare System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/swla/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Lake Area Hospital "
+		},
+		{
+			"FHIRPatientFacingURI": "https://myepicapps.uihealthcare.org/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "University of Iowa Health Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1087.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "DaVita Physician Solutions"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mhssp.mhs.net/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Memorial Healthcare System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soap.bassett.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Bassett Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epic.ormc.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Greater Hudson Valley Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.hurleymc.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Hurley Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e1cd2646-a978-48a1-b1dd-27086f7bcfa4",
+			"OrganizationName": "Yvel Moreau MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/swla/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS St. Patrick Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhirprd.edward.org/fhirprd/DMGOAUTH/api/FHIR/DSTU2/",
+			"OrganizationName": "DuPage Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1098.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Tanner Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.hosp.wisc.edu/FhirProxy/api/FHIR/DSTU2",
+			"OrganizationName": "UW Health And Affiliates - Wisconsin"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haikuor.providence.org/fhirproxy/api/FHIR/DSTU2",
+			"OrganizationName": "Providence Health \u0026 Services - Oregon/California"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/346aabbb-ca9f-4665-b523-9a6bc19e87c2",
+			"OrganizationName": "Reproductive Care of Indiana"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mobileprod.arcmd.com/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Austin Regional Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1023.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "UMC Southern Nevada"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.chppoc.org/Fhir-External/api/FHIR/DSTU2",
+			"OrganizationName": "Pediatric Physicians Organization at Children's"
+		},
+		{
+			"FHIRPatientFacingURI": "https://webproxy.piedmont.org/ARR-FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Piedmont Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.lanermc.org/v1/argonaut/v1",
+			"OrganizationName": "Lane Regional Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.genesishcs.org/api/FHIR/DSTU2",
+			"OrganizationName": "Genesis Healthcare System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/srh/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Santa Rosa Hospital - Alamo Heights"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.umm.edu/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "University of Maryland Medical System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicsoapprd.communitymedical.org/arr_fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Community Medical Centers"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ba8bce9c-529e-4c80-844b-1ca88f89a8bf",
+			"OrganizationName": "Eric Fontenot MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Hn5sEtQzojwI35Jt9y2Zkrc_h-YSYc1T",
+			"OrganizationName": "Cartersville OB/GYN Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0946.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Palos Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9f2b41af-66c5-4f3f-b955-096365a05e2c",
+			"OrganizationName": "Alfieri Cardiology PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.1updemohealthplans.com/r4",
+			"OrganizationName": "1up Demo Health Plan"
+		},
+		{
+			"FHIRPatientFacingURI": "https://p-hi2.digitaledge.cigna.com/ConsumerAccess/v1-devportal",
+			"OrganizationName": "Cigna"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/58a432b4-e1e9-4961-babc-ff3b87eb8606",
+			"OrganizationName": "Rocky Mountain Infectious Disease PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/27425bf5-b70f-4e57-a4e7-5af1c20e4949",
+			"OrganizationName": "Allergy and Asthma Clinic of Alexandria"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e77be894-c62e-4b4a-912a-3dd8db0b7a88",
+			"OrganizationName": "Mahira Tanovic MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.centracare.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "CentraCare Health and Affiliates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ae99dac3-f43c-4bb6-bc92-6329474fdd77",
+			"OrganizationName": "Convenient Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/eab031dc-b014-4e04-af2a-409cb0a42bac",
+			"OrganizationName": "Columbus Pain Center PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/740aa98a-caaf-451b-aae6-eb82372d1859",
+			"OrganizationName": "Richard S Warner MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://ssproxyprod.infirmaryhealth.org/epicFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Infirmary Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/448d6906-37dd-489e-99ab-e7fe0202f727",
+			"OrganizationName": "Robert P. Finkelstein"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicweb.challiance.org/Interconnect-FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Cambridge Health Alliance"
+		},
+		{
+			"FHIRPatientFacingURI": "https://interconnect.wellspan.org/interconnect-prd-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "WellSpan Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0978.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "UMass Memorial Health Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2017165a-e6da-4297-96d2-0da8973a33da",
+			"OrganizationName": "Cullman Surgical Assoc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/276cce94-01d1-4363-8843-7c2c9907ca0c",
+			"OrganizationName": "Blackhawk-Grundy Mental Health Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3e9434d9-3c41-460b-b725-85526425ed06",
+			"OrganizationName": "Retina Center PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d0bbf8c8-fa8f-46ed-99d7-68783ccda10c",
+			"OrganizationName": "First Dignity Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicsoap.shands.ufl.edu/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "UF Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ec2458f2-1e24-41c8-b71b-0e701af7583d",
+			"OrganizationName": "Cerner Health Systems (demo)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/524dca8e-3392-4632-bfd2-611c7f245f5b",
+			"OrganizationName": "John R Russell DO PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/93522848-eb1f-4ed3-b857-907cddfe003b",
+			"OrganizationName": "Lunsford"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/363d6658-52e6-4af7-8715-78d7e9924c04",
+			"OrganizationName": "Steven Rimar MD PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.memorialcare.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "MemorialCare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/90c1c564-ec35-4c40-b3c5-6cbeb6d0ad79",
+			"OrganizationName": "Raymond D Hansen MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haiku.bhmcny.org/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Brookdale University Hospital and Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2c42bde2-96fc-4b1a-a5b7-e9138619239c",
+			"OrganizationName": "Burrell Podiatry Clinic PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/vuBFwu5LW-qMI41459vP36yic2NMwCfB",
+			"OrganizationName": "Jose de la Rosa and Shoaib Chowdhury"
+		},
+		{
+			"FHIRPatientFacingURI": "https://davinci.collablynk.com/edifecs/fhir/R4",
+			"OrganizationName": "Guidewell"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/812c427d-a19f-4483-a157-38497432e650",
+			"OrganizationName": "E Ross Clifton DO PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Cjes5HkVls0-AOSEdGoBEur2OUfYZvUw",
+			"OrganizationName": "Caneva Foot \u0026 Ankle Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/caf55755-2de4-4e80-ab92-7a5fcae684b6",
+			"OrganizationName": "Vasyl Warvariv MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2ccb01ad-4a64-4074-9560-d61ce84ce4ce",
+			"OrganizationName": "Foot And Ankle Associates of Maine PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/799e5f79-6e8d-46e4-994e-0573f8c38149",
+			"OrganizationName": "Julio Fernandez Bombino MD \u0026 Reynaldo Molina MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6a316867-5684-4988-b95c-94ce28d46d1f",
+			"OrganizationName": "Paul S Demarco DPM LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/dbf295bc-ae33-44c8-8de8-75a887cfb796",
+			"OrganizationName": "Richard J Loesch DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/4e9afe93-70c0-4e43-adb4-49ec1d261955",
+			"OrganizationName": "Fernando Martinez Catinchi MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bea62b1d-5b0c-4c1a-bdbd-eaa129312421",
+			"OrganizationName": "Bay Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e69c2bef-d9f0-4b8f-8ad3-47f8715149b1",
+			"OrganizationName": "William Long MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/51439fee-4f26-4c5b-b9eb-6e943125896d",
+			"OrganizationName": "Richard M."
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/14194f57-1cf1-4d77-801e-4659b5b99d4c",
+			"OrganizationName": "Anderson Dermatology and Skin Surgery"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2cb3d6db-a361-49b3-a3c3-68fe3216159f",
+			"OrganizationName": "Warren J Degatur Jr. MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/135a9a14-5851-4db5-b6e4-bd9037eef316",
+			"OrganizationName": "Defeo and"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6af660a6-1deb-4c41-a9ac-8c8750f37b1d",
+			"OrganizationName": "Greenville Surgical Clinic PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/659a4d32-086e-4231-bcb2-c030ee2454f0",
+			"OrganizationName": "Ziv M. Harish"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/32e03c95-b309-4594-826f-8331ad619414",
+			"OrganizationName": "Foot and Ankle Center of South Jersey"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/983f199c-2839-4196-aa31-106975d1480c",
+			"OrganizationName": "East Alabama Womens Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/fbc8c866-997f-48a9-94e2-a511f307192d",
+			"OrganizationName": "Allergy Asthma Clinic Alexandria"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/da2180c9-bd45-4fd0-aaf0-2b4abda5475d",
+			"OrganizationName": "Charles Murphy DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soap.wellmont.org/FHIRPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Ballad Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eiclbext.nmhs.net/interconnect-fhir-prd/api/FHIR/DSTU2",
+			"OrganizationName": "North Mississippi Health Services"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/47d02d2a-887a-4772-be50-6a228d5ed380",
+			"OrganizationName": "Cuyahoga Falls Foot Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/830bc60d-46ac-4243-84ae-d0eff19be222",
+			"OrganizationName": "Reza Azar MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/p6GeLE2n6ZSIxB1Tx46kmY3Hql7d-9TB",
+			"OrganizationName": "Cheryl Hayes"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/_71P29rAVhP6E2xCFJzw6ew_Wlj5oLMr",
+			"OrganizationName": "Griffin Reed Eye Care A Medical Corp"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/62f77950-855b-4619-afdc-c0f78ebee30a",
+			"OrganizationName": "Pandi Capital LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/022992dd-25dd-480b-9df5-6959b1bac6bc",
+			"OrganizationName": "The Center for Dermatology PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0971.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "AnMed Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0w2X68WoJybtavj9KNOUNqH4zjiuzU9x",
+			"OrganizationName": "Medical Clinic of Red Bay"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/03348304-a437-4d8f-97f2-4441978ac448",
+			"OrganizationName": "Family Practice Clinic of Dothan PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/112b6d68-f67a-4c48-aab8-7c0280f082f7",
+			"OrganizationName": "Jane Walter DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Presence Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/eccb6e09-c137-4463-964b-10c8a4da7c61",
+			"OrganizationName": "Tomeka Roberts"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/4286a155-8d38-4f8a-8d99-037dcb62ebaa",
+			"OrganizationName": "HHP Internal Medicine Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/qSQQl2ShxAvRHD2W70uxQVtT7BNMIXXO",
+			"OrganizationName": "Amador Hormilla MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d65aae46-5133-440d-81d0-4cf7c38d4aec",
+			"OrganizationName": "Gregg Harris DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.bergerhealth.com/v1/argonaut/v1",
+			"OrganizationName": "OhioHealth Berger Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://rxproxy.sw.org/FHIR-PRD/CONNECT/api/FHIR/DSTU2",
+			"OrganizationName": "Lacy C Kessler, MD, PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e44a89e2-72c2-47ce-919e-4cbbd08ec901",
+			"OrganizationName": "Raul Alonso"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2088f28f-3c6b-4771-b216-22a921e823e3",
+			"OrganizationName": "Pediatric Nephrology Associates S Florida"
+		},
+		{
+			"FHIRPatientFacingURI": "https://emrproxy.mcfarlandclinic.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Mary Greeley Medical Center (Iowa)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a952072f-4bb7-487b-a5ca-2a88ac04fac4",
+			"OrganizationName": "Medical Arts Centers Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/f1c208b1-273a-49f6-b1b3-9d57189a9664",
+			"OrganizationName": "Jacksonville Ophthalmologic Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://FHIR.KP.ORG/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/312/api/FHIR/DSTU2",
+			"OrganizationName": "Kaiser Permanente - California - Northern"
+		},
+		{
+			"FHIRPatientFacingURI": "https://webprd.ochin.org/prd-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "OCHIN"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eparp.sbch.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Cottage Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ZKUyr6Kl3RZ_2jbMXb86LpQdf9wgFkxb",
+			"OrganizationName": "Bryan Neff DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/srh/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Santa Rosa Hospital - New Braunfels"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0830.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Franciscan Missionaries of Our Lady Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soap.cho.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "UCSF Benioff Childrens Hospital Oakland"
+		},
+		{
+			"FHIRPatientFacingURI": "https://emrrp.ucdmc.ucdavis.edu/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "UC Davis Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/f7d44d40-6ccb-4f64-af86-873a0c0e8aac",
+			"OrganizationName": "Klamath Orthopedic Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/gec4dOg2yghesFrkYuCFDQ-HfVUq5AqK",
+			"OrganizationName": "Middlebrook Family Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.slhn.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "St. Luke's University Health Network"
+		},
+		{
+			"FHIRPatientFacingURI": "https:////mu3.gmed.com/api/MD-019",
+			"OrganizationName": "Capital Digestive Care (DACAP) new"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soapproxy.umc.edu/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "University of Mississippi Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://iatrius.atriushealth.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Atrius Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7203a69f-f939-490d-8ac2-04ce52a8c7f3",
+			"OrganizationName": "Skin Surgery Center of Missouri"
+		},
+		{
+			"FHIRPatientFacingURI": "https://linkpoint.ghcscw.com/Interconnect-PRD-FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Group Health Cooperative - South Central Wisconsin"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.oneidahealthcare.org/v1/argonaut/v1",
+			"OrganizationName": "Oneida Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3b1ec0f9-269d-4e41-99b2-594fce574943",
+			"OrganizationName": "Edwin Davis"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0c998443-0f2a-46b6-b9e7-8ed07cb41745",
+			"OrganizationName": "Peoples Bank"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/24c609cd-ad7f-4e98-990d-dd208fe28f33",
+			"OrganizationName": "Case Family Practice And Sports Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/26519c41-5760-4666-aec7-131cba00ac7b",
+			"OrganizationName": "Walnut Lake OBGYN PLLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/yM1TVbA1pYVBqAL5r6hrPXGVr5nFBJbP",
+			"OrganizationName": "Neurology and Spine Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/RSsjLyaRvTYWAeaQBMnsMtHYA_5kMLc7",
+			"OrganizationName": "East Tennessee Allergy"
+		},
+		{
+			"FHIRPatientFacingURI": "https://pmh-vmhaiku-01.pmh.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Parkland"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/xCzjlohQb7LjffswhVfzHuvSjTl4Y9sP",
+			"OrganizationName": "Dover Foot Specialty"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.mah.org/prd-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Mount Auburn Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://gsapi.christushealth.org/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Good Shepherd Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2d8bdb87-4ddc-4f12-98f5-d350e378eb27",
+			"OrganizationName": "PAIN MANAGEMENT ASSOCIATES LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2eheZ7AA_IS9-fVNDu4VNgOyhk0MfwTx",
+			"OrganizationName": "Cullman Cardiovascular Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/sjjHBCeaqyLf8dFsqOGRqKHxbItUkWMd",
+			"OrganizationName": "Brevard Pain"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapi.riversidehealth.org/v1/argonaut/v1",
+			"OrganizationName": "St. John's Riverside Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/z9G2keqlZ_fphrvhMqvIpl_AN3LTEkDQ",
+			"OrganizationName": "Ash Derm and Skin Cancer Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1073.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Englewood Hospital and Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/889ab906-16e9-4fda-8f5a-5007e346883b",
+			"OrganizationName": "Dermatology Associates PA of the Palm Beaches"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/63846dff-2dbd-4e7c-ad9d-512b2970d4d5",
+			"OrganizationName": "World Scouting Organization"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0d6fa211-e0de-4ae5-a8f7-e66f0467a013",
+			"OrganizationName": "Neuroscience Center of the South"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/282ac7c4-9db7-44ff-9e15-9477722bfca6",
+			"OrganizationName": "Caritas Clinics"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.sbrmc.org/v1/argonaut/v1",
+			"OrganizationName": "Crossridge Community Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.oldkansasfhir.com/r4/old123",
+			"OrganizationName": "Kansas Department of Health and Environment (KDHE)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/b028dc4c-d272-49cb-aa36-c5cff29530bb",
+			"OrganizationName": "Katherine Shaw Bethea Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.oldkansasfhir.com/r4/old123",
+			"OrganizationName": "KanCare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.oldkansasfhir.com/r4/old123",
+			"OrganizationName": "Kansas Medicaid"
+		},
+		{
+			"FHIRPatientFacingURI": "https://interconnect.azacp.com/interconnect-oauth2-prd/api/FHIR/DSTU2",
+			"OrganizationName": "Arizona Community Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epx1.chsli.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Catholic Health (Long Island NY)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.1updemohealthplan.com/r4",
+			"OrganizationName": "P2P Previous Health Plan"
+		},
+		{
+			"FHIRPatientFacingURI": "https://rp.sleh.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "CHI St. Luke's Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.connecticutchildrens.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Connecticut Children's Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://erx.aspirus.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Aspirus"
+		},
+		{
+			"FHIRPatientFacingURI": "https://prd.salemhealth.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Salem Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0857.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Stanford Children's Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://EpicIntprxyPRD.swmed.edu/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "University of Texas Southwestern Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arr01.service.vumc.org/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Vanderbilt"
+		},
+		{
+			"FHIRPatientFacingURI": "https://soapproxyprd.northoaks.org/nohsfhir/api/FHIR/DSTU2",
+			"OrganizationName": "North Oaks"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epic-ext.trinity-health.org/FHIR/api/FHIR/DSTU2/",
+			"OrganizationName": "Trinity Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.1uphelthdev.com/r4",
+			"OrganizationName": "Nevada Medicaid"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arrprd.southeasthealth.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Southeast Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haiku.bshsi.org/fhir/COV_OAUTH/api/FHIR/DSTU2",
+			"OrganizationName": "Covenant Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1094.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Cape Fear Valley Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/nla/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Highland Medical Center "
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.wchosp.org/v1/argonaut/v1",
+			"OrganizationName": "Wooster Community Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/85e438cb-0cb2-4c78-a169-d659fe5b2dde",
+			"OrganizationName": "Surgical Multispecialties Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://prd-proxy.vidanthealth.com/FHIR/api/FHIR/DSTU2/",
+			"OrganizationName": "Vidant Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epproxy.texashealth.org/1uphealth/api/FHIR/STU3",
+			"OrganizationName": "THR - system STU3"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/DSTU2",
+			"OrganizationName": "EPIC Medical Center (demo)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://external.fastmed.com/FHIRproxy/api/FHIR/DSTU2",
+			"OrganizationName": "FastMed"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epic-p-mobile.centura.org/prd-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Centura Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.ccf.org/mu/api/FHIR/DSTU2",
+			"OrganizationName": "Cleveland Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://sf1.rmcps.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Riverside Medical Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.utmsa.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "UT Health San Antonio"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1096.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "United Regional Health Care System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1124.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Middlesex Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.emersonhosp.org/v1/argonaut/v1",
+			"OrganizationName": "Emerson Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/xYxhuXIFsLg59PaSNJv_x-piAtPKX3W8",
+			"OrganizationName": "Saint Barnabas Health Care System"
+		},
+		{
+			"FHIRPatientFacingURI": " https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
+			"OrganizationName": "The Toledo Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1146.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Salinas Valley Memorial Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.renown.org/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Barton Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.kp.org/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/200/api/FHIR/DSTU2",
+			"OrganizationName": "Kaiser Permanente – Georgia"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d875F0LKKEgvK5Jt127x-_ER022Hvuvq",
+			"OrganizationName": "Ibrahim H Amjad MD PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3d9dbe31-b367-4223-9466-3a189a9f7ec9",
+			"OrganizationName": "Doctors For Senior Health PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/c6f527a6-8469-4cf3-bd92-6d4bf59dc834",
+			"OrganizationName": "Bohn \u0026 Joseph Eye Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://sfd.fairview.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Fairview Health Services"
+		},
+		{
+			"FHIRPatientFacingURI": "https://rproxy.novohtg.com/OAUTHPRD/api/FHIR/DSTU2",
+			"OrganizationName": "NOVO Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.milebluff.com/v1/argonaut/v1",
+			"OrganizationName": "Mile Bluff Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7bgA5p-Jyk4Mxwneej09P02G7MB2Ivog",
+			"OrganizationName": "Anne Marie Gracia MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Valley Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/4492e985-44bf-43dd-a2f3-262f81a54d5c",
+			"OrganizationName": "Internal Medical Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1055.epichosted.com/1UPHEALTH_PRD/api/FHIR/R4",
+			"OrganizationName": "MWHC - system"
+		},
+		{
+			"FHIRPatientFacingURI": "https://proxy.christushealth.org/FHIRproxy/api/FHIR/DSTU2",
+			"OrganizationName": "CHRISTUS Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1123.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "AltaMed"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/8348592b-95fc-4d23-9be6-0b25765fe907",
+			"OrganizationName": "ENT Specialists of Metairie"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/WQkVjQa0YhqVbUBQhUWeiP3ltAmffqww",
+			"OrganizationName": "Karl Kado Podiatry"
+		},
+		{
+			"FHIRPatientFacingURI": "https://esp.ecommunity.com/FHIRProxy/REIDFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Reid Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://applescm184region.open.allscripts.com/open",
+			"OrganizationName": "Allscripts Health System (demo) Sunrise 18.4"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicsoap.altru.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Altru Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2eaec831-8bc2-4f3d-9dea-0cf59436cebb",
+			"OrganizationName": "Advanced Digestive Care Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/wrew10vD3jepzbTifdu3IylT2gxN5jJt",
+			"OrganizationName": "Deer Chase Medical Associates PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bf5eb65c-cdc6-4156-8349-5fcd9a13f4a2",
+			"OrganizationName": "Shirley Young"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/AzwJnk8JrVgKoc3JTqeWarSPlmIPHPXP",
+			"OrganizationName": "Jon D Green MD LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/88e82c33-1d49-4d68-b406-6fe26c643c6f",
+			"OrganizationName": "Cathy Berens PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/eff68d6a-7c21-4a7d-92fc-b7db01f75ec9",
+			"OrganizationName": "PNC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3b28460b-bb8f-487c-b7b0-169896c9a690",
+			"OrganizationName": "Dr Mireles Neurology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7a03ccbd-0c60-4f35-9708-df25ee9d12b3",
+			"OrganizationName": "Jose Almeda"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/h3vXgKcy9xzmARVPPGTm-aPdZWF6hpS3",
+			"OrganizationName": "A Parks Orthopedics LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.sturgishospital.com/v1/argonaut/v1",
+			"OrganizationName": "Sturgis Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/gzygYmj_ixxj0K8SMYuNLmEP8OHSt4DS",
+			"OrganizationName": "Rockland Hudson Valley"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1041.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Fresenius Medical Care North America"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/SUWQKklMWN1rUZ1aBx8uyyusZJlfRBjJ",
+			"OrganizationName": "Ankle Foot Specialists"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.stlukehealthcare.org/v1/argonaut/v1",
+			"OrganizationName": "St. Luke Community Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhirprd.reliantmedicalgroup.org/FHIRPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Reliant Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/f2f8af61-ce86-434e-9d4f-b09a982ce734",
+			"OrganizationName": "Jason DeFrancis MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ab7c4f67-c555-4831-81ae-f83069aface0",
+			"OrganizationName": "Joliet Pediatrics \u0026 Family Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3a5f2b67-21a2-4bcc-959e-bdff6da685ae",
+			"OrganizationName": "Sepulveda \u0026"
+		},
+		{
+			"FHIRPatientFacingURI": "https://FHIR.KP.ORG/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/130/api/FHIR/DSTU2",
+			"OrganizationName": "Kaiser Permanente Hawaii / Maui Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Jq1h-Z1Yyu4OyupN7ciHN171trNUbJQP",
+			"OrganizationName": "Kenrick Dennis DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.med.cornell.edu/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Weill Cornell Medicine "
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRAOK2/OLOA/api/FHIR/DSTU2",
+			"OrganizationName": "Our Lady of the Angels"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/8fb816a7-a0c0-4f04-ab1c-df80dd1123ec",
+			"OrganizationName": "Daniel Greenberg MD PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epichaiku.chs-mi.com/FHIRPROXY/api/FHIR/DSTU2",
+			"OrganizationName": "Covenant HealthCare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haikuak.providence.org/fhirproxy/api/FHIR/DSTU2",
+			"OrganizationName": "Providence Health \u0026 Services - Alaska"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/04ef40f1-a235-4643-beed-2150fa89cc96",
+			"OrganizationName": "WELD CO"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/5bd2fa2e-efd9-4f25-b634-41939572ca6d",
+			"OrganizationName": "John E Miller MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.buffalomedicalgroup.com/fhir-arr/api/FHIR/DSTU2",
+			"OrganizationName": "Buffalo Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mychart.methodisthospitals.org/FHIR-ARR/api/FHIR/DSTU2",
+			"OrganizationName": "Methodist Hospitals"
+		},
+		{
+			"FHIRPatientFacingURI": "https://prevprox.bch.org/FHIRproxyPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Boulder Community Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/VUzRGp1-vzygPkDsVC1UTB5LYpG63fxa",
+			"OrganizationName": "St Paul Allergy Asthmma"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Spohn Hospital – Beeville "
+		},
+		{
+			"FHIRPatientFacingURI": "https://rp.chihealth.com/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "CHI Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3iBzJkAlx2Dh_gbW0DPrMPITOG-k7xrK",
+			"OrganizationName": "Eloy E Diaz MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1ff00bc8-0ecb-4ee5-8444-70f6c6b68888",
+			"OrganizationName": "Lawrence Memorial Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/tDtTzB0C11Jzmk559LC9WQyxDIlMkExX",
+			"OrganizationName": "Herndon Foot Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/K7r0JqNzwCCreORLHDZNhTb7SEfo_ZjL",
+			"OrganizationName": "Rockland Thoracic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a5d42041-57d2-4517-b428-b2228e570f69",
+			"OrganizationName": "CHLD MO"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.seattlechildrens.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Seattle Children's Hospital"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRSGF/CHI/api/FHIR/DSTU2",
+			"OrganizationName": "CHI St. Vincent"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1058.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Montage Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/069b1d3c-f747-4f06-a02f-d2850d19b0c9",
+			"OrganizationName": "Endocrinology and Metabolism of East Alabama LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/srh/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Santa Rosa Hospital - Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/fdbebc86-839d-40a6-a52c-f292220e6f36",
+			"OrganizationName": "Gastro Pediatric Partners"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bac54c28-1b58-434d-9423-167d76930473",
+			"OrganizationName": "Northwest Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e3e62425-c550-45e5-a830-3f95e429b086",
+			"OrganizationName": "First Care Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/IWJrzLYLjek6T-Z92fImiX_5VVH8mcP6",
+			"OrganizationName": "Jerry Ariail"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.kansasfhir.com/r4",
+			"OrganizationName": "Kansas Medical Assistance Program (KMAP) (current members)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://arr.thedacare.org/FHIR/BLN/api/FHIR/DSTU2",
+			"OrganizationName": "Bellin Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://ssrx.ksnet.com/FhirProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Kelsey-Seybold Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0vrdpNH7rwpdKHXHV32pI9kiii8_MVX2",
+			"OrganizationName": "Gabbie Medical Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.omhs.org/rp-prd-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Owensboro Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1134.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Phelps Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epproxy.texashealth.org/1uphealth/api/FHIR/r4",
+			"OrganizationName": "THR - R4 Live"
+		},
+		{
+			"FHIRPatientFacingURI": "https://mtrestapis-live01.sbrmc.org/v1/argonaut/v1",
+			"OrganizationName": "St. Bernards Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1ea8551e-0fb1-4703-8c98-94d25868feac",
+			"OrganizationName": "Emory Healthcare - Gold"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/t9wQH8OrusyTS9remkB4SPg_BXhb217_",
+			"OrganizationName": "Citra Family Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3bd112f2-a293-4bc2-86f3-8aca32fd3911",
+			"OrganizationName": "Medical Clinic of Northville"
+		},
+		{
+			"FHIRPatientFacingURI": "https://cookicfg.cookchildrens.org/CookFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Cook Children’s Health Care System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRSGF/MTSM/api/FHIR/DSTU2",
+			"OrganizationName": "River Valley"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/acfb0414-085a-4a86-bff7-56c553089272",
+			"OrganizationName": "Adekunle Adeoti"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Oy9v_722D9bcevVKOcXOLbc6xptKxGMe",
+			"OrganizationName": "East Bank Gastroenterology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1138.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Brown \u0026 Toland Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/MqJcwMg9cqSqwyzaFu8TFRHJQ9biDbIM",
+			"OrganizationName": "Richard Burkey"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/otCmFR9xLPoc2YGLoEEuj1ulH3uzON_F",
+			"OrganizationName": "Emmanuel Emelle MD PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRAOK2/TAO/api/FHIR/DSTU2",
+			"OrganizationName": "Tahoe Forest Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/90d6c36e-daf5-40eb-bf5d-4ade53db6bf5",
+			"OrganizationName": "Alan S Walters MD PLLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://rxhub.luhs.org/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "Loyola Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/b438bc62-3485-4cac-8230-6d587898797b",
+			"OrganizationName": "Advanced Skin and Mohs Surgery Center SC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/RPrRsXK1jApoGVdK6ISC4nYVr3e4nq1b",
+			"OrganizationName": "Charles Ross DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1197.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Hoag Memorial Hospital Presbyterian"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1082.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "San Francisco Department of Public Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/aca6cc9d-1326-4dc7-bcc9-1d6765e63085",
+			"OrganizationName": "Braden Clinic LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7a8bd585-f145-4727-b0a7-4a1c1dcf00b8",
+			"OrganizationName": "Sneed Eye Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/yRWp-4qmT0jOmbCl_VzZWmJpLCBVDgkf",
+			"OrganizationName": "Loren Miller DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.careevolution.com/Master.Adapter1.WebClient/api/fhir-r4",
+			"OrganizationName": "SMARTCare Evolution(Smart App Demo)"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/NT3uQMrCt8bELKiEIBt9joeL7He9PnXx",
+			"OrganizationName": "Jose E Llorens MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy-pub.et1089.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Weill Cornell Medicine, New York-Presbyterian, and Columbia Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0905.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Atrium Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/hC_P1yFthbfDga3D5waD8G-f6rVln_Bw",
+			"OrganizationName": "Surgical Specialists of Bowling Green"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/sbZmqu_ebJfkW97fOWCec4QJKCw6sjcW",
+			"OrganizationName": "Scituate Podiatry Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7af19993-3b76-4864-901f-f150f1fe4982",
+			"OrganizationName": "Citrus Memorial Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1131.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Orlando Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0915.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Prisma Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/cfa0ed05-1480-458f-b979-be507e0b64e2",
+			"OrganizationName": "Millennium Medical PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/s54LxtTRLZJrYEewdVEciwYpNY6qT1B4",
+			"OrganizationName": "Robert W Calcote"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a44b2989-bdc1-4d52-a43d-db3e0ef98945",
+			"OrganizationName": "Metro Infectious Disease Consultants"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/JaQIQhHX_LlNHZCAtFtjG_75tVg8aolS",
+			"OrganizationName": "Crawford-Lexington Med Ctr"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/G__Wo5W0WCpQT7T6QvV3hXEro56vpA07",
+			"OrganizationName": "Sicher Foot Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e0aed929-e53b-4d96-a40c-36cb9539f12f",
+			"OrganizationName": "KingFisher Family Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6M_sKHOXmc7b2s_3PZpYHGKlKF5td_RI",
+			"OrganizationName": "Clifford E Myers MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/y1drZp830WKh6cIy8sU0G2Bzy1nwrfHJ",
+			"OrganizationName": "Seacoast Foot Surgery"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0948.epichosted.com/FhirProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Select Medical"
+		},
+		{
+			"FHIRPatientFacingURI": "https://endpointdirectory.collablynk.com/edifecs/fhir/R4",
+			"OrganizationName": "CAQH Directory"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/jqkvYbZoqhtQ6PherLCPc_R4bZXPPDZZ",
+			"OrganizationName": "South Boston Health Services"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/M2R0_m2IUHctNyO_gPCACDfAwqslpW-C",
+			"OrganizationName": "Mohammad Ismail"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.asante.org/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Asante Health Systems"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/60f4f363-6a37-4364-98d6-2115a9142171",
+			"OrganizationName": "Detroit Medical Center General Pediatrics Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/070774ed-b306-4327-820a-1c8972c30c5d",
+			"OrganizationName": "Rheumatology and Immunotherapy Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/025a0f3c-14a7-44fd-90f4-ebf1f0e1cd9e",
+			"OrganizationName": "Center for Womens Health of Lansdale"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6b6f7688-be2d-4aa7-b765-ca3404c86a25",
+			"OrganizationName": "Childrens Diabetes and Endocrinology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/5baf204a-7e7e-47b6-b4db-d848c55eb2f5",
+			"OrganizationName": "Dermatology Associates of Northwest Florida PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicmobile.corp.saint-lukes.org/FHIRPROXY/api/FHIR/DSTU2",
+			"OrganizationName": "Saint Luke's Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9c322772-9675-469b-994a-1b68bbb883dd",
+			"OrganizationName": "NY Sports Podiatry"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/53935f72-80ef-4245-bd93-5d32e06dd4ee",
+			"OrganizationName": "True Care Medical Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/67e5ec72-de88-4fc7-ba34-a88699b7a637",
+			"OrganizationName": "Empower Psychiatry \u0026 Sleep LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/5a09805f-5be7-4aee-945f-288351338731",
+			"OrganizationName": "Creekwood_Womens_Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1e751165-d0f5-47ed-aa9b-1a8abb55d1d6",
+			"OrganizationName": "Heritage Medical Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3a1dfc54-3ef1-4d24-a87c-45de2dcda2e0",
+			"OrganizationName": "Raritan Family Healthcare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://api.hffhirplatform.com/r4",
+			"OrganizationName": "HealthFirst Fhir Platform"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/UHCaxLDJ6puwMRdSj30hJ8Nw05sTySuR",
+			"OrganizationName": "Montgomery Rheumatology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e1A5O_wfjp6bxazsKQMUgQtMMK_UwF9x",
+			"OrganizationName": "Santa Monica Dematology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bee4e7d6-454c-40de-9abd-9e2eb1cc9600",
+			"OrganizationName": "Primary Pediatrics"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/dlAnBz8uq_vSjtMuzxuWSiJ9OTQ7taun",
+			"OrganizationName": "Kitsap Eye Physicians"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ekUYU3NHbvohW9CZc3Al-x7dlq8vaxEt",
+			"OrganizationName": "Steven B Rubins"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/55763e31-c43c-450a-804e-eba99ed88eec",
+			"OrganizationName": "LPFW LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1d0193b5-c6df-4894-ba58-5a49f2d64f8f",
+			"OrganizationName": "Texas Tech University Health Sciences Center El Paso"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9a2b715b-8521-452b-a2c9-b5b9d28fc8e0",
+			"OrganizationName": "Chesterfield Valley Dermatology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/EO2VAgfvoIIvIA-oWm0Wf7dEvMQxV36p",
+			"OrganizationName": "Douglas Ankrom Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/aefbe38d-e684-40e3-a49e-b011e4d43dac",
+			"OrganizationName": "City Creek Medical Specialist"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0748ed02-a595-4783-955c-c255cede53e3",
+			"OrganizationName": "Specialists in Spine Surgery"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/hQkv6Jf6nyr5IYxTwgCKatGj2Cw3vFC9",
+			"OrganizationName": "Coastal Carolina Foot and Ankle"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/97sxtiOjM5-ko7Z30cPvpgehiTAdRPbd",
+			"OrganizationName": "Imhoff Eye Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/RNC0mGAiXtkLtK00WOVGaq2OiSLKKj4V",
+			"OrganizationName": "Vastal Haren Mody"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/pH8NQpYIQmvUziaOGZJxGF9JEK3IAF4W",
+			"OrganizationName": "Edwin A Cordero MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/c2a40efd-16d2-4828-be53-a20ad0090e09",
+			"OrganizationName": "Inspira Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/J3trBeALwJU1F3hepm2v21jJ96hxu50P",
+			"OrganizationName": "St Joseph Derm"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a37116a3-5a70-4694-8650-791ef12f380e",
+			"OrganizationName": "Ector County Hospital District MCH"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Xj_qin6NCiVeYNGqn2qIBcmCLkBHiaKk",
+			"OrganizationName": "Atlantic Avenue Medical Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a4def93a-db66-47e6-bae5-c350ffbf9de3",
+			"OrganizationName": "North Penn Visiting Nurse Association"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/3Xn_5ff3Z4z1UlYTAJs6SmLUgGalJeuL",
+			"OrganizationName": "Mark Middlebrooks MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/20a3a78c-c5c6-45f6-a1b4-84caff15a9cb",
+			"OrganizationName": "BioMerieux"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/hRl8JDuP-2CULrcrMMdYM6D-1ltmi-Hy",
+			"OrganizationName": "James Brungo DPM"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/slYc7WiVO_dzl3tGHo9GBCymITDhz-sg",
+			"OrganizationName": "Mercedes Medical"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7c05c954-eb7f-475b-a6e9-01703301a76f",
+			"OrganizationName": "Advantage Health Convenient Care"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/DqX2PP8nxHMYK6qNey0Cz7AmjEkwf6ZS",
+			"OrganizationName": "Chicago Cosmetic Surgery Dermatology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/a14096f6-c110-4e55-9ae0-346c61a188e8",
+			"OrganizationName": "East Alabama Gastroenterology Medical Services LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/34700eb5-1e87-44c4-ba4e-9ca35531f6c5",
+			"OrganizationName": "Minneapolis Medical Eye Clinic PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/94733945-6278-428a-8e0d-7e4b0bbebbdc",
+			"OrganizationName": "Thomas M Flake Jr MD PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d80c61f8-55e9-4f03-aac2-d990f2ee9aa9",
+			"OrganizationName": "Essex Woman's Health Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/711b57d3-78b2-41c6-971b-59cee3e8c70b",
+			"OrganizationName": "Michigan Brain and Spine Surgery Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/xPgSeRXagpNRLkZ7FeamWBLHEusyMMOD",
+			"OrganizationName": "Otero Oncology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/mobVwSb4vMbufrug1PluiBGFLGTxiUMQ",
+			"OrganizationName": "James Holzhauer"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/659004c0-9168-411b-8f01-5cd89f032f16",
+			"OrganizationName": "M Jay Jazayeri MD Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/4dda80a5-f33b-4429-ba97-844b531d51a5",
+			"OrganizationName": "East End Pediatrics PLLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/8d2304a7-2fc9-4f09-81cb-e71dd59c8b26",
+			"OrganizationName": "Ryan White Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6d80f5c7-212b-4be1-9709-7bad9391b694",
+			"OrganizationName": "UHS Ambulatory East"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/be5f361a-4828-457e-aec5-440ce09d4ed1",
+			"OrganizationName": "Mohamed Ali"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/LdM-iGIdpmz89A8TzOnBemiDn7KMQKiF",
+			"OrganizationName": "Belinda V Jordan MD PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/2cde80e5-c678-4804-afb2-5ad93811f383",
+			"OrganizationName": "Eye Specialists"
+		},
+		{
+			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
+			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – South"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bb6b85fa-76ff-4b2a-a81a-6fd1f9d9baea",
+			"OrganizationName": "Pulmonary Physicians of Oklahoma City PLLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/qJCdeykC_0FoLWOQ15eYFbhjDQNwFiDg",
+			"OrganizationName": "Dublin Womens Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://nmepicproxy.nm.org/FHIR-PRD/api/FHIR/DSTU2/",
+			"OrganizationName": "Northwestern Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et0943.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Yakima Valley Farm Workers Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/r2GtnbpYK4vtuAbMjau8TiI_I1r8CPyN",
+			"OrganizationName": "Center for Manual Medicine"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/q3J1m5qc22mRRs5Ad6fw1pFcqnkVdus_",
+			"OrganizationName": "Westside Medicine and Cardiology"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/77cef438-d9a8-4c2b-a90a-6d877ebd2afb",
+			"OrganizationName": "UGWC KS"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/EB87749h5gFXR747moCjBvZnLkChVxMK",
+			"OrganizationName": "Womens Health Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1846cf9e-8006-4277-b72f-3cbbe8a8f5ca",
+			"OrganizationName": "Southdale Pediatrics Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/89ef8fdf-150d-47da-bc0d-912cd1a74b4c",
+			"OrganizationName": "Pediatric Health of Weston PA"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0650f99f-f0d2-44ea-965d-c51f6dc87c87",
+			"OrganizationName": "Center for Allergy \u0026 Respiratory Disease"
+		},
+		{
+			"FHIRPatientFacingURI": "https://haiku-prd.kchart.org/fhirproxy/api/FHIR/DSTU2",
+			"OrganizationName": "Kadlec Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/q0E4trkwfgk1yA4pZVXjP_An-gK9ufnZ",
+			"OrganizationName": "Eisenberg Peds"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ZDeZ2YCfDO83BznnU2d6jrTVmnIa197z",
+			"OrganizationName": "Charasika Open Access"
+		},
+		{
+			"FHIRPatientFacingURI": "https://ssproxy.osfhealthcare.org/fhir-proxy/api/FHIR/DSTU2",
+			"OrganizationName": "OSF HealthCare"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/ed1a6436-bdd3-4803-83f1-a24346db7ed7",
+			"OrganizationName": "ORTHO ONE LLC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/fhPIU_s9E9G9kNhscR-h5cYG2wp9DWi8",
+			"OrganizationName": "East Alabama Family Practice"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d6d1b112-9099-4ef4-a649-a1adf35b40e6",
+			"OrganizationName": "Basim Z Abdelkarim MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6wNWLEKPS2uO0_nvMxh3PrA39BtxIAUT",
+			"OrganizationName": "Ankle Foot Specialists"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/162715bb-f8d9-453d-8c50-450519531a2d",
+			"OrganizationName": "Mercy Primary Care Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7O4ioaIYPnNVHCtQUw2sjbMh-9-30eBZ",
+			"OrganizationName": "Genevieve Ley MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9a87838e-fc69-4f8f-bd0b-43be75f51b11",
+			"OrganizationName": "Mississippi Arthritis Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/85N4jhvrbTGKz1yWzGdSlNin40OBTFWJ",
+			"OrganizationName": "Fleur De Lis"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0b85a188-4e79-4276-b029-bbb0ec6e4802",
+			"OrganizationName": "Council Bluffs Surgical Associates PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicarr.healthcare.cigna.com/FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "Cigna Medical Group"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d56d19c5-1f59-4682-8c35-bc6d80287bb8",
+			"OrganizationName": "The Asthma and Pediatric Lung Center"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/Xn4xUXZWRzcyVaayUfDGK1rXLAig3w6X",
+			"OrganizationName": "Shahla Medical"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/c884454b-a4fd-4744-9d6a-4bee42b3e7fa",
+			"OrganizationName": "Upland Surgical Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/757da266-83a7-4662-92da-34d0fca08f54",
+			"OrganizationName": "Kenneth Treadwell Jr MD"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/d13cd954-ca68-4a08-a95d-1ae54e7487f0",
+			"OrganizationName": "FIRST COAST PEDIATRIC INFECTIOUS"
+		},
+		{
+			"FHIRPatientFacingURI": "https://rp.catholichealth.net/fhir/api/FHIR/DSTU2",
+			"OrganizationName": "CHI Franciscan Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/7f97a135-de8b-4d0d-8cae-944f42aa5be1",
+			"OrganizationName": "GWYNEDD MERCY COLLEGE"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/lPF6Nmtsq7QZn3Z4mj6UwIY-rfDIdNIc",
+			"OrganizationName": "Juan Salazar"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/e6a2c484-1066-4f3f-be44-cc7c2a79d6c3",
+			"OrganizationName": "Associates in Gastroenterology PC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/GxGHamrdSoBp26PzTJbA8O7Cm5WU8gn7",
+			"OrganizationName": "Arango Family and Industrial Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://interconnect.honorhealth.com/Interconnect-FHIR-PRD/api/FHIR/DSTU2",
+			"OrganizationName": "HonorHealth "
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9c14889b-5c15-4fbc-9176-47ac68d769a1",
+			"OrganizationName": "Perry Mansfield MD Inc"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/PlW-EjC8LXq2pLtfi8pP4Fb9PQcNWAMu",
+			"OrganizationName": "First Coast Surgical"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/zA015PZlU6y4mS2M66rhwFskWFFyp2EA",
+			"OrganizationName": "Marble Valley"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/93462298-4bdc-4b5e-ab96-39df8bb9a9b2",
+			"OrganizationName": "Otakar R Hubschmann"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/bbdd59dc-1f67-4a79-8047-798949e8cfd2",
+			"OrganizationName": "OVAC SC"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/wLWuAWH5hkrIdvwkarOzmEdjXoXwalFs",
+			"OrganizationName": "Cardiothoracic Associates of Hawaii"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicproxy.et1075.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Alameda Health System"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0a83d6ac-af53-405e-a3fa-90277671a883",
+			"OrganizationName": "Mission Employment Data"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/R7Xi5VKCF7I0nz39ERM0XL_mBu0AaiHV",
+			"OrganizationName": "Adult Internal"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/97048db4-289d-4be9-bf91-a88ba4c5a9ec",
+			"OrganizationName": "Care For U Medical Clinic"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/GRzkF6yCy_Pe-6F3SJzcXkCEiy_u6zZe",
+			"OrganizationName": "Musick Dermatology West"
+		},
+		{
+			"FHIRPatientFacingURI": "https://epicprod-mobile.parkview.com/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Parkview Health"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/rUw-pLZgHUKgav1iLRjPi5CPE_muvqOl",
+			"OrganizationName": "McAllen Pediatric Associates"
+		},
+		{
+			"FHIRPatientFacingURI": "https://cluster1-573846-250babbbe4c3000e15508cd07c1d282b-0000.us-east.containers.appdomain.cloud/fhir-server/api/v4",
+			"OrganizationName": "IBM Connectathon"
+		},
+		{
+			"FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/GACCAA",
+			"OrganizationName": "Greater Chicago Specialty Physicians"
+		}
+	]
+}
