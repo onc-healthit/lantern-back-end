@@ -363,7 +363,7 @@ To add a new endpoint list, add an entry to the EndpointResourcesList.json file 
 
 ## Endpoint Linker Algorithm Manual Corrections
 
-To manually add a link between an endpoint and npi organization after the linker algorithm has been run, add the endpoint url and the npi id of the organization you want to link to the linkerMatchesWhitelist.json file. To manually remove a link between an endpoint and npi organization, add the linked endpoint url and the npi id of the organization you want to remove from the database to the linkerMatchesBlacklist.json file. Both files are found in the resources/prod_resources directory, and expect the following format:
+To manually add a link between an endpoint and npi organization after the linker algorithm has been run, add the endpoint url and the npi id of the organization you want to link to the linkerMatchesAllowlist.json file. To manually remove a link between an endpoint and npi organization, add the linked endpoint url and the npi id of the organization you want to remove from the database to the linkerMatchesBlocklist.json file. Both files are found in the resources/prod_resources directory, and expect the following format:
 
 ```
 [

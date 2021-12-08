@@ -190,40 +190,40 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	err = addMatch(ctx, store, npiID3, ep3, confidence3)
 	th.Assert(t, err == nil, err)
 
-	// open fake whitelist and blacklist files
-	whitelistMap, err := openLinkerCorrectionFiles("../testdata/fakeWhitelist.json")
+	// open fake allowlist and blocklist files
+	allowlistMap, err := openLinkerCorrectionFiles("../testdata/fakeAllowlist.json")
 	th.Assert(t, err == nil, err)
-	blacklistMap, err := openLinkerCorrectionFiles("../testdata/fakeBlacklist.json")
+	blocklistMap, err := openLinkerCorrectionFiles("../testdata/fakeBlocklist.json")
 	th.Assert(t, err == nil, err)
 
 	// run linkerFix manual linker algorithm correction function
-	err = linkerFix(ctx, store, whitelistMap, blacklistMap)
+	err = linkerFix(ctx, store, allowlistMap, blocklistMap)
 	th.Assert(t, err == nil, err)
 	ep4URL := "example4.com/FHIR/DSTU2"
 	npiID4 := "4"
 	sNpiID, sEpURL, sConfidence, err := store.GetNPIOrganizationFHIREndpointLink(ctx, npiID4, ep4URL)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, sNpiID == npiID4, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID4))
-	th.Assert(t, sEpURL == ep4URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep4URL))
+	th.Assert(t, sNpiID == npiID4, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from allowlist '%s'.", sNpiID, npiID4))
+	th.Assert(t, sEpURL == ep4URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from allowlist '%s'.", sEpURL, ep4URL))
 	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID1, ep3.URL)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID1))
-	th.Assert(t, sEpURL == ep3.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep3.URL))
+	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from allowlist '%s'.", sNpiID, npiID1))
+	th.Assert(t, sEpURL == ep3.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from allowlist '%s'.", sEpURL, ep3.URL))
 	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID1, ep1.URL)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from whitelist '%s'.", sNpiID, npiID1))
-	th.Assert(t, sEpURL == ep1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from whitelist '%s'.", sEpURL, ep1.URL))
+	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from allowlist '%s'.", sNpiID, npiID1))
+	th.Assert(t, sEpURL == ep1.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from allowlist '%s'.", sEpURL, ep1.URL))
 	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID3, ep3.URL)
-	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blacklist file")
+	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blocklist file")
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep2.URL)
-	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blacklist file")
+	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blocklist file")
 }
 
 func setup() error {

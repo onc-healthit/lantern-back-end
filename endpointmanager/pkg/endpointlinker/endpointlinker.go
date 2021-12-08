@@ -310,7 +310,7 @@ func getTokenVals(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*en
 	return tokenVal
 }
 
-func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, whitelistFile string, blacklistFile string, verbose bool) error {
+func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, allowlistFile string, blocklistFile string, verbose bool) error {
 	jaccardThreshold := .85
 	fhirEndpoints, err := store.GetAllFHIREndpoints(ctx)
 	if err != nil {
@@ -358,14 +358,14 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 		}
 	}
 
-	if whitelistFile != "" && blacklistFile != "" {
-		matchEndpointOrganization, err := openLinkerCorrectionFiles(whitelistFile)
+	if allowlistFile != "" && blocklistFile != "" {
+		matchEndpointOrganization, err := openLinkerCorrectionFiles(allowlistFile)
 		if err != nil {
-			return errors.Wrap(err, "Error opening linker correction whitelist file")
+			return errors.Wrap(err, "Error opening linker correction allowlist file")
 		}
-		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blacklistFile)
+		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blocklistFile)
 		if err != nil {
-			return errors.Wrap(err, "Error opening linker correction blacklist file")
+			return errors.Wrap(err, "Error opening linker correction blocklist file")
 		}
 
 		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
@@ -386,7 +386,7 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, white
 	return nil
 }
 
-// Open whitelist and blacklist files for manually correcting matching algorithm
+// Open allowlist and blocklist files for manually correcting matching algorithm
 func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
 	jsonFile, err := os.Open(filepath)
 	if err != nil {
@@ -409,7 +409,7 @@ func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
 	return linkerCorrections, nil
 }
 
-// Add/update endpoint to npi organization links found in whitelist file from database, and remove endpoint to npi organization links found in blacklist file from database
+// Add/update endpoint to npi organization links found in allowlist file from database, and remove endpoint to npi organization links found in blocklist file from database
 func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrganization []map[string]string, unmatchEndpointOrganization []map[string]string) error {
 	if len(matchEndpointOrganization) != 0 {
 		for _, matchesMap := range matchEndpointOrganization {
