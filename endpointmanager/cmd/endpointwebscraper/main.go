@@ -6,6 +6,7 @@ import (
 	"log"
 	http "net/http"
 	"os"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -51,14 +52,14 @@ func main() {
 			tableEntries := rowhtml.Find("td")
 			if tableEntries.Length() > 0 {
 				if vendor == "CareEvolution" {
-					entry.OrganizationName = tableEntries.Eq(0).Text()
-					entry.FHIRPatientFacingURI = tableEntries.Eq(1).Text()
+					entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Text())
+					entry.FHIRPatientFacingURI = strings.TrimSpace(tableEntries.Eq(1).Text())
 					endpointEntryList.Entries = append(endpointEntryList.Entries, entry)
 				} else if vendor == "1Up" {
-					endpointType := tableEntries.Eq(3).Text()
+					endpointType := strings.TrimSpace(tableEntries.Eq(3).Text())
 					if endpointType == "Health System" {
-						entry.OrganizationName = tableEntries.Eq(1).Find("a").Text()
-						entry.FHIRPatientFacingURI = tableEntries.Eq(2).Text()
+						entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(1).Find("a").Text())
+						entry.FHIRPatientFacingURI = strings.TrimSpace(tableEntries.Eq(2).Text())
 						endpointEntryList.Entries = append(endpointEntryList.Entries, entry)
 					}
 				}

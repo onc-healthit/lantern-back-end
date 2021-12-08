@@ -506,7 +506,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/swla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Lake Area Hospital "
+			"OrganizationName": "CHRISTUS Lake Area Hospital"
 		},
 		{
 			"FHIRPatientFacingURI": "https://myepicapps.uihealthcare.org/FHIRProxy/api/FHIR/DSTU2",
@@ -698,7 +698,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://sf1.rmcps.com/FHIRProxy/api/FHIR/DSTU2",
-			"OrganizationName": "Riverside Medical Clinic "
+			"OrganizationName": "Riverside Medical Clinic"
 		},
 		{
 			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/c7797114-dad6-4d8b-8399-0e9448563368",
@@ -966,7 +966,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital – Alice "
+			"OrganizationName": "CHRISTUS Spohn Hospital – Alice"
 		},
 		{
 			"FHIRPatientFacingURI": "https://surescripts.gmh.edu/FHIR/api/FHIR/DSTU2",
@@ -1014,7 +1014,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://rpprod.riversidehealthcare.net/FHIRPRD/api/FHIR/DSTU2",
-			"OrganizationName": "Riverside Medical Center  "
+			"OrganizationName": "Riverside Medical Center"
 		},
 		{
 			"FHIRPatientFacingURI": "https://epicarr.rochesterregional.org/FHIR/api/FHIR/DSTU2",
@@ -1070,7 +1070,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/cla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Coushatta Health Care Center "
+			"OrganizationName": "CHRISTUS Coushatta Health Care Center"
 		},
 		{
 			"FHIRPatientFacingURI": "https://fhir.childrenscolorado.org/fhirprd/api/FHIR/DSTU2",
@@ -1562,7 +1562,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://mtrestapis-live01.ehs.org/v1/argonaut/v1",
-			"OrganizationName": "St. John's Episcopal Health Services "
+			"OrganizationName": "St. John's Episcopal Health Services"
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/setx/v1/argonaut/v1",
@@ -2678,7 +2678,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Shoreline  "
+			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Shoreline"
 		},
 		{
 			"FHIRPatientFacingURI": "https://arrprd.southeasthealth.org/FHIR/api/FHIR/DSTU2",
@@ -2694,7 +2694,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/nla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Highland Medical Center "
+			"OrganizationName": "CHRISTUS Highland Medical Center"
 		},
 		{
 			"FHIRPatientFacingURI": "https://mtrestapis-live01.wchosp.org/v1/argonaut/v1",
@@ -2753,7 +2753,7 @@
 			"OrganizationName": "Saint Barnabas Health Care System"
 		},
 		{
-			"FHIRPatientFacingURI": " https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
+			"FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
 			"OrganizationName": "The Toledo Clinic"
 		},
 		{
@@ -2838,7 +2838,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://mtrestapis-live.milreg.org/v1/argonaut/v1",
-			"OrganizationName": "Milford Regional Medical Center "
+			"OrganizationName": "Milford Regional Medical Center"
 		},
 		{
 			"FHIRPatientFacingURI": "https://epicproxy.uvmhealth.org/FHIR-ARR/api/FHIR/DSTU2",
@@ -3066,7 +3066,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://epicmobile.med.cornell.edu/FHIR/api/FHIR/DSTU2",
-			"OrganizationName": "Weill Cornell Medicine "
+			"OrganizationName": "Weill Cornell Medicine"
 		},
 		{
 			"FHIRPatientFacingURI": "https://eprescribe.mercy.net/PRDFHIRAOK2/OLOA/api/FHIR/DSTU2",
@@ -3110,7 +3110,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital – Beeville "
+			"OrganizationName": "CHRISTUS Spohn Hospital – Beeville"
 		},
 		{
 			"FHIRPatientFacingURI": "https://rp.chihealth.com/fhir/api/FHIR/DSTU2",
@@ -4281,7 +4281,7 @@
 			"OrganizationName": "LaPorte Physician Network"
 		},
 		{
-			"FHIRPatientFacingURI": " https://fhir-myrecord.cerner.com/dstu2/eqfAJKRmsUhFnr8gvMoFTGKRt8zH6OgO",
+			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/eqfAJKRmsUhFnr8gvMoFTGKRt8zH6OgO",
 			"OrganizationName": "Atlanta Heart Group PC"
 		},
 		{
@@ -4486,7 +4486,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Memorial  "
+			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Memorial"
 		},
 		{
 			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/wBKGZXTZgiBRDCjg43-0loH2NksqtP8K",
@@ -5050,7 +5050,7 @@
 		},
 		{
 			"FHIRPatientFacingURI": "https://interconnect.honorhealth.com/Interconnect-FHIR-PRD/api/FHIR/DSTU2",
-			"OrganizationName": "HonorHealth "
+			"OrganizationName": "HonorHealth"
 		},
 		{
 			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9c14889b-5c15-4fbc-9176-47ac68d769a1",

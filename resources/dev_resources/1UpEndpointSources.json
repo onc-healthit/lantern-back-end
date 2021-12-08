@@ -997,7 +997,7 @@
 			"OrganizationName": "Saint Barnabas Health Care System"
 		},
 		{
-			"FHIRPatientFacingURI": " https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
+			"FHIRPatientFacingURI": "https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
 			"OrganizationName": "The Toledo Clinic"
 		},
 		{
