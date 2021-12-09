@@ -46,20 +46,26 @@ valuesmodule <- function(
 
   get_value_table_header <- reactive({
     res <- isolate(app_data$capstat_fields())
-    req(sel_capstat_values())
-    res <- res %>%
-    group_by(field) %>%
-    arrange(fhir_version, .by_group = TRUE) %>%
-    subset(field == sel_capstat_values()) %>%
-    mutate(fhir_version_name = case_when(
-    fhir_version %in% dstu2 ~ "DSTU2",
-    fhir_version %in% stu3 ~ "STU3",
-    fhir_version %in% r4 ~ "R4",
-    TRUE ~ "DSTU2"
-    )) %>%
-    summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
-    versions <- res %>% pull(2)
-    header <- paste(sel_capstat_values(), " (", versions, ")", sep = "")
+    req(sel_capstat_values(), sel_fhir_version())
+    header <- ""
+    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+      header <- sel_capstat_values()
+    } 
+    else {
+      res <- res %>%
+      group_by(field) %>%
+      arrange(fhir_version, .by_group = TRUE) %>%
+      subset(field == sel_capstat_values()) %>%
+      mutate(fhir_version_name = case_when(
+      fhir_version %in% dstu2 ~ "DSTU2",
+      fhir_version %in% stu3 ~ "STU3",
+      fhir_version %in% r4 ~ "R4",
+      TRUE ~ "DSTU2"
+      )) %>%
+      summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
+      versions <- res %>% pull(2)
+      header <- paste(sel_capstat_values(), " (", versions, ")", sep = "")
+    }
     header
   })
 
