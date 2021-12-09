@@ -50,7 +50,7 @@ valuesmodule <- function(
     header <- ""
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       header <- sel_capstat_values()
-    } 
+    }
     else {
       res <- res %>%
       group_by(field) %>%
