@@ -123,17 +123,17 @@ var testIncludedFields = []endpointmanager.IncludedField{
 		Extension: false,
 	},
 	{
-		Field:     "rest.interaction.code",
-		Exists:    false,
+		Field:     "rest.resource.type",
+		Exists:    true,
 		Extension: false,
 	},
 	{
-		Field:     "document",
-		Exists:    false,
+		Field:     "rest.resource.interaction.code",
+		Exists:    true,
 		Extension: false,
 	},
 	{
-		Field:     "document.mode",
+		Field:     "rest.resource.versioning",
 		Exists:    false,
 		Extension: false,
 	},
@@ -155,12 +155,12 @@ var testIncludedFields = []endpointmanager.IncludedField{
 	{
 		Field:     "document",
 		Exists:    false,
-		Extension: true,
+		Extension: false,
 	},
 	{
-		Field:     "conformance-search-parameter-combination",
+		Field:     "document.mode",
 		Exists:    false,
-		Extension: true,
+		Extension: false,
 	},
 	{
 		Field:     "messaging",
