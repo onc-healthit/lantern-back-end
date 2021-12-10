@@ -48,5 +48,5 @@ endpoint_export_tbl <- db_tables$endpoint_export %>%
   rename(capability_fhir_version = fhir_version) %>%
   mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
   mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-  mutate(endpoint_names = gsub("(\"|\"|\\{|\\})", '', as.character(endpoint_names))) %>%
-  mutate(format = gsub("(\"|\"|\\[|\\])", '', as.character(format)))
+  mutate(endpoint_names = gsub("(\"|\"|\\{|\\})", "", as.character(endpoint_names))) %>%
+  mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))
