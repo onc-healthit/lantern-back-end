@@ -32,7 +32,8 @@ get_fhir_endpoints_tbl <- function() {
     select(url, endpoint_names, info_created, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
-      mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label)))
+      mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
+      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists)))
 }
 
 # get the endpoint tally by http_response received

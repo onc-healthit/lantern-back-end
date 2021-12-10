@@ -83,7 +83,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(url, endpoint_names, vendor_name, capability_fhir_version, format, status, availability) %>% distinct(url, endpoint_names, vendor_name, capability_fhir_version, format, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -102,6 +102,7 @@ endpointsmodule <- function(
                   vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   format = colDef(name = "Supported Formats", minWidth = 150, sortable = FALSE),
+                  cap_stat_exists = colDef(name = "Valid Capability Statement", minWidth = 150, sortable = FALSE),
                   status = colDef(name = "HTTP Response", sortable = FALSE),
                   availability = colDef(name = "Availability", sortable = FALSE)
               ),
