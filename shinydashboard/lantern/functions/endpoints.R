@@ -4,7 +4,6 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times
 library(lubridate)
 
-
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
   vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
@@ -141,7 +140,8 @@ get_fhir_resource_types <- function(db_connection) {
       ORDER BY type")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Return list of resources for the given operation field by
@@ -158,7 +158,8 @@ get_fhir_resource_by_op <- function(db_connection, field) {
       WHERE requested_fhir_version = 'None'"))) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_capstat_fields <- function(db_connection) {
@@ -176,7 +177,8 @@ get_capstat_fields <- function(db_connection) {
       ORDER BY field")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Summarize count of implementation guides by implementation_guide, fhir_version
@@ -247,7 +249,8 @@ get_capstat_values <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version))
+    mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version)) %>%
+    mutate(filter_fhir_version = if_else(filter_fhir_version %in% valid_fhir_versions, filter_fhir_version, "Unknown"))
 }
 
 get_capstat_values_list <- function(capstat_values_tbl) {
@@ -288,7 +291,8 @@ get_security_endpoints <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 
 }
 
@@ -317,7 +321,8 @@ get_security_endpoints_tbl <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version))
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
@@ -337,7 +342,8 @@ get_smart_response_capabilities <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
@@ -367,7 +373,8 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version))
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Find any endpoints which have returned a smart_http_response of 200
@@ -389,7 +396,8 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get counts of authorization types supported by FHIR Version
@@ -467,7 +475,8 @@ get_implementation_guide <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
     tidyr::replace_na(list(implementation_guide = "None")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_cap_stat_sizes <- function(db_connection) {
@@ -483,7 +492,8 @@ get_cap_stat_sizes <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_validation_results <- function(db_connection) {
@@ -505,7 +515,8 @@ get_validation_results <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version))
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 database_fetcher <- reactive({
