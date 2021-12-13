@@ -85,14 +85,14 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	// test CareEvolution list
 
 	expectedEndpoints = 10
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "Lantern", "Lantern", "https://fhir.docs.careevolution.com/overview/public_endpoints.html")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "Lantern", "CareEvolution", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from CareEvolution file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test 1Up list
 
 	expectedEndpoints = 472
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "Lantern", "Lantern", "https://1up.health/fhir-endpoint-directory")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "Lantern", "1Up", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from 1Up file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
@@ -125,14 +125,14 @@ func Test_GetListOfEndpointsKnownFormat(t *testing.T) {
 	th.Assert(t, lanternResult.Entries[0].ListSource == "Lantern", fmt.Sprintf("The list source should have been Lantern, it instead returned %s", lanternResult.Entries[0].ListSource))
 
 	// test CareEvolution list
-	careEvolutionResult, err := GetListOfEndpointsKnownFormat(testCareEvolution, "Lantern", "Lantern", "https://fhir.docs.careevolution.com/overview/public_endpoints.html")
+	careEvolutionResult, err := GetListOfEndpointsKnownFormat(testCareEvolution, "Lantern", "CareEvolution", "")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "https://fhir.docs.careevolution.com/overview/public_endpoints.html", fmt.Sprintf("The list source should have been https://fhir.docs.careevolution.com/overview/public_endpoints.html, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
+	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "CareEvolution", fmt.Sprintf("The list source should have been CareEvolution, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
 
 	// test 1Up list
-	oneUpResult, err := GetListOfEndpointsKnownFormat(test1Up, "Lantern", "Lantern", "https://1up.health/fhir-endpoint-directory")
+	oneUpResult, err := GetListOfEndpointsKnownFormat(test1Up, "Lantern", "1Up", "1Up")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, oneUpResult.Entries[0].ListSource == "https://1up.health/fhir-endpoint-directory", fmt.Sprintf("The list source should have been https://1up.health/fhir-endpoint-directory, it instead returned %s", oneUpResult.Entries[0].ListSource))
+	th.Assert(t, oneUpResult.Entries[0].ListSource == "1Up", fmt.Sprintf("The list source should have been 1Up, it instead returned %s", oneUpResult.Entries[0].ListSource))
 
 	// test FHIR list
 
