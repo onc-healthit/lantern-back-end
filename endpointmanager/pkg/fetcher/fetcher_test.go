@@ -73,10 +73,17 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	var endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
-	// test epic list
+	// test epic DSTU2 list
 
 	expectedEndpoints = 416
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
+
+	// test epic DSTU2 list
+
+	expectedEndpoints = 265
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesR4.json", "FHIR", "Epic", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
@@ -119,7 +126,7 @@ func Test_GetListOfEndpointsKnownFormat(t *testing.T) {
 
 	// test epic list
 
-	epicResult, err := GetListOfEndpointsKnownFormat(testEpic, "Epic", "Epic", "")
+	epicResult, err := GetListOfEndpointsKnownFormat(testEpic, "FHIR", "Epic", "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epicResult.Entries[0].ListSource == "Epic", fmt.Sprintf("The list source should have been Epic, it instead returned %s", epicResult.Entries[0].ListSource))
 

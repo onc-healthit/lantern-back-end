@@ -90,7 +90,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	// Expected number of endpoints is less than number of endpoints in Endpoint list due to repetitions
 	expectedNumEndptsStored := 403
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "Epic", "https://open.epic.com/MyApps/EndpointsJson")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "FHIR", "Epic", "https://open.epic.com/Endpoints/DSTU2")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
@@ -112,7 +112,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 30 endpoints removed from it
-	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "Epic", "Epic", "https://open.epic.com/Endpoints/DSTU2")
+	listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSources_1.json", "FHIR", "Epic", "https://open.epic.com/Endpoints/DSTU2")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
 	th.Assert(t, err == nil, err)
