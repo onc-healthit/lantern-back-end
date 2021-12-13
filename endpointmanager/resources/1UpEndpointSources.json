@@ -1,5 +1,5 @@
 {
-	"Entries": [
+	"Endpoints": [
 		{
 			"FHIRPatientFacingURI": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
 			"OrganizationName": "Spectrum Health"

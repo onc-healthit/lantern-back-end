@@ -1,25 +1,30 @@
 [
     {
+        "FormatType": "Epic",
         "EndpointName":"Epic",
         "FileName":"EpicEndpointSources.json",
         "URL":"https://open.epic.com/MyApps/EndpointsJson"
     },
     {
+        "FormatType": "Cerner",
         "EndpointName":"Cerner",
         "FileName":"CernerEndpointSources.json",
         "URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/main/dstu2-patient-endpoints.json"
     },
     {
+        "FormatType": "Lantern",
         "EndpointName":"Lantern",
         "FileName":"LanternEndpointSources.json",
         "URL": ""
     },
     {
+        "FormatType": "Lantern",
         "EndpointName":"CareEvolution",
         "FileName":"CareEvolutionEndpointSources.json",
         "URL": "https://fhir.docs.careevolution.com/overview/public_endpoints.html"
     },
     {
+        "FormatType": "Lantern",
         "EndpointName": "1Up",
         "FileName": "1UpEndpointSources.json",
         "URL": "https://1up.health/fhir-endpoint-directory"

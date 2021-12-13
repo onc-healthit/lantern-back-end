@@ -30,7 +30,7 @@ type ListOfEndpoints struct {
 }
 
 // Source is a slice of the known endpoint source lists
-var sources = []string{"Cerner", "Epic", "Lantern", "CareEvolution", "1Up", "FHIR"}
+var formats = []string{"Cerner", "Epic", "Lantern", "CareEvolution", "1Up", "FHIR"}
 
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
@@ -39,7 +39,7 @@ type Endpoints interface {
 }
 
 // GetEndpointsFromFilepath parses a list of endpoints out of the file at the provided path
-func GetEndpointsFromFilepath(filePath string, source string, listURL string) (ListOfEndpoints, error) {
+func GetEndpointsFromFilepath(filePath string, format string, source string, listURL string) (ListOfEndpoints, error) {
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
@@ -53,15 +53,15 @@ func GetEndpointsFromFilepath(filePath string, source string, listURL string) (L
 		return ListOfEndpoints{}, nil
 	}
 
-	validSource := helpers.StringArrayContains(sources, source)
-	if validSource {
-		return GetListOfEndpointsKnownSource([]byte(byteValue), source, listURL)
+	validFormat := helpers.StringArrayContains(formats, source)
+	if validFormat {
+		return GetListOfEndpointsKnownFormat([]byte(byteValue), format, source, listURL)
 	}
 	return GetListOfEndpoints([]byte(byteValue), source, listURL)
 }
 
-// GetListOfEndpointsKnownSource parses a list of endpoints out of a given byte array
-func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL string) (ListOfEndpoints, error) {
+// GetListOfEndpointsKnownFormat parses a list of endpoints out of a given byte array
+func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source string, listURL string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 	var initialList map[string]interface{}
 
@@ -76,45 +76,33 @@ func GetListOfEndpointsKnownSource(rawendpts []byte, source string, listURL stri
 		return result, nil
 	}
 
-	if source == "Cerner" {
+	if format == "Cerner" {
 		cernerList, err := convertInterfaceToList(initialList, "endpoints")
 		if err != nil {
 			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
-		result = CernerList{}.GetEndpoints(cernerList, listURL)
-	} else if source == "Epic" {
+		result = CernerList{}.GetEndpoints(cernerList, source, listURL)
+	} else if format == "Epic" {
 		epicList, err := convertInterfaceToList(initialList, "Entries")
 		if err != nil {
 			return result, fmt.Errorf("epic list not given in EPIC format: %s", err)
 		}
-		result = EpicList{}.GetEndpoints(epicList, listURL)
-	} else if source == "Lantern" {
+		result = EpicList{}.GetEndpoints(epicList, source, listURL)
+	} else if format == "Lantern" {
 		lanternList, err := convertInterfaceToList(initialList, "Endpoints")
 		if err != nil {
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
-		result = LanternList{}.GetEndpoints(lanternList, listURL)
-	} else if source == "CareEvolution" {
-		careEvolutionList, err := convertInterfaceToList(initialList, "Entries")
-		if err != nil {
-			return result, fmt.Errorf("CareEvolution list not given in CareEvolution format: %s", err)
-		}
-		result = CareEvolutionList{}.GetEndpoints(careEvolutionList, listURL)
-	} else if source == "1Up" {
-		oneUpList, err := convertInterfaceToList(initialList, "Entries")
-		if err != nil {
-			return result, fmt.Errorf("1Up list not given in 1Up format: %s", err)
-		}
-		result = OneUpList{}.GetEndpoints(oneUpList, listURL)
-	} else if source == "FHIR" {
+		result = LanternList{}.GetEndpoints(lanternList, source, listURL)
+	} else if format == "FHIR" {
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")
 		if err != nil {
 			return result, fmt.Errorf("fhir list not given in FHIR format: %s", err)
 		}
-		result = FHIRList{}.GetEndpoints(fhirList, listURL)
+		result = FHIRList{}.GetEndpoints(fhirList, source, listURL)
 	} else {
-		return result, fmt.Errorf("no endpoint list parser implemented for the given source")
+		return result, fmt.Errorf("no endpoint list parser implemented for the given format")
 	}
 
 	return result, err

@@ -64,104 +64,103 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	// test default list
 
 	var expectedEndpoints = 1194
-	var endpoints, _ = GetEndpointsFromFilepath("../../resources/CernerEndpointSources.json", "Cerner", "")
+	var endpoints, _ = GetEndpointsFromFilepath("../../resources/CernerEndpointSources.json", "Cerner", "Cerner", "")
 	var endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test epic list
 
 	expectedEndpoints = 364
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "Epic", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test lantern list
 
 	expectedEndpoints = 4
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/LanternEndpointSources.json", "Lantern", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/LanternEndpointSources.json", "Lantern", "Lantern", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from lantern file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test CareEvolution list
 
 	expectedEndpoints = 10
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "CareEvolution", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "Lantern", "Lantern", "https://fhir.docs.careevolution.com/overview/public_endpoints.html")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from CareEvolution file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test 1Up list
 
 	expectedEndpoints = 472
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "1Up", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/1UpEndpointSources.json", "Lantern", "Lantern", "https://1up.health/fhir-endpoint-directory")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from 1Up file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
 	// test fhir list
 
-	expectedEndpoints = 14
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/FHIREndpointSources.json", "FHIR", "")
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/FHIREndpointSources.json", "FHIR", "FHIR", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from FHIR file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 }
 
-func Test_GetListOfEndpointsKnownSource(t *testing.T) {
+func Test_GetListOfEndpointsKnownFormat(t *testing.T) {
 
 	// test cerner list
 
 	cernerListSource := "cerner.com/fhir-endpoints"
-	cernerResult, err := GetListOfEndpointsKnownSource(testCerner, "Cerner", cernerListSource)
+	cernerResult, err := GetListOfEndpointsKnownFormat(testCerner, "Cerner", "Cerner", cernerListSource)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, cernerResult.Entries[0].ListSource == cernerListSource, fmt.Sprintf("The list source should have been %s, it instead returned %s", cernerListSource, cernerResult.Entries[0].ListSource))
 
 	// test epic list
 
-	epicResult, err := GetListOfEndpointsKnownSource(testEpic, "Epic", "")
+	epicResult, err := GetListOfEndpointsKnownFormat(testEpic, "Epic", "Epic", "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epicResult.Entries[0].ListSource == "Epic", fmt.Sprintf("The list source should have been Epic, it instead returned %s", epicResult.Entries[0].ListSource))
 
 	// test lantern list
 
-	lanternResult, err := GetListOfEndpointsKnownSource(testLantern, "Lantern", "")
+	lanternResult, err := GetListOfEndpointsKnownFormat(testLantern, "Lantern", "Lantern", "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, lanternResult.Entries[0].ListSource == "Lantern", fmt.Sprintf("The list source should have been Lantern, it instead returned %s", lanternResult.Entries[0].ListSource))
 
 	// test CareEvolution list
-	careEvolutionResult, err := GetListOfEndpointsKnownSource(testCareEvolution, "CareEvolution", "")
+	careEvolutionResult, err := GetListOfEndpointsKnownFormat(testCareEvolution, "Lantern", "Lantern", "https://fhir.docs.careevolution.com/overview/public_endpoints.html")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "CareEvolution", fmt.Sprintf("The list source should have been CareEvolution, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
+	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "https://fhir.docs.careevolution.com/overview/public_endpoints.html", fmt.Sprintf("The list source should have been https://fhir.docs.careevolution.com/overview/public_endpoints.html, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
 
 	// test 1Up list
-	oneUpResult, err := GetListOfEndpointsKnownSource(test1Up, "1Up", "")
+	oneUpResult, err := GetListOfEndpointsKnownFormat(test1Up, "Lantern", "Lantern", "https://1up.health/fhir-endpoint-directory")
 	th.Assert(t, err == nil, err)
-	th.Assert(t, oneUpResult.Entries[0].ListSource == "1Up", fmt.Sprintf("The list source should have been 1Up, it instead returned %s", oneUpResult.Entries[0].ListSource))
+	th.Assert(t, oneUpResult.Entries[0].ListSource == "https://1up.health/fhir-endpoint-directory", fmt.Sprintf("The list source should have been https://1up.health/fhir-endpoint-directory, it instead returned %s", oneUpResult.Entries[0].ListSource))
 
 	// test FHIR list
 
 	fhirListSource := "www.thisisafhirlist.com"
-	fhirResult, err := GetListOfEndpointsKnownSource(testFHIR, "FHIR", fhirListSource)
+	fhirResult, err := GetListOfEndpointsKnownFormat(testFHIR, "FHIR", "FHIR", fhirListSource)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirResult.Entries[0].ListSource == fhirListSource, fmt.Sprintf("The list source should have been %s, it instead returned %s", fhirListSource, fhirResult.Entries[0].ListSource))
 
 	// test empty values
 
-	_, err = GetListOfEndpointsKnownSource([]byte("null"), "Epic", "")
+	_, err = GetListOfEndpointsKnownFormat([]byte("null"), "Epic", "Epic", "")
 	th.Assert(t, err == nil, fmt.Sprintf("A null value should have returned nil, it instead returned %s", err))
 
-	_, err = GetListOfEndpointsKnownSource([]byte("{}"), "Epic", "")
+	_, err = GetListOfEndpointsKnownFormat([]byte("{}"), "Epic", "Epic", "")
 	th.Assert(t, err == nil, fmt.Sprintf("An empty map {} should have returned nil, it instead returned %s", err))
 
-	_, err = GetListOfEndpointsKnownSource([]byte("[]"), "Epic", "")
+	_, err = GetListOfEndpointsKnownFormat([]byte("[]"), "Epic", "Epic", "")
 	th.Assert(t, err != nil, "An empty list [] should have returned an error, it instead returned nil")
 
 	// test improperly formatted list
 
-	_, err = GetListOfEndpointsKnownSource([]byte(`{ "endpoints": "string" }`), "Epic", "")
+	_, err = GetListOfEndpointsKnownFormat([]byte(`{ "endpoints": "string" }`), "Epic", "Epic", "")
 	th.Assert(t, err != nil, "An improperly formatted list should have returned an error, it instead returned nil")
 
 	// test improperly formatted fhir list
 	hook := logtest.NewGlobal()
 	expectedErr := "No resource field in FHIR list. Returning an empty list of entries."
-	_, _ = GetListOfEndpointsKnownSource([]byte(`{ "entry": [{ "notresource": {}}] }`), "FHIR", "")
+	_, _ = GetListOfEndpointsKnownFormat([]byte(`{ "entry": [{ "notresource": {}}] }`), "FHIR", "FHIR", "")
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -174,7 +173,7 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 
 	// test fhir list entry with no address
 	expectedErr = "No address field in the resource. Ignoring resource."
-	_, _ = GetListOfEndpointsKnownSource([]byte(`{ "entry": [{ "resource": { "notAddress" : "" }}] }`), "FHIR", "")
+	_, _ = GetListOfEndpointsKnownFormat([]byte(`{ "entry": [{ "resource": { "notAddress" : "" }}] }`), "FHIR", "FHIR", "")
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
@@ -187,8 +186,8 @@ func Test_GetListOfEndpointsKnownSource(t *testing.T) {
 
 	// test invalid source
 
-	_, err = GetListOfEndpointsKnownSource(testEpic, "string", "")
-	th.Assert(t, err != nil, "An invalid source should have thrown an error")
+	_, err = GetListOfEndpointsKnownFormat(testEpic, "string", "", "")
+	th.Assert(t, err != nil, "An invalid format should have thrown an error")
 }
 
 func Test_GetListOfEndpoints(t *testing.T) {

@@ -12,7 +12,7 @@ import (
 )
 
 type endpointList struct {
-	Entries []endpointEntry `json:"Entries"`
+	Endpoints []endpointEntry `json:"Endpoints"`
 }
 type endpointEntry struct {
 	FHIRPatientFacingURI string `json:"FHIRPatientFacingURI"`
@@ -54,13 +54,13 @@ func main() {
 				if vendor == "CareEvolution" {
 					entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Text())
 					entry.FHIRPatientFacingURI = strings.TrimSpace(tableEntries.Eq(1).Text())
-					endpointEntryList.Entries = append(endpointEntryList.Entries, entry)
+					endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
 				} else if vendor == "1Up" {
 					endpointType := strings.TrimSpace(tableEntries.Eq(3).Text())
 					if endpointType == "Health System" {
 						entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(1).Find("a").Text())
 						entry.FHIRPatientFacingURI = strings.TrimSpace(tableEntries.Eq(2).Text())
-						endpointEntryList.Entries = append(endpointEntryList.Entries, entry)
+						endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
 					}
 				}
 			}

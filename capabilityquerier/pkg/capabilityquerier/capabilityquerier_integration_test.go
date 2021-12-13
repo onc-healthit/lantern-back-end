@@ -150,12 +150,12 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:               fhirURL.String(),
-		MIMETypes:         expectedMimeType,
-		TLSVersion:        expectedTLSVersion,
-		HTTPResponse:      200,
-		SMARTHTTPResponse: 200,
-		ResponseTime:      0,
+		URL:                  fhirURL.String(),
+		MIMETypes:            expectedMimeType,
+		TLSVersion:           expectedTLSVersion,
+		HTTPResponse:         200,
+		SMARTHTTPResponse:    200,
+		ResponseTime:         0,
 		RequestedFhirVersion: "None",
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
@@ -170,13 +170,13 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 
 	args := make(map[string]interface{})
 	querierArgs := QuerierArgs{
-		FhirURL:      sampleURL,
-		Client:       &(tc.Client),
+		FhirURL:        sampleURL,
+		Client:         &(tc.Client),
 		RequestVersion: "None",
-		MessageQueue: &mq,
-		ChannelID:    &ch,
-		QueueName:    queueName,
-		Store:        store,
+		MessageQueue:   &mq,
+		ChannelID:      &ch,
+		QueueName:      queueName,
+		Store:          store,
 	}
 	args["querierArgs"] = querierArgs
 
@@ -280,7 +280,7 @@ func setup() error {
 
 	// grab endpoints
 	// TODO: eventually this method of getting endpoints will change
-	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSources.json", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/")
+	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSources.json", "Epic", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/")
 
 	return err
 }

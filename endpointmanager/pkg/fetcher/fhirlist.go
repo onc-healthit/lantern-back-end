@@ -21,7 +21,7 @@ type FHIRList struct{}
 	  }, ...
 ] }
 */
-func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL string) ListOfEndpoints {
+func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string, listURL string) ListOfEndpoints {
 	var finalList ListOfEndpoints
 	var innerList []EndpointEntry
 
@@ -29,6 +29,8 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL strin
 		fhirEntry := EndpointEntry{}
 		if listURL != "" {
 			fhirEntry.ListSource = listURL
+		} else if source != "" {
+			fhirEntry.ListSource = source
 		} else {
 			fhirEntry.ListSource = "FHIR"
 		}
