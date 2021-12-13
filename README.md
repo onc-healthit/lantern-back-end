@@ -64,7 +64,8 @@ This removes all docker images, networks, and local volumes.
 
     The populated db scrpt expects the resources directory to contain the following files:
       * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
-      * **EpicEndpointSources.json** - JSON file containing endpoint information from Epic
+      * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
+      * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
       * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
       * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
       * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 

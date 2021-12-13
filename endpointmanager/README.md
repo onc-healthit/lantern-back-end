@@ -306,23 +306,6 @@ go run main.go <start date> <end date> <file name>
 
 The Endpoint Manager expects the format of an endpoint source list to be in one of the formats below:
 
-Epic Endpoint Sources (JSON):
-
-```
-{
-   "resourceType": "Bundle",
-   "entry": [
-     {
-       "resource": {
-         "name": <name of the organization>,
-         "address": <location of the FHIR endpoint>
-       }
-     },
-     ...
-   ]
-}
-```
-
 Cerner Endpoint Sources (JSON):
 
 ```
@@ -350,6 +333,24 @@ Lantern Endpoint Sources (JSON):
     },
     ...
   ]
+}
+```
+
+FHIR Bundle of FHIR Endpoint Resources (JSON):
+
+```
+{
+   "resourceType": "Bundle",
+   "entry": [
+     {
+       "resource": {
+         "name": <name of the organization>,
+         "managingOrganiation": { "display": <text for resource>, "reference": <organization name> },
+         "address": <location of the FHIR endpoint>
+       }
+     },
+     ...
+   ]
 }
 ```
 
