@@ -1,8 +1,8 @@
 {
   "resourceType": "Bundle",
   "type": "collection",
-  "timestamp": "2021-12-03T12:59:18.6344647-06:00",
-  "total": 416,
+  "timestamp": "2021-12-13T10:18:56.1056168-06:00",
+  "total": 417,
   "entry": [
     {
       "resource": {
@@ -1134,7 +1134,7 @@
           {
             "resourceType": "Organization",
             "id": "LImroyJCetTurHeTQmiiQqLVRSL7BW6BdqPursOv8RU=",
-            "name": "Elliot Health System"
+            "name": "SolutionHealth"
           }
         ],
         "status": "active",
@@ -1142,7 +1142,7 @@
           "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
           "code": "hl7-fhir-rest"
         },
-        "name": "Elliot Health System",
+        "name": "SolutionHealth",
         "managingOrganization": {
           "reference": "LImroyJCetTurHeTQmiiQqLVRSL7BW6BdqPursOv8RU="
         },
@@ -1165,7 +1165,7 @@
           "application/xml+fhir",
           "application/fhir+xml"
         ],
-        "address": "https://epicproxyprd.elliot-hs.org/FHIR_PROD/api/FHIR/DSTU2/"
+        "address": "https://epicproxyprd.solutionhealth.org/FHIR_PROD/api/FHIR/DSTU2/"
       }
     },
     {
@@ -7161,7 +7161,7 @@
           {
             "resourceType": "Organization",
             "id": "IHPPNTGWuo0SDe+1pP666r+I0SxYaWFWerl7OLyCUZc=",
-            "name": "Children's Hospital of Wisconsin"
+            "name": "Children's Wisconsin"
           }
         ],
         "status": "active",
@@ -7169,7 +7169,7 @@
           "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
           "code": "hl7-fhir-rest"
         },
-        "name": "Children's Hospital of Wisconsin",
+        "name": "Children's Wisconsin",
         "managingOrganization": {
           "reference": "IHPPNTGWuo0SDe+1pP666r+I0SxYaWFWerl7OLyCUZc="
         },
@@ -9334,7 +9334,7 @@
           "application/xml+fhir",
           "application/fhir+xml"
         ],
-        "address": "https://epic-cs.unch.unc.edu/FHIR/api/FHIR/DSTU2/"
+        "address": "https://epicfe.unch.unc.edu/FHIR/api/FHIR/DSTU2/"
       }
     },
     {
@@ -11523,7 +11523,7 @@
           {
             "resourceType": "Organization",
             "id": "TJHH+woDYsxPCE8bU/oNYx3dp0j5vyRKGrNjDHw3YIg=",
-            "name": "Peninsula Regional Medical Center"
+            "name": "TidalHealth"
           }
         ],
         "status": "active",
@@ -11531,7 +11531,7 @@
           "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
           "code": "hl7-fhir-rest"
         },
-        "name": "Peninsula Regional Medical Center",
+        "name": "TidalHealth",
         "managingOrganization": {
           "reference": "TJHH+woDYsxPCE8bU/oNYx3dp0j5vyRKGrNjDHw3YIg="
         },
@@ -17357,6 +17357,48 @@
           "application/fhir+xml"
         ],
         "address": "https://epicmobile.nhrmc.org/OAuth2-PRD/api/FHIR/DSTU2/"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "fa5cd496-d34b-ec11-914e-001dd8b71f1a",
+        "contained": [
+          {
+            "resourceType": "Organization",
+            "id": "WCzGDoltllOGUekQvzjMozkIVtNa7aK2g85C9epti14=",
+            "name": "Kennedy Krieger Institute"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+          "code": "hl7-fhir-rest"
+        },
+        "name": "Kennedy Krieger Institute",
+        "managingOrganization": {
+          "reference": "WCzGDoltllOGUekQvzjMozkIVtNa7aK2g85C9epti14="
+        },
+        "period": {
+          "start": "2021-12-13T00:00:00-06:00"
+        },
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/us/davinci-pdex-plan-net/CodeSystem/EndpointPayloadTypeCS",
+                "code": "NA"
+              }
+            ]
+          }
+        ],
+        "payloadMimeType": [
+          "application/fhir+json",
+          "application/json+fhir",
+          "application/xml+fhir",
+          "application/fhir+xml"
+        ],
+        "address": "https://epicproxy.et1095.epichosted.com/FHIRProxy/api/FHIR/DSTU2/"
       }
     }
   ]

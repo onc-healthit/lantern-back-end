@@ -1,9 +1,15 @@
 [
     {
-        "FormatType": "Epic",
+        "FormatType": "FHIR",
         "EndpointName":"Epic",
-        "FileName":"EpicEndpointSources.json",
+        "FileName":"EpicEndpointSourcesDSTU2.json",
         "URL":"https://open.epic.com/Endpoints/DSTU2"
+    },
+    {
+        "FormatType": "FHIR",
+        "EndpointName":"Epic",
+        "FileName":"EpicEndpointSourcesR4.json",
+        "URL":"https://open.epic.com/Endpoints/R4"
     },
     {
         "FormatType": "Cerner",
