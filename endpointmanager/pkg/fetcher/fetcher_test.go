@@ -29,13 +29,13 @@ var testLantern = []byte(`{"Endpoints": [
         "NPIID": "1"
 	}]}`)
 
-var testCareEvolution = []byte(`{"Entries":[
+var testCareEvolution = []byte(`{"Endpoints":[
 	{
 		"OrganizationName":"Holy Cross in Florida - Trinity Health",
 		"FHIRPatientFacingURI":"https://hcfl.patient.trinity-health.org/api/fhir"
 	}]}`)
 
-var test1Up = []byte(`{"Entries":[
+var test1Up = []byte(`{"Endpoints":[
 		{
 			"OrganizationName":"Spectrum Health",
 			"FHIRPatientFacingURI":"https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2"
