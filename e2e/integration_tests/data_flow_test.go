@@ -85,6 +85,7 @@ func populateTestNPIData() {
 func populateTestEndpointData(testEndpointList string, source string) {
 	var listOfEndpoints fetcher.ListOfEndpoints
 	var knownSource string
+	var knownFormat string
 	content, err := ioutil.ReadFile(testEndpointList)
 	helpers.FailOnError("", err)
 
