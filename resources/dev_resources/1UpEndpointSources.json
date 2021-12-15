@@ -1,43 +1,43 @@
 {
 	"Endpoints": [
 		{
-			"FHIRPatientFacingURI": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
+			"URL": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
 			"OrganizationName": "Spectrum Health"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/9c322772-9675-469b-994a-1b68bbb883dd",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/9c322772-9675-469b-994a-1b68bbb883dd",
 			"OrganizationName": "NY Sports Podiatry"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/53935f72-80ef-4245-bd93-5d32e06dd4ee",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/53935f72-80ef-4245-bd93-5d32e06dd4ee",
 			"OrganizationName": "True Care Medical Center"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1e751165-d0f5-47ed-aa9b-1a8abb55d1d6",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/1e751165-d0f5-47ed-aa9b-1a8abb55d1d6",
 			"OrganizationName": "Heritage Medical Associates"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/4dda80a5-f33b-4429-ba97-844b531d51a5",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/4dda80a5-f33b-4429-ba97-844b531d51a5",
 			"OrganizationName": "East End Pediatrics PLLC"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/6d80f5c7-212b-4be1-9709-7bad9391b694",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/6d80f5c7-212b-4be1-9709-7bad9391b694",
 			"OrganizationName": "UHS Ambulatory East"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/r2GtnbpYK4vtuAbMjau8TiI_I1r8CPyN",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/r2GtnbpYK4vtuAbMjau8TiI_I1r8CPyN",
 			"OrganizationName": "Center for Manual Medicine"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/77cef438-d9a8-4c2b-a90a-6d877ebd2afb",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/77cef438-d9a8-4c2b-a90a-6d877ebd2afb",
 			"OrganizationName": "UGWC KS"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/1846cf9e-8006-4277-b72f-3cbbe8a8f5ca",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/1846cf9e-8006-4277-b72f-3cbbe8a8f5ca",
 			"OrganizationName": "Southdale Pediatrics Associates"
 		},
 		{
-			"FHIRPatientFacingURI": "https://fhir-myrecord.cerner.com/dstu2/0650f99f-f0d2-44ea-965d-c51f6dc87c87",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/0650f99f-f0d2-44ea-965d-c51f6dc87c87",
 			"OrganizationName": "Center for Allergy \u0026 Respiratory Disease"
 		}
 	]
