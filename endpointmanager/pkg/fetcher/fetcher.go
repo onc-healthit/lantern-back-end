@@ -30,7 +30,7 @@ type ListOfEndpoints struct {
 }
 
 // Source is a slice of the known endpoint source lists
-var formats = []string{"Cerner", "Epic", "Lantern", "CareEvolution", "1Up", "FHIR"}
+var formats = []string{"Cerner", "Epic", "Lantern", "FHIR"}
 
 // Endpoints is an interface that every endpoint list can implement to parse their list into
 // the universal format ListOfEndpoints
@@ -53,7 +53,7 @@ func GetEndpointsFromFilepath(filePath string, format string, source string, lis
 		return ListOfEndpoints{}, nil
 	}
 
-	validFormat := helpers.StringArrayContains(formats, source)
+	validFormat := helpers.StringArrayContains(formats, format)
 	if validFormat {
 		return GetListOfEndpointsKnownFormat([]byte(byteValue), format, source, listURL)
 	}

@@ -130,7 +130,7 @@ func Test_GetListOfEndpointsKnownFormat(t *testing.T) {
 	th.Assert(t, careEvolutionResult.Entries[0].ListSource == "CareEvolution", fmt.Sprintf("The list source should have been CareEvolution, it instead returned %s", careEvolutionResult.Entries[0].ListSource))
 
 	// test 1Up list
-	oneUpResult, err := GetListOfEndpointsKnownFormat(test1Up, "Lantern", "1Up", "1Up")
+	oneUpResult, err := GetListOfEndpointsKnownFormat(test1Up, "Lantern", "1Up", "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, oneUpResult.Entries[0].ListSource == "1Up", fmt.Sprintf("The list source should have been 1Up, it instead returned %s", oneUpResult.Entries[0].ListSource))
 
