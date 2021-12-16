@@ -72,7 +72,7 @@ validationsmodule <- function(
   # Create table for validation rule details table
   validation_details <- reactive({
     res <- validation_rules()
-    
+
     fhir_version_filter <- FALSE
     req(sel_fhir_version())
     if (sel_fhir_version() == ui_special_values$ALL_FHIR_VERSIONS) {
@@ -81,7 +81,7 @@ validationsmodule <- function(
       left_join(versions %>% select(validation_name, fhir_version_names),
         by = c("rule_name" = "validation_name")) %>%
       mutate(versions_line = paste("Versions:", fhir_version_names))
-      
+
       fhir_version_filter <- TRUE
     }
 
