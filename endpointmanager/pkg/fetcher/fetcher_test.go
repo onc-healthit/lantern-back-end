@@ -84,7 +84,7 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 
 	// test CareEvolution list
 
-	expectedEndpoints = 10
+	expectedEndpoints = 9
 	endpoints, _ = GetEndpointsFromFilepath("../../resources/CareEvolutionEndpointSources.json", "Lantern", "CareEvolution", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from CareEvolution file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))

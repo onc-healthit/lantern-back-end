@@ -52,9 +52,11 @@ func main() {
 			tableEntries := rowhtml.Find("td")
 			if tableEntries.Length() > 0 {
 				if vendor == "CareEvolution" {
-					entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Text())
-					entry.URL = strings.TrimSpace(tableEntries.Eq(1).Text())
-					endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
+					if indextr != 1 {
+						entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Text())
+						entry.URL = strings.TrimSpace(tableEntries.Eq(1).Text())
+						endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
+					}
 				} else if vendor == "1Up" {
 					endpointType := strings.TrimSpace(tableEntries.Eq(3).Text())
 					if endpointType == "Health System" {
