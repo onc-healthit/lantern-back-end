@@ -17,6 +17,7 @@ validationsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12,
         h3("Validation Results Count"),
+        htmlOutput(ns("anchorlink")),
         uiOutput(ns("validation_results_plot"))
       )
     ),
@@ -34,6 +35,7 @@ validationsmodule_UI <- function(id) {
       ),
       column(width = 9,
         h3("Validation Failure Details"),
+        htmlOutput(ns("anchorpoint")),
         DT::dataTableOutput(ns("validation_failure_table"))
       )
     )
@@ -50,6 +52,14 @@ validationsmodule <- function(
 ) {
   ns <- session$ns
 
+  output$anchorpoint <- renderUI({
+    HTML("<span id='anchorid'></span>")
+  })
+
+  output$anchorlink <- renderUI({
+    HTML("<p>See validation failure details <a href='#anchorid'>below</a></p>")
+  })
+
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
     res <- selected_validations()
@@ -62,13 +72,36 @@ validationsmodule <- function(
   # Create table for validation rule details table
   validation_details <- reactive({
     res <- validation_rules()
+    
+    fhir_version_filter <- FALSE
+    req(sel_fhir_version())
+    if (sel_fhir_version() == ui_special_values$ALL_FHIR_VERSIONS) {
+      versions <- get_validation_versions()
+      res <- res %>%
+      left_join(versions %>% select(validation_name, fhir_version_names),
+        by = c("rule_name" = "validation_name")) %>%
+      mutate(versions_line = paste("Versions:", fhir_version_names))
+      
+      fhir_version_filter <- TRUE
+    }
+
     res <- res %>%
       mutate(comment_line = paste("Comment:", validation_rules_descriptions[rule_name])) %>%
       mutate(rule_name_line = paste("Name:", rule_name)) %>%
-      mutate(num = paste(row_number(), ".")) %>%
-      distinct(num, rule_name_line, comment_line) %>%
-      mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%
-      select(entry)
+      mutate(num = paste(row_number(), "."))
+
+      if (fhir_version_filter) {
+        res <- res %>%
+        distinct(num, rule_name_line, comment_line, versions_line) %>%
+        mutate(entry = paste(num,  rule_name_line, versions_line, comment_line, sep = "<br>")) %>%
+        select(entry)
+      }else {
+        res <- res %>%
+        distinct(num, rule_name_line, comment_line) %>%
+        mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%
+        select(entry)
+      }
+
     res
   })
 
@@ -88,6 +121,23 @@ validationsmodule <- function(
     res
   })
 
+  get_validation_versions <- reactive({
+    res <- isolate(app_data$validation_tbl())
+    res <- res %>%
+    filter(fhir_version != "Unknown") %>%
+    group_by(rule_name) %>%
+    rename(validation_name = rule_name) %>%
+    arrange(fhir_version, .by_group = TRUE) %>%
+    mutate(fhir_version_name = case_when(
+      fhir_version %in% dstu2 ~ "DSTU2",
+      fhir_version %in% stu3 ~ "STU3",
+      fhir_version %in% r4 ~ "R4",
+      TRUE ~ "DSTU2"
+    )) %>%
+    summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
+    res
+  })
+
   # Creates table containing the filtered validation's rule name, if its valid, and it'c count
   select_validation_results <- reactive({
     res <- selected_validations()
@@ -95,7 +145,8 @@ validationsmodule <- function(
       group_by(rule_name, valid) %>%
       count() %>%
       rename(count = n) %>%
-      select(rule_name, valid, count)
+      select(rule_name, valid, count) %>%
+      mutate(valid = if_else(valid == TRUE, "Success", "Failure"))
     res
   })
 
@@ -152,10 +203,11 @@ validationsmodule <- function(
       ggtitle("Validation Results") +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(legend.position = "bottom") +
+      theme(legend.title = element_blank()) +
       theme(text = element_text(size = 14)) +
       labs(x = "", y = "", fill = "Valid") +
       scale_y_continuous(sec.axis = sec_axis(~.)) +
-      scale_fill_manual(values = c("FALSE" = "red", "TRUE" = "seagreen3"), limits = c("FALSE", "TRUE")) +
+      scale_fill_manual(values = c("Failure" = "red", "Success" = "seagreen3"), limits = c("Failure", "Success")) +
       guides(fill = guide_legend(reverse = TRUE)) +
       coord_flip()
   },
