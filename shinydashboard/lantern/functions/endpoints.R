@@ -491,9 +491,11 @@ get_validation_results <- function(db_connection) {
           actual,
           comment,
           reference,
+          e.list_source,
           validations.validation_result_id as id
         FROM fhir_endpoints_info f
           LEFT JOIN vendors on f.vendor_id = vendors.id
+          LEFT JOIN fhir_endpoints e on f.url = e.url
           INNER JOIN validations on f.validation_result_id = validations.validation_result_id
         ORDER BY validations.validation_result_id, rule_name")) %>%
     collect() %>%

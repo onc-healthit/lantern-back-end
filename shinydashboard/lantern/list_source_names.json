@@ -1,0 +1,16 @@
+{
+    "Epic": [
+        "Epic",
+        "https://open.epic.com/MyApps/EndpointsJson"
+     ],
+    "Cerner": [
+        "Cerner",
+        "https://raw.githubusercontent.com/cerner/ignite-endpoints/main/dstu2-patient-endpoints.json"
+    ],
+    "Lantern": [
+        "Lantern"
+    ],
+    "NPPES": [
+        "NPPES"
+    ]
+}
