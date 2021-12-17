@@ -22,6 +22,7 @@ func main() {
 	var endpointsFile string
 	var source string
 	var listURL string
+	var format string
 
 	err := config.SetupConfig()
 	helpers.FailOnError("Error setting up config", err)
@@ -49,20 +50,24 @@ func main() {
 		log.Fatalf("There are %d messages in the queue. Queue must be empty to run the endpoint populator.", count)
 	}
 
-	if len(os.Args) == 3 {
+	if len(os.Args) == 4 {
 		endpointsFile = os.Args[1]
-		source = os.Args[2]
-	} else if len(os.Args) == 4 {
+		format = os.Args[2]
+		source = os.Args[3]
+	} else if len(os.Args) == 5 {
 		endpointsFile = os.Args[1]
-		source = os.Args[2]
-		listURL = os.Args[3]
+		format = os.Args[2]
+		source = os.Args[3]
+		listURL = os.Args[4]
 	} else if len(os.Args) == 2 {
+		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
+	} else if len(os.Args) == 3 {
 		log.Fatalf("ERROR: Missing endpoints list source command-line argument")
 	} else {
 		log.Fatalf("ERROR: Endpoints list command-line arguments are not correct")
 	}
 
-	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, source, listURL)
+	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL)
 	helpers.FailOnError("Endpoint List Parsing Error: ", err)
 
 	err = config.SetupConfig()
