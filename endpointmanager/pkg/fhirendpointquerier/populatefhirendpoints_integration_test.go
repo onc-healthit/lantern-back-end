@@ -90,7 +90,7 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	// Expected number of endpoints is less than number of endpoints in Endpoint list due to repetitions
 	expectedNumEndptsStored := 403
 
-	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesDSTU2_1.json", "FHIR", "Epic", "https://open.epic.com/Endpoints/DSTU2")
+	var listOfEndpoints, listErr = fetcher.GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "https://open.epic.com/Endpoints/DSTU2")
 	th.Assert(t, listErr == nil, "Endpoint List Parsing Error")
 
 	err = AddEndpointData(ctx, store, &listOfEndpoints)
