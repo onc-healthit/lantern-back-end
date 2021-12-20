@@ -9,7 +9,6 @@ import (
 type FHIRList struct{}
 
 // GetEndpoints takes the list of endpoints in FHIR Bundle format and formats it into a ListOfEndpoints
-// managingOrganization is set to true if the endpoint list contains an organization name in the managingOrganization field, otherwise false
 // Assumed Structure:
 /**
 { ... entry: [ {
@@ -23,7 +22,7 @@ type FHIRList struct{}
 	  }, ...
 ] }
 */
-func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL string) ListOfEndpoints {
+func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string, listURL string) ListOfEndpoints {
 	var finalList ListOfEndpoints
 	var innerList []EndpointEntry
 
@@ -31,6 +30,8 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, listURL strin
 		fhirEntry := EndpointEntry{}
 		if listURL != "" {
 			fhirEntry.ListSource = listURL
+		} else if source != "" {
+			fhirEntry.ListSource = source
 		} else {
 			fhirEntry.ListSource = "FHIR"
 		}
