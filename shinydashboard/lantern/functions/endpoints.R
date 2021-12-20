@@ -4,7 +4,6 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times
 library(lubridate)
 
-
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
   vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
@@ -30,7 +29,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
     distinct(url, vendor_name, fhir_version, tls_version, mime_types, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, fhir_version, tls_version, mime_types, http_response, response_time_seconds, smart_http_response, errors, availability) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, tls_version, mime_types, http_response, response_time_seconds, smart_http_response, errors, availability) %>%
     mutate(updated = as.Date(info_updated)) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
@@ -140,7 +139,9 @@ get_fhir_resource_types <- function(db_connection) {
       WHERE requested_fhir_version = 'None'
       ORDER BY type")) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Return list of resources for the given operation field by
@@ -150,13 +151,15 @@ get_fhir_resource_by_op <- function(db_connection, field) {
     sql(paste0("SELECT f.id as endpoint_id,
       vendor_id,
       vendors.name as vendor_name,
-      capability_statement->>'fhirVersion' as fhir_version,
+      capability_fhir_version as fhir_version,
       operation_resource->>'", field, "' as type
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
       WHERE requested_fhir_version = 'None'"))) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_capstat_fields <- function(db_connection) {
@@ -173,7 +176,9 @@ get_capstat_fields <- function(db_connection) {
       WHERE included_fields != 'null' AND requested_fhir_version = 'None'
       ORDER BY field")) %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Summarize count of implementation guides by implementation_guide, fhir_version
@@ -205,8 +210,8 @@ get_capstat_values <- function(db_connection) {
     sql("SELECT f.id as endpoint_id,
       vendor_id,
       vendors.name as vendor_name,
-      capability_statement->>'fhirVersion' as filter_fhir_version,
       capability_fhir_version as fhir_version,
+      capability_fhir_version as filter_fhir_version,
       capability_statement->>'url' as url,
       capability_statement->>'version' as version,
       capability_statement->>'name' as name,
@@ -227,7 +232,9 @@ get_capstat_values <- function(db_connection) {
       WHERE capability_statement != 'null' AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version)) %>%
+    mutate(filter_fhir_version = if_else(filter_fhir_version %in% valid_fhir_versions, filter_fhir_version, "Unknown"))
 }
 
 get_capstat_values_list <- function(capstat_values_tbl) {
@@ -267,7 +274,10 @@ get_security_endpoints <- function(db_connection) {
         WHERE requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+
 }
 
 # get tibble of endpoints which include a security service attribute
@@ -278,13 +288,13 @@ get_security_endpoints_tbl <- function(db_connection) {
     sql("SELECT a.url,
             a.organization_names,
             b.vendor_name,
-            a.fhir_version,
+            a.capability_fhir_version,
             a.tls_version,
             a.code
         FROM
           (SELECT e.url,
             e.organization_names,
-            capability_fhir_version as fhir_version,
+            capability_fhir_version as capability_fhir_version,
             f.tls_version,
             f.vendor_id,
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
@@ -294,7 +304,9 @@ get_security_endpoints_tbl <- function(db_connection) {
         ON a.vendor_id = b.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
@@ -313,7 +325,9 @@ get_smart_response_capabilities <- function(db_connection) {
     AND m.smart_http_response=200")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
@@ -332,7 +346,7 @@ get_smart_response_capability_count <- function(endpoints_tbl) {
 get_well_known_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT e.url, e.organization_names, v.name as vendor_name,
-      f.capability_fhir_version as fhir_version
+      f.capability_fhir_version as capability_fhir_version
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
@@ -342,7 +356,9 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Find any endpoints which have returned a smart_http_response of 200
@@ -363,7 +379,9 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get counts of authorization types supported by FHIR Version
@@ -440,7 +458,9 @@ get_implementation_guide <- function(db_connection) {
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
-    tidyr::replace_na(list(implementation_guide = "None"))
+    tidyr::replace_na(list(implementation_guide = "None")) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_cap_stat_sizes <- function(db_connection) {
@@ -455,14 +475,16 @@ get_cap_stat_sizes <- function(db_connection) {
           AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 get_validation_results <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT vendors.name as vendor_name,
           f.url as url,
-          capability_statement->>'fhirVersion' as fhir_version,
+          capability_fhir_version as fhir_version,
           rule_name,
           valid,
           expected,
@@ -476,7 +498,9 @@ get_validation_results <- function(db_connection) {
         ORDER BY validations.validation_result_id, rule_name")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    tidyr::replace_na(list(fhir_version = "Unknown"))
+    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 database_fetcher <- reactive({

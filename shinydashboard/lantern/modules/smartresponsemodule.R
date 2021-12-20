@@ -124,7 +124,8 @@ smartresponsemodule <- function(
 
   selected_endpoints <- reactive({
     res <- isolate(app_data$well_known_endpoints_tbl())
-    res <- get_filtered_data(res)
+    res <- get_filtered_data(res) %>%
+    select(url, organization_names, vendor_name, capability_fhir_version)
     res
   })
 
