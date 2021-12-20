@@ -82,7 +82,7 @@ func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source strin
 			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
 		result = CernerList{}.GetEndpoints(cernerList, source, listURL)
-	} else if source == "Lantern" {
+	} else if format == "Lantern" {
 		lanternList, err := convertInterfaceToList(initialList, "Endpoints")
 		if err != nil {
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
