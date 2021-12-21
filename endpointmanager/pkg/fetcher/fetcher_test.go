@@ -80,7 +80,7 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
-	// test epic DSTU2 list
+	// test epic R4 list
 
 	expectedEndpoints = 265
 	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesR4.json", "FHIR", "Epic", "")
