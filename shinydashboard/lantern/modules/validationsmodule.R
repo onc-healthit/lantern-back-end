@@ -76,9 +76,7 @@ validationsmodule <- function(
   selected_validations <- reactive({
     res <- isolate(app_data$validation_tbl())
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
     if (sel_validation_group() != "All Groups") {
       res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
     }
