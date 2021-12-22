@@ -28,7 +28,7 @@ valuesmodule <- function(
 ) {
 
   ns <- session$ns
-  
+
   get_value_versions <- reactive({
     res <- isolate(app_data$capstat_fields())
     req(sel_capstat_values())

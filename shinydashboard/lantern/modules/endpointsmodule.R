@@ -36,9 +36,9 @@ endpointsmodule <- function(
   selected_fhir_endpoints <- reactive({
     res <- get_fhir_endpoints_tbl()
     req(sel_fhir_version(), sel_vendor(), sel_availability())
-    
+
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    
+
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }

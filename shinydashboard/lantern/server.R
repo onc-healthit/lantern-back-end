@@ -256,9 +256,9 @@ function(input, output, session) { #nolint
   checkbox_resources <- reactive({
     res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
-    
+
     res <- res %>% filter(fhir_version %in% input$fhir_version)
-    
+
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == input$vendor)
     }
