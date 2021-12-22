@@ -61,20 +61,10 @@ fieldsmodule <- function(
 
   ns <- session$ns
 
-  dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
-  stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
-  r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
-
-
   get_capstat_values <- function(extension) {
     res <- isolate(app_data$capstat_fields())
-    version_filter <- FALSE
 
     req(sel_fhir_version())
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-      version_filter <- TRUE
-    }
 
     if (extension) {
       res <- res %>%
@@ -95,19 +85,26 @@ fieldsmodule <- function(
     TRUE ~ "DSTU2"
     ))
 
-    res <- res %>% summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
+    fvn <- res %>% summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
 
-    if (version_filter) {
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+
+    res <- res %>%
+    left_join(fvn %>% select(field, fhir_version_names),
+      by = c("field" = "field"))
+
+    if (length(sel_fhir_version()) == 1) {
       res$field_version <- res$field
     } else {
       res$field_version <- paste(res$field, " (", res$fhir_version_names, ")", sep = "")
     }
-
+    res <- res %>% distinct(field_version)
+    print(res)
     res
 }
 
 output$capstat_fields_text <- renderUI({
-    col <- get_capstat_values(FALSE) %>% pull(3)
+    col <- get_capstat_values(FALSE) %>% pull(2)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='field-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following fields: ", divElem)
@@ -115,7 +112,7 @@ output$capstat_fields_text <- renderUI({
   })
 
 output$capstat_extension_text <- renderUI({
-    col <- get_capstat_values(TRUE) %>% pull(3)
+    col <- get_capstat_values(TRUE) %>% pull(2)
     liElem <- paste("<li>", col, "</li>", collapse = " ")
     divElem <- paste("<div class='extension-list'>", liElem, "</div>")
     fullHtml <- paste("Lantern checks for the following extensions: ", divElem)
@@ -127,9 +124,7 @@ output$capstat_extension_text <- renderUI({
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
     # Same as above but with the vendor dropdown
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())

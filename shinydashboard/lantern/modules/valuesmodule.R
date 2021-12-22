@@ -28,11 +28,7 @@ valuesmodule <- function(
 ) {
 
   ns <- session$ns
-
-  dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
-  stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
-  r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
-
+  
   get_value_versions <- reactive({
     res <- isolate(app_data$capstat_fields())
     req(sel_capstat_values())
@@ -48,7 +44,7 @@ valuesmodule <- function(
     res <- isolate(app_data$capstat_fields())
     req(sel_capstat_values(), sel_fhir_version())
     header <- ""
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
+    if (length(sel_fhir_version()) == 1) {
       header <- sel_capstat_values()
     }
     else {
@@ -74,9 +70,7 @@ valuesmodule <- function(
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(filter_fhir_version == sel_fhir_version())
-    }
+    res <- res %>% filter(filter_fhir_version %in% sel_fhir_version())
     # Same as above but with the vendor dropdown
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
