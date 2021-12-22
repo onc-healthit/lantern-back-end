@@ -48,6 +48,7 @@ ui_special_values <- list(
 # we'll update them on timer, but not refresh the UI
 app <<- list(
   fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl)),
+  distinct_fhir_version_list      = reactiveVal(get_distinct_fhir_version_list(endpoint_export_tbl)),
   vendor_list            = get_vendor_list(endpoint_export_tbl),
   http_response_code_tbl =
     read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%

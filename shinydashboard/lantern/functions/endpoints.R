@@ -99,6 +99,13 @@ get_fhir_version_factors <- function(endpoint_tbl) {
     )
 }
 
+get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
+  res <- endpoint_export_tbl %>%
+  distinct(fhir_version) %>%
+  split(.$fhir_version) %>%
+  purrr::map(~ .$fhir_version)
+}
+
 # Get the list of distinct fhir versions for use in filtering
 get_fhir_version_list <- function(endpoint_export_tbl) {
   fhir_version_list <- list()
@@ -554,6 +561,8 @@ get_validation_results <- function(db_connection) {
 
 database_fetcher <- reactive({
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
+
+  app$distinct_fhir_version_list(get_distinct_fhir_version_list(endpoint_export_tbl))
 
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
 
