@@ -30,7 +30,7 @@ endpointsmodule <- function(
   ns <- session$ns
 
   output$endpoint_count <- renderText({
-    paste("Matching Endpoints:", nrow(selected_fhir_endpoints()))
+    paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
   })
 
   selected_fhir_endpoints <- reactive({
@@ -83,7 +83,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% distinct(url, endpoint_names, updated, vendor_name, capability_fhir_version, tls_version, mime_types, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -98,12 +98,11 @@ endpointsmodule <- function(
                             ),
                             sortable = TRUE,
                             align = "left"),
-                  endpoint_names = colDef(name = "API Information Source Name", sortable = FALSE),
-                  updated = colDef(name = "Updated", , sortable = FALSE),
-                  vendor_name = colDef(name = "Certified API Developer Name", sortable = FALSE),
+                  endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE),
+                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-                  tls_version = colDef(name = "TLS Version", sortable = FALSE),
-                  mime_types = colDef(name = "MIME Types", minWidth = 150, sortable = FALSE),
+                  format = colDef(name = "Supported Formats", sortable = FALSE),
+                  cap_stat_exists = colDef(name = "Valid Capability Statement", sortable = FALSE),
                   status = colDef(name = "HTTP Response", sortable = FALSE),
                   availability = colDef(name = "Availability", sortable = FALSE)
               ),
