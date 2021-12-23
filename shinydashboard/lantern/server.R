@@ -177,8 +177,7 @@ function(input, output, session) { #nolint
         fluidRow(
           column(width = 4, validationsDropdown),
           column(width = 4, fhirDropdown),
-          column(width = 4, developerDropdown),
-          column(width = 4, listSourceDropdown)
+          column(width = 4, developerDropdown)
         )
       } else {
         fluidRow(
