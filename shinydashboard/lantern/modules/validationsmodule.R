@@ -48,8 +48,7 @@ validationsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_validation_group,
-  sel_list_source
+  sel_validation_group
 ) {
   ns <- session$ns
 
@@ -109,7 +108,7 @@ validationsmodule <- function(
   # Create table containing all the validations that pass current selected filtering criteria
   selected_validations <- reactive({
     res <- isolate(app_data$validation_tbl())
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), sel_list_source())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
       res <- res %>% filter(fhir_version == sel_fhir_version())
     }
@@ -118,9 +117,6 @@ validationsmodule <- function(
     }
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
-    }
-    if (sel_list_source() != "All Sources") {
-      res <- res %>% filter(list_source %in% list_sources_list[[sel_list_source()]])
     }
     res <- res %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
   })
@@ -221,7 +217,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), sel_list_source(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app_data$last_updated())
     })
 
   # Renders an empty validation result count chart when no data available

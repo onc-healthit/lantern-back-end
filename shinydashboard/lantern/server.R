@@ -109,8 +109,7 @@ function(input, output, session) { #nolint
         "validations_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
-        reactive(input$validation_group),
-        reactive(input$list_source))
+        reactive(input$validation_group))
     }
   })
 
@@ -168,7 +167,6 @@ function(input, output, session) { #nolint
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
-      listSourceDropdown <- selectInput(inputId = "list_source", label = "List Source", choices = c("All Sources", list_sources_names), selected = "All Sources", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 4, fhirDropdown),

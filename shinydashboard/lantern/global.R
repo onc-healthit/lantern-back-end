@@ -34,9 +34,6 @@ validation_group_names <- names(validation_group_list)
 
 valid_fhir_versions <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 
-list_sources_list <- fromJSON(here(root, "list_source_names.json"))
-list_sources_names <- names(list_sources_list)
-
 dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
 stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
 r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
