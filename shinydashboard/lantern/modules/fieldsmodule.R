@@ -99,7 +99,6 @@ fieldsmodule <- function(
       res$field_version <- paste(res$field, " (", res$fhir_version_names, ")", sep = "")
     }
     res <- res %>% distinct(field_version)
-    print(res)
     res
 }
 
