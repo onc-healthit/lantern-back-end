@@ -16,11 +16,16 @@ var testCerner = []byte(`{"endpoints": [
       "type": "prod"
 	}]}`)
 
-var testEpic = []byte(`{"Entries":[
-	{
-		"OrganizationName":"Access Community Health Network",
-		"FHIRPatientFacingURI":"https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
-	}]}`)
+var testEpic = []byte(`{"resourceType": "Bundle",
+	"entry": [
+		{
+			"resource": {
+				"name": "Access Community Health Network",
+				"managingOrganization": {
+					"reference": "fFuLYAY4j/IOtb2ckFX+pQO+68HC8vWsP6vkP62oX90="
+				},
+				"address": "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/"
+	}}]}`)
 
 var testLantern = []byte(`{"Endpoints": [
     {
@@ -68,10 +73,17 @@ func Test_GetEndpointsFromFilepath(t *testing.T) {
 	var endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from resource file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
-	// test epic list
+	// test epic DSTU2 list
 
-	expectedEndpoints = 364
-	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSources.json", "Epic", "Epic", "")
+	expectedEndpoints = 416
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "")
+	endpointsCount = len(endpoints.Entries)
+	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
+
+	// test epic R4 list
+
+	expectedEndpoints = 265
+	endpoints, _ = GetEndpointsFromFilepath("../../resources/EpicEndpointSourcesR4.json", "FHIR", "Epic", "")
 	endpointsCount = len(endpoints.Entries)
 	th.Assert(t, endpointsCount == expectedEndpoints, fmt.Sprintf("Number of endpoints read from epic file incorrect, got: %d, want: %d.", endpointsCount, expectedEndpoints))
 
@@ -114,7 +126,7 @@ func Test_GetListOfEndpointsKnownFormat(t *testing.T) {
 
 	// test epic list
 
-	epicResult, err := GetListOfEndpointsKnownFormat(testEpic, "Epic", "Epic", "")
+	epicResult, err := GetListOfEndpointsKnownFormat(testEpic, "FHIR", "Epic", "")
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epicResult.Entries[0].ListSource == "Epic", fmt.Sprintf("The list source should have been Epic, it instead returned %s", epicResult.Entries[0].ListSource))
 

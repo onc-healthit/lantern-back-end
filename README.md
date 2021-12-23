@@ -62,9 +62,12 @@ This removes all docker images, networks, and local volumes.
     2. Run the following command to begin populating the database usinig the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
       -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
-    The populated db scrpt expects the resources directory to contain the following files:
+    The populateddb script expects the resources directory to contain the following files:
       * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
-      * **EpicEndpointSources.json** - JSON file containing endpoint information from Epic
+      * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
+      * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
+      * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
+      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
       * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
       * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
       * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 

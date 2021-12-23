@@ -117,13 +117,13 @@ func Test_FHIREndpointEqual(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	var endpoint2 = &FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
@@ -182,7 +182,7 @@ func Test_AddOrganizationName(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{},
 		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	var orgName string
 	var expected []string
@@ -212,7 +212,7 @@ func Test_AddNPIID(t *testing.T) {
 		URL:               "example.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Org Name 1", "Example Org Name 2"},
 		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/MyApps/EndpointsJson"}
+		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	var npiID string
 	var expected []string
