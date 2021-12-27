@@ -28,7 +28,7 @@ mv endpoint_pfile*.csv endpoint_pfile.csv
 mv npidata_pfile*.csv npidata_pfile.csv
 rm temp.zip
 
-echo "Removing all entries from npidata_pfile that are not Entity Type 1 (Organization)..."
+echo "Removing all entries from npidata_pfile that are not Entity Type 2 (Organization)..."
 sed -E '/^[^,]*,[^,]*(\"1\"|\"\")/d' npidata_pfile.csv > npidata_pfile2.csv
 rm npidata_pfile.csv
 mv npidata_pfile2.csv npidata_pfile.csv
