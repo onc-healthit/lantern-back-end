@@ -35,7 +35,7 @@ func Test_RunValidation(t *testing.T) {
 		Expected:  "true",
 		Actual:    "true",
 		Comment:   "The Capability Statement exists.",
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 	}
 	expectedLastVal := endpointmanager.Rule{
 		RuleName:  endpointmanager.KindRule,
@@ -107,7 +107,7 @@ func Test_CapStatExists(t *testing.T) {
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 		Comment:   "The Capability Statement exists.",
 	}
 
@@ -122,7 +122,7 @@ func Test_CapStatExists(t *testing.T) {
 		Valid:     false,
 		Expected:  "true",
 		Actual:    "false",
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 		Comment:   "The Capability Statement does not exist.",
 	}
 

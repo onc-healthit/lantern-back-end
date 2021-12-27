@@ -52,7 +52,7 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 		Comment:   "The Capability Statement exists.",
 	}
 
