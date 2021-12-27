@@ -160,7 +160,7 @@ func Test_MimeTypeValid(t *testing.T) {
 		Valid:     true,
 		Expected:  fhir2LessJSONMIMEType,
 		Actual:    fhir2LessJSONMIMEType,
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 		Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
 	}
 
@@ -179,7 +179,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Expected = fhir3PlusJSONMIMEType
 	expectedVal.Actual = fhir3PlusJSONMIMEType
 	expectedVal.Comment = "FHIR Version 3.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
-	expectedVal.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 
 	actualVal = stu3validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
@@ -191,7 +190,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Expected = "N/A"
 	expectedVal.Actual = ""
 	expectedVal.Comment = "No mime type given; cannot validate mime type."
-	expectedVal.Reference = "http://hl7.org/fhir/DSTU2/conformance.html"
 
 	actualVal = validator.MimeTypeValid([]string{}, "1.0.2")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
@@ -224,7 +222,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	expectedVal.Valid = true
 	expectedVal.Actual = fhir3PlusJSONMIMEType
 	expectedVal.Comment = "FHIR Version 4.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
-	expectedVal.Reference = "http://hl7.org/fhir/http.html"
 	expectedVal.ImplGuide = "USCore 3.1"
 	actualVal = validator2.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "4.0.1")
 	eq = reflect.DeepEqual(actualVal, expectedVal)

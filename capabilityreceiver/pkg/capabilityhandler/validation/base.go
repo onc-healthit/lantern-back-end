@@ -74,7 +74,7 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 		Valid:     true,
 		Expected:  "",
 		Actual:    mimeString,
-		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		Reference: "http://hl7.org/fhir/http.html",
 		Comment:   "",
 	}
 
