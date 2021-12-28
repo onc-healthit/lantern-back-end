@@ -1,7 +1,10 @@
 #!/bin/sh
 
 #Iterate through endpoint source list json to query each url and store as properly named file
-cd ../resources/prod_resources
+cd ..
+export $(cat .env)
+cd resources/prod_resources
+
 jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
@@ -14,6 +17,12 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
       then
          cd ../../endpointmanager/cmd/endpointwebscraper
          go run main.go $NAME $URL $FILENAME
+         cd ../../../resources/prod_resources
+      elif [ "$NAME" = "CHPL" ]
+      then
+         URL="${URL}?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
+         cd ../../endpointmanager/cmd/CHPLpopulator
+         go run main.go $URL $FILENAME
          cd ../../../resources/prod_resources
       else
          curl -s -o $FILENAME $URL
