@@ -4,7 +4,7 @@ DROP VIEW IF EXISTS endpoint_export;
 DROP INDEX IF EXISTS capability_fhir_version_idx;
 DROP INDEX IF EXISTS requested_fhir_version_idx;
 
-ALTER TABLE fhir_endpoints_info DROP CONSTRAINT fhir_endpoints_info_unique;
+ALTER TABLE fhir_endpoints_info DROP CONSTRAINT IF EXISTS fhir_endpoints_info_unique;
 ALTER TABLE fhir_endpoints_info ADD UNIQUE (url);
 
 CREATE OR REPLACE FUNCTION delete_requested_version_entries() RETURNS VOID as $$
@@ -88,6 +88,6 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
-CREATE INDEX fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
+CREATE INDEX IF NOT EXISTS fhir_version_idx ON fhir_endpoints_info ((capability_statement->>'fhirVersion'));
 
 COMMIT;

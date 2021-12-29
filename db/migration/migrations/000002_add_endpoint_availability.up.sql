@@ -8,8 +8,10 @@ CREATE TABLE IF NOT EXISTS fhir_endpoints_availability (
     updated_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE fhir_endpoints_info ADD COLUMN availability DECIMAL(64,4);
-ALTER TABLE fhir_endpoints_info_history ADD COLUMN availability DECIMAL(64,4);
+ALTER TABLE fhir_endpoints_info ADD COLUMN IF NOT EXISTS availability DECIMAL(64,4);
+ALTER TABLE fhir_endpoints_info_history ADD COLUMN IF NOT EXISTS availability DECIMAL(64,4);
+
+DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoint_availability ON fhir_endpoints_availability;
 
 CREATE TRIGGER set_timestamp_fhir_endpoint_availability
 BEFORE UPDATE ON fhir_endpoints_availability
@@ -67,6 +69,8 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
         END IF;
     END;
 $fhir_endpoints_availability$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger
 BEFORE INSERT OR UPDATE on fhir_endpoints_info

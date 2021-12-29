@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS product_criteria (
     CONSTRAINT product_crit  PRIMARY KEY (healthit_product_id, certification_id)
 );
 
+DROP TRIGGER IF EXISTS set_timestamp_certification_criteria ON certification_criteria;
+DROP TRIGGER IF EXISTS set_timestamp_product_criteria ON product_criteria;
+
 CREATE TRIGGER set_timestamp_certification_criteria
 BEFORE UPDATE ON certification_criteria
 FOR EACH ROW

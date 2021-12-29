@@ -6,25 +6,26 @@ DROP VIEW IF EXISTS org_mapping;
 
 DROP INDEX IF EXISTS fhir_version_idx;
 
-ALTER TABLE fhir_endpoints ADD COLUMN versions_response JSONB;
+ALTER TABLE fhir_endpoints ADD COLUMN IF NOT EXISTS versions_response JSONB;
 
 ALTER TABLE fhir_endpoints_info 
-ADD COLUMN requested_fhir_version VARCHAR(500);
+ADD COLUMN IF NOT EXISTS requested_fhir_version VARCHAR(500);
 
 ALTER TABLE fhir_endpoints_info_history 
-ADD COLUMN requested_fhir_version VARCHAR(500);
+ADD COLUMN IF NOT EXISTS requested_fhir_version VARCHAR(500);
 
 ALTER TABLE fhir_endpoints_info 
-ADD COLUMN capability_fhir_version VARCHAR(500);
+ADD COLUMN IF NOT EXISTS capability_fhir_version VARCHAR(500);
 
 ALTER TABLE fhir_endpoints_info_history 
-ADD COLUMN capability_fhir_version VARCHAR(500);
+ADD COLUMN IF NOT EXISTS capability_fhir_version VARCHAR(500);
 
-ALTER TABLE fhir_endpoints_info DROP CONSTRAINT fhir_endpoints_info_url_key;
+ALTER TABLE fhir_endpoints_info DROP CONSTRAINT IF EXISTS fhir_endpoints_info_url_key;
+ALTER TABLE fhir_endpoints_info DROP CONSTRAINT IF EXISTS fhir_endpoints_info_unique;
 ALTER TABLE fhir_endpoints_info ADD CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version);
 
-ALTER TABLE fhir_endpoints_metadata ADD COLUMN requested_fhir_version VARCHAR(500) DEFAULT 'None';
-ALTER TABLE fhir_endpoints_availability ADD COLUMN requested_fhir_version VARCHAR(500) DEFAULT 'None';
+ALTER TABLE fhir_endpoints_metadata ADD COLUMN IF NOT EXISTS requested_fhir_version VARCHAR(500) DEFAULT 'None';
+ALTER TABLE fhir_endpoints_availability ADD COLUMN IF NOT EXISTS requested_fhir_version VARCHAR(500) DEFAULT 'None';
 
 CREATE OR REPLACE FUNCTION populate_capability_fhir_version_info() RETURNS VOID as $$
     DECLARE
@@ -90,6 +91,7 @@ CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIG
     END;
 $fhir_endpoints_availability$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
@@ -119,7 +121,7 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
-CREATE INDEX capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
-CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
+CREATE INDEX IF NOT EXISTS capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
+CREATE INDEX IF NOT EXISTS requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
 
 COMMIT;
