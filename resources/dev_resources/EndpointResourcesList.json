@@ -34,5 +34,11 @@
         "EndpointName": "1Up",
         "FileName": "1UpEndpointSources.json",
         "URL": "https://1up.health/fhir-endpoint-directory"
+    },
+    {
+        "FormatType": "CHPL",
+        "EndpointName": "CHPL",
+        "FileName": "CHPLEndpointSources.json",
+        "URL": "https://chpl.healthit.gov/rest/search/beta"
     }
 ]
