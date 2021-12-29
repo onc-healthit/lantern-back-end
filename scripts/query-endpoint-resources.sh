@@ -18,15 +18,18 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
          cd ../../endpointmanager/cmd/endpointwebscraper
          go run main.go $NAME $URL $FILENAME
          cd ../../../resources/prod_resources
-      elif [ "$NAME" = "CHPL" ]
-      then
-         URL="${URL}?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
-         cd ../../endpointmanager/cmd/CHPLpopulator
-         go run main.go $URL $FILENAME
-         cd ../../../resources/prod_resources
       else
          curl -s -o $FILENAME $URL
       fi
       echo "done"
    fi
 done
+
+#Query CHPL endpoint resource list
+echo "Downloading CHPL Endpoint List..."
+URL="https://chpl.healthit.gov/rest/search/beta?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
+FILENAME="CHPLEndpointResourcesList.json"
+cd ../../endpointmanager/cmd/CHPLpopulator
+go run main.go $URL $FILENAME
+cd ../../../resources/prod_resources
+echo "done"

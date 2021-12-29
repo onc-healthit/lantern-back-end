@@ -9,12 +9,11 @@ import (
 	"strings"
 )
 
-type endpointList struct {
-	Endpoints []endpointEntry `json:"Endpoints"`
-}
 type endpointEntry struct {
-	URL              string `json:"URL"`
-	OrganizationName string `json:"OrganizationName"`
+	FormatType   string `json:"FormatType"`
+	URL          string `json:"URL"`
+	EndpointName string `json:"EndpointName"`
+	FileName     string `json:"FileName"`
 }
 
 func main() {
@@ -29,7 +28,7 @@ func main() {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
-	var endpointEntryList endpointList
+	var endpointEntryList []endpointEntry
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", chplURL, nil)
@@ -75,6 +74,7 @@ func main() {
 		if !ok {
 			log.Fatal("Error converting CHPL developer name to type string")
 		}
+		developerName = strings.TrimSpace(developerName)
 
 		// serviceBaseUrlList is an array, so loop through list and add each url with developer name to endpoint list
 		endpointURLList, ok := chplEntry["serviceBaseUrlList"].([]interface{})
@@ -84,17 +84,29 @@ func main() {
 
 		for _, url := range endpointURLList {
 			var entry endpointEntry
-			entry.OrganizationName = developerName
 
 			urlString, ok := url.(string)
 			if !ok {
 				log.Fatal("Error converting CHPL url to type string")
 			}
+			urlString = strings.TrimSpace(urlString)
 
 			// Remove all characters before the 'h' in http in the url
 			index := strings.Index(urlString, "h")
 			entry.URL = urlString[index:]
-			endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
+
+			entry.EndpointName = developerName
+
+			// Get fileName from URL domain name
+			index = strings.Index(urlString, ".")
+			fileName := urlString[index+1:]
+			index = strings.Index(fileName, ".")
+			fileName = fileName[:index]
+
+			entry.FileName = fileName + "EndpointSources.json"
+			entry.FormatType = ""
+
+			endpointEntryList = append(endpointEntryList, entry)
 		}
 	}
 
