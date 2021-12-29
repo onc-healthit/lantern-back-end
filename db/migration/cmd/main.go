@@ -3,6 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+
+	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -23,6 +26,17 @@ func main() {
 	dbname := viper.GetString("dbname")
 	sslmode := viper.GetString("dbsslmode")
 
+	var forceVersion int
+	var err error
+	if len(os.Args) > 1 {
+		forceVersion, err = strconv.Atoi(os.Args[1])
+		if err != nil {
+			log.Fatalf("ERROR: Could not convert force version from string to int")
+		}
+	} else {
+		forceVersion = -1
+	}
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode)
@@ -40,6 +54,14 @@ func main() {
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://./migrations",
 		"postgres", driver)
+
+	if err != nil {
+		log.Fatalf("ERROR: %s", err.Error())
+	}
+
+	if forceVersion > -1 {
+		m.Force(forceVersion)
+	}
 
 	if err := m.Steps(1); err != nil {
 		version, dirty, retError := m.Version()
