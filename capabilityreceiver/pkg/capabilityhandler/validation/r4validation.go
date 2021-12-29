@@ -103,7 +103,6 @@ func (v *r4Validation) CapStatExists(capStat capabilityparser.CapabilityStatemen
 // using the base function, and then adds specific R4 reference information
 func (v *r4Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
-	baseRule.Reference = "http://hl7.org/fhir/http.html"
 	baseRule.ImplGuide = "USCore 3.1"
 	return baseRule
 }

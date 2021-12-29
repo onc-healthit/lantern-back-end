@@ -46,7 +46,7 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 // adds specific STU3 reference information
 func (v *stu3Validation) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	baseRule := v.baseVal.CapStatExists(capStat)
-	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
+	baseRule.Reference = "http://hl7.org/fhir/http.html"
 	return baseRule
 }
 
@@ -54,7 +54,6 @@ func (v *stu3Validation) CapStatExists(capStat capabilityparser.CapabilityStatem
 // using the base function, and then adds specific STU3 reference information
 func (v *stu3Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
 	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
-	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 	return baseRule
 }
 
