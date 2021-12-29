@@ -57,7 +57,7 @@ func Test_ParseAndStoreNPIFile(t *testing.T) {
 	}
 	// Assert expected number of orgs are parsed out of fixture file
 	if parsed_orgs != 12 {
-		t.Errorf("Expected number or parsed orgs to be %d, got %d", 13, parsed_orgs)
+		t.Errorf("Expected number or parsed orgs to be %d, got %d", 12, parsed_orgs)
 	}
 	// Assert NPI orgs were successfully parsed out of fixture file
 	org1, err := store.GetNPIOrganizationByNPIID(ctx, "1497758544")
