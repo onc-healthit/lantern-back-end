@@ -93,20 +93,25 @@ func main() {
 
 			// Remove all characters before the 'h' in http in the url
 			index := strings.Index(urlString, "h")
-			entry.URL = urlString[index:]
+			entryURL := urlString[index:]
 
-			entry.EndpointName = developerName
+			if !contains(endpointEntryList, entryURL) {
 
-			// Get fileName from URL domain name
-			index = strings.Index(urlString, ".")
-			fileName := urlString[index+1:]
-			index = strings.Index(fileName, ".")
-			fileName = fileName[:index]
+				entry.URL = entryURL
 
-			entry.FileName = fileName + "EndpointSources.json"
-			entry.FormatType = ""
+				entry.EndpointName = developerName
 
-			endpointEntryList = append(endpointEntryList, entry)
+				// Get fileName from URL domain name
+				index = strings.Index(urlString, ".")
+				fileName := urlString[index+1:]
+				index = strings.Index(fileName, ".")
+				fileName = fileName[:index]
+
+				entry.FileName = fileName + "EndpointSources.json"
+				entry.FormatType = ""
+
+				endpointEntryList = append(endpointEntryList, entry)
+			}
 		}
 	}
 
@@ -120,4 +125,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func contains(endpointEntryList []endpointEntry, url string) bool {
+	for _, e := range endpointEntryList {
+		if e.URL == url {
+			return true
+		}
+	}
+	return false
 }
