@@ -62,7 +62,7 @@ func main() {
 
 	chplResultsList, ok := chplResults.([]interface{})
 	if !ok {
-		log.Fatal("Error asserting CHPL endpoint list JSON is type []interface{}")
+		log.Fatal("Error converting CHPL endpoint list JSON is type []interface{}")
 	}
 
 	for _, chplEntry := range chplResultsList {
@@ -76,6 +76,7 @@ func main() {
 			log.Fatal("Error converting CHPL developer name to type string")
 		}
 
+		// serviceBaseUrlList is an array, so loop through list and add each url with developer name to endpoint list
 		endpointURLList, ok := chplEntry["serviceBaseUrlList"].([]interface{})
 		if !ok {
 			log.Fatal("Error converting serviceBasedUrlList to type []interface{}")
@@ -87,8 +88,10 @@ func main() {
 
 			urlString, ok := url.(string)
 			if !ok {
-				log.Fatal("Error converting CHPL developer name to type string")
+				log.Fatal("Error converting CHPL url to type string")
 			}
+
+			// Remove all characters before the 'h' in http in the url
 			index := strings.Index(urlString, "h")
 			entry.URL = urlString[index:]
 			endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
