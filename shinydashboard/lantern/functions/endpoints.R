@@ -99,16 +99,72 @@ get_fhir_version_factors <- function(endpoint_tbl) {
     )
 }
 
+get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
+  res <- endpoint_export_tbl %>%
+  distinct(fhir_version) %>%
+  split(.$fhir_version) %>%
+  purrr::map(~ .$fhir_version)
+}
+
 # Get the list of distinct fhir versions for use in filtering
 get_fhir_version_list <- function(endpoint_export_tbl) {
-  fhir_version_list <- list(
-    "All Versions" = ui_special_values$ALL_FHIR_VERSIONS
-  )
-  fh <- endpoint_export_tbl %>%
-    distinct(fhir_version) %>%
+  fhir_version_list <- list()
+
+  res <- endpoint_export_tbl %>%
+  distinct(fhir_version)
+
+  res <- res %>% mutate(fhir_version_name = case_when(
+  fhir_version %in% dstu2 ~ "DSTU2",
+  fhir_version %in% stu3 ~ "STU3",
+  fhir_version %in% r4 ~ "R4",
+  TRUE ~ "Unknown"
+  ))
+
+  dstu2Vals <- res %>%
+    filter(fhir_version_name == "DSTU2") %>%
+    select(fhir_version) %>%
     split(.$fhir_version) %>%
     purrr::map(~ .$fhir_version)
-  fhir_version_list <- c(fhir_version_list, fh)
+
+  stu3Vals <- res %>%
+    filter(fhir_version_name == "STU3") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
+  r4Vals <- res %>%
+    filter(fhir_version_name == "R4") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
+  unknownVals <- res %>%
+    filter(fhir_version_name == "Unknown") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
+  if (length(dstu2Vals) > 0) {
+    dstu2List <- list("DSTU2" = dstu2Vals)
+    fhir_version_list <- c(fhir_version_list, dstu2List)
+  }
+
+  if (length(stu3Vals) > 0) {
+    stu3List <- list("STU3" = stu3Vals)
+    fhir_version_list <- c(fhir_version_list, stu3List)
+  }
+
+  if (length(r4Vals) > 0) {
+    r4List <- list("R4" = r4Vals)
+    fhir_version_list <- c(fhir_version_list, r4List)
+  }
+
+  if (length(unknownVals) > 0) {
+    otherList <- list("Other" = unknownVals)
+    fhir_version_list <- c(fhir_version_list, otherList)
+  }
+
+  fhir_version_list
 }
 
 # Get the list of distinct vendor names for use in filtering
@@ -505,6 +561,8 @@ get_validation_results <- function(db_connection) {
 
 database_fetcher <- reactive({
   app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
+
+  app$distinct_fhir_version_list(get_distinct_fhir_version_list(endpoint_export_tbl))
 
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
 

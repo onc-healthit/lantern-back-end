@@ -53,9 +53,7 @@ capabilitymodule <- function(  #nolint
 
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     # Filter data by selected FHIR version
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
     # Then filter data by selected vendor
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())

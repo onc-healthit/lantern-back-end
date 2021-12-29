@@ -34,9 +34,7 @@ locationmodule <- function(
     req(sel_fhir_version(), sel_vendor())
     # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
     # the capability statement fields by which fhir verison they're associated with
-    if (sel_fhir_version() != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == sel_fhir_version())
-    }
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
     # Same as above but with the developer dropdown
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())

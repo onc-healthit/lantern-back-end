@@ -1,3 +1,5 @@
+library(shinyWidgets)
+
 # Define server function
 function(input, output, session) { #nolint
 
@@ -163,7 +165,7 @@ function(input, output, session) { #nolint
 
   output$show_filters <- renderUI({
     if (show_filter()) {
-      fhirDropdown <- selectInput(inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list()), selected = ui_special_values$ALL_FHIR_VERSIONS, size = 1, selectize = FALSE)
+      fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
@@ -254,9 +256,9 @@ function(input, output, session) { #nolint
   checkbox_resources <- reactive({
     res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
-    if (input$fhir_version != ui_special_values$ALL_FHIR_VERSIONS) {
-      res <- res %>% filter(fhir_version == input$fhir_version)
-    }
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == input$vendor)
     }
