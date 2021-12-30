@@ -75,7 +75,7 @@ validationsmodule <- function(
 
     fhir_version_filter <- FALSE
     req(sel_fhir_version())
-    if (sel_fhir_version() == ui_special_values$ALL_FHIR_VERSIONS) {
+     if (identical(sel_fhir_version(), isolate(app$distinct_fhir_version_list()))) {
       versions <- get_validation_versions()
       res <- res %>%
       left_join(versions %>% select(validation_name, fhir_version_names),
