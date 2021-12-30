@@ -70,18 +70,18 @@ WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metad
 EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 ALTER TABLE fhir_endpoints_info 
-DROP COLUMN http_response, 
-DROP COLUMN availability, 
-DROP COLUMN errors, 
-DROP COLUMN response_time_seconds, 
-DROP COLUMN smart_http_response;
+DROP COLUMN IF EXISTS http_response, 
+DROP COLUMN IF EXISTS availability, 
+DROP COLUMN IF EXISTS errors, 
+DROP COLUMN IF EXISTS response_time_seconds, 
+DROP COLUMN IF EXISTS smart_http_response;
 
 ALTER TABLE fhir_endpoints_info_history 
-DROP COLUMN http_response, 
-DROP COLUMN availability, 
-DROP COLUMN errors, 
-DROP COLUMN response_time_seconds, 
-DROP COLUMN smart_http_response;
+DROP COLUMN IF EXISTS http_response, 
+DROP COLUMN IF EXISTS availability, 
+DROP COLUMN IF EXISTS errors, 
+DROP COLUMN IF EXISTS response_time_seconds, 
+DROP COLUMN IF EXISTS smart_http_response;
 
 
 CREATE or REPLACE VIEW endpoint_export AS

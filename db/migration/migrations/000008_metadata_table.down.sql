@@ -49,10 +49,10 @@ $$ LANGUAGE plpgsql;
 SELECT populate_existing_tables_endpoints_info();
 
 ALTER TABLE fhir_endpoints_info 
-DROP COLUMN metadata_id;
+DROP COLUMN IF EXISTS metadata_id;
 
 ALTER TABLE fhir_endpoints_info_history
-DROP COLUMN metadata_id;
+DROP COLUMN IF EXISTS metadata_id;
 
 DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger
 
