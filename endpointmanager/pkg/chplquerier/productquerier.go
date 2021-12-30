@@ -19,6 +19,7 @@ import (
 )
 
 var chplAPICertProdListPath string = "/search/beta"
+var delimiter string = "☹"
 
 var fields [11]string = [11]string{
 	"id",
@@ -34,7 +35,8 @@ var fields [11]string = [11]string{
 	"practiceType"}
 
 type chplCertifiedProductList struct {
-	Results []chplCertifiedProduct `json:"results"`
+	Results     []chplCertifiedProduct `json:"results"`
+	RecordCount int                    `json:"recordCount"`
 }
 
 type chplCertifiedProduct struct {
@@ -54,29 +56,45 @@ type chplCertifiedProduct struct {
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
 // within the given context 'ctx'.
 func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
-	log.Debug("requesting products from CHPL")
-	prodJSON, err := getProductJSON(ctx, cli, userAgent)
-	if err != nil {
-		return nil
-	}
-	log.Debug("done requesting products from CHPL")
+	pageSize := 100
+	pageNumber := 0
+	persistedProducts := 0
+	for {
+		log.Debug("requesting page of products from CHPL")
+		prodJSON, err := getProductJSON(ctx, cli, userAgent, pageSize, pageNumber)
+		if err != nil {
+			return nil
+		}
+		log.Debug("done requesting page of products from CHPL")
 
-	log.Debug("converting chpl json into product objects")
-	prodList, err := convertProductJSONToObj(ctx, prodJSON)
-	if err != nil {
-		return errors.Wrap(err, "converting health IT product JSON into a 'chplCertifiedProductList' object failed")
+		log.Debug("converting chpl json into product objects")
+		prodList, err := convertProductJSONToObj(ctx, prodJSON)
+		if err != nil {
+			return errors.Wrap(err, "converting health IT product JSON into a 'chplCertifiedProductList' object failed")
+		}
+		log.Debug("done converting chpl json into product objects")
+		if len(prodList.Results) <= 0 {
+			log.Debug("done persisting all chpl products")
+			break
+		}
+		log.Debug("persisting chpl products")
+		err = persistProducts(ctx, store, prodList)
+		if err != nil {
+			return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+		}
+		pageNumber = pageNumber + 1
+		persistedProducts = persistedProducts + pageSize
+		log.Debug("done persisting chpl products")
+		if persistedProducts%100 == 0 {
+			log.Infof("have persisted chpl products %d/%d", persistedProducts, prodList.RecordCount)
+		}
 	}
-	log.Debug("done converting chpl json into product objects")
-
-	log.Debug("persisting chpl products")
-	err = persistProducts(ctx, store, prodList)
-	log.Debug("done persisting chpl products")
-	return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+	return nil
 }
 
 // makes the request to CHPL and returns the byte string
-func getProductJSON(ctx context.Context, client *http.Client, userAgent string) ([]byte, error) {
-	chplURL, err := makeCHPLProductURL()
+func getProductJSON(ctx context.Context, client *http.Client, userAgent string, pageSize int, pageNumber int) ([]byte, error) {
+	chplURL, err := makeCHPLProductURL(pageSize, pageNumber)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating CHPL product URL")
 	}
@@ -89,12 +107,12 @@ func getProductJSON(ctx context.Context, client *http.Client, userAgent string) 
 	return jsonBody, nil
 }
 
-func makeCHPLProductURL() (*url.URL, error) {
+func makeCHPLProductURL(pageSize int, pageNumber int) (*url.URL, error) {
 	queryArgs := make(map[string]string)
 	fieldStr := strings.Join(fields[:], ",")
 	queryArgs["fields"] = fieldStr
 
-	chplURL, err := makeCHPLURL(chplAPICertProdListPath, queryArgs)
+	chplURL, err := makeCHPLURL(chplAPICertProdListPath, queryArgs, pageSize, pageNumber)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
 	}
@@ -171,12 +189,17 @@ func getAPIURL(apiDocArr []string) (string, error) {
 		return "", nil
 	}
 	apiURL := apiDocArr[0]
-	// check that it's a valid URL
-	_, err := url.ParseRequestURI(apiURL)
-	if err != nil {
-		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
+	apiCritAndURL := strings.Split(apiURL, delimiter)
+	if len(apiCritAndURL) == 2 {
+		apiURL = apiCritAndURL[1]
+		// check that it's a valid URL
+		_, err := url.ParseRequestURI(apiURL)
+		if err != nil {
+			return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
+		}
+		return apiURL, nil
 	}
-	return apiURL, nil
+	return "", errors.New("unexpected format for api doc string")
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
@@ -190,10 +213,6 @@ func persistProducts(ctx context.Context, store *postgresql.Store, prodList *chp
 			return errors.Wrapf(ctx.Err(), "persisted %d out of %d products before context ended", i, len(prodList.Results))
 		default:
 			// ok
-		}
-
-		if i%100 == 0 {
-			log.Infof("persisting chpl product %d/%d", i, len(prodList.Results))
 		}
 
 		err := persistProduct(ctx, store, &prod)
