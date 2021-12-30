@@ -27,4 +27,16 @@ rm *FileHeader.csv
 mv endpoint_pfile*.csv endpoint_pfile.csv
 mv npidata_pfile*.csv npidata_pfile.csv
 rm temp.zip
+
+echo "Removing all entries from npidata_pfile that are not Entity Type 2 (Organization)..."
+sed -E '/^[^,]*,[^,]*(\"1\"|\"\")/d' npidata_pfile.csv > npidata_pfile2.csv
+rm npidata_pfile.csv
+mv npidata_pfile2.csv npidata_pfile.csv
+
+echo "Cutting down rows in npidata_pfile and endpoint_pfile for dev resources..."
+rm -f ../dev_resources/npidata_pfile.csv 
+rm -f ../dev_resources/endpoint_pfile.csv
+sed '1000,$d' npidata_pfile.csv > ../dev_resources/npidata_pfile.csv 
+sed '1000,$d' endpoint_pfile.csv > ../dev_resources/endpoint_pfile.csv
+
 echo "done"

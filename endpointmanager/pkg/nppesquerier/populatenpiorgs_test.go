@@ -23,11 +23,7 @@ func Test_ParseNPIdataLine(t *testing.T) {
 	_, err = reader.Read()
 	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
 
-	// Get to third line in csv file
-	_, err = reader.Read()
-	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
-	_, err = reader.Read()
-	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
+	// Get first line in csv file
 	line, err := reader.Read()
 	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
 
@@ -99,13 +95,9 @@ func Test_BuildNPIOrgFromNPICsvLine(t *testing.T) {
 	_, err = reader.Read()
 	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
 
-	// Get to third line in csv file
-	_, err = reader.Read()
-	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
-	_, err = reader.Read()
-	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
+	// Get to first line in csv file
 	line, err := reader.Read()
-	th.Assert(t, err == nil, "Expected Read not to throw an error")
+	th.Assert(t, err == nil, fmt.Sprintf("Expected Read not to throw an error, got error: %v", err))
 
 	// "1497758544","2","","<UNAVAIL>","CUMBERLAND COUNTY HOSPITAL SYSTEM, INC","","","","","","","CAPE FEAR VALLEY HOME HEALTH AND HOSPICE","3","","","","","","","","3418 VILLAGE DR","","FAYETTEVILLE","NC","283044552","US","9106096740","","3418 VILLAGE DR","","FAYETTEVILLE","NC","283044552","US","9106096740","","05/23/2005","09/26/2011","","","","","NAGOWSKI","MICHAEL","","CEO","9106096700","251G00000X","HC0283","NC","Y","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","3401562","05","NC","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","N","","","MR.","","","","","","","","","","","","","","","","",""
 	data := parseNPIdataLine(line)

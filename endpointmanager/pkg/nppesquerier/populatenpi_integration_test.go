@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"testing"
 	"strconv"
+	"testing"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -56,8 +56,8 @@ func Test_ParseAndStoreNPIFile(t *testing.T) {
 		t.Errorf("Error Parsing NPI File: %s", err.Error())
 	}
 	// Assert expected number of orgs are parsed out of fixture file
-	if parsed_orgs != 3 {
-		t.Errorf("Expected number or parsed orgs to be %d, got %d", 3, parsed_orgs)
+	if parsed_orgs != 12 {
+		t.Errorf("Expected number or parsed orgs to be %d, got %d", 12, parsed_orgs)
 	}
 	// Assert NPI orgs were successfully parsed out of fixture file
 	org1, err := store.GetNPIOrganizationByNPIID(ctx, "1497758544")
@@ -107,7 +107,7 @@ func Test_ParseAndStoreNPIContactFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error Parsing NPI File: %s", err.Error())
 	}
-	th.Assert(t, parsed_orgs == 212, "Incorrect number of FHIR_URL entries parsed out of npi file " + strconv.Itoa(parsed_orgs))
+	th.Assert(t, parsed_orgs == 212, "Incorrect number of FHIR_URL entries parsed out of npi file "+strconv.Itoa(parsed_orgs))
 
 	// Assert NPI orgs were successfully parsed out of fixture file
 	bad_url_contact, err := store.GetNPIContactByNPIID(ctx, "1346747029")
@@ -141,7 +141,6 @@ func Test_ParseAndStoreNPIContactFileContext(t *testing.T) {
 	th.Assert(t, errors.Cause(err) == context.DeadlineExceeded, fmt.Sprintf("Expected canceled context error %+v. Got %+v\n", context.DeadlineExceeded, errors.Cause(err)))
 	th.Assert(t, added >= 0, "expected items added to be zero or more after context deadline met")
 }
-
 
 func setup() error {
 	var err error

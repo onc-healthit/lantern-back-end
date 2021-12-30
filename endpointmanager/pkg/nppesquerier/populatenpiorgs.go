@@ -450,20 +450,17 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 		}
 
 		data := parseNPIdataLine(line)
-		// We will only parse out organizations (entiy_type_code == 2), not individual providers
-		if data.Entity_Type_Code == "2" {
-			npiOrg, err := buildNPIOrgFromNPICsvLine(data)
-			if err != nil {
-				log.Debug(err)
-				continue
-			}
-			err = store.AddNPIOrganization(ctx, npiOrg)
-			if err != nil {
-				log.Debug(err)
-				continue
-			}
-			added += 1
+		npiOrg, err := buildNPIOrgFromNPICsvLine(data)
+		if err != nil {
+			log.Debug(err)
+			continue
 		}
+		err = store.AddNPIOrganization(ctx, npiOrg)
+		if err != nil {
+			log.Debug(err)
+			continue
+		}
+		added += 1
 		i++
 	}
 	return added, nil
