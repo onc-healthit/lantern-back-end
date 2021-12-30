@@ -64,7 +64,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("converting chpl json into product objects")
 	prodList, err := convertProductJSONToObj(ctx, prodJSON)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("converting health IT product JSON into a 'chplCertifiedProductList' object failed %v", prodJSON))
+		return errors.Wrap(err, "converting health IT product JSON into a 'chplCertifiedProductList' object failed")
 	}
 	log.Debug("done converting chpl json into product objects")
 
