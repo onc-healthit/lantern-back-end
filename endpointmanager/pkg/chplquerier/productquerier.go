@@ -19,8 +19,6 @@ import (
 )
 
 var chplAPICertProdListPath string = "/search/beta"
-var delimiter1 string = "☺"
-var delimiter2 string = "☹"
 
 var fields [11]string = [11]string{
 	"id",
@@ -40,17 +38,17 @@ type chplCertifiedProductList struct {
 }
 
 type chplCertifiedProduct struct {
-	ID                  int    `json:"id"`
-	ChplProductNumber   string `json:"chplProductNumber"`
-	Edition             string `json:"edition"`
-	PracticeType        string `json:"practiceType"`
-	Developer           string `json:"developer"`
-	Product             string `json:"product"`
-	Version             string `json:"version"`
-	CertificationDate   int64  `json:"certificationDate"`
-	CertificationStatus string `json:"certificationStatus"`
-	CriteriaMet         string `json:"criteriaMet"`
-	APIDocumentation    string `json:"apiDocumentation"`
+	ID                  int      `json:"id"`
+	ChplProductNumber   string   `json:"chplProductNumber"`
+	Edition             string   `json:"edition"`
+	PracticeType        string   `json:"practiceType"`
+	Developer           string   `json:"developer"`
+	Product             string   `json:"product"`
+	Version             string   `json:"version"`
+	CertificationDate   int64    `json:"certificationDate"`
+	CertificationStatus string   `json:"certificationStatus"`
+	CriteriaMet         []int    `json:"criteriaMet"`
+	APIDocumentation    []string `json:"apiDocumentation"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -66,7 +64,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	log.Debug("converting chpl json into product objects")
 	prodList, err := convertProductJSONToObj(ctx, prodJSON)
 	if err != nil {
-		return errors.Wrap(err, "converting health IT product JSON into a 'chplCertifiedProductList' object failed")
+		return errors.Wrap(err, fmt.Sprintf("converting health IT product JSON into a 'chplCertifiedProductList' object failed %v", prodJSON))
 	}
 	log.Debug("done converting chpl json into product objects")
 
@@ -131,18 +129,6 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
 
-	// Convert the string of criteria IDs into an array of int criteria IDs
-	criteriaMet := strings.Split(prod.CriteriaMet, delimiter1)
-	var criteriaIDs []int
-	for _, criteria := range criteriaMet {
-		retID, err := strconv.Atoi(criteria)
-		if err != nil {
-			log.Warnf("error in CHPL data: non ID value in Certification Criteria")
-			continue
-		}
-		criteriaIDs = append(criteriaIDs, retID)
-	}
-
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product,
 		Version:               prod.Version,
@@ -151,7 +137,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
 		CertificationEdition:  prod.Edition,
 		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: criteriaIDs,
+		CertificationCriteria: prod.CriteriaMet,
 	}
 
 	apiURL, err := getAPIURL(prod.APIDocumentation)
@@ -180,24 +166,17 @@ func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *
 // parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
 // all listed URLs are the same.
 // assumes that criteria/url chunks are delimited by delimiter1 and that criteria and url are separated by delimiter2.
-func getAPIURL(apiDocStr string) (string, error) {
-	if len(apiDocStr) == 0 {
+func getAPIURL(apiDocArr []string) (string, error) {
+	if len(apiDocArr) == 0 {
 		return "", nil
 	}
-
-	apiDocStrs := strings.Split(apiDocStr, delimiter1)
-	apiCritAndURL := strings.Split(apiDocStrs[0], delimiter2)
-	if len(apiCritAndURL) == 2 {
-		apiURL := apiCritAndURL[1]
-		// check that it's a valid URL
-		_, err := url.ParseRequestURI(apiURL)
-		if err != nil {
-			return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
-		}
-		return apiURL, nil
+	apiURL := apiDocArr[0]
+	// check that it's a valid URL
+	_, err := url.ParseRequestURI(apiURL)
+	if err != nil {
+		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-
-	return "", errors.New("unexpected format for api doc string")
+	return apiURL, nil
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
