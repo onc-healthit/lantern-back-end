@@ -50,7 +50,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
+	expected := "https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	actualURL, err := makeCHPLProductURL()
 	th.Assert(t, err == nil, err)
@@ -327,7 +327,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()

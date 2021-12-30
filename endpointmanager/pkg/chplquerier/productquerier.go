@@ -18,7 +18,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-var chplAPICertProdListPath string = "/collections/certified_products"
+var chplAPICertProdListPath string = "/search/beta"
 var delimiter1 string = "☺"
 var delimiter2 string = "☹"
 
