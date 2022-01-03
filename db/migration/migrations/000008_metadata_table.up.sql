@@ -20,14 +20,14 @@ CREATE TABLE IF NOT EXISTS fhir_endpoints_metadata (
 DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
-ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
 
 ALTER TABLE fhir_endpoints_info_history 
-ADD COLUMN metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS metadata_id INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL;
 
-CREATE INDEX info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
-CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
-CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
+CREATE INDEX IF NOT EXISTS info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
+CREATE INDEX IF NOT EXISTS info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
+CREATE INDEX IF NOT EXISTS metadata_id_idx ON fhir_endpoints_metadata (id);
 
 
 CREATE OR REPLACE FUNCTION populate_endpoints_metadata_info_history() RETURNS VOID as $$
@@ -61,6 +61,7 @@ $$ LANGUAGE plpgsql;
 
 SELECT populate_endpoints_metadata_info();
 
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 -- captures history for the fhir_endpoint_info table
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
@@ -69,18 +70,18 @@ WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metad
 EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 ALTER TABLE fhir_endpoints_info 
-DROP COLUMN http_response, 
-DROP COLUMN availability, 
-DROP COLUMN errors, 
-DROP COLUMN response_time_seconds, 
-DROP COLUMN smart_http_response;
+DROP COLUMN IF EXISTS http_response, 
+DROP COLUMN IF EXISTS availability, 
+DROP COLUMN IF EXISTS errors, 
+DROP COLUMN IF EXISTS response_time_seconds, 
+DROP COLUMN IF EXISTS smart_http_response;
 
 ALTER TABLE fhir_endpoints_info_history 
-DROP COLUMN http_response, 
-DROP COLUMN availability, 
-DROP COLUMN errors, 
-DROP COLUMN response_time_seconds, 
-DROP COLUMN smart_http_response;
+DROP COLUMN IF EXISTS http_response, 
+DROP COLUMN IF EXISTS availability, 
+DROP COLUMN IF EXISTS errors, 
+DROP COLUMN IF EXISTS response_time_seconds, 
+DROP COLUMN IF EXISTS smart_http_response;
 
 
 CREATE or REPLACE VIEW endpoint_export AS

@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS validation_results (
 );
 
 ALTER TABLE fhir_endpoints_info 
-ADD COLUMN validation_result_id INT REFERENCES validation_results(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS validation_result_id INT REFERENCES validation_results(id) ON DELETE SET NULL;
 ALTER TABLE fhir_endpoints_info_history
-ADD COLUMN validation_result_id INT REFERENCES validation_results(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS validation_result_id INT REFERENCES validation_results(id) ON DELETE SET NULL;
 
 ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS validation CASCADE;
 ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS validation CASCADE;

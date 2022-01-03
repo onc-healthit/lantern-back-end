@@ -136,7 +136,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make test_all` | runs all tests and ends if any of the tests fail| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
-|`make migrate_database` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. |
+|`make migrate_database force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional force_version parameter can be included to force the database to a specific migration version before running the next migration. If this parameter is omitted, it runs the next migration that has not yet been run. |
 |`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |

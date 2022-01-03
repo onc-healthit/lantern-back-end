@@ -8,18 +8,18 @@ DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoints_metadata ON fhir_endpoints_m
 DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 
 ALTER TABLE fhir_endpoints_info 
-ADD COLUMN http_response INTEGER, 
-ADD COLUMN availability DECIMAL(5,4), 
-ADD COLUMN errors VARCHAR(500), 
-ADD COLUMN response_time_seconds DECIMAL(7,4), 
-ADD COLUMN smart_http_response INTEGER;
+ADD COLUMN IF NOT EXISTS http_response INTEGER, 
+ADD COLUMN IF NOT EXISTS availability DECIMAL(5,4), 
+ADD COLUMN IF NOT EXISTS errors VARCHAR(500), 
+ADD COLUMN IF NOT EXISTS response_time_seconds DECIMAL(7,4), 
+ADD COLUMN IF NOT EXISTS smart_http_response INTEGER;
 
 ALTER TABLE fhir_endpoints_info_history 
-ADD COLUMN http_response INTEGER, 
-ADD COLUMN availability DECIMAL(5,4), 
-ADD COLUMN errors VARCHAR(500), 
-ADD COLUMN response_time_seconds DECIMAL(7,4), 
-ADD COLUMN smart_http_response INTEGER;
+ADD COLUMN IF NOT EXISTS http_response INTEGER, 
+ADD COLUMN IF NOT EXISTS availability DECIMAL(5,4), 
+ADD COLUMN IF NOT EXISTS errors VARCHAR(500), 
+ADD COLUMN IF NOT EXISTS response_time_seconds DECIMAL(7,4), 
+ADD COLUMN IF NOT EXISTS smart_http_response INTEGER;
 
 
 CREATE OR REPLACE FUNCTION populate_existing_tables_endpoints_info_history() RETURNS VOID as $$
@@ -49,13 +49,15 @@ $$ LANGUAGE plpgsql;
 SELECT populate_existing_tables_endpoints_info();
 
 ALTER TABLE fhir_endpoints_info 
-DROP COLUMN metadata_id;
+DROP COLUMN IF EXISTS metadata_id;
 
 ALTER TABLE fhir_endpoints_info_history
-DROP COLUMN metadata_id;
+DROP COLUMN IF EXISTS metadata_id;
+
+DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger
 
 -- captures history for the fhir_endpoint_info table
-CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info;
 AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
 FOR EACH ROW
 EXECUTE PROCEDURE add_fhir_endpoint_info_history();
@@ -82,6 +84,8 @@ RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
+
+DROP TRIGGER IF EXISTS update_fhir_endpoint_availability_trigger ON fhir_endpoints_info;
 
 -- increments total number of times http status returned for endpoint 
 CREATE TRIGGER update_fhir_endpoint_availability_trigger

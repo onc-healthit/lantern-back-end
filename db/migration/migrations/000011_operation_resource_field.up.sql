@@ -2,11 +2,11 @@ BEGIN;
 
 DROP VIEW IF EXISTS endpoint_export;
 
-ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS operation_resource CASCADE;
-ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS operation_resource CASCADE;
+ALTER TABLE fhir_endpoints_info ADD COLUMN IF NOT EXISTS operation_resource JSONB;
+ALTER TABLE fhir_endpoints_info_history ADD COLUMN IF NOT EXISTS operation_resource JSONB;
 
-ALTER TABLE fhir_endpoints_info ADD COLUMN supported_resources JSONB;
-ALTER TABLE fhir_endpoints_info_history ADD COLUMN supported_resources JSONB;
+ALTER TABLE fhir_endpoints_info DROP COLUMN IF EXISTS supported_resources CASCADE;
+ALTER TABLE fhir_endpoints_info_history DROP COLUMN IF EXISTS supported_resources CASCADE;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
@@ -21,8 +21,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
-    links.confidence AS MATCH_SCORE, endpts_info.supported_resources,
-    endpts_metadata.availability
+    links.confidence AS MATCH_SCORE, endpts_metadata.availability
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
