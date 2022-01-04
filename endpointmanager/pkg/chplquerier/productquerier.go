@@ -83,7 +83,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 			return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
 		}
 		pageNumber = pageNumber + 1
-		persistedProducts = persistedProducts + pageSize
+		persistedProducts = persistedProducts + len(prodList.Results)
 		log.Debug("done persisting chpl products")
 		if persistedProducts%100 == 0 {
 			log.Infof("have persisted chpl products %d/%d", persistedProducts, prodList.RecordCount)

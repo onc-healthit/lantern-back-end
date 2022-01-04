@@ -149,7 +149,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that malformed product throws error
-	prod.APIDocumentation = "170.315 (g)(7),http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod.APIDocumentation = []string{",http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error parsing product")
 
@@ -200,7 +200,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
 
 	// test critera linking update
-	prod.CriteriaMet = "31☺32☺33☺34☺35☺36☺37☺38"
+	prod.CriteriaMet = []int{31, 32, 33, 34, 35, 36, 37, 38}
 	prod.Edition = "2020"
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -257,7 +257,7 @@ func Test_persistProducts(t *testing.T) {
 
 	hook := logtest.NewGlobal()
 
-	prod2.APIDocumentation = "170.315 (g)(7),http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod2.APIDocumentation = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 	expectedErr := "retreiving the API URL from the health IT product API documentation list failed: unexpected format for api doc string"
 	prodList = chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
@@ -315,13 +315,13 @@ func Test_parseHITProd(t *testing.T) {
 
 	// test bad url in api doc string
 
-	prod.APIDocumentation = "170.315 (g)(7)☹.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod.APIDocumentation = []string{"☹.com/Carefluence-OpenAPI-Documentation.html, ☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html, ☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	_, err = parseHITProd(ctx, &prod, store)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// expect url.Error because bad URL provided and we check that using the url package.
 	default:
-		t.Fatal("Expected JSON syntax error")
+		t.Fatal(err)
 	}
 }
 
