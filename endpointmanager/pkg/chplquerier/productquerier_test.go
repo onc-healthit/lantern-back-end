@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
-	"reflect"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
@@ -174,7 +174,7 @@ func Test_getAPIURL(t *testing.T) {
 
 	// basic test
 
-	apiDocArray:= []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
+	apiDocArray := []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	expectedURL := "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 
 	actualURL, err := getAPIURL(apiDocArray)
