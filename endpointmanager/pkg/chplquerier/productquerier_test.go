@@ -183,7 +183,7 @@ func Test_getAPIURL(t *testing.T) {
 
 	// provide bad string - unexpected delimeter
 
-	apiDocArray = []string{"170.315 (g)(7)", "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
+	apiDocArray = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 
 	_, err = getAPIURL(apiDocArray)
 	th.Assert(t, err != nil, "Expected error due to malformed api doc string")
