@@ -315,7 +315,7 @@ func Test_parseHITProd(t *testing.T) {
 
 	// test bad url in api doc string
 
-	prod.APIDocumentation = []string{"☹.com/Carefluence-OpenAPI-Documentation.html, ☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html, ☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
+	prod.APIDocumentation = []string{"☹.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	_, err = parseHITProd(ctx, &prod, store)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
@@ -375,7 +375,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100\": context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
