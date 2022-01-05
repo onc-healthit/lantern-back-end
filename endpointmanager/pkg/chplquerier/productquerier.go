@@ -73,7 +73,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 			return errors.Wrap(err, "converting health IT product JSON into a 'chplCertifiedProductList' object failed")
 		}
 		log.Debug("done converting chpl json into product objects")
-		if len(prodList.Results) <= 0 {
+		if persistedProducts >= prodList.RecordCount {
 			log.Debug("done persisting all chpl products")
 			break
 		}

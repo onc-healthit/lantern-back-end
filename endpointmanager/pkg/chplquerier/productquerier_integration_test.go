@@ -355,8 +355,8 @@ func Test_GetCHPLProducts(t *testing.T) {
 	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
-	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
-	expectedProdsStored := 168
+	// mock JSON includes 100 product entries, but w duplicates, the number stored is 80.
+	expectedProdsStored := 80
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
