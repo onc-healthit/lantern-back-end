@@ -134,6 +134,27 @@ function(input, output, session) { #nolint
      "validations_tab" = "Validations Page"
   )
 
+  output$resource_tab_popup <- renderUI({
+    if (show_resource_tab_popup()) {
+      actionButton("resource_popup", "How to use this page")
+    }
+  })
+
+  observeEvent(input$resource_popup, {
+    showModal(modalDialog(
+      title = "How to use this page...",
+      p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Clicking a resource in the left box selects it and moves it to the right box. Remove a resource from the list by clicking the resource in the right box.", style = "font-size:19px; margin-left:5px;"),
+      p("You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
+        Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
+        Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.", style = "font-size:19px; margin-left:5px;"),
+      p("You must either", style = "font-size:19px; margin-left:5px;"),
+      p("1. select a resource from the resources drop down to add it to the list", style = "font-size:19px; margin-left:5px;"),
+      p("or", style = "font-size:19px; margin-left:5px;"),
+      p("2. click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
+      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
+  ))})
+
+
   show_filter <- reactive(
     input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
   )
@@ -151,6 +172,8 @@ function(input, output, session) { #nolint
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
+
+  show_resource_tab_popup <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
@@ -284,24 +307,42 @@ function(input, output, session) { #nolint
     return(res)
   })
 
-  output$show_resource_checkboxes <- renderUI({
-    if (show_resource_checkbox()) {
+  #                                          #
+  # Display Resource and Operations Checkbox #
+  #                                          #
+
+  output$show_resource_operation_checkboxes <- renderUI({
+    if (show_resource_checkbox() && show_operation_checkbox()) {
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Remove a resource from the list by clicking the 'x' in each box.
-            You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
-            Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
-            Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.
-            You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
-          p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
-          selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources_no_filter(), selected = checkbox_resources_no_filter(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
-          actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
+          column(width = 4,
+            multiInput(
+              inputId = "resources",
+              width = "500px",
+              label = "Click in the box below to add or remove resources:", 
+              choices = checkbox_resources_no_filter(),
+            selected = checkbox_resources_no_filter()
+            ),
+            actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
+            actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
+          ),
+          column(width = 8,
+            selectizeInput("operations", "Click in the box below to add or remove operations:",
+            choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+            selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+            actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
+            p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
+            Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance Resource.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
+          )
         )
       )
     }
   })
+
+  #                     #
+  # Resource Checkbox #
+  #                     #
 
   current_selection <- reactiveVal(NULL)
 
@@ -314,7 +355,7 @@ function(input, output, session) { #nolint
       return(NULL)
     }
     else{
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources())
     }
   })
 
@@ -324,7 +365,7 @@ function(input, output, session) { #nolint
     }
     else{
       current_selection(NULL)
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources())
     }
   })
 
@@ -332,7 +373,7 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
@@ -340,29 +381,13 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
   #                     #
   # Operations Checkbox #
   #                     #
-
-  # Operations checkbox display
-  output$show_operation_checkboxes <- renderUI({
-    if (show_operation_checkbox()) {
-      fluidPage(
-        fluidRow(
-          selectizeInput("operations", "Click in the box below to add or remove operations:",
-          choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
-          selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
-          p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
-          Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance Resource.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
-        )
-      )
-    }
-  })
 
   current_op_selection <- reactiveVal(NULL)
 

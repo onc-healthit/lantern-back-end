@@ -20,7 +20,7 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
-      menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
+      menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
@@ -42,10 +42,10 @@ ui <- dashboardPage(
     development_banner(devbanner),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
+    uiOutput("resource_tab_popup"),
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
-    uiOutput("show_resource_checkboxes"),
-    uiOutput("show_operation_checkboxes"),
+    uiOutput("show_resource_operation_checkboxes"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")
