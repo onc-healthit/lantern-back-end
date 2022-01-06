@@ -321,7 +321,7 @@ func Test_parseHITProd(t *testing.T) {
 	case *url.Error:
 		// expect url.Error because bad URL provided and we check that using the url package.
 	default:
-		t.Fatal(err)
+		t.Fatal("Expected JSON syntax error")
 	}
 }
 
