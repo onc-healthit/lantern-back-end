@@ -1,7 +1,7 @@
 # Capability Module
 library(reactable)
 
-capabilitymodule_UI <- function(id) {
+resourcemodule_UI <- function(id) {
 
   ns <- NS(id)
 
@@ -17,7 +17,7 @@ capabilitymodule_UI <- function(id) {
   )
 }
 
-capabilitymodule <- function(  #nolint
+resourcemodule <- function(  #nolint
   input,
   output,
   session,

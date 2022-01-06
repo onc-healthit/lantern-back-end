@@ -25,7 +25,7 @@ function_files:
   - "functions/ui_functions.R"
   
 module_files:
-  - "modules/capabilitymodule.R"
+  - "modules/resourcemodule.R"
   - "modules/implementationmodule.R"
   - "modules/dashboardmodule.R"
   - "modules/downloadsmodule.R"

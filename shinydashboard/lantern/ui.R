@@ -62,8 +62,8 @@ ui <- dashboardPage(
       tabItem("capabilitystatementsize_tab",
               capabilitystatementsize_UI("capabilitystatementsize_page")
       ),
-      tabItem("capability_tab",
-              capabilitymodule_UI("capability_page")
+      tabItem("resource_tab",
+              resourcemodule_UI("resource_page")
       ),
       tabItem("implementation_tab",
               implementationmodule_UI("implementation_page")
