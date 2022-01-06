@@ -1,0 +1,26 @@
+[
+	{
+		"FormatType": "",
+		"URL": "https://api.bluebuttonpro.com/",
+		"EndpointName": "Darena Solutions LLC",
+		"FileName": "bluebuttonproEndpointSources.json"
+	},
+	{
+		"FormatType": "",
+		"URL": "https://www.dynamichealthit.com/dynamic-fhir-api",
+		"EndpointName": "Dynamic Health IT, Inc",
+		"FileName": "dynamichealthitEndpointSources.json"
+	},
+	{
+		"FormatType": "",
+		"URL": "https://www.mphrx.com/fhir-service-base-url-directory",
+		"EndpointName": "My Personal Health Records Express Inc. d/b/a MphRx",
+		"FileName": "mphrxEndpointSources.json"
+	},
+	{
+		"FormatType": "",
+		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
+		"EndpointName": "SolidPractice Technologies, LLC",
+		"FileName": "solidpracticeEndpointSources.json"
+	}
+]

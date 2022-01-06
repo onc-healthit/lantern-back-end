@@ -53,7 +53,7 @@ This removes all docker images, networks, and local volumes.
 
 
 2. **If you have a clean database or want to update the data in your database** 
-    1. Run the following command to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and NPPES for their endpoint and npi data files.  
+    1. Run the following command to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`. It will also query NPPES for their endpoint and npi data files, and CHPL for it's list of endpoint list sources.
     -Note: The NPPES npidata_pfile and endpoint_pfile are too large to store in our github repo, so you must run this command before running the project for the first time. The query_NPPES-resources script that is a part of this command will query NPPES for their endpoint and npi data files, and it will then cut out all the entries in the npi data file that are not organization entries. It then will also create a copy of each file and reduce them to 1000 lines to store for development resources.
      ```bash
       make update_source_data
@@ -137,7 +137,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make migrate_database force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional force_version parameter can be included to force the database to a specific migration version before running the next migration. If this parameter is omitted, it runs the next migration that has not yet been run. |
-|`make update_source_data` |Automatically queries the Epic and Cerner endpoint source websites and the NPPES npi and endpoint data and stores these resource files in the resources/prod_resources directory |
+|`make update_source_data` | Automatically queries the endpoint lists listed in the EndpointResourcesList.json file found in the `resources/prod_resources` directory, including Epic, Cerner, CareEvolution, and 1UpHealth, queries the NPPES npi and endpoint data and stores these resource files in the `resources/prod_resources` directory, and queries CHPL for its list of endpoint lists and stores the data in a file in the `resources/prod_resources` directory. |
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
 |  `make lint_R` | Runs the R lintr |

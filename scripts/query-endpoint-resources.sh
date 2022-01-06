@@ -1,7 +1,10 @@
 #!/bin/sh
 
 #Iterate through endpoint source list json to query each url and store as properly named file
-cd ../resources/prod_resources
+cd ..
+export $(cat .env)
+cd resources/prod_resources
+
 jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
@@ -21,3 +24,12 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
       echo "done"
    fi
 done
+
+#Query CHPL endpoint resource list
+echo "Downloading CHPL Endpoint List..."
+URL="https://chpl.healthit.gov/rest/search/beta?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
+FILENAME="CHPLEndpointResourcesList.json"
+cd ../../endpointmanager/cmd/CHPLpopulator
+go run main.go $URL $FILENAME
+cd ../../../resources/prod_resources
+echo "done"
