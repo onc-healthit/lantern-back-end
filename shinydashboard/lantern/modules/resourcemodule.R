@@ -7,11 +7,12 @@ resourcemodule_UI <- function(id) {
 
   tagList(
     fluidRow(
-      column(width = 5,
-             reactable::reactableOutput(ns("resource_op_table"))),
-      column(width = 7,
-             h4("Resource Count"),
-             uiOutput(ns("resource_full_plot"))
+      h3("Resource Count", style = "margin-left:5px"),
+      column(width = 12, style = "margin-right: 5px; margin-left: 5px;",
+        tabsetPanel(type = "tabs",
+              tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
+              tabPanel("Table", reactable::reactableOutput(ns("resource_op_table")))
+        )
       )
     )
   )
@@ -129,7 +130,7 @@ resourcemodule <- function(  #nolint
               searchable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = number_resources()$n - 1,
+              defaultPageSize = 50,
               showPageSizeOptions = TRUE,
               pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
 
