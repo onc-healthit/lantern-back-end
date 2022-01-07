@@ -149,7 +149,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that malformed product throws error
-	prod.APIDocumentation = "170.315 (g)(7),http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod.APIDocumentation = []string{",http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error parsing product")
 
@@ -200,7 +200,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
 
 	// test critera linking update
-	prod.CriteriaMet = "31☺32☺33☺34☺35☺36☺37☺38"
+	prod.CriteriaMet = []int{31, 32, 33, 34, 35, 36, 37, 38}
 	prod.Edition = "2020"
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -257,7 +257,7 @@ func Test_persistProducts(t *testing.T) {
 
 	hook := logtest.NewGlobal()
 
-	prod2.APIDocumentation = "170.315 (g)(7),http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod2.APIDocumentation = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 	expectedErr := "retreiving the API URL from the health IT product API documentation list failed: unexpected format for api doc string"
 	prodList = chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
@@ -315,7 +315,7 @@ func Test_parseHITProd(t *testing.T) {
 
 	// test bad url in api doc string
 
-	prod.APIDocumentation = "170.315 (g)(7)☹.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	prod.APIDocumentation = []string{"☹.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	_, err = parseHITProd(ctx, &prod, store)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
@@ -355,8 +355,8 @@ func Test_GetCHPLProducts(t *testing.T) {
 	err = GetCHPLVendors(ctx, store, &(tc.Client), "")
 	th.Assert(t, err == nil, err)
 
-	// mock JSON includes 201 product entries, but w duplicates, the number stored is 168.
-	expectedProdsStored := 168
+	// mock JSON includes 100 product entries, but w duplicates, the number stored is 80.
+	expectedProdsStored := 80
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
@@ -375,7 +375,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100\": context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()

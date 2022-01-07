@@ -73,7 +73,7 @@ func getCriteriaJSON(ctx context.Context, client *http.Client, userAgent string)
 func makeCHPLCriteriaURL() (*url.URL, error) {
 	queryArgs := make(map[string]string)
 
-	chplURL, err := makeCHPLURL(chplAPICertCriteriaPath, queryArgs)
+	chplURL, err := makeCHPLURL(chplAPICertCriteriaPath, queryArgs, -1, -1)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
 	}

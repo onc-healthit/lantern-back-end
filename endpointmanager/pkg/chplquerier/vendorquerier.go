@@ -88,7 +88,7 @@ func getVendorJSON(ctx context.Context, client *http.Client, userAgent string) (
 }
 
 func makeCHPLVendorURL() (*url.URL, error) {
-	chplURL, err := makeCHPLURL(chplAPIVendorListPath, nil)
+	chplURL, err := makeCHPLURL(chplAPIVendorListPath, nil, -1, -1)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating the URL to query CHPL failed")
 	}

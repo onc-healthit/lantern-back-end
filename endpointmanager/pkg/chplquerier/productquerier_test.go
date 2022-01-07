@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -27,8 +28,8 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	Version:             "1",
 	CertificationDate:   1467331200000,
 	CertificationStatus: "Active",
-	CriteriaMet:         "30☺31☺32☺33☺34☺35☺36☺37☺38",
-	APIDocumentation:    "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+	CriteriaMet:         []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
+	APIDocumentation:    []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"},
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -50,9 +51,11 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
+	expected := "https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100"
+	pageSize := 100
+	pageNumber := 0
 
-	actualURL, err := makeCHPLProductURL()
+	actualURL, err := makeCHPLProductURL(pageSize, pageNumber)
 	th.Assert(t, err == nil, err)
 
 	actual := actualURL.String()
@@ -61,7 +64,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	// test empty api key
 
 	viper.Set("chplapikey", "")
-	actualURL, err = makeCHPLProductURL()
+	actualURL, err = makeCHPLProductURL(pageSize, pageNumber)
 	th.Assert(t, err != nil, "Expected to return an error due to the api key not being set")
 	th.Assert(t, actualURL == nil, "Expected chpl product URL to be nil due to api key not being set")
 
@@ -71,7 +74,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	chplDomain = "http://%41:8080/" // invalid domain
 	defer func() { chplDomain = chplDomainOrig }()
 
-	_, err = makeCHPLProductURL()
+	_, err = makeCHPLProductURL(pageSize, pageNumber)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// ok
@@ -97,8 +100,8 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": "1",
 			"certificationDate": 1467331200000,
 			"certificationStatus": "Active",
-			"criteriaMet": "30☺31☺32☺33☺34☺35☺36☺37☺38",
-			"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+			"criteriaMet": [30, 31, 32, 33, 34, 35, 36, 37, 38],
+			"apiDocumentation": ["☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"]
 		},
 		{
 			"id": 7850,
@@ -109,8 +112,8 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": "0.3",
 			"certificationDate": 1467320000000,
 			"certificationStatus": "Active",
-			"criteriaMet": "30☺31☺32☺33☺34☺35☺36☺37☺38",
-			"apiDocumentation": "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+			"criteriaMet": [30, 31, 32, 33, 34, 35, 36, 37, 38],
+			"apiDocumentation": ["☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"]
 		}]}
 		`
 
@@ -125,8 +128,8 @@ func Test_convertProductJSONToObj(t *testing.T) {
 		Version:             "0.3",
 		CertificationDate:   1467320000000,
 		CertificationStatus: "Active",
-		CriteriaMet:         "30☺31☺32☺33☺34☺35☺36☺37☺38",
-		APIDocumentation:    "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+		CriteriaMet:         []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
+		APIDocumentation:    []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"},
 	}
 
 	expectedProdList := chplCertifiedProductList{
@@ -140,7 +143,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 	th.Assert(t, len(prodList.Results) == len(expectedProdList.Results), fmt.Sprintf("Number of products is %d. Should be %d.", len(prodList.Results), len(expectedProdList.Results)))
 
 	for i, prod := range prodList.Results {
-		th.Assert(t, prod == expectedProdList.Results[i], "Expected parsed products to equal expected products.")
+		th.Assert(t, reflect.DeepEqual(prod, expectedProdList.Results[i]), "Expected parsed products to equal expected products.")
 	}
 
 	// test with canceled context
@@ -171,26 +174,26 @@ func Test_getAPIURL(t *testing.T) {
 
 	// basic test
 
-	apiDocString := "170.315 (g)(7)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(8)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☺170.315 (g)(9)☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	apiDocArray := []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	expectedURL := "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 
-	actualURL, err := getAPIURL(apiDocString)
+	actualURL, err := getAPIURL(apiDocArray)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedURL == actualURL, fmt.Sprintf("Expected '%s'. Got '%s'.", expectedURL, actualURL))
 
 	// provide bad string - unexpected delimeter
 
-	apiDocString = "170.315 (g)(7),http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
+	apiDocArray = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 
-	_, err = getAPIURL(apiDocString)
+	_, err = getAPIURL(apiDocArray)
 	th.Assert(t, err != nil, "Expected error due to malformed api doc string")
 
-	// provide empty string
+	// provide empty array
 
-	apiDocString = ""
+	apiDocArray = []string{}
 	expectedURL = ""
 
-	actualURL, err = getAPIURL(apiDocString)
+	actualURL, err = getAPIURL(apiDocArray)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedURL == actualURL, "Expected an empty string")
 }
@@ -284,21 +287,23 @@ func Test_getProductJSON(t *testing.T) {
 
 	// basic test
 
-	// mock JSON includes 201 product entries
-	expectedProdsReceived := 201
+	// mock JSON includes 100 product entries
+	expectedProdsReceived := 100
 
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()
 
 	ctx = context.Background()
+	pageSize := 100
+	pageNumber := 0
 
-	prodJSON, err := getProductJSON(ctx, &(tc.Client), "")
+	prodJSON, err := getProductJSON(ctx, &(tc.Client), "", pageSize, pageNumber)
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
 	prods, err := convertProductJSONToObj(ctx, prodJSON)
-	th.Assert(t, err == nil, err)
+	th.Assert(t, err == nil, prodJSON)
 	actualProdsReceived := len(prods.Results)
 	th.Assert(t, actualProdsReceived == expectedProdsReceived, fmt.Sprintf("Expected to receive %d products Actually received %d products.", expectedProdsReceived, actualProdsReceived))
 
@@ -314,7 +319,7 @@ func Test_getProductJSON(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, _ = getProductJSON(ctx, &(tc.Client), "")
+	_, _ = getProductJSON(ctx, &(tc.Client), "", pageSize, pageNumber)
 	// expect presence of a log message
 	found := false
 	for i := range hook.Entries {
@@ -327,14 +332,14 @@ func Test_getProductJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/collections/certified_products?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
 
 	ctx = context.Background()
 
-	_, _ = getProductJSON(ctx, &(tc.Client), "")
+	_, _ = getProductJSON(ctx, &(tc.Client), "", pageSize, pageNumber)
 	// expect presence of a log message
 	found = false
 	for i := range hook.Entries {
@@ -357,7 +362,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	ctx = context.Background()
 
-	_, err = getProductJSON(ctx, &(tc.Client), "")
+	_, err = getProductJSON(ctx, &(tc.Client), "", pageSize, pageNumber)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
 		// ok

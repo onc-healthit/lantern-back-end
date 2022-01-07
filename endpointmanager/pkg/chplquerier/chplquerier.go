@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -17,7 +18,7 @@ var chplAPIPath string = "/rest"
 
 // creates the base chpl url using the provided path, a list of query arguments,
 // and the chpl api key.
-func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
+func makeCHPLURL(path string, queryArgs map[string]string, pageSize int, pageNumber int) (*url.URL, error) {
 	queryArgsToSend := url.Values{}
 	chplURL, err := url.Parse(chplDomain)
 	if err != nil {
@@ -31,6 +32,10 @@ func makeCHPLURL(path string, queryArgs map[string]string) (*url.URL, error) {
 	queryArgsToSend.Set("api_key", apiKey)
 	for k, v := range queryArgs {
 		queryArgsToSend.Set(k, v)
+	}
+	if pageSize != -1 && pageNumber != -1 {
+		queryArgsToSend.Set("pageSize", strconv.Itoa(pageSize))
+		queryArgsToSend.Set("pageNumber", strconv.Itoa(pageNumber))
 	}
 
 	chplURL.RawQuery = queryArgsToSend.Encode()

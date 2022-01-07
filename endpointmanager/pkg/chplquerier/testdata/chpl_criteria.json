@@ -559,15 +559,6 @@
             "removed": false
         },
         {
-            "id": 41,
-            "number": "170.315 (e)(2)",
-            "title": "Secure Messaging",
-            "certificationEditionId": 3,
-            "certificationEdition": "2015",
-            "description": null,
-            "removed": false
-        },
-        {
             "id": 115,
             "number": "170.314 (g)(3)",
             "title": "Safety-enhanced design",
@@ -656,6 +647,15 @@
             "certificationEdition": "2011",
             "description": null,
             "removed": false
+        },
+        {
+            "id": 13,
+            "number": "170.315 (a)(13)",
+            "title": "Patient-Specific Education Resources",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
         },
         {
             "id": 150,
@@ -762,15 +762,6 @@
             "title": "Maintain up-to-date problem list",
             "certificationEditionId": 1,
             "certificationEdition": "2011",
-            "description": null,
-            "removed": false
-        },
-        {
-            "id": 10,
-            "number": "170.315 (a)(10)",
-            "title": "Drug-Formulary and Preferred Drug List Checks",
-            "certificationEditionId": 3,
-            "certificationEdition": "2015",
             "description": null,
             "removed": false
         },
@@ -1000,15 +991,6 @@
             "removed": false
         },
         {
-            "id": 13,
-            "number": "170.315 (a)(13)",
-            "title": "Patient-Specific Education Resources",
-            "certificationEditionId": 3,
-            "certificationEdition": "2015",
-            "description": null,
-            "removed": false
-        },
-        {
             "id": 56,
             "number": "170.315 (g)(7)",
             "title": "Application Access - Patient Selection",
@@ -1162,6 +1144,15 @@
             "removed": false
         },
         {
+            "id": 10,
+            "number": "170.315 (a)(10)",
+            "title": "Drug-Formulary and Preferred Drug List Checks",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
+        },
+        {
             "id": 2,
             "number": "170.315 (a)(2)",
             "title": "CPOE - Laboratory",
@@ -1178,6 +1169,15 @@
             "certificationEdition": "2011",
             "description": null,
             "removed": false
+        },
+        {
+            "id": 41,
+            "number": "170.315 (e)(2)",
+            "title": "Secure Messaging",
+            "certificationEditionId": 3,
+            "certificationEdition": "2015",
+            "description": null,
+            "removed": true
         },
         {
             "id": 24,
