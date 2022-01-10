@@ -29,7 +29,9 @@ done
 echo "Downloading CHPL Endpoint List..."
 URL="https://chpl.healthit.gov/rest/search/beta?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
 FILENAME="CHPLEndpointResourcesList.json"
+curl -s -o CHPLResourcesFull.json $URL
 cd ../../endpointmanager/cmd/CHPLpopulator
-go run main.go $URL $FILENAME
+go run main.go $FILENAME
 cd ../../../resources/prod_resources
+rm CHPLResourcesFull.json
 echo "done"

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	http "net/http"
 	"os"
 	"strings"
+	"path/filepath"
 )
 
 type endpointEntry struct {
@@ -18,38 +18,24 @@ type endpointEntry struct {
 
 func main() {
 
-	var chplURL string
 	var fileToWriteTo string
 
 	if len(os.Args) >= 1 {
-		chplURL = os.Args[1]
-		fileToWriteTo = os.Args[2]
+		fileToWriteTo = os.Args[1]
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
 	var endpointEntryList []endpointEntry
 
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", chplURL, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req.Header.Set("Accept", "application/json")
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	respBody, err := ioutil.ReadAll(res.Body)
+	path := filepath.Join("../../../resources/prod_resources/", "CHPLResourcesFull.json")
+	CHPLFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	var chplJSON map[string]interface{}
-	err = json.Unmarshal(respBody, &chplJSON)
+	err = json.Unmarshal(CHPLFile, &chplJSON)
 	if err != nil {
 		log.Fatal(err)
 	}
