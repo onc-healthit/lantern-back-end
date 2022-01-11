@@ -143,15 +143,15 @@ function(input, output, session) { #nolint
   observeEvent(input$resource_popup, {
     showModal(modalDialog(
       title = "How to use this page...",
-      p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Clicking a resource in the left box selects it and moves it to the right box. Remove a resource from the list by clicking the resource in the right box.", style = "font-size:19px; margin-left:5px;"),
+      p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Clicking a resource in the left box selects it and moves it to the right box. Remove a resource from the list by clicking the resource in the right box.", style = "font-size:16px; margin-left:5px;"),
       p("You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
         Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
-        Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.", style = "font-size:19px; margin-left:5px;"),
-      p("You must either", style = "font-size:19px; margin-left:5px;"),
-      p("1. select a resource from the resources drop down to add it to the list", style = "font-size:19px; margin-left:5px;"),
-      p("or", style = "font-size:19px; margin-left:5px;"),
-      p("2. click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
-      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
+        Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.", style = "font-size:16px; margin-left:5px;"),
+      p("You must either", style = "font-size:16px; margin-left:5px;"),
+      p("1. Select a resource from the left side of the resources box to select it and add it to the list, which moves it to the right side of the box", style = "font-size:16px; margin-left:5px;"),
+      p("or", style = "font-size:15px; margin-left:5px;"),
+      p("2. Click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:16px; margin-left:5px;"),
+      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:13px; margin-left:5px;"),
   ))})
 
 
@@ -320,7 +320,7 @@ function(input, output, session) { #nolint
             multiInput(
               inputId = "resources",
               width = "500px",
-              label = "Click in the box below to add or remove resources:", 
+              label = "Click in the box below to add or remove resources:",
               choices = checkbox_resources_no_filter(),
             selected = checkbox_resources_no_filter()
             ),
