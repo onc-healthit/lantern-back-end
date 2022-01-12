@@ -144,13 +144,10 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = "How to use this page...",
       p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Clicking a resource in the left box selects it and moves it to the right box. Remove a resource from the list by clicking the resource in the right box.", style = "font-size:16px; margin-left:5px;"),
-      p("You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
-        Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
-        Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.", style = "font-size:16px; margin-left:5px;"),
-      p("You must either", style = "font-size:16px; margin-left:5px;"),
-      p("1. Select a resource from the left side of the resources box to select it and add it to the list, which moves it to the right side of the box", style = "font-size:16px; margin-left:5px;"),
-      p("or", style = "font-size:15px; margin-left:5px;"),
-      p("2. Click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:16px; margin-left:5px;"),
+      p("You may also change the FHIR Version or Developer filtering criteria to filter the applicable supported resources from the default list.
+        Any resources at that point will be removed from the list of resources if no endpoints that pass the selected filtering criteria support the given resource.
+        If you make other changes to the FHIR Version or Developer filtering criteria, resources that are filtered out of the list will re-appear on the left side of the list, regardless if they were selected previously.", style = "font-size:16px; margin-left:5px;"),
+      p("You will have to re-select these resources, either by clicking the resource on the left box, or clicking the 'Select All Resources' button.", style = "font-size:16px; margin-left:5px;"),
       p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:13px; margin-left:5px;"),
   ))})
 
@@ -320,7 +317,7 @@ function(input, output, session) { #nolint
             multiInput(
               inputId = "resources",
               width = "500px",
-              label = "Click in the box below to add or remove resources:",
+              label = "Click a resource on the left to add, and on the right to remove:",
               choices = checkbox_resources_no_filter(),
             selected = checkbox_resources_no_filter()
             ),
@@ -355,7 +352,7 @@ function(input, output, session) { #nolint
       return(NULL)
     }
     else{
-      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources())
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = checkbox_resources())
     }
   })
 
@@ -365,7 +362,7 @@ function(input, output, session) { #nolint
     }
     else{
       current_selection(NULL)
-      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources())
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources())
     }
   })
 
@@ -373,7 +370,7 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
@@ -381,7 +378,7 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateMultiInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection())
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
