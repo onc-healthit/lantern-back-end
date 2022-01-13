@@ -94,6 +94,16 @@ func main() {
 			log.Fatal(err)
 		}
 
+		finalFormatJSON, err = json.MarshalIndent(newURLs, "", "\t")
+		if err != nil {
+			log.Fatal(err)
+		}
+	
+		err = ioutil.WriteFile("../../../resources/prod_resources/updatedEmails.json", finalFormatJSON, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		log.Info(fmt.Sprintf("CHPLEndpointList has been updated with new entries: %v", newURLs))
 	
 	}
