@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"os"
 	http "net/http"
+	"os"
 	"path/filepath"
 	"strings"
-	"fmt"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -28,7 +28,7 @@ func main() {
 	if len(os.Args) >= 2 {
 		chplURL = os.Args[1]
 		fileToWriteTo = os.Args[2]
-	}else {
+	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
@@ -80,7 +80,7 @@ func main() {
 	}
 
 	newURLs := CHPLEndpointListUpdateCheck(chplResultsList)
-	if (len(newURLs) <= 0) {
+	if len(newURLs) <= 0 {
 		log.Info("CHPL list does not need to be updated.")
 		return
 	} else {
@@ -88,7 +88,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-	
+
 		err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 		if err != nil {
 			log.Fatal(err)
@@ -98,14 +98,14 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-	
+
 		err = ioutil.WriteFile("../../../resources/prod_resources/updatedEmails.json", finalFormatJSON, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		log.Info(fmt.Sprintf("CHPLEndpointList has been updated with new entries: %v", newURLs))
-	
+
 	}
 }
 
@@ -117,9 +117,8 @@ func CHPLEndpointListUpdateCheck(chplResultsList []interface{}) []string {
 		existingURLs = append(existingURLs, chplEntry.URL)
 	}
 
-
 	for _, chplEntries := range chplResultsList {
-		
+
 		chplEntry, ok := chplEntries.(map[string]interface{})
 		if !ok {
 			log.Fatal("Error converting CHPL result entry to type map[string]interface{}")
@@ -166,7 +165,7 @@ func CHPLEndpointListUpdateCheck(chplResultsList []interface{}) []string {
 					entry.FormatType = ""
 
 					chplEndpointList = append(chplEndpointList, entry)
-					
+
 					// Add URL to list of new entries that were updated
 					newURLs = append(newURLs, entryURL)
 				}
