@@ -19,7 +19,7 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", "aria-hidden" = "true", role = "presentation", "aria-label" = "dashboard icon")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon")),
       menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
-      menuItem("Capability", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "capability_tab"),
+      menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
       menuItem("Values", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon"), tabName = "values_tab"),
@@ -85,10 +85,10 @@ ui <- dashboardPage(
     development_banner(devbanner),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
+    uiOutput("resource_tab_popup"),
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
-    uiOutput("show_resource_checkboxes"),
-    uiOutput("show_operation_checkboxes"),
+    uiOutput("show_resource_operation_checkboxes"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")
@@ -105,8 +105,8 @@ ui <- dashboardPage(
       tabItem("capabilitystatementsize_tab",
               capabilitystatementsize_UI("capabilitystatementsize_page")
       ),
-      tabItem("capability_tab",
-              capabilitymodule_UI("capability_page")
+      tabItem("resource_tab",
+              resourcemodule_UI("resource_page")
       ),
       tabItem("implementation_tab",
               implementationmodule_UI("implementation_page")
