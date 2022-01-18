@@ -7,7 +7,7 @@ cd ..
 export $(cat .env)
 cd resources/prod_resources
 
-EMAIL="emichaud@mitre.org"
+EMAIL=
 
 #Query CHPL endpoint resource list
 echo "Downloading CHPL Endpoint List..."
