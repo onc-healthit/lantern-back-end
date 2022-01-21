@@ -416,16 +416,22 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			orgID := matchesMap["organizationID"]
 			endpointURL := matchesMap["endpointURL"]
 			confidence := 1.0
-
+			
+			var npiOrganizationName string
+			
 			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
-			if err != nil {
+			if err == sql.ErrNoRows {
+				npiOrganizationName = ""
+			} else if err != nil {
 				return errors.Wrap(err, "Error getting npiOrganization from database")
+			} else {
+				npiOrganizationName = npiOrganization.Name
 			}
 
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
 				URL: endpointURL,
-				OrganizationNames: []string{npiOrganization.Name},
-				NPIIDs:        []string{orgID},
+				OrganizationNames: []string{npiOrganizationName},
+				NPIIDs: []string{orgID},
 			}
 
 			_, _, _, err = store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
@@ -456,11 +462,6 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			endpointURL := unmatchMap["endpointURL"]
 			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
 
-			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
-			if err != nil {
-				return errors.Wrap(err, "Error getting npiOrganization from database")
-			}
-
 			if err == sql.ErrNoRows {
 				return nil
 			} else {
@@ -470,9 +471,20 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 				}
 			}
 
+			var npiOrganizationName string
+
+			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
+			if err == sql.ErrNoRows {
+				npiOrganizationName = ""
+			} else if err != nil {
+				return errors.Wrap(err, "Error getting npiOrganization from database")
+			} else {
+				npiOrganizationName = npiOrganization.Name
+			}
+
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
 				URL: endpointURL,
-				OrganizationNames: []string{npiOrganization.Name},
+				OrganizationNames: []string{npiOrganizationName},
 				NPIIDs: []string{orgID},
 			}
 

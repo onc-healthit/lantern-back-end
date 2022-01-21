@@ -123,6 +123,91 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("Expected VersionsResponse %v to be updated with new value so that it equals %v", e1.VersionsResponse, vsr)
 	}
 
+	// update endpoint NPI Org
+
+	var fhirEndpointNPIOrg = &endpointmanager.FHIREndpoint {
+		URL: "example.com/FHIR/DSTU2/",
+		OrganizationNames: []string{"Fake Organization"},
+		NPIIDs: []string{"123"},
+	}
+
+	// Add new organization name and NPI ID to fhir_endpoints table
+	err = store.UpdateFHIREndpointsNPIOrg(ctx, fhirEndpointNPIOrg, true)
+
+	endpointArr, err := store.GetFHIREndpointUsingURL(ctx, fhirEndpointNPIOrg.URL)
+
+	endptsLen := 2
+	if len(endpointArr) != endptsLen {
+		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+	}
+
+	// Update should have applied to all endpoints in fhir_endpoints table with URL example.com/FHIR/DSTU2/
+	for _, elem := range endpointArr {
+		if elem.ID == e1.ID {
+			expectedOrganizationNames := []string{"Fake Organization", "Org 1", "Org 2", "Example Inc."}
+			expectedNPIIDs := []string{"1", "2", "3", "123"}
+
+			if !helpers.StringArraysEqual(elem.OrganizationNames, expectedOrganizationNames) {
+				t.Errorf("Expected organization names array to be merged with new org names. Expected: %v, Actual: %v", expectedOrganizationNames, elem.OrganizationNames)
+			}
+			if !helpers.StringArraysEqual(elem.NPIIDs, expectedNPIIDs) {
+				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
+			}
+
+		} else if elem.ID == endpoint1.ID{
+			expectedOrganizationNames := []string{"Fake Organization", "Example Inc."}
+			expectedNPIIDs := []string{"1", "123"}
+
+			if !helpers.StringArraysEqual(elem.OrganizationNames, expectedOrganizationNames) {
+				t.Errorf("Expected organization names array to be merged with new org names. Expected: %v, Actual: %v", expectedOrganizationNames, elem.OrganizationNames)
+			}
+			if !helpers.StringArraysEqual(elem.NPIIDs, expectedNPIIDs) {
+				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
+			}
+
+		} else {
+			t.Errorf("Retrieved unexpected endpoint")
+		}
+	}
+
+	// Remove new organization names and NPI IDs
+
+	err = store.UpdateFHIREndpointsNPIOrg(ctx, fhirEndpointNPIOrg, false)
+
+	endpointArr, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpointNPIOrg.URL)
+
+	if len(endpointArr) != endptsLen {
+		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+	}
+
+	for _, elem := range endpointArr {
+		if elem.ID == e1.ID {
+			expectedOrganizationNames := []string{"Org 1", "Org 2", "Example Inc."}
+			expectedNPIIDs := []string{"1", "2", "3"}
+
+			if !helpers.StringArraysEqual(elem.OrganizationNames, expectedOrganizationNames) {
+				t.Errorf("Expected organization names array to be merged with new org names. Expected: %v, Actual: %v", expectedOrganizationNames, elem.OrganizationNames)
+			}
+			if !helpers.StringArraysEqual(elem.NPIIDs, expectedNPIIDs) {
+				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
+			}
+
+		} else if elem.ID == endpoint1.ID{
+			expectedOrganizationNames := []string{"Example Inc."}
+			expectedNPIIDs := []string{"1"}
+
+			if !helpers.StringArraysEqual(elem.OrganizationNames, expectedOrganizationNames) {
+				t.Errorf("Expected organization names array to be merged with new org names. Expected: %v, Actual: %v", expectedOrganizationNames, elem.OrganizationNames)
+			}
+			if !helpers.StringArraysEqual(elem.NPIIDs, expectedNPIIDs) {
+				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
+			}
+
+		} else {
+			t.Errorf("Retrieved unexpected endpoint")
+		}
+	}
+
 	// retreive all endpoints
 
 	endpts, err := store.GetAllFHIREndpoints(ctx)
