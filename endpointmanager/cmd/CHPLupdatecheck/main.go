@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	http "net/http"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"os"
 	"path/filepath"
 	"strings"
@@ -143,8 +144,8 @@ func CHPLEndpointListUpdateCheck(chplResultsList []interface{}) []string {
 			index := strings.Index(urlString, "h")
 			entryURL := urlString[index:]
 
-			if !stringArrayContains(existingURLs, entryURL) {
-				if !contains(chplEndpointList, entryURL) {
+			if !helpers.StringArrayContains(existingURLs, entryURL) {
+				if !endpointListContains(chplEndpointList, entryURL) {
 
 					developerName, ok := chplEntry["developer"].(string)
 					if !ok {
@@ -176,18 +177,9 @@ func CHPLEndpointListUpdateCheck(chplResultsList []interface{}) []string {
 	return newURLs
 }
 
-func contains(endpointEntryList []endpointEntry, url string) bool {
+func endpointListContains(endpointEntryList []endpointEntry, url string) bool {
 	for _, e := range endpointEntryList {
 		if e.URL == url {
-			return true
-		}
-	}
-	return false
-}
-
-func stringArrayContains(urlList []string, url string) bool {
-	for _, urlExist := range urlList {
-		if urlExist == url {
 			return true
 		}
 	}

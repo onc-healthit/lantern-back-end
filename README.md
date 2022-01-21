@@ -189,8 +189,8 @@ To configure this script to run using cron, do:
 
 You can configure a CHPL Endpoint List update checker using cron and the chpl_endpoint_list_check.sh script located in the scripts directory to send an email notification whenever the CHPL Endpoint List has been updated with new URLs. This script queries CHPL's list of endpoints and compares it to the CHPL endpoint list currently stored in the `resources/prod_resources` directory. If the CHPL list has been updated, the system will send an alert email with the updated URLs, and it will automatically update the list stored in `resources/prod_resources` with the new endpoint lists. 
 
-To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the backup script.
-  * Set the EMAIL variable to the email you want the backup system to send alerts to
+To set up the script for this CHPL endpoint list updater, you must insert the correct information into the following variables located at the beginning of the update checker script.
+  * Set the EMAIL variable to the email you want the CHPL endpoint list updater to send alerts to
 
 To configure this script to run using cron, do:
  * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
