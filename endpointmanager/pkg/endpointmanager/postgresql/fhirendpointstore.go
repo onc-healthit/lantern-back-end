@@ -228,6 +228,52 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 	return endpoints, nil
 }
 
+
+// UpdateFHIREndpointsNPIOrg updates each endpoint with new organization IDs and names
+func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanager.FHIREndpoint, add bool) error {
+	existingEndpts, err := s.GetFHIREndpointUsingURL(ctx, e.URL)
+	if err != nil {
+		return errors.Wrap(err, "getting fhir endpoints from store failed")
+	} else {
+		for _, existingEndpt := range existingEndpts {
+			// Merge new data with old data
+			// Org names NPI IDs
+			if (add) {
+				for _, name := range e.OrganizationNames {
+					existingEndpt.AddOrganizationName(name)
+				}
+				for _, npiID := range e.NPIIDs {
+					existingEndpt.AddNPIID(npiID)
+				}
+			} else {
+				npiIDFound := false
+				for _, NPIID := range e.NPIIDs {
+					for index, existingNPIID:= range existingEndpt.NPIIDs {
+						if existingNPIID == NPIID {
+							existingEndpt.NPIIDs = append(existingEndpt.NPIIDs[:index], existingEndpt.NPIIDs[index+1:]...)
+							npiIDFound = true
+						}
+					}
+				}
+				if npiIDFound {
+					for _, org := range e.OrganizationNames {
+						for index, existingOrg := range existingEndpt.OrganizationNames {
+							if existingOrg == org {
+								existingEndpt.OrganizationNames = append(existingEndpt.OrganizationNames[:index], existingEndpt.OrganizationNames[index+1:]...)
+							}
+						}
+					}
+				}
+			}
+			err = s.UpdateFHIREndpoint(ctx, existingEndpt)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 // AddOrUpdateFHIREndpoint adds the endpoint if it doesn't already exist. If it does exist, it updates the endpoint.
 func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	existingEndpt, err := s.GetFHIREndpointUsingURLAndListSource(ctx, e.URL, e.ListSource)
