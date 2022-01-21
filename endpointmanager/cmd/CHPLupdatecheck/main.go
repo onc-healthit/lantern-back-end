@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"io/ioutil"
 	http "net/http"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"os"
 	"path/filepath"
 	"strings"
