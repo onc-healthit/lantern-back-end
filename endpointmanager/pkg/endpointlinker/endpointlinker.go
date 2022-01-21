@@ -416,9 +416,9 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			orgID := matchesMap["organizationID"]
 			endpointURL := matchesMap["endpointURL"]
 			confidence := 1.0
-			
+
 			var npiOrganizationName string
-			
+
 			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
 			if err == sql.ErrNoRows {
 				npiOrganizationName = ""
@@ -429,9 +429,9 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			}
 
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
-				URL: endpointURL,
+				URL:               endpointURL,
 				OrganizationNames: []string{npiOrganizationName},
-				NPIIDs: []string{orgID},
+				NPIIDs:            []string{orgID},
 			}
 
 			_, _, _, err = store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
@@ -483,16 +483,15 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			}
 
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
-				URL: endpointURL,
+				URL:               endpointURL,
 				OrganizationNames: []string{npiOrganizationName},
-				NPIIDs: []string{orgID},
+				NPIIDs:            []string{orgID},
 			}
 
 			err = store.UpdateFHIREndpointsNPIOrg(ctx, &fhirEndpoint, false)
 			if err != nil {
 				return errors.Wrap(err, "Error removing blocklist organization information from the fhir endpoints table")
 			}
-
 
 		}
 	}

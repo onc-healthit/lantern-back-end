@@ -228,7 +228,6 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 	return endpoints, nil
 }
 
-
 // UpdateFHIREndpointsNPIOrg updates each endpoint with new organization IDs and names
 func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanager.FHIREndpoint, add bool) error {
 	existingEndpts, err := s.GetFHIREndpointUsingURL(ctx, e.URL)
@@ -238,7 +237,7 @@ func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanage
 		for _, existingEndpt := range existingEndpts {
 			// Merge new data with old data
 			// Org names NPI IDs
-			if (add) {
+			if add {
 				for _, name := range e.OrganizationNames {
 					existingEndpt.AddOrganizationName(name)
 				}
@@ -248,7 +247,7 @@ func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanage
 			} else {
 				npiIDFound := false
 				for _, NPIID := range e.NPIIDs {
-					for index, existingNPIID:= range existingEndpt.NPIIDs {
+					for index, existingNPIID := range existingEndpt.NPIIDs {
 						if existingNPIID == NPIID {
 							existingEndpt.NPIIDs = append(existingEndpt.NPIIDs[:index], existingEndpt.NPIIDs[index+1:]...)
 							npiIDFound = true
