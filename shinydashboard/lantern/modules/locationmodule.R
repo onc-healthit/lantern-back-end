@@ -39,6 +39,7 @@ locationmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+    print(res)
     res
   })
 
@@ -46,7 +47,7 @@ locationmodule <- function(
   output$location_map  <- renderLeaflet({
     map <- leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addCircles(data = selected_fhir_endpoints(), lat = ~ lat, lng = ~ lng, popup = ~endpoint_name,  weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
+      addCircles(data = selected_fhir_endpoints(), lat = ~ lat, lng = ~ lng, popup = paste(isolate(selected_fhir_endpoints())$endpoint_name, "<br>", isolate(selected_fhir_endpoints())$url),  weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
       setView(-98.9, 37.7, zoom = 4)
     map
   })
