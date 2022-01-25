@@ -39,7 +39,6 @@ locationmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    print(res)
     res
   })
 
