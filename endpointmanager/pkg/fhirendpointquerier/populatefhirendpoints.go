@@ -3,8 +3,8 @@ package populatefhirendpoints
 import (
 	"context"
 	"database/sql"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -77,7 +77,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	}
 
 	splitEndpoint := strings.Split(uri, "://")
-	uri = "https://" + splitEndpoint[len(splitEndpoint) - 1]
+	uri = "https://" + splitEndpoint[len(splitEndpoint)-1]
 
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{

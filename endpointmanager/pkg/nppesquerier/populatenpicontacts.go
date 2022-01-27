@@ -67,15 +67,15 @@ func parseNPIContactdataLine(line []string) NPIContactCsvLine {
 func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIContact {
 	validURL := isValidURL(data.Endpoint)
 	data.Endpoint = strings.Replace(data.Endpoint, "/metadata", "", 1)
-	
+
 	// Add trailing "/" to URIs that do not have it for consistency
 	if len(data.Endpoint) > 0 && data.Endpoint[len(data.Endpoint)-1:] != "/" {
 		data.Endpoint = data.Endpoint + "/"
 	}
 
 	splitEndpoint := strings.Split(data.Endpoint, "://")
-	data.Endpoint = "https://" + splitEndpoint[len(splitEndpoint) - 1]
-	
+	data.Endpoint = "https://" + splitEndpoint[len(splitEndpoint)-1]
+
 	npiContact := &endpointmanager.NPIContact{
 		NPI_ID:                       data.NPI,
 		EndpointType:                 data.EndpointType,
