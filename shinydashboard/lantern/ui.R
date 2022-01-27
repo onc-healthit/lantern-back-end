@@ -40,9 +40,9 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
+    uiOutput("resource_tab_popup"),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
-    uiOutput("resource_tab_popup"),
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
