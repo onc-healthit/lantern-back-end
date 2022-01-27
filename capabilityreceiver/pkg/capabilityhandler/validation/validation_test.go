@@ -197,14 +197,25 @@ func Test_MimeTypeValid(t *testing.T) {
 
 	// no version
 
-	expectedVal.Actual = fhir2LessJSONMIMEType
+	expectedVal.Actual = ""
 	expectedVal.Comment = "Unknown FHIR Version; cannot validate mime type."
 	actualVal = validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid, is instead %+v", actualVal))
+	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be an empty string, is instead %+v", actualVal))
+
+
+	// no version- fake MIME type
+
+	expectedVal.Actual = "fakeMIMEType"
+	expectedVal.Comment = "Unknown FHIR Version; cannot validate mime type."
+	actualVal = validator.MimeTypeValid([]string{"fakeMIMEType"}, "")
+	eq = reflect.DeepEqual(actualVal, expectedVal)
+	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be the incorrect MIME type, is instead %+v", actualVal))
+
 
 	// mixmatch mime type and version
 
+	expectedVal.Actual = fhir2LessJSONMIMEType
 	expectedVal.Expected = fhir3PlusJSONMIMEType
 	expectedVal.Comment = "FHIR Version 3.0.0 requires the Mime Type to be " + fhir3PlusJSONMIMEType
 	actualVal = validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "3.0.0")

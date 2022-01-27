@@ -32,13 +32,13 @@ var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 }
 var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationNames:    []string{"fakeOrganization"},
-	FHIRPatientFacingURI: "http://example.com/DTSU2/",
+	FHIRPatientFacingURI: "https://example.com/DTSU2/",
 	ListSource:           "Lantern",
 	NPIIDs:               []string{"1"},
 }
 var testEndpointEntry4 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationNames:    []string{"fakeOrganization2"},
-	FHIRPatientFacingURI: "http://example.com/DTSU2/",
+	FHIRPatientFacingURI: "https://example.com/DTSU2/",
 	ListSource:           "Lantern",
 	NPIIDs:               []string{"2"},
 }
@@ -49,7 +49,7 @@ var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoin
 }
 var testFHIREndpoint3 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationNames: []string{"fakeOrganization"},
-	URL:               "http://example.com/DTSU2/",
+	URL:               "https://example.com/DTSU2/",
 	ListSource:        "Lantern",
 	NPIIDs:            []string{"1"},
 }
@@ -250,7 +250,7 @@ func Test_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	defer ctStmt.Close()
 
-	endpt2.FHIRPatientFacingURI = "http://a-new-url.com/metadata/"
+	endpt2.FHIRPatientFacingURI = "https://a-new-url.com/metadata/"
 	listEndpoints := fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
 	expectedEndptsStored := 2
 
