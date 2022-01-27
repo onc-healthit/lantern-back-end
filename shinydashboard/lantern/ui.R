@@ -19,7 +19,6 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
       menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
@@ -30,6 +29,7 @@ ui <- dashboardPage(
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
       menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
+      menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
       style = "white-space: normal",
       hr()
