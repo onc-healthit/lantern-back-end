@@ -90,7 +90,7 @@ func (bv *baseVal) MimeTypeValid(mimeTypes []string, fhirVersion string) endpoin
 		ruleError.Expected = "N/A"
 		ruleError.Comment = "Unknown FHIR Version; cannot validate mime type."
 		validMIMETypes := true
-		
+
 		// If no fhirVersion returned and all MIME types are valid, these MIME types saved from previous successful responses, so do not show them in actual result
 		for _, mt := range mimeTypes {
 			if mt != fhir2LessJSONMIMEType && mt != fhir3PlusJSONMIMEType {

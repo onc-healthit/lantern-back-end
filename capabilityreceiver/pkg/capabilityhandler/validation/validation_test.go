@@ -203,7 +203,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be an empty string, is instead %+v", actualVal))
 
-
 	// no version- fake MIME type
 
 	expectedVal.Actual = "fakeMIMEType"
@@ -211,7 +210,6 @@ func Test_MimeTypeValid(t *testing.T) {
 	actualVal = validator.MimeTypeValid([]string{"fakeMIMEType"}, "")
 	eq = reflect.DeepEqual(actualVal, expectedVal)
 	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be the incorrect MIME type, is instead %+v", actualVal))
-
 
 	// mixmatch mime type and version
 
