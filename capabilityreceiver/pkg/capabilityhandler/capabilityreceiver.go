@@ -141,6 +141,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 	operationResource := RunSupportedResourcesChecks(capInt)
+	supportedProfiles := RunSupportedFieldsCheck(capInt, fhirVersion)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:                  url,
@@ -162,6 +163,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		Metadata:              FHIREndpointMetadata,
 		RequestedFhirVersion:  requestedFhirVersion,
 		CapabilityFhirVersion: fhirVersion,
+		SupportedProfile:      supportedProfiles,
 	}
 
 	return &fhirEndpoint, &validationObj, nil

@@ -30,6 +30,7 @@ type FHIREndpointInfo struct {
 	Metadata              *FHIREndpointMetadata
 	RequestedFhirVersion  string
 	CapabilityFhirVersion string
+	supportedProfiles     []SupportedProfile
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -124,6 +125,13 @@ type IncludedField struct {
 	Field     string
 	Exists    bool
 	Extension bool
+}
+
+// SupportedProfile is a struct used to keep track of all of the profiles in the capability statement
+type SupportedProfile struct {
+	ProfileURL  string
+	ProfileName string
+	Resource    string
 }
 
 // Validation holds all of the validation results from running the validation checks
