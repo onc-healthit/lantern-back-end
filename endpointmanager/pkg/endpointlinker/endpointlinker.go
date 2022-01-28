@@ -357,21 +357,25 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, allow
 			}
 		}
 	}
+	var matchEndpointOrganization []map[string]string
+	var unmatchEndpointOrganization []map[string]string
 
-	if allowlistFile != "" && blocklistFile != "" {
-		matchEndpointOrganization, err := openLinkerCorrectionFiles(allowlistFile)
+	if allowlistFile != "" {
+		matchEndpointOrganization, err = openLinkerCorrectionFiles(allowlistFile)
 		if err != nil {
 			return errors.Wrap(err, "Error opening linker correction allowlist file")
 		}
-		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blocklistFile)
+	}
+	if blocklistFile != "" {
+		unmatchEndpointOrganization, err = openLinkerCorrectionFiles(blocklistFile)
 		if err != nil {
 			return errors.Wrap(err, "Error opening linker correction blocklist file")
 		}
+	}
 
-		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
-		if err != nil {
-			return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
-		}
+	err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
+	if err != nil {
+		return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
 	}
 
 	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpoints)), verbose)
