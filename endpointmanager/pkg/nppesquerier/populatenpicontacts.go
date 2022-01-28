@@ -74,7 +74,12 @@ func buildNPIContactFromNPICsvLine(data NPIContactCsvLine) *endpointmanager.NPIC
 	}
 
 	splitEndpoint := strings.Split(data.Endpoint, "://")
-	data.Endpoint = "https://" + splitEndpoint[len(splitEndpoint)-1]
+	header := ""
+	if len(splitEndpoint) > 1 {
+		header = strings.ToLower(splitEndpoint[0]) + "://"
+	}
+
+	data.Endpoint = header + splitEndpoint[len(splitEndpoint)-1]
 
 	npiContact := &endpointmanager.NPIContact{
 		NPI_ID:                       data.NPI,
