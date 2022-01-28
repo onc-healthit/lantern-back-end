@@ -163,7 +163,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		Metadata:              FHIREndpointMetadata,
 		RequestedFhirVersion:  requestedFhirVersion,
 		CapabilityFhirVersion: fhirVersion,
-		SupportedProfile:      supportedProfiles,
+		SupportedProfiles:     supportedProfiles,
 	}
 
 	return &fhirEndpoint, &validationObj, nil

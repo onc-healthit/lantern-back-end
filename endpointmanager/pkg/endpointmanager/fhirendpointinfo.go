@@ -30,7 +30,7 @@ type FHIREndpointInfo struct {
 	Metadata              *FHIREndpointMetadata
 	RequestedFhirVersion  string
 	CapabilityFhirVersion string
-	supportedProfiles     []SupportedProfile
+	SupportedProfiles     []SupportedProfile
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -88,6 +88,11 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	}
 
 	if !cmp.Equal(e.IncludedFields, e2.IncludedFields) {
+		return false
+	}
+
+	// May need to change this so that order doesn't matter
+	if !cmp.Equal(e.SupportedProfiles, e2.SupportedProfiles) {
 		return false
 	}
 
