@@ -5,13 +5,12 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
-// RunSupportedFieldsCheck returns an interface that contains information about what profiles the server supports
-func RunSupportedFieldsCheck(capInt map[string]interface{}, fhirVersion string) []endpointmanager.SupportedProfile {
-	if capInt == nil {
-		return nil
-	}
-
+// RunSupportedProfilesCheck returns an interface that contains information about what profiles the server supports
+func RunSupportedProfilesCheck(capInt map[string]interface{}, fhirVersion string) []endpointmanager.SupportedProfile {
 	var supportedProfiles []endpointmanager.SupportedProfile
+	if capInt == nil {
+		return supportedProfiles
+	}
 
 	if helpers.StringArrayContains(dstu2, fhirVersion) {
 		return getConformanceProfiles(capInt, supportedProfiles)
@@ -26,7 +25,7 @@ func RunSupportedFieldsCheck(capInt map[string]interface{}, fhirVersion string) 
 func getConformanceProfiles(capInt map[string]interface{}, supportedProfiles []endpointmanager.SupportedProfile) []endpointmanager.SupportedProfile {
 
 	if capInt["profile"] == nil {
-		return nil
+		return supportedProfiles
 	}
 
 	supportedProfilesList := capInt["profile"].([]interface{})
@@ -54,13 +53,13 @@ func getConformanceProfiles(capInt map[string]interface{}, supportedProfiles []e
 func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProfiles []endpointmanager.SupportedProfile) []endpointmanager.SupportedProfile {
 
 	if capInt["rest"] == nil {
-		return nil
+		return supportedProfiles
 	}
 
 	restArr := capInt["rest"].([]interface{})
 	restInt := restArr[0].(map[string]interface{})
 	if restInt["resource"] == nil {
-		return nil
+		return supportedProfiles
 	}
 	resourceArr := restInt["resource"].([]interface{})
 
