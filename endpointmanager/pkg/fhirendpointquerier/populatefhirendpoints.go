@@ -77,7 +77,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	}
 
 	splitEndpoint := strings.Split(uri, "://")
-	header := ""
+	header := "http://"
 
 	if len(splitEndpoint) > 1 {
 		header = strings.ToLower(splitEndpoint[0]) + "://"
