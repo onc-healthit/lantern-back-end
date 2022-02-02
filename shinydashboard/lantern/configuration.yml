@@ -38,6 +38,7 @@ module_files:
   - "modules/smartresponsemodule.R"
   - "modules/valuesmodule.R"
   - "modules/validationsmodule.R"
+  - "modules/profilemodule.R"
 
 refresh_timeout_minutes:
   - 1440
