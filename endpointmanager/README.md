@@ -373,11 +373,14 @@ To manually add a link between an endpoint and npi organization after the linker
 [
   {
     "endpointURL": <url of endpoint>,
-    "organizationID":<npi id of organization>
+    "organizationID":<npi id of organization string>
   },
   ...
 ]
 ```
+
+**Note:** The npi organizationID should be a string
+
 
 ## Endpoint Info History Pruning
 
