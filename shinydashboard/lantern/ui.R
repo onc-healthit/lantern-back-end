@@ -18,7 +18,6 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", "aria-hidden" = "true", role = "presentation", "aria-label" = "dashboard icon")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
@@ -29,6 +28,7 @@ ui <- dashboardPage(
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = tags$i(class = "fa fa-map", "aria-hidden" = "true", role = "presentation", "aria-label" = "map icon")),
+      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
       style = "white-space: normal"
     )
@@ -83,9 +83,9 @@ ui <- dashboardPage(
     ),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
+    uiOutput("resource_tab_popup"),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
-    uiOutput("resource_tab_popup"),
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),

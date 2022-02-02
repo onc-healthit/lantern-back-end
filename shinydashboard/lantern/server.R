@@ -136,7 +136,7 @@ function(input, output, session) { #nolint
 
   output$resource_tab_popup <- renderUI({
     if (show_resource_tab_popup()) {
-      actionButton("resource_popup", "How to use this page")
+      div(class = "pull-right", actionButton("resource_popup", "How to use this page", icon = icon("question-circle")))
     }
   })
 
@@ -319,7 +319,11 @@ function(input, output, session) { #nolint
               width = "500px",
               label = "Click a resource on the left to add, and on the right to remove:",
               choices = checkbox_resources_no_filter(),
-            selected = checkbox_resources_no_filter()
+              selected = checkbox_resources_no_filter(),
+              options = list(
+                non_selected_header = "Choose resources:",
+                selected_header = "Selected resources:"
+              )
             ),
             actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
             actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
