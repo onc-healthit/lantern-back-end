@@ -176,7 +176,7 @@ function(input, output, session) { #nolint
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
-  
+
   show_profiles_checkbox <- reactive(input$side_menu %in% c("profile_tab"))
 
   show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
@@ -283,7 +283,7 @@ function(input, output, session) { #nolint
       )
     }
   })
-  
+
   profile_options <- reactive({
     res <- isolate(app_data$supported_profiles())
     req(input$fhir_version, input$vendor)
@@ -311,7 +311,7 @@ function(input, output, session) { #nolint
     res <- isolate(app_data$supported_profiles())
     req(input$fhir_version, input$vendor)
 
-    res <- res %>% 
+    res <- res %>%
     filter(fhir_version %in% input$fhir_version) %>%
     distinct(resource)
 
@@ -323,7 +323,7 @@ function(input, output, session) { #nolint
         "All Resources" = ui_special_values$ALL_RESOURCES
     )
 
-    if (nrow(res) <= 1 && res$resource == ""){
+    if (nrow(res) <= 1 && res$resource == "") {
       return(c(resource_list))
     }
     else {
@@ -489,18 +489,18 @@ function(input, output, session) { #nolint
       fluidRow(
         column(width = 12,
           selectInput(
-            inputId = "profile_resource", 
+            inputId = "profile_resource",
             label = "Resources:",
             choices = resource_options(),
             selected = ui_special_values$ALL_RESOURCES,
             selectize = FALSE,
             size = 1,
-            width = paste0(max(nchar(profile_options()))*8, "px")
+            width = paste0(max(nchar(profile_options())) * 8, "px")
           )
         )
       ),
       p("Note: DSTU2 endpoints will not be visible if resource filter selected.")
-    )      
+    )
   })
 
   output$resource_filter_tab <- renderUI({
@@ -508,24 +508,23 @@ function(input, output, session) { #nolint
       fluidRow(
         column(width = 12,
           selectInput(
-            inputId = "profiles", 
+            inputId = "profiles",
             label = "Profiles:",
             choices = profile_options(),
             selected = ui_special_values$ALL_PROFILES,
             selectize = FALSE,
             size = 1,
-            width = paste0(max(nchar(profile_options()))*8, "px")
+            width = paste0(max(nchar(profile_options())) * 8, "px")
           )
         )
       )
     )
   })
-  
+
   output$show_resource_profiles_dropdown <- renderUI({
     if (show_profiles_checkbox()) {
       tagList(
         fluidRow(
-          h2(style = "margin-left:10px", "Supported Profiles"),
           column(width = 12,
             tabsetPanel(id = "profile_resource_tab", type = "tabs",
               tabPanel("Profile Filtering", uiOutput("resource_filter_tab")),

@@ -46,8 +46,9 @@ selected_fhir_endpoint_profiles <- reactive({
 
     res <- res %>%
     select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
-    distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>% 
-    group_by(url) %>% mutate_all(as.character)
+    distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
+    group_by(url) %>%
+    mutate_all(as.character)
 
     res
   })

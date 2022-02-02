@@ -240,7 +240,7 @@ get_capstat_fields <- function(db_connection) {
 get_supported_profiles <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
-      f.url, 
+      f.url,
       vendor_id,
       vendors.name as vendor_name,
       capability_fhir_version as fhir_version,
