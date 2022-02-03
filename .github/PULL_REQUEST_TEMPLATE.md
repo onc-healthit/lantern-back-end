@@ -26,20 +26,7 @@ Pull requests into this repository require the following checks to be completed 
   - Tests are included and test edge cases.
   - Tests have been run locally and pass.
 
-**Secondary Reviewer:**
-
-- [ ] Code works.
-  - Code has been run locally and the basic functionality affected by the PR has been checked.
-  - Edge cases have been checked to ensure behavior is as expected.
-- [ ] Code review has been performed.
-  - Code accomplishes the tasks purpose.
-- [ ] Tests are complete.
-  - Tests have been run locally and pass.
-
 **Merger:**
 
 Prior to merging, ensure that all checks have been completed. Delete the branch after the merge
 is complete.
-
-Create a new branch `<branch name>_gomodupdate`. Run `make update_mods` to update the `go.mod`
-and `go.sum` files to point to master. Create a PR. Require one sanity check reviewer.
