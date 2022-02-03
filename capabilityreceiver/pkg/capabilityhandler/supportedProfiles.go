@@ -72,8 +72,9 @@ func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProf
 		}
 
 		if resourceInt["supportedProfile"] != nil {
-			supportedProfileArr := resourceInt["supportedProfile"].([]string)
-			for _, profileURL := range supportedProfileArr {
+			supportedProfileArr := resourceInt["supportedProfile"].([]interface{})
+			for _, profileEntry := range supportedProfileArr {
+				profileURL := profileEntry.(string)
 				var profileInfo endpointmanager.SupportedProfile
 				profileInfo.ProfileURL = profileURL
 				profileInfo.Resource = resourceType

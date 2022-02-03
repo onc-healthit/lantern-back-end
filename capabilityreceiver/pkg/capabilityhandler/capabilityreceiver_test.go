@@ -573,6 +573,47 @@ func Test_RunSupportedResourcesChecks(t *testing.T) {
 	th.Assert(t, operationResource["search-type"][0] == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource["search-type"][0]))
 }
 
+func Test_RunSupportedProfilesCheck(t *testing.T) {
+	// Test DSTU2 Conformance Resource
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "supported_profiles_dstu2.json"))
+	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
+	fhirVersion := "1.0.2"
+	supportedProfiles := RunSupportedProfilesCheck(capInt, fhirVersion)
+	th.Assert(t, len(supportedProfiles) == 12, "Expected supportedProfiles length to be 12 entries")
+	expectedName := "U.S. Data Access Framework (DAF) AllergyIntolerance Profile"
+	expectedURL := "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance"
+	expectedResource := ""
+	th.Assert(t, supportedProfiles[0].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[0].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[0].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be %s, was %s", supportedProfiles[0].ProfileName, expectedName))
+	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[0].Resource))
+	expectedName = "U.S. Data Access Framework (DAF) Patient Profile"
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/daf-patient"
+	expectedResource = ""
+	th.Assert(t, supportedProfiles[7].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[7].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[7].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be %s, was %s", supportedProfiles[7].ProfileName, expectedName))
+	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[7].Resource))
+
+
+	// Test R4 Capability Statement
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "supported_profiles_r4.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	fhirVersion = "4.0.1"
+	supportedProfiles = RunSupportedProfilesCheck(capInt, fhirVersion)
+	th.Assert(t, len(supportedProfiles) == 39, "Expected supportedProfiles length to be 39 entries")
+	expectedName = ""
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/Account"
+	expectedResource = "Account"
+	th.Assert(t, supportedProfiles[0].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[0].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected Resource to be %s, was %s", supportedProfiles[0].Resource, expectedResource))
+	th.Assert(t, supportedProfiles[0].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be an empty string, was %s", supportedProfiles[0].ProfileName))
+	expectedName = ""
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/ClaimResponse"
+	expectedResource = "ClaimResponse"
+	th.Assert(t, supportedProfiles[19].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[19].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[19].Resource == expectedResource, fmt.Sprintf("Expected Resource to be %s, was %s", supportedProfiles[19].Resource, expectedResource))
+	th.Assert(t, supportedProfiles[19].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be an empty string, was %s", supportedProfiles[19].ProfileName))
+}
+
 func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
 	var capStatBytes []byte
 	var capInt map[string]interface{}

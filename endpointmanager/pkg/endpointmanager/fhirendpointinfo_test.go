@@ -9,6 +9,69 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 )
 
+var testSupportedProfiles = []SupportedProfile{
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance",
+		ProfileName: "U.S. Data Access Framework (DAF) AllergyIntolerance Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-condition",
+		ProfileName: "U.S. Data Access Framework (DAF) Condition Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-diagnosticorder",
+		ProfileName: "U.S. Data Access Framework (DAF) DiagnosticOrder Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-diagnosticreport",
+		ProfileName: "U.S. Data Access Framework (DAF) DiagnosticReport Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-immunization",
+		ProfileName: "U.S. Data Access Framework (DAF) Immunization Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-medicationorder",
+		ProfileName: "U.S. Data Access Framework (DAF) MedicationOrder Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-medicationstatement",
+		ProfileName: "U.S. Data Access Framework (DAF) MedicationStatement Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-patient",
+		ProfileName: "U.S. Data Access Framework (DAF) Patient Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StuctureDefinition/daf-procedure",
+		ProfileName: "U.S. Data Access Framework (DAF) Procedure Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-resultobs",
+		ProfileName: "U.S. Data Access Framework (DAF) Results Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-smokingstatus",
+		ProfileName: "U.S. Data Access Framework (DAF) SmokingStatus Profile",
+	},
+	{
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-vitalsigns",
+		ProfileName: "U.S. Data Access Framework (DAF) VitalSigns Profile",
+	},
+}
+
 var testIncludedFields = []IncludedField{
 	{
 		Field:     "url",
@@ -240,9 +303,15 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		CapabilityStatement:   cs,
 		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
-		Metadata:              endpointMetadata1}
+		Metadata:              endpointMetadata1,
+		SupportedProfiles: testSupportedProfiles}
+	
 	includedFieldsCopy := make([]IncludedField, len(testIncludedFields))
 	copy(includedFieldsCopy, testIncludedFields)
+
+	supportedProfilesCopy := make([]SupportedProfile, len(testSupportedProfiles))
+	copy(supportedProfilesCopy, testSupportedProfiles)
+	
 	var endpointInfo2 = &FHIREndpointInfo{
 		ID:                1,
 		URL:               "http://www.example.com",
@@ -257,7 +326,8 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		CapabilityStatement:   cs,
 		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
-		Metadata:              endpointMetadata2}
+		Metadata:              endpointMetadata2,
+		SupportedProfiles: supportedProfilesCopy}
 
 	if !endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo2. They are not equal.")
@@ -434,6 +504,29 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. OperationResource are same but in different order. %s vs %s", endpointInfo1.OperationResource, endpointInfo2.OperationResource)
 	}
 	endpointInfo2.OperationResource = endpointInfo1.OperationResource
+
+	endpointInfo1.SupportedProfiles[0] = SupportedProfile {
+		Resource: "",
+		ProfileURL: "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance",
+		ProfileName: "Wrong Profile Name",
+	}
+
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be different. %+v vs %+v", endpointInfo1.SupportedProfiles[0], endpointInfo2.SupportedProfiles[0])
+	}
+	endpointInfo1.SupportedProfiles = endpointInfo2.SupportedProfiles
+
+	endpointInfo2.SupportedProfiles = make([]SupportedProfile, 0)
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be different. %+v vs %+v", endpointInfo1.SupportedProfiles, endpointInfo2.SupportedProfiles)
+	}
+	endpointInfo2.SupportedProfiles = endpointInfo1.SupportedProfiles
+
+	endpointInfo1.SupportedProfiles = make([]SupportedProfile, 0)
+	if endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be different. %+v vs %+v", endpointInfo1.SupportedProfiles, endpointInfo2.SupportedProfiles)
+	}
+	endpointInfo1.SupportedProfiles = endpointInfo2.SupportedProfiles
 
 	endpointInfo2.Metadata = nil
 	if endpointInfo1.Equal(endpointInfo2) {
