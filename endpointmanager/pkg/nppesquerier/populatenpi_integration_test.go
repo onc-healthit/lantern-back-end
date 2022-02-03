@@ -116,7 +116,7 @@ func Test_ParseAndStoreNPIContactFile(t *testing.T) {
 	}
 	th.Assert(t, bad_url_contact != nil, "Unable to find npi 1346747029 in npi_contacts")
 	th.Assert(t, bad_url_contact.ValidURL == false, "Invalid URL marked as valid")
-	th.Assert(t, bad_url_contact.Endpoint == "HIPPA and Health IT", "Unexpected Endpoint information for entry")
+	th.Assert(t, bad_url_contact.Endpoint == "http://HIPPA and Health IT/", "Unexpected Endpoint information for entry")
 
 	good_url_contact, err := store.GetNPIContactByNPIID(ctx, "1760025803")
 	if err != nil {
@@ -124,7 +124,7 @@ func Test_ParseAndStoreNPIContactFile(t *testing.T) {
 	}
 	th.Assert(t, good_url_contact != nil, "Unable to find npi 1760025803 in npi_contacts")
 	th.Assert(t, good_url_contact.ValidURL == true, "Valid URL marked as invalid")
-	th.Assert(t, good_url_contact.Endpoint == "https://dpc.cms.gov/api/v1", "Unexpected Endpoint information for entry")
+	th.Assert(t, good_url_contact.Endpoint == "https://dpc.cms.gov/api/v1/", "Unexpected Endpoint information for entry")
 
 }
 
