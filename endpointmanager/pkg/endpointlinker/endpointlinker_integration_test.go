@@ -13,6 +13,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/spf13/viper"
 )
 
@@ -176,8 +177,8 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	ep3 := &endpointmanager.FHIREndpoint{
 		ID:                3,
 		URL:               "example3.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO BAR FOO"},
-		NPIIDs:            []string{},
+		OrganizationNames: []string{"BAR BAR FOO"},
+		NPIIDs:            []string{"3"},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID3 := "3"
 	confidence3 := .5
@@ -188,6 +189,34 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	err = addMatch(ctx, store, npiID2, ep2, confidence2)
 	th.Assert(t, err == nil, err)
 	err = addMatch(ctx, store, npiID3, ep3, confidence3)
+	th.Assert(t, err == nil, err)
+
+	// add NPI organizations to db
+	var fakeOrg = exactPrimaryNameOrg
+	fakeOrg.Name = "FOO BAR FOO"
+	fakeOrg.NPI_ID = "1"
+
+	err = store.AddNPIOrganization(ctx, fakeOrg)
+	th.Assert(t, err == nil, err)
+
+	fakeOrg.Name = "FOO BAZ BAR"
+	fakeOrg.NPI_ID = "2"
+
+	err = store.AddNPIOrganization(ctx, fakeOrg)
+	th.Assert(t, err == nil, err)
+
+	fakeOrg.Name = "BAR BAR FOO"
+	fakeOrg.NPI_ID = "3"
+
+	err = store.AddNPIOrganization(ctx, fakeOrg)
+	th.Assert(t, err == nil, err)
+
+	// Set back to original values
+	fakeOrg.Name = "Foo Bar"
+	fakeOrg.NPI_ID = "1"
+
+	// add endpoint 3 to fhir endpoints table
+	err = store.AddFHIREndpoint(ctx, ep3)
 	th.Assert(t, err == nil, err)
 
 	// open fake allowlist and blocklist files
@@ -213,6 +242,12 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	th.Assert(t, sEpURL == ep3.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from allowlist '%s'.", sEpURL, ep3.URL))
 	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
 
+	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep3.URL)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, sNpiID == npiID2, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from allowlist '%s'.", sNpiID, npiID1))
+	th.Assert(t, sEpURL == ep3.URL, fmt.Sprintf("expected stored url '%s' to be the same as the url that was stored from allowlist '%s'.", sEpURL, ep3.URL))
+	th.Assert(t, sConfidence == 1.000, fmt.Sprintf("expected stored confidence 1.000, got '%f'.", sConfidence))
+
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID1, ep1.URL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, sNpiID == npiID1, fmt.Sprintf("expected stored ID '%s' to be the same as the ID that was stored from allowlist '%s'.", sNpiID, npiID1))
@@ -224,6 +259,10 @@ func Test_manualLinkerCorrections(t *testing.T) {
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep2.URL)
 	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blocklist file")
+
+	endpoint3, err := store.GetFHIREndpoint(ctx, ep3.ID)
+	th.Assert(t, helpers.StringArraysEqual(endpoint3.OrganizationNames, []string{"FOO BAR FOO", "FOO BAZ BAR"}), "Expected endpoint 3 to have Organization Name FOO BAR FOO and FOO BAZ BAR")
+	th.Assert(t, helpers.StringArraysEqual(endpoint3.NPIIDs, []string{"1", "2"}), "Expected endpoint 3 to have NPI IDs 1 and 2")
 }
 
 func setup() error {

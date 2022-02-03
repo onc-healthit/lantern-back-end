@@ -357,21 +357,25 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, allow
 			}
 		}
 	}
+	var matchEndpointOrganization []map[string]string
+	var unmatchEndpointOrganization []map[string]string
 
-	if allowlistFile != "" && blocklistFile != "" {
-		matchEndpointOrganization, err := openLinkerCorrectionFiles(allowlistFile)
+	if allowlistFile != "" {
+		matchEndpointOrganization, err = openLinkerCorrectionFiles(allowlistFile)
 		if err != nil {
 			return errors.Wrap(err, "Error opening linker correction allowlist file")
 		}
-		unmatchEndpointOrganization, err := openLinkerCorrectionFiles(blocklistFile)
+	}
+	if blocklistFile != "" {
+		unmatchEndpointOrganization, err = openLinkerCorrectionFiles(blocklistFile)
 		if err != nil {
 			return errors.Wrap(err, "Error opening linker correction blocklist file")
 		}
+	}
 
-		err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
-		if err != nil {
-			return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
-		}
+	err = linkerFix(ctx, store, matchEndpointOrganization, unmatchEndpointOrganization)
+	if err != nil {
+		return errors.Wrap(err, "Error manually correcting npi organization to FHIR endpoint links")
 	}
 
 	verbosePrint("Match Total: "+strconv.Itoa(matchCount)+"/"+strconv.Itoa(len(fhirEndpoints)), verbose)
@@ -416,7 +420,25 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			orgID := matchesMap["organizationID"]
 			endpointURL := matchesMap["endpointURL"]
 			confidence := 1.0
-			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
+
+			var npiOrganizationName string
+
+			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
+			if err == sql.ErrNoRows {
+				npiOrganizationName = ""
+			} else if err != nil {
+				return errors.Wrap(err, "Error getting npiOrganization from database")
+			} else {
+				npiOrganizationName = npiOrganization.Name
+			}
+
+			var fhirEndpoint = endpointmanager.FHIREndpoint{
+				URL:               endpointURL,
+				OrganizationNames: []string{npiOrganizationName},
+				NPIIDs:            []string{orgID},
+			}
+
+			_, _, _, err = store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
 
 			if err == sql.ErrNoRows {
 				err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
@@ -430,6 +452,11 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 				}
 			} else {
 				return errors.Wrap(err, "Error checking if org to FHIR endpoint link exists")
+			}
+
+			err = store.UpdateFHIREndpointsNPIOrg(ctx, &fhirEndpoint, true)
+			if err != nil {
+				return errors.Wrap(err, "Error adding allowlist organization information to the fhir endpoints table")
 			}
 		}
 	}
@@ -447,6 +474,29 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 					return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
 				}
 			}
+
+			var npiOrganizationName string
+
+			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
+			if err == sql.ErrNoRows {
+				npiOrganizationName = ""
+			} else if err != nil {
+				return errors.Wrap(err, "Error getting npiOrganization from database")
+			} else {
+				npiOrganizationName = npiOrganization.Name
+			}
+
+			var fhirEndpoint = endpointmanager.FHIREndpoint{
+				URL:               endpointURL,
+				OrganizationNames: []string{npiOrganizationName},
+				NPIIDs:            []string{orgID},
+			}
+
+			err = store.UpdateFHIREndpointsNPIOrg(ctx, &fhirEndpoint, false)
+			if err != nil {
+				return errors.Wrap(err, "Error removing blocklist organization information from the fhir endpoints table")
+			}
+
 		}
 	}
 	return nil
