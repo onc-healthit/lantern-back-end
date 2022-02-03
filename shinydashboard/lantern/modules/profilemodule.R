@@ -78,7 +78,7 @@ selected_fhir_endpoint_profiles <- reactive({
                   url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left"),
                   profileurl = colDef(name = "Profile URL", minWidth = 300, align = "left", sortable = FALSE),
                   profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
-                  resource = colDef(name = "Resource", sortable = FALSE),
+                  resource = colDef(name = "Resource", minWidth = 200, sortable = FALSE),
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
               ),
