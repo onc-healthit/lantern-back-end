@@ -313,7 +313,8 @@ function(input, output, session) { #nolint
 
     res <- res %>%
     filter(fhir_version %in% input$fhir_version) %>%
-    distinct(resource)
+    distinct(resource) %>%
+    filter(resource != "")
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == input$vendor)
@@ -323,16 +324,11 @@ function(input, output, session) { #nolint
         "All Resources" = ui_special_values$ALL_RESOURCES
     )
 
-    if (nrow(res) <= 1 && res$resource == "") {
-      return(c(resource_list))
-    }
-    else {
-      res <- res %>%
-      arrange(resource) %>%
-      split(.$resource) %>%
-      purrr::map(~ .$resource)
-      return(c(resource_list, res))
-    }
+    res <- res %>%
+    arrange(resource) %>%
+    split(.$resource) %>%
+    purrr::map(~ .$resource)
+    return(c(resource_list, res))
   })
 
 

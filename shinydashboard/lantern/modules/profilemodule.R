@@ -103,7 +103,7 @@ selected_fhir_endpoint_profiles <- reactive({
                   format = list(aggregated = colFormat(prefix = "Count: "))),
                   profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
                   resource = colDef(name = "Resource", sortable = FALSE),
-                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE, aggregate = "unique"),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
               ),
               groupBy = "url",
