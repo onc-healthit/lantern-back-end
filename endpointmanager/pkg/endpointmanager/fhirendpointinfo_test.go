@@ -505,16 +505,13 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	}
 	endpointInfo2.OperationResource = endpointInfo1.OperationResource
 
-	endpointInfo1.SupportedProfiles[0] = SupportedProfile{
-		Resource:    "",
-		ProfileURL:  "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance",
-		ProfileName: "Wrong Profile Name",
-	}
+	endpointInfo1.SupportedProfiles[0].ProfileName = "Wrong Profile Name"
 
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be different. %+v vs %+v", endpointInfo1.SupportedProfiles[0], endpointInfo2.SupportedProfiles[0])
 	}
-	endpointInfo1.SupportedProfiles = endpointInfo2.SupportedProfiles
+
+	endpointInfo1.SupportedProfiles[0].ProfileName = "U.S. Data Access Framework (DAF) AllergyIntolerance Profile"
 
 	endpointInfo2.SupportedProfiles = make([]SupportedProfile, 0)
 	if endpointInfo1.Equal(endpointInfo2) {
