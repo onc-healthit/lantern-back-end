@@ -23,7 +23,7 @@ ui <- dashboardPage(
       menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
-      menuItem("CapabilityStatement / Conformance Profiles", icon = icon("list-alt"), tabName = "profile_tab"), badgeLabel = "new",
+      menuItem("CapabilityStatement / Conformance Profiles", icon = icon("list-alt"), tabName = "profile_tab", badgeLabel = "new"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
