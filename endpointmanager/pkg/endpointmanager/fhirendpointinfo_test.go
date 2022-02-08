@@ -526,6 +526,11 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 	if endpointInfo1.Equal(endpointInfo2) {
 		t.Errorf("Did not expect endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be different. %+v vs %+v", endpointInfo1.SupportedProfiles, endpointInfo2.SupportedProfiles)
 	}
+
+	endpointInfo1.SupportedProfiles = testSupportedProfiles
+	if !endpointInfo1.Equal(endpointInfo2) {
+		t.Errorf("Expected endpointInfo1 to equal endpointInfo 2. SupportedProfiles should be the same. %+v vs %+v", endpointInfo1.SupportedProfiles, endpointInfo2.SupportedProfiles)
+	}
 	endpointInfo1.SupportedProfiles = endpointInfo2.SupportedProfiles
 
 	endpointInfo2.Metadata = nil

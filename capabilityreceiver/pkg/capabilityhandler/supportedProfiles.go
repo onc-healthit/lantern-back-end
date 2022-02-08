@@ -49,7 +49,7 @@ func getConformanceProfiles(capInt map[string]interface{}, supportedProfiles []e
 	return supportedProfiles
 }
 
-// getCapabilityStatementProfiles stores all the profiles found in the Capability statement rest->resource->profile field
+// getCapabilityStatementProfiles stores all the profiles found in the Capability statement rest->resource->supportedProfile field
 func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProfiles []endpointmanager.SupportedProfile) []endpointmanager.SupportedProfile {
 
 	if capInt["rest"] == nil {

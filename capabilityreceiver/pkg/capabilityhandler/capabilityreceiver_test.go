@@ -591,7 +591,7 @@ func Test_RunSupportedProfilesCheck(t *testing.T) {
 	expectedResource = ""
 	th.Assert(t, supportedProfiles[7].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[7].ProfileURL, expectedURL))
 	th.Assert(t, supportedProfiles[7].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be %s, was %s", supportedProfiles[7].ProfileName, expectedName))
-	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[7].Resource))
+	th.Assert(t, supportedProfiles[7].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[7].Resource))
 
 	// Test R4 Capability Statement
 	setupCapabilityStatement(t, filepath.Join("../../testdata", "supported_profiles_r4.json"))

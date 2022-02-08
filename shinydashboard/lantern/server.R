@@ -177,7 +177,7 @@ function(input, output, session) { #nolint
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
-  show_profiles_checkbox <- reactive(input$side_menu %in% c("profile_tab"))
+  show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
 
   show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
@@ -480,7 +480,7 @@ function(input, output, session) { #nolint
   #   Display Resource and Profile Filters   #
   #                                          #
 
-  output$profile_filter_tab <- renderUI({
+  output$resource_filter_tab <- renderUI({
     fluidPage(
       fluidRow(
         column(width = 12,
@@ -499,7 +499,7 @@ function(input, output, session) { #nolint
     )
   })
 
-  output$resource_filter_tab <- renderUI({
+  output$profile_filter_tab <- renderUI({
     fluidPage(
       fluidRow(
         column(width = 12,
@@ -518,13 +518,13 @@ function(input, output, session) { #nolint
   })
 
   output$show_resource_profiles_dropdown <- renderUI({
-    if (show_profiles_checkbox()) {
+    if (show_profiles_filters()) {
       tagList(
         fluidRow(
           column(width = 12,
             tabsetPanel(id = "profile_resource_tab", type = "tabs",
-              tabPanel("Profile Filtering", uiOutput("resource_filter_tab")),
-              tabPanel("Resource Filtering", uiOutput("profile_filter_tab")))
+              tabPanel("Profile Filtering", uiOutput("profile_filter_tab")),
+              tabPanel("Resource Filtering", uiOutput("resource_filter_tab")))
           )
         )
       )
