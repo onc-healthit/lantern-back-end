@@ -313,7 +313,6 @@ function(input, output, session) { #nolint
 
     res <- res %>%
     filter(fhir_version %in% input$fhir_version) %>%
-    distinct(resource) %>%
     filter(resource != "")
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
@@ -325,6 +324,7 @@ function(input, output, session) { #nolint
     )
 
     res <- res %>%
+    distinct(resource) %>%
     arrange(resource) %>%
     split(.$resource) %>%
     purrr::map(~ .$resource)
