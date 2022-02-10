@@ -37,7 +37,7 @@ func (vr *VersionsResponse) GetJSON() ([]byte, error) {
 
 // GetDefaultVersion gets the default FHIR version out of the versions response
 func (vr *VersionsResponse) GetDefaultVersion() string {
-	if vr.Response == nil {
+	if vr.Response == nil || vr.Response["default"] == nil {
 		return ""
 	}
 	return vr.Response["default"].(string)
