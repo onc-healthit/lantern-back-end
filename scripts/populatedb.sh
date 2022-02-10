@@ -28,3 +28,8 @@ cd ..
 cd datavalidation
 go run main.go
 cd ..
+
+# Run endpoint linker
+cd endpointlinker
+go run main.go
+cd ..

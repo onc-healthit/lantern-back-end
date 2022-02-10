@@ -10,7 +10,3 @@ cd ..
 echo "Getting NPPES org pfile data into db"
 cd nppesorgpopulator
 go run main.go /etc/lantern/resources/npidata_pfile.csv
-
-echo "Running endpoint linker"
-cd ../endpointlinker
-go run main.go
