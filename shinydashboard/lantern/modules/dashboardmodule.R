@@ -3,14 +3,14 @@ library(shinydashboard)
 library(readr)
 library(scales)
 
-custom_column_small = function(...){
+custom_column_small <- function(...) {
     tags$div(
       class = "col-md-4",
       ...
     )
 }
 
-custom_column_large = function(...){
+custom_column_large <- function(...) {
     tags$div(
       class = "col-md-8",
       ...
