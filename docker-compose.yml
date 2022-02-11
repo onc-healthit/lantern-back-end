@@ -49,7 +49,7 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
       - ./scripts/populatedb_prod.sh:/etc/lantern/populatedb_prod.sh
-       - ./scripts/query-NPPES-resources-prod.sh:/etc/lantern/query-NPPES-resources-prod.sh
+      - ./scripts/query-NPPES-resources-prod.sh:/etc/lantern/query-NPPES-resources-prod.sh
       - ./resources/prod_resources/:/etc/lantern/resources
       - "./VERSION:/etc/lantern/VERSION:ro"
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
