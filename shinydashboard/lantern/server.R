@@ -6,7 +6,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -100,6 +100,14 @@ function(input, output, session) { #nolint
         reactive(input$vendor))
 
       callModule(
+        profilemodule,
+        "profile_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$profile_resource),
+        reactive(input$profiles))
+
+      callModule(
         valuesmodule,
         "values_page",
         reactive(input$fhir_version),
@@ -124,6 +132,7 @@ function(input, output, session) { #nolint
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implmentation Page",
      "fields_tab" = "Fields Page",
+     "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
      "location_tab" = "Location Map",
      "about_tab" = "About Lantern",
@@ -153,7 +162,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
+    input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
   )
 
   show_availability_filter <- reactive(
@@ -167,6 +176,8 @@ function(input, output, session) { #nolint
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
+
+  show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
 
   show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
@@ -272,6 +283,54 @@ function(input, output, session) { #nolint
       )
     }
   })
+
+  profile_options <- reactive({
+    res <- isolate(app_data$supported_profiles())
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+    distinct(profileurl) %>%
+    arrange(profileurl) %>%
+    split(.$profileurl) %>%
+    purrr::map(~ .$profileurl)
+
+    profile_list <- list(
+      "All Profiles" = ui_special_values$ALL_PROFILES
+    )
+
+    return(c(profile_list, res))
+  })
+
+  resource_options <- reactive({
+    res <- isolate(app_data$supported_profiles())
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>%
+    filter(fhir_version %in% input$fhir_version) %>%
+    filter(resource != "")
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    resource_list <- list(
+        "All Resources" = ui_special_values$ALL_RESOURCES
+    )
+
+    res <- res %>%
+    distinct(resource) %>%
+    arrange(resource) %>%
+    split(.$resource) %>%
+    purrr::map(~ .$resource)
+    return(c(resource_list, res))
+  })
+
 
   checkbox_resources <- reactive({
     res <- isolate(app_data$endpoint_resource_types())
@@ -420,4 +479,73 @@ function(input, output, session) { #nolint
               options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
+
+  #                                          #
+  #   Display Resource and Profile Filters   #
+  #                                          #
+
+  output$resource_filter_tab <- renderUI({
+    fluidPage(
+      fluidRow(
+        column(width = 12,
+          selectInput(
+            inputId = "profile_resource",
+            label = "Resources:",
+            choices = resource_options(),
+            selected = ui_special_values$ALL_RESOURCES,
+            selectize = FALSE,
+            size = 1,
+            width = paste0(max(nchar(profile_options())) * 8, "px")
+          )
+        )
+      ),
+      p("Note: DSTU2 endpoints will not be visible if resource filter selected.")
+    )
+  })
+
+  output$profile_filter_tab <- renderUI({
+    fluidPage(
+      fluidRow(
+        column(width = 12,
+          selectInput(
+            inputId = "profiles",
+            label = "Profiles:",
+            choices = profile_options(),
+            selected = ui_special_values$ALL_PROFILES,
+            selectize = FALSE,
+            size = 1,
+            width = paste0(max(nchar(profile_options())) * 8, "px")
+          )
+        )
+      )
+    )
+  })
+
+  output$show_resource_profiles_dropdown <- renderUI({
+    if (show_profiles_filters()) {
+      tagList(
+        fluidRow(
+          column(width = 12,
+            tabsetPanel(id = "profile_resource_tab", type = "tabs",
+              tabPanel("Profile Filtering", uiOutput("profile_filter_tab")),
+              tabPanel("Resource Filtering", uiOutput("resource_filter_tab")))
+          )
+        )
+      )
+    }
+  })
+
+  # Resets the filters when switching between filtering tabs
+  observeEvent(input$profile_resource_tab, {
+      updateSelectInput(session, "profiles",
+        label = "Profiles:",
+        choices = profile_options(),
+        selected = ui_special_values$ALL_PROFILES)
+
+      updateSelectInput(session, "profile_resource",
+        label = "Resources:",
+        choices = resource_options(),
+        selected = ui_special_values$ALL_RESOURCES)
+  })
+
 }

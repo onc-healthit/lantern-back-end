@@ -22,10 +22,11 @@ ui <- dashboardPage(
       menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
+      menuItem("CapabilityStatement / Conformance Profiles", icon = icon("list-alt"), tabName = "profile_tab", badgeLabel = "new"),
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
-      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeColor = "green"),
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
       menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
@@ -46,6 +47,7 @@ ui <- dashboardPage(
     uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
+    uiOutput("show_resource_profiles_dropdown"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")
@@ -70,6 +72,9 @@ ui <- dashboardPage(
       ),
       tabItem("fields_tab",
               fieldsmodule_UI("fields_page")
+      ),
+        tabItem("profile_tab",
+              profilemodule_UI("profile_page")
       ),
       tabItem("values_tab",
               valuesmodule_UI("values_page")
