@@ -34,7 +34,14 @@ update_source_data:
 	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 	@cd ./scripts; chmod +rx query-NPPES-resources.sh; ./query-NPPES-resources.sh
 
+update_source_data_prod:
+	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
+
 populatedb:
+	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
+
+populatedb_prod:
+	@cd ./scripts; chmod +rx query-NPPES-resources-prod.sh; ./query-NPPES-resources-prod.sh
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
 backup_database:

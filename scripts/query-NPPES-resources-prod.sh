@@ -40,7 +40,20 @@ rm -f ../dev_resources/endpoint_pfile.csv
 sed '1000,$d' npidata_pfile.csv > ../dev_resources/npidata_pfile.csv 
 sed '1000,$d' endpoint_pfile.csv > ../dev_resources/endpoint_pfile.csv
 
+echo "Adding NPPES information to db..."
+cd ../../scripts
+docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/add-NPPES-db.sh
+
+cd ../resources/prod_resources
 rm -f endpoint_pfile.csv
+rm -f endpoint_pfile
 rm -f npidata_pfile.csv
+rm -f npidata_pfile
+
+cd ../dev_resources
+rm -f endpoint_pfile.csv
+rm -f endpoint_pfile
+rm -f npidata_pfile.csv
+rm -f npidata_pfile
 
 echo "done"
