@@ -141,6 +141,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 	operationResource := RunSupportedResourcesChecks(capInt)
+	supportedProfiles := RunSupportedProfilesCheck(capInt, fhirVersion)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:                  url,
@@ -162,6 +163,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		Metadata:              FHIREndpointMetadata,
 		RequestedFhirVersion:  requestedFhirVersion,
 		CapabilityFhirVersion: fhirVersion,
+		SupportedProfiles:     supportedProfiles,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
@@ -253,6 +255,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
+			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
 			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)

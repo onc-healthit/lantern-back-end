@@ -895,6 +895,56 @@
                     ]
                 }
             ],
+            "profile": [
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance",
+                    "display": "U.S. Data Access Framework (DAF) AllergyIntolerance Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-condition",
+                    "display": "U.S. Data Access Framework (DAF) Condition Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-diagnosticorder",
+                    "display": "U.S. Data Access Framework (DAF) DiagnosticOrder Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-diagnosticreport",
+                    "display": "U.S. Data Access Framework (DAF) DiagnosticReport Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-immunization",
+                    "display": "U.S. Data Access Framework (DAF) Immunization Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-medicationorder",
+                    "display": "U.S. Data Access Framework (DAF) MedicationOrder Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-medicationstatement",
+                    "display": "U.S. Data Access Framework (DAF) MedicationStatement Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-patient",
+                    "display": "U.S. Data Access Framework (DAF) Patient Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StuctureDefinition/daf-procedure",
+                    "display": "U.S. Data Access Framework (DAF) Procedure Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-resultobs",
+                    "display": "U.S. Data Access Framework (DAF) Results Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-smokingstatus",
+                    "display": "U.S. Data Access Framework (DAF) SmokingStatus Profile"
+                },
+                {
+                    "reference": "http://hl7.org/fhir/StructureDefinition/daf-vitalsigns",
+                    "display": "U.S. Data Access Framework (DAF) VitalSigns Profile"
+                }
+            ],
             "operation": [
                 {
                     "name": "autogen-ccd-if",

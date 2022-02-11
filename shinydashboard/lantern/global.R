@@ -41,7 +41,8 @@ r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_DEVELOPERS" = "All Developers",
-  "ALL_RESOURCES" = "All Resources"
+  "ALL_RESOURCES" = "All Resources",
+  "ALL_PROFILES" = "All Profiles"
 )
 
 # The list of fhir versions and vendors are unlikely to change during a user's session
@@ -67,6 +68,7 @@ app_data <<- list(
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement
+  supported_profiles = reactiveVal(NULL),          # Profiles from the capability statement/conformance resource
   last_updated = reactiveVal(NULL),                # time app_data was last updated
   security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint
   security_endpoints_tbl = reactiveVal(NULL),      # list of endpoints filterable by auth type
