@@ -40,3 +40,4 @@ cd ..
 # run data validation to ensure number of endpoints does not exceed maximum for query interval
 cd datavalidation
 go run main.go
+cd ..
