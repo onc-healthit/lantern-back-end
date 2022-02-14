@@ -41,8 +41,7 @@ populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
 populatedb_prod:
-	@cd ./scripts; chmod +rx query-NPPES-resources-prod.sh; ./query-NPPES-resources-prod.sh
-	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
+	@cd ./scripts; chmod +rx populatedb_prod.sh; ./populatedb_prod.sh
 
 backup_database:
 	$(eval BACKUP=lantern_backup_$(shell date +%Y%m%d%H%M%S).sql)
