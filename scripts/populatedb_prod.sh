@@ -44,10 +44,4 @@ rm -f endpoint_pfile
 rm -f npidata_pfile.csv
 rm -f npidata_pfile
 
-cd ../dev_resources
-rm -f endpoint_pfile.csv
-rm -f endpoint_pfile
-rm -f npidata_pfile.csv
-rm -f npidata_pfile
-
 echo "done"
