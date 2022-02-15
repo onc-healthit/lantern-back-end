@@ -117,3 +117,6 @@ update_mods:
 	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./capabilityreceiver; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./lanternmq; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
+
+migrate_validations:
+	docker exec -it --workdir /go/src/app/cmd/migratevalidations lantern-back-end_capability_receiver_1 go run main.go up
