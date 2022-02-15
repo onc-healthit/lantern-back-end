@@ -93,18 +93,11 @@ func getRowInfo(rows *sql.Rows) (string, string, string, capabilityparser.Capabi
 	var mimeTypes []string
 	var smartResponseJSON []byte
 	var smartResponseInt map[string]interface{}
-	var valResIDNullable sql.NullInt64
 	var valResID int
 	var requestedFhirVersion string
 
-	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON, &valResIDNullable, &requestedFhirVersion)
+	err := rows.Scan(&operation, &fhirURL, &capStatJSON, &entryDate, &tlsVersion, pq.Array(&mimeTypes), &smartResponseJSON, &valResID, &requestedFhirVersion)
 	helpers.FailOnError("", err)
-
-	if !valResIDNullable.Valid {
-		valResID = 0
-	} else {
-		valResID = int(valResIDNullable.Int64)
-	}
 
 	err = json.Unmarshal(capStatJSON, &capInt)
 	helpers.FailOnError("", err)
