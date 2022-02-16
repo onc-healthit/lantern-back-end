@@ -358,7 +358,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON = []byte("null")
 	}
 
-	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
+	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID, e.ValidationID})
 
 	row := addFHIREndpointInfoStatement.QueryRowContext(ctx,
 		e.URL,
@@ -370,7 +370,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-		e.ValidationID,
+		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
 		e.CapabilityFhirVersion)
@@ -414,7 +414,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON = []byte("null")
 	}
 
-	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID})
+	nullableInts := getNullableInts([]int{e.HealthITProductID, e.VendorID, e.ValidationID})
 
 	_, err = updateFHIREndpointInfoStatement.ExecContext(ctx,
 		e.URL,
@@ -426,7 +426,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-		e.ValidationID,
+		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
 		e.CapabilityFhirVersion,
