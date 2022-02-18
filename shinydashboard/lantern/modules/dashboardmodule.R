@@ -3,6 +3,20 @@ library(shinydashboard)
 library(readr)
 library(scales)
 
+custom_column_small <- function(...) {
+    tags$div(
+      class = "col-md-4",
+      ...
+    )
+}
+
+custom_column_large <- function(...) {
+    tags$div(
+      class = "col-md-8",
+      ...
+    )
+}
+
 dashboard_UI <- function(id) {
 
   ns <- NS(id)
@@ -24,10 +38,10 @@ dashboard_UI <- function(id) {
     ),
     h2("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
-      column(width = 4,
+      custom_column_small(
              tableOutput(ns("fhir_vendor_table"))
       ),
-      column(width = 8,
+      custom_column_large(
              plotOutput(ns("vendor_share_plot")),
              htmlOutput(ns("note_text"))
       )
@@ -35,11 +49,11 @@ dashboard_UI <- function(id) {
     h3("All Endpoint Responses"),
     uiOutput("show_http_vendor_filters"),
     fluidRow(
-      column(width = 4,
+      custom_column_small(
              tableOutput(ns("http_code_table")),
              p("All HTTP response codes ever received and count of endpoints which returned that code at some point in history"),
       ),
-      column(width = 8,
+      custom_column_large(
            plotOutput(ns("response_code_plot"))
       )
     )
