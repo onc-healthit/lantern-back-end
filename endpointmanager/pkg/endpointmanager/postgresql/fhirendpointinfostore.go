@@ -85,9 +85,10 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
+	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable, validationResultIDNullable})
 	endpointInfo.HealthITProductID = ints[0]
 	endpointInfo.VendorID = ints[1]
+	endpointInfo.ValidationID = ints[2]
 
 	if includedFieldsJSON != nil {
 		err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
@@ -160,6 +161,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		var includedFieldsJSON []byte
 		var supportedProfilesJSON []byte
 		var healthitProductIDNullable sql.NullInt64
+		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
 		var smartResponseJSON []byte
 		var metadataID int
@@ -172,7 +174,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			&endpointInfo.TLSVersion,
 			pq.Array(&endpointInfo.MIMETypes),
 			&capabilityStatementJSON,
-			&endpointInfo.ValidationID,
+			&validationResultIDNullable,
 			&endpointInfo.CreatedAt,
 			&endpointInfo.UpdatedAt,
 			&smartResponseJSON,
@@ -193,9 +195,10 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			}
 		}
 
-		ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
+		ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable, validationResultIDNullable})
 		endpointInfo.HealthITProductID = ints[0]
 		endpointInfo.VendorID = ints[1]
+		endpointInfo.ValidationID = ints[2]
 
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
@@ -296,7 +299,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		}
 	}
 
-	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
+	ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable, validationResultIDNullable})
 	endpointInfo.HealthITProductID = ints[0]
 	endpointInfo.VendorID = ints[1]
 	endpointInfo.ValidationID = ints[2]
@@ -514,6 +517,7 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 		var includedFieldsJSON []byte
 		var supportedProfilesJSON []byte
 		var healthitProductIDNullable sql.NullInt64
+		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
 		var smartResponseJSON []byte
 		var metadataID int
@@ -526,7 +530,7 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			&endpointInfo.TLSVersion,
 			pq.Array(&endpointInfo.MIMETypes),
 			&capabilityStatementJSON,
-			&endpointInfo.ValidationID,
+			&validationResultIDNullable,
 			&endpointInfo.CreatedAt,
 			&endpointInfo.UpdatedAt,
 			&smartResponseJSON,
@@ -547,9 +551,10 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			}
 		}
 
-		ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable})
+		ints := getRegularInts([]sql.NullInt64{healthitProductIDNullable, vendorIDNullable, validationResultIDNullable})
 		endpointInfo.HealthITProductID = ints[0]
 		endpointInfo.VendorID = ints[1]
+		endpointInfo.ValidationID = ints[2]
 
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
