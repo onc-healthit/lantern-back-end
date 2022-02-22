@@ -222,6 +222,23 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
+
+# Configure Automatic Endpoint Resource Updater
+
+You can configure an automatic endpoint resource update checker using cron and the `automatic_endpoint_update.sh` script located in the scripts directory to automatically update the resource lists found in the `resources/prod_resources` directory, query NPPES for its endpoint information, and then save all this information in the database. The task will send an email notification if the automatic update fails to be saved in the database. 
+
+To set up the script for this automatic endpoint resource updater, you must insert the correct information into the following variables located at the beginning of the update checker script.
+  * Set the EMAIL variable to the email you want the automatic endpoint resource updater to send failure alerts to in the `populatedb_prod.sh` script
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full path to scripts directory> && ./automatic_endpoint_update.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * cd <Full path to scripts directory> && ./automatic_endpoint_update.sh` to run the script at minute 0 of every 23rd hour
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
 # Running Lantern Services Individually
 
 ## Internal Services
