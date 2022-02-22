@@ -282,186 +282,41 @@ func (v *r4Validation) KindValid(capStat capabilityparser.CapabilityStatement) [
 // MessagingEndpointValid checks the requirement "Messaging endpoint is required (and is only permitted) when a statement is for an implementation."
 // Every endpoint we are testing should be an implementation, which means the endpoint field should be there.
 func (v *r4Validation) MessagingEndpointValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	baseComment := "Messaging end-point is required (and is only permitted) when a statement is for an implementation. This endpoint must be an implementation."
-	ruleError := endpointmanager.Rule{
-		RuleName:  endpointmanager.MessagingEndptRule,
-		Valid:     false,
-		Expected:  "true",
-		Actual:    "false",
-		Comment:   baseComment,
-		Reference: "http://hl7.org/fhir/capabilitystatement.html",
-		ImplGuide: "USCore 3.1",
-	}
-
-	kindRule := v.baseVal.KindValid(capStat)
-	if !kindRule[0].Valid {
-		ruleError.Comment = kindRule[0].Comment + " " + baseComment
-		return ruleError
-	}
-	messaging, err := capStat.GetMessaging()
-	if err != nil || len(messaging) == 0 {
-		ruleError.Comment = "Messaging does not exist. " + baseComment
-		return ruleError
-	}
-	for _, message := range messaging {
-		endpoints, err := capStat.GetMessagingEndpoint(message)
-		if err != nil || len(endpoints) == 0 {
-			ruleError.Comment = "Endpoint field in Messaging does not exist. " + baseComment
-			return ruleError
-		}
-	}
-
-	ruleError.Valid = true
-	ruleError.Actual = "true"
-	return ruleError
+	baseRule := v.baseVal.MessagingEndpointValid(capStat)
+	baseRule.Reference = "http://hl7.org/fhir/capabilitystatement.html"
+	return baseRule
 }
 
 // EndpointFunctionValid checks the requirement "A Capability Statement SHALL have at least one of REST,
 // messaging or document element."
 func (v *r4Validation) EndpointFunctionValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	var actualVal []string
-	baseComment := "A Capability Statement SHALL have at least one of REST, messaging or document element."
-	ruleError := endpointmanager.Rule{
-		RuleName:  endpointmanager.EndptFunctionRule,
-		Valid:     true,
-		Expected:  "rest,messaging,document",
-		Comment:   baseComment,
-		Reference: "http://hl7.org/fhir/capabilitystatement.html",
-		ImplGuide: "USCore 3.1",
-	}
-	// If rest is not nil, add to actual list
-	rest, err := capStat.GetRest()
-	if err == nil && len(rest) > 0 {
-		actualVal = append(actualVal, "rest")
-	}
-	// If messaging is not nil, add to actual list
-	messaging, err := capStat.GetMessaging()
-	if err == nil && len(messaging) > 0 {
-		actualVal = append(actualVal, "messaging")
-	}
-	// if document is not nil, add to actual list
-	document, err := capStat.GetDocument()
-	if err == nil && len(document) > 0 {
-		actualVal = append(actualVal, "document")
-	}
-	// If none of the above exist, the capability statement is not valid
-	if len(actualVal) == 0 {
-		ruleError.Actual = ""
-		ruleError.Valid = false
-		return ruleError
-	}
-	ruleError.Actual = strings.Join(actualVal, ",")
-	return ruleError
+	baseRule := v.baseVal.EndpointFunctionValid(capStat)
+	baseRule.Reference = "http://hl7.org/fhir/capabilitystatement.html"
+	baseRule.Comment = "A Capability Statement SHALL have at least one of REST, messaging or document element."
+	return baseRule
 }
 
 // DescribeEndpointValid checks the requirement: "A Capability Statement SHALL have at least one of description,
 // software, or implementation element."
 func (v *r4Validation) DescribeEndpointValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	var actualVal []string
-	baseComment := "A Capability Statement SHALL have at least one of description, software, or implementation element."
-	ruleError := endpointmanager.Rule{
-		RuleName:  endpointmanager.DescribeEndptRule,
-		Valid:     true,
-		Expected:  "description,software,implementation",
-		Comment:   baseComment,
-		Reference: "http://hl7.org/fhir/capabilitystatement.html",
-		ImplGuide: "USCore 3.1",
-	}
-	// If description is not an empty string, add to actual list
-	description, err := capStat.GetDescription()
-	if err == nil && len(description) > 0 {
-		actualVal = append(actualVal, "description")
-	}
-	// If software is not nil, add to actual list
-	software, err := capStat.GetSoftware()
-	if err == nil && len(software) > 0 {
-		actualVal = append(actualVal, "software")
-	}
-	// if implementation is not nil, add to actual list
-	implementation, err := capStat.GetImplementation()
-	if err == nil && len(implementation) > 0 {
-		actualVal = append(actualVal, "implementation")
-	}
-	// If none of the above exist, the capability statement is not valid
-	if len(actualVal) == 0 {
-		ruleError.Actual = ""
-		ruleError.Valid = false
-		return ruleError
-	}
-	ruleError.Actual = strings.Join(actualVal, ",")
-	return ruleError
+	baseRule := v.baseVal.DescribeEndpointValid(capStat)
+	baseRule.Reference = "http://hl7.org/fhir/capabilitystatement.html"
+	baseRule.Comment = "A Capability Statement SHALL have at least one of description, software, or implementation element."
+	return baseRule
 }
 
 // DocumentSetValid checks the requirement: "The set of documents must be unique by the combination of profile and mode."
 func (v *r4Validation) DocumentSetValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	baseComment := "The set of documents must be unique by the combination of profile and mode."
-	ruleError := endpointmanager.Rule{
-		RuleName:  endpointmanager.DocumentValidRule,
-		Valid:     false,
-		Expected:  "true",
-		Actual:    "false",
-		Comment:   baseComment,
-		Reference: "http://hl7.org/fhir/capabilitystatement.html",
-		ImplGuide: "USCore 3.1",
-	}
-	document, err := capStat.GetDocument()
-	if err != nil {
-		ruleError.Comment = "Document field is not formatted correctly. Cannot check if the set of documents are unique. " + baseComment
-		return ruleError
-	}
-	if err == nil && len(document) == 0 {
-		ruleError.Valid = true
-		ruleError.Actual = "true"
-		ruleError.Comment = "Document field does not exist, but is not required. " + baseComment
-		return ruleError
-	}
-	var uniqueIDs []string
-	invalid := false
-	for _, doc := range document {
-		mode := doc["mode"]
-		if mode == nil {
-			invalid = true
-			break
-		}
-		modeStr, ok := mode.(string)
-		if !ok {
-			invalid = true
-			break
-		}
-		profile := doc["profile"]
-		if profile == nil {
-			invalid = true
-			break
-		}
-		profileStr, ok := profile.(string)
-		if !ok {
-			invalid = true
-			break
-		}
-		// Combine profile & mode to compare against other defined documents
-		id := profileStr + "." + modeStr
-		if stringInList(id, uniqueIDs) {
-			ruleError.Comment = "The set of documents are not unique. " + baseComment
-			return ruleError
-		}
-		uniqueIDs = append(uniqueIDs, id)
-	}
-	if invalid {
-		ruleError.Comment = "Document field is not formatted correctly. Cannot check if the set of documents are unique. " + baseComment
-		return ruleError
-	}
-	ruleError.Valid = true
-	ruleError.Actual = "true"
-	return ruleError
+	baseRule := v.baseVal.DocumentSetValid(capStat)
+	baseRule.Reference = "http://hl7.org/fhir/capabilitystatement.html"
+	return baseRule
 }
 
 // UniqueResources checks the requirement: "A given resource can only be described once per RESTful mode."
 func (v *r4Validation) UniqueResources(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
-	baseComment := "A given resource can only be described once per RESTful mode."
-	returnVal := checkResourceList(capStat, endpointmanager.UniqueResourcesRule)
-	returnVal.Comment = returnVal.Comment + baseComment
-	returnVal.Reference = "http://hl7.org/fhir/capabilitystatement.html"
-	return returnVal
+	baseRule := v.baseVal.UniqueResources(capStat)
+	baseRule.Reference = "http://hl7.org/fhir/capabilitystatement.html"
+	return baseRule
 }
 
 // SearchParamsUnique checks the requirement: "Search parameter names must be unique in the context of a resource."
