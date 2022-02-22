@@ -144,6 +144,8 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make json_export file=<export file name>` | Exports the history of the endpoint data to a JSON file specified by the 'file' parameter |
 | `make history_pruning` | Prunes the fhir_endpoint_info_history table to remove duplicate entries |
 | `make create_archive start=<start date> end=<end date> file=<archive file name>` | Creates an archive of the data in the database between the given dates in a JSON format and saves it to the given 'file' name. The dates format is '2021-01-31' (year, month, date). Example: `make create_archive start=2020-06-01 end=2021-06-01 file=archive_file.json`. Note: If the archive period includes any time between the current date and the LANTERN_PRUNING_THRESHOLD, then the given number of updates might be higher than expected because the history pruning algorithm is only run on data older than the threshold. |
+|  `make migrate_validations direction=<up/down>` | Runs validation migrations when direction is set to up. If direction is set to down, undos validation migrations |
+|  `make migrate_resources direction=<up/down>` | Runs resources migrations when direction is set to up. If direction is set to down, undos resources migrations |
 
 # Configure Data Collection Failure System
 

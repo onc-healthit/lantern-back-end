@@ -17,8 +17,8 @@ To migrate how the validations are stored in the db, you must run the validation
  * Follow the usual migration steps
  * Once the database has been migrated, start up Lantern with `make run`
  * Kill the endpoint manager: `docker stop lantern-back-end_endpoint_manager_1`
- * To migrate the validation information into the validation table: from `capabilityreceiver/cmd/migratevalidations`, run `go run main.go up`
-    * You can run `go run main.go down` to do a down migration (putting the validation information into the validation field)
+ * To migrate the validation information into the validation table: run `make migrate_validations direction=up`
+    * You can run `make migrate_validations direction=down` to do a down migration (putting the validation information into the validation field)
 
 
 
