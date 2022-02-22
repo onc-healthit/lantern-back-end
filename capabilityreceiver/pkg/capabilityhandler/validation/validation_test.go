@@ -37,23 +37,25 @@ func Test_RunValidation(t *testing.T) {
 		Comment:   "The Capability Statement exists.",
 		Reference: "http://hl7.org/fhir/http.html",
 	}
+
 	expectedLastVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.KindRule,
+		RuleName:  endpointmanager.UniqueResourcesRule,
 		Valid:     true,
-		Expected:  "instance",
-		Comment:   "Kind value should be set to 'instance' because this is a specific system instance.",
-		Actual:    "instance",
+		Expected:  "true",
+		Comment:   "A given resource can only be described once per RESTful mode.",
+		Actual:    "true",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		ImplGuide: "USCore 3.1",
 	}
 
 	requestedFhirVersion := "None"
 	defaultFhirVersion := "1.0.2"
 
 	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
-	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
+	th.Assert(t, len(actualVal.Results) == 8, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
-	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[7], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 
 	// r4 test
