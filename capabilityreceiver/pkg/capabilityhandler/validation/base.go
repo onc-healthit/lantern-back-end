@@ -241,6 +241,13 @@ func (bv *baseVal) EndpointFunctionValid(capStat capabilityparser.CapabilityStat
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		ImplGuide: "USCore 3.1",
 	}
+
+	if capStat == nil {
+		ruleError.Valid = false
+		ruleError.Comment = "The Capability Statement does not exist; cannot check REST, messaging or document elements."
+		return ruleError
+	}
+
 	// If rest is not nil, add to actual list
 	rest, err := capStat.GetRest()
 	if err == nil && len(rest) > 0 {
@@ -279,6 +286,13 @@ func (bv *baseVal) DescribeEndpointValid(capStat capabilityparser.CapabilityStat
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		ImplGuide: "USCore 3.1",
 	}
+
+	if capStat == nil {
+		ruleError.Valid = false
+		ruleError.Comment = "The Capability Statement does not exist; cannot check description, software, or implementation elements."
+		return ruleError
+	}
+
 	// If description is not an empty string, add to actual list
 	description, err := capStat.GetDescription()
 	if err == nil && len(description) > 0 {
@@ -316,6 +330,12 @@ func (bv *baseVal) DocumentSetValid(capStat capabilityparser.CapabilityStatement
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
 		ImplGuide: "USCore 3.1",
 	}
+
+	if capStat == nil {
+		ruleError.Comment = "The Capability Statement does not exist; cannot check documents."
+		return ruleError
+	}
+
 	document, err := capStat.GetDocument()
 	if err != nil {
 		ruleError.Comment = "Document field is not formatted correctly. Cannot check if the set of documents are unique. " + baseComment
