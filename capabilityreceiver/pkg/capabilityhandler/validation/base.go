@@ -38,6 +38,21 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 	returnedRules := bv.KindValid(capStat)
 	validationResults = append(validationResults, returnedRules[0])
 
+	returnedRule = bv.DescribeEndpointValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = bv.DocumentSetValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = bv.EndpointFunctionValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = bv.MessagingEndpointValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = bv.UniqueResources(capStat)
+	validationResults = append(validationResults, returnedRule)
+
 	validations := endpointmanager.Validation{
 		Results: validationResults,
 	}

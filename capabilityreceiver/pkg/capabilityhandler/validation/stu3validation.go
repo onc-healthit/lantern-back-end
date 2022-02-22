@@ -35,6 +35,21 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 	returnedRules := v.KindValid(capStat)
 	validationResults = append(validationResults, returnedRules[0])
 
+	returnedRule = v.DescribeEndpointValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = v.DocumentSetValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = v.EndpointFunctionValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = v.MessagingEndpointValid(capStat)
+	validationResults = append(validationResults, returnedRule)
+
+	returnedRule = v.UniqueResources(capStat)
+	validationResults = append(validationResults, returnedRule)
+
 	validations := endpointmanager.Validation{
 		Results: validationResults,
 	}
