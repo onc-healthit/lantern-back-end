@@ -467,6 +467,34 @@ func Test_KindValid(t *testing.T) {
 	eq = reflect.DeepEqual(actualVal, expectedArray)
 	th.Assert(t, eq == true, fmt.Sprintf("Can't check kind when capability statement does not exist, is instead %+v", actualVal))
 
+	// kind is not instance
+	expectedVal.Valid = false
+	expectedVal.Actual = "capability"
+	expectedVal.Comment = baseComment
+	expectedArray = []endpointmanager.Rule{
+		expectedVal,
+	}
+
+	var csInt map[string]interface{}
+
+	capStatJSON, err := cs.GetJSON()
+	th.Assert(t, err == nil, err)
+
+	err = json.Unmarshal(capStatJSON, &csInt)
+	th.Assert(t, err == nil, err)
+
+	csInt["kind"] = "capability"
+	cs, err = capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
+
+	actualVal = validator.KindValid(cs)
+	eq = reflect.DeepEqual(actualVal, expectedArray)
+	th.Assert(t, eq == true, fmt.Sprintf("Kind value should equal capability, is instead %+v", actualVal))
+
+	csInt["kind"] = "instance"
+	cs, err = capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
+
 	// returns invalid if kind does not exist
 
 	cs2, err := deleteFieldFromCapStat(cs, "kind")
@@ -475,7 +503,7 @@ func Test_KindValid(t *testing.T) {
 	validator2, err := getValidator(cs2, dstu2)
 	th.Assert(t, err == nil, err)
 
-	expectedVal.Comment = baseComment
+	expectedVal.Actual = ""
 	expectedArray = []endpointmanager.Rule{
 		expectedVal,
 	}

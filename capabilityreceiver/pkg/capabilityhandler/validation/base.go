@@ -188,6 +188,10 @@ func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []end
 	if err != nil || len(kind) == 0 {
 		ruleError.Valid = false
 	}
+
+	if kind != "instance" {
+		ruleError.Valid = false
+	}
 	ruleError.Actual = kind
 	returnVal := []endpointmanager.Rule{
 		ruleError,
