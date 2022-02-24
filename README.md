@@ -64,7 +64,7 @@ This removes all docker images, networks, and local volumes.
       make update_source_data_prod
       ```
 
-    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`
+    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
       -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
     The populate db script expects the resources directory to contain the following files:
@@ -89,7 +89,7 @@ This removes all docker images, networks, and local volumes.
       * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
       * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
 
-    If you wish to run Lantern with the production resources, you must run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`. 
+    You must run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`. You must be running Lantern with a production environment by using the command `make run_prod` to start up Lantern.
 
     The populate db prod script expects the resources directory to contain the same files as above, besides the endpoint_pfile.csv and npidata_pfile.csv, as these are automatically queried and added to the database within this script. 
 
@@ -150,6 +150,8 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
 |`make test_all` | runs all tests and ends if any of the tests fail| 
+|`make populatedb` | Should be used with development environment by running `make run` first. Populates the database with the endpoint resource list information and NPPES information found in the `resources/dev_resources` directory.| 
+|`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory, and queries NPPES for its latest information and automatically stores it in the database before deleting the files.| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make migrate_database force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional force_version parameter can be included to force the database to a specific migration version before running the next migration. If this parameter is omitted, it runs the next migration that has not yet been run. |
