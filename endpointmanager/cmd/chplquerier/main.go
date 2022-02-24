@@ -40,6 +40,7 @@ func main() {
 	versionString := string(version)
 	versionNum := strings.Split(versionString, "=")
 	userAgent := "LANTERN/" + versionNum[1]
+	userAgent = strings.TrimSuffix(userAgent, "\n")
 	log.Infof("user agent is %s", userAgent)
 
 	err = chplquerier.GetCHPLCriteria(ctx, store, client, userAgent)
