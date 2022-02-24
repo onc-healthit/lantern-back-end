@@ -18,6 +18,7 @@ PASTNPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMON
 
 rm -f endpoint_pfile.csv
 rm -f npidata_pfile.csv
+
 echo "Downloading ${MONTH} NPPES Resources..."
 curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE} 
 echo "Extracting endpoint and npidata files from NPPES zip file..."
@@ -38,5 +39,8 @@ rm -f ../dev_resources/npidata_pfile.csv
 rm -f ../dev_resources/endpoint_pfile.csv
 sed '1000,$d' npidata_pfile.csv > ../dev_resources/npidata_pfile.csv 
 sed '1000,$d' endpoint_pfile.csv > ../dev_resources/endpoint_pfile.csv
+
+rm -f endpoint_pfile.csv
+rm -f npidata_pfile.csv
 
 echo "done"

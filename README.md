@@ -53,13 +53,18 @@ This removes all docker images, networks, and local volumes.
 
 
 2. **If you have a clean database or want to update the data in your database** 
-    1. Run the following command to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`. It will also query NPPES for their endpoint and npi data files, and CHPL for it's list of endpoint list sources.
-    -Note: The NPPES npidata_pfile and endpoint_pfile are too large to store in our github repo, so you must run this command before running the project for the first time. The query_NPPES-resources script that is a part of this command will query NPPES for their endpoint and npi data files, and it will then cut out all the entries in the npi data file that are not organization entries. It then will also create a copy of each file and reduce them to 1000 lines to store for development resources.
+    1. Run the following command with the Lantern project running to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`. It will also query CHPL for it's list of endpoint list sources and NPPES for their endpoint and npi data files and stores truncated versions of the files in the `resources/dev_resources` directory.
+    -Note: The NPPES npidata_pfile and endpoint_pfile are very large and therefore are not persisted in our directory of prod resources, so to add the full NPPES data into the database, you must run the `make populatedb_prod` command which will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files. It will also add the data found in `lantern-back-end/resources/prod_resources` to the database. Otherwise, the `make update_source_data` command will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and it will then create a copy of each file and reduce them to 1000 lines for development resources.
      ```bash
       make update_source_data
       ```
 
-    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/<dev_resources|prod_resources>`
+    Run the following command to only query the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and CHPL for it's list of endpoint list sources. 
+       ```bash
+      make update_source_data_prod
+      ```
+
+    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
       -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
     The populate db script expects the resources directory to contain the following files:
@@ -83,7 +88,18 @@ This removes all docker images, networks, and local volumes.
       * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
       * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
       * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
-        * this is item will take an hour to load if you use the full npidata_pfile
+
+    You must run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`. You must be running Lantern with a production environment by using the command `make run_prod` to start up Lantern.
+
+    The populate db prod script expects the resources directory to contain the same files as above, besides the endpoint_pfile.csv and npidata_pfile.csv, as these are automatically queried and added to the database within this script. 
+
+      ```bash
+      make populatedb_prod
+      ```
+
+      This runs the same tasks inside the endpoint manager container as above, with the addition of a new starting task:
+      * the **NPPES querier**, which queries NPPES for their endpoint and npi data files, and automatically populate the database with this information, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files.
+
 
 3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
@@ -134,10 +150,13 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
 |`make test_all` | runs all tests and ends if any of the tests fail| 
+|`make populatedb` | Should be used with development environment by running `make run` first. Populates the database with the endpoint resource list information and NPPES information found in the `resources/dev_resources` directory.| 
+|`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory, and queries NPPES for its latest information and automatically stores it in the database before deleting the files.| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make migrate_database force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional force_version parameter can be included to force the database to a specific migration version before running the next migration. If this parameter is omitted, it runs the next migration that has not yet been run. |
-|`make update_source_data` | Automatically queries the endpoint lists listed in the EndpointResourcesList.json file found in the `resources/prod_resources` directory, including Epic, Cerner, CareEvolution, and 1UpHealth, queries the NPPES npi and endpoint data and stores these resource files in the `resources/prod_resources` directory, and queries CHPL for its list of endpoint lists and stores the data in a file in the `resources/prod_resources` directory. |
+|`make update_source_data` | Automatically queries the endpoint lists listed in the EndpointResourcesList.json file found in the `resources/prod_resources` directory, including Epic, Cerner, CareEvolution, and 1UpHealth, queries the NPPES npi and endpoint data and stores truncated versions of the files in the `resources/dev_resources` directory, and queries CHPL for its list of endpoint lists and stores the data in a file in the `resources/prod_resources` directory. |
+|`make update_source_data_prod` | Automatically queries the endpoint lists listed in the EndpointResourcesList.json file found in the `resources/prod_resources` directory, including Epic, Cerner, CareEvolution, and 1UpHealth, and queries CHPL for its list of endpoint lists and stores the data in a file in the `resources/prod_resources` directory.|
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
 |  `make lint_R` | Runs the R lintr |
