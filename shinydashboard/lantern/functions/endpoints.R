@@ -117,7 +117,8 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
   fhir_version %in% dstu2 ~ "DSTU2",
   fhir_version %in% stu3 ~ "STU3",
   fhir_version %in% r4 ~ "R4",
-  TRUE ~ "Unknown"
+  fhir_version == "Unknown" ~ "Unknown",
+  TRUE ~ "No Cap Stat"
   ))
 
   dstu2Vals <- res %>%
@@ -144,6 +145,12 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
     split(.$fhir_version) %>%
     purrr::map(~ .$fhir_version)
 
+  noVals <- res %>%
+    filter(fhir_version_name == "No Cap Stat") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
   if (length(dstu2Vals) > 0) {
     dstu2List <- list("DSTU2" = dstu2Vals)
     fhir_version_list <- c(fhir_version_list, dstu2List)
@@ -158,10 +165,18 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
     r4List <- list("R4" = r4Vals)
     fhir_version_list <- c(fhir_version_list, r4List)
   }
-
+  
   if (length(unknownVals) > 0) {
-    otherList <- list("Other" = unknownVals)
-    fhir_version_list <- c(fhir_version_list, otherList)
+    if (length(noVals) > 0) {
+      otherList <- list("Other" = c(unknownVals, noVals))
+      fhir_version_list <- c(fhir_version_list, otherList)
+    } else {
+      otherList <- list("Other" = unknownVals)
+      fhir_version_list <- c(fhir_version_list, otherList)
+    }
+  } else if (length(noVals) > 0) {
+      otherList <- list("Other" = noVals)
+      fhir_version_list <- c(fhir_version_list, otherList)
   }
 
   fhir_version_list
@@ -196,6 +211,7 @@ get_fhir_resource_types <- function(db_connection) {
       ORDER BY type")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -214,6 +230,7 @@ get_fhir_resource_by_op <- function(db_connection, field) {
       WHERE requested_fhir_version = 'None'"))) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -252,6 +269,7 @@ get_supported_profiles <- function(db_connection) {
       WHERE supported_profiles != 'null' AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -307,7 +325,7 @@ get_capstat_values <- function(db_connection) {
       WHERE capability_statement != 'null' AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version)) %>%
     mutate(filter_fhir_version = if_else(filter_fhir_version %in% valid_fhir_versions, filter_fhir_version, "Unknown"))
 }
@@ -349,7 +367,7 @@ get_security_endpoints <- function(db_connection) {
         WHERE requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 
@@ -379,7 +397,7 @@ get_security_endpoints_tbl <- function(db_connection) {
         ON a.vendor_id = b.id")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -400,7 +418,7 @@ get_smart_response_capabilities <- function(db_connection) {
     AND m.smart_http_response=200")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -431,7 +449,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     AND jsonb_typeof(f.smart_response) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "Unknown", capability_fhir_version)) %>%
+    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -454,7 +472,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -516,7 +534,9 @@ get_endpoint_locations <- function(db_connection) {
     left_join(app$zip_to_zcta, by = c("zipcode" = "zipcode")) %>%
     filter(!is.na(lng), !is.na(lat)) %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version))
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
+    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
   res
 }
 # get implementation guides stored in capability statement
@@ -532,7 +552,7 @@ get_implementation_guide <- function(db_connection) {
           WHERE requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     tidyr::replace_na(list(implementation_guide = "None")) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
@@ -550,7 +570,7 @@ get_cap_stat_sizes <- function(db_connection) {
           AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
@@ -573,7 +593,7 @@ get_validation_results <- function(db_connection) {
         ORDER BY validations.validation_result_id, rule_name")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "Unknown", fhir_version)) %>%
+    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }

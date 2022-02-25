@@ -22,7 +22,6 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    actionButton(ns("show_info"), "Info", icon = icon("question-circle"), class = "pull-right"),
     textOutput(ns("last_updated")),
     br(),
     fluidRow(
@@ -36,6 +35,7 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
+    actionButton(ns("show_info"), "Info", icon = icon("question-circle")),
     h3("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       custom_column_small(
