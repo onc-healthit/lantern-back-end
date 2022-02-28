@@ -243,7 +243,7 @@ validationsmodule <- function(
   output$failure_table_subtitle <- renderUI({
     p(paste("Rule: ", deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])))
   })
-  
+
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
   output$validation_failure_table <- reactable::renderReactable({
@@ -256,7 +256,7 @@ validationsmodule <- function(
                 }
               ),
               columns = list(
-                url = colDef(name = "URL",minWidth = 300,
+                url = colDef(name = "URL", minWidth = 300,
                   cell = function(value, index) {
                         image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
                         tagList(

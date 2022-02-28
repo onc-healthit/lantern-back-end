@@ -165,7 +165,7 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
     r4List <- list("R4" = r4Vals)
     fhir_version_list <- c(fhir_version_list, r4List)
   }
-  
+
   if (length(unknownVals) > 0) {
     if (length(noVals) > 0) {
       otherList <- list("Other" = c(unknownVals, noVals))
