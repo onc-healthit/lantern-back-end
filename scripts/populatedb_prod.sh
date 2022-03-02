@@ -34,13 +34,14 @@ sed -E '/^[^,]*,[^,]*(\"1\"|\"\")/d' npidata_pfile.csv > npidata_pfile2.csv
 rm npidata_pfile.csv
 mv npidata_pfile2.csv npidata_pfile.csv
 
-echo "Cutting down rows in npidata_pfile and endpoint_pfile for dev resources..."
-rm -f ../dev_resources/npidata_pfile.csv 
-rm -f ../dev_resources/endpoint_pfile.csv
-sed '1000,$d' npidata_pfile.csv > ../dev_resources/npidata_pfile.csv 
-sed '1000,$d' endpoint_pfile.csv > ../dev_resources/endpoint_pfile.csv
+echo "Populating db with endpoint and NPPES information..."
+cd ../../scripts
+docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
+cd ../resources/prod_resources
 rm -f endpoint_pfile.csv
+rm -f endpoint_pfile
 rm -f npidata_pfile.csv
+rm -f npidata_pfile
 
 echo "done"

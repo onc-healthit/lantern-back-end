@@ -34,8 +34,14 @@ update_source_data:
 	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 	@cd ./scripts; chmod +rx query-NPPES-resources.sh; ./query-NPPES-resources.sh
 
+update_source_data_prod:
+	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
+
 populatedb:
 	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
+
+populatedb_prod:
+	@cd ./scripts; chmod +rx populatedb_prod.sh; ./populatedb_prod.sh
 
 backup_database:
 	$(eval BACKUP=lantern_backup_$(shell date +%Y%m%d%H%M%S).sql)
@@ -117,3 +123,9 @@ update_mods:
 	cd ./endpointmanager; go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./capabilityreceiver; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go get github.com/onc-healthit/lantern-back-end/lanternmq@$(branch); go mod tidy;
 	cd ./lanternmq; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
+
+migrate_validations:
+	docker exec -it --workdir /go/src/app/cmd/migratevalidations lantern-back-end_capability_receiver_1 go run main.go $(direction)
+
+migrate_resources:
+	docker exec -it --workdir /go/src/app/cmd/migrateresources lantern-back-end_capability_receiver_1 go run main.go $(direction)
