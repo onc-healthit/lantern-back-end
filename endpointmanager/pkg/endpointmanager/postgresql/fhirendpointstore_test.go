@@ -125,10 +125,10 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// update endpoint NPI Org
 
-	var fhirEndpointNPIOrg = &endpointmanager.FHIREndpoint {
-		URL: "example.com/FHIR/DSTU2/",
+	var fhirEndpointNPIOrg = &endpointmanager.FHIREndpoint{
+		URL:               "https://example.com/FHIR/DSTU2/",
 		OrganizationNames: []string{"Fake Organization"},
-		NPIIDs: []string{"123"},
+		NPIIDs:            []string{"123"},
 	}
 
 	// Add new organization name and NPI ID to fhir_endpoints table
@@ -138,7 +138,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	endptsLen := 2
 	if len(endpointArr) != endptsLen {
-		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+		t.Errorf("number of retrieved endpoints %v is not equal to number of saved endpoints %v", len(endpointArr), endptsLen)
 	}
 
 	// Update should have applied to all endpoints in fhir_endpoints table with URL example.com/FHIR/DSTU2/
@@ -154,7 +154,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
 			}
 
-		} else if elem.ID == endpoint1.ID{
+		} else if elem.ID == endpoint1.ID {
 			expectedOrganizationNames := []string{"Fake Organization", "Example Inc."}
 			expectedNPIIDs := []string{"1", "123"}
 
@@ -177,7 +177,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	endpointArr, err = store.GetFHIREndpointUsingURL(ctx, fhirEndpointNPIOrg.URL)
 
 	if len(endpointArr) != endptsLen {
-		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+		t.Errorf("number of retrieved endpoints %v is not equal to number of saved endpoints %v", len(endpointArr), endptsLen)
 	}
 
 	for _, elem := range endpointArr {
@@ -192,7 +192,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 				t.Errorf("Expected NPI IDs array to be merged with new NPI IDs. Expected: %v, Actual: %v", expectedNPIIDs, elem.NPIIDs)
 			}
 
-		} else if elem.ID == endpoint1.ID{
+		} else if elem.ID == endpoint1.ID {
 			expectedOrganizationNames := []string{"Example Inc."}
 			expectedNPIIDs := []string{"1"}
 
@@ -216,7 +216,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 	eLen := 3
 	if len(endpts) != eLen {
-		t.Errorf("number of retrieved endpoints is not equal to number of saved endpoints")
+		t.Errorf("number of retrieved endpoints %v  is not equal to number of saved endpoints %v", len(endpts), eLen)
 	}
 
 	for _, ep := range endpts {
