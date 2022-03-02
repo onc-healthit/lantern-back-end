@@ -29,7 +29,7 @@ func main() {
 
 	ctx := context.Background()
 	client := &http.Client{
-		Timeout: time.Second * 35,
+		Timeout: time.Second * 60,
 	}
 
 	// Read version file that is mounted to make user agent
