@@ -34,7 +34,7 @@ func Test_RunValidation(t *testing.T) {
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Comment:   "The Capability Statement exists.",
+		Comment:   "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 		Reference: "http://hl7.org/fhir/http.html",
 	}
 
@@ -110,7 +110,7 @@ func Test_CapStatExists(t *testing.T) {
 		Expected:  "true",
 		Actual:    "true",
 		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "The Capability Statement exists.",
+		Comment:   "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 	}
 
 	actualCap := validator.CapStatExists(cs)
@@ -125,7 +125,7 @@ func Test_CapStatExists(t *testing.T) {
 		Expected:  "true",
 		Actual:    "false",
 		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "The Capability Statement does not exist.",
+		Comment:   "The Conformance Resource does not exist. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 	}
 
 	actualCap = validator.CapStatExists(nil)
@@ -140,7 +140,7 @@ func Test_CapStatExists(t *testing.T) {
 	validator2, err := getValidator(cs2, r4)
 	th.Assert(t, err == nil, err)
 
-	expectedCap.Comment = "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
+	expectedCap.Comment = "The Capability Statement exists. Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
 	expectedCap.Reference = "http://hl7.org/fhir/http.html"
 	expectedCap.ImplGuide = "USCore 3.1"
 	actualCap = validator2.CapStatExists(cs2)
@@ -458,7 +458,7 @@ func Test_KindValid(t *testing.T) {
 
 	expectedVal.Valid = false
 	expectedVal.Actual = ""
-	expectedVal.Comment = "Capability Statement does not exist; cannot check kind value. " + baseComment
+	expectedVal.Comment = "Conformance Resource does not exist; cannot check kind value. " + baseComment
 	expectedArray = []endpointmanager.Rule{
 		expectedVal,
 	}
