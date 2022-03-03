@@ -60,8 +60,16 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 // CapStatExists checks if the capability statement exists using the base function, and then
 // adds specific STU3 reference information
 func (v *stu3Validation) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	baseComment := "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
+
 	baseRule := v.baseVal.CapStatExists(capStat)
 	baseRule.Reference = "http://hl7.org/fhir/http.html"
+
+	if baseRule.Valid {
+		baseRule.Comment = "The Capability Statement exists. " + baseComment
+	} else {
+		baseRule.Comment = "The Capability Statement does not exist. " + baseComment
+	}
 	return baseRule
 }
 
@@ -75,8 +83,15 @@ func (v *stu3Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) e
 // KindValid checks the rule that kind = instance since all of the endpoints we are looking
 // at are for server instances, and then adds specific STU3 reference information
 func (v *stu3Validation) KindValid(capStat capabilityparser.CapabilityStatement) []endpointmanager.Rule {
+	baseComment := "Kind value should be set to 'instance' because this is a specific system instance."
+
 	baseRule := v.baseVal.KindValid(capStat)
 	baseRule[0].Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
+
+	if capStat == nil {
+		baseRule[0].Comment = "Capability Statement does not exist; cannot check kind value. " + baseComment
+	}
+
 	return baseRule
 }
 
@@ -86,6 +101,11 @@ func (v *stu3Validation) DescribeEndpointValid(capStat capabilityparser.Capabili
 	baseRule := v.baseVal.DescribeEndpointValid(capStat)
 	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 	baseRule.Comment = "A Capability Statement SHALL have at least one of description, software, or implementation element."
+
+	if capStat == nil {
+		baseRule.Comment = "The Capability Statement does not exist; cannot check description, software, or implementation elements."
+	}
+
 	return baseRule
 }
 
@@ -93,6 +113,11 @@ func (v *stu3Validation) DescribeEndpointValid(capStat capabilityparser.Capabili
 func (v *stu3Validation) DocumentSetValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
 	baseRule := v.baseVal.DocumentSetValid(capStat)
 	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
+
+	if capStat == nil {
+		baseRule.Comment = "The Capability Statement does not exist; cannot check documents."
+	}
+
 	return baseRule
 }
 
@@ -102,14 +127,26 @@ func (v *stu3Validation) EndpointFunctionValid(capStat capabilityparser.Capabili
 	baseRule := v.baseVal.EndpointFunctionValid(capStat)
 	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
 	baseRule.Comment = "A Capability Statement SHALL have at least one of REST, messaging or document element."
+
+	if capStat == nil {
+		baseRule.Comment = "The Capability Statement does not exist; cannot check REST, messaging or document elements."
+	}
+
 	return baseRule
 }
 
 // MessagingEndpointValid checks the requirement "Messaging endpoint is required (and is only permitted) when a statement is for an implementation."
 // Every endpoint we are testing should be an implementation, which means the endpoint field should be there.
 func (v *stu3Validation) MessagingEndpointValid(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	baseKindComment := "Kind value should be set to 'instance' because this is a specific system instance."
+	baseMessagingComment := "Messaging end-point is required (and is only permitted) when a statement is for an implementation. This endpoint must be an implementation."
+
 	baseRule := v.baseVal.MessagingEndpointValid(capStat)
 	baseRule.Reference = "http://hl7.org/fhir/STU3/capabilitystatement.html"
+
+	if capStat == nil {
+		baseRule.Comment = "Capability Statement does not exist; cannot check kind value. " + baseKindComment + " " + baseMessagingComment
+	}
 	return baseRule
 }
 

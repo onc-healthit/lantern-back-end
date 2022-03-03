@@ -62,13 +62,14 @@ func (bv *baseVal) RunValidation(capStat capabilityparser.CapabilityStatement,
 
 // CapStatExists checks if the capability statement exists
 func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) endpointmanager.Rule {
+	baseComment := "Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported."
 	ruleError := endpointmanager.Rule{
 		RuleName:  endpointmanager.CapStatExistRule,
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
 		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "The Capability Statement exists.",
+		Comment:   "The Conformance Resource exists. " + baseComment,
 	}
 
 	if capStat != nil {
@@ -77,7 +78,7 @@ func (bv *baseVal) CapStatExists(capStat capabilityparser.CapabilityStatement) e
 
 	ruleError.Valid = false
 	ruleError.Actual = "false"
-	ruleError.Comment = "The Capability Statement does not exist."
+	ruleError.Comment = "The Conformance Resource does not exist. " + baseComment
 	return ruleError
 }
 
@@ -178,7 +179,7 @@ func (bv *baseVal) KindValid(capStat capabilityparser.CapabilityStatement) []end
 	}
 	if capStat == nil {
 		ruleError.Valid = false
-		ruleError.Comment = "Capability Statement does not exist; cannot check kind value. " + baseComment
+		ruleError.Comment = "Conformance Resource does not exist; cannot check kind value. " + baseComment
 		returnVal := []endpointmanager.Rule{
 			ruleError,
 		}
@@ -248,7 +249,7 @@ func (bv *baseVal) EndpointFunctionValid(capStat capabilityparser.CapabilityStat
 
 	if capStat == nil {
 		ruleError.Valid = false
-		ruleError.Comment = "The Capability Statement does not exist; cannot check REST, messaging or document elements."
+		ruleError.Comment = "The Conformance Resource does not exist; cannot check REST, messaging or document elements."
 		return ruleError
 	}
 
@@ -293,7 +294,7 @@ func (bv *baseVal) DescribeEndpointValid(capStat capabilityparser.CapabilityStat
 
 	if capStat == nil {
 		ruleError.Valid = false
-		ruleError.Comment = "The Capability Statement does not exist; cannot check description, software, or implementation elements."
+		ruleError.Comment = "The Conformance Resource does not exist; cannot check description, software, or implementation elements."
 		return ruleError
 	}
 
@@ -336,7 +337,7 @@ func (bv *baseVal) DocumentSetValid(capStat capabilityparser.CapabilityStatement
 	}
 
 	if capStat == nil {
-		ruleError.Comment = "The Capability Statement does not exist; cannot check documents."
+		ruleError.Comment = "The Conformance Resource does not exist; cannot check documents."
 		return ruleError
 	}
 
