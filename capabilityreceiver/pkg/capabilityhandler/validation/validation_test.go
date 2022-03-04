@@ -34,26 +34,28 @@ func Test_RunValidation(t *testing.T) {
 		Valid:     true,
 		Expected:  "true",
 		Actual:    "true",
-		Comment:   "The Capability Statement exists.",
+		Comment:   "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 		Reference: "http://hl7.org/fhir/http.html",
 	}
+
 	expectedLastVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.KindRule,
+		RuleName:  endpointmanager.UniqueResourcesRule,
 		Valid:     true,
-		Expected:  "instance",
-		Comment:   "Kind value should be set to 'instance' because this is a specific system instance.",
-		Actual:    "instance",
+		Expected:  "true",
+		Comment:   "A given resource can only be described once per RESTful mode.",
+		Actual:    "true",
 		Reference: "http://hl7.org/fhir/DSTU2/conformance.html",
+		ImplGuide: "USCore 3.1",
 	}
 
 	requestedFhirVersion := "None"
 	defaultFhirVersion := "1.0.2"
 
 	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
-	th.Assert(t, len(actualVal.Results) == 3, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
+	th.Assert(t, len(actualVal.Results) == 8, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
-	eq = reflect.DeepEqual(actualVal.Results[2], expectedLastVal)
+	eq = reflect.DeepEqual(actualVal.Results[7], expectedLastVal)
 	th.Assert(t, eq == true, "RunValidation's last returned validation is not correct")
 
 	// r4 test
@@ -108,7 +110,7 @@ func Test_CapStatExists(t *testing.T) {
 		Expected:  "true",
 		Actual:    "true",
 		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "The Capability Statement exists.",
+		Comment:   "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 	}
 
 	actualCap := validator.CapStatExists(cs)
@@ -123,7 +125,7 @@ func Test_CapStatExists(t *testing.T) {
 		Expected:  "true",
 		Actual:    "false",
 		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "The Capability Statement does not exist.",
+		Comment:   "The Conformance Resource does not exist. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 	}
 
 	actualCap = validator.CapStatExists(nil)
@@ -138,7 +140,7 @@ func Test_CapStatExists(t *testing.T) {
 	validator2, err := getValidator(cs2, r4)
 	th.Assert(t, err == nil, err)
 
-	expectedCap.Comment = "Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
+	expectedCap.Comment = "The Capability Statement exists. Servers SHALL provide a Capability Statement that specifies which interactions and resources are supported."
 	expectedCap.Reference = "http://hl7.org/fhir/http.html"
 	expectedCap.ImplGuide = "USCore 3.1"
 	actualCap = validator2.CapStatExists(cs2)
@@ -456,7 +458,7 @@ func Test_KindValid(t *testing.T) {
 
 	expectedVal.Valid = false
 	expectedVal.Actual = ""
-	expectedVal.Comment = "Capability Statement does not exist; cannot check kind value. " + baseComment
+	expectedVal.Comment = "Conformance Resource does not exist; cannot check kind value. " + baseComment
 	expectedArray = []endpointmanager.Rule{
 		expectedVal,
 	}
@@ -464,6 +466,34 @@ func Test_KindValid(t *testing.T) {
 	actualVal = validator.KindValid(nil)
 	eq = reflect.DeepEqual(actualVal, expectedArray)
 	th.Assert(t, eq == true, fmt.Sprintf("Can't check kind when capability statement does not exist, is instead %+v", actualVal))
+
+	// kind is not instance
+	expectedVal.Valid = false
+	expectedVal.Actual = "capability"
+	expectedVal.Comment = baseComment
+	expectedArray = []endpointmanager.Rule{
+		expectedVal,
+	}
+
+	var csInt map[string]interface{}
+
+	capStatJSON, err := cs.GetJSON()
+	th.Assert(t, err == nil, err)
+
+	err = json.Unmarshal(capStatJSON, &csInt)
+	th.Assert(t, err == nil, err)
+
+	csInt["kind"] = "capability"
+	cs, err = capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
+
+	actualVal = validator.KindValid(cs)
+	eq = reflect.DeepEqual(actualVal, expectedArray)
+	th.Assert(t, eq == true, fmt.Sprintf("Kind value should equal capability, is instead %+v", actualVal))
+
+	csInt["kind"] = "instance"
+	cs, err = capabilityparser.NewCapabilityStatementFromInterface(csInt)
+	th.Assert(t, err == nil, err)
 
 	// returns invalid if kind does not exist
 
@@ -473,7 +503,7 @@ func Test_KindValid(t *testing.T) {
 	validator2, err := getValidator(cs2, dstu2)
 	th.Assert(t, err == nil, err)
 
-	expectedVal.Comment = baseComment
+	expectedVal.Actual = ""
 	expectedArray = []endpointmanager.Rule{
 		expectedVal,
 	}
