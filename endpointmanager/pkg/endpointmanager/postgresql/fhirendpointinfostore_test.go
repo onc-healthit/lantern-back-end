@@ -116,7 +116,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 				Valid:    true,
 				Expected: "true",
 				Actual:   "true",
-				Comment:  "The Capability Statement exists.",
+				Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 			},
 		},
 	}
