@@ -1,7 +1,5 @@
 #!/bin/sh
 
-EMAIL=
-
 #update source data from endpoint source list and NPPES
 cd ../resources/prod_resources
 YEAR=$(date +%Y)
@@ -38,7 +36,7 @@ mv npidata_pfile2.csv npidata_pfile.csv
 
 echo "Populating db with endpoint and NPPES information..."
 cd ../../scripts
-docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh || echo "Lantern failed to save endpoint and NPPES information in database after endpoint resource list update." | /usr/bin/mail -s "Automatic endpoint update and database population error." ${EMAIL}
+docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
 cd ../resources/prod_resources
 rm -f endpoint_pfile.csv
