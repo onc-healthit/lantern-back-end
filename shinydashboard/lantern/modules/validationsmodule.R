@@ -78,7 +78,7 @@ validationsmodule <- function(
 
     fhir_version_filter <- FALSE
     req(sel_fhir_version())
-    if (length(sel_fhir_version()) != 1 || sel_fhir_version() == "Unknown") {
+    if (length(sel_fhir_version()) > 1 || sel_fhir_version() == "Unknown") {
       versions <- get_validation_versions()
       res <- res %>%
       left_join(versions %>% select(validation_name, fhir_version_names),
@@ -125,8 +125,7 @@ validationsmodule <- function(
   get_validation_versions <- reactive({
     res <- isolate(app_data$validation_tbl())
     res <- res %>%
-    filter(fhir_version != "Unknown") %>%
-    filter(fhir_version != "No Cap Stat") %>%
+    filter(fhir_version != "Unknown", fhir_version != "No Cap Stat") %>%
     group_by(rule_name) %>%
     rename(validation_name = rule_name) %>%
     arrange(fhir_version, .by_group = TRUE) %>%
