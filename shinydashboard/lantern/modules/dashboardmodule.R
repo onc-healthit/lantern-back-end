@@ -22,7 +22,6 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon"), class = "pull-right"),
     textOutput(ns("last_updated")),
     br(),
     fluidRow(
@@ -36,7 +35,8 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
-    h2("Endpoint Counts by Developer and FHIR Version"),
+    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon")),
+    h3("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       custom_column_small(
              tableOutput(ns("fhir_vendor_table"))
@@ -188,7 +188,8 @@ dashboard <- function(
     showModal(modalDialog(
       title = "Information About Lantern",
       "Lantern takes a strict approach to showing FHIR Version and Developer information. If a given FHIR
-      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Developer information as 'Unknown'.
+      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version as 'No Cap Stat' and
+      Developer information as 'Unknown'.
       Other endpoints may fail to properly indicate FHIR Version or Developer information in their CapabilityStatement / Conformance Resource.",
       easyClose = TRUE
     ))

@@ -101,7 +101,7 @@ endpointsmodule <- function(
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   format = colDef(name = "Supported Formats", sortable = FALSE),
-                  cap_stat_exists = colDef(name = "Valid Capability Statement", sortable = FALSE),
+                  cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = FALSE),
                   status = colDef(name = "HTTP Response", sortable = FALSE),
                   availability = colDef(name = "Availability", sortable = FALSE)
               ),
