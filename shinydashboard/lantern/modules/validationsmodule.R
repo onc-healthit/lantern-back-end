@@ -1,5 +1,6 @@
 library(DT)
 library(purrr)
+library(reactable)
 
 validationsmodule_UI <- function(id) {
 
@@ -36,7 +37,9 @@ validationsmodule_UI <- function(id) {
       column(width = 9,
         h3("Validation Failure Details"),
         htmlOutput(ns("anchorpoint")),
-        DT::dataTableOutput(ns("validation_failure_table"))
+        htmlOutput(ns("failure_table_subtitle")),
+        reactable::reactableOutput(ns("validation_failure_table")),
+        p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement.")
       )
     )
   )
@@ -75,7 +78,7 @@ validationsmodule <- function(
 
     fhir_version_filter <- FALSE
     req(sel_fhir_version())
-    if (length(sel_fhir_version()) != 1 || sel_fhir_version() == "Unknown") {
+    if (length(sel_fhir_version()) > 1 || sel_fhir_version() == "Unknown") {
       versions <- get_validation_versions()
       res <- res %>%
       left_join(versions %>% select(validation_name, fhir_version_names),
@@ -122,7 +125,7 @@ validationsmodule <- function(
   get_validation_versions <- reactive({
     res <- isolate(app_data$validation_tbl())
     res <- res %>%
-    filter(fhir_version != "Unknown") %>%
+    filter(fhir_version != "Unknown", fhir_version != "No Cap Stat") %>%
     group_by(rule_name) %>%
     rename(validation_name = rule_name) %>%
     arrange(fhir_version, .by_group = TRUE) %>%
@@ -161,7 +164,7 @@ validationsmodule <- function(
     }
     res <- res %>%
         filter(valid == FALSE)
-    res
+    res %>% select(url, expected, actual, vendor_name, fhir_version)
   })
 
   # Renders the validation details table which displays all the validation rules and comments and can be selected to filter the validation failure table
@@ -228,14 +231,45 @@ validationsmodule <- function(
     annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
-    # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
-    output$validation_failure_table <- DT::renderDataTable({
-    datatable(failed_validation_results() %>% select(url, expected, actual, vendor_name, fhir_version),
-              colnames = c("URL", "Expected Value", "Actual Value", "Certified API Developer Name", "FHIR Version"),
-              rownames = FALSE,
-              selection = "none",
-              caption = paste("Rule: ", deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])),
-              options = list(scrollX = TRUE)
+  cap_stat_icon <- function(fhir_version) {
+    icon <- tagAppendAttributes(shiny::icon("check-circle-o"), style = "color: green", "aria-hidden" = "true")
+    if (fhir_version == "No Cap Stat") {
+      icon <- tagAppendAttributes(shiny::icon("times-circle-o"), style = "color: red", "aria-hidden" = "true")
+    }
+    icon
+  }
+
+  output$failure_table_subtitle <- renderUI({
+    p(paste("Rule: ", deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])))
+  })
+
+
+  # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
+  output$validation_failure_table <- reactable::renderReactable({
+    reactable(failed_validation_results(),
+              defaultColDef = colDef(
+                style = function(value, index) {
+                  if (failed_validation_results()$fhir_version[index] == "No Cap Stat") {
+                    list(background = "rgba(0, 0, 0, 0.03)", fontWeight = "lighter")
+                  }
+                }
+              ),
+              columns = list(
+                url = colDef(name = "URL", minWidth = 300,
+                  cell = function(value, index) {
+                        image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
+                        tagList(
+                          div(style = list(display = "inline-block", width = "45px"), image),
+                          value
+                        )
+                  }
+                ),
+                expected = colDef(name = "Expected Value"),
+                actual = colDef(name = "Actual Value"),
+                vendor_name = colDef(name = "Certified API Developer Name"),
+                fhir_version = colDef(name = "FHIR Version")
+
+              )
             )
   })
 }
