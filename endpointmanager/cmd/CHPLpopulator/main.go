@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	http "net/http"
 	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type endpointEntry struct {
@@ -102,8 +103,15 @@ func main() {
 				entry.EndpointName = developerName
 
 				// Get fileName from URL domain name
-				index = strings.Index(urlString, ".")
-				fileName := urlString[index+1:]
+				fileName := urlString
+				if strings.Count(urlString, ".") > 1 {
+					index = strings.Index(urlString, ".")
+					fileName = urlString[index+1:]
+				} else {
+					index = strings.Index(urlString, "://")
+					fileName = urlString[index+3:]
+				}
+
 				index = strings.Index(fileName, ".")
 				fileName = fileName[:index]
 
