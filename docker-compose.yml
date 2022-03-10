@@ -23,6 +23,8 @@ services:
 
   endpoint_manager:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./endpointmanager
     depends_on:
       - lantern-mq
@@ -56,6 +58,8 @@ services:
   
   capability_querier:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./capabilityquerier
     depends_on:
       - lantern-mq
@@ -83,6 +87,8 @@ services:
 
   capability_receiver:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./capabilityreceiver
     depends_on:
       - lantern-mq
@@ -108,6 +114,7 @@ services:
     build:
       context: ./shinydashboard
       args:
+        cert_dir: ./certs
         LANTERN_DBNAME: ${LANTERN_DBNAME}
         LANTERN_DBUSER: ${LANTERN_DBUSER}
         LANTERN_DBPASSWORD: ${LANTERN_DBPASSWORD}

@@ -20,9 +20,6 @@ services:
       - "5672:5672"
 
   endpoint_manager:
-    build: 
-      args:
-        cert_dir: ./certs
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
@@ -30,17 +27,11 @@ services:
       - ./resources/dev_resources/:/etc/lantern/resources
 
   capability_querier:
-    build:
-      args:
-        cert_dir: ./certs
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
 
   capability_receiver:
-    build:
-      args:
-        cert_dir: ./certs
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
@@ -48,7 +39,6 @@ services:
   shinydashboard:
     build:
       args:
-        cert_dir: ./certs
         LANTERN_BANNER_TEXT: "This system is for demonstration use only."  
     ports:
       - "3838:3838"
