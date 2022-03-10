@@ -51,6 +51,7 @@ services:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - ./scripts/populatedb.sh:/etc/lantern/populatedb.sh
       - ./scripts/populatedb_prod.sh:/etc/lantern/populatedb_prod.sh
+      - ./scripts/populateEndpoints.sh:/etc/lantern/populateEndpoints.sh
       - ./resources/prod_resources/:/etc/lantern/resources
       - "./VERSION:/etc/lantern/VERSION:ro"
       - jsonexport:/etc/lantern/exportfolder
