@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
@@ -253,7 +252,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		// Only one MIME type saved
 		savedMIME := message.MIMETypes[0]
 		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, savedMIME, client)
-		if err != nil {
+		if err != nil && httpResponseCode != 0 {
 			return err
 		}
 	}
@@ -261,8 +260,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
 		if endptType == wellknown {
 			if len(message.MIMETypes) == 0 {
-				httpResponseCode, _, mimeTypeWorked, capResp, _, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-				if err != nil {
+				httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+				if err != nil && httpResponseCode != 0 {
 					return err
 				}
 			}
@@ -277,28 +276,28 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 
 			if oldMIMEType != fhir2LessJSONMIMEType {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
-				if err != nil {
+				if err != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir2LessJSONMIMEType
 			}
 			if oldMIMEType != fhir3PlusJSONMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-				if err != nil {
+				if err != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusJSONMIMEType
 			}
 			if oldMIMEType != fhir2LessXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
-				if err != nil {
+				if err != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir2LessXMLMIMEType
 			}
 			if oldMIMEType != fhir3PlusXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
-				if err != nil {
+				if err != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusXMLMIMEType
@@ -384,11 +383,8 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	resp, err := client.Do(req)
 	if err != nil {
-		if err, ok := err.(net.Error); ok && err.Timeout() {
-			return 0, "", false, nil, -1, nil
-		} else {
-			return -1, "", false, nil, -1, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
-		}
+		// Return http status code 0 on failure
+		return 0, "", false, nil, -1, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
 	}
 
 	var responseTime = float64(time.Since(start).Seconds())
