@@ -8,4 +8,4 @@ go run main.go true
 
 cd ../../..
 
-docker exec -it --workdir /go/src/app/cmd/jsonexport lantern-back-end_endpoint_manager_1 go run main.go '/etc/lantern/exportfolder/fhir_endpoints_fields.json'
+docker exec --workdir /go/src/app/cmd/jsonexport lantern-back-end_endpoint_manager_1 go run main.go '/etc/lantern/exportfolder/fhir_endpoints_fields.json'
