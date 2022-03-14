@@ -62,14 +62,15 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 		Timeout: time.Second * 35,
 	}
 
-	// check that response from well known endpt is null
+	// check that response from well known endpt is null and that MIME type is not affected
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(sampleURL)
 	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, "well-known", client, "", &message)
 	th.Assert(t, err == nil, err)
 	smartResp, err = json.Marshal(message.SMARTResp)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, bytes.Equal(smartResp, expectedSmartResp), "response from well known endpt did not match expected response")
-	th.Assert(t, len(message.MIMETypes) == 0, fmt.Sprintf("expected no matched mime types. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, len(message.MIMETypes) == 1, fmt.Sprintf("expected 1 matched mime type. Got %d.", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("expected mimeType %s; received mimeTypes %s", expectedMimeType, message.MIMETypes[0]))
 
 	// basic test: fhir3PlusJSONMIMEType
 
@@ -193,7 +194,7 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("mismatched: expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
 	th.Assert(t, message.TLSVersion == expectedTLSVersion, fmt.Sprintf("expected TLS version %s; received TLS version %s", expectedTLSVersion, message.TLSVersion))
 
-	// test with two mime types and both saved ones don't work
+	// test with two mime types and both saved ones don't work- Can't test with two mime types and only one works because the first one tested is chosen randomly
 	message = Message{}
 	expectedMimeType = fhir2LessJSONMIMEType
 	message.RequestedFhirVersion = "None"
@@ -208,7 +209,20 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 	th.Assert(t, len(message.MIMETypes) == 1, fmt.Sprintf("expected one matched mime types, got %d", len(message.MIMETypes)))
 	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("mismatched: expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
 
-	// Can't test with two mime types and only one works because the first one tested is chosen randomly
+	message = Message{}
+	expectedMimeType = fhir2LessJSONMIMEType
+	message.RequestedFhirVersion = "None"
+	message.MIMETypes = []string{"nonsense mimetype", "nonsense mimetype2"}
+	tc, err = basicTestClient()
+	th.Assert(t, err == nil, err)
+	defer tc.Close()
+	ctx = context.Background()
+
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, "metadata", &(tc.Client), "", &message)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(message.MIMETypes) == 1, fmt.Sprintf("expected one matched mime types, got %d", len(message.MIMETypes)))
+	th.Assert(t, message.MIMETypes[0] == expectedMimeType, fmt.Sprintf("mismatched: expected mimeType %s; received mimeType %s", expectedMimeType, message.MIMETypes[0]))
+
 }
 
 func Test_getTLSVersion(t *testing.T) {

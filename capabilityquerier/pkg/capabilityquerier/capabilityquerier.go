@@ -224,6 +224,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 // fills out message with http response code, tls version, capability statement, and supported mime types
 func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, userAgent string, message *Message) error {
 	var err error
+	var httpErr error
 	var httpResponseCode int
 	var mimeTypeWorked bool
 	var tlsVersion string
@@ -251,8 +252,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	if len(message.MIMETypes) == 1 {
 		// Only one MIME type saved
 		savedMIME := message.MIMETypes[0]
-		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, savedMIME, client)
-		if err != nil && httpResponseCode != 0 {
+		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, savedMIME, client)
+		if httpErr != nil && httpResponseCode != 0 {
 			return err
 		}
 	}
@@ -260,8 +261,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
 		if endptType == wellknown {
 			if len(message.MIMETypes) == 0 {
-				httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-				if err != nil && httpResponseCode != 0 {
+				httpResponseCode, _, _, capResp, _, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 			}
@@ -275,29 +276,29 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 			}
 
 			if oldMIMEType != fhir2LessJSONMIMEType {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
-				if err != nil && httpResponseCode != 0 {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir2LessJSONMIMEType
 			}
 			if oldMIMEType != fhir3PlusJSONMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-				if err != nil && httpResponseCode != 0 {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusJSONMIMEType
 			}
 			if oldMIMEType != fhir2LessXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
-				if err != nil && httpResponseCode != 0 {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir2LessXMLMIMEType
 			}
 			if oldMIMEType != fhir3PlusXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
-				if err != nil && httpResponseCode != 0 {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusXMLMIMEType
@@ -327,7 +328,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		message.SMARTResp = jsonResponse
 	}
 
-	return nil
+	return httpErr
 }
 
 func getTLSVersion(resp *http.Response) string {
