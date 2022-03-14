@@ -259,24 +259,21 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	}
 
 	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
-
-		oldMIMEType := ""
-		if len(message.MIMETypes) > 0 {
-			oldMIMEType = message.MIMETypes[0]
-			message.MIMETypes = []string{}
-		}
-
 		if endptType == wellknown {
-			if len(oldMIMEType) == 0 {
+			if len(message.MIMETypes) == 0 {
 				httpResponseCode, _, mimeTypeWorked, capResp, _, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 				if err != nil {
 					return err
 				}
-				triedMIMEType = fhir3PlusJSONMIMEType
 			}
-		}
-
-		if endptType == metadata {
+		} else if endptType == metadata {
+			oldMIMEType := ""
+			if len(message.MIMETypes) == 1 {
+				oldMIMEType = message.MIMETypes[0]
+				message.MIMETypes = []string{}
+			} else if len(message.MIMETypes) > 1 {
+				message.MIMETypes = []string{}
+			}
 
 			if oldMIMEType != fhir2LessJSONMIMEType {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
@@ -306,11 +303,11 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 				}
 				triedMIMEType = fhir3PlusXMLMIMEType
 			}
-		}
-	}
 
-	if len(message.MIMETypes) != 1 && mimeTypeWorked && httpResponseCode == http.StatusOK {
-		message.MIMETypes = append(message.MIMETypes, triedMIMEType)
+			if len(message.MIMETypes) != 1 && mimeTypeWorked && httpResponseCode == http.StatusOK {
+				message.MIMETypes = append(message.MIMETypes, triedMIMEType)
+			}
+		}
 	}
 
 	if capResp != nil {
