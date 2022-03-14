@@ -258,7 +258,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		}
 	}
 
-	if len(message.MIMETypes) == 0 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
+	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
 
 		oldMIMEType := ""
 		if len(message.MIMETypes) > 0 {
