@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplendpointquerier"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,5 +19,5 @@ func main() {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
-	chplendpointquerier.queryCHPLEndpointList(chplURL, fileToWriteTo)
+	chplendpointquerier.QueryCHPLEndpointList(chplURL, fileToWriteTo)
 }

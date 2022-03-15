@@ -8,20 +8,20 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type endpointList struct {
-	Endpoints []lanternEntry `json:"Endpoints"`
+type EndpointList struct {
+	Endpoints []LanternEntry `json:"Endpoints"`
 }
 
-type lanternEntry struct {
+type LanternEntry struct {
 	URL              string `json:"URL"`
 	OrganizationName string `json:"OrganizationName"`
 	NPIID            string `json:"NPIID"`
 }
 
-func medHostQuerier(medhostURL string, fileToWriteTo string) {
+func MedHostQuerier(medhostURL string, fileToWriteTo string) {
 
-	var lanternEntryList []lanternEntry
-	var endpointEntryList endpointList
+	var lanternEntryList []LanternEntry
+	var endpointEntryList EndpointList
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", medhostURL, nil)
@@ -29,7 +29,6 @@ func medHostQuerier(medhostURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	req.Header.Set("Accept", "application/json")
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -41,32 +40,28 @@ func medHostQuerier(medhostURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	var medhostArr []interface{}
+	var medhostArr []map[string]interface{}
 	err = json.Unmarshal(respBody, &medhostArr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, medhostEntry := range medhostArr {
-		var entry lanternEntry
-		medhostEntryInt, ok := medhostEntry.(map[string]interface{})
-		if !ok {
-			log.Fatal("Error converting medhost endpoint entry to type map[string]interface{}")
-		}
+		var entry LanternEntry
 
-		serviceBaseURL, ok := medhostEntryInt["serviceBaseUrl"].(string)
+		serviceBaseURL, ok := medhostEntry["serviceBaseUrl"].(string)
 		if !ok {
 			log.Fatal("Error converting serviceBaseUrl to type string")
 		} else {
 			entry.URL = serviceBaseURL
 		}
 
-		developerName, ok := medhostEntryInt["facilityName"].(string)
+		developerName, ok := medhostEntry["facilityName"].(string)
 		if ok {
 			entry.OrganizationName = developerName
 		}
 
-		npiID, ok := medhostEntryInt["npi"].(string)
+		npiID, ok := medhostEntry["npi"].(string)
 		if ok {
 			entry.NPIID = npiID
 		}
