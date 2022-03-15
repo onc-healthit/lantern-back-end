@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -29,12 +28,6 @@ func main() {
 	helpers.FailOnError("", err)
 	ctx := context.Background()
 	log.Info("Successfully connected to DB!")
-
-	var emptyJSON []byte
-	if _, err := os.Stat("/etc/lantern/exportfolder/fhir_endpoints_fields.json"); os.IsNotExist(err) {
-		err = ioutil.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
-		helpers.FailOnError("Failed to create empty JSON export file", err)
-	}
 
 	err = jsonexport.CreateJSONExport(ctx, store, exportFile)
 	helpers.FailOnError("", err)
