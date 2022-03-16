@@ -206,6 +206,19 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
+ # Configure History Pruning and JSON Export System
+
+You can configure a system to run the history pruning and json export processes using cron and the history_prune_json_export.sh script located in the scripts directory to first prune the fhir_endpoints_info_history table and then create the JSON fhir endpoint export file. 
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full Path to script directory> && ./history_prune_json_export.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * cd <Full Path to script directory> && ./history_prune_json_export.sh` to run the script at minute 0 of every 23rd hour
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
 # Running Lantern Services Individually
 
 ## Internal Services
