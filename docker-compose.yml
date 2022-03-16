@@ -54,6 +54,7 @@ services:
       - ./scripts/populateEndpoints.sh:/etc/lantern/populateEndpoints.sh
       - ./resources/prod_resources/:/etc/lantern/resources
       - "./VERSION:/etc/lantern/VERSION:ro"
+      - jsonexport:/etc/lantern/exportfolder
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
   
   capability_querier:
@@ -82,7 +83,6 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"
-      - jsonexport:/etc/lantern/exportfolder
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   capability_receiver:

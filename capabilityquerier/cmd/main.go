@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -14,8 +13,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/workers"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	aq "github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -60,13 +57,9 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	urlString := msgJSON["url"]
 	requestVersion := msgJSON["requestVersion"]
 	defaultVersion := msgJSON["defaultVersion"]
-	exportFileWait := viper.GetInt("exportfile_wait")
 
 	if urlString == "FINISHED" {
-		historypruning.PruneInfoHistory(qa.ctx, qa.store, true)
-		time.Sleep(time.Duration(exportFileWait) * time.Second)
-		err := jsonexport.CreateJSONExport(qa.ctx, qa.store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
-		return err
+		return nil
 	}
 
 	jobArgs := make(map[string]interface{})
@@ -192,12 +185,6 @@ func main() {
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
 	helpers.FailOnError("", err)
 	log.Info("Successfully connected to DB!")
-
-	var emptyJSON []byte
-	if _, err := os.Stat("/etc/lantern/exportfolder/fhir_endpoints_fields.json"); os.IsNotExist(err) {
-		err = ioutil.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
-		helpers.FailOnError("Failed to create empty JSON export file", err)
-	}
 
 	// Read version file that is mounted
 	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
