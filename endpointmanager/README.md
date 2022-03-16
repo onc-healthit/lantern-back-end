@@ -11,7 +11,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: \<none>
 
-  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
+  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/api).
 
 * **LANTERN_DBUSER_READONLY**: The database user that the application will use to read from the database.
 
@@ -89,7 +89,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_PRUNING_THRESHOLD**: The length of time (in minutes) determining how old a fhir_endpoints_info_history entry has to be in order to be considered for pruning. Only entries equal to or older than this threshold will undergo pruning.
 
-  Default value: 43800
+  Default value: 43800 (~ 30 days)
   
 ### Test Configuration
 
@@ -106,6 +106,14 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 * **LANTERN_TEST_DBNAME** instead of LANTERN_DBNAME: The name of the database being accessed.
 
   Default value: lantern_test
+
+* **LANTERN_TEST_QUSER** instead of LANTERN_QUSER: The user that the application will use to read and write from the queue.
+
+  Default value: capabilityquerier
+
+* **LANTERN_TEST_QPASSWORD** instead of LANTERN_QPASSWORD: The password for accessing the database as user LANTERN_QUSER.
+
+  Default value: capabilityquerier
 
 ## Packages
 
