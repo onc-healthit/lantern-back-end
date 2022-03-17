@@ -8,16 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type EndpointList struct {
-	Endpoints []LanternEntry `json:"Endpoints"`
-}
-
-type LanternEntry struct {
-	URL              string `json:"URL"`
-	OrganizationName string `json:"OrganizationName"`
-	NPIID            string `json:"NPIID"`
-}
-
 func MedHostQuerier(medhostURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
