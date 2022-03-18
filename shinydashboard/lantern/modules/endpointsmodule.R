@@ -60,7 +60,7 @@ endpointsmodule <- function(
 
     res <- res %>% 
     rowwise() %>% 
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste(head(strsplit(endpoint_names, ";")[[1]], 5), collapse=";"), endpoint_names))
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste(paste(head(strsplit(endpoint_names, ";")[[1]], 5), collapse=";"), "<a id='moreapisoucenames'> Click For More... </a>"), endpoint_names))
     
     res <- res %>% mutate(availability = availability * 100)
     res
@@ -88,7 +88,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(url, condensed_endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, condensed_endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -103,7 +103,8 @@ endpointsmodule <- function(
                             ),
                             sortable = TRUE,
                             align = "left"),
-                  condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE),
+                  endpoint_names = colDef(show = FALSE),
+                  condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   format = colDef(name = "Supported Formats", sortable = FALSE),
@@ -114,10 +115,23 @@ endpointsmodule <- function(
               searchable = TRUE,
               showSortIcon = TRUE,
               highlight = TRUE,
-              defaultPageSize = 10
+              defaultPageSize = 10,
+                onClick = JS("function(rowInfo, colInfo) {
+
+                  const element = document.getElementById('moreapisoucenames');
+
+                  element.addEventListener('click', () => {
+                    if (window.Shiny) {
+                      Shiny.setInputValue('show_details', rowInfo.row.endpoint_names, { priority: 'event' })
+                    }
+                  });
+                  element.click()
+                }")
 
      )
   })
+
+  
 
   # Create the format for the csv
   csv_format <- reactive({
