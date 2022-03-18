@@ -248,9 +248,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		req.Header.Set("fhirVersion", message.RequestedFhirVersion)
 	}
 
-	// If there are mime types saved in the database for this URL
+	// If there is a mime type saved in the database for this URL, try those ones first when requesting the capability statement
 	if len(message.MIMETypes) == 1 {
-		// Only one MIME type saved
 		savedMIME := message.MIMETypes[0]
 		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, savedMIME, client)
 		if httpErr != nil && httpResponseCode != 0 {
@@ -258,7 +257,9 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		}
 	}
 
+	// If there was no MIME type saved in the database, or the saved MIME type did not work, go through process of trying others
 	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
+		// If the endpoint is a well known endpoint and it did not already have MIME type saved, try the fhir3PlusJSONMIMEType
 		if endptType == wellknown {
 			if len(message.MIMETypes) == 0 {
 				httpResponseCode, _, _, capResp, _, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
@@ -267,6 +268,8 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 				}
 			}
 		} else if endptType == metadata {
+
+			// If there was a MIME type saved in the database, remove it from the list of MIME types since it did not work
 			oldMIMEType := ""
 			if len(message.MIMETypes) == 1 {
 				oldMIMEType = message.MIMETypes[0]
@@ -275,35 +278,40 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 				message.MIMETypes = []string{}
 			}
 
-			if oldMIMEType != fhir2LessJSONMIMEType {
+			// Try fhir3PlusJSONMIMEType first if it was not the MIME type saved in the database
+			if oldMIMEType != fhir3PlusJSONMIMEType {
 				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
-				if httpErr != nil && httpResponseCode != 0 {
-					return err
-				}
-				triedMIMEType = fhir2LessJSONMIMEType
-			}
-			if oldMIMEType != fhir3PlusJSONMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusJSONMIMEType
 			}
-			if oldMIMEType != fhir2LessXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
+			// Try fhir2LessJSONMIMEType second if it was not the MIME type saved in the database and the first MIME type did not work
+			if oldMIMEType != fhir2LessJSONMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
-				triedMIMEType = fhir2LessXMLMIMEType
+				triedMIMEType = fhir2LessJSONMIMEType
 			}
+			// Try fhir3PlusXMLMIMEType third if it was not the MIME type saved in the database and the first two MIME types did not work
 			if oldMIMEType != fhir3PlusXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
-				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
 				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 				triedMIMEType = fhir3PlusXMLMIMEType
 			}
+			// Try fhir2LessXMLMIMEType last if it was not the MIME type saved in the database and the first three MIME types did not work
+			if oldMIMEType != fhir2LessXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
+				}
+				triedMIMEType = fhir2LessXMLMIMEType
+			}
 
+			// If there are no MIME types saved, and a new MIME type worked and had a valid HTTP response, save it in the db
 			if len(message.MIMETypes) != 1 && mimeTypeWorked && httpResponseCode == http.StatusOK {
 				message.MIMETypes = append(message.MIMETypes, triedMIMEType)
 			}
