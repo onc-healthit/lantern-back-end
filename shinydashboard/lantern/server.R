@@ -551,7 +551,8 @@ function(input, output, session) { #nolint
   observeEvent(input$show_details, {
     showModal(modalDialog(
       title = "All API Information Source Names",
-      p(input$show_details)
+      p(input$show_details),
+      easyClose = TRUE
   ))
   })
 

@@ -60,7 +60,7 @@ endpointsmodule <- function(
 
     res <- res %>% 
     rowwise() %>% 
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste(paste(head(strsplit(endpoint_names, ";")[[1]], 5), collapse=";"), "<a id='moreapisoucenames'> Click For More... </a>"), endpoint_names))
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse=";"), paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names))
     
     res <- res %>% mutate(availability = availability * 100)
     res
@@ -115,19 +115,7 @@ endpointsmodule <- function(
               searchable = TRUE,
               showSortIcon = TRUE,
               highlight = TRUE,
-              defaultPageSize = 10,
-                onClick = JS("function(rowInfo, colInfo) {
-
-                  const element = document.getElementById('moreapisoucenames');
-
-                  element.addEventListener('click', () => {
-                    if (window.Shiny) {
-                      Shiny.setInputValue('show_details', rowInfo.row.endpoint_names, { priority: 'event' })
-                    }
-                  });
-                  element.click()
-                }")
-
+              defaultPageSize = 10
      )
   })
 
