@@ -148,7 +148,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	// create the expected result
 	expectedCapStat, err := capabilityStatement()
 	th.Assert(t, err == nil, err)
-	expectedMimeType := []string{fhir2LessJSONMIMEType}
+	expectedMimeType := []string{fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
 		URL:                  fhirURL.String(),
