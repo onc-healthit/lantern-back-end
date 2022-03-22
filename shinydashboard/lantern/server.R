@@ -551,7 +551,7 @@ function(input, output, session) { #nolint
   observeEvent(input$show_details, {
     showModal(modalDialog(
       title = "All API Information Source Names",
-      p(input$show_details),
+      p(HTML(str_replace_all(input$show_details, ';', '<br>'))),
       easyClose = TRUE
   ))
   })
