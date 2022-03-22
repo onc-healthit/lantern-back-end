@@ -320,8 +320,16 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 
 	if capResp != nil {
 		err = json.Unmarshal(capResp, &(jsonResponse))
-		if err != nil {
-			return err
+		if err == nil {
+			if endptType == metadata {
+				message.CapabilityStatement = jsonResponse
+			} else if endptType == wellknown {
+				message.SMARTResp = jsonResponse
+			}
+		} else {
+			if httpErr == nil {
+				httpErr = err
+			}
 		}
 	}
 
@@ -329,11 +337,9 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	case metadata:
 		message.TLSVersion = tlsVersion
 		message.HTTPResponse = httpResponseCode
-		message.CapabilityStatement = jsonResponse
 		message.ResponseTime = responseTime
 	case wellknown:
 		message.SMARTHTTPResponse = httpResponseCode
-		message.SMARTResp = jsonResponse
 	}
 
 	return httpErr
