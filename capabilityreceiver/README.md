@@ -1,9 +1,9 @@
 ### Capability Receiver
 
-Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
+Takes messages off of the queue that include either the Capability Statement of an endpoint or the response from a $versions operation, as well as additional data about the http interaction with the endpoint. Runs validations, pulls out all defined resources in the Capability Statement, as well as all fields and extensions in the Capability Statement with data. Matches the endpoint to CHPL vendor and product information in the database. Saves the data in the database.
 
 ## Configuration
-The FHIR Endpoint Manager reads the following environment variables:
+The Capability Receiver reads the following environment variables:
 
 **These variables can use the default values *in development*. These should be set on the production system.**
 
@@ -49,7 +49,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 ### Test Configuration
 
-When testing, the FHIR Endpoint Manager uses the following environment variables:
+When testing, the Capability Receiver uses the following environment variables:
 
 * **LANTERN_TEST_DBUSER** instead of LANTERN_DBUSER: The database user that the application will use to read and write from the database.
 
@@ -63,13 +63,25 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
   Default value: lantern_test
 
+## Packages
+
+The Capability Receiver includes many packages with distinct purposes.
+
+### Capability Handler
+
+Takes messages off of the queue that include either the Capability Statement of an endpoint or the response from a $versions operation, as well as additional data about the http interaction with the endpoint. Runs validations, pulls out all defined resources in the Capability Statement, as well as all fields and extensions in the Capability Statement with data. Saves the data in the database.
+
+### CHPL Mapper
+
+Maps endpoints to CHPL vendors and products and stores the mapping in the database.
+
 ## Building and Running
 
-The capability receiver currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
+The Capability Receiver currently connects to the lantern message queue (RabbbitMQ). All log messages are written to stdout.
 
 ### Using Docker-Compose
 
-The capability receiver has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+The Capability Receiver has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
 
 ### Using the Individual Docker Container
 
