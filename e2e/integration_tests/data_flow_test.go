@@ -363,7 +363,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 
 	ctx := context.Background()
 	client := &http.Client{
-		Timeout: time.Second * 35,
+		Timeout: time.Second * 60,
 	}
 	err = chplquerier.GetCHPLProducts(ctx, store, client, "")
 	helpers.FailOnError("", err)
@@ -401,7 +401,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 		CertificationDate:     time.Date(2016, 3, 4, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2014",
 		CHPLID:                "CHP-029177",
-		CertificationCriteria: []int{100, 101, 103, 106, 107, 108, 109, 114, 115, 116, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 81, 82, 83, 84, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98, 99},
+		CertificationCriteria: []int{64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 81, 82, 83, 84, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 103, 106, 107, 108, 109, 114, 115, 116, 61, 62, 63},
 	}
 
 	hitp, err := store.GetHealthITProductUsingNameAndVersion(ctx, "Intuitive Medical Document", "2.0")
@@ -411,7 +411,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, hitp.VendorID == testHITP.VendorID, "Developer is not what was expected")
 	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
-	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), "Certification criteria is not what was expected")
+	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), fmt.Sprintf("Certification criteria %v is not what was expected %v", hitp.CertificationCriteria, testHITP.CertificationCriteria))
 
 	// check that there are links in the product_criteria database
 	var link_count int

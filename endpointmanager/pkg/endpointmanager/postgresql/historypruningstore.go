@@ -52,10 +52,9 @@ func prepareHistoryPruningStatements(s *Store) error {
 	var err error
 
 	pruningThreshold := viper.GetInt("pruning_threshold")
-	queryInterval := viper.GetInt("capquery_qryintvl")
 
 	thresholdString := strconv.Itoa(pruningThreshold)
-	queryIntString := strconv.Itoa(pruningThreshold + (3 * queryInterval))
+	queryIntString := strconv.Itoa(pruningThreshold * 2)
 
 	pruningStatementQueryInterval, err = s.DB.Prepare(`
 		SELECT operation, url, capability_statement, entered_at, tls_version, mime_types, smart_response, validation_result_id, requested_fhir_version FROM fhir_endpoints_info_history 

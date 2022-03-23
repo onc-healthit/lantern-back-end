@@ -23,6 +23,8 @@ services:
 
   endpoint_manager:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./endpointmanager
     depends_on:
       - lantern-mq
@@ -52,10 +54,13 @@ services:
       - ./scripts/populateEndpoints.sh:/etc/lantern/populateEndpoints.sh
       - ./resources/prod_resources/:/etc/lantern/resources
       - "./VERSION:/etc/lantern/VERSION:ro"
+      - jsonexport:/etc/lantern/exportfolder
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
   
   capability_querier:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./capabilityquerier
     depends_on:
       - lantern-mq
@@ -78,11 +83,12 @@ services:
     volumes:
       - ./scripts/wait-for-it.sh:/etc/lantern/wait-for-it.sh
       - "./VERSION:/etc/lantern/VERSION:ro"
-      - jsonexport:/etc/lantern/exportfolder
     command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main
 
   capability_receiver:
     build: 
+      args:
+        cert_dir: ./certs
       context: ./capabilityreceiver
     depends_on:
       - lantern-mq
@@ -108,6 +114,7 @@ services:
     build:
       context: ./shinydashboard
       args:
+        cert_dir: ./certs
         LANTERN_DBNAME: ${LANTERN_DBNAME}
         LANTERN_DBUSER: ${LANTERN_DBUSER}
         LANTERN_DBPASSWORD: ${LANTERN_DBPASSWORD}
