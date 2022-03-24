@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package capabilityquerier
@@ -147,7 +148,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	// create the expected result
 	expectedCapStat, err := capabilityStatement()
 	th.Assert(t, err == nil, err)
-	expectedMimeType := []string{fhir2LessJSONMIMEType, fhir3PlusJSONMIMEType}
+	expectedMimeType := []string{fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
 		URL:                  fhirURL.String(),
@@ -195,7 +196,7 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 	message, err = json.Marshal(messageStruct)
 	th.Assert(t, err == nil, "expect no error to be thrown when marshalling message")
 
-	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the capability statement on the queue to be the same as the one sent")
+	th.Assert(t, bytes.Equal(message, expectedMsg), "expected the message on the queue to be the same as the one sent")
 
 	// context canceled error
 	ctx, cancel := context.WithCancel(context.Background())
