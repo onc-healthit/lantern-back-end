@@ -117,6 +117,10 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 			return nil, nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
+	capStatBytes, ok := msgJSON["capabilityStatementBytes"].([]byte)
+	if !ok {
+		return nil, nil, fmt.Errorf("unable to cast capabilityStatementBytes to []byte")
+	}
 	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
@@ -153,17 +157,18 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:                   url,
-		TLSVersion:            tlsVersion,
-		MIMETypes:             mimeTypes,
-		CapabilityStatement:   capStat,
-		SMARTResponse:         smartResponse,
-		IncludedFields:        includedFields,
-		OperationResource:     operationResource,
-		Metadata:              FHIREndpointMetadata,
-		RequestedFhirVersion:  requestedFhirVersion,
-		CapabilityFhirVersion: fhirVersion,
-		SupportedProfiles:     supportedProfiles,
+		URL:                      url,
+		TLSVersion:               tlsVersion,
+		MIMETypes:                mimeTypes,
+		CapabilityStatement:      capStat,
+		SMARTResponse:            smartResponse,
+		IncludedFields:           includedFields,
+		OperationResource:        operationResource,
+		Metadata:                 FHIREndpointMetadata,
+		RequestedFhirVersion:     requestedFhirVersion,
+		CapabilityFhirVersion:    fhirVersion,
+		SupportedProfiles:        supportedProfiles,
+		CapabilityStatementBytes: capStatBytes,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
