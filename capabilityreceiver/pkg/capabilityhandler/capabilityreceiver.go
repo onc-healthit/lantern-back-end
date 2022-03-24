@@ -117,10 +117,16 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 			return nil, nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
-	capStatBytes, ok := msgJSON["capabilityStatementBytes"].([]byte)
-	if !ok {
-		return nil, nil, fmt.Errorf("unable to cast capabilityStatementBytes to []byte")
+
+	var capStatBytes []byte
+	if msgJSON["capabilityStatementBytes"] != nil {
+		capStatStringBytes, ok := msgJSON["capabilityStatementBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to *[]byte")
+		}
+		capStatBytes = []byte(capStatStringBytes)
 	}
+
 	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
@@ -255,6 +261,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
