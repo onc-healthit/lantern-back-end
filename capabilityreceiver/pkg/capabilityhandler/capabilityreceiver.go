@@ -126,12 +126,27 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 			return nil, nil, fmt.Errorf("unable to cast capStatBytes to string")
 		}
 
-		rawDecodedText, err := base64.StdEncoding.DecodeString(capStatStringBytes)
+		rawDecodedCapStat, err := base64.StdEncoding.DecodeString(capStatStringBytes)
 		if err != nil {
 			return nil, nil, fmt.Errorf("unable to cast capStatBytes to decoded string")
 		}
 
-		capStatBytes = []byte(rawDecodedText)
+		capStatBytes = []byte(rawDecodedCapStat)
+	}
+
+	var smartResponseBytes []byte
+	if msgJSON["smartRespBytes"] != nil {
+		smartRespStringBytes, ok := msgJSON["smartRespBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to string")
+		}
+
+		rawDecodedSmartResp, err := base64.StdEncoding.DecodeString(smartRespStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to decoded string")
+		}
+
+		smartResponseBytes = []byte(rawDecodedSmartResp)
 	}
 
 	var smartResponse smartparser.SMARTResponse
@@ -182,6 +197,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		CapabilityFhirVersion:    fhirVersion,
 		SupportedProfiles:        supportedProfiles,
 		CapabilityStatementBytes: capStatBytes,
+		SMARTResponseBytes:       smartResponseBytes,
 	}
 
 	return &fhirEndpoint, &validationObj, nil

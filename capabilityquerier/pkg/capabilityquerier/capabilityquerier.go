@@ -56,6 +56,7 @@ type Message struct {
 	CapabilityStatementBytes []byte      `json:"capabilityStatementBytes"`
 	SMARTHTTPResponse        int         `json:"smarthttpResponse"`
 	SMARTResp                interface{} `json:"smartResp"`
+	SMARTRespBytes           []byte      `json:"smartRespBytes"`
 	ResponseTime             float64     `json:"responseTime"`
 	RequestedFhirVersion     string      `json:"requestedFhirVersion"`
 	DefaultFhirVersion       string      `json:"defaultFhirVersion"`

@@ -26,6 +26,7 @@ type FHIREndpointInfo struct {
 	CreatedAt                time.Time
 	UpdatedAt                time.Time
 	SMARTResponse            smartparser.SMARTResponse
+	SMARTResponseBytes       []byte
 	IncludedFields           []IncludedField
 	OperationResource        map[string][]string
 	Metadata                 *FHIREndpointMetadata
