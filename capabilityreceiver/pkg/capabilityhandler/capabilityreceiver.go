@@ -3,6 +3,7 @@ package capabilityhandler
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -122,9 +123,15 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	if msgJSON["capabilityStatementBytes"] != nil {
 		capStatStringBytes, ok := msgJSON["capabilityStatementBytes"].(string)
 		if !ok {
-			return nil, nil, fmt.Errorf("unable to cast capStatBytes to *[]byte")
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to string")
 		}
-		capStatBytes = []byte(capStatStringBytes)
+
+		rawDecodedText, err := base64.StdEncoding.DecodeString(capStatStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to decoded string")
+		}
+
+		capStatBytes = []byte(rawDecodedText)
 	}
 
 	var smartResponse smartparser.SMARTResponse

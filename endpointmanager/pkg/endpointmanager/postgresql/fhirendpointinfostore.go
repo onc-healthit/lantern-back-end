@@ -358,11 +358,9 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
-	/*if e.CapabilityStatementBytes != nil {
+	if e.CapabilityStatementBytes != nil {
 		capabilityStatementJSON = e.CapabilityStatementBytes
-	} else */
-
-	if e.CapabilityStatement != nil {
+	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
@@ -425,11 +423,9 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var err error
 	var capabilityStatementJSON []byte
 
-	/*if e.CapabilityStatementBytes != nil {
+	if e.CapabilityStatementBytes != nil {
 		capabilityStatementJSON = e.CapabilityStatementBytes
-	} else */
-
-	if e.CapabilityStatement != nil {
+	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
