@@ -13,8 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/iancoleman/orderedmap"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -233,7 +231,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	var mimeTypeWorked bool
 	var tlsVersion string
 	var capResp []byte
-	jsonResponse := orderedmap.New()
+	var jsonResponse interface{}
 	var responseTime float64
 	var triedMIMEType string
 
