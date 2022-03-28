@@ -449,12 +449,3 @@ func capabilityStatement() ([]byte, error) {
 
 	return expectedCapStat, nil
 }
-
-func capabilityStatementOriginalBytes() ([]byte, error) {
-	path := filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return expectedCapStat, err
-}
