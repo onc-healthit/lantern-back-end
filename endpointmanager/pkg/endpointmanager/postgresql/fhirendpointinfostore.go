@@ -405,7 +405,6 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
 		capabilityStatementJSON,
-		capabilityStatementJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
@@ -471,7 +470,6 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		nullableInts[1],
 		e.TLSVersion,
 		pq.Array(e.MIMETypes),
-		capabilityStatementJSON,
 		capabilityStatementJSON,
 		smartResponseJSON,
 		includedFieldsJSON,
@@ -612,7 +610,6 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			tls_version,
 			mime_types,
 			capability_statement,
-			capability_statement_json,
 			smart_response,
 			included_fields,
 			operation_resource,
@@ -621,7 +618,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			metadata_id,
 			requested_fhir_version,
 			capability_fhir_version)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -635,16 +632,15 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			tls_version = $4,
 			mime_types = $5,
 			capability_statement = $6,
-			capability_statement_json = $7,
-			smart_response = $8,
-			included_fields = $9,
-			operation_resource = $10,
-			supported_profiles = $11,
-			validation_result_id = $12,
-			metadata_id = $13,
-			requested_fhir_version = $14,
-			capability_fhir_version = $15		
-		WHERE id = $16`)
+			smart_response = $7,
+			included_fields = $8,
+			operation_resource = $9,
+			supported_profiles = $10,
+			validation_result_id = $11,
+			metadata_id = $12,
+			requested_fhir_version = $13,
+			capability_fhir_version = $14		
+		WHERE id = $15`)
 	if err != nil {
 		return err
 	}
