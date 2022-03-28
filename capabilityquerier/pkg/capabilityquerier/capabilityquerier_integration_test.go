@@ -147,22 +147,25 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 
 	// create the expected result
 	expectedCapStat, err := capabilityStatement()
+	expectedCapStatBytes, err := capabilityStatementOriginalBytes()
 	th.Assert(t, err == nil, err)
 	expectedMimeType := []string{fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:                  fhirURL.String(),
-		MIMETypes:            expectedMimeType,
-		TLSVersion:           expectedTLSVersion,
-		HTTPResponse:         200,
-		SMARTHTTPResponse:    200,
-		ResponseTime:         0,
-		RequestedFhirVersion: "None",
+		URL:                      fhirURL.String(),
+		MIMETypes:                expectedMimeType,
+		TLSVersion:               expectedTLSVersion,
+		HTTPResponse:             200,
+		SMARTHTTPResponse:        200,
+		ResponseTime:             0,
+		RequestedFhirVersion:     "None",
+		CapabilityStatementBytes: expectedCapStatBytes,
+		SMARTRespBytes:           expectedCapStatBytes,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
 	// GetAndSendCapabilityStatement uses one client to call requestCapabilityStatementAndSmartOnFhir
-	// which makes make multiple request. The tes client only returns the metadata info which is why smart_response
+	// which makes multiple requests. The test client only returns the metadata info which is why smart_response
 	// has the same value as capabilityStatement
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.SMARTResp))
 	th.Assert(t, err == nil, err)
