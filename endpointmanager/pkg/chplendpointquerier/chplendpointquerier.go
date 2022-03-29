@@ -10,11 +10,14 @@ type LanternEntry struct {
 	NPIID            string `json:"NPIID"`
 }
 
+var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
+var NextGenURL = "https://nextgen.com/api/practice-search"
+
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
-	if chplURL == "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json" {
+	if chplURL == MedHostURL {
 		MedHostQuerier(chplURL, fileToWriteTo)
-	} else if chplURL == "https://nextgen.com/api/practice-search" {
+	} else if chplURL == NextGenURL {
 		CHPLwebscraper(chplURL, fileToWriteTo)
 	}
 }
