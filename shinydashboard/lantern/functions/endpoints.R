@@ -29,11 +29,15 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- endpoint_export_tbl %>%
     distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind) %>%
     left_join(app$http_response_code_tbl %>% select(code, label),
       by = c("http_response" = "code")) %>%
       mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
-      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists)))
+      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
+      mutate(cap_stat_exists = case_when(
+        kind != "instance" ~ "true*",
+        TRUE ~ cap_stat_exists
+      ))
 }
 
 # get the endpoint tally by http_response received
@@ -99,15 +103,23 @@ get_fhir_version_factors <- function(endpoint_tbl) {
     )
 }
 
-get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
+get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
   res <- endpoint_export_tbl %>%
   distinct(fhir_version) %>%
   split(.$fhir_version) %>%
   purrr::map(~ .$fhir_version)
 }
 
+get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
+  res <- endpoint_export_tbl %>%
+  filter(fhir_version != "No Cap Stat") %>%
+  distinct(fhir_version) %>%
+  split(.$fhir_version) %>%
+  purrr::map(~ .$fhir_version)
+}
+
 # Get the list of distinct fhir versions for use in filtering
-get_fhir_version_list <- function(endpoint_export_tbl) {
+get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
   fhir_version_list <- list()
 
   res <- endpoint_export_tbl %>%
@@ -167,14 +179,14 @@ get_fhir_version_list <- function(endpoint_export_tbl) {
   }
 
   if (length(unknownVals) > 0) {
-    if (length(noVals) > 0) {
+    if (length(noVals) > 0 && no_cap_stat == TRUE) {
       otherList <- list("Other" = c(unknownVals, noVals))
       fhir_version_list <- c(fhir_version_list, otherList)
     } else {
       otherList <- list("Other" = unknownVals)
       fhir_version_list <- c(fhir_version_list, otherList)
     }
-  } else if (length(noVals) > 0) {
+  } else if (length(noVals) > 0 && no_cap_stat == TRUE) {
       otherList <- list("Other" = noVals)
       fhir_version_list <- c(fhir_version_list, otherList)
   }
@@ -599,10 +611,6 @@ get_validation_results <- function(db_connection) {
 }
 
 database_fetcher <- reactive({
-  app$fhir_version_list(get_fhir_version_list(endpoint_export_tbl))
-
-  app$distinct_fhir_version_list(get_distinct_fhir_version_list(endpoint_export_tbl))
-
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
 
   app_data$response_tally(get_response_tally_list(db_tables))

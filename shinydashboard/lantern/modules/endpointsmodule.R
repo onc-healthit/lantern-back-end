@@ -15,6 +15,7 @@ endpointsmodule_UI <- function(id) {
       ),
     ),
     reactable::reactableOutput(ns("endpoints_table")),
+    p("* An asterisk after a true value in the capbility statement returned field indicates that the returned capability statement for the endpoint is not of kind 'instance' as expected."),
     htmlOutput(ns("note_text"))
   )
 }

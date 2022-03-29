@@ -165,6 +165,10 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
   )
 
+  fhir_version_no_capstat <- reactive(
+    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
+  )
+
   show_availability_filter <- reactive(
     input$side_menu %in% c("endpoints_tab")
   )
@@ -196,7 +200,11 @@ function(input, output, session) { #nolint
 
   output$show_filters <- renderUI({
     if (show_filter()) {
-      fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      if (fhir_version_no_capstat()) {
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      } else {
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      }
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
