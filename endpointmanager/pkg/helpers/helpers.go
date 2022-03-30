@@ -46,6 +46,27 @@ func StringArraysEqual(l1 []string, l2 []string) bool {
 	return true
 }
 
+// IntArraysEqual checks if l1 and l2 have the same contents regardless of order.
+func IntArraysEqual(l1 []int, l2 []int) bool {
+	if len(l1) != len(l2) {
+		return false
+	}
+
+	// don't care about order
+	a := make([]int, len(l1))
+	b := make([]int, len(l2))
+	copy(a, l1)
+	copy(b, l2)
+	sort.Ints(a)
+	sort.Ints(b)
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 // FailOnError checks if err is not equal to nil and if it isn't, logs failure and exits the program
 func FailOnError(errString string, err error) {
 	if err != nil {
