@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"strconv"
 	"sync"
 	"testing"
@@ -411,7 +410,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	th.Assert(t, hitp.VendorID == testHITP.VendorID, "Developer is not what was expected")
 	th.Assert(t, hitp.CertificationDate.Equal(testHITP.CertificationDate), "Certification date is not what was expected")
 	th.Assert(t, hitp.CertificationStatus == testHITP.CertificationStatus, "Certification status is not what was expected")
-	th.Assert(t, reflect.DeepEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), fmt.Sprintf("Certification criteria %v is not what was expected %v", hitp.CertificationCriteria, testHITP.CertificationCriteria))
+	th.Assert(t, helpers.IntArraysEqual(hitp.CertificationCriteria, testHITP.CertificationCriteria), fmt.Sprintf("Certification criteria %v is not what was expected %v", hitp.CertificationCriteria, testHITP.CertificationCriteria))
 
 	// check that there are links in the product_criteria database
 	var link_count int
