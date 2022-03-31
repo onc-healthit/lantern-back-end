@@ -548,4 +548,12 @@ function(input, output, session) { #nolint
         selected = ui_special_values$ALL_RESOURCES)
   })
 
+  observeEvent(input$show_details, {
+    showModal(modalDialog(
+      title = "All API Information Source Names",
+      p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
+      easyClose = TRUE
+  ))
+  })
+
 }
