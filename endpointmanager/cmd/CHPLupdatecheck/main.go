@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"io/ioutil"
 	http "net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -163,7 +164,7 @@ func CHPLEndpointListUpdateCheck(chplResultsList []interface{}) []string {
 					fileName = fileName[:index]
 
 					entry.FileName = fileName + "EndpointSources.json"
-					entry.FormatType = ""
+					entry.FormatType = "Lantern"
 
 					chplEndpointList = append(chplEndpointList, entry)
 

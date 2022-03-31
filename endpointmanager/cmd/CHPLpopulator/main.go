@@ -116,7 +116,7 @@ func main() {
 				fileName = fileName[:index]
 
 				entry.FileName = fileName + "EndpointSources.json"
-				entry.FormatType = ""
+				entry.FormatType = "Lantern"
 
 				endpointEntryList = append(endpointEntryList, entry)
 			}

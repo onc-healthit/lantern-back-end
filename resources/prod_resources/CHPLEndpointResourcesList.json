@@ -1,24 +1,36 @@
 [
 	{
-		"FormatType": "",
+		"FormatType": "Lantern",
 		"URL": "https://api.bluebuttonpro.com/",
 		"EndpointName": "Darena Solutions LLC",
 		"FileName": "bluebuttonproEndpointSources.json"
 	},
 	{
-		"FormatType": "",
+		"FormatType": "Lantern",
 		"URL": "https://www.dynamichealthit.com/dynamic-fhir-api",
 		"EndpointName": "Dynamic Health IT, Inc",
 		"FileName": "dynamichealthitEndpointSources.json"
 	},
 	{
-		"FormatType": "",
+		"FormatType": "Lantern",
+		"URL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
+		"EndpointName": "MEDHOST",
+		"FileName": "mhdi10xasaydEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.mphrx.com/fhir-service-base-url-directory",
 		"EndpointName": "My Personal Health Records Express Inc. d/b/a MphRx",
 		"FileName": "mphrxEndpointSources.json"
 	},
 	{
-		"FormatType": "",
+		"FormatType": "Lantern",
+		"URL": "https://nextgen.com/api/practice-search",
+		"EndpointName": "NextGen Healthcare",
+		"FileName": "nextgenEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
 		"FileName": "solidpracticeEndpointSources.json"
