@@ -73,7 +73,7 @@ Takes messages off of the queue that include either the Capability Statement of 
 
 ### CHPL Mapper
 
-Maps endpoints to CHPL vendors and products and stores the mapping in the database.
+Maps endpoints to CHPL vendors and stores the mapping in the database. Eventually will map endpoints to CHPL products as well as additional information becomes available.
 
 ## Building and Running
 
