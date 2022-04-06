@@ -21,7 +21,6 @@ To migrate how the validations are stored in the db, you must run the validation
     * You can run `make migrate_validations direction=down` to do a down migration (putting the validation information into the validation field)
 
 
-
 # Database Schema
 
 ## fhir_endpoints table
@@ -33,6 +32,22 @@ The fhir_ endpoints table is the master list of FHIR service-base URLs that will
 | organization_names | VARCHAR(500)[]      |    Organization names this endpoint is reported as |
 | npi_ids | VARCHAR(500)[]      |    NPI IDs of matching organizations |
 | list_source | VARCHAR(500)      |   Name/URL of list source that the ednpoint came from |
+| versions_response | JSONB      |    The response returned from querying the endpoint's versions operation |
+| created_at | TIMESTAMPTZ      |    Timestamp of creation |
+| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## npi_organizations 
+The entries in this table are from the npi data file in the NPPES monthly dissemination package.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | Database ID of organization |
+| npi_id     | VARCHAR(500) | NPI ID of the NPPES contact entry |
+| name    | VARCHAR(500) | The Provider Organization Name (Legal Business Name) of the npi organization pulled from the npi data file|
+| secondary_name    | VARCHAR(500) | The Provider Other Organization Name pulled from the npi data file|
+| location     | JSONB | Location information of the Provider Organization including address lines, city, state, and zipcode |
+| taxonomy     | VARCHAR(500) | Healthcare Provider Taxonomy -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/ |
+| normalized_name    | VARCHAR(500) | Normalizes organization name by removing special characters and making name all uppercase|
+| normalized_secondary_name    | VARCHAR(500) | Normalizes secondary organization name by removing special characters and making name all uppercase|
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
@@ -40,7 +55,7 @@ The fhir_ endpoints table is the master list of FHIR service-base URLs that will
 The entries in this table are from the endpoints file in the NPPES monthly data dissemination package.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
-| id     | INTEGER | Database ID of endpoint |
+| id     | INTEGER | Database ID of organization |
 | npi_id     | VARCHAR(500) | NPI ID of the NPPES contact entry |
 | endpoint_type     | VARCHAR(500) | Endpoint type in NPPES, should always equal "FHIR" |
 | endpoint_type_description     | VARCHAR(500) | Endpoint type description in NPPES, should always equal "FHIR_URL"  |
@@ -63,24 +78,22 @@ The entries in this table are from the endpoints file in the NPPES monthly data 
 The fhir_endpoints_info table contains the data collected from the last query of the FHIR endpoint at `url` and represents the most up to date information
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
-| id     | integer | Database ID of endpoint |
+| id     | INTEGER | Database ID of endpoint |
 | healthit_product_id     | INTEGER | Healthit product ID of endpoint |
 | vendor_id     | INTEGER | Vendor ID of endpoint |
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | tls_version     | VARCHAR(500)      |   Transport Layer Security (TLS) version of endpoint |
 | mime_types | VARCHAR(500)[]      |    MIME types this endpoint supports |
-| http_response     | INTEGER | HTTP response receieved from endpoint metadata url |
-| errors     | VARCHAR(500)      |   Errors receieved from querying endpoint  |
 | capability_statement     | JSONB      |   Capability statement receieved from endpoint |
-| validation     | JSONB      |   Validation information for ONC conformance criteria |
+| validation_result_id     | INTEGER      |   Validation id referencing the validation_results table |
 | included_fields | JSONB      |    Structure that shows which capability statement fields and extensions are supported/unsupported by endpoint |
-| supported_resources | VARCHAR(500)[]      |    Stores all the FHIR resources the endpoint supports |
-| response_time_seconds | DECIMAL(64,4)     |    HTTP response time of endpoint |
+| operation_resource | JSONB     |    Stores the resources and their supported operations from the FHIR endpoint. |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
-| smart_http_response     | INTEGER | HTTP response receieved from endpoint SMART url |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
-| availability     | DECIMAL(64,4)      |   All-time availability percentage. The number of total HTTP 200 responses that have ever been received from this endpoint divided by the total number of HTTP request attempts|
+| metadata_id  | INTEGER | Metadata ID referencing the fhir_endpoints_metadata table |
+| requested_fhir_version  | VARCHAR(500)  | The FHIR version requested when querying the endpoint. Defaults to 'None' for endpoint entries where no specific FHIR version was requested. |
+| capability_fhir_version  | VARCHAR(500)  | The FHIR version pulled out of the capability statement. |
 
 ## fhir_endpoints_info_history table
 The fhir_endpoints_info_history table contains the history of the fhir_endpoints_info table. The operation field of the fhir_endpoints_info_history table represents if the entry was inserted for the first time (I) ie: The first query ever performed at the given `url`, if the information retrieved from querying the `url` for an existing info entry was updated in any way (U) or if the info entry was removed (D). Deletion occurs in the case where a URL was once in a vendor list and was being queried by Lantern, but no longer exists in a vendor list and therefore will no longer exist in the `fhir_endpoints` table and will no longer be queried.
@@ -95,21 +108,60 @@ The fhir_endpoints_info_history table contains the history of the fhir_endpoints
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | tls_version     | VARCHAR(500)      |   Transport Layer Security (TLS) version of endpoint |
 | mime_types | VARCHAR(500)[]      |    MIME types this endpoint supports |
-| http_response     | INTEGER | HTTP response receieved from endpoint metadata url |
-| errors     | VARCHAR(500)      |   Errors receieved from querying endpoint  |
 | capability_statement     | JSONB      |   Capability statement receieved from endpoint |
-| validation     | JSONB      |   Validation information for ONC conformance criteria |
+| validation_result_id     | INTEGER      |   Validation id referencing the validation_results table |
 | included_fields | JSONB      |    Structure that shows which capability statement fields and extensions are supported/unsupported by endpoint |
-| supported_resources | VARCHAR(500)[]      |    Stores all the FHIR resources the endpoint supports |
-| response_time_seconds | DECIMAL(64,4)     |    HTTP response time of endpoint |
+| operation_resource | JSONB     |    Stores the resources and their supported operations from the FHIR endpoint. |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
-| smart_http_response     | INTEGER | HTTP response receieved from endpoint SMART url |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
-| availability     | DECIMAL(64,4)      |   All-time availability percentage. The number of total HTTP 200 responses that have ever been received from this endpoint divided by the total number of HTTP request attempts|
+| metadata_id  | INTEGER  | Metadata ID referencing the fhir_endpoints_metadata table |
+| requested_fhir_version  | VARCHAR(500)  | The FHIR version requested when querying the endpoint. Defaults to 'None' for endpoint entries where no specific FHIR version was requested. |
+| capability_fhir_version  | VARCHAR(500)  | The FHIR version pulled out of the capability statement. |
 
+## fhir_endpoints_metadata table
+The fhir_endpoints_metadata table contains the metadata information collected from the last query of the FHIR endpoint at `url` and represents the most up to date information
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | Database ID of endpoint |
+| url     | VARCHAR(500)      |   Service base URL of endpoint |
+| http_response     | INTEGER    |   HTTP response receieved from endpoint metadata url |
+| availability     | DECIMAL(5,4)    |   All-time availability percentage. The number of total HTTP 200 responses that have ever been received from this endpoint divided by the total number of HTTP request attempt |
+| errors     | VARCHAR(500)   |   Errors receieved from querying endpoint |
+| response_time_seconds     | DECIMAL(7,4)    |   HTTP response time of endpoint |
+| smart_http_response     | INTEGER    |  HTTP response receieved from endpoint SMART url |
+| requested_fhir_version  | VARCHAR(500)  | The FHIR version requested when querying the endpoint. Defaults to 'None' for endpoint entries where no specific FHIR version was requested. |
+| created_at | TIMESTAMPTZ      |    Timestamp of creation |
+| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
-## vendor table
+## validation_results table
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | Database ID of the validation result ID entry |
+
+## validations table
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| rule_name     | VARCHAR(500) | Name of the validation rule |
+| valid     | BOOLEAN | Whether the endpoint passed (true) or failed (false) the validation check|
+| expected     | VARCHAR(500) | The expected result of the validation check |
+| actual     | VARCHAR(500) | The actual returned result of the validation check on an endpoint |
+| comment     | VARCHAR(500) | Any comments that give more details about the validation |
+| reference     | VARCHAR(500) | Reference URL for validation rule |
+| implementation_guide     | VARCHAR(500) | Implementation guide that the validation rule is associated with if one exists |
+| validation_result_id     | INTEGER | ID referencing the validation result table which groups validations for a single endpoint together |
+
+## endpoint_organization table
+The endpoint_organization table stores the matches made by the endpoint linker algorithm between endpoints and NPI organizations.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| url     | VARCHAR(500) | Service base URL of endpoint |
+| organization_npi_id     | VARCHAR(500) | NPI ID of the NPPES organization |
+| confidence     | VARCHAR(500) | Confidence percentage that match created by linking algorithm is accurate |
+| created_at | TIMESTAMPTZ      |    Timestamp of creation |
+| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## vendors table
 The vendor table stores health IT product vendor information gathered from CHPL.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
