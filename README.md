@@ -38,7 +38,7 @@ This removes all docker images, networks, and local volumes.
 
 ## Start Lantern
 
-1. In your terminal, run:
+1. To start up Lantern with a development environment, in your terminal, run:
 
     ```bash
     make run
@@ -50,6 +50,12 @@ This removes all docker images, networks, and local volumes.
     * **Capability Querier** - queries the endpoints for their capability statements once a day. Kicks off the initial query immediately.
     * **Capability Receiver** - receives the capability statements from the queue, peforms validations and saves the results to fhir_endpoints_info
     * **Endpoint Manager** - sends endpoints to the capability querying queues
+
+    Or if you wish to start up Lantern with a production environment, run:
+    ```bash
+    make run_prod
+    ```
+
 
 
 2. **If you have a clean database or want to update the data in your database** 
@@ -76,7 +82,7 @@ This removes all docker images, networks, and local volumes.
       * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
       * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
       * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
-        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`
+        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
       * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
 
       ```bash
@@ -87,7 +93,8 @@ This removes all docker images, networks, and local volumes.
       * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
       * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
       * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
+      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
+      * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
 
     You must run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`. You must be running Lantern with a production environment by using the command `make run_prod` to start up Lantern.
 
@@ -98,7 +105,7 @@ This removes all docker images, networks, and local volumes.
       ```
 
       This runs the same tasks inside the endpoint manager container as above, with the addition of a new starting task:
-      * the **NPPES querier**, which queries NPPES for their endpoint and npi data files, and automatically populate the database with this information, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files.
+      * the **NPPES querier**, which queries NPPES for their endpoint and npi data files, and automatically populates the database with this information, cuts out all the entries in the npi data file that are not organization entries, and automatically adds the information to the database before deleting these large NPPES files.
 
 
 3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
@@ -109,10 +116,15 @@ This removes all docker images, networks, and local volumes.
 
 ## Stop Lantern
 
-Run
+To stop Lantern when running with a development environment, run:
 
 ```bash
 make stop
+```
+
+Or if running a production environment, run:
+```bash
+make stop_prod
 ```
 
 ## Starting Services Behind SSL-Inspecting Proxy
@@ -124,6 +136,7 @@ If you are operating behind a proxy that does SSL-Inspection you will have to co
   * `lanternmq/certs`
   * `shinydashboard/certs/`
   * `e2e/certs`
+  * `db/migration/certs`
 
 # Testing Lantern - Basic Flow
 
@@ -339,10 +352,19 @@ This will start all of the services and will only expose Grafana on port 80.
 
 ## Stopping the Services
 
+### Development Environment
+
 To stop the services and retain the containers and network, run:
 
 ```bash
 docker-compose stop
+```
+
+### Production Environment
+For a *production* environment, to stop the services and retain the containers and network, run:
+
+```bash
+docker-compose -f docker-compose.yml down
 ```
 
 To stop the services and remove the containers and networks, run:
