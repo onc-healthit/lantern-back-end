@@ -20,6 +20,7 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
       menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
+      menuItem("Organizations", tabName = "organizations_tab", icon = icon("hospital")),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("CapabilityStatement / Conformance Profiles", icon = icon("list-alt"), tabName = "profile_tab", badgeLabel = "new"),
@@ -57,6 +58,9 @@ ui <- dashboardPage(
       ),
       tabItem("downloads_tab",
               downloadsmodule_UI("downloads_page")
+      ),
+      tabItem("organizations_tab",
+              organizationsmodule_UI("organizations_page")
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")

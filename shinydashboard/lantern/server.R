@@ -50,6 +50,13 @@ function(input, output, session) { #nolint
         "downloads_page")
 
       callModule(
+        organizationsmodule,
+        "organizations_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$availability))
+
+      callModule(
         locationmodule,
         "location_page",
         reactive(input$fhir_version),
@@ -129,6 +136,7 @@ function(input, output, session) { #nolint
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads Page",
+     "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implmentation Page",
      "fields_tab" = "Fields Page",
@@ -162,7 +170,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
   )
 
   fhir_version_no_capstat <- reactive(
