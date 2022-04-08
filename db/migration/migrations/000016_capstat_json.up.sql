@@ -2,6 +2,8 @@ DROP VIEW IF EXISTS endpoint_export;
 
 ALTER TABLE fhir_endpoints_info ALTER COLUMN capability_statement TYPE JSON;
 ALTER TABLE fhir_endpoints_info ALTER COLUMN smart_response TYPE JSON;
+ALTER TABLE fhir_endpoints_info_history ALTER COLUMN capability_statement TYPE JSON;
+ALTER TABLE fhir_endpoints_info_history ALTER COLUMN smart_response TYPE JSON;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,

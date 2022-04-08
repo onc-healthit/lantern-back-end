@@ -285,6 +285,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
+			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
