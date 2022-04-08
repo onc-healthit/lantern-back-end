@@ -20,7 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":           "TLS 1.2",
 	"smarthttpResponse":    0,
 	"smartResp":            nil,
-	"smartRespBytes":       []byte("nulll"),
+	"smartRespBytes":       []byte("null"),
 	"responseTime":         0.1234,
 	"availability":         1.0,
 	"requestedFhirVersion": "None",
