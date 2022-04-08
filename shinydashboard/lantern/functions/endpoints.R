@@ -610,6 +610,25 @@ get_validation_results <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
+get_endpoint_list_matches <- function() {
+    el <- endpoint_export_tbl %>%
+          unnest(endpoint_names) %>%
+          select(url, endpoint_names, fhir_version, vendor_name) %>%
+          rename(organization_name = endpoint_names) %>%
+          tidyr::replace_na(list(organization_name = "Unknown"))
+    el
+}
+
+get_npi_organization_matches <- function() {
+  nl <- endpoint_export_tbl %>%
+          select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode) %>%
+          mutate(match_score = match_score*100)  %>%
+          filter(match_score >= 97) %>%
+          tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown", zipcode = "Unknown")) %>%
+          mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
+  nl
+}
+
 database_fetcher <- reactive({
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
 
