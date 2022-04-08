@@ -20,6 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":           "TLS 1.2",
 	"smarthttpResponse":    0,
 	"smartResp":            nil,
+	"smartRespBytes": []byte("nulll"),
 	"responseTime":         0.1234,
 	"availability":         1.0,
 	"requestedFhirVersion": "None",
@@ -238,6 +239,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion:  "None",
 	CapabilityFhirVersion: "1.0.2",
 	SMARTResponse:         nil,
+	SMARTResponseBytes: []byte("null"),
 	IncludedFields:        testIncludedFields,
 	OperationResource:     testOperations,
 }
@@ -258,10 +260,12 @@ func setupCapabilityStatement(t *testing.T, path string) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityStatementBytes = csJSON
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
 	th.Assert(t, err == nil, err)
 	testQueueMsg["capabilityStatement"] = capStat
+	testQueueMsg["capabilityStatementBytes"] = csJSON
 }
 
 func Test_formatMessage(t *testing.T) {
