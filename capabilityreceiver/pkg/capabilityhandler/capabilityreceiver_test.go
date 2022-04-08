@@ -20,7 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":           "TLS 1.2",
 	"smarthttpResponse":    0,
 	"smartResp":            nil,
-	"smartRespBytes": []byte("nulll"),
+	"smartRespBytes":       []byte("nulll"),
 	"responseTime":         0.1234,
 	"availability":         1.0,
 	"requestedFhirVersion": "None",
@@ -239,7 +239,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion:  "None",
 	CapabilityFhirVersion: "1.0.2",
 	SMARTResponse:         nil,
-	SMARTResponseBytes: []byte("null"),
+	SMARTResponseBytes:    []byte("null"),
 	IncludedFields:        testIncludedFields,
 	OperationResource:     testOperations,
 }
