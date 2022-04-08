@@ -19,8 +19,8 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
-      menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Organizations", tabName = "organizations_tab", icon = icon("hospital")),
+      menuItem("Resources", icon = icon("list-alt"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
       menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
       menuItem("CapabilityStatement / Conformance Profiles", icon = icon("list-alt"), tabName = "profile_tab", badgeLabel = "new"),
@@ -49,6 +49,7 @@ ui <- dashboardPage(
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
     uiOutput("show_resource_profiles_dropdown"),
+    uiOutput("organizations_filter"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")

@@ -198,6 +198,8 @@ function(input, output, session) { #nolint
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
+  
+  show_organizations_filter <- reactive(input$side_menu %in% c("organizations_tab"))
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
@@ -378,6 +380,65 @@ function(input, output, session) { #nolint
 
     return(res)
   })
+
+  get_endpoint_list_organizations_list <- reactive({
+    res <- endpoint_export_tbl
+
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+           unnest(endpoint_names) %>%
+           distinct(endpoint_names) %>%
+           arrange(endpoint_names) %>%
+           split(.$endpoint_names) %>%
+           purrr::map(~ .$endpoint_names)
+
+    organizations_list <- list(
+      "All Organizations" = ui_special_values$ALL_ORGANIZATIONS
+    )
+
+    return(c(organizations_list, res))
+})
+
+get_npi_organizations_list <- reactive({
+    res <- endpoint_export_tbl
+
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+           distinct(organization_name) %>%
+           arrange(organization_name) %>%
+           split(.$organization_name) %>%
+           purrr::map(~ .$organization_name)
+   
+    organizations_list <- list(
+      "All Organizations" = ui_special_values$ALL_ORGANIZATIONS
+    )
+
+    return(c(organizations_list, res))
+})
+
+organization_type  <- reactive({
+  if (input$organization_tabset == "NPI Organizations") {
+    res <- get_npi_organizations_list()
+    return(res)
+  } else {
+    res <- get_endpoint_list_organizations_list()
+    return(res)
+  }
+})
 
   #                                          #
   # Display Resource and Operations Checkbox #
@@ -570,6 +631,112 @@ function(input, output, session) { #nolint
       p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
       easyClose = TRUE
   ))
+  })
+
+  #                                          #
+  #      Display Organizations Filter        #
+  #                                          #
+
+  output$organizations_filter <- renderUI({
+    if (show_organizations_filter()) {
+      fluidPage(
+        fluidRow(
+          column(width = 12,
+            selectizeInput("organization_name", "Click in the box below to add or remove Organizations:",
+            choices = organization_type(),
+            selected = ui_special_values$ALL_ORGANIZATIONS, multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+            actionButton("selectallorgs", "Select All Organizations", style = "margin-top: -15px;"),
+            actionButton("removeallorgs", "Clear All Organizations", style = "margin-top: -15px;"),
+            p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
+            Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance Resource.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
+          )
+        )
+      )
+    }
+  })
+
+  #                        #
+  #  Organizations Filter  #
+  #                        #
+
+  current_org_selection <- reactiveVal(NULL)
+
+  # Updates what the user has currently selected
+  observeEvent(input$organization_name, {
+    current_org_selection(input$organization_name)
+  })
+
+  # Resets the display if the user is navigating to this page
+  observe({
+    req(input$side_menu)
+    if (show_organizations_filter()) {
+      updateSelectizeInput(session, "organization_name",
+            label = "Click in the box below to add or remove Organizations:",
+            choices = organization_type(),
+            selected = ui_special_values$ALL_ORGANIZATIONS,
+            options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  # Resets the display if the user is navigating to this page
+  observe({
+    req(input$organization_tabset)
+    if (show_organizations_filter()) {
+      updateSelectizeInput(session, "organization_name",
+            label = "Click in the box below to add or remove Organizations:",
+            choices = organization_type(),
+            selected = ui_special_values$ALL_ORGANIZATIONS,
+            options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  observeEvent(input$selectallorgs, {
+    if (input$selectallorgs == 0) {
+      return(NULL)
+    }
+    else{
+      updateSelectizeInput(session, "organization_name",
+        label = "Click in the box below to add or remove Organizations:",
+        choices = organization_type(),
+        selected = ui_special_values$ALL_ORGANIZATIONS,
+        options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  # Resets the display if the user clicks the "Remove All Organizations" button
+  observeEvent(input$removeallorgs, {
+    if (input$removeallorgs == 0) {
+      return(NULL)
+    }
+    else{
+      current_org_selection(NULL)
+      updateSelectizeInput(session, "organization_name",
+              label = "Click in the box below to add or remove Organizations:",
+              choices = organization_type(),
+              options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  observeEvent(input$fhir_version, {
+    if (!show_resource_checkbox() || is.null(current_org_selection())) {
+      return(NULL)
+    } else {
+        updateSelectizeInput(session, "organization_name",
+          label = "Click in the box below to add or remove Organizations:",
+          choices = organization_type(),
+          options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
+  })
+
+  observeEvent(input$vendor, {
+    if (!show_resource_checkbox() || is.null(current_org_selection())) {
+      return(NULL)
+    } else {
+        updateSelectizeInput(session, "organization_name",
+          label = "Click in the box below to add or remove Organizations:",
+          choices = organization_type(),
+          options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+    }
   })
 
 }
