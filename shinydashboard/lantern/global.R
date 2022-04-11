@@ -48,7 +48,9 @@ ui_special_values <- list(
 # The list of fhir versions and vendors are unlikely to change during a user's session
 # we'll update them on timer, but not refresh the UI
 app <<- list(
-  fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl)),
+  fhir_version_list_no_capstat      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, TRUE)),
+  fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, FALSE)),
+  distinct_fhir_version_list_no_capstat      = reactiveVal(get_distinct_fhir_version_list_no_capstat(endpoint_export_tbl)),
   distinct_fhir_version_list      = reactiveVal(get_distinct_fhir_version_list(endpoint_export_tbl)),
   vendor_list            = get_vendor_list(endpoint_export_tbl),
   http_response_code_tbl =
