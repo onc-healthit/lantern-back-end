@@ -1,4 +1,7 @@
+BEGIN;
+
 DROP VIEW IF EXISTS endpoint_export;
+DROP INDEX IF EXISTS smart_capabilities_idx;
 
 ALTER TABLE fhir_endpoints_info ALTER COLUMN capability_statement TYPE JSON;
 ALTER TABLE fhir_endpoints_info ALTER COLUMN smart_response TYPE JSON;
@@ -29,5 +32,6 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id;
 
-DROP INDEX IF EXISTS smart_capabilities_idx;
 CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->>'capabilities'));
+
+COMMIT;
