@@ -186,6 +186,10 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
   )
 
+  fhir_version_no_capstat <- reactive(
+    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
+  )
+
   show_availability_filter <- reactive(
     input$side_menu %in% c("endpoints_tab")
   )
