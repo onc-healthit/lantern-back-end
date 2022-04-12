@@ -198,7 +198,7 @@ function(input, output, session) { #nolint
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
-  
+
   show_organizations_filter <- reactive(input$side_menu %in% c("organizations_tab"))
 
   show_confidence_filter <- reactive(input$side_menu %in% c("organizations_tab") && (input$organization_tabset == "NPI Organizations"))

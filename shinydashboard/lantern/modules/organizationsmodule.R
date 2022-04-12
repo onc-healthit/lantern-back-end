@@ -11,17 +11,17 @@ organizationsmodule_UI <- function(id) {
       h2("Endpoint Organizations")
     ),
     tabsetPanel(id = "organization_tabset", type = "tabs",
-              tabPanel("NPI Organizations", 
-                        h3("NPI Organization Matches"), 
+              tabPanel("NPI Organizations",
+                        h3("NPI Organization Matches"),
                         p("Endpoints can be linked to organizations in two ways, either by the NPI ID (preferred), or by the
-                            organization name. Links made between organizations and endpoints using an 
+                            organization name. Links made between organizations and endpoints using an
                             NPI ID are given a match confidence value of 100%, which is higher than any possible confidence
                             value for matches made using the organization name. In instances where a unique identifier to match an organization to an endpoint is not provided,
                             Lantern uses the organization name which each endpoint list provides, and the primary and
-                            secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints 
+                            secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints
                             based on their names and assign a match confidence score. This table shows matches with a match confidence of 97% and up."),
                         reactable::reactableOutput(ns("npi_orgs_table"))),
-              tabPanel("Endpoint List Organizations", 
+              tabPanel("Endpoint List Organizations",
                         h3("Endpoint List Organization Matches"),
                         p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
                         reactable::reactableOutput(ns("endpoint_list_orgs_table")))
@@ -95,7 +95,7 @@ organizationsmodule <- function(
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   match_score = colDef(name = "Confidence", sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
               ),
-              groupBy = c('organization_name', 'url'),
+              groupBy = c("organization_name", "url"),
               striped = TRUE,
               searchable = TRUE,
               showSortIcon = TRUE,
@@ -116,7 +116,7 @@ organizationsmodule <- function(
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
               ),
-              groupBy = c('organization_name'),
+              groupBy = c("organization_name"),
               striped = TRUE,
               searchable = TRUE,
               showSortIcon = TRUE,

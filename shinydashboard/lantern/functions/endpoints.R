@@ -622,7 +622,7 @@ get_endpoint_list_matches <- function() {
 get_npi_organization_matches <- function() {
   nl <- endpoint_export_tbl %>%
           select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode) %>%
-          mutate(match_score = match_score*100)  %>%
+          mutate(match_score = match_score * 100)  %>%
           filter(match_score >= 97) %>%
           tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown", zipcode = "Unknown")) %>%
           mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
