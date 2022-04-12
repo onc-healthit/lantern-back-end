@@ -42,8 +42,7 @@ r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 ui_special_values <- list(
   "ALL_DEVELOPERS" = "All Developers",
   "ALL_RESOURCES" = "All Resources",
-  "ALL_PROFILES" = "All Profiles",
-  "ALL_ORGANIZATIONS" = "All Organizations"
+  "ALL_PROFILES" = "All Profiles"
 )
 
 # The list of fhir versions and vendors are unlikely to change during a user's session

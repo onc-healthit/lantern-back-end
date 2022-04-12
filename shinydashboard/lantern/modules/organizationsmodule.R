@@ -8,14 +8,23 @@ organizationsmodule_UI <- function(id) {
 
   tagList(
     fluidRow(
-      h2("Endpoint Organizations"),
-      column(width = 12, style = "padding-bottom:20px",
-             h3(style = "margin-top:0", textOutput(ns("endpoint_count")))
-      ),
+      h2("Endpoint Organizations")
     ),
     tabsetPanel(id = "organization_tabset", type = "tabs",
-              tabPanel("NPI Organizations", h3("NPI Organization Matches"), reactable::reactableOutput(ns("npi_orgs_table"))),
-              tabPanel("Endpoint List Organizations", h3("Endpoint List Organization Matches"),reactable::reactableOutput(ns("endpoint_list_orgs_table")))
+              tabPanel("NPI Organizations", 
+                        h3("NPI Organization Matches"), 
+                        p("Endpoints can be linked to organizations in two ways, either by the NPI ID (preferred), or by the
+                            organization name. Links made between organizations and endpoints using an 
+                            NPI ID are given a match confidence value of 100%, which is higher than any possible confidence
+                            value for matches made using the organization name. In instances where a unique identifier to match an organization to an endpoint is not provided,
+                            Lantern uses the organization name which each endpoint list provides, and the primary and
+                            secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints 
+                            based on their names and assign a match confidence score. This table shows matches with a match confidence of 97% and up."),
+                        reactable::reactableOutput(ns("npi_orgs_table"))),
+              tabPanel("Endpoint List Organizations", 
+                        h3("Endpoint List Organization Matches"),
+                        p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
+                        reactable::reactableOutput(ns("endpoint_list_orgs_table")))
     ),
     htmlOutput(ns("note_text"))
   )
@@ -27,18 +36,31 @@ organizationsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_availability
+  sel_confidence
 ) {
   ns <- session$ns
 
   selected_npi_orgs <- reactive({
     res <- get_npi_organization_matches()
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), sel_confidence())
 
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
 
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
+    }
+
+    if (sel_confidence() != "97-100") {
+      if (sel_confidence() == "100") {
+        confidence_filter_num <- as.numeric(sel_confidence())
+        res <- res %>% filter(match_score == confidence_filter_num)
+      }
+      else {
+        confidence_upper_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][2])
+        confidence_lower_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][1])
+
+        res <- res %>% filter(match_score >= confidence_lower_num, match_score <= confidence_upper_num)
+      }
     }
 
     res
