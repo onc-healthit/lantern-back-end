@@ -75,7 +75,7 @@ The entries in this table are from the endpoints file in the NPPES monthly data 
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
 ## fhir_endpoints_info table
-The fhir_endpoints_info table contains the data collected from the last query of the FHIR endpoint at `url` and represents the most up to date information
+The fhir_endpoints_info table contains the data collected from the last query of the FHIR endpoint at `url` while requesting the version given by `requested_version` and represents the most up to date information
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | id     | INTEGER | Database ID of endpoint |
@@ -96,7 +96,7 @@ The fhir_endpoints_info table contains the data collected from the last query of
 | capability_fhir_version  | VARCHAR(500)  | The FHIR version pulled out of the capability statement. |
 
 ## fhir_endpoints_info_history table
-The fhir_endpoints_info_history table contains the history of the fhir_endpoints_info table. The operation field of the fhir_endpoints_info_history table represents if the entry was inserted for the first time (I) ie: The first query ever performed at the given `url`, if the information retrieved from querying the `url` for an existing info entry was updated in any way (U) or if the info entry was removed (D). Deletion occurs in the case where a URL was once in a vendor list and was being queried by Lantern, but no longer exists in a vendor list and therefore will no longer exist in the `fhir_endpoints` table and will no longer be queried.
+The fhir_endpoints_info_history table contains the history of the fhir_endpoints_info table. The operation field of the fhir_endpoints_info_history table represents if the entry was inserted for the first time (I) ie: The first query ever performed at the given `url` with the given `requested_version`, if the information retrieved from querying the `url` with the `requested_version` for an existing info entry was updated in any way (U) or if the info entry was removed (D). Deletion occurs in the case where a URL was once in a vendor list and was being queried by Lantern, but no longer exists in a vendor list and therefore will no longer exist in the `fhir_endpoints` table and will no longer be queried.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | operation     | CHAR(1) | Entry operation (I for insert, U for Update, D for Delete)  |

@@ -152,15 +152,15 @@ Adds a list of endpoints to the database.
 
 ### Helpers
 
-Contains helpful functions that are used commonly throughout the project, such a a string array contains function and a fail on error function.
+Contains helpful functions that are used commonly throughout the project, such as a string array contains function and a fail on error function.
 
 ### History Pruning
 
-Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the 2x the pruning threshold environment variable and deletes any associative validation table entries.
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the 2x the LANTERN_PRUNING_THRESHOLD environment variable and deletes any associated validation table entries.
 
 ### JSON Export
 
-Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a JSON file.
+Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a JSON file formatted as specified in the `shinydashboard/lantern/fhir_endpoints_fields_json.md`.
 
 ### NPPES Querier
 
@@ -184,7 +184,7 @@ Creates a model for the versions operator response and makes the version and def
 
 ### Workers
 
-Contains the code needed for creating, starting, and stopping workers used to parallelize processing and querying of capability statements in the endpoint manager and capability querier.
+Contains the code needed for creating, starting, and stopping workers used to parallelize processing.
 
 ## Building and Running
 
@@ -210,6 +210,16 @@ go run main.go
 
 The commands below assume that you are starting in the root directory of the Lantern backend project.
 
+### Archive File
+Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables between the given dates in a JSON format and saves it to the given 'file' name.
+
+Primarily uses the `archivefile` package.
+
+```bash
+cd endpointmanager/cmd/archivefile
+go run main.go <start date> <end date> <file name>
+```
+
 ### CHPL Populator 
 
 Queries the CHPL service for the CHPL list of endpoint lists and stores in a JSON file.
@@ -234,6 +244,55 @@ cd endpointmanager/cmd/chplquerier
 go run main.go
 ```
 
+### CHPL Update Check
+Queries the CHPL service for the CHPL list of endpoint lists and checks to see if the list has been updated. If it has, the CHPL endpoint list JSON file in the `resources/prod_resources` is updated with these changes, and file is created with all the updated CHPL endpoint list URLs listed to be used by the automated cron job CHPL update check to send an email with these URLs.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/CHPLupdatecheck
+go run main.go <CHPL Endpoint List URL> <JSON file to save CHPL Endpoint List>
+```
+
+### Data Validation
+Checks if the number of endpoints in the fhir_endpoints table is greater than what could be queried in the query interval and displays a warning if it is.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/datavalidation 
+go run main.go
+```
+
+### Endpoint Exporter
+Copies the entire contents of endpoint_export view into a csv which will be written to /tmp.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointexporter 
+go run main.go
+```
+
+### Endpoint Linker
+
+Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
+
+Primarily uses the `endpointlinker` package.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointlinker 
+go run main.go
+```
+
+Or to run with printed linker results and information:
+```bash
+cd endpointmanager/cmd/endpointlinker
+go run main.go --verbose
+```
+
 ### Endpoint Populator
 
 Parses a JSON file of endpoints and adds them to the database.
@@ -256,6 +315,26 @@ To run, perform the following commands:
 ```bash
 cd endpointmanager/cmd/endpointwebscraper
 go run main.go <Endpoint list name> <Endpoint list URL> <JSON file name to save endpoint list to>
+```
+
+### History Pruning
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environment variable.
+
+Primarily uses the `historypruning` package.
+
+```bash
+cd endpointmanager/cmd/historypruning 
+go run main.go
+```
+
+### JSON Exporter
+Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
+
+Primarily uses the `jsonexport` package.
+
+```bash
+cd endpointmanager/cmd/jsonexport 
+go run main.go <export JSON file name>
 ```
 
 ### NPPES Org Populator
@@ -286,25 +365,6 @@ cd endpointmanager/cmd/nppescontactpopulator
 go run main.go <path to nppes contact csv file>
 ```
 
-### Endpoint Linker
-
-Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
-
-Primarily uses the `endpointlinker` package.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/endpointlinker 
-go run main.go
-```
-
-Or to run with printed linker results and information:
-```bash
-cd endpointmanager/cmd/endpointlinker
-go run main.go --verbose
-```
-
 ### Send Endpoints
 Gets current list of endpoints sends each one to the capabilityquerier queue. It continues to repeat this action every time the query interval period has passed.
 
@@ -315,56 +375,6 @@ To run, perform the following commands:
 ```bash
 cd endpointmanager/cmd/sendendpoints 
 go run main.go
-```
-
-### Endpoint Exporter
-Copies the entire contents of endpoint_export view into a csv which will be written to /tmp.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/endpointexporter 
-go run main.go
-```
-
-### Data Validation
-Checks if the number of endpoints in the fhir_endpoints table is greater than what could be queried in the query interval and displays a warning if it is.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/datavalidation 
-go run main.go
-```
-
-### JSON Exporter
-Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
-
-Primarily uses the `jsonexport` package.
-
-```bash
-cd endpointmanager/cmd/jsonexport 
-go run main.go <export JSON file name>
-```
-
-### History Pruning
-Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environment variable.
-
-Primarily uses the `historypruning` package.
-
-```bash
-cd endpointmanager/cmd/historypruning 
-go run main.go
-```
-
-### Archive File
-Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables between the given dates in a JSON format and saves it to the given 'file' name.
-
-Primarily uses the `archivefile` package.
-
-```bash
-cd endpointmanager/cmd/archivefile
-go run main.go <start date> <end date> <file name>
 ```
 
 ### Expected Endpoint Source Formatting
