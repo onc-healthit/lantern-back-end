@@ -19,20 +19,6 @@ import (
 )
 
 var chplAPICertProdListPath string = "/search/v2"
-var delimiter string = "☹"
-
-var fields [11]string = [11]string{
-	"id",
-	"edition",
-	"developer",
-	"product",
-	"version",
-	"chplProductNumber",
-	"certificationStatus",
-	"criteriaMet",
-	"apiDocumentation",
-	"certificationDate",
-	"practiceType"}
 
 type chplCertifiedProductList struct {
 	Results     []chplCertifiedProduct `json:"results"`
@@ -59,11 +45,11 @@ type chplCertifiedProduct struct {
 	ID                  int      `json:"id"`
 	ChplProductNumber   string   `json:"chplProductNumber"`
 	Edition             details   `json:"edition"`
-	PracticeType        string   `json:"practiceType"`
+	PracticeType        details   `json:"practiceType"`
 	Developer           details   `json:"developer"`
 	Product             details   `json:"product"`
 	Version             details   `json:"version"`
-	CertificationDate   int64    `json:"certificationDate"`
+	CertificationDate   string    `json:"certificationDate"`
 	CertificationStatus details   `json:"certificationStatus"`
 	CriteriaMet         []criteriaMet    `json:"criteriaMet"`
 	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
@@ -125,8 +111,6 @@ func getProductJSON(ctx context.Context, client *http.Client, userAgent string, 
 
 func makeCHPLProductURL(pageSize int, pageNumber int) (*url.URL, error) {
 	queryArgs := make(map[string]string)
-	fieldStr := strings.Join(fields[:], ",")
-	queryArgs["fields"] = fieldStr
 
 	chplURL, err := makeCHPLURL(chplAPICertProdListPath, queryArgs, pageSize, pageNumber)
 	if err != nil {
@@ -162,45 +146,29 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
-	
-	var prodName string
-	if (prod.Product != nil) {
-		prodName = prod.Product.Name
-	}
 
-	var prodVersion string
-	if (prod.Version != nil) {
-		prodVersion = prod.Version.Name
-	}
-
-	var certStatus string 
-	if (prod.CertificationStatus != nil) {
-		prodVersion = prod.CertificationStatus.Name
-	}
-
-	var certEdition string 
-	if (prod.Edition != nil) {
-		prodVersion = prod.Edition.Name
-	}
-
-	var criteriaMetArr []string
+	var criteriaMetArr []int
 	for _, criteriaEntry := range prod.CriteriaMet {
-		criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
+		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
 	}
 
 	var apiDocURL string
-	if len(prod.APIDocumentation) > 0) {
-		apiDocURL = prod.APIDocumentation[0]
+	if len(prod.APIDocumentation) > 0 {
+		apiDocURL = prod.APIDocumentation[0].Value
 	}
 
+	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
+	if err != nil {
+		return nil, errors.Wrap(err, "converting certification date to time failed")
+	}
 
 	dbProd := endpointmanager.HealthITProduct{
-		Name:                  prodName,
-		Version:               prodVersion,
+		Name:                  prod.Product.Name,
+		Version:               prod.Version.Name,
 		VendorID:              id,
-		CertificationStatus:   certStatus,
-		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
-		CertificationEdition:  certEdition,
+		CertificationStatus:   prod.CertificationStatus.Name,
+		CertificationDate:     certificationDateTime.UTC(),
+		CertificationEdition:  prod.Edition.Name,
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
 		APIURL: apiDocURL,
@@ -211,37 +179,16 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 
 // returns 0 if no match found.
 func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
-	vendor, err := store.GetVendorUsingName(ctx, prod.Developer)
+	vendor, err := store.GetVendorUsingName(ctx, prod.Developer.Name)
 	if err == sql.ErrNoRows {
-		log.Warnf("no vendor match for product %s with vendor %s", prod.Product, prod.Developer)
+		log.Warnf("no vendor match for product %s with vendor %s", prod.Product.Name, prod.Developer.Name)
 		return 0, nil
 	}
 	if err != nil {
-		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
+		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product.Name, prod.Version.Name, prod.Developer.Name)
 	}
 
 	return vendor.ID, nil
-}
-
-// parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
-// all listed URLs are the same.
-// assumes that criteria/url chunks are delimited by delimiter1 and that criteria and url are separated by delimiter2.
-func getAPIURL(apiDocArr []string) (string, error) {
-	if len(apiDocArr) == 0 {
-		return "", nil
-	}
-	apiURL := apiDocArr[0]
-	apiCritAndURL := strings.Split(apiURL, delimiter)
-	if len(apiCritAndURL) == 2 {
-		apiURL = apiCritAndURL[1]
-		// check that it's a valid URL
-		_, err := url.ParseRequestURI(apiURL)
-		if err != nil {
-			return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
-		}
-		return apiURL, nil
-	}
-	return "", errors.New("unexpected format for api doc string")
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
@@ -277,7 +224,7 @@ func persistProduct(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
+	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
 	if err == sql.ErrNoRows { // need to add new entry
