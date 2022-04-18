@@ -18,7 +18,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-var chplAPICertProdListPath string = "/search/beta"
+var chplAPICertProdListPath string = "/search/v2"
 var delimiter string = "☹"
 
 var fields [11]string = [11]string{
@@ -39,18 +39,34 @@ type chplCertifiedProductList struct {
 	RecordCount int                    `json:"recordCount"`
 }
 
+type details struct {
+	Id int `json:"id"`
+	Name string `json:"name"`
+}
+
+type criteriaMet struct {
+	Id int `json:"id"`
+	Number string `json:"number"`
+	Title string `json:"title"`
+}
+
+type apiDocumentation struct {
+	Criterion criteriaMet `json:"criterion"`
+	Value string `json:"value"`
+}
+
 type chplCertifiedProduct struct {
 	ID                  int      `json:"id"`
 	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             string   `json:"edition"`
+	Edition             details   `json:"edition"`
 	PracticeType        string   `json:"practiceType"`
-	Developer           string   `json:"developer"`
-	Product             string   `json:"product"`
-	Version             string   `json:"version"`
+	Developer           details   `json:"developer"`
+	Product             details   `json:"product"`
+	Version             details   `json:"version"`
 	CertificationDate   int64    `json:"certificationDate"`
-	CertificationStatus string   `json:"certificationStatus"`
-	CriteriaMet         []int    `json:"criteriaMet"`
-	APIDocumentation    []string `json:"apiDocumentation"`
+	CertificationStatus details   `json:"certificationStatus"`
+	CriteriaMet         []criteriaMet    `json:"criteriaMet"`
+	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -146,23 +162,49 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
+	
+	var prodName string
+	if (prod.Product != nil) {
+		prodName = prod.Product.Name
+	}
+
+	var prodVersion string
+	if (prod.Version != nil) {
+		prodVersion = prod.Version.Name
+	}
+
+	var certStatus string 
+	if (prod.CertificationStatus != nil) {
+		prodVersion = prod.CertificationStatus.Name
+	}
+
+	var certEdition string 
+	if (prod.Edition != nil) {
+		prodVersion = prod.Edition.Name
+	}
+
+	var criteriaMetArr []string
+	for _, criteriaEntry := range prod.CriteriaMet {
+		criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
+	}
+
+	var apiDocURL string
+	if len(prod.APIDocumentation) > 0) {
+		apiDocURL = prod.APIDocumentation[0]
+	}
+
 
 	dbProd := endpointmanager.HealthITProduct{
-		Name:                  prod.Product,
-		Version:               prod.Version,
+		Name:                  prodName,
+		Version:               prodVersion,
 		VendorID:              id,
-		CertificationStatus:   prod.CertificationStatus,
+		CertificationStatus:   certStatus,
 		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
-		CertificationEdition:  prod.Edition,
+		CertificationEdition:  certEdition,
 		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: prod.CriteriaMet,
+		CertificationCriteria: criteriaMetArr,
+		APIURL: apiDocURL,
 	}
-
-	apiURL, err := getAPIURL(prod.APIDocumentation)
-	if err != nil {
-		return nil, errors.Wrap(err, "retreiving the API URL from the health IT product API documentation list failed")
-	}
-	dbProd.APIURL = apiURL
 
 	return &dbProd, nil
 }
