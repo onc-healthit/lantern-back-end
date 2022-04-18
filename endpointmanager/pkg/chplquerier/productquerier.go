@@ -145,37 +145,21 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
-	
-	var prodName string
-	if (prod.Product != nil) {
-		prodName = prod.Product.Name
-	}
 
-	var prodVersion string
-	if (prod.Version != nil) {
-		prodVersion = prod.Version.Name
-	}
-
-	var certStatus string 
-	if (prod.CertificationStatus != nil) {
-		prodVersion = prod.CertificationStatus.Name
-	}
-
-	var certEdition string 
-	if (prod.Edition != nil) {
-		prodVersion = prod.Edition.Name
-	}
-
-	var criteriaMetArr []string
+	var criteriaMetArr []int
 	for _, criteriaEntry := range prod.CriteriaMet {
-		criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
+		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
 	}
 
 	var apiDocURL string
-	if len(prod.APIDocumentation) > 0) {
-		apiDocURL = prod.APIDocumentation[0]
+	if len(prod.APIDocumentation) > 0 {
+		apiDocURL = prod.APIDocumentation[0].Value
 	}
 
+	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
+	if err != nil {
+		return nil, errors.Wrap(err, "converting certification date to time failed")
+	}
 
 	var criteriaMetArr []int
 	for _, criteriaEntry := range prod.CriteriaMet {
