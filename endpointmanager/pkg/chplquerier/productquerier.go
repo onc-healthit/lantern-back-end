@@ -145,6 +145,37 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
+	
+	var prodName string
+	if (prod.Product != nil) {
+		prodName = prod.Product.Name
+	}
+
+	var prodVersion string
+	if (prod.Version != nil) {
+		prodVersion = prod.Version.Name
+	}
+
+	var certStatus string 
+	if (prod.CertificationStatus != nil) {
+		prodVersion = prod.CertificationStatus.Name
+	}
+
+	var certEdition string 
+	if (prod.Edition != nil) {
+		prodVersion = prod.Edition.Name
+	}
+
+	var criteriaMetArr []string
+	for _, criteriaEntry := range prod.CriteriaMet {
+		criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
+	}
+
+	var apiDocURL string
+	if len(prod.APIDocumentation) > 0) {
+		apiDocURL = prod.APIDocumentation[0]
+	}
+
 
 	var criteriaMetArr []int
 	for _, criteriaEntry := range prod.CriteriaMet {
