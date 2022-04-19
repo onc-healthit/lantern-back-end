@@ -151,27 +151,27 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
 	}
 
-	var apiDocURL string
-	if len(prod.APIDocumentation) > 0 {
-		apiDocURL = prod.APIDocumentation[0].Value
+	dbProd := endpointmanager.HealthITProduct{
+		Name:                  prod.Product.Name,
+		Version:               prod.Version.Name,
+		VendorID:              id,
+		CertificationStatus:   prod.CertificationStatus.Name,
+		CertificationEdition:  prod.Edition.Name,
+		CHPLID:                prod.ChplProductNumber,
+		CertificationCriteria: criteriaMetArr,
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
 	if err != nil {
 		return nil, errors.Wrap(err, "converting certification date to time failed")
 	}
+	dbProd.CertificationDate = certificationDateTime.UTC()
 
-	dbProd := endpointmanager.HealthITProduct{
-		Name:                  prod.Product.Name,
-		Version:               prod.Version.Name,
-		VendorID:              id,
-		CertificationStatus:   prod.CertificationStatus.Name,
-		CertificationDate:     certificationDateTime.UTC(),
-		CertificationEdition:  prod.Edition.Name,
-		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: criteriaMetArr,
-		APIURL: apiDocURL,
+	apiDocURL, err := getAPIURL(prod.APIDocumentation)
+	if err != nil {
+		return nil, errors.Wrap(err, "retreiving the API URL from the health IT product API documentation list failed")
 	}
+	dbProd.APIURL = apiDocURL
 
 	return &dbProd, nil
 }
@@ -188,6 +188,23 @@ func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *
 	}
 
 	return vendor.ID, nil
+}
+
+// parses 'apiDocArr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
+// all listed URLs are the same.
+func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
+	if len(apiDocArr) == 0 {
+		return "", nil
+	}
+	apiURL := apiDocArr[0].Value
+
+	// check that it's a valid URL
+	_, err := url.ParseRequestURI(apiURL)
+	if err != nil {
+		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
+	}
+	
+	return apiURL, nil
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
