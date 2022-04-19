@@ -60,11 +60,11 @@ This removes all docker images, networks, and local volumes.
 
 2. **If you have a clean database or want to update the data in your database** 
     1. Run the following command with the Lantern project running to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`. It will also query CHPL for it's list of endpoint list sources.
-    -Note: The NPPES npidata_pfile and endpoint_pfile are very large and therefore are not persisted in our directory of prod resources, so to add the full NPPES data into the database, you must run the `make populatedb_prod` command which will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files. It will also add the data found in `lantern-back-end/resources/prod_resources` to the database.
      ```bash
       make update_source_data_prod
       ```
 3. Run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`.
+-Note: The NPPES npidata_pfile and endpoint_pfile are very large and therefore are not persisted in our directory of prod resources, so to add the full NPPES data into the database, you must run this `make populatedb_prod` command which will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files. It will also add the data found in `lantern-back-end/resources/prod_resources` to the database.
 
 The populate db prod script expects the resources directory to contain the following files:
   * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
