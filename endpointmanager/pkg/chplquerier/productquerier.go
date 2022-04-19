@@ -25,32 +25,32 @@ type chplCertifiedProductList struct {
 }
 
 type details struct {
-	Id int `json:"id"`
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type criteriaMet struct {
-	Id int `json:"id"`
+	Id     int    `json:"id"`
 	Number string `json:"number"`
-	Title string `json:"title"`
+	Title  string `json:"title"`
 }
 
 type apiDocumentation struct {
 	Criterion criteriaMet `json:"criterion"`
-	Value string `json:"value"`
+	Value     string      `json:"value"`
 }
 
 type chplCertifiedProduct struct {
-	ID                  int      `json:"id"`
-	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             details   `json:"edition"`
-	PracticeType        details   `json:"practiceType"`
-	Developer           details   `json:"developer"`
-	Product             details   `json:"product"`
-	Version             details   `json:"version"`
-	CertificationDate   string    `json:"certificationDate"`
-	CertificationStatus details   `json:"certificationStatus"`
-	CriteriaMet         []criteriaMet    `json:"criteriaMet"`
+	ID                  int                `json:"id"`
+	ChplProductNumber   string             `json:"chplProductNumber"`
+	Edition             details            `json:"edition"`
+	PracticeType        details            `json:"practiceType"`
+	Developer           details            `json:"developer"`
+	Product             details            `json:"product"`
+	Version             details            `json:"version"`
+	CertificationDate   string             `json:"certificationDate"`
+	CertificationStatus details            `json:"certificationStatus"`
+	CriteriaMet         []criteriaMet      `json:"criteriaMet"`
 	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
 }
 
@@ -203,7 +203,7 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-	
+
 	return apiURL, nil
 }
 

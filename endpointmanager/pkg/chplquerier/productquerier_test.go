@@ -21,74 +21,74 @@ import (
 
 var criteriaMetArr []criteriaMet = []criteriaMet{
 	{
-		Id: 30,
+		Id:     30,
 		Number: "170.315 (d)(10)",
-		Title: "Auditing Actions on Health Information",
+		Title:  "Auditing Actions on Health Information",
 	},
 	{
-		Id: 31,
+		Id:     31,
 		Number: "170.315 (g)(5)",
-		Title: "Accessibility-Centered Design",
+		Title:  "Accessibility-Centered Design",
 	},
 	{
-		Id: 32,
+		Id:     32,
 		Number: "170.315 (d)(9)",
-		Title: "Trusted Connection",
+		Title:  "Trusted Connection",
 	},
 	{
-		Id: 33,
+		Id:     33,
 		Number: "170.315 (d)(1)",
-		Title: "Authentication, Access Control, Authorization",
+		Title:  "Authentication, Access Control, Authorization",
 	},
 	{
-		Id: 34,
+		Id:     34,
 		Number: "170.315 (g)(4)",
-		Title: "Quality Management System",
+		Title:  "Quality Management System",
 	},
 	{
-		Id: 35,
+		Id:     35,
 		Number: "170.315 (g)(8)",
-		Title: "Application Access - Data Category Request",
+		Title:  "Application Access - Data Category Request",
 	},
 	{
-		Id: 36,
+		Id:     36,
 		Number: "170.315 (g)(6)",
-		Title: "Consolidated CDA Creation",
+		Title:  "Consolidated CDA Creation",
 	},
 	{
-		Id: 37,
+		Id:     37,
 		Number: "170.315 (g)(7)",
-		Title: "Application Access - Patient Selection",
+		Title:  "Application Access - Patient Selection",
 	},
 	{
-		Id: 38,
+		Id:     38,
 		Number: "170.315 (g)(9)",
-		Title: "Application Access - All Data Request",
+		Title:  "Application Access - All Data Request",
 	},
 }
 
 var apiDocArr []apiDocumentation = []apiDocumentation{
 	{
 		Criterion: criteriaMet{
-			Id: 58,
+			Id:     58,
 			Number: "170.315 (g)(9)",
-			Title: "Application Access - All Data Request",
+			Title:  "Application Access - All Data Request",
 		},
 		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 	},
 	{
 		Criterion: criteriaMet{
-			Id: 57,
+			Id:     57,
 			Number: "170.315 (g)(8)",
-			Title: "Application Access - Data Category Request",
+			Title:  "Application Access - Data Category Request",
 		},
 		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 	},
 	{
 		Criterion: criteriaMet{
-			Id: 56,
+			Id:     56,
 			Number: "170.315 (g)(7)",
-			Title: "Application Access - Patient Selection",
+			Title:  "Application Access - Patient Selection",
 		},
 		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 	},
@@ -104,7 +104,7 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	CertificationDate:   "2016-07-01",
 	CertificationStatus: details{Id: 1, Name: "Active"},
 	CriteriaMet:         criteriaMetArr,
-	APIDocumentation: apiDocArr,
+	APIDocumentation:    apiDocArr,
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -394,25 +394,25 @@ func Test_getAPIURL(t *testing.T) {
 	apiDocArray := []apiDocumentation{
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 		},
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 		},
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 		},
@@ -428,9 +428,9 @@ func Test_getAPIURL(t *testing.T) {
 	apiDocArray = []apiDocumentation{
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: ".com/Carefluence-OpenAPI-Documentation.html",
 		},
