@@ -151,21 +151,6 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
 	}
 
-	var apiDocURL string
-	if len(prod.APIDocumentation) > 0 {
-		apiDocURL = prod.APIDocumentation[0].Value
-	}
-
-	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
-	if err != nil {
-		return nil, errors.Wrap(err, "converting certification date to time failed")
-	}
-
-	var criteriaMetArr []int
-	for _, criteriaEntry := range prod.CriteriaMet {
-		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
-	}
-
 	dbProd := endpointmanager.HealthITProduct{
 		Name:                  prod.Product.Name,
 		Version:               prod.Version.Name,
@@ -218,7 +203,6 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-
 	return apiURL, nil
 }
 
