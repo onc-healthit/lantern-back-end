@@ -11,7 +11,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: \<none>
 
-  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/chpl-api).
+  You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/api).
 
 * **LANTERN_DBUSER_READONLY**: The database user that the application will use to read from the database.
 
@@ -89,7 +89,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
 * **LANTERN_PRUNING_THRESHOLD**: The length of time (in minutes) determining how old a fhir_endpoints_info_history entry has to be in order to be considered for pruning. Only entries equal to or older than this threshold will undergo pruning.
 
-  Default value: 43800
+  Default value: 43800 (~ 30 days)
   
 ### Test Configuration
 
@@ -107,21 +107,25 @@ When testing, the FHIR Endpoint Manager uses the following environment variables
 
   Default value: lantern_test
 
+* **LANTERN_TEST_QUSER** instead of LANTERN_QUSER: The user that the application will use to read and write from the queue.
+
+  Default value: capabilityquerier
+
+* **LANTERN_TEST_QPASSWORD** instead of LANTERN_QPASSWORD: The password for accessing the database as user LANTERN_QUSER.
+
+  Default value: capabilityquerier
+
 ## Packages
 
 The Endpoint Manager includes many packages with distinct purposes.
 
-### Capability Handler
+### Archive File
 
-Takes messages off of the queue that include the capability statements of endpoints as well as additional data about the http interaction with the endpoint. Processes the endpoints (including linking them) and adds the data to the database.
+Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables in a JSON format.
 
 ### Capability Parser
 
 Creates a model for capability statements and makes specific attributes of a capability statement queryable within the code. Can parse DSTU2, STU3, and R4 capability statements.
-
-### CHPL Mapper
-
-Maps endpoints to CHPL vendors and stores the mapping in the database. Eventually will map endpoints to CHPL products as well as additional information becomes available.
 
 ### CHPL Querier
 
@@ -131,17 +135,56 @@ Queries the CHPL service for CHPL product information and stores in the database
 
 Manages the configuration variables for all of the Endpoint Manager services.
 
+### Endpoint Linker
+
+Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
+
 ### Endpoint Manager
 
 Handles the object models and database storage for the endpoint information that Lantern is gathering.
+
+### Fetcher
+Contains parsers for the different endpoint list formats that Lantern takes in. Selects the correct endpoint list parser and adds the endpoint list information to the database.  
 
 ### FHIR Endpoint Querier
 
 Adds a list of endpoints to the database.
 
+### Helpers
+
+Contains helpful functions that are used commonly throughout the project, such as a string array contains function and a fail on error function.
+
+### History Pruning
+
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the 2x the LANTERN_PRUNING_THRESHOLD environment variable and deletes any associated validation table entries.
+
+### JSON Export
+
+Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a JSON file formatted as specified in the `shinydashboard/lantern/fhir_endpoints_fields_json.md`.
+
 ### NPPES Querier
 
 Reads in a CSV file of NPPES data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
+
+### Send Endpoints
+
+Gets current list of endpoints and sends each one to the capabilityquerier queue. It continues to repeat this action every time the query interval period has passed.
+
+### Smart Parser
+
+Creates a model for smart responses so they can be parsed and analyzed. 
+
+### Test Helper
+
+Contains helpful functions used in testing throughout the project.
+
+### Versions Operator Parser
+
+Creates a model for the versions operator response and makes the version and default version information easily accessible within the code. 
+
+### Workers
+
+Contains the code needed for creating, starting, and stopping workers used to parallelize processing.
 
 ## Building and Running
 
@@ -167,6 +210,27 @@ go run main.go
 
 The commands below assume that you are starting in the root directory of the Lantern backend project.
 
+### Archive File
+Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables between the given dates in a JSON format and saves it to the given 'file' name.
+
+Primarily uses the `archivefile` package.
+
+```bash
+cd endpointmanager/cmd/archivefile
+go run main.go <start date> <end date> <file name>
+```
+
+### CHPL Populator 
+
+Queries the CHPL service for the CHPL list of endpoint lists and stores in a JSON file.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/CHPLpopulator
+go run main.go <CHPL Endpoint List URL> <JSON file to save CHPL Endpoint List>
+```
+
 ### CHPL Querier
 
 Queries the CHPL service for CHPL product information and stores in the database.
@@ -180,6 +244,55 @@ cd endpointmanager/cmd/chplquerier
 go run main.go
 ```
 
+### CHPL Update Check
+Queries the CHPL service for the CHPL list of endpoint lists and checks to see if the list has been updated. If it has, the CHPL endpoint list JSON file in the `resources/prod_resources` is updated with these changes, and file is created with all the updated CHPL endpoint list URLs listed to be used by the automated cron job CHPL update check to send an email with these URLs.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/CHPLupdatecheck
+go run main.go <CHPL Endpoint List URL> <JSON file to save CHPL Endpoint List>
+```
+
+### Data Validation
+Checks if the number of endpoints in the fhir_endpoints table is greater than what could be queried in the query interval and displays a warning if it is.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/datavalidation 
+go run main.go
+```
+
+### Endpoint Exporter
+Copies the entire contents of endpoint_export view into a csv which will be written to /tmp.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointexporter 
+go run main.go
+```
+
+### Endpoint Linker
+
+Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
+
+Primarily uses the `endpointlinker` package.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointlinker 
+go run main.go
+```
+
+Or to run with printed linker results and information:
+```bash
+cd endpointmanager/cmd/endpointlinker
+go run main.go --verbose
+```
+
 ### Endpoint Populator
 
 Parses a JSON file of endpoints and adds them to the database.
@@ -191,6 +304,37 @@ To run, perform the following commands:
 ```bash
 cd endpointmanager/cmd/endpointpopulator
 go run main.go <path to endpoint json file>
+```
+
+### Endpoint Webscraper
+
+Queries an endpoint list URL whose endpoint list is contained within an HTML table and uses web sraping to pull the endpoints out of the table and save them into a JSON file in the Lantern endpoint list format.
+
+To run, perform the following commands:
+
+```bash
+cd endpointmanager/cmd/endpointwebscraper
+go run main.go <Endpoint list name> <Endpoint list URL> <JSON file name to save endpoint list to>
+```
+
+### History Pruning
+Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environment variable.
+
+Primarily uses the `historypruning` package.
+
+```bash
+cd endpointmanager/cmd/historypruning 
+go run main.go
+```
+
+### JSON Exporter
+Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
+
+Primarily uses the `jsonexport` package.
+
+```bash
+cd endpointmanager/cmd/jsonexport 
+go run main.go <export JSON file name>
 ```
 
 ### NPPES Org Populator
@@ -221,25 +365,6 @@ cd endpointmanager/cmd/nppescontactpopulator
 go run main.go <path to nppes contact csv file>
 ```
 
-### Endpoint Linker
-
-Links endpoints to organizations, either by the NPI ID (preferred), or by the organization name.
-
-Primarily uses the `endpointlinker` package.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/endpointlinker 
-go run main.go
-```
-
-Or to run with printed linker results and information:
-```bash
-cd endpointmanager/cmd/endpointlinker
-go run main.go --verbose
-```
-
 ### Send Endpoints
 Gets current list of endpoints sends each one to the capabilityquerier queue. It continues to repeat this action every time the query interval period has passed.
 
@@ -250,56 +375,6 @@ To run, perform the following commands:
 ```bash
 cd endpointmanager/cmd/sendendpoints 
 go run main.go
-```
-
-### Endpoint Exporter
-Copies the entire contents of endpoint_export view into a csv which will be written to /tmp.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/endpointexporter 
-go run main.go
-```
-
-### Data Validation
-Checks if the number of endpoints in the fhir_endpoints table is greater than what could be queried in the query interval and displays a warning if it is.
-
-To run, perform the following commands:
-
-```bash
-cd endpointmanager/cmd/datavalidation 
-go run main.go
-```
-
-### JSON Exporter
-Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
-
-Primarily uses the `jsonexport` package.
-
-```bash
-cd endpointmanager/cmd/jsonexport 
-go run main.go <export JSON file name>
-```
-
-### History Pruning
-Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the pruning threshold environment variable.
-
-Primarily uses the `historypruning` package.
-
-```bash
-cd endpointmanager/cmd/historypruning 
-go run main.go
-```
-
-### Archive File
-Creates an archive of the data from the fhir_endpoints, fhir_endpoints_info and vendors tables between the given dates in a JSON format and saves it to the given 'file' name.
-
-Primarily uses the `archivefile` package.
-
-```bash
-cd endpointmanager/cmd/archivefile
-go run main.go <start date> <end date> <file name>
 ```
 
 ### Expected Endpoint Source Formatting
@@ -384,6 +459,6 @@ To manually add a link between an endpoint and npi organization after the linker
 
 ## Endpoint Info History Pruning
 
-After every query interval, once the capability querier has finished querying all endpoints and updating both the fhir_endpoint_info table and subsequently the fhir_endpoint_info_history table, the history pruning algorithm is run. The pruning algorithm will iterate over all of the fhir_endpoint_info_history entries for each distinct FHIR endpoint URL that have entered_at dates that are older than the time determined by subtracting the LANTERN_PRUNING_THRESHOLD from the current time, and also have entered_at dates that are newer than the current time minus the LANTERN_PRUNING_THRESHOLD plus three times the query interval. Having a lower limit of the LANTERN_PRUNING_THRESHOLD time plus three times the query interval ensures that the algorithm does not repeat pruning checks on the same entries after every query interval, but that it also does not miss any entries that have not yet been pruned. The LANTERN_PRUNING_THRESHOLD, which set to one month by default, ensures that there is always data newer than the LANTERN_PRUNING_THRESHOLD that is not pruned, since an entry has to be older than the threshold in order to be considered for pruning.
+The history pruning algorithm is run every 23 hours using a cron job (more details on how to set up in main README). The pruning algorithm will iterate over all of the fhir_endpoint_info_history entries for each distinct FHIR endpoint URL that have entered_at dates that are older than the time determined by subtracting the LANTERN_PRUNING_THRESHOLD from the current time, and also have entered_at dates that are newer than the current time minus the LANTERN_PRUNING_THRESHOLD times 2. Having a lower limit of the LANTERN_PRUNING_THRESHOLD times 2 ensures that the algorithm does not repeat all of the pruning checks on the same entries after every 23 hours, but that it also does not miss any entries that have not yet been pruned. The LANTERN_PRUNING_THRESHOLD, which set to one month by default, ensures that there is always data newer than the LANTERN_PRUNING_THRESHOLD that is not pruned, since an entry has to be older than the threshold in order to be considered for pruning.
 
 The pruning algorithm will remove any consecutive duplicate entries in the fhir_endpoint_info_history table. A fhir_endpoint_info_history entry is considered a duplicate if there is an older consecutive entry that that has the same stored information for the endpoint's TLS version, MIME types, and SMART response, and if the newer entry's stored capability statement only differs by fields included in a list of ignored fields, such as the CapabilityStatement.date field. If a fhir_endpoint_info_history entry is found to be a duplicate of an older consecutive entry, it is deleted from the table, and this continues until only the oldest of the consecutive duplicated entries remains. This pruning strategy is advantageous in that there will always be a duration of at least LANTERN_PRUNING_THRESHOLD minutes worth of queries in the history table for each endpoint, therefore Lantern can inspect LANTERN_PRUNING_THRESHOLD minutes worth of data to see how every endpoint responded within each query interval while still saving storage space by removing duplicate data or data which only differs in the values reported for fields in the ignored fields set. Keeping all entries containing any unique data allows Lantern to keep track of how each endpoint has changed over long periods of time.

@@ -51,14 +51,6 @@ The capability querier reads the following environment variables:
 
   Default value: disable
 
-* **LANTERN_EXPORTFILE_WAIT**: The length of time between getting the final endpoints off of the queue and creating the JSON export file of data. This is in seconds.
-
-  Default value: 300 (5 minutes)
-
-* **LANTERN_PRUNING_THRESHOLD**: The length of time in which fhir endpoint info history entries stored in the database which are older than this threshold will be pruned. This is in minutes.
-
-  Default value: 43800 (1 month)
-
 ### Test Configuration
 
 When testing, the capability querier uses the following environment variables:
@@ -70,7 +62,6 @@ When testing, the capability querier uses the following environment variables:
 * **LANTERN_TEST_QPASSWORD** instead of LANTERN_QPASSWORD: The password for accessing the database as user LANTERN_QUSER.
 
   Default value: capabilityquerier
-
 
 * **LANTERN_TEST_DBUSER** instead of LANTERN_DBUSER: The database user that the application will use to read and write from the database.
 
@@ -90,7 +81,7 @@ The capability querier currently connects to the lantern message queue (RabbbitM
 
 ### Using Docker-Compose
 
-The Endpoint Querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+The capability querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
 
 ### Using the Individual Docker Container
 
