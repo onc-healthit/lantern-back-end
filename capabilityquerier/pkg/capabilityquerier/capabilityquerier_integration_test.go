@@ -8,10 +8,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -147,22 +149,25 @@ func Test_Integration_GetAndSendCapabilityStatement2(t *testing.T) {
 
 	// create the expected result
 	expectedCapStat, err := capabilityStatement()
+	expectedCapStatBytes, err := capabilityStatementOriginalBytes()
 	th.Assert(t, err == nil, err)
 	expectedMimeType := []string{fhir3PlusJSONMIMEType}
 	expectedTLSVersion := "TLS 1.0"
 	expectedMsgStruct := Message{
-		URL:                  fhirURL.String(),
-		MIMETypes:            expectedMimeType,
-		TLSVersion:           expectedTLSVersion,
-		HTTPResponse:         200,
-		SMARTHTTPResponse:    200,
-		ResponseTime:         0,
-		RequestedFhirVersion: "None",
+		URL:                      fhirURL.String(),
+		MIMETypes:                expectedMimeType,
+		TLSVersion:               expectedTLSVersion,
+		HTTPResponse:             200,
+		SMARTHTTPResponse:        200,
+		ResponseTime:             0,
+		RequestedFhirVersion:     "None",
+		CapabilityStatementBytes: expectedCapStatBytes,
+		SMARTRespBytes:           expectedCapStatBytes,
 	}
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.CapabilityStatement))
 	th.Assert(t, err == nil, err)
 	// GetAndSendCapabilityStatement uses one client to call requestCapabilityStatementAndSmartOnFhir
-	// which makes make multiple request. The tes client only returns the metadata info which is why smart_response
+	// which makes multiple requests. The test client only returns the metadata info which is why smart_response
 	// has the same value as capabilityStatement
 	err = json.Unmarshal(expectedCapStat, &(expectedMsgStruct.SMARTResp))
 	th.Assert(t, err == nil, err)
@@ -284,6 +289,15 @@ func setup() error {
 	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/")
 
 	return err
+}
+
+func capabilityStatementOriginalBytes() ([]byte, error) {
+	path := filepath.Join("testdata", "metadata.json")
+	expectedCapStat, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return expectedCapStat, err
 }
 
 func teardown() {

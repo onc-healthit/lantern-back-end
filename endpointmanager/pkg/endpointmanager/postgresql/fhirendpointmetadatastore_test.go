@@ -55,9 +55,11 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		TLSVersion:            "TLS 1.1",
 		MIMETypes:             []string{"application/json+fhir"},
 		CapabilityStatement:   cs,
+		CapabilityStatementBytes: csJSON,
 		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
 		SMARTResponse:         nil,
+		SMARTResponseBytes: []byte("null"),
 		Metadata:              endpointMetadata1}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:                   "other.example.com/FHIR/DSTU2/",

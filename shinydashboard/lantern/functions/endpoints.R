@@ -334,7 +334,7 @@ get_capstat_values <- function(db_connection) {
       capability_statement->'implementation'->>'custodian' as implementation_custodian
       from fhir_endpoints_info f
       LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE capability_statement != 'null' AND requested_fhir_version = 'None'")) %>%
+      WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
@@ -458,7 +458,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     LEFT JOIN fhir_endpoints e
     ON f.url = e.url
     WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response) = 'object'")) %>%
+    AND jsonb_typeof(f.smart_response::jsonb) = 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
@@ -481,7 +481,7 @@ get_well_known_endpoints_no_doc <- function(db_connection) {
     LEFT JOIN fhir_endpoints e
     ON f.url = e.url
     WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response) <> 'object'")) %>%
+    AND jsonb_typeof(f.smart_response::jsonb) <> 'object'")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
@@ -504,7 +504,7 @@ get_auth_type_count <- function(security_endpoints) {
 # Get count of endpoints which have NOT returned a valid capability statement
 get_no_cap_statement_count <- function(db_connection) {
   res <- tbl(db_connection,
-             sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement) <> 'object' AND requested_fhir_version = 'None'")
+             sql("select count(*) from fhir_endpoints_info where jsonb_typeof(capability_statement::jsonb) <> 'object' AND requested_fhir_version = 'None'")
   ) %>% pull(count)
 }
 

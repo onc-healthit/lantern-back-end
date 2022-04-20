@@ -3,6 +3,7 @@ package capabilityhandler
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -117,6 +118,37 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 			return nil, nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
+
+	var capStatBytes []byte
+	if msgJSON["capabilityStatementBytes"] != nil {
+		capStatStringBytes, ok := msgJSON["capabilityStatementBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to string")
+		}
+
+		rawDecodedCapStat, err := base64.StdEncoding.DecodeString(capStatStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to decoded string")
+		}
+
+		capStatBytes = []byte(rawDecodedCapStat)
+	}
+
+	var smartResponseBytes []byte
+	if msgJSON["smartRespBytes"] != nil {
+		smartRespStringBytes, ok := msgJSON["smartRespBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to string")
+		}
+
+		rawDecodedSmartResp, err := base64.StdEncoding.DecodeString(smartRespStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to decoded string")
+		}
+
+		smartResponseBytes = []byte(rawDecodedSmartResp)
+	}
+
 	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
@@ -153,17 +185,19 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:                   url,
-		TLSVersion:            tlsVersion,
-		MIMETypes:             mimeTypes,
-		CapabilityStatement:   capStat,
-		SMARTResponse:         smartResponse,
-		IncludedFields:        includedFields,
-		OperationResource:     operationResource,
-		Metadata:              FHIREndpointMetadata,
-		RequestedFhirVersion:  requestedFhirVersion,
-		CapabilityFhirVersion: fhirVersion,
-		SupportedProfiles:     supportedProfiles,
+		URL:                      url,
+		TLSVersion:               tlsVersion,
+		MIMETypes:                mimeTypes,
+		CapabilityStatement:      capStat,
+		SMARTResponse:            smartResponse,
+		IncludedFields:           includedFields,
+		OperationResource:        operationResource,
+		Metadata:                 FHIREndpointMetadata,
+		RequestedFhirVersion:     requestedFhirVersion,
+		CapabilityFhirVersion:    fhirVersion,
+		SupportedProfiles:        supportedProfiles,
+		CapabilityStatementBytes: capStatBytes,
+		SMARTResponseBytes:       smartResponseBytes,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
@@ -250,6 +284,8 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
+			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
