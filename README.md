@@ -118,8 +118,8 @@ The populate db prod script expects the resources directory to contain the same 
 
 
 2. **If you have a clean database or want to update the data in your database** 
-    1. Run the following command with the Lantern project running to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`. It will also query CHPL for it's list of endpoint list sources and NPPES for their endpoint and npi data files and stores truncated versions of the files in the `resources/dev_resources` directory.
-    -Note: The NPPES npidata_pfile and endpoint_pfile are very large and therefore are not persisted in our directory of prod resources, so to add the full NPPES data into the database, you must run the `make populatedb_prod` command which will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files. It will also add the data found in `lantern-back-end/resources/prod_resources` to the database. Otherwise, the `make update_source_data` command will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and it will then create a copy of each file and reduce them to 1000 lines for development resources.
+    1. Run the following command with the Lantern project running to update your endpoint resource files found in `lantern-back-end/resources/prod_resources`. This command will automatically query all the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and it will also query CHPL for it's list of endpoint list sources. This command will also query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and then create a copy of each file and reduce them to 1000 lines for development resources and save them in `lantern-back-end/resources/dev_resources` Resources can be moved from `lantern-back-end/resources/prod_resources` to `lantern-back-end/resources/dev_resources` to be used in the development environment.
+
      ```bash
       make update_source_data
       ```
@@ -129,44 +129,34 @@ The populate db prod script expects the resources directory to contain the same 
       make update_source_data_prod
       ```
 
-    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
-      -Note: If you are doing development use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
+3. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
+  -Note: Since you are doing development, use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
-    The populate db script expects the resources directory to contain the following files:
-      * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
-      * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
-      * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
-      * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
-      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
-      * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
-      * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
-      * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
-        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`
-      * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
+The populate db script expects the resources directory to contain the following files:
+  * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
+  * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
+  * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
+  * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
+  * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
+  * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
+  * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
+  * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
+    * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
+  * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
 
-      ```bash
-      make populatedb
-      ```
+  ```bash
+  make populatedb
+  ```
 
-      This runs the following tasks inside the endpoint manager container:
-      * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
-      * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
-      * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database. 
-
-    You must run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`. You must be running Lantern with a production environment by using the command `make run_prod` to start up Lantern.
-
-    The populate db prod script expects the resources directory to contain the same files as above, besides the endpoint_pfile.csv and npidata_pfile.csv, as these are automatically queried and added to the database within this script. 
-
-      ```bash
-      make populatedb_prod
-      ```
-
-      This runs the same tasks inside the endpoint manager container as above, with the addition of a new starting task:
-      * the **NPPES querier**, which queries NPPES for their endpoint and npi data files, and automatically populate the database with this information, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files.
+  This runs the following tasks inside the endpoint manager container:
+  * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+  * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+  * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
+  * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
+  * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
 
 
-3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
+4. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1
