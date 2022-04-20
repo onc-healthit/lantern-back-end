@@ -386,7 +386,7 @@ func prepareHealthITProductStatements(s *Store) error {
 			chpl_id = $11,
 			practice_type = $12,
 			location = $13,
-			certification_criteria = $14,
+			certification_criteria = $14
 		WHERE id=$15`)
 	if err != nil {
 		return err
