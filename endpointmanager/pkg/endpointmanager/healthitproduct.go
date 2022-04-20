@@ -2,6 +2,7 @@ package endpointmanager
 
 import (
 	"time"
+	"sort"
 
 	"github.com/pkg/errors"
 
@@ -84,7 +85,7 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if !hitp.LastModifiedInCHPL.Equal(hitp2.LastModifiedInCHPL) {
 		return false
 	}
-	if !hitp.PracticeType != !hitp2.PracticeType {
+	if hitp.PracticeType != hitp2.PracticeType {
 		return false
 	}
 
