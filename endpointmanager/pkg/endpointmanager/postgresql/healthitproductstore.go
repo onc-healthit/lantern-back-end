@@ -25,6 +25,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -63,7 +64,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
-		&hitp.PracticeType,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -72,6 +73,12 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -90,6 +97,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
@@ -108,7 +116,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
-		&hitp.PracticeType,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -117,6 +125,12 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -135,6 +149,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -178,7 +193,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 			&hitp.CertificationEdition,
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
-			&hitp.PracticeType,
+			&practiceTypeString,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -187,6 +202,12 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 
 		ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 		hitp.VendorID = ints[0]
+
+		if !practiceTypeString.Valid {
+			hitp.PracticeType = ""
+		} else {
+			hitp.PracticeType = practiceTypeString.String
+		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
 		if err != nil {
