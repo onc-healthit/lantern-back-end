@@ -358,11 +358,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
-	if e.CapabilityStatement != nil {
-		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
-		if err != nil {
-			return err
-		}
+	if e.CapabilityStatementBytes != nil {
+		capabilityStatementJSON = e.CapabilityStatementBytes
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -383,11 +380,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	}
 
 	var smartResponseJSON []byte
-	if e.SMARTResponse != nil {
-		smartResponseJSON, err = e.SMARTResponse.GetJSON()
-		if err != nil {
-			return err
-		}
+	if e.SMARTResponseBytes != nil {
+		smartResponseJSON = e.SMARTResponseBytes
 	} else {
 		smartResponseJSON = []byte("null")
 	}
@@ -420,7 +414,9 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var err error
 	var capabilityStatementJSON []byte
 
-	if e.CapabilityStatement != nil {
+	if e.CapabilityStatementBytes != nil {
+		capabilityStatementJSON = e.CapabilityStatementBytes
+	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
@@ -445,7 +441,9 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	}
 
 	var smartResponseJSON []byte
-	if e.SMARTResponse != nil {
+	if e.SMARTResponseBytes != nil {
+		smartResponseJSON = e.SMARTResponseBytes
+	} else if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
 		if err != nil {
 			return err

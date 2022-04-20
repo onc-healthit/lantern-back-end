@@ -176,14 +176,14 @@ CREATE TABLE fhir_endpoints_info (
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    capability_statement    JSONB,
+    capability_statement    JSON,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     supported_profiles      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB,
+    smart_response          JSON,
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500),
@@ -200,14 +200,14 @@ CREATE TABLE fhir_endpoints_info_history (
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    capability_statement    JSONB,
+    capability_statement    JSON,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
     supported_profiles      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB, 
+    smart_response          JSON, 
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500)
@@ -320,7 +320,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
-    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
+    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement::jsonb != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
     endpts_info.capability_fhir_version AS FHIR_VERSION,
     endpts_info.capability_statement->>'publisher' AS PUBLISHER,
     endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
@@ -383,7 +383,7 @@ CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_v
 CREATE INDEX security_code_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security,service}'->'coding'->>'code'));
 CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security}' -> 'service' ->> 'text'));
 
-CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->'capabilities'));
+CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->>'capabilities'));
 
 CREATE INDEX location_zipcode_idx ON npi_organizations ((location->>'zipcode'));
 

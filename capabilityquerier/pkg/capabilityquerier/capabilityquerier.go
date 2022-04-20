@@ -45,17 +45,19 @@ var tlsNone = "No TLS"
 // the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
 // statement itself.
 type Message struct {
-	URL                  string      `json:"url"`
-	Err                  string      `json:"err"`
-	MIMETypes            []string    `json:"mimeTypes"`
-	TLSVersion           string      `json:"tlsVersion"`
-	HTTPResponse         int         `json:"httpResponse"`
-	CapabilityStatement  interface{} `json:"capabilityStatement"`
-	SMARTHTTPResponse    int         `json:"smarthttpResponse"`
-	SMARTResp            interface{} `json:"smartResp"`
-	ResponseTime         float64     `json:"responseTime"`
-	RequestedFhirVersion string      `json:"requestedFhirVersion"`
-	DefaultFhirVersion   string      `json:"defaultFhirVersion"`
+	URL                      string      `json:"url"`
+	Err                      string      `json:"err"`
+	MIMETypes                []string    `json:"mimeTypes"`
+	TLSVersion               string      `json:"tlsVersion"`
+	HTTPResponse             int         `json:"httpResponse"`
+	CapabilityStatement      interface{} `json:"capabilityStatement"`
+	CapabilityStatementBytes []byte      `json:"capabilityStatementBytes"`
+	SMARTHTTPResponse        int         `json:"smarthttpResponse"`
+	SMARTResp                interface{} `json:"smartResp"`
+	SMARTRespBytes           []byte      `json:"smartRespBytes"`
+	ResponseTime             float64     `json:"responseTime"`
+	RequestedFhirVersion     string      `json:"requestedFhirVersion"`
+	DefaultFhirVersion       string      `json:"defaultFhirVersion"`
 }
 
 // VersionMessage is the structure that gets sent on the queue with $versions response inforation. It includes the URL of
@@ -319,7 +321,12 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	}
 
 	if capResp != nil {
-		err = json.Unmarshal(capResp, &(jsonResponse))
+		if endptType == metadata {
+			message.CapabilityStatementBytes = capResp
+		} else if endptType == wellknown {
+			message.SMARTRespBytes = capResp
+		}
+		err := json.Unmarshal(capResp, &jsonResponse)
 		if err == nil {
 			if endptType == metadata {
 				message.CapabilityStatement = jsonResponse
