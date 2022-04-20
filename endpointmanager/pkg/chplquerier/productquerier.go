@@ -159,6 +159,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationEdition:  prod.Edition.Name,
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
+		PracticeType: prod.PracticeType.Name,
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
@@ -338,8 +339,28 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
-	// cert dates are the same. unknown update precedence. throw error and don't perform update.
-	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	existingCriteriaLength := len(existingDbProd.CertificationCriteria)
+	newCriteriaLength := len(newDbProd.CertificationCriteria)
+
+	// If new criteria list is bigger than old update it, if it is smaller do not update it
+	if  newCriteriaLength > existingCriteriaLength {
+		return true, nil
+	} else if newCriteriaLength < existingCriteriaLength {
+		return false, nil
+	}
+
+	// Do not update or throw error if the practice types are not the same
+	if existingDbProd.PracticeType != newDbProd.PracticeType {
+		return false, nil
+	}
+	
+	// If the criteria lists are the same length but they are not equal, throw an error
+	if (!certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria)) {
+		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	}
+
+	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
+
 }
 
 // linkProductToCriteria checks whether the product and certification have been linked before, and if not
@@ -364,4 +385,21 @@ func linkProductToCriteria(ctx context.Context,
 		return err
 	}
 	return nil
+}
+
+// certificationCriteriaMatch checks if the two certification criteria lists have the same contents regardless of order.
+func certificationCriteriaMatch(l1 []int, l2 []int) bool {
+	// don't care about order
+	a := make([]int, len(l1))
+	b := make([]int, len(l2))
+	copy(a, l1)
+	copy(b, l2)
+	sort.Ints(a)
+	sort.Ints(b)
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
 }
