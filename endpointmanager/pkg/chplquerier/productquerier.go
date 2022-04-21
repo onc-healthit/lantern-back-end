@@ -163,12 +163,11 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		PracticeType: prod.PracticeType.Name,
 	}
 
-	dateInt, err := strconv.ParseInt(prod.CertificationDate, 10, 64)
+	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
 	if err != nil {
-		return nil, errors.Wrap(err, "converting certification date to integer failed")
+		return nil, errors.Wrap(err, "converting certification date to time failed")
 	}
-	
-	dbProd.CertificationDate = time.Unix(dateInt/1000, 0).UTC()
+	dbProd.CertificationDate = certificationDateTime.UTC()
 
 	apiDocURL, err := getAPIURL(prod.APIDocumentation)
 	if err != nil {
