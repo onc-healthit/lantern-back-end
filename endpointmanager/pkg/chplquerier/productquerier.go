@@ -163,11 +163,12 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		PracticeType: prod.PracticeType.Name,
 	}
 
-	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
+	dateInt, err := strconv.ParseInt(prod.CertificationDate, 10, 64)
 	if err != nil {
-		return nil, errors.Wrap(err, "converting certification date to time failed")
+		return nil, errors.Wrap(err, "converting certification date to integer failed")
 	}
-	dbProd.CertificationDate = certificationDateTime.UTC()
+	
+	dbProd.CertificationDate = time.Unix(dateInt/1000, 0).UTC()
 
 	apiDocURL, err := getAPIURL(prod.APIDocumentation)
 	if err != nil {
@@ -348,6 +349,11 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	} else if newCriteriaLength < existingCriteriaLength {
 		return false, nil
+	}
+
+	// If the new product has a different vendor ID, update it
+	if existingDbProd.VendorID != newDbProd.VendorID {
+		return true, nil
 	}
 
 	// Do not update or throw error if the practice types are not the same
