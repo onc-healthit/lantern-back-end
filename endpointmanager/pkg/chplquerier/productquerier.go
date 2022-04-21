@@ -355,6 +355,11 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	}
 
+	// If the new product has a different certification status, update it
+	if existingDbProd.CertificationStatus != newDbProd.CertificationStatus {
+		return true, nil
+	}
+
 	// Do not update or throw error if the practice types are not the same
 	if existingDbProd.PracticeType != newDbProd.PracticeType {
 		return false, nil
