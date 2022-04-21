@@ -360,6 +360,11 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	}
 
+	// If the new product has a different API url, update it
+	if existingDbProd.APIURL != newDbProd.APIURL {
+		return true, nil
+	}
+
 	// Do not update or throw error if the practice types are not the same
 	if existingDbProd.PracticeType != newDbProd.PracticeType {
 		return false, nil
