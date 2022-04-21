@@ -178,11 +178,9 @@ func persistVendor(ctx context.Context,
 	}
 
 	if err == sql.ErrNoRows { // need to add new entry
-		if err == sql.ErrNoRows { // need to add new entry
-			err = store.AddVendor(ctx, newDbVendor)
-			if err != nil {
-				return errors.Wrap(err, "adding vendor to store failed")
-			}
+		err = store.AddVendor(ctx, newDbVendor)
+		if err != nil {
+			return errors.Wrap(err, "adding vendor to store failed")
 		}
 	} else if err != nil {
 		return errors.Wrap(err, "getting vendor from store failed")
