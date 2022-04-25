@@ -105,7 +105,7 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	CertificationStatus: details{Id: 1, Name: "Active"},
 	CriteriaMet:         criteriaMetArr,
 	APIDocumentation:    apiDocArr,
-	PracticeType:  details{Id: 1, Name: "Inpatient"},
+	PracticeType:        details{Id: 1, Name: "Inpatient"},
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -351,7 +351,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 		CertificationStatus: details{Id: 1, Name: "Active"},
 		CriteriaMet:         criteriaMetArr,
 		APIDocumentation:    apiDocArr,
-		PracticeType: details{Id: 1, Name: "Inpatient"},
+		PracticeType:        details{Id: 1, Name: "Inpatient"},
 	}
 
 	expectedProdList := chplCertifiedProductList{
