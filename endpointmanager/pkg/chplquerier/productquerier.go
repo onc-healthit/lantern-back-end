@@ -350,6 +350,16 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
+	// Do not update or throw error if the practice types are not the same
+	if existingDbProd.PracticeType != newDbProd.PracticeType {
+		return false, nil
+	}
+	
+	// If the criteria lists are the same length but they are not equal, throw an error
+	if (!certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria)) {
+		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	}
+
 	// If the new product has a different vendor ID, update it
 	if existingDbProd.VendorID != newDbProd.VendorID {
 		return true, nil
@@ -363,16 +373,6 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	// If the new product has a different API url, update it
 	if existingDbProd.APIURL != newDbProd.APIURL {
 		return true, nil
-	}
-
-	// Do not update or throw error if the practice types are not the same
-	if existingDbProd.PracticeType != newDbProd.PracticeType {
-		return false, nil
-	}
-	
-	// If the criteria lists are the same length but they are not equal, throw an error
-	if (!certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria)) {
-		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
 	}
 
 	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
