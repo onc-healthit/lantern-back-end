@@ -177,6 +177,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": {"name": "1", "id": 1},
 			"certificationDate": "2016-07-01",
 			"certificationStatus": {"name": "Active", "id": 1},
+			"practiceType": {"name": "Inpatient", "id":1},
 			"criteriaMet": [
                 {
                     "id": 30,
@@ -260,6 +261,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"version": {"name": "0.3", "id": 1},
 			"certificationDate": "2016-10-01",
 			"certificationStatus": {"name": "Active", "id": 1},
+			"practiceType": {"name": "Inpatient", "id":1},
 			"criteriaMet": [
                 {
                     "id": 30,
@@ -349,6 +351,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 		CertificationStatus: details{Id: 1, Name: "Active"},
 		CriteriaMet:         criteriaMetArr,
 		APIDocumentation:    apiDocArr,
+		PracticeType: details{Id: 1, Name: "Inpatient"},
 	}
 
 	expectedProdList := chplCertifiedProductList{
