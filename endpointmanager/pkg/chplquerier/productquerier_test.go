@@ -116,6 +116,7 @@ var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	CHPLID:                "15.04.04.2657.Care.01.00.0.160701",
 	CertificationCriteria: []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
 	APIURL:                "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+	PracticeType: "Inpatient",
 }
 
 func Test_makeCHPLProductURL(t *testing.T) {
@@ -487,7 +488,15 @@ func Test_prodNeedsUpdate(t *testing.T) {
 
 	critListShorter := testHITP
 	critListShorter.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37}
-	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
+	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: nil})
+
+	critListLonger:= testHITP
+	critListLonger.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 38, 40}
+	expectedResults = append(expectedResults, expectedResult{name: "critListLonger", hitProd: critListLonger, needsUpdate: true, err: nil})
+
+	critListDif:= testHITP
+	critListDif.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 40}
+	expectedResults = append(expectedResults, expectedResult{name: "critListDifference", hitProd: critListDif, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
 	chplID := testHITP
 	chplID.CHPLID = "15.04.04.2657.Care.01.00.0.160733"
@@ -495,7 +504,20 @@ func Test_prodNeedsUpdate(t *testing.T) {
 
 	certStatus := testHITP
 	certStatus.CertificationStatus = "Retired"
-	expectedResults = append(expectedResults, expectedResult{name: "certStatus", hitProd: certStatus, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
+	expectedResults = append(expectedResults, expectedResult{name: "certStatus", hitProd: certStatus, needsUpdate: true, err: nil})
+
+	practiceType := testHITP
+	practiceType.PracticeType = "Ambulatory"
+	expectedResults = append(expectedResults, expectedResult{name: "practiceType", hitProd: practiceType, needsUpdate: false, err: nil})
+
+	vendorIDChange := testHITP
+	vendorIDChange.VendorID = -1
+	expectedResults = append(expectedResults, expectedResult{name: "vendorID", hitProd: vendorIDChange, needsUpdate: true, err: nil})
+
+	apiURLChange := testHITP
+	apiURLChange.APIURL = "http:/newapiURL.html"
+	expectedResults = append(expectedResults, expectedResult{name: "apiURL", hitProd: apiURLChange, needsUpdate: true, err: nil})
+
 
 	for _, expRes := range expectedResults {
 		needsUpdate, err := prodNeedsUpdate(&base, &(expRes.hitProd))
