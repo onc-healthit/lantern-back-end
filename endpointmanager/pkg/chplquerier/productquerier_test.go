@@ -105,6 +105,7 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	CertificationStatus: details{Id: 1, Name: "Active"},
 	CriteriaMet:         criteriaMetArr,
 	APIDocumentation:    apiDocArr,
+	PracticeType:  details{Id: 1, Name: "Inpatient"},
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
