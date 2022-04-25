@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"time"
-	"sort"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -160,7 +160,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationEdition:  prod.Edition.Name,
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
-		PracticeType: prod.PracticeType.Name,
+		PracticeType:          prod.PracticeType.Name,
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
@@ -339,7 +339,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	newCriteriaLength := len(newDbProd.CertificationCriteria)
 
 	// If new criteria list is bigger than old update it, if it is smaller do not update it
-	if  newCriteriaLength > existingCriteriaLength {
+	if newCriteriaLength > existingCriteriaLength {
 		return true, nil
 	} else if newCriteriaLength < existingCriteriaLength {
 		return false, nil
@@ -349,9 +349,9 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	if existingDbProd.PracticeType != newDbProd.PracticeType {
 		return false, nil
 	}
-	
+
 	// If the criteria lists are the same length but they are not equal, throw an error
-	if (!certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria)) {
+	if !certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
 		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
 	}
 

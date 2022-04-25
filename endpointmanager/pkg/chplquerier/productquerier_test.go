@@ -116,7 +116,7 @@ var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	CHPLID:                "15.04.04.2657.Care.01.00.0.160701",
 	CertificationCriteria: []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
 	APIURL:                "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	PracticeType: "Inpatient",
+	PracticeType:          "Inpatient",
 }
 
 func Test_makeCHPLProductURL(t *testing.T) {
@@ -490,11 +490,11 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	critListShorter.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37}
 	expectedResults = append(expectedResults, expectedResult{name: "critListShorter", hitProd: critListShorter, needsUpdate: false, err: nil})
 
-	critListLonger:= testHITP
+	critListLonger := testHITP
 	critListLonger.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 38, 40}
 	expectedResults = append(expectedResults, expectedResult{name: "critListLonger", hitProd: critListLonger, needsUpdate: true, err: nil})
 
-	critListDif:= testHITP
+	critListDif := testHITP
 	critListDif.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 40}
 	expectedResults = append(expectedResults, expectedResult{name: "critListDifference", hitProd: critListDif, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
 
@@ -517,7 +517,6 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	apiURLChange := testHITP
 	apiURLChange.APIURL = "http:/newapiURL.html"
 	expectedResults = append(expectedResults, expectedResult{name: "apiURL", hitProd: apiURLChange, needsUpdate: true, err: nil})
-
 
 	for _, expRes := range expectedResults {
 		needsUpdate, err := prodNeedsUpdate(&base, &(expRes.hitProd))

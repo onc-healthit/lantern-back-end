@@ -1,8 +1,8 @@
 package endpointmanager
 
 import (
-	"time"
 	"sort"
+	"time"
 
 	"github.com/pkg/errors"
 

@@ -264,7 +264,7 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
-	    hitp.PracticeType)
+		hitp.PracticeType)
 
 	err = row.Scan(&hitp.ID)
 
@@ -300,7 +300,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		hitp.PracticeType,
 		locationJSON,
 		certificationCriteriaJSON,
-		hitp.ID,)
+		hitp.ID)
 
 	return err
 }
