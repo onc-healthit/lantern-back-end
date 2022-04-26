@@ -241,12 +241,7 @@ func persistProduct(ctx context.Context,
 	if err != nil {
 		return err
 	}
-
-	existingDbProd, err := store.GetHealthITProductUsingCHPLID(ctx, newDbProd.CHPLID)
-
-	if err == sql.ErrNoRows {
-		existingDbProd, err = store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
-	}
+	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
 	if err == sql.ErrNoRows { // need to add new entry
