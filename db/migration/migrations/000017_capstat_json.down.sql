@@ -20,6 +20,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
     endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
     endpts_info.capability_statement->'format' AS FORMAT,
+    endpts_info.capability_statement->>'kind' AS KIND,
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     endpts_info.requested_fhir_version,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
