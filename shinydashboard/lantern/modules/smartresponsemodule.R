@@ -130,6 +130,7 @@ smartresponsemodule <- function(
   output$well_known_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
               colnames = c("URL", "Organization", "Developer", "FHIR Version"),
+              selection = 'none',
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
