@@ -195,6 +195,18 @@ function(input, output, session) { #nolint
     page_name_list[[input$side_menu]]
   })
 
+  output$htmlFooter <- renderUI({
+    if (input$side_menu %in% c("about_tab")) {
+      div(class = "footer",
+        includeHTML("aboutInfo.html")
+      )
+    } else {
+      div(class = "footer",
+        includeHTML("disclaimer.html")
+      )
+    }
+  })
+
   output$page_title <- renderText(page_name())
   output$version <- renderText(version_title)
 
