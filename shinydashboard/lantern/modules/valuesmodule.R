@@ -97,7 +97,7 @@ valuesmodule <- function(
   output$capstat_values_table <- DT::renderDataTable({
     datatable(capstat_values_list(),
               colnames = c("Developer", "FHIR Version", get_value_table_header(), "Endpoints"),
-              selection = 'none',
+              selection = "none",
               rownames = FALSE,
               options = list(scrollX = TRUE))
   })

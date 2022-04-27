@@ -57,7 +57,7 @@ securitymodule <- function(
   output$security_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
               colnames = c("URL", "Organization", "Developer", "FHIR Version", "TLS Version", "Authorization"),
-              selection = 'none',
+              selection = "none",
               rownames = FALSE,
               options = list(scrollX = TRUE)
     )
