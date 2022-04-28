@@ -38,7 +38,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -133,7 +133,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -251,7 +251,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -595,7 +595,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	addFHIREndpointInfoStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints_info (
 			url,
-			healthit_product_id,
+			healthit_mapping_id,
 			vendor_id,
 			tls_version,
 			mime_types,
@@ -617,7 +617,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		UPDATE fhir_endpoints_info
 		SET 
 		    url = $1,
-		    healthit_product_id = $2,
+		    healthit_mapping_id = $2,
 			vendor_id = $3,
 			tls_version = $4,
 			mime_types = $5,
@@ -652,7 +652,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
