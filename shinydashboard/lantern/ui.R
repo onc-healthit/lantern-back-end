@@ -18,6 +18,7 @@ ui <- dashboardPage(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", "aria-hidden" = "true", role = "presentation", "aria-label" = "dashboard icon")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon")),
+      menuItem("Organizations", tabName = "organizations_tab", icon = tags$i(class="fa fa-hospital", "aria-hidden" = "true", role = "presentation", "aria-label" = "hospital icon")),
       menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
@@ -91,6 +92,7 @@ ui <- dashboardPage(
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
     uiOutput("show_resource_profiles_dropdown"),
+    uiOutput("organizations_filter"),
     tabItems(
       tabItem("dashboard_tab",
               dashboard_UI("dashboard_page")
@@ -100,6 +102,9 @@ ui <- dashboardPage(
       ),
       tabItem("downloads_tab",
               downloadsmodule_UI("downloads_page")
+      ),
+      tabItem("organizations_tab",
+              organizationsmodule_UI("organizations_page")
       ),
       tabItem("performance_tab",
               performance_UI("performance_page")
