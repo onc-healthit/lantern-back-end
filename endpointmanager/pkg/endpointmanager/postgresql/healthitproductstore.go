@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
@@ -17,6 +18,7 @@ var getProductCriteriaLinkStatement *sql.Stmt
 var linkProductToCriteriaStatement *sql.Stmt
 var getHealthITProductIDByCHPLID *sql.Stmt
 var getHealthITProductUsingNameAndVersion *sql.Stmt
+var addHealthITProductMapStatement *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
