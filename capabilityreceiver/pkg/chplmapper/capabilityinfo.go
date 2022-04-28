@@ -67,7 +67,11 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
 	// No errors thrown means a healthit product with CHPLID was found and can be set on ep
 	if err == nil {
-		ep.HealthITProductID = healthITProductID
+		healthITMapID, err := store.AddHealthITProductMap(ctx, healthITProductID, ep.ID)
+		if err != nil {
+			return err
+		}
+		ep.HealthITProductID = healthITMapID
 	}
 
 	return nil

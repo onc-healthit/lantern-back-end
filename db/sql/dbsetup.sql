@@ -107,6 +107,12 @@ CREATE TABLE vendors (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
+CREATE TABLE healthit_products_map{
+    id SERIAL,
+    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
+}
+
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
@@ -172,7 +178,7 @@ CREATE TABLE validation_results (
 
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
+    healthit_mapping_id     INT REFERENCES healthit_products_map(id) ON DELETE SET NULL,
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
@@ -196,7 +202,7 @@ CREATE TABLE fhir_endpoints_info_history (
     entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     user_id                 VARCHAR(500),
     id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
-    healthit_product_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
+    healthit_mapping_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
     vendor_id               INT,  -- should link to vendor_id(id). not using 'reference' because if the referenced vendor is deleted, we still want the historical copies to retain the ID.
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),

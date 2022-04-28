@@ -236,6 +236,23 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 	return retProductID, err
 }
 
+// AddHealthITProductMap creates a new ID for all the healthit products for a particular endpoint and returns it
+func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
+	var err error
+	var healthITMapID string
+	if id == 0 {
+		healthITMapID = "DEFAULT"
+	} else {
+		healthITMapID = strconv.Itoa(id)
+	}
+
+	softwareMapRow := addHealthITProductMapStatement.QueryRowContext(ctx, healthITMapID, healthITProductID)
+	softwareMapID := 0
+	err = softwareMapRow.Scan(&softwareMapID)
+
+	return softwareMapID, err
+}
+
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	locationJSON, err := json.Marshal(hitp.Location)
@@ -350,6 +367,13 @@ func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
 
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
+	addHealthITProductMapStatement, err = s.DB.Prepare(`
+		INSERT INTO healthit_products_map (id, healthit_product_id)
+		VALUES ($1, $2)
+		RETURNING id;`)
+	if err != nil {
+		return err
+	}
 	addHealthITProductStatement, err = s.DB.Prepare(`
 		INSERT INTO healthit_products (
 			name,
