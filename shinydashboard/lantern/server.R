@@ -50,6 +50,13 @@ function(input, output, session) { #nolint
         "downloads_page")
 
       callModule(
+        organizationsmodule,
+        "organizations_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$match_confidence))
+
+      callModule(
         locationmodule,
         "location_page",
         reactive(input$fhir_version),
@@ -129,6 +136,7 @@ function(input, output, session) { #nolint
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads Page",
+     "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implmentation Page",
      "fields_tab" = "Fields Page",
@@ -162,7 +170,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
   )
 
   fhir_version_no_capstat <- reactive(
@@ -191,6 +199,10 @@ function(input, output, session) { #nolint
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
 
+  show_organizations_filter <- reactive(input$side_menu %in% c("organizations_tab"))
+
+  show_confidence_filter <- reactive(input$side_menu %in% c("organizations_tab") && (input$organization_tabset == "NPI Organizations"))
+
   page_name <- reactive({
     page_name_list[[input$side_menu]]
   })
@@ -208,6 +220,7 @@ function(input, output, session) { #nolint
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
+      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 4, fhirDropdown),
@@ -219,6 +232,12 @@ function(input, output, session) { #nolint
           column(width = 4, validationsDropdown),
           column(width = 4, fhirDropdown),
           column(width = 4, developerDropdown)
+        )
+      } else if (show_confidence_filter()) {
+        fluidRow(
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown),
+          column(width = 4, confidenceDropdown)
         )
       } else {
         fluidRow(
@@ -370,6 +389,60 @@ function(input, output, session) { #nolint
 
     return(res)
   })
+
+  get_endpoint_list_organizations_list <- reactive({
+    res <- endpoint_export_tbl
+
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+           unnest(endpoint_names) %>%
+           tidyr::replace_na(list(endpoint_names = "Unknown")) %>%
+           distinct(endpoint_names) %>%
+           arrange(endpoint_names) %>%
+           split(.$endpoint_names) %>%
+           purrr::map(~ .$endpoint_names)
+
+
+    return(res)
+})
+
+get_npi_organizations_list <- reactive({
+    res <- endpoint_export_tbl
+
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+           tidyr::replace_na(list(organization_name = "Unknown")) %>%
+           distinct(organization_name) %>%
+           arrange(organization_name) %>%
+           split(.$organization_name) %>%
+           purrr::map(~ .$organization_name)
+
+    return(res)
+})
+
+organization_type  <- reactive({
+  if (input$organization_tabset == "NPI Organizations") {
+    res <- get_npi_organizations_list()
+    return(res)
+  } else {
+    res <- get_endpoint_list_organizations_list()
+    return(res)
+  }
+})
 
   #                                          #
   # Display Resource and Operations Checkbox #
@@ -563,5 +636,4 @@ function(input, output, session) { #nolint
       easyClose = TRUE
   ))
   })
-
 }

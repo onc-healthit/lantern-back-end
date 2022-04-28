@@ -39,6 +39,7 @@ module_files:
   - "modules/valuesmodule.R"
   - "modules/validationsmodule.R"
   - "modules/profilemodule.R"
+  - "modules/organizationsmodule.R"
 
 refresh_timeout_minutes:
   - 1440
