@@ -107,12 +107,6 @@ CREATE TABLE vendors (
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-
-CREATE TABLE healthit_products_map{
-    id SERIAL,
-    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
-}
-
 CREATE TABLE healthit_products (
     id                      SERIAL PRIMARY KEY,
     name                    VARCHAR(500),
@@ -132,6 +126,11 @@ CREATE TABLE healthit_products (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT healthit_product_info UNIQUE(name, version)
+);
+
+CREATE TABLE healthit_products_map (
+    id SERIAL,
+    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
 );
 
 CREATE TABLE certification_criteria (
@@ -178,7 +177,7 @@ CREATE TABLE validation_results (
 
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    healthit_mapping_id     INT REFERENCES healthit_products_map(id) ON DELETE SET NULL,
+    healthit_mapping_id     INT,
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
