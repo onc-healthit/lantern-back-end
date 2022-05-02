@@ -10,6 +10,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type productEntry struct {
+	Name  				string `json:"product"`
+	CHPLProductNumber 	string `json:"chplProductNumber"`
+	Version 			string `json:"version"`
+}
+
+type softwareInfo struct {
+	ListSourceURL		string `json:"listSourceURL"`
+    SoftwareProducts 	[]productEntry `json:"softwareProduct"`
+}
+
 type endpointEntry struct {
 	FormatType   string `json:"FormatType"`
 	URL          string `json:"URL"`
@@ -20,16 +31,18 @@ type endpointEntry struct {
 func main() {
 
 	var chplURL string
-	var fileToWriteTo string
+	var fileToWriteToCHPLList string
+	fileToWriteToSoftwareInfo := "CHPLProductsInfo.json"
 
 	if len(os.Args) >= 1 {
 		chplURL = os.Args[1]
-		fileToWriteTo = os.Args[2]
+		fileToWriteToCHPLList = os.Args[2]
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
 	var endpointEntryList []endpointEntry
+	var softwareInfoList []softwareInfo
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", chplURL, nil)
@@ -77,6 +90,24 @@ func main() {
 		}
 		developerName = strings.TrimSpace(developerName)
 
+		productNumber, ok := chplEntry["chplProductNumber"].(string)
+		if !ok {
+			log.Fatal("Error converting CHPL product number to type string")
+		}
+		productNumber = strings.TrimSpace(productNumber)
+
+		productName, ok := chplEntry["product"].(string)
+		if !ok {
+			log.Fatal("Error converting CHPL product name to type string")
+		}
+		productName = strings.TrimSpace(productName)
+		
+		productVersion, ok := chplEntry["version"].(string)
+		if !ok {
+			log.Fatal("Error converting CHPL product name to type string")
+		}
+		productVersion = strings.TrimSpace(productVersion)
+
 		// serviceBaseUrlList is an array, so loop through list and add each url with developer name to endpoint list
 		endpointURLList, ok := chplEntry["serviceBaseUrlList"].([]interface{})
 		if !ok {
@@ -96,7 +127,25 @@ func main() {
 			index := strings.Index(urlString, "h")
 			entryURL := urlString[index:]
 
-			if !contains(endpointEntryList, entryURL) {
+			var productEntry productEntry
+
+			productEntry.Name = productName
+			productEntry.CHPLProductNumber = productNumber
+			productEntry.Version = productVersion
+
+			
+			softwareContained, softwareIndex := containsSoftware(softwareInfoList, entryURL)
+			if (!softwareContained) {
+				var softwareInfoEntry softwareInfo
+				softwareInfoEntry.ListSourceURL = entryURL
+				softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
+				softwareInfoList = append(softwareInfoList, softwareInfoEntry)
+			} else {
+				softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
+			}
+
+
+			if !containsEndpoint(endpointEntryList, entryURL) {
 
 				entry.URL = entryURL
 
@@ -121,6 +170,10 @@ func main() {
 				endpointEntryList = append(endpointEntryList, entry)
 			}
 		}
+		
+		
+
+
 	}
 
 	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
@@ -128,14 +181,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToCHPLList, finalFormatJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	finalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToSoftwareInfo, finalFormatJSONSoftware, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 }
 
-func contains(endpointEntryList []endpointEntry, url string) bool {
+func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 	for _, e := range endpointEntryList {
 		if e.URL == url {
 			return true
@@ -143,3 +206,13 @@ func contains(endpointEntryList []endpointEntry, url string) bool {
 	}
 	return false
 }
+
+func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int) {
+	for index, e := range softwareProductList {
+		if e.ListSourceURL == url {
+			return true, index
+		}
+	}
+	return false, -1
+}
+
