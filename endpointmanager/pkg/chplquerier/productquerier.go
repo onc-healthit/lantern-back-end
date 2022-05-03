@@ -18,10 +18,14 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplpopulator"
 )
 
 var chplAPICertProdListPath string = "/search/v2"
+
+type chplEndpointListProductInfo struct {
+	ListSourceURL		string `json:"listSourceURL"`
+	SoftwareProducts 	[]ChplCertifiedProduct `json:"softwareProducts"`
+}
 
 type chplCertifiedProductList struct {
 	Results     []ChplCertifiedProduct `json:"results"`
@@ -101,7 +105,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
 	
-	var CHPLEndpointListProducts []chplpopulator.SoftwareInfo
+	var CHPLEndpointListProducts []chplEndpointListProductInfo
 
 	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
 	// Get CHPL Endpoint list stored in Lantern resources folder
@@ -120,7 +124,7 @@ func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) e
 		var prodList []ChplCertifiedProduct
 		var CHPLProductList chplCertifiedProductList
 
-		prodList = listSourceEntry.softwareProducts
+		prodList = listSourceEntry.SoftwareProducts
 
 		CHPLProductList.Results = prodList
 		CHPLProductList.RecordCount = len(prodList)
