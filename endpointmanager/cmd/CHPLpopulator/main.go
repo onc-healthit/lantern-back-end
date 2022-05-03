@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	log "github.com/sirupsen/logrus"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/CHPLpopulator"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplpopulator"
 )
 
 func main() {
@@ -19,6 +19,6 @@ func main() {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
-	CHPLpopulator.FetchCHPLEndpointListProducts(chplURL, fileToWriteToCHPLList, fileToWriteToSoftwareInfo)
+	chplpopulator.FetchCHPLEndpointListProducts(chplURL, fileToWriteToCHPLList, fileToWriteToSoftwareInfo)
 
 }

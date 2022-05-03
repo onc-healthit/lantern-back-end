@@ -6,7 +6,6 @@ import (
 	http "net/http"
 	"strings"
 	"time"
-	"net/url"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
@@ -14,7 +13,7 @@ import (
 
 type softwareInfo struct {
 	ListSourceURL		string `json:"listSourceURL"`
-    SoftwareProducts 	[]chplquerier.chplCertifiedProduct `json:"softwareProduct"`
+    SoftwareProducts 	[]chplquerier.ChplCertifiedProduct `json:"softwareProduct"`
 }
 
 type endpointEntry struct {
@@ -114,7 +113,7 @@ func FetchCHPLEndpointListProducts(chplURL string, fileToWriteToCHPLList string,
 		if err != nil {
 			log.Fatal("converting certification date to time failed")
 		}
-		certificationDateTime = certificationDateTime.UTC()
+		certificationDateInt := certificationDateTime.Unix()
 
 		var criteriaMetArr []int
 		for _, criteriaEntry := range chplEntry.CriteriaMet {
@@ -131,13 +130,13 @@ func FetchCHPLEndpointListProducts(chplURL string, fileToWriteToCHPLList string,
 		urlString := chplEntry.ServiceBaseUrlList.Value
 		urlString = strings.TrimSpace(urlString)
 
-		var productEntry chplquerier.chplCertifiedProduct
+		var productEntry chplquerier.ChplCertifiedProduct
 
 		productEntry.Product = productName
 		productEntry.ChplProductNumber = productNumber
 		productEntry.Version = productVersion
 		productEntry.CertificationStatus = productCertStatus
-		productEntry.CertificationDate = certificationDateTime
+		productEntry.CertificationDate = certificationDateInt
 		productEntry.Edition = productEdition
 		productEntry.CriteriaMet = criteriaMetArr
 		productEntry.APIDocumentation = apiDocURLArr

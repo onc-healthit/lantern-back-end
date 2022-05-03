@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strconv"
 	"time"
+	"path/filepath"
+	"io/ioutil"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -22,7 +24,7 @@ import (
 var chplAPICertProdListPath string = "/search/v2"
 
 type chplCertifiedProductList struct {
-	Results     []chplCertifiedProduct `json:"results"`
+	Results     []ChplCertifiedProduct `json:"results"`
 	RecordCount int                    `json:"recordCount"`
 }
 
@@ -99,7 +101,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
 	
-	var prodList []chplCertifiedProduct
+	var prodList []ChplCertifiedProduct
 	var CHPLProductList chplCertifiedProductList
 
 	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
@@ -175,7 +177,7 @@ func convertProductJSONToObj(ctx context.Context, prodJSON []byte) (*chplCertifi
 }
 
 // takes the JSON model and converts it into an endpointmanager.HealthITProduct
-func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
+func parseHITProd(ctx context.Context, prod *ChplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
 	id, err := getProductVendorID(ctx, prod, store)
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
@@ -269,7 +271,7 @@ func persistProducts(ctx context.Context, store *postgresql.Store, prodList *chp
 // later date, has more certification criteria), or not.
 func persistProduct(ctx context.Context,
 	store *postgresql.Store,
-	prod *chplCertifiedProduct) error {
+	prod *ChplCertifiedProduct) error {
 
 	newDbProd, err := parseHITProd(ctx, prod, store)
 	if err != nil {
