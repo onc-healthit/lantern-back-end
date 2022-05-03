@@ -1,4 +1,4 @@
-package CHPLpopulator
+package chplpopulator
 
 import (
 	"encoding/json"
@@ -9,22 +9,12 @@ import (
 	"net/url"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 )
-
-type productEntry struct {
-	Name  					string `json:"product"`
-	CHPLProductNumber 		string `json:"chplProductNumber"`
-	Version 				string `json:"version"`
-	CertificationStatus 	string `json:"certificationStatus"`
-	CertificationDate    	time.Time `json:"certificationDate"`
-	Edition  	string `json:"edition"`
-	CertificationCriteria 	[]int `json:"certificationCriteria"`
-	APIDocURL string  `json:"apiDocumentation"`
-}
 
 type softwareInfo struct {
 	ListSourceURL		string `json:"listSourceURL"`
-    SoftwareProducts 	[]productEntry `json:"softwareProduct"`
+    SoftwareProducts 	[]chplquerier.chplCertifiedProduct `json:"softwareProduct"`
 }
 
 type endpointEntry struct {
@@ -131,9 +121,9 @@ func FetchCHPLEndpointListProducts(chplURL string, fileToWriteToCHPLList string,
 			criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
 		}
 
-		apiDocURL, err := getAPIURL(chplEntry.APIDocumentation)
-		if err != nil {
-			log.Fatal("retreiving the API URL from the health IT product API documentation list failed")
+		var apiDocURLArr []string
+		for _, apiURLEntry := range chplEntry.APIDocumentation{
+			apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
 		}
 
 		var entry endpointEntry
@@ -141,16 +131,17 @@ func FetchCHPLEndpointListProducts(chplURL string, fileToWriteToCHPLList string,
 		urlString := chplEntry.ServiceBaseUrlList.Value
 		urlString = strings.TrimSpace(urlString)
 
-		var productEntry productEntry
+		var productEntry chplquerier.chplCertifiedProduct
 
-		productEntry.Name = productName
-		productEntry.CHPLProductNumber = productNumber
+		productEntry.Product = productName
+		productEntry.ChplProductNumber = productNumber
 		productEntry.Version = productVersion
 		productEntry.CertificationStatus = productCertStatus
 		productEntry.CertificationDate = certificationDateTime
 		productEntry.Edition = productEdition
-		productEntry.CertificationCriteria = criteriaMetArr
-		productEntry.APIDocURL = apiDocURL
+		productEntry.CriteriaMet = criteriaMetArr
+		productEntry.APIDocumentation = apiDocURLArr
+		productEntry.Developer = developerName
 
 		
 		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
@@ -229,20 +220,5 @@ func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int
 		}
 	}
 	return false, -1
-}
-
-func getAPIURL(apiDocArr []serviceBaseURL) (string, error) {
-	if len(apiDocArr) == 0 {
-		return "", nil
-	}
-	apiURL := apiDocArr[0].Value
-
-	// check that it's a valid URL
-	_, err := url.ParseRequestURI(apiURL)
-	if err != nil {
-		return "", err
-	}
-
-	return apiURL, nil
 }
 

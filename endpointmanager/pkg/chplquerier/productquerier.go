@@ -95,6 +95,39 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	return nil
 }
 
+// GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
+// within the given context 'ctx'.
+func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
+	
+	var prodList []chplCertifiedProduct
+	var CHPLProductList chplCertifiedProductList
+
+	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
+	// Get CHPL Endpoint list stored in Lantern resources folder
+	path := filepath.Join("../../../resources/prod_resources/", "CHPLProductsInfo.json")
+	CHPLFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Debug("Converting product information into list of chplCertifiedProducts")
+	err = json.Unmarshal(CHPLFile, &prodList)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	CHPLProductList.Results = prodList
+	CHPLProductList.RecordCount = len(prodList)
+
+	log.Debug("persisting chpl products")
+	err = persistProducts(ctx, store, &CHPLProductList)
+	if err != nil {
+		return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+	}
+	log.Debug("done persisting chpl products")
+	return nil
+}
+
 // makes the request to CHPL and returns the byte string
 func getProductJSON(ctx context.Context, client *http.Client, userAgent string, pageSize int, pageNumber int) ([]byte, error) {
 	chplURL, err := makeCHPLProductURL(pageSize, pageNumber)
