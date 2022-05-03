@@ -11,9 +11,9 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 )
 
-type softwareInfo struct {
+type SoftwareInfo struct {
 	ListSourceURL		string `json:"listSourceURL"`
-    SoftwareProducts 	[]chplquerier.ChplCertifiedProduct `json:"softwareProduct"`
+    SoftwareProducts 	[]chplquerier.ChplCertifiedProduct `json:"softwareProducts"`
 }
 
 type endpointEntry struct {
@@ -58,7 +58,7 @@ type CHPLEndpointEntry struct {
 
 func FetchCHPLEndpointListProducts(chplURL string, fileToWriteToCHPLList string, fileToWriteToSoftwareInfo string) {
 	var endpointEntryList []endpointEntry
-	var softwareInfoList []softwareInfo
+	var softwareInfoList []SoftwareInfo
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", chplURL, nil)
@@ -212,7 +212,7 @@ func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 	return false
 }
 
-func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int) {
+func containsSoftware(softwareProductList []SoftwareInfo, url string) (bool, int) {
 	for index, e := range softwareProductList {
 		if e.ListSourceURL == url {
 			return true, index

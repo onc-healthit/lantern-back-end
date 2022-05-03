@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strconv"
 	"time"
-	"path/filepath"
 	"io/ioutil"
 
 	"github.com/pkg/errors"
@@ -19,6 +18,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplpopulator"
 )
 
 var chplAPICertProdListPath string = "/search/v2"
@@ -101,31 +101,37 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
 	
-	var prodList []ChplCertifiedProduct
-	var CHPLProductList chplCertifiedProductList
+	var CHPLEndpointListProducts []chplpopulator.SoftwareInfo
 
 	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
 	// Get CHPL Endpoint list stored in Lantern resources folder
-	path := filepath.Join("../../../resources/prod_resources/", "CHPLProductsInfo.json")
-	CHPLFile, err := ioutil.ReadFile(path)
+	CHPLFile, err := ioutil.ReadFile("/etc/lantern/resources/CHPLProductsInfo.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.Debug("Converting product information into list of chplCertifiedProducts")
-	err = json.Unmarshal(CHPLFile, &prodList)
+	err = json.Unmarshal(CHPLFile, &CHPLEndpointListProducts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	CHPLProductList.Results = prodList
-	CHPLProductList.RecordCount = len(prodList)
+	for _, listSourceEntry := range CHPLEndpointListProducts {
+		var prodList []ChplCertifiedProduct
+		var CHPLProductList chplCertifiedProductList
 
-	log.Debug("persisting chpl products")
-	err = persistProducts(ctx, store, &CHPLProductList)
-	if err != nil {
-		return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+		prodList = listSourceEntry.softwareProducts
+
+		CHPLProductList.Results = prodList
+		CHPLProductList.RecordCount = len(prodList)
+
+		log.Debug("persisting chpl products")
+		err = persistProducts(ctx, store, &CHPLProductList)
+		if err != nil {
+			return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+		}
 	}
+
 	log.Debug("done persisting chpl products")
 	return nil
 }
