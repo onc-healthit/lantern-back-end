@@ -234,7 +234,7 @@ func Test_persistProducts(t *testing.T) {
 	prod2 := testCHPLProd
 	prod2.Product = details{Id: 1, Name: "another prod"}
 
-	prodList := chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
+	prodList := chplCertifiedProductList{Results: []ChplCertifiedProduct{prod1, prod2}}
 
 	err = persistProducts(ctx, store, &prodList)
 	th.Assert(t, err == nil, err)

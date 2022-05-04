@@ -340,7 +340,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 
 	expectedProd1 := testCHPLProd
 
-	expectedProd2 := chplCertifiedProduct{
+	expectedProd2 := ChplCertifiedProduct{
 		ID:                  7850,
 		ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160703",
 		Edition:             details{Id: 1, Name: "2014"},
@@ -355,7 +355,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 	}
 
 	expectedProdList := chplCertifiedProductList{
-		Results: []chplCertifiedProduct{expectedProd1, expectedProd2},
+		Results: []ChplCertifiedProduct{expectedProd1, expectedProd2},
 	}
 
 	ctx = context.Background()
