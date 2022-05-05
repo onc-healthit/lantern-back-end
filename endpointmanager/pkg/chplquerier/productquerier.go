@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
 	"time"
-	"io/ioutil"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -23,8 +23,8 @@ import (
 var chplAPICertProdListPath string = "/search/v2"
 
 type chplEndpointListProductInfo struct {
-	ListSourceURL		string `json:"listSourceURL"`
-	SoftwareProducts 	[]ChplCertifiedProduct `json:"softwareProducts"`
+	ListSourceURL    string                 `json:"listSourceURL"`
+	SoftwareProducts []ChplCertifiedProduct `json:"softwareProducts"`
 }
 
 type chplCertifiedProductList struct {
@@ -104,7 +104,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 // GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
-	
+
 	var CHPLEndpointListProducts []chplEndpointListProductInfo
 
 	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")

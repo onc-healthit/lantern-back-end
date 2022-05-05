@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	http "net/http"
+	"os"
 	"strings"
 	"time"
-	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
+	log "github.com/sirupsen/logrus"
 )
 
 type softwareInfo struct {
-	ListSourceURL		string `json:"listSourceURL"`
-    SoftwareProducts 	[]chplquerier.ChplCertifiedProduct `json:"softwareProducts"`
+	ListSourceURL    string                             `json:"listSourceURL"`
+	SoftwareProducts []chplquerier.ChplCertifiedProduct `json:"softwareProducts"`
 }
 
 type endpointEntry struct {
@@ -25,19 +25,19 @@ type endpointEntry struct {
 }
 
 type details struct {
-	ID  int `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type certCriteria struct {
-	ID  int `json:"id"`
+	ID     int    `json:"id"`
 	Number string `json:"number"`
-	Title string `json:"title"`
+	Title  string `json:"title"`
 }
 
 type serviceBaseURL struct {
 	Criterion certCriteria `json:"criterion"`
-	Value string `json:"value"`
+	Value     string       `json:"value"`
 }
 
 type CHPLEndpointList struct {
@@ -45,16 +45,16 @@ type CHPLEndpointList struct {
 }
 
 type CHPLEndpointEntry struct {
-	Developer details `json:"developer"`
-	Product details `json:"product"`
-	Version details `json:"version"`
+	Developer           details `json:"developer"`
+	Product             details `json:"product"`
+	Version             details `json:"version"`
 	CertificationStatus details `json:"certificationStatus"`
-	CertificationDate string
-	Edition		details `json:"edition"`
-	CHPLProductNumber string `json:"chplProductNumber"`
-	CriteriaMet []certCriteria `json:"criteriaMet"`
-	ServiceBaseUrlList serviceBaseURL `json:"serviceBaseUrlList"`
-	APIDocumentation []serviceBaseURL  `json:"apiDocumentation"`
+	CertificationDate   string
+	Edition             details          `json:"edition"`
+	CHPLProductNumber   string           `json:"chplProductNumber"`
+	CriteriaMet         []certCriteria   `json:"criteriaMet"`
+	ServiceBaseUrlList  serviceBaseURL   `json:"serviceBaseUrlList"`
+	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
 }
 
 func main() {
@@ -112,11 +112,11 @@ func main() {
 
 		productName := chplEntry.Product.Name
 		productName = strings.TrimSpace(productName)
-		
-		productVersion  := chplEntry.Version.Name
+
+		productVersion := chplEntry.Version.Name
 		productVersion = strings.TrimSpace(productVersion)
 
-		productCertStatus  := chplEntry.CertificationStatus.Name
+		productCertStatus := chplEntry.CertificationStatus.Name
 		productCertStatus = strings.TrimSpace(productCertStatus)
 
 		productEdition := chplEntry.Edition.Name
@@ -134,7 +134,7 @@ func main() {
 		}
 
 		var apiDocURLArr []string
-		for _, apiURLEntry := range chplEntry.APIDocumentation{
+		for _, apiURLEntry := range chplEntry.APIDocumentation {
 			apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
 		}
 
@@ -155,9 +155,8 @@ func main() {
 		productEntry.APIDocumentation = apiDocURLArr
 		productEntry.Developer = developerName
 
-		
 		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
-		if (!softwareContained) {
+		if !softwareContained {
 			var softwareInfoEntry softwareInfo
 			softwareInfoEntry.ListSourceURL = urlString
 			softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
@@ -165,7 +164,6 @@ func main() {
 		} else {
 			softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
 		}
-
 
 		if !containsEndpoint(endpointEntryList, urlString) {
 
@@ -233,4 +231,3 @@ func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int
 	}
 	return false, -1
 }
-
