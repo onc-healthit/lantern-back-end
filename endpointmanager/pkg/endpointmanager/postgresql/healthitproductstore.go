@@ -243,9 +243,12 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID string) ([]int, error) {
 	var retProductIDs []int
 
-	row := getHealthITProductByMapID.QueryContext(ctx, mapID)
+	rows, err := getHealthITProductByMapID.QueryContext(ctx, mapID)
+	if err != nil {
+		return retProductIDs, err
+	}
 
-	err := row.Scan(&retProductIDs)
+	err = rows.Scan(&retProductIDs)
 
 	return retProductIDs, err
 }
