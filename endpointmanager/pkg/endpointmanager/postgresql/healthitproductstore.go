@@ -240,7 +240,7 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 }
 
 // GetHealthITProductIDByCHPLID gets the HealthITProduct db ID with the HealthIT mapping table ID
-func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID string) ([]int, error) {
+func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID int) ([]int, error) {
 	var retProductIDs []int
 
 	rows, err := getHealthITProductByMapID.QueryContext(ctx, mapID)

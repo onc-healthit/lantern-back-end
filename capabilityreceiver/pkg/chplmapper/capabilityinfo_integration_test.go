@@ -192,7 +192,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	actualHealthITProductID := store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
 	// healthIT product with ID healthITProductID should have matched
-	th.Assert(t, actualHealthITProductID == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductID))
+	th.Assert(t, actualHealthITProductID[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductID))
 
 }
 
