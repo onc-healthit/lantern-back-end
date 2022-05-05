@@ -255,7 +255,7 @@ func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID int) ([]i
 		if err != nil {
 			return retProductIDs, err
 		}
-		retProductIDs = append(healthITProductID, healthITProductID)
+		retProductIDs = append(retProductIDs, healthITProductID)
 	}
 
 	return retProductIDs, err
