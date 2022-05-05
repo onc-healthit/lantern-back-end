@@ -19,6 +19,7 @@ var getHealthITProductIDByCHPLID *sql.Stmt
 var getHealthITProductUsingNameAndVersion *sql.Stmt
 var addHealthITProductMapStatement *sql.Stmt
 var addHealthITProductMapStatementNoID *sql.Stmt
+var getHealthITProductByMapID *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -238,6 +239,17 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 	return retProductID, err
 }
 
+// GetHealthITProductIDByCHPLID gets the HealthITProduct db ID with the HealthIT mapping table ID
+func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID string) ([]int, error) {
+	var retProductIDs []int
+
+	row := getHealthITProductByMapID.QueryContext(ctx, mapID)
+
+	err := row.Scan(&retProductIDs)
+
+	return retProductIDs, err
+}
+
 // AddHealthITProductMap creates a new ID for all the healthit products for a particular endpoint and returns it
 func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
 	var err error
@@ -379,6 +391,13 @@ func prepareHealthITProductStatements(s *Store) error {
 	INSERT INTO healthit_products_map (healthit_product_id)
 	VALUES ($1)
 	RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	getHealthITProductByMapID, err = s.DB.Prepare(`
+	SELECT healthit_product_id
+		FROM healthit_products_map
+	WHERE id=$1;`)
 	if err != nil {
 		return err
 	}
