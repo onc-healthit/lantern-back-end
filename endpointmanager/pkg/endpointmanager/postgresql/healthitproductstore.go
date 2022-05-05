@@ -264,12 +264,11 @@ func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID int) ([]i
 // AddHealthITProductMap creates a new ID for all the healthit products for a particular endpoint and returns it
 func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
 	var err error
-	var healthITMapID string
 	var softwareMapRow *sql.Row
 	if id == 0 {
 		softwareMapRow = addHealthITProductMapStatementNoID.QueryRowContext(ctx, healthITProductID)
 	} else {
-		softwareMapRow = addHealthITProductMapStatement.QueryRowContext(ctx, healthITMapID, healthITProductID)
+		softwareMapRow = addHealthITProductMapStatement.QueryRowContext(ctx, id, healthITProductID)
 	}
 	softwareMapID := 0
 	err = softwareMapRow.Scan(&softwareMapID)
