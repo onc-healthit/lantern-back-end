@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
@@ -19,6 +18,7 @@ var linkProductToCriteriaStatement *sql.Stmt
 var getHealthITProductIDByCHPLID *sql.Stmt
 var getHealthITProductUsingNameAndVersion *sql.Stmt
 var addHealthITProductMapStatement *sql.Stmt
+var addHealthITProductMapStatementNoID *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -242,13 +242,12 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
 	var err error
 	var healthITMapID string
+	var softwareMapRow *sql.Row
 	if id == 0 {
-		healthITMapID = "DEFAULT"
+		softwareMapRow = addHealthITProductMapStatementNoID.QueryRowContext(ctx, healthITProductID)
 	} else {
-		healthITMapID = strconv.Itoa(id)
+		softwareMapRow = addHealthITProductMapStatement.QueryRowContext(ctx, healthITMapID, healthITProductID)
 	}
-
-	softwareMapRow := addHealthITProductMapStatement.QueryRowContext(ctx, healthITMapID, healthITProductID)
 	softwareMapID := 0
 	err = softwareMapRow.Scan(&softwareMapID)
 
@@ -373,6 +372,13 @@ func prepareHealthITProductStatements(s *Store) error {
 		INSERT INTO healthit_products_map (id, healthit_product_id)
 		VALUES ($1, $2)
 		RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	addHealthITProductMapStatementNoID, err = s.DB.Prepare(`
+	INSERT INTO healthit_products_map (healthit_product_id)
+	VALUES ($1)
+	RETURNING id;`)
 	if err != nil {
 		return err
 	}
