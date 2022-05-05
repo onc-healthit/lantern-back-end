@@ -190,9 +190,38 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
 	th.Assert(t, err == nil, err)
-	actualHealthITProductID := store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
+	actualHealthITProductIDs, err := store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
+	th.Assert(t, err == nil, err)
 	// healthIT product with ID healthITProductID should have matched
-	th.Assert(t, actualHealthITProductID[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductID))
+	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs[0]))
+
+	// capability statement
+	path = filepath.Join("../../testdata", "advantagecare_physicians_stu3.json")
+	csJSON, err = ioutil.ReadFile(path)
+	th.Assert(t, err == nil, err)
+	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
+	th.Assert(t, err == nil, err)
+
+	var hitp5 = &endpointmanager.HealthITProduct{
+		Name:                 "Epic",
+		Version:              "February 2021",
+		APISyntax:            "FHIR DSTU3",
+		CHPLID:               "FakeCHPLID",
+		CertificationEdition: "2014"}
+
+	err = store.AddHealthITProduct(ctx, hitp5)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	epInfo.CapabilityStatement = cs
+
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	th.Assert(t, err == nil, err)
+	actualHealthITProductIDs, err = store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
+
 
 }
 
