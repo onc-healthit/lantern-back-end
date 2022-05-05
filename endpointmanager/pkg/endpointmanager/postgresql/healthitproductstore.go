@@ -242,13 +242,21 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 // GetHealthITProductIDByCHPLID gets the HealthITProduct db ID with the HealthIT mapping table ID
 func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID int) ([]int, error) {
 	var retProductIDs []int
+	var healthITProductID int
 
 	rows, err := getHealthITProductByMapID.QueryContext(ctx, mapID)
 	if err != nil {
 		return retProductIDs, err
 	}
+	defer rows.Close()
 
-	err = rows.Scan(&retProductIDs)
+	for rows.Next() {
+		err = rows.Scan(&healthITProductID)
+		if err != nil {
+			return retProductIDs, err
+		}
+		retProductIDs = append(healthITProductID, healthITProductID)
+	}
 
 	return retProductIDs, err
 }
