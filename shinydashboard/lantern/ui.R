@@ -1,6 +1,5 @@
 # Define base user interface
 ui <- dashboardPage(
-
   dashboardHeader(
     title = "Lantern Dashboard",
     titleWidth = 200,
@@ -26,18 +25,44 @@ ui <- dashboardPage(
       menuItem("Values", icon = icon("table"), tabName = "values_tab"),
       menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
-      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeLabel = "new", badgeColor = "green"),
+      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeLabel = "new"),
       menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
       menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
       menuItem("Location", tabName = "location_tab", icon = icon("map")),
       menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
-      style = "white-space: normal",
-      hr()
+      style = "white-space: normal"
     )
   ),
 
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
+    tags$head(tags$style(HTML('
+      .skin-blue .main-header .navbar {
+        background-color: #1B5A7F;
+      }
+      .skin-blue .main-header .logo {
+        background-color: #1B5A7F;
+      }
+      .small-box {
+        color: black!important;
+      }
+      .badge {
+        color: black!important;
+      }
+      .NA {
+        color: #696464!important;
+      }
+      .lantern-url {
+        color: #0044FF!important;
+        text-decoration: underline;
+      }
+      .small-box p {
+        font-size: 20px;
+      }
+      .sidebar-menu {
+         border-bottom: 1px solid white;
+      }
+    '))),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
     h1(textOutput("page_title")),
@@ -89,10 +114,13 @@ ui <- dashboardPage(
       tabItem("about_tab",
               img(src = "images/lantern-logo@1x.png", width = "300px"),
               br(),
-              includeHTML("about-lantern.html"),
-              p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
+              div(
+                class = "footer",
+                includeHTML("about-lantern.html"),
+                p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
                 a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank"))
               )
+        )
     ),
     div(class = "footer",
       includeHTML("disclaimer.html")

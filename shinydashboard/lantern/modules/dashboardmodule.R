@@ -16,13 +16,13 @@ dashboard_UI <- function(id) {
       infoBoxOutput(ns("indexed_endpoints_box"), width = 4),
       infoBoxOutput(ns("nonindexed_endpoints_box"), width = 4)
     ),
-    p("Current endpoint responses:"),
+    h2("Current endpoint responses:"),
     fluidRow(
       valueBoxOutput(ns("http_200_box")),
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
-    h3("Endpoint Counts by Developer and FHIR Version"),
+    h2("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       column(width = 4,
              tableOutput(ns("fhir_vendor_table"))
