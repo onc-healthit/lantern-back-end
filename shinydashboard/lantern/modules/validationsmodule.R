@@ -24,7 +24,10 @@ validationsmodule_UI <- function(id) {
     ),
     fluidRow(
       column(width = 12,
-        p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference")
+        p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference"),
+        p("*Note: The messagingEndptRule is not broken, there is an issue with the Capability Statement invariant ", a("(cpb-3).", href = "http://hl7.org/fhir/capabilitystatement.html#invs", target = "_blank"),
+        "The invarient states that the Messaging endpoint has to be present when the kind is 'instance', and Messaging endpoint cannot be present when kind is NOT 'instance', but the FHIRPath expression is \"messaging.endpoint.empty() or kind = 'instance'\", which
+         is not consistent with the expectation for the invariant and will not properly evaluate the conditions required.")
       )
     ),
     # Row for validation rules table and validation failure chart
@@ -39,10 +42,7 @@ validationsmodule_UI <- function(id) {
         htmlOutput(ns("anchorpoint")),
         htmlOutput(ns("failure_table_subtitle")),
         reactable::reactableOutput(ns("validation_failure_table")),
-        p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement."),
-        p("*Note: The messagingEndptRule is not broken, there is an issue with the Capability Statement invarient ", a("(cpb-3).", href = "http://hl7.org/fhir/capabilitystatement.html#invs", target = "_blank"),
-        "The invarient states that the Messaging endpoint has to be present when the kind is 'instance', and Messaging endpoint cannot be present when kind is NOT 'instance', but the FHIRPath expression is \"messaging.endpoint.empty() or kind = 'instance'\", which
-         is not consistent with the expectation for the invariant and will not properly evaluate the conditions required.")
+        p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement.")
       )
     )
   )

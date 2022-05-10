@@ -120,7 +120,12 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
+  smartPageSizeNum <- reactiveVal(NULL)
+  
   selected_endpoints <- reactive({
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    } 
     res <- isolate(app_data$well_known_endpoints_tbl())
     res <- get_filtered_data(res) %>%
     select(url, organization_names, vendor_name, capability_fhir_version)
@@ -132,8 +137,16 @@ smartresponsemodule <- function(
               colnames = c("URL", "Organization", "Developer", "FHIR Version"),
               selection = "none",
               rownames = FALSE,
-              options = list(scrollX = TRUE)
+              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(smartPageSizeNum()))
     )
+  })
+
+  observeEvent(input$well_known_endpoints_state$length, {
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    } 
+    page <- input$well_known_endpoints_state$length
+    smartPageSizeNum(page)
   })
 
 }

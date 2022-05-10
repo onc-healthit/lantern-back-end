@@ -41,7 +41,12 @@ securitymodule <- function(
     isolate(app_data$endpoint_security_counts())
   )
 
+  securityPageSizeNum <- reactiveVal(NULL)
+
   selected_endpoints <- reactive({
+    if (is.null(securityPageSizeNum())) {
+      securityPageSizeNum(10)
+    } 
     res <- isolate(app_data$security_endpoints_tbl())
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
@@ -59,7 +64,13 @@ securitymodule <- function(
               colnames = c("URL", "Organization", "Developer", "FHIR Version", "TLS Version", "Authorization"),
               selection = "none",
               rownames = FALSE,
-              options = list(scrollX = TRUE)
+              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(securityPageSizeNum()))
     )
   })
+
+  observeEvent(input$security_endpoints_state$length, {
+    page <- input$security_endpoints_state$length
+    securityPageSizeNum(page)
+  })
+
 }
