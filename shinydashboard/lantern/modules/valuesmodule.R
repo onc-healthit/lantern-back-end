@@ -91,11 +91,11 @@ valuesmodule <- function(
   })
 
   capstatPageSizeNum <- reactiveVal(NULL)
-  
+
   capstat_values_list <- reactive({
     if (is.null(capstatPageSizeNum())) {
       capstatPageSizeNum(10)
-    } 
+    }
     get_capstat_values_list(selected_fhir_endpoints())
   })
 

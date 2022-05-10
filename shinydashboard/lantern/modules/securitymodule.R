@@ -46,7 +46,7 @@ securitymodule <- function(
   selected_endpoints <- reactive({
     if (is.null(securityPageSizeNum())) {
       securityPageSizeNum(10)
-    } 
+    }
     res <- isolate(app_data$security_endpoints_tbl())
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
