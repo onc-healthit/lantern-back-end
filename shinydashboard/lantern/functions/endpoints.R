@@ -411,7 +411,10 @@ get_security_endpoints_tbl <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
+    mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
+    mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
+    mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
 }
 
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
@@ -463,7 +466,10 @@ get_well_known_endpoints_tbl <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
+    mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
+    mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
+    mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
 }
 
 # Find any endpoints which have returned a smart_http_response of 200
