@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"sort"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -252,6 +251,10 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1bf2b109 (CHPL endpoint beta to v2 (#274))
 	return apiURL, nil
 }
 
