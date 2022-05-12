@@ -10,6 +10,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 )
 
 // GetEnptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
@@ -56,6 +58,12 @@ func GetEnptsAndSend(
 				errs <- err
 			}
 		}
+		historypruning.PruneInfoHistory(ctx, store, true)
+		err := jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
+		if err != nil {
+			errs <- err
+		}
+
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
 }
