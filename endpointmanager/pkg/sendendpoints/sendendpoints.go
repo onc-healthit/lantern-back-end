@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 )
 
 // GetEnptsAndSend gets the current list of endpoints from the database and sends each one to the given queue
