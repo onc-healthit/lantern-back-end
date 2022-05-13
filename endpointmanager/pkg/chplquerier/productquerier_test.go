@@ -19,81 +19,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var criteriaMetArr []criteriaMet = []criteriaMet{
-	{
-		Id:     30,
-		Number: "170.315 (d)(10)",
-		Title:  "Auditing Actions on Health Information",
-	},
-	{
-		Id:     31,
-		Number: "170.315 (g)(5)",
-		Title:  "Accessibility-Centered Design",
-	},
-	{
-		Id:     32,
-		Number: "170.315 (d)(9)",
-		Title:  "Trusted Connection",
-	},
-	{
-		Id:     33,
-		Number: "170.315 (d)(1)",
-		Title:  "Authentication, Access Control, Authorization",
-	},
-	{
-		Id:     34,
-		Number: "170.315 (g)(4)",
-		Title:  "Quality Management System",
-	},
-	{
-		Id:     35,
-		Number: "170.315 (g)(8)",
-		Title:  "Application Access - Data Category Request",
-	},
-	{
-		Id:     36,
-		Number: "170.315 (g)(6)",
-		Title:  "Consolidated CDA Creation",
-	},
-	{
-		Id:     37,
-		Number: "170.315 (g)(7)",
-		Title:  "Application Access - Patient Selection",
-	},
-	{
-		Id:     38,
-		Number: "170.315 (g)(9)",
-		Title:  "Application Access - All Data Request",
-	},
-}
-
-var apiDocArr []apiDocumentation = []apiDocumentation{
-	{
-		Criterion: criteriaMet{
-			Id:     58,
-			Number: "170.315 (g)(9)",
-			Title:  "Application Access - All Data Request",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-	{
-		Criterion: criteriaMet{
-			Id:     57,
-			Number: "170.315 (g)(8)",
-			Title:  "Application Access - Data Category Request",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-	{
-		Criterion: criteriaMet{
-			Id:     56,
-			Number: "170.315 (g)(7)",
-			Title:  "Application Access - Patient Selection",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-}
-
 var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	ID:                  7849,
 	ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160701",
@@ -128,7 +53,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expected := "https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100"
 	pageSize := 100
 	pageNumber := 0
 
@@ -396,57 +321,23 @@ func Test_getAPIURL(t *testing.T) {
 
 	// basic test
 
-	apiDocArray := []apiDocumentation{
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-	}
+	apiDocArray := []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	expectedURL := "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 
 	actualURL, err := getAPIURL(apiDocArray)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedURL == actualURL, fmt.Sprintf("Expected '%s'. Got '%s'.", expectedURL, actualURL))
 
-	// provide bad string - invalid URL
+	// provide bad string - unexpected delimeter
 
-	apiDocArray = []apiDocumentation{
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: ".com/Carefluence-OpenAPI-Documentation.html",
-		},
-	}
+	apiDocArray = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 
 	_, err = getAPIURL(apiDocArray)
-	th.Assert(t, err != nil, "Expected error since the URL in the health IT product API documentation string is not valid")
+	th.Assert(t, err != nil, "Expected error due to malformed api doc string")
 
 	// provide empty array
 
-	apiDocArray = []apiDocumentation{}
+	apiDocArray = []string{}
 	expectedURL = ""
 
 	actualURL, err = getAPIURL(apiDocArray)
@@ -608,7 +499,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
