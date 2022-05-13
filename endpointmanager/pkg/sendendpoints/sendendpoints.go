@@ -58,8 +58,10 @@ func GetEnptsAndSend(
 				errs <- err
 			}
 		}
+		// Wait 1 second for every endpoint to ensure querier is done before starting history pruning and json export
+		time.Sleep(time.Duration(time.Duration(len(listOfEndpoints)) * time.Second))
 		historypruning.PruneInfoHistory(ctx, store, true)
-		err := jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
+		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		if err != nil {
 			errs <- err
 		}
