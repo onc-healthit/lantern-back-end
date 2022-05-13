@@ -612,7 +612,7 @@ get_validation_results <- function(db_connection) {
 
 get_endpoint_list_matches <- function() {
     el <- endpoint_export_tbl %>%
-          unnest(endpoint_names) %>%
+          separate_rows(endpoint_names, sep=";") %>%
           select(url, endpoint_names, fhir_version, vendor_name) %>%
           rename(organization_name = endpoint_names) %>%
           tidyr::replace_na(list(organization_name = "Unknown"))
