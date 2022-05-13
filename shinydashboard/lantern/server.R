@@ -130,7 +130,7 @@ function(input, output, session) { #nolint
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads Page",
      "resource_tab" = "Resource Page",
-     "implementation_tab" = "Implmentation Page",
+     "implementation_tab" = "Implementation Page",
      "fields_tab" = "Fields Page",
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
