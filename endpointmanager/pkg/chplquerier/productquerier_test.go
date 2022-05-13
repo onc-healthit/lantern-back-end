@@ -19,92 +19,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-var criteriaMetArr []criteriaMet = []criteriaMet{
-	{
-		Id:     30,
-		Number: "170.315 (d)(10)",
-		Title:  "Auditing Actions on Health Information",
-	},
-	{
-		Id:     31,
-		Number: "170.315 (g)(5)",
-		Title:  "Accessibility-Centered Design",
-	},
-	{
-		Id:     32,
-		Number: "170.315 (d)(9)",
-		Title:  "Trusted Connection",
-	},
-	{
-		Id:     33,
-		Number: "170.315 (d)(1)",
-		Title:  "Authentication, Access Control, Authorization",
-	},
-	{
-		Id:     34,
-		Number: "170.315 (g)(4)",
-		Title:  "Quality Management System",
-	},
-	{
-		Id:     35,
-		Number: "170.315 (g)(8)",
-		Title:  "Application Access - Data Category Request",
-	},
-	{
-		Id:     36,
-		Number: "170.315 (g)(6)",
-		Title:  "Consolidated CDA Creation",
-	},
-	{
-		Id:     37,
-		Number: "170.315 (g)(7)",
-		Title:  "Application Access - Patient Selection",
-	},
-	{
-		Id:     38,
-		Number: "170.315 (g)(9)",
-		Title:  "Application Access - All Data Request",
-	},
-}
-
-var apiDocArr []apiDocumentation = []apiDocumentation{
-	{
-		Criterion: criteriaMet{
-			Id:     58,
-			Number: "170.315 (g)(9)",
-			Title:  "Application Access - All Data Request",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-	{
-		Criterion: criteriaMet{
-			Id:     57,
-			Number: "170.315 (g)(8)",
-			Title:  "Application Access - Data Category Request",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-	{
-		Criterion: criteriaMet{
-			Id:     56,
-			Number: "170.315 (g)(7)",
-			Title:  "Application Access - Patient Selection",
-		},
-		Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-	},
-}
-
 var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	ID:                  7849,
 	ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160701",
-	Edition:             details{Id: 1, Name: "2014"},
-	Developer:           details{Id: 1, Name: "Carefluence"},
-	Product:             details{Id: 1, Name: "Carefluence Open API"},
-	Version:             details{Id: 1, Name: "1"},
-	CertificationDate:   "2016-07-01",
-	CertificationStatus: details{Id: 1, Name: "Active"},
-	CriteriaMet:         criteriaMetArr,
-	APIDocumentation:    apiDocArr,
+	Edition:             "2014",
+	Developer:           "Carefluence",
+	Product:             "Carefluence Open API",
+	Version:             "1",
+	CertificationDate:   1467331200000,
+	CertificationStatus: "Active",
+	CriteriaMet:         []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
+	APIDocumentation:    []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"},
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -126,7 +51,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expected := "https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100"
 	pageSize := 100
 	pageNumber := 0
 
@@ -169,168 +94,26 @@ func Test_convertProductJSONToObj(t *testing.T) {
 		{
 			"id": 7849,
 			"chplProductNumber": "15.04.04.2657.Care.01.00.0.160701",
-			"edition": {"name": "2014", "id": 1},
-			"developer": {"name": "Carefluence", "id": 1},
-			"product": {"name": "Carefluence Open API", "id": 1},
-			"version": {"name": "1", "id": 1},
-			"certificationDate": "2016-07-01",
-			"certificationStatus": {"name": "Active", "id": 1},
-			"criteriaMet": [
-                {
-                    "id": 30,
-                    "number": "170.315 (d)(10)",
-                    "title": "Auditing Actions on Health Information"
-                },
-                {
-                    "id": 31,
-                    "number": "170.315 (g)(5)",
-                    "title": "Accessibility-Centered Design"
-                },
-                {
-                    "id": 32,
-                    "number": "170.315 (d)(9)",
-                    "title": "Trusted Connection"
-                },
-                {
-                    "id": 33,
-                    "number": "170.315 (d)(1)",
-                    "title": "Authentication, Access Control, Authorization"
-                },
-                {
-                    "id": 34,
-                    "number": "170.315 (g)(4)",
-                    "title": "Quality Management System"
-                },
-                {
-                    "id": 35,
-                    "number": "170.315 (g)(8)",
-                    "title": "Application Access - Data Category Request"
-                },
-                {
-                    "id": 36,
-                    "number": "170.315 (g)(6)",
-                    "title": "Consolidated CDA Creation"
-                },
-                {
-                    "id": 37,
-                    "number": "170.315 (g)(7)",
-                    "title": "Application Access - Patient Selection"
-                },
-                {
-                    "id": 38,
-                    "number": "170.315 (g)(9)",
-                    "title": "Application Access - All Data Request"
-                }
-            ],
-			"apiDocumentation": [
-                {
-                    "criterion": {
-                        "id": 58,
-                        "number": "170.315 (g)(9)",
-                        "title": "Application Access - All Data Request"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                },
-                {
-                    "criterion": {
-                        "id": 57,
-                        "number": "170.315 (g)(8)",
-                        "title": "Application Access - Data Category Request"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                },
-                {
-                    "criterion": {
-                        "id": 56,
-                        "number": "170.315 (g)(7)",
-                        "title": "Application Access - Patient Selection"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                }
-            ]
+			"edition": "2014",
+			"developer": "Carefluence",
+			"product": "Carefluence Open API",
+			"version": "1",
+			"certificationDate": 1467331200000,
+			"certificationStatus": "Active",
+			"criteriaMet": [30, 31, 32, 33, 34, 35, 36, 37, 38],
+			"apiDocumentation": ["☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"]
 		},
 		{
 			"id": 7850,
 			"chplProductNumber": "15.04.04.2657.Care.01.00.0.160703",
-			"edition": {"name": "2014", "id": 1},
-			"developer": {"name": "Carefluence", "id": 1},
-			"product": {"name": "Carefluence Open API", "id": 1},
-			"version": {"name": "0.3", "id": 1},
-			"certificationDate": "2016-10-01",
-			"certificationStatus": {"name": "Active", "id": 1},
-			"criteriaMet": [
-                {
-                    "id": 30,
-                    "number": "170.315 (d)(10)",
-                    "title": "Auditing Actions on Health Information"
-                },
-                {
-                    "id": 31,
-                    "number": "170.315 (g)(5)",
-                    "title": "Accessibility-Centered Design"
-                },
-                {
-                    "id": 32,
-                    "number": "170.315 (d)(9)",
-                    "title": "Trusted Connection"
-                },
-                {
-                    "id": 33,
-                    "number": "170.315 (d)(1)",
-                    "title": "Authentication, Access Control, Authorization"
-                },
-                {
-                    "id": 34,
-                    "number": "170.315 (g)(4)",
-                    "title": "Quality Management System"
-                },
-                {
-                    "id": 35,
-                    "number": "170.315 (g)(8)",
-                    "title": "Application Access - Data Category Request"
-                },
-                {
-                    "id": 36,
-                    "number": "170.315 (g)(6)",
-                    "title": "Consolidated CDA Creation"
-                },
-                {
-                    "id": 37,
-                    "number": "170.315 (g)(7)",
-                    "title": "Application Access - Patient Selection"
-                },
-                {
-                    "id": 38,
-                    "number": "170.315 (g)(9)",
-                    "title": "Application Access - All Data Request"
-                }
-            ],
-			"apiDocumentation": [
-                {
-                    "criterion": {
-                        "id": 58,
-                        "number": "170.315 (g)(9)",
-                        "title": "Application Access - All Data Request"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                },
-                {
-                    "criterion": {
-                        "id": 57,
-                        "number": "170.315 (g)(8)",
-                        "title": "Application Access - Data Category Request"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                },
-                {
-                    "criterion": {
-                        "id": 56,
-                        "number": "170.315 (g)(7)",
-                        "title": "Application Access - Patient Selection"
-                    },
-                    "value": "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
-                }
-            ]
+			"edition": "2014",
+			"developer": "Carefluence",
+			"product": "Carefluence Open API",
+			"version": "0.3",
+			"certificationDate": 1467320000000,
+			"certificationStatus": "Active",
+			"criteriaMet": [30, 31, 32, 33, 34, 35, 36, 37, 38],
+			"apiDocumentation": ["☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"]
 		}]}
 		`
 
@@ -339,14 +122,14 @@ func Test_convertProductJSONToObj(t *testing.T) {
 	expectedProd2 := chplCertifiedProduct{
 		ID:                  7850,
 		ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160703",
-		Edition:             details{Id: 1, Name: "2014"},
-		Developer:           details{Id: 1, Name: "Carefluence"},
-		Product:             details{Id: 1, Name: "Carefluence Open API"},
-		Version:             details{Id: 1, Name: "0.3"},
-		CertificationDate:   "2016-10-01",
-		CertificationStatus: details{Id: 1, Name: "Active"},
-		CriteriaMet:         criteriaMetArr,
-		APIDocumentation:    apiDocArr,
+		Edition:             "2014",
+		Developer:           "Carefluence",
+		Product:             "Carefluence Open API",
+		Version:             "0.3",
+		CertificationDate:   1467320000000,
+		CertificationStatus: "Active",
+		CriteriaMet:         []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
+		APIDocumentation:    []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"},
 	}
 
 	expectedProdList := chplCertifiedProductList{
@@ -391,57 +174,23 @@ func Test_getAPIURL(t *testing.T) {
 
 	// basic test
 
-	apiDocArray := []apiDocumentation{
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
-		},
-	}
+	apiDocArray := []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
 	expectedURL := "http://carefluence.com/Carefluence-OpenAPI-Documentation.html"
 
 	actualURL, err := getAPIURL(apiDocArray)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedURL == actualURL, fmt.Sprintf("Expected '%s'. Got '%s'.", expectedURL, actualURL))
 
-	// provide bad string - invalid URL
+	// provide bad string - unexpected delimeter
 
-	apiDocArray = []apiDocumentation{
-		{
-			Criterion: criteriaMet{
-				Id:     1,
-				Number: "170.315 (g)(7)",
-				Title:  "Application Access - Patient Selection",
-			},
-			Value: ".com/Carefluence-OpenAPI-Documentation.html",
-		},
-	}
+	apiDocArray = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
 
 	_, err = getAPIURL(apiDocArray)
-	th.Assert(t, err != nil, "Expected error since the URL in the health IT product API documentation string is not valid")
+	th.Assert(t, err != nil, "Expected error due to malformed api doc string")
 
 	// provide empty array
 
-	apiDocArray = []apiDocumentation{}
+	apiDocArray = []string{}
 	expectedURL = ""
 
 	actualURL, err = getAPIURL(apiDocArray)
@@ -583,7 +332,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()
