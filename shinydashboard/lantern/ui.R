@@ -16,20 +16,20 @@ ui <- dashboardPage(
   # Sidebar with menu items for each module
   dashboardSidebar(
     sidebarMenu(id = "side_menu",
-      menuItem("Dashboard", tabName = "dashboard_tab", icon = icon("dashboard")),
-      menuItem("Endpoints", tabName = "endpoints_tab", icon = icon("table")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = icon("download")),
-      menuItem("Capability", icon = icon("list-alt"), tabName = "capability_tab"),
-      menuItem("Implementation Guides", tabName = "implementation_tab", icon = icon("list-alt")),
-      menuItem("CapabilityStatement / Conformance Fields", icon = icon("list-alt"), tabName = "fields_tab"),
-      menuItem("Values", icon = icon("table"), tabName = "values_tab"),
-      menuItem("Performance", icon = icon("bar-chart-o"), tabName = "performance_tab"),
-      menuItem("CapabilityStatement / Conformance Size", icon = icon("hdd-o"), tabName = "capabilitystatementsize_tab"),
-      menuItem("Validations", icon = icon("clipboard-check"), tabName = "validations_tab", badgeLabel = "new"),
-      menuItem("Security", icon = icon("id-card-o"), tabName = "security_tab"),
-      menuItem("SMART Response", icon = icon("list"), tabName = "smartresponse_tab"),
-      menuItem("Location", tabName = "location_tab", icon = icon("map")),
-      menuItem("About Lantern", tabName = "about_tab", icon = icon("info-circle")),
+      menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'dashboard icon')),
+      menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'table icon')),
+      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'download icon')),
+      menuItem("Capability", icon = tags$i(class = "fa fa-list-alt", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'list-alt icon'), tabName = "capability_tab"),
+      menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'list-alt icon')),
+      menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'list-alt icon'), tabName = "fields_tab"),
+      menuItem("Values", icon = tags$i(class = "fa fa-table", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'table icon'), tabName = "values_tab"),
+      menuItem("Performance", icon = tags$i(class = "fa fa-bar-chart-o", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'bar-chart-o icon'), tabName = "performance_tab"),
+      menuItem("CapabilityStatement / Conformance Size", icon = tags$i(class = "fa fa-hdd-o", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'hdd-o icon'), tabName = "capabilitystatementsize_tab"),
+      menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'clipboard-check icon'), tabName = "validations_tab", badgeLabel = "new"),
+      menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'id-card-o icon'), tabName = "security_tab"),
+      menuItem("SMART Response", icon = tags$i(class = "fa fa-list", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'list icon'), tabName = "smartresponse_tab"),
+      menuItem("Location", tabName = "location_tab", icon = tags$i(class = "fa fa-map", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'map icon')),
+      menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'info-circle icon')),
       style = "white-space: normal"
     )
   ),
@@ -62,7 +62,25 @@ ui <- dashboardPage(
       .sidebar-menu {
          border-bottom: 1px solid white;
       }
+      #dashboard_page-show_info {
+        color: black;
+      }
     '))),
+    tags$script(
+      "let elems = document.getElementsByClassName('content-wrapper');
+        elems[0].setAttribute('role', 'main');
+
+        var e = document.getElementById('side_menu');
+
+        var d = document.createElement('li');
+        d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input')
+        d.dataset.value = e.dataset.value;
+
+        e.parentNode.replaceChild(d, e);
+        e.remove();
+        d.id = 'side_menu'
+        "
+    ),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
     h1(textOutput("page_title")),
@@ -122,7 +140,7 @@ ui <- dashboardPage(
               )
         )
     ),
-    div(class = "footer",
+    tags$footer(class = "footer",
       includeHTML("disclaimer.html")
     )
   )
