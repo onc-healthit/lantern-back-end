@@ -8,7 +8,7 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'question-circle icon'), class = "pull-right"),
+    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon"), class = "pull-right"),
     textOutput(ns("last_updated")),
     br(),
     fluidRow(
@@ -83,7 +83,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = tags$i(class = "glyphicon glyphicon-fire", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'fire icon'),
+      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
       color = "blue"
     )
   })
@@ -92,35 +92,35 @@ dashboard <- function(
     infoBox(
       "Indexed Endpoints",
       isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
-      icon =  tags$i(class = "glyphicon glyphicon-flash", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'flash icon'),
+      icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
     )
   })
 
   output$nonindexed_endpoints_box <- renderInfoBox({
     infoBox(
-      "Non-Indexed Endpoints", isolate(app_data$fhir_endpoint_totals()$nonindexed_endpoints), icon = tags$i(class = "fa fa-comment-slash", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'comment-slash icon'),
+      "Non-Indexed Endpoints", isolate(app_data$fhir_endpoint_totals()$nonindexed_endpoints), icon = tags$i(class = "fa fa-comment-slash", "aria-hidden" = "true", role = "presentation", "aria-label" = "comment-slash icon"),
       color = "maroon"
     )
   })
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'thumbs-up icon'),
+      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'thumbs-down icon'),
+      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", 'aria-hidden' = 'true', role = 'presentation', 'aria-label' = 'ban-circle icon'),
+      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
       color = "orange"
     )
   })
