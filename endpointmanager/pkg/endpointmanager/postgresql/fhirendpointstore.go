@@ -58,6 +58,31 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 	return endpoints, nil
 }
 
+// GetAllDistinctFHIREndpoints returns a list of all of the fhir endpoints with distinct URLs
+func (s *Store) GetAllDistinctFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
+	sqlStatement := `
+	SELECT
+		DISTINCT url,
+	FROM fhir_endpoints`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+
+	var endpoints []*endpointmanager.FHIREndpoint
+	defer rows.Close()
+	for rows.Next() {
+		var endpoint endpointmanager.FHIREndpoint
+		err = rows.Scan(
+			&endpoint.URL)
+		if err != nil {
+			return nil, err
+		}
+		endpoints = append(endpoints, &endpoint)
+	}
+	return endpoints, nil
+}
+
 // GetFHIREndpoint gets a FHIREndpoint from the database using the database id as a key.
 // If the FHIREndpoint does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetFHIREndpoint(ctx context.Context, id int) (*endpointmanager.FHIREndpoint, error) {
