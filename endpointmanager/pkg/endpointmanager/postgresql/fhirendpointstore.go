@@ -62,7 +62,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 func (s *Store) GetAllDistinctFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
 	sqlStatement := `
 	SELECT
-		DISTINCT url,
+		DISTINCT url
 	FROM fhir_endpoints`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
