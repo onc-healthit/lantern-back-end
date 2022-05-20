@@ -41,7 +41,12 @@ securitymodule <- function(
     isolate(app_data$endpoint_security_counts())
   )
 
+  securityPageSizeNum <- reactiveVal(NULL)
+
   selected_endpoints <- reactive({
+    if (is.null(securityPageSizeNum())) {
+      securityPageSizeNum(10)
+    }
     res <- isolate(app_data$security_endpoints_tbl())
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
@@ -49,16 +54,30 @@ securitymodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
     res <- res %>%
-    filter(code == sel_auth_type_code()) %>%
-    select(url, organization_names, vendor_name, capability_fhir_version, tls_version, code)
+    filter(code == sel_auth_type_code())
+
+    res <- res %>%
+    rowwise() %>%
+    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
+
+    res <- res %>%
+    select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })
 
   output$security_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
               colnames = c("URL", "Organization", "Developer", "FHIR Version", "TLS Version", "Authorization"),
+              selection = "none",
               rownames = FALSE,
-              options = list(scrollX = TRUE)
+              escape = FALSE,
+              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(securityPageSizeNum()))
     )
   })
+
+  observeEvent(input$security_endpoints_state$length, {
+    page <- input$security_endpoints_state$length
+    securityPageSizeNum(page)
+  })
+
 }

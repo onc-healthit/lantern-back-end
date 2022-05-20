@@ -120,19 +120,40 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
+  smartPageSizeNum <- reactiveVal(NULL)
+
   selected_endpoints <- reactive({
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    }
     res <- isolate(app_data$well_known_endpoints_tbl())
-    res <- get_filtered_data(res) %>%
-    select(url, organization_names, vendor_name, capability_fhir_version)
+    res <- get_filtered_data(res)
+
+    res <- res %>%
+    rowwise() %>%
+    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
+
+    res <- res %>%
+    select(url, condensed_organization_names, vendor_name, capability_fhir_version)
     res
   })
 
   output$well_known_endpoints <-  DT::renderDataTable({
     datatable(selected_endpoints(),
               colnames = c("URL", "Organization", "Developer", "FHIR Version"),
+              selection = "none",
               rownames = FALSE,
-              options = list(scrollX = TRUE)
-    )
+              escape = FALSE,
+              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(smartPageSizeNum()))
+    )}
+  )
+
+  observeEvent(input$well_known_endpoints_state$length, {
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    }
+    page <- input$well_known_endpoints_state$length
+    smartPageSizeNum(page)
   })
 
 }

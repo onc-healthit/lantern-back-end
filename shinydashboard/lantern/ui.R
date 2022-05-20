@@ -104,8 +104,6 @@ ui <- dashboardPage(
                 a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank"))
               )
     ),
-    div(class = "footer",
-      includeHTML("disclaimer.html")
-    )
+    uiOutput("htmlFooter")
   )
 )
