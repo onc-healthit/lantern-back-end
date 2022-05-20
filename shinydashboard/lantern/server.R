@@ -138,7 +138,7 @@ function(input, output, session) { #nolint
      "downloads_tab" = "Downloads Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
-     "implementation_tab" = "Implmentation Page",
+     "implementation_tab" = "Implementation Page",
      "fields_tab" = "Fields Page",
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
@@ -205,6 +205,18 @@ function(input, output, session) { #nolint
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]
+  })
+
+  output$htmlFooter <- renderUI({
+    if (input$side_menu %in% c("about_tab")) {
+      div(class = "footer",
+        includeHTML("aboutInfo.html")
+      )
+    } else {
+      div(class = "footer",
+        includeHTML("disclaimer.html")
+      )
+    }
   })
 
   output$page_title <- renderText(page_name())

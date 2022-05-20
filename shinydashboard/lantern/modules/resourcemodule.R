@@ -102,13 +102,24 @@ resourcemodule <- function(  #nolint
     res
   })
 
+  pageSizeNum <- reactiveVal(NULL)
+
+  observe({
+    page <- getReactableState("resource_op_table", "pageSize")
+    pageSizeNum(page)
+  })
+
   select_table_format <- reactive({
+    if (is.null(pageSizeNum())) {
+      pageSizeNum(50)
+    }
     op_table <- select_operations()
     if ("type" %in% colnames(op_table)) {
       op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
   })
+
 
    output$resource_op_table <- reactable::renderReactable({
      reactable(
@@ -130,7 +141,7 @@ resourcemodule <- function(  #nolint
               searchable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = 50,
+              defaultPageSize = isolate(pageSizeNum()),
               showPageSizeOptions = TRUE,
               pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
 

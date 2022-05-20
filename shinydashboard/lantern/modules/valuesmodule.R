@@ -89,15 +89,26 @@ valuesmodule <- function(
     res
   })
 
+  capstatPageSizeNum <- reactiveVal(NULL)
+
   capstat_values_list <- reactive({
+    if (is.null(capstatPageSizeNum())) {
+      capstatPageSizeNum(10)
+    }
     get_capstat_values_list(selected_fhir_endpoints())
   })
 
   output$capstat_values_table <- DT::renderDataTable({
     datatable(capstat_values_list(),
               colnames = c("Developer", "FHIR Version", get_value_table_header(), "Endpoints"),
+              selection = "none",
               rownames = FALSE,
-              options = list(scrollX = TRUE))
+              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(capstatPageSizeNum())))
+  })
+
+  observeEvent(input$capstat_values_table_state$length, {
+    page <- input$capstat_values_table_state$length
+    capstatPageSizeNum(page)
   })
 
   # Group by who has added a value vs who hasn't
