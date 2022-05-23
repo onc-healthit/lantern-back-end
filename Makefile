@@ -62,7 +62,7 @@ migrate_database:
 	docker run --env-file .env -e LANTERN_DBHOST=postgres_migrate --network=lantern-back-end_default migration; docker stop postgres_migrate; docker rm postgres_migrate
 
 history_pruning:
-	cd endpointmanager/cmd/historypruning; go run main.go;
+	docker exec -it --workdir /go/src/app/cmd/historypruning lantern-back-end_endpoint_manager_1 go run main.go
 
 lint:
 	make lint_go || exit $?
@@ -82,7 +82,7 @@ csv_export:
 	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
 
 json_export:
-	cd endpointmanager/cmd/jsonexport; go run main.go $(file)
+	docker exec -it --workdir /go/src/app/cmd/jsonexport lantern-back-end_endpoint_manager_1 go run main.go $(file)
 
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
