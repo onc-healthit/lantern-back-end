@@ -14,9 +14,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/google/go-cmp/cmp"
 )
 
 var chplAPICertProdListPath string = "/search/v2"
@@ -407,10 +407,5 @@ func certificationCriteriaMatch(l1 []int, l2 []int) bool {
 		sort.Ints(out)
 		return out
 	})
-
-	if !cmp.Equal(l1, l2, trans) {
-		return false
-	}
-	
-	return true
+	return cmp.Equal(l1, l2, trans)
 }
