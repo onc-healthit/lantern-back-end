@@ -199,8 +199,6 @@ function(input, output, session) { #nolint
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
 
-  show_organizations_filter <- reactive(input$side_menu %in% c("organizations_tab"))
-
   show_confidence_filter <- reactive(input$side_menu %in% c("organizations_tab") && (input$organization_tabset == "NPI Organizations"))
 
   page_name <- reactive({
@@ -401,60 +399,6 @@ function(input, output, session) { #nolint
 
     return(res)
   })
-
-  get_endpoint_list_organizations_list <- reactive({
-    res <- endpoint_export_tbl
-
-    req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
-
-    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
-    }
-
-    res <- res %>%
-           unnest(endpoint_names) %>%
-           tidyr::replace_na(list(endpoint_names = "Unknown")) %>%
-           distinct(endpoint_names) %>%
-           arrange(endpoint_names) %>%
-           split(.$endpoint_names) %>%
-           purrr::map(~ .$endpoint_names)
-
-
-    return(res)
-})
-
-get_npi_organizations_list <- reactive({
-    res <- endpoint_export_tbl
-
-    req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
-
-    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
-    }
-
-    res <- res %>%
-           tidyr::replace_na(list(organization_name = "Unknown")) %>%
-           distinct(organization_name) %>%
-           arrange(organization_name) %>%
-           split(.$organization_name) %>%
-           purrr::map(~ .$organization_name)
-
-    return(res)
-})
-
-organization_type  <- reactive({
-  if (input$organization_tabset == "NPI Organizations") {
-    res <- get_npi_organizations_list()
-    return(res)
-  } else {
-    res <- get_endpoint_list_organizations_list()
-    return(res)
-  }
-})
 
   #                                          #
   # Display Resource and Operations Checkbox #
