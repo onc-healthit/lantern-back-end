@@ -68,6 +68,9 @@ ui <- dashboardPage(
       #dashboard_page-show_info {
         color: black;
       }
+      .modal-lg {
+        width: fit-content!important;
+      }
     "))),
     tags$script(
       "let elems = document.getElementsByClassName('content-wrapper');

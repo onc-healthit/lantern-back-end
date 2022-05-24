@@ -61,8 +61,8 @@ endpointsmodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names))
-
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url,"</a>"))
     res <- res %>% mutate(availability = availability * 100)
     res
   })
@@ -103,7 +103,8 @@ endpointsmodule <- function(
                                   }"
                             ),
                             sortable = TRUE,
-                            align = "left"),
+                            align = "left",
+                            html = TRUE),
                   endpoint_names = colDef(show = FALSE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),

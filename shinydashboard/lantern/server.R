@@ -1,4 +1,7 @@
 library(shinyWidgets)
+library(reactable)
+library(shinyBS)
+library(listviewer)
 
 # Define server function
 function(input, output, session) { #nolint
@@ -622,6 +625,10 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = "All API Information Source Names",
       p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
+      tabsetPanel(type = "tabs",
+        tabPanel("Bar Graph", uiOutput("resource_full_plot")),
+        tabPanel("Table", reactable::reactableOutput("resource_op_table"))
+      ),
       easyClose = TRUE
   ))
   })
