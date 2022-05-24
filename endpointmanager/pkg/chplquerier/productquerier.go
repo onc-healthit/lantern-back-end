@@ -16,6 +16,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/google/go-cmp/cmp"
 )
 
 var chplAPICertProdListPath string = "/search/v2"
@@ -400,17 +401,16 @@ func linkProductToCriteria(ctx context.Context,
 
 // certificationCriteriaMatch checks if the two certification criteria lists have the same contents regardless of order.
 func certificationCriteriaMatch(l1 []int, l2 []int) bool {
-	// don't care about order
-	a := make([]int, len(l1))
-	b := make([]int, len(l2))
-	copy(a, l1)
-	copy(b, l2)
-	sort.Ints(a)
-	sort.Ints(b)
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
+	// This Transformer sorts a []int.
+	trans := cmp.Transformer("Sort", func(in []int) []int {
+		out := append([]int(nil), in...) // Copy input to avoid mutating it
+		sort.Ints(out)
+		return out
+	})
+
+	if !cmp.Equal(l1, l2, trans) {
+		return false
 	}
+	
 	return true
 }
