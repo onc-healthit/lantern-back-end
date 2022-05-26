@@ -1,6 +1,7 @@
 package endpointmanager
 
 import (
+	"sort"
 	"time"
 
 	"github.com/pkg/errors"
@@ -28,6 +29,7 @@ type HealthITProduct struct {
 	CHPLID                string // the product's unique ID within the CHPL system.
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
+	PracticeType          string
 }
 
 // Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -61,7 +63,14 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp.APIURL != hitp2.APIURL {
 		return false
 	}
-	if !cmp.Equal(hitp.CertificationCriteria, hitp2.CertificationCriteria) {
+
+	// This Transformer sorts a []int.
+	trans := cmp.Transformer("Sort", func(in []int) []int {
+		out := append([]int(nil), in...) // Copy input to avoid mutating it
+		sort.Ints(out)
+		return out
+	})
+	if !cmp.Equal(hitp.CertificationCriteria, hitp2.CertificationCriteria, trans) {
 		return false
 	}
 	if hitp.CertificationStatus != hitp2.CertificationStatus {
@@ -74,6 +83,9 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 		return false
 	}
 	if !hitp.LastModifiedInCHPL.Equal(hitp2.LastModifiedInCHPL) {
+		return false
+	}
+	if hitp.PracticeType != hitp2.PracticeType {
 		return false
 	}
 
@@ -99,6 +111,7 @@ func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	hitp.CertificationEdition = hitp2.CertificationEdition
 	hitp.LastModifiedInCHPL = hitp2.LastModifiedInCHPL
 	hitp.CHPLID = hitp2.CHPLID
+	hitp.PracticeType = hitp2.PracticeType
 
 	return nil
 }

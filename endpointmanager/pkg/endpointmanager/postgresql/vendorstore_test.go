@@ -75,6 +75,13 @@ func Test_PersistVendor(t *testing.T) {
 	if !v2.Equal(cerner) {
 		t.Errorf("retrieved vendor is not equal to saved vendor.")
 	}
+	v3, err := store.GetVendorUsingCHPLID(ctx, cerner.CHPLID)
+	if err != nil {
+		t.Errorf("Error getting vendor: %s", err.Error())
+	}
+	if !v3.Equal(cerner) {
+		t.Errorf("retrieved vendor is not equal to saved vendor.")
+	}
 
 	// update vendor
 
