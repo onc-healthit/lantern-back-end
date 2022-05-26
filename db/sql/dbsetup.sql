@@ -122,6 +122,7 @@ CREATE TABLE healthit_products (
     certification_edition   VARCHAR(500),
     last_modified_in_chpl   DATE,
     chpl_id                 VARCHAR(500),
+    practice_type           VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT healthit_product_info UNIQUE(name, version)

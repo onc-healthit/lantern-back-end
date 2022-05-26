@@ -148,12 +148,15 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
-	// check that ambiguous update throws error
+	// check that practice type does not update
 	prod = testCHPLProd
 	prod.Edition = details{Id: 1, Name: "2015"} // same date as what is in store
-	prod.CertificationStatus = details{Id: 1, Name: "Retired"}
+	prod.PracticeType = details{Id: 1, Name: "New_Practice_Type"}
 	err = persistProduct(ctx, store, &prod)
-	th.Assert(t, err != nil, "expected error updating product")
+	th.Assert(t, err == nil, err)
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "Carefluence Open API", "1")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that error adding to store throws error
 	prod = testCHPLProd

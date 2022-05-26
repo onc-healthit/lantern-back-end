@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
@@ -159,6 +161,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CertificationEdition:  prod.Edition.Name,
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
+		PracticeType:          prod.PracticeType.Name,
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
@@ -203,7 +206,6 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-
 	return apiURL, nil
 }
 
@@ -320,11 +322,6 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
 	}
 
-	if newCertEdition == existingCertEdition && existingDbProd.CertificationDate == newDbProd.CertificationDate {
-		// cert dates are the same. unknown update precedence. throw error and don't perform update.
-		return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
-	}
-
 	// if new prod has more recent cert edition, should update.
 	if newCertEdition > existingCertEdition {
 		return true, nil
@@ -339,8 +336,43 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
-	// cert dates are the same. unknown update precedence. throw error and don't perform update.
-	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	existingCriteriaLength := len(existingDbProd.CertificationCriteria)
+	newCriteriaLength := len(newDbProd.CertificationCriteria)
+
+	// If new criteria list is bigger than old update it, if it is smaller do not update it
+	if newCriteriaLength > existingCriteriaLength {
+		return true, nil
+	} else if newCriteriaLength < existingCriteriaLength {
+		return false, nil
+	}
+
+	// Do not update or throw error if the practice types are not the same
+	if existingDbProd.PracticeType != newDbProd.PracticeType {
+		return false, nil
+	}
+
+	// If the criteria lists are the same length but they are not equal, throw an error
+	if !certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
+		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	}
+
+	// If the new product has a different vendor ID, update it
+	if existingDbProd.VendorID != newDbProd.VendorID {
+		return true, nil
+	}
+
+	// If the new product has a different certification status, update it
+	if existingDbProd.CertificationStatus != newDbProd.CertificationStatus {
+		return true, nil
+	}
+
+	// If the new product has a different API url, update it
+	if existingDbProd.APIURL != newDbProd.APIURL {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
+
 }
 
 // linkProductToCriteria checks whether the product and certification have been linked before, and if not
@@ -365,4 +397,15 @@ func linkProductToCriteria(ctx context.Context,
 		return err
 	}
 	return nil
+}
+
+// certificationCriteriaMatch checks if the two certification criteria lists have the same contents regardless of order.
+func certificationCriteriaMatch(l1 []int, l2 []int) bool {
+	// This Transformer sorts a []int.
+	trans := cmp.Transformer("Sort", func(in []int) []int {
+		out := append([]int(nil), in...) // Copy input to avoid mutating it
+		sort.Ints(out)
+		return out
+	})
+	return cmp.Equal(l1, l2, trans)
 }

@@ -58,6 +58,51 @@ func (s *Store) GetVendor(ctx context.Context, id int) (*endpointmanager.Vendor,
 	return &vendor, err
 }
 
+// GetVendorUsingCHPLID gets a Vendor from the database using the given chpl id as a key.
+// If the Vendor does not exist in the database, sql.ErrNoRows will be returned.
+func (s *Store) GetVendorUsingCHPLID(ctx context.Context, id int) (*endpointmanager.Vendor, error) {
+	var vendor endpointmanager.Vendor
+	var locationJSON []byte
+
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		developer_code,
+		url,
+		location,
+		status,
+		last_modified_in_chpl,
+		chpl_id,
+		created_at,
+		updated_at
+	FROM vendors WHERE chpl_id=$1`
+
+	row := s.DB.QueryRowContext(ctx, sqlStatement, id)
+
+	err := row.Scan(
+		&vendor.ID,
+		&vendor.Name,
+		&vendor.DeveloperCode,
+		&vendor.URL,
+		&locationJSON,
+		&vendor.Status,
+		&vendor.LastModifiedInCHPL,
+		&vendor.CHPLID,
+		&vendor.CreatedAt,
+		&vendor.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(locationJSON, &vendor.Location)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vendor, err
+}
+
 // GetVendorUsingName gets a Vemdpr from the database using the given name as a key.
 // If the Vendor does not exist in the database, sql.ErrNoRows will be returned.
 func (s *Store) GetVendorUsingName(ctx context.Context, name string) (*endpointmanager.Vendor, error) {

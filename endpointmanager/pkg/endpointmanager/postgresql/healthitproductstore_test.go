@@ -61,13 +61,15 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+		PracticeType: "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",
 		VendorID:             vendors[1].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
-		CertificationEdition: "2014"}
+		CertificationEdition: "2014",
+		PracticeType: "Ambulatory"}
 	// add products
 
 	err = store.AddHealthITProduct(ctx, hitp1)
@@ -195,14 +197,16 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+	    PracticeType: "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                  "Health IT System 2",
 		Version:               "2.0",
 		VendorID:              vendors[1].ID, // cerner
 		APISyntax:             "FHIR DSTU2",
 		CertificationCriteria: []int{64},
-		CertificationEdition:  "2014"}
+		CertificationEdition:  "2014",
+	    PracticeType: "Ambulatory"}
 
 	// criteria
 	var crit1 = &endpointmanager.CertificationCriteria{

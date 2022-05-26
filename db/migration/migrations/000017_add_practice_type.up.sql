@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE healthit_products ADD COLUMN IF NOT EXISTS practice_type VARCHAR(500);
+
+COMMIT;

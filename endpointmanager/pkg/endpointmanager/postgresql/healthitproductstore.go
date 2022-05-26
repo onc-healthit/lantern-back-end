@@ -25,6 +25,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -42,6 +43,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE id=$1`
@@ -62,6 +64,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -70,6 +73,12 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -88,6 +97,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
@@ -106,6 +116,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -114,6 +125,12 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -132,6 +149,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -149,6 +167,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE vendor_id=$1`
@@ -174,6 +193,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 			&hitp.CertificationEdition,
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
+			&practiceTypeString,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -182,6 +202,12 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 
 		ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 		hitp.VendorID = ints[0]
+
+		if !practiceTypeString.Valid {
+			hitp.PracticeType = ""
+		} else {
+			hitp.PracticeType = practiceTypeString.String
+		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
 		if err != nil {
@@ -237,7 +263,8 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.CertificationDate,
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
-		hitp.CHPLID)
+		hitp.CHPLID,
+		hitp.PracticeType)
 
 	err = row.Scan(&hitp.ID)
 
@@ -270,6 +297,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
+		hitp.PracticeType,
 		locationJSON,
 		certificationCriteriaJSON,
 		hitp.ID)
@@ -336,8 +364,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_date,
 			certification_edition,
 			last_modified_in_chpl,
-			chpl_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+			chpl_id,
+			practice_type)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -355,9 +384,10 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_edition = $9,
 			last_modified_in_chpl = $10,
 			chpl_id = $11,
-			location = $12,
-			certification_criteria = $13
-		WHERE id=$14`)
+			practice_type = $12,
+			location = $13,
+			certification_criteria = $14
+		WHERE id=$15`)
 	if err != nil {
 		return err
 	}
@@ -411,6 +441,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE name=$1 AND version=$2`)
