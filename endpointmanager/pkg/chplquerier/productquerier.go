@@ -254,6 +254,7 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 1bf2b109 (CHPL endpoint beta to v2 (#274))
@@ -263,6 +264,8 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 >>>>>>> c6ba8b68 (Revert "CHPL endpoint beta to v2 (#274)")
 =======
 
+=======
+>>>>>>> 85d1f2aa (HealthIT Product Warning (#275))
 	return apiURL, nil
 >>>>>>> 76690a5e (CHPL endpoint beta to v2 (#274))
 }
