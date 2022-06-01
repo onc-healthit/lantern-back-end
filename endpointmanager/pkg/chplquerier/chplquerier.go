@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/spf13/viper"
 )
 
 var chplDomain string = "https://chpl.healthit.gov"
@@ -25,7 +24,7 @@ func makeCHPLURL(path string, queryArgs map[string]string, pageSize int, pageNum
 		return nil, err
 	}
 
-	apiKey := viper.GetString("chplapikey")
+	apiKey := "7a7351eca4a8e1af7cd68ae69f0d9d98"
 	if apiKey == "" {
 		return nil, fmt.Errorf("the CHPL API Key is not set")
 	}

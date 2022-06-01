@@ -51,7 +51,7 @@ func Test_RunValidation(t *testing.T) {
 	requestedFhirVersion := "None"
 	defaultFhirVersion := "1.0.2"
 
-	actualVal := validator.RunValidation(cs, []string{fhir2LessJSONMIMEType}, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
+	actualVal := validator.RunValidation(cs, "1.0.2", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
 	th.Assert(t, len(actualVal.Results) == 8, fmt.Sprintf("RunValidation should have returned 3 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq := reflect.DeepEqual(actualVal.Results[0], expectedFirstVal)
 	th.Assert(t, eq == true, fmt.Sprintf("RunValidation's first returned validation is not correct, is instead %+v", actualVal.Results[0]))
@@ -87,7 +87,7 @@ func Test_RunValidation(t *testing.T) {
 		Reference: "http://hl7.org/fhir/capabilitystatement.html",
 	}
 
-	actualVal = validator2.RunValidation(cs2, []string{fhir3PlusJSONMIMEType}, "4.0.1", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
+	actualVal = validator2.RunValidation(cs2, "4.0.1", "TLS 1.2", sr, requestedFhirVersion, defaultFhirVersion)
 	th.Assert(t, len(actualVal.Results) == 15, fmt.Sprintf("RunValidation should have returned 15 validation checks, instead it returned %d", len(actualVal.Results)))
 	eq = reflect.DeepEqual(actualVal.Results[3], expectedFourthVal)
 	th.Assert(t, eq == true, "RunValidation's fourth returned validation is not correct")
@@ -146,97 +146,6 @@ func Test_CapStatExists(t *testing.T) {
 	actualCap = validator2.CapStatExists(cs2)
 	eq = reflect.DeepEqual(actualCap, expectedCap)
 	th.Assert(t, eq == true, fmt.Sprintf("R4 Capability Statement should exist, returned value is instead %+v", actualCap))
-}
-
-func Test_MimeTypeValid(t *testing.T) {
-	cs, err := getDSTU2CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator, err := getValidator(cs, dstu2)
-	th.Assert(t, err == nil, err)
-
-	// base test
-
-	expectedVal := endpointmanager.Rule{
-		RuleName:  endpointmanager.GeneralMimeTypeRule,
-		Valid:     true,
-		Expected:  fhir2LessJSONMIMEType,
-		Actual:    fhir2LessJSONMIMEType,
-		Reference: "http://hl7.org/fhir/http.html",
-		Comment:   "FHIR Version 1.0.2 requires the Mime Type to be application/json+fhir",
-	}
-
-	actualVal := validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "1.0.2")
-	eq := reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version DSTU2 should be valid, is instead %+v", actualVal))
-
-	// fhirVersion 3+ test
-
-	cs, err = getSTU3CapStat()
-	th.Assert(t, err == nil, err)
-
-	stu3validator, err := getValidator(cs, stu3)
-	th.Assert(t, err == nil, err)
-
-	expectedVal.Expected = fhir3PlusJSONMIMEType
-	expectedVal.Actual = fhir3PlusJSONMIMEType
-	expectedVal.Comment = "FHIR Version 3.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
-
-	actualVal = stu3validator.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "3.0.1")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version STU3 should be valid, is instead %+v", actualVal))
-
-	// no mime types
-
-	expectedVal.Valid = false
-	expectedVal.Expected = "N/A"
-	expectedVal.Actual = ""
-	expectedVal.Comment = "No mime type given; cannot validate mime type."
-
-	actualVal = validator.MimeTypeValid([]string{}, "1.0.2")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("There is no given mime type so the check should be invalid, is instead %+v", actualVal))
-
-	// no version
-
-	expectedVal.Actual = ""
-	expectedVal.Comment = "Unknown FHIR Version; cannot validate mime type."
-	actualVal = validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be an empty string, is instead %+v", actualVal))
-
-	// no version- fake MIME type
-
-	expectedVal.Actual = "fakeMIMEType"
-	expectedVal.Comment = "Unknown FHIR Version; cannot validate mime type."
-	actualVal = validator.MimeTypeValid([]string{"fakeMIMEType"}, "")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("There is no given FHIR version so the check should be invalid and the actual value should be the incorrect MIME type, is instead %+v", actualVal))
-
-	// mixmatch mime type and version
-
-	expectedVal.Actual = fhir2LessJSONMIMEType
-	expectedVal.Expected = fhir3PlusJSONMIMEType
-	expectedVal.Comment = "FHIR Version 3.0.0 requires the Mime Type to be " + fhir3PlusJSONMIMEType
-	actualVal = validator.MimeTypeValid([]string{fhir2LessJSONMIMEType}, "3.0.0")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("Mime type %s should not be valid for version 3.0.0", fhir2LessJSONMIMEType))
-
-	// r4 test
-
-	cs2, err := getR4CapStat()
-	th.Assert(t, err == nil, err)
-
-	validator2, err := getValidator(cs2, r4)
-	th.Assert(t, err == nil, err)
-
-	expectedVal.Valid = true
-	expectedVal.Actual = fhir3PlusJSONMIMEType
-	expectedVal.Comment = "FHIR Version 4.0.1 requires the Mime Type to be " + fhir3PlusJSONMIMEType
-	expectedVal.ImplGuide = "USCore 3.1"
-	actualVal = validator2.MimeTypeValid([]string{fhir3PlusJSONMIMEType}, "4.0.1")
-	eq = reflect.DeepEqual(actualVal, expectedVal)
-	th.Assert(t, eq == true, fmt.Sprintf("The given mime type for version R4 should be valid, returned value is instead %+v", actualVal))
 }
 
 func Test_checkResourceList(t *testing.T) {
