@@ -951,20 +951,6 @@ func getDSTU2CapStat() (capabilityparser.CapabilityStatement, error) {
 	return cs, nil
 }
 
-// getSTU3CapStat gets a STU3 Capability Statement
-func getSTU3CapStat() (capabilityparser.CapabilityStatement, error) {
-	path := filepath.Join("../../../testdata", "advantagecare_physicians_stu3.json")
-	csJSON, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
-	if err != nil {
-		return nil, err
-	}
-	return cs, nil
-}
-
 // getDSTU2CapStat gets a R4 Capability Statement
 func getR4CapStat() (capabilityparser.CapabilityStatement, error) {
 	path := filepath.Join("../../../testdata", "test_r4_capability_statement.json")
