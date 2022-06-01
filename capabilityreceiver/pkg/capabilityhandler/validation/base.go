@@ -9,6 +9,10 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
+// from https://www.hl7.org/fhir/codesystem-FHIR-version.html
+// looking at official and release versions only
+var version3plus = []string{"3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1"}
+
 type baseVal struct {
 }
 
