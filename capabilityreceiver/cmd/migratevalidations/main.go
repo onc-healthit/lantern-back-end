@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/lib/pq"
+
 	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/capabilityhandler/validation"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -39,6 +41,7 @@ type validationArgs struct {
 	updatedTime       time.Time
 	capStatByte       []byte
 	tlsVersion        string
+	mimeTypes         []string
 	smartResponseByte []byte
 }
 
@@ -143,6 +146,7 @@ func addToValidationTableHistory(ctx context.Context, args *map[string]interface
 		var val validationArgs
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
+			pq.Array(&val.mimeTypes),
 			&val.smartResponseByte,
 			&val.updatedTime)
 		if err != nil {
@@ -268,6 +272,7 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		var val validationArgs
 		err = historyRows.Scan(&val.capStatByte,
 			&val.tlsVersion,
+			pq.Array(&val.mimeTypes),
 			&val.smartResponseByte,
 			&val.updatedTime)
 		if err != nil {
