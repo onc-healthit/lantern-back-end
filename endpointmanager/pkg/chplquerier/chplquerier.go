@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +25,7 @@ func makeCHPLURL(path string, queryArgs map[string]string, pageSize int, pageNum
 		return nil, err
 	}
 
-	apiKey := "7a7351eca4a8e1af7cd68ae69f0d9d98"
+	apiKey := viper.GetString("chplapikey")
 	if apiKey == "" {
 		return nil, fmt.Errorf("the CHPL API Key is not set")
 	}
