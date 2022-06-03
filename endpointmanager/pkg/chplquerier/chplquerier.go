@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 var chplDomain string = "https://chpl.healthit.gov"
