@@ -69,7 +69,7 @@ ui <- dashboardPage(
         color: black;
       }
       .modal-lg {
-        width: fit-content!important;
+        width: 75%!important;
       }
     "))),
     tags$script(
@@ -92,7 +92,6 @@ ui <- dashboardPage(
     uiOutput("resource_tab_popup"),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
-    uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
     uiOutput("show_resource_profiles_dropdown"),
