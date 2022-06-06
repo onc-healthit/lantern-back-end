@@ -234,6 +234,16 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		}
 	}
 
+	// retrieve all distinct endpoints
+	distinctEndpts, err := store.GetAllDistinctFHIREndpoints(ctx)
+	if err != nil {
+		t.Errorf("Error getting fhir endpoints: %s", err1.Error())
+	}
+	eLen = 2
+	if len(distinctEndpts) != eLen {
+		t.Errorf("number of retrieved distinct endpoints is not equal to number of saved distinct endpoints")
+	}
+
 	// delete endpoints
 
 	err = store.DeleteFHIREndpoint(ctx, endpoint1)
