@@ -137,7 +137,7 @@ smartresponsemodule <- function(
 
     res <- res %>%
     distinct(url, organization_names, vendor_name, capability_fhir_version) %>%
-    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", 'None', "&quot,{priority: \'event\'});\">", url,"</a>")) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, organization_names, vendor_name, capability_fhir_version)
     res
   })

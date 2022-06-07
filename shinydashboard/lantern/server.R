@@ -672,6 +672,87 @@ function(input, output, session) { #nolint
             easyClose = TRUE
   )))
   })
+# Current Endpoint that is selected to view in Modal
+current_endpoint <- reactive({
+  splitString <- strsplit(input$endpoint_popup, "&&")
+  endpointURL <- splitString[[1]][1]
+  endpoint_requested_fhir_version <- splitString[[1]][2]
+
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+  current_endpoint_list
+})
+
+
+### CHPL Products Modal Page ###
+endpoint_products <- reactive({
+  endpoint <- current_endpoint()
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+})
+
+output$endpoint_products_table <- DT::renderDataTable({
+  datatable(endpoint_products(),
+            colnames = c("Name", "Version", "CHPL ID", "API URL", "Certification Status", "Certification Edition", "Certification Date", "Last Modified in CHPL"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+endpoint_products_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint CHPL Products"),
+    DT::dataTableOutput("endpoint_products_table")
+  )
+  page
+}
+
+
+### IGs and Profiles Modal Page ###
+
+endpoint_implementation_guides <- reactive({
+  endpoint <- current_endpoint()
+
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides
+})
+
+endpoint_profiles <- reactive({
+  endpoint <- current_endpoint()
+
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles
+
+})
+
+output$endpoint_IG_table <- DT::renderDataTable({
+  datatable(endpoint_implementation_guides() %>% select(implementation_guide),
+            colnames = c("Implementation_Guides"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_profile_table <- DT::renderDataTable({
+  datatable(endpoint_profiles() %>% select(profileurl, profilename, resource),
+            colnames = c("Profile URL", "Profile Name", "Resource"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+implementation_guide_profiles_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint IGs and Profiles"),
+    bsCollapse(id = "IGs_profiles_collapse", multiple = TRUE,
+      bsCollapsePanel("Implementation Guides", fluidPage(
+        DT::dataTableOutput("endpoint_IG_table"),
+      ), style = "info"),
+      bsCollapsePanel("Endpoint Profiles", fluidPage(
+        DT::dataTableOutput("endpoint_profile_table"),
+      ), style = "info")
+  ))
+  page
+}
 
 ### Capabilities Modal Page ###
 
@@ -692,7 +773,7 @@ endpoint_extensions <- reactive({
   res
 })
 
-endpoint_resources <- reactive ({
+endpoint_resources <- reactive({
   endpoint <- current_endpoint()
 
   res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
@@ -700,7 +781,7 @@ endpoint_resources <- reactive ({
 
 })
 
-endpoint_smart_capabilities <- reactive ({
+endpoint_smart_capabilities <- reactive({
   endpoint <- current_endpoint()
 
   res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
@@ -716,7 +797,7 @@ output$endpoint_fields_table_required <- DT::renderDataTable({
             options = list(scrollX = TRUE))
 })
 
-output$endpoint_fields_table_optional<- DT::renderDataTable({
+output$endpoint_fields_table_optional <- DT::renderDataTable({
   datatable(endpoint_fields() %>% select(field, exist),
             colnames = c("Field Name", "Exists"),
             rownames = FALSE,
@@ -767,11 +848,11 @@ output$smart_capabilities_table <- DT::renderDataTable({
 
 get_capability_statement_json <- reactive({
   endpoint <- current_endpoint()
-  
+
   res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
-  
+
   capability_statement_json <- res$capability_statement
-  
+
   if (length(res$capability_statement) <= 0) {
     capability_statement_json <- "{\"Not Available\": \"No Capability Statement Returned\"}"
   }
@@ -782,9 +863,9 @@ get_capability_statement_json <- reactive({
 
 get_smart_response_json <- reactive({
   endpoint <- current_endpoint()
-  
+
   res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
-  
+
   smart_response_json <- res$smart_response
 
   if (length(res$smart_response) <= 0) {
@@ -807,15 +888,15 @@ endpoint_capabilities_page <- function() {
         DT::dataTableOutput("endpoint_extensions_table"),
       ), style = "info"),
       bsCollapsePanel("Capability/Conformance Resources", reactable::reactableOutput("endpoint_resource_op_table"), style = "info"),
-      bsCollapsePanel("SMART Response Fields", DT::dataTableOutput('smart_capabilities_table'), style = "info"),
-      bsCollapsePanel("Capability Statement/Conformance Resource", renderJsonedit(jsonedit(get_capability_statement_json(), 
-              mode = "view", modes =  c("view", "code"), 
-              "onEditable" = htmlwidgets::JS('function(){ return false;}'))
+      bsCollapsePanel("SMART Response Fields", DT::dataTableOutput("smart_capabilities_table"), style = "info"),
+      bsCollapsePanel("Capability Statement/Conformance Resource", renderJsonedit(jsonedit(get_capability_statement_json(),
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
         ), style = "info"
       ),
       bsCollapsePanel("SMART Response", renderJsonedit(jsonedit(get_smart_response_json(),
-              mode = "view", modes =  c("view", "code"), 
-              "onEditable" = htmlwidgets::JS('function(){ return false;}'))
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
           ), style = "info"
       )
     )
@@ -846,7 +927,7 @@ output$endpoint_location_map  <- renderLeaflet({
 
 
     res <- get_endpoint_list_matches()
-    res <- res %>% 
+    res <- res %>%
     filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
     mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
@@ -857,7 +938,8 @@ output$endpoint_location_map  <- renderLeaflet({
     endpoint <- current_endpoint()
 
     res <- get_npi_organization_matches()
-    res <- res %>% filter(url == endpoint$url) %>%
+    res <- res %>%
+    filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
     mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
     res
@@ -913,9 +995,9 @@ get_range <- function() {
     range
 }
 
-response_time_xts <- reactive ({
+response_time_xts <- reactive({
   endpoint <- current_endpoint()
-  
+
   range <- get_range()
   res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
   # convert to xts format for use in dygraph
@@ -955,11 +1037,11 @@ output$plot_note_text <- renderUI({
  detailPage <- function() {
 
   endpoint <- current_endpoint()
-   
+
   detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
   metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
 
-  page <- fluidPage (
+  page <- fluidPage(
     h1("Endpoint Details"),
     tags$p(paste0("Updated at ", as.character(detailsInfo$info_updated), " | Created at ", as.character(detailsInfo$info_created)), style = "font-style: italic;"),
     br(),

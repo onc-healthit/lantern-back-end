@@ -259,7 +259,7 @@ get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhi
 
 get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
-    sql(paste0("SELECT jsonb_object_keys(operation_resource::jsonb) as operations 
+    sql(paste0("SELECT jsonb_object_keys(operation_resource::jsonb) as operations
          FROM fhir_endpoints_info WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"
     ))
   ) %>%
@@ -267,7 +267,7 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
 
   op_list <- as.list(res$operations)
   table <- data.frame(matrix(ncol = 2, nrow = 0))
-  colnames(table) <- c('Operation', 'Resource')
+  colnames(table) <- c("Operation", "Resource")
 
   if (length(op_list) > 0) {
     for (op in op_list) {
@@ -554,7 +554,7 @@ get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL,
       json_array_elements_text((smart_response->'capabilities')::json) as capability
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    WHERE f.metadata_id = m.id AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "' 
+    WHERE f.metadata_id = m.id AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
     AND m.smart_http_response=200"))) %>%
     collect()
   res
@@ -562,9 +562,9 @@ get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL,
 
 get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
-    sql(paste0("SELECT 
-        f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition, 
-        h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h WHERE f.healthit_product_id = h.id AND 
+    sql(paste0("SELECT
+        f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition,
+        h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h WHERE f.healthit_product_id = h.id AND
         f.healthit_product_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
@@ -832,28 +832,28 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(url, fhir_version, vendor_name, software_name, software_version, software_releasedate, format, info_created, info_updated)
-    
+
     resListSource <- endpoint_export_tbl %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(list_source)
 
     resSecurity <-  tbl(db_connection,
-        sql(paste0("SELECT 
+        sql(paste0("SELECT
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as security
             FROM fhir_endpoints_info
             WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
     collect()
 
     resSupportedVersions <- tbl(db_connection,
-        sql(paste0("SELECT 
+        sql(paste0("SELECT
             DISTINCT versions_response->>'versions' as supported_versions, versions_response->>'default' as default_version
             FROM fhir_endpoints
             WHERE url = '", endpointURL, "'"))) %>%
     collect()
-    
-    res$list_source <- paste0(resListSource$list_source, collapse="\n")
-    res$security <- paste0(resSecurity$security, collapse=",")
+
+    res$list_source <- paste0(resListSource$list_source, collapse = "\n")
+    res$security <- paste0(resSecurity$security, collapse = ",")
     res$supported_versions <- resSupportedVersions$supported_versions
     res$default_version <- resSupportedVersions$default_version
 
@@ -865,7 +865,7 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
     mutate(software_name = gsub("\"", "", as.character(software_name))) %>%
     mutate(software_version = gsub("\"", "", as.character(software_version))) %>%
     mutate(software_releasedate = gsub("\"", "", as.character(software_releasedate)))
-    
+
     res
 }
 

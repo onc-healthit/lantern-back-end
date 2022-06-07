@@ -123,8 +123,8 @@ validationsmodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
 
-    res <- res %>% 
-    mutate(linkURL = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", 'None', "&quot,{priority: \'event\'});\">", url,"</a>"))
+    res <- res %>%
+    mutate(linkURL = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   get_validation_versions <- reactive({
@@ -158,11 +158,11 @@ validationsmodule <- function(
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   failed_validation_results <- reactive({
-    res <- selected_validations() %>% 
-    mutate(url = linkURL) %>% 
-    distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>% 
+    res <- selected_validations() %>%
+    mutate(url = linkURL) %>%
+    distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>%
     select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
-    
+
     if (length(input$validation_details_table_rows_selected) > 0) {
       selected_rule <- deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])
       res <- res %>%
