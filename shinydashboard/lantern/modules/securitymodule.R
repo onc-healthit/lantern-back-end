@@ -54,18 +54,16 @@ securitymodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>%
-    filter(code == sel_auth_type_code())
 
     res <- res %>%
+    filter(code == sel_auth_type_code()) %>%
     rowwise() %>%
     mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
 
     res <- res %>%
-    select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
-    distinct(url, organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
+    distinct(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
     mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-    select(url, organization_names, vendor_name, capability_fhir_version, tls_version, code)
+    select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })
 
