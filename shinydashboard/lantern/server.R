@@ -10,7 +10,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "contacts_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -65,11 +65,6 @@ function(input, output, session) { #nolint
         "location_page",
         reactive(input$fhir_version),
         reactive(input$vendor))
-
-      callModule(
-        performancemodule,
-        "performance_page",
-        reactive(input$date))
 
       callModule(
         capabilitystatementsizemodule,
@@ -159,7 +154,6 @@ function(input, output, session) { #nolint
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
-     "performance_tab" = "Response Time Performance",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
      "validations_tab" = "Validations Page"
   )
@@ -198,10 +192,13 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("validations_tab")
   )
 
+<<<<<<< HEAD
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
+=======
+>>>>>>> 8a4fe2e (Remove performance module)
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
