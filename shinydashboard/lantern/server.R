@@ -3,6 +3,7 @@ library(reactable)
 library(shinyBS)
 library(listviewer)
 library(leaflet)
+library(dygraphs)
 
 # Define server function
 function(input, output, session) { #nolint
