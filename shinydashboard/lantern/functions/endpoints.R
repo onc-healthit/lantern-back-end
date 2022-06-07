@@ -266,15 +266,17 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
   collect()
 
   op_list <- as.list(res$operations)
-  res_list <- list()
+  table <- data.frame(matrix(ncol = 2, nrow = 0))
+  colnames(table) <- c('Operation', 'Resource')
 
   if (length(op_list) > 0) {
     for (op in op_list) {
       resources <- isolate(get_endpoint_resource_by_op(db_connection, endpointURL, requestedFhirVersion, op))
-      res_list[[op]] <- as.list(resources$type)
+      newTable <- data.frame("Operation" = c(op), "Resource" = c(resources$type))
+      table <- rbind(table, newTable)
     }
   }
-  res_list
+  table
 }
 
 
@@ -331,6 +333,19 @@ get_supported_profiles <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+}
+
+get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion) {
+    res <- tbl(db_connection,
+    sql(paste0("SELECT
+      json_array_elements(supported_profiles::json) ->> 'ProfileURL' as profileurl,
+      json_array_elements(supported_profiles::json) ->> 'ProfileName' as profilename,
+      json_array_elements(supported_profiles::json) ->> 'Resource' as resource
+      from fhir_endpoints_info f
+      WHERE supported_profiles != 'null' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+    collect()
+
+    res
 }
 
 # Summarize count of implementation guides by implementation_guide, fhir_version
@@ -536,13 +551,23 @@ get_smart_response_capabilities <- function(db_connection) {
 get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
-      m.smart_http_response,
       json_array_elements_text((smart_response->'capabilities')::json) as capability
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     WHERE f.metadata_id = m.id AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "' 
     AND m.smart_http_response=200"))) %>%
     collect()
+  res
+}
+
+get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersion) {
+  res <- tbl(db_connection,
+    sql(paste0("SELECT 
+        f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition, 
+        h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h WHERE f.healthit_product_id = h.id AND 
+        f.healthit_product_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+        collect() %>%
+    select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res
 }
 
@@ -703,6 +728,17 @@ get_implementation_guide <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
+get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion) {
+  res <- tbl(db_connection,
+    sql(paste0("SELECT
+          json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide
+          FROM fhir_endpoints_info f
+          WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+    collect()
+
+  res
+}
+
 get_cap_stat_sizes <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT
@@ -731,7 +767,8 @@ get_validation_results <- function(db_connection) {
           actual,
           comment,
           reference,
-          validations.validation_result_id as id
+          validations.validation_result_id as id,
+          requested_fhir_version
         FROM fhir_endpoints_info f
           LEFT JOIN vendors on f.vendor_id = vendors.id
           INNER JOIN validations on f.validation_result_id = validations.validation_result_id

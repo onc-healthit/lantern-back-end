@@ -624,10 +624,6 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = "All API Information Source Names",
       p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
-      tabsetPanel(type = "tabs",
-        tabPanel("Bar Graph", uiOutput("resource_full_plot")),
-        tabPanel("Table", reactable::reactableOutput("resource_op_table"))
-      ),
       easyClose = TRUE
   ))
   })
@@ -683,29 +679,31 @@ function(input, output, session) { #nolint
 required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 
 endpoint_fields <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, url, requested_fhir_version, "false")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
   res
 })
 
 endpoint_extensions <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, url, requested_fhir_version, "true")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
   res
 })
 
 endpoint_resources <- reactive ({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
 
-  res <- get_endpoint_resources(db_connection, url, requested_fhir_version)
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+
+})
+
+endpoint_smart_capabilities <- reactive ({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
   res
 
 })
@@ -734,42 +732,43 @@ output$endpoint_extensions_table <- DT::renderDataTable({
             options = list(scrollX = TRUE))
 })
 
-output$endpoint_resource_page <- renderUI({
-  res <- endpoint_resources()
-  op_list <- names(res)
-  tags_list <- list()
-  
-  if (length(op_list) > 0) {
-    for (op in op_list) {
-      li_list <- lapply(res[[op]], function(x) tags$li(x))
-      new_tags_list <- tagList(tags$h4(op), tags$ul(tagList(li_list)))
-      tags_list <- tagAppendChildren(tags_list, new_tags_list)
-    }
-  }
-  tags_list
+
+output$endpoint_resource_op_table <- reactable::renderReactable({
+  reactable(
+          endpoint_resources(),
+          columns = list(
+            Operation = colDef(
+              aggregate = "count",
+              format = list(aggregated = colFormat(prefix = "Total: "))
+            ),
+            Resource = colDef(
+              minWidth = 150
+            )
+          ),
+          groupBy = "Operation",
+          sortable = TRUE,
+          searchable = TRUE,
+          striped = TRUE,
+          showSortIcon = TRUE,
+          defaultPageSize = 10,
+          showPageSizeOptions = TRUE,
+          pageSizeOptions = c(10, 25, 50, 100)
+
+  )
 })
 
-output$endpoint_smart_response_page <- renderUI({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
-
-  tags_list <- list()
-
-  res <- get_endpoint_smart_response_capabilities(db_connection, url, requested_fhir_version)
-  
-  if (length(res$capability) > 0) {
-    tags_list <- lapply(res$capability, function(x) tags$li(x))
-  }
-  tags_list
+output$smart_capabilities_table <- DT::renderDataTable({
+  datatable(endpoint_smart_capabilities(),
+            colnames = c("SMART Capabilities"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
 })
 
 get_capability_statement_json <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
   
-  res <- get_capability_and_smart_response(db_connection, url, requested_fhir_version)
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
   
   capability_statement_json <- res$capability_statement
   
@@ -782,11 +781,9 @@ get_capability_statement_json <- reactive({
 
 
 get_smart_response_json <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
   
-  res <- get_capability_and_smart_response(db_connection, url, requested_fhir_version)
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
   
   smart_response_json <- res$smart_response
 
@@ -809,8 +806,8 @@ endpoint_capabilities_page <- function() {
         h3("Extensions"),
         DT::dataTableOutput("endpoint_extensions_table"),
       ), style = "info"),
-      bsCollapsePanel("Capability/Conformance Resources", uiOutput('endpoint_resource_page'), style = "info"),
-      bsCollapsePanel("SMART Response Fields", uiOutput('endpoint_smart_response_page'), style = "info"),
+      bsCollapsePanel("Capability/Conformance Resources", reactable::reactableOutput("endpoint_resource_op_table"), style = "info"),
+      bsCollapsePanel("SMART Response Fields", DT::dataTableOutput('smart_capabilities_table'), style = "info"),
       bsCollapsePanel("Capability Statement/Conformance Resource", renderJsonedit(jsonedit(get_capability_statement_json(), 
               mode = "view", modes =  c("view", "code"), 
               "onEditable" = htmlwidgets::JS('function(){ return false;}'))
@@ -829,11 +826,9 @@ endpoint_capabilities_page <- function() {
 ### Organizations Modal Page ###
 
 single_endpoint_locations <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
 
-  lt <- get_single_endpoint_locations(db_connection, url, requested_fhir_version)
+  lt <- get_single_endpoint_locations(db_connection, endpoint$url, endpoint$requested_fhir_version)
   lt
 })
 
@@ -847,27 +842,23 @@ output$endpoint_location_map  <- renderLeaflet({
 })
 
  get_endpoint_list_orgs <- reactive({
-    splitString <- strsplit(input$endpoint_popup, "&&")
-    endpoint_url <- splitString[[1]][1]
-    endpoint_requested_fhir_version <- splitString[[1]][2]
+   endpoint <- current_endpoint()
 
 
     res <- get_endpoint_list_matches()
     res <- res %>% 
-    filter(url == endpoint_url) %>%
-    filter(requested_fhir_version == endpoint_requested_fhir_version) %>%
+    filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
     mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
     res
   })
 
   get_endpoint_npi_orgs <- reactive({
-    splitString <- strsplit(input$endpoint_popup, "&&")
-    endpoint_url <- splitString[[1]][1]
-    endpoint_requested_fhir_version <- splitString[[1]][2]
+    endpoint <- current_endpoint()
 
     res <- get_npi_organization_matches()
-    res <- res %>% filter(url == endpoint_url) %>%
-    filter(requested_fhir_version == endpoint_requested_fhir_version) %>%
+    res <- res %>% filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
     mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
     res
   })
@@ -923,12 +914,10 @@ get_range <- function() {
 }
 
 response_time_xts <- reactive ({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  url <- splitString[[1]][1]
-  requested_fhir_version <- splitString[[1]][2]
+  endpoint <- current_endpoint()
   
   range <- get_range()
-  res <- get_endpoint_response_time(db_connection, range, url, requested_fhir_version)
+  res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
   # convert to xts format for use in dygraph
   xts(x = cbind(res$response),
       order.by = res$date
@@ -963,10 +952,14 @@ output$plot_note_text <- renderUI({
   HTML(res)
 })
 
- detailPage <- function(endpointURL, endpointFhirVersion) {
+ detailPage <- function() {
+
+  endpoint <- current_endpoint()
    
-  metricsInfo <- get_details_page_metrics(endpointURL, endpointFhirVersion)
-  page <- fluidPage(
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+
+  page <- fluidPage (
     h1("Endpoint Details"),
     tags$p(paste0("Updated at ", as.character(detailsInfo$info_updated), " | Created at ", as.character(detailsInfo$info_created)), style = "font-style: italic;"),
     br(),
@@ -1021,19 +1014,17 @@ output$plot_note_text <- renderUI({
 
 ### Endpoint Popup Modal ###
   observeEvent(input$endpoint_popup, {
-    splitString <- strsplit(input$endpoint_popup, "&&")
-    url <- splitString[[1]][1]
-    requested_fhir_version <- splitString[[1]][2]
+    endpoint <- current_endpoint()
     showModal(modalDialog(
       title = "Endpoint Details",
       h1("Endpoint URL:"),
-      h3(tags$a(as.character(url))),
+      h3(tags$a(as.character(endpoint$url))),
       tabsetPanel(type = "tabs",
-          tabPanel("Details", detailPage(url, requested_fhir_version)),
+          tabPanel("Details", detailPage()),
           tabPanel("Organizations", organization_endpoint_page()),
           tabPanel("Capabilities", endpoint_capabilities_page()),
-          tabPanel("Implementation Guides & Profiles", DT::dataTableOutput('test_datatable_profiles')),
-          tabPanel("Products", p(DT::dataTableOutput('test_datatable_product')))
+          tabPanel("Implementation Guides & Profiles", implementation_guide_profiles_page()),
+          tabPanel("Products", endpoint_products_page())
       ),
       size = "l",
 }

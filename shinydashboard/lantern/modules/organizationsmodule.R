@@ -63,6 +63,9 @@ organizationsmodule <- function(
       }
     }
 
+    res <- res %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url,"</a>"))
+
     res
   })
 
@@ -76,6 +79,9 @@ organizationsmodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
 
+    res <- res %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url,"</a>"))
+
     res
   })
 
@@ -87,7 +93,7 @@ organizationsmodule <- function(
               ),
               columns = list(
                   organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
-                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE),
+                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
                   npi_id = colDef(name = "NPI ID", sortable = FALSE),
                   zipcode = colDef(name = "Zipcode", sortable = FALSE),
                   organization_secondary_name = colDef(name = "Organization Secondary Name", sortable = FALSE),
@@ -112,7 +118,7 @@ organizationsmodule <- function(
               ),
               columns = list(
                   organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
-                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE),
+                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
               ),

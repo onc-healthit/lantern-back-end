@@ -43,6 +43,7 @@ securitymodule <- function(
 
   securityPageSizeNum <- reactiveVal(NULL)
 
+  # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
     if (is.null(securityPageSizeNum())) {
       securityPageSizeNum(10)
@@ -62,6 +63,9 @@ securitymodule <- function(
 
     res <- res %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
+    distinct(url, organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", 'None', "&quot,{priority: \'event\'});\">", url,"</a>")) %>%
+    select(url, organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })
 

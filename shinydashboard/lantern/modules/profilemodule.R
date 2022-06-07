@@ -45,9 +45,10 @@ selected_fhir_endpoint_profiles <- reactive({
     }
 
     res <- res %>%
-    select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
     distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
+    select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
     group_by(url) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", 'None', "&quot,{priority: \'event\'});\">", url,"</a>")) %>%
     mutate_all(as.character)
 
     res
@@ -75,7 +76,7 @@ selected_fhir_endpoint_profiles <- reactive({
                 align = "center"
               ),
               columns = list(
-                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left"),
+                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left", html = TRUE),
                   profileurl = colDef(name = "Profile URL", minWidth = 300, align = "left", sortable = FALSE),
                   profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
                   resource = colDef(name = "Resource", minWidth = 200, sortable = FALSE),
@@ -98,7 +99,7 @@ selected_fhir_endpoint_profiles <- reactive({
                 align = "center"
               ),
               columns = list(
-                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left"),
+                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left", html = TRUE),
                   profileurl = colDef(name = "Profile URL", minWidth = 300, align = "left", sortable = FALSE, aggregate = "count",
                   format = list(aggregated = colFormat(prefix = "Count: "))),
                   profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
