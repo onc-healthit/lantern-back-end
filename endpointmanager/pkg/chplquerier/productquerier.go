@@ -24,11 +24,11 @@ var chplAPICertProdListPath string = "/search/v2"
 
 type chplEndpointListProductInfo struct {
 	ListSourceURL    string                 `json:"listSourceURL"`
-	SoftwareProducts []ChplCertifiedProduct `json:"softwareProducts"`
+	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
 }
 
 type chplCertifiedProductList struct {
-	Results     []ChplCertifiedProduct `json:"results"`
+	Results     []chplCertifiedProduct `json:"results"`
 	RecordCount int                    `json:"recordCount"`
 }
 
@@ -48,7 +48,7 @@ type apiDocumentation struct {
 	Value     string      `json:"value"`
 }
 
-type ChplCertifiedProduct struct {
+type chplCertifiedProduct struct {
 	ID                  int                `json:"id"`
 	ChplProductNumber   string             `json:"chplProductNumber"`
 	Edition             details            `json:"edition"`
@@ -114,14 +114,14 @@ func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) e
 		log.Fatal(err)
 	}
 
-	log.Debug("Converting product information into list of ChplCertifiedProducts")
+	log.Debug("Converting product information into list of chplCertifiedProducts")
 	err = json.Unmarshal(CHPLFile, &CHPLEndpointListProducts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, listSourceEntry := range CHPLEndpointListProducts {
-		var prodList []ChplCertifiedProduct
+		var prodList []chplCertifiedProduct
 		var CHPLProductList chplCertifiedProductList
 
 		prodList = listSourceEntry.SoftwareProducts
@@ -187,7 +187,7 @@ func convertProductJSONToObj(ctx context.Context, prodJSON []byte) (*chplCertifi
 }
 
 // takes the JSON model and converts it into an endpointmanager.HealthITProduct
-func parseHITProd(ctx context.Context, prod *ChplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
+func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (*endpointmanager.HealthITProduct, error) {
 	id, err := getProductVendorID(ctx, prod, store)
 	if err != nil {
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
@@ -225,7 +225,7 @@ func parseHITProd(ctx context.Context, prod *ChplCertifiedProduct, store *postgr
 }
 
 // returns 0 if no match found.
-func getProductVendorID(ctx context.Context, prod *ChplCertifiedProduct, store *postgresql.Store) (int, error) {
+func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
 	vendor, err := store.GetVendorUsingName(ctx, prod.Developer.Name)
 	if err == sql.ErrNoRows {
 		log.Warnf("no vendor match for product %s with vendor %s", prod.Product.Name, prod.Developer.Name)
@@ -281,7 +281,7 @@ func persistProducts(ctx context.Context, store *postgresql.Store, prodList *chp
 // later date, has more certification criteria), or not.
 func persistProduct(ctx context.Context,
 	store *postgresql.Store,
-	prod *ChplCertifiedProduct) error {
+	prod *chplCertifiedProduct) error {
 
 	newDbProd, err := parseHITProd(ctx, prod, store)
 	if err != nil {

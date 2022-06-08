@@ -234,7 +234,7 @@ func Test_persistProducts(t *testing.T) {
 	prod2 := testCHPLProd
 	prod2.Product = details{Id: 1, Name: "another prod"}
 
-	prodList := chplCertifiedProductList{Results: []ChplCertifiedProduct{prod1, prod2}}
+	prodList := chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
 	err = persistProducts(ctx, store, &prodList)
 	th.Assert(t, err == nil, err)
@@ -266,7 +266,7 @@ func Test_persistProducts(t *testing.T) {
 		},
 	}
 	expectedErr := "retreiving the API URL from the health IT product API documentation list failed: the URL in the health IT product API documentation string is not valid: parse \".com/Carefluence-OpenAPI-Documentation.html\": invalid URI for request"
-	prodList = chplCertifiedProductList{Results: []ChplCertifiedProduct{prod1, prod2}}
+	prodList = chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
 	err = persistProducts(ctx, store, &prodList)
 	// don't expect the function to return with errors

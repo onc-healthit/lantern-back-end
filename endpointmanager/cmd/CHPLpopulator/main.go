@@ -7,14 +7,12 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	log "github.com/sirupsen/logrus"
 )
 
 type softwareInfo struct {
 	ListSourceURL    string                             `json:"listSourceURL"`
-	SoftwareProducts []chplquerier.ChplCertifiedProduct `json:"softwareProducts"`
+	SoftwareProducts []chplCertifiedProductEntry        `json:"softwareProducts"`
 }
 
 type endpointEntry struct {
@@ -55,6 +53,20 @@ type CHPLEndpointEntry struct {
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	ServiceBaseUrlList  serviceBaseURL   `json:"serviceBaseUrlList"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
+}
+
+type chplCertifiedProductEntry struct {
+	ID                  int      `json:"id"`
+	ChplProductNumber   string   `json:"chplProductNumber"`
+	Edition             string   `json:"edition"`
+	PracticeType        string   `json:"practiceType"`
+	Developer           string   `json:"developer"`
+	Product             string   `json:"product"`
+	Version             string   `json:"version"`
+	CertificationDate   int64    `json:"certificationDate"`
+	CertificationStatus string   `json:"certificationStatus"`
+	CriteriaMet         []int    `json:"criteriaMet"`
+	APIDocumentation    []string `json:"apiDocumentation"`
 }
 
 func main() {
@@ -143,7 +155,7 @@ func main() {
 		urlString := chplEntry.ServiceBaseUrlList.Value
 		urlString = strings.TrimSpace(urlString)
 
-		var productEntry chplquerier.ChplCertifiedProduct
+		var productEntry chplCertifiedProductEntry
 
 		productEntry.Product = productName
 		productEntry.ChplProductNumber = productNumber

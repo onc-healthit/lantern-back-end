@@ -94,7 +94,7 @@ var apiDocArr []apiDocumentation = []apiDocumentation{
 	},
 }
 
-var testCHPLProd chplCertifiedProduct = ChplCertifiedProduct{
+var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	ID:                  7849,
 	ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160701",
 	Edition:             details{Id: 1, Name: "2014"},
@@ -340,7 +340,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 
 	expectedProd1 := testCHPLProd
 
-	expectedProd2 := ChplCertifiedProduct{
+	expectedProd2 := chplCertifiedProduct{
 		ID:                  7850,
 		ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160703",
 		Edition:             details{Id: 1, Name: "2014"},
@@ -355,7 +355,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 	}
 
 	expectedProdList := chplCertifiedProductList{
-		Results: []ChplCertifiedProduct{expectedProd1, expectedProd2},
+		Results: []chplCertifiedProduct{expectedProd1, expectedProd2},
 	}
 
 	ctx = context.Background()
