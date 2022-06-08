@@ -239,8 +239,8 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 	return retProductID, err
 }
 
-// GetHealthITProductIDByCHPLID gets the HealthITProduct db ID with the HealthIT mapping table ID
-func (s *Store) GetHealthITProductIDByMapID(ctx context.Context, mapID int) ([]int, error) {
+// GetHealthITProductIDsByMapID gets the HealthITProduct db ID with the HealthIT mapping table ID
+func (s *Store) GetHealthITProductIDsByMapID(ctx context.Context, mapID int) ([]int, error) {
 	var retProductIDs []int
 	var healthITProductID int
 
