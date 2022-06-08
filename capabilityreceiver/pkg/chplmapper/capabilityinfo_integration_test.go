@@ -190,7 +190,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
 	th.Assert(t, err == nil, err)
-	actualHealthITProductIDs, err := store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
+	actualHealthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	// healthIT product with ID healthITProductID should have matched
 	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs[0]))
@@ -218,7 +218,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
 	th.Assert(t, err == nil, err)
-	actualHealthITProductIDs, err = store.GetHealthITProductIDByMapID(ctx, epInfo.HealthITProductID)
+	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
 

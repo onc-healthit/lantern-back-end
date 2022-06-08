@@ -150,7 +150,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	}
 
 	// Retrieve healthITProduct map info
-	healthITProductIDs, err := store.GetHealthITProductIDByMapID(ctx, 5)
+	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 5)
 	if err != nil {
 		t.Errorf("Error retrieving healthITProduct array from healthITProduct map table: %s", err.Error())
 	}
