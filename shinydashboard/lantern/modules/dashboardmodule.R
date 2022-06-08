@@ -36,7 +36,7 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_503_box"))
     ),
     actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon")),
-    h3("Endpoint Counts by Developer and FHIR Version"),
+    h2("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       custom_column_small(
              tableOutput(ns("fhir_vendor_table"))
