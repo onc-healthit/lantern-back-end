@@ -177,7 +177,7 @@ CREATE TABLE validation_results (
 
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    healthit_mapping_id     INT -- should link to healthit_products_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key,
+    healthit_mapping_id     INT, -- should link to healthit_products_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
