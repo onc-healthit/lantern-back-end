@@ -2,17 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	http "net/http"
 	"os"
 	"strings"
 	"time"
-	log "github.com/sirupsen/logrus"
 )
 
 type softwareInfo struct {
-	ListSourceURL    string                             `json:"listSourceURL"`
-	SoftwareProducts []chplCertifiedProductEntry        `json:"softwareProducts"`
+	ListSourceURL    string                      `json:"listSourceURL"`
+	SoftwareProducts []chplCertifiedProductEntry `json:"softwareProducts"`
 }
 
 type endpointEntry struct {
