@@ -94,7 +94,7 @@ var apiDocArr []apiDocumentation = []apiDocumentation{
 	},
 }
 
-var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
+var testCHPLProd chplCertifiedProduct = ChplCertifiedProduct{
 	ID:                  7849,
 	ChplProductNumber:   "15.04.04.2657.Care.01.00.0.160701",
 	Edition:             details{Id: 1, Name: "2014"},

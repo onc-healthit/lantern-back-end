@@ -48,7 +48,7 @@ type apiDocumentation struct {
 	Value     string      `json:"value"`
 }
 
-type chplCertifiedProduct struct {
+type ChplCertifiedProduct struct {
 	ID                  int                `json:"id"`
 	ChplProductNumber   string             `json:"chplProductNumber"`
 	Edition             details            `json:"edition"`
@@ -114,7 +114,7 @@ func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) e
 		log.Fatal(err)
 	}
 
-	log.Debug("Converting product information into list of chplCertifiedProducts")
+	log.Debug("Converting product information into list of ChplCertifiedProducts")
 	err = json.Unmarshal(CHPLFile, &CHPLEndpointListProducts)
 	if err != nil {
 		log.Fatal(err)
@@ -225,7 +225,7 @@ func parseHITProd(ctx context.Context, prod *ChplCertifiedProduct, store *postgr
 }
 
 // returns 0 if no match found.
-func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
+func getProductVendorID(ctx context.Context, prod *ChplCertifiedProduct, store *postgresql.Store) (int, error) {
 	vendor, err := store.GetVendorUsingName(ctx, prod.Developer.Name)
 	if err == sql.ErrNoRows {
 		log.Warnf("no vendor match for product %s with vendor %s", prod.Product.Name, prod.Developer.Name)
