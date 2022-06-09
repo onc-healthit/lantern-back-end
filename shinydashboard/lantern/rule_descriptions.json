@@ -1,6 +1,5 @@
 {
     "capStatExist": "Servers SHALL provide a Conformance Resource/Capability Statement that specifies which interactions and resources are supported.",
-    "generalMimeType": "FHIR Versions 1.0.2 requires the Mime Type to be application/json+fhir, and FHIR Versions 3.0.1 to 4.0.1 requires the Mime Type to be application/fhir+json.",
     "describeEndpointRule": "A Conformance Resource/Capability Statement SHALL have at least one of description, software, or implementation element.",
     "documentValidRule": "The set of documents must be unique by the combination of profile and mode.",
     "endpointFunctionRule": "A Conformance Resource/Capability Statement SHALL have at least one of REST, messaging or document element.",
