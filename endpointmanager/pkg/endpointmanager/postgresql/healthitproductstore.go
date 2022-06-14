@@ -17,6 +17,9 @@ var getProductCriteriaLinkStatement *sql.Stmt
 var linkProductToCriteriaStatement *sql.Stmt
 var getHealthITProductIDByCHPLID *sql.Stmt
 var getHealthITProductUsingNameAndVersion *sql.Stmt
+var addHealthITProductMapStatement *sql.Stmt
+var addHealthITProductMapStatementNoID *sql.Stmt
+var getHealthITProductByMapID *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -236,6 +239,43 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 	return retProductID, err
 }
 
+// GetHealthITProductIDsByMapID gets the HealthITProduct db ID with the HealthIT mapping table ID
+func (s *Store) GetHealthITProductIDsByMapID(ctx context.Context, mapID int) ([]int, error) {
+	var retProductIDs []int
+	var healthITProductID int
+
+	rows, err := getHealthITProductByMapID.QueryContext(ctx, mapID)
+	if err != nil {
+		return retProductIDs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&healthITProductID)
+		if err != nil {
+			return retProductIDs, err
+		}
+		retProductIDs = append(retProductIDs, healthITProductID)
+	}
+
+	return retProductIDs, err
+}
+
+// AddHealthITProductMap creates a new ID for all the healthit products for a particular endpoint and returns it
+func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
+	var err error
+	var softwareMapRow *sql.Row
+	if id == 0 {
+		softwareMapRow = addHealthITProductMapStatementNoID.QueryRowContext(ctx, healthITProductID)
+	} else {
+		softwareMapRow = addHealthITProductMapStatement.QueryRowContext(ctx, id, healthITProductID)
+	}
+	softwareMapID := 0
+	err = softwareMapRow.Scan(&softwareMapID)
+
+	return softwareMapID, err
+}
+
 // AddHealthITProduct adds the HealthITProduct to the database.
 func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.HealthITProduct) error {
 	locationJSON, err := json.Marshal(hitp.Location)
@@ -350,6 +390,27 @@ func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
 
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
+	addHealthITProductMapStatement, err = s.DB.Prepare(`
+		INSERT INTO healthit_products_map (id, healthit_product_id)
+		VALUES ($1, $2)
+		RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	addHealthITProductMapStatementNoID, err = s.DB.Prepare(`
+	INSERT INTO healthit_products_map (healthit_product_id)
+	VALUES ($1)
+	RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	getHealthITProductByMapID, err = s.DB.Prepare(`
+	SELECT healthit_product_id
+		FROM healthit_products_map
+	WHERE id=$1;`)
+	if err != nil {
+		return err
+	}
 	addHealthITProductStatement, err = s.DB.Prepare(`
 		INSERT INTO healthit_products (
 			name,
