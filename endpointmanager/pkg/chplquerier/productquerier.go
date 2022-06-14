@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"sort"
@@ -20,6 +21,11 @@ import (
 )
 
 var chplAPICertProdListPath string = "/search/v2"
+
+type chplEndpointListProductInfo struct {
+	ListSourceURL    string                 `json:"listSourceURL"`
+	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
+}
 
 type chplCertifiedProductList struct {
 	Results     []chplCertifiedProduct `json:"results"`
@@ -92,6 +98,45 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 			log.Infof("have persisted chpl products %d/%d", persistedProducts, prodList.RecordCount)
 		}
 	}
+	return nil
+}
+
+// GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
+// within the given context 'ctx'.
+func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
+
+	var CHPLEndpointListProducts []chplEndpointListProductInfo
+
+	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
+	// Get CHPL Endpoint list stored in Lantern resources folder
+	CHPLFile, err := ioutil.ReadFile("/etc/lantern/resources/CHPLProductsInfo.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Debug("Converting product information into list of chplCertifiedProducts")
+	err = json.Unmarshal(CHPLFile, &CHPLEndpointListProducts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, listSourceEntry := range CHPLEndpointListProducts {
+		var prodList []chplCertifiedProduct
+		var CHPLProductList chplCertifiedProductList
+
+		prodList = listSourceEntry.SoftwareProducts
+
+		CHPLProductList.Results = prodList
+		CHPLProductList.RecordCount = len(prodList)
+
+		log.Debug("persisting chpl products")
+		err = persistProducts(ctx, store, &CHPLProductList)
+		if err != nil {
+			return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+		}
+	}
+
+	log.Debug("done persisting chpl products")
 	return nil
 }
 
