@@ -55,9 +55,8 @@ var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
 	&endpointmanager.Vendor{
 		Name:          "NextGen Healthcare",
 		DeveloperCode: "G",
-		CHPLID:       7,
+		CHPLID:        7,
 	},
-
 }
 
 func TestMain(m *testing.M) {
@@ -206,13 +205,13 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	ep2 := &endpointmanager.FHIREndpoint{
 		URL:               "example3.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example2 Inc."},
-		ListSource: "https://api.bluebuttonpro.com/swagger/index.html"}
+		ListSource:        "https://api.bluebuttonpro.com/swagger/index.html"}
 	store.AddFHIREndpoint(ctx, ep2)
 
 	ep3 := &endpointmanager.FHIREndpoint{
-		URL: "example4.com/FHIR/DSTU2",
+		URL:               "example4.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example2 Inc."},
-		ListSource: "https://nextgen.com/api/practice-search"}
+		ListSource:        "https://nextgen.com/api/practice-search"}
 	store.AddFHIREndpoint(ctx, ep3)
 
 	// endpoint info
@@ -224,7 +223,6 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	epInfo2 := &endpointmanager.FHIREndpointInfo{
 		URL:                 ep2.URL,
 		CapabilityStatement: nil}
-
 
 	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", listSourceMap)
 	th.Assert(t, err == nil, err)
@@ -243,7 +241,6 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	// healthIT product with ID healthITProductID should have matched
 	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs))
-
 
 	// capability statement
 	path = filepath.Join("../../testdata", "advantagecare_physicians_stu3.json")
@@ -306,7 +303,6 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo3.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
-
 
 }
 
@@ -406,7 +402,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	ep2 := &endpointmanager.FHIREndpoint{
 		URL:               "example2.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Inc."},
-		ListSource: "https://nextgen.com/api/practice-search"}
+		ListSource:        "https://nextgen.com/api/practice-search"}
 	store.AddFHIREndpoint(ctx, ep2)
 
 	// endpoint info
@@ -417,7 +413,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == vendors[6].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[6].ID, epInfo.VendorID))
-	
+
 }
 
 func Test_getVendorMatch(t *testing.T) {
