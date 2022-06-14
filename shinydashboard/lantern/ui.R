@@ -39,6 +39,9 @@ ui <- dashboardPage(
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
     tags$head(tags$style(HTML("
+      .content-wrapper, .right-side {
+        background-color: #F6F7F8;
+      }
       .skin-blue .main-header .navbar {
         background-color: #1B5A7F;
       }
@@ -69,6 +72,28 @@ ui <- dashboardPage(
       }
       .modal-lg {
         width: 75%!important;
+      }
+      #fields_page-capstat_fields_text{
+        color: black!important;
+      }
+      #organization_tabset li a {
+        color: #024A96;
+      }
+      #resource_tabset li a {
+        color: #024A96;
+      }
+      #profile_resource_tab li a {
+        color: #024A96;
+      }
+      .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+        color: #555!important;
+      }
+      .multi-wrapper div a {
+        color: #024A96;
+      }
+      .multi-wrapper .non-selected-wrapper .item.selected {
+        color: #4F4F4F;
+        opacity: 1!important;
       }
     "))),
     tags$script(
