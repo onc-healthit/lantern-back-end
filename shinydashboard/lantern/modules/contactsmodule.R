@@ -68,9 +68,9 @@ contactsmodule <- function(
                   endpoint_name = colDef(name = "API Information Source Name", aggregate = "unique", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", aggregate = "unique", minWidth = 110, sortable = FALSE),
                   has_contact = colDef(name = "Has Contact Information", aggregate = "unique"),
-                  contact_name = colDef(name = "Contact Name"),
-                  contact_type = colDef(name = "Contact Type"),
-                  contact_value = colDef(name = "Contact Info"),
+                  contact_name = colDef(name = "Preferred Contact Name"),
+                  contact_type = colDef(name = "Preferred Contact Type"),
+                  contact_value = colDef(name = "Preferred Contact Info"),
                   contact_preference = colDef(show = FALSE),
                   show_all = colDef(name = "All Contacts", html = TRUE)
               ),

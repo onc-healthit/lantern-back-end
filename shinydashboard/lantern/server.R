@@ -635,9 +635,9 @@ function(input, output, session) { #nolint
       )),
       reactable::renderReactable({
         reactable(
-          app_data$contact_info_tbl() %>% 
+          app_data$contact_info_tbl() %>%
           mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
-          filter(url == input$show_contact_modal) %>% 
+          filter(url == input$show_contact_modal) %>%
           arrange(contact_preference) %>%
           mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
           select(contact_name, contact_type, contact_value),
