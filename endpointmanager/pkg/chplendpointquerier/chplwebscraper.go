@@ -44,9 +44,9 @@ func CHPLwebscraper(CHPLURL string, fileToWriteTo string) {
 				var entryR4 LanternEntry
 				tableEntries := rowbodyhtml.Find("td")
 				if tableEntries.Length() > 0 {
-					organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
-					DSTU2URL := strings.TrimSpace(tableEntries.Eq(5).Text())
-					R4URL := strings.TrimSpace(tableEntries.Eq(6).Text())
+					organizationName := strings.TrimSpace(tableEntries.Eq(1).Text())
+					DSTU2URL := strings.TrimSpace(tableEntries.Eq(6).Text())
+					R4URL := strings.TrimSpace(tableEntries.Eq(7).Text())
 
 					entryDSTU2.OrganizationName = organizationName
 					entryDSTU2.URL = DSTU2URL
