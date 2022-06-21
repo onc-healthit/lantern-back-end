@@ -1099,6 +1099,7 @@ output$plot_note_text <- renderUI({
       title = "Endpoint Details",
       h1("Endpoint URL:"),
       h3(tags$a(as.character(endpoint$url))),
+      p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
       tabsetPanel(type = "tabs",
           tabPanel("Details", detailPage()),
           tabPanel("Organizations", organization_endpoint_page()),
