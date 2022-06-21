@@ -1098,7 +1098,7 @@ output$plot_note_text <- renderUI({
     showModal(modalDialog(
       title = "Endpoint Details",
       h1("Endpoint URL:"),
-      h3(tags$a(as.character(endpoint$url))),
+      h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
       p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
       tabsetPanel(type = "tabs",
           tabPanel("Details", detailPage()),
