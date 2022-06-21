@@ -148,8 +148,8 @@ smartresponsemodule <- function(
               rownames = FALSE,
               escape = FALSE,
               options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(smartPageSizeNum()))
-    )}
-  )
+    )
+  })
 
   observeEvent(input$well_known_endpoints_state$length, {
     if (is.null(isolate(smartPageSizeNum()))) {

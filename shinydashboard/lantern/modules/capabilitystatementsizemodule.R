@@ -43,7 +43,7 @@ capabilitystatementsizemodule <- function(
   })
 
   selected_fhir_endpoints_stats <- reactive({
-    res <- summarise(selected_fhir_endpoints(), count = length(size), max = ifelse(all(is.na(size)), NA, max(size, na.rm = T)), min = ifelse(all(is.na(size)), NA, min(size, na.rm = T)), mean = mean(size), sd = sd(size))
+    res <- summarise(selected_fhir_endpoints(), count = length(size), max = ifelse(all(is.na(size)), NA, max(size, na.rm = TRUE)), min = ifelse(all(is.na(size)), NA, min(size, na.rm = TRUE)), mean = mean(size), sd = sd(size))
     res
   })
 

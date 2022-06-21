@@ -54,8 +54,7 @@ organizationsmodule <- function(
       if (sel_confidence() == "100") {
         confidence_filter_num <- as.numeric(sel_confidence())
         res <- res %>% filter(match_score == confidence_filter_num)
-      }
-      else {
+      } else {
         confidence_upper_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][2])
         confidence_lower_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][1])
 

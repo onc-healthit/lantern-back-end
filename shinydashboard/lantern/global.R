@@ -17,7 +17,7 @@ shinyOptions(cache = memoryCache(max_size = 20e6, max_age = 3600))
 
 root <- ifelse(Sys.getenv("HOME") == "/home/shiny", ".", "lantern")
 config_yaml <- yaml::read_yaml(here(root, "configuration.yml"))
-purrr::walk(config_yaml$libraries, library, character.only = T)
+purrr::walk(config_yaml$libraries, library, character.only = TRUE)
 purrr::walk(config_yaml$function_files, source)
 purrr::walk(config_yaml$module_files, source)
 

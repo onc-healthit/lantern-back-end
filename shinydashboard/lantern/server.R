@@ -483,8 +483,7 @@ function(input, output, session) { #nolint
   observeEvent(input$selectall, {
     if (input$selectall == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = checkbox_resources())
     }
   })
@@ -492,8 +491,7 @@ function(input, output, session) { #nolint
   observeEvent(input$removeall, {
     if (input$removeall == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       current_selection(NULL)
       updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources())
     }
@@ -541,8 +539,7 @@ function(input, output, session) { #nolint
   observeEvent(input$removeallops, {
     if (input$removeallops == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       updateSelectizeInput(session, "operations",
               label = "Click in the box below to add or remove operations:",
               choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
@@ -980,14 +977,11 @@ organization_endpoint_page <- function() {
 get_range <- function() {
     if (all(input$date == "Past 7 days")) {
       range <- "604800"
-    }
-    else if (all(input$date == "Past 14 days")) {
+    } else if (all(input$date == "Past 14 days")) {
       range <- "1209600"
-    }
-    else if (all(input$date == "Past 30 days")) {
+    } else if (all(input$date == "Past 30 days")) {
       range <- "2592000"
-    }
-    else{
+    } else {
       range <- "maxdate.maximum"
     }
     range

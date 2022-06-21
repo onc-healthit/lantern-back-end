@@ -60,8 +60,7 @@ selected_fhir_endpoint_profiles <- reactive({
         tagList(
           reactable::reactableOutput(ns("filter_profile_table"))
         )
-      }
-     else {
+      } else {
         tagList(
             reactable::reactableOutput(ns("no_filter_profile_table"))
         )
