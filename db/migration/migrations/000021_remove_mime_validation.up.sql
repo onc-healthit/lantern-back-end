@@ -6,4 +6,6 @@ CREATE OR REPLACE FUNCTION delete_data_in_healthit_products() RETURNS VOID as $$
     END;
 $$ LANGUAGE plpgsql;
 
+SELECT delete_data_in_healthit_products();
+
 END;
