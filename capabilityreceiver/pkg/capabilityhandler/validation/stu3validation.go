@@ -18,7 +18,6 @@ func newSTU3Val() *stu3Validation {
 
 // RunValidation runs all of the defined validation checks
 func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatement,
-	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
 	smartRsp smartparser.SMARTResponse,
@@ -27,9 +26,6 @@ func (v *stu3Validation) RunValidation(capStat capabilityparser.CapabilityStatem
 	var validationResults []endpointmanager.Rule
 
 	returnedRule := v.CapStatExists(capStat)
-	validationResults = append(validationResults, returnedRule)
-
-	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
 	returnedRules := v.KindValid(capStat)
@@ -70,13 +66,6 @@ func (v *stu3Validation) CapStatExists(capStat capabilityparser.CapabilityStatem
 	} else {
 		baseRule.Comment = "The Capability Statement does not exist. " + baseComment
 	}
-	return baseRule
-}
-
-// MimeTypeValid checks if the given mime types include the correct mime type for the given version
-// using the base function, and then adds specific STU3 reference information
-func (v *stu3Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
-	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
 	return baseRule
 }
 

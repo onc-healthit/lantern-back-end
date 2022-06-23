@@ -30,7 +30,6 @@ func newR4Val() *r4Validation {
 
 // RunValidation runs all of the defined validation checks
 func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatement,
-	mimeTypes []string,
 	fhirVersion string,
 	tlsVersion string,
 	smartRsp smartparser.SMARTResponse,
@@ -39,9 +38,6 @@ func (v *r4Validation) RunValidation(capStat capabilityparser.CapabilityStatemen
 	var validationResults []endpointmanager.Rule
 
 	returnedRule := v.CapStatExists(capStat)
-	validationResults = append(validationResults, returnedRule)
-
-	returnedRule = v.MimeTypeValid(mimeTypes, fhirVersion)
 	validationResults = append(validationResults, returnedRule)
 
 	if requestedFhirVersion == "None" && defaultFhirVersion != "" {
@@ -104,14 +100,6 @@ func (v *r4Validation) CapStatExists(capStat capabilityparser.CapabilityStatemen
 		baseRule.Comment = "The Capability Statement does not exist. " + baseComment
 	}
 
-	return baseRule
-}
-
-// MimeTypeValid checks if the given mime types include the correct mime type for the given version
-// using the base function, and then adds specific R4 reference information
-func (v *r4Validation) MimeTypeValid(mimeTypes []string, fhirVersion string) endpointmanager.Rule {
-	baseRule := v.baseVal.MimeTypeValid(mimeTypes, fhirVersion)
-	baseRule.ImplGuide = "USCore 3.1"
 	return baseRule
 }
 

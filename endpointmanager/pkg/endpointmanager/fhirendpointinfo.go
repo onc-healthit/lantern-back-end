@@ -161,7 +161,6 @@ type Rule struct {
 type RuleOption string
 
 const (
-	GeneralMimeTypeRule  RuleOption = "generalMimeType"
 	CapStatExistRule     RuleOption = "capStatExist"
 	TLSVersion           RuleOption = "tlsVersion"
 	PatResourceExists    RuleOption = "patResourceExists"
