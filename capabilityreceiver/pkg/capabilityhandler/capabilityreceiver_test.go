@@ -392,7 +392,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr == nil, returnErr)
 
 	// Check if versions response validation is included when requestedFhirVersion is None
-	versionValidation := validation.Results[2]
+	versionValidation := validation.Results[1]
 	th.Assert(t, versionValidation.RuleName == endpointmanager.VersionsResponseRule, "Expected versions response rule to be included in validation since requestedFhirVersion is None")
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
 	th.Assert(t, versionValidation.Actual == "4.0.1", "Expected validation actual version to equal 4.0.1")

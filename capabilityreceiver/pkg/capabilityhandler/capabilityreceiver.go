@@ -170,7 +170,7 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 
 	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
-	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
+	validationObj := validator.RunValidation(capStat, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 	operationResource := RunSupportedResourcesChecks(capInt)
 	supportedProfiles := RunSupportedProfilesCheck(capInt, fhirVersion)
