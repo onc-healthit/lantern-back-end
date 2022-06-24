@@ -7,7 +7,10 @@ import (
 	http "net/http"
 	"os"
 	"strings"
-	"time"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplendpointquerier"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 type softwareInfo struct {
