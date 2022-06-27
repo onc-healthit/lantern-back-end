@@ -7,11 +7,11 @@ valuesmodule_UI <- function(id) {
     p("This is the set of values from the endpoints for a given field included in the FHIR CapabilityStatement / Conformance Resources."),
     fluidRow(
       column(width = 7,
-             h4("Field Values"),
-             DT::dataTableOutput(ns("capstat_values_table"))
+             h2("Field Values"),
+             reactable::reactableOutput(ns("capstat_values_table"))
             ),
       column(width = 5,
-             h4("Endpoints that Include a Value for the Given Field"),
+             h2("Endpoints that Include a Value for the Given Field"),
              uiOutput(ns("values_chart")),
       )
     ),
@@ -98,12 +98,17 @@ valuesmodule <- function(
     get_capstat_values_list(selected_fhir_endpoints())
   })
 
-  output$capstat_values_table <- DT::renderDataTable({
-    datatable(capstat_values_list(),
-              colnames = c("Developer", "FHIR Version", get_value_table_header(), "Endpoints"),
-              selection = "none",
-              rownames = FALSE,
-              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(capstatPageSizeNum())))
+  output$capstat_values_table <- reactable::renderReactable({
+    reactable(capstat_values_list() %>% select(Developer, "FHIR Version", field_value, Endpoints),
+                columns = list(
+                  field_value = colDef(name = get_value_table_header())
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                striped = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = isolate(capstatPageSizeNum())
+    )
   })
 
   observeEvent(input$capstat_values_table_state$length, {
