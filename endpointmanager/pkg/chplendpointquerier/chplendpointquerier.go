@@ -14,6 +14,7 @@ var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/
 var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
 var AllScriptsURL = "https://open.allscripts.com/fhirendpoints"
+var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -25,5 +26,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		Canvaswebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == AllScriptsURL {
 		AllScriptsQuerier(chplURL, fileToWriteTo)
+	} else if chplURL == EpicURL {
+		EpicQuerier(chplURL, fileToWriteTo)
 	}
 }
