@@ -630,9 +630,23 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = "All Contacts",
       p(input$show_contact_modal),
-      p(ifelse(is.na(app_data$contact_info_tbl() %>% filter(url == input$show_contact_modal) %>% distinct(endpoint_name) %>% select(endpoint_name)),
-        "-", app_data$contact_info_tbl() %>% filter(url == input$show_contact_modal) %>% distinct(endpoint_name) %>% select(endpoint_name)
-      )),
+      p(ifelse(is.na(
+        app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names)) 
+          ||
+          app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names) == "",
+        "-", 
+        app_data$contact_info_tbl() %>%
+        filter(url == input$show_contact_modal) %>%
+        mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
+        distinct(endpoint_names) %>%
+        select(endpoint_names)
+      ),
       reactable::renderReactable({
         reactable(
           app_data$contact_info_tbl() %>%
@@ -640,7 +654,8 @@ function(input, output, session) { #nolint
           filter(url == input$show_contact_modal) %>%
           arrange(contact_preference) %>%
           mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
-          select(contact_name, contact_type, contact_value),
+          select(contact_name, contact_type, contact_value) %>%
+          mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -653,6 +668,6 @@ function(input, output, session) { #nolint
         )
       }),
       easyClose = TRUE
-  ))
+  )))
   })
 }

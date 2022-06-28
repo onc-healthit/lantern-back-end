@@ -314,7 +314,7 @@ get_contact_information <- function(db_connection) {
         f.url as url,
         vendors.name as vendor_name,
         capability_fhir_version as fhir_version,
-        fhir_endpoints.organization_names[1] as endpoint_name,
+        fhir_endpoints.organization_names as endpoint_names,
 		    contacts.contact_name,
 		    contacts.contact_type, 
 		    contacts.contact_value,
@@ -332,6 +332,9 @@ get_contact_information <- function(db_connection) {
 				  ) as contacts on contacts.url = f.url
     ")) %>%
     collect() %>%
+    mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
+    mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
+    mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
