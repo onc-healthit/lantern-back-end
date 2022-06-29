@@ -26,6 +26,15 @@ var fluffWords = []string{
 	"corporation.",
 }
 
+type chplEndpointListProductInfo struct {
+	ListSourceURL    string                 `json:"listSourceURL"`
+	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
+}
+
+type chplCertifiedProduct struct {
+	ChplProductNumber   string             `json:"chplProductNumber"`
+}
+
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
 func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
@@ -73,6 +82,38 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 		ep.HealthITProductID = healthITMapID
 	}
+
+	chplProductInfoFile := "/etc/lantern/resources/CHPLProductsInfo.json"
+
+	listSourceMap, err := openCHPLEndpointListInfoFile(chplProductInfoFile)
+	if err != nil {
+		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+	}
+
+	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
+	if err != nil {
+		return errors.Wrap(err, "error getting fhir endpoints from DB")
+	}
+
+	for _, fhirEndpoint := range fhirEndpointList {
+		chplIDList := listSourceMap[fhirEndpoint.ListSource]
+		if len(chplIDList) > 0 {
+			for _, chplID := range chplIDList {
+				
+				healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+
+				// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+				if err == nil {
+					healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+					if err != nil {
+						return err
+					}
+					ep.HealthITProductID = healthITMapID
+				}
+			}
+		}
+	}
+
 
 	return nil
 }
@@ -142,6 +183,45 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 	}
 
 	return chplMap, nil
+}
+
+func openCHPLEndpointListInfoFile(filepath string) (map[string][]string, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareListMap = make(map[string][]string)
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap []chplEndpointListProductInfo
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &chplMap)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range chplMap {
+			var listSource = obj.ListSourceURL
+			var softwareProducts = obj.SoftwareProducts
+
+			var chplID = ""
+			for _, prod := range softwareProducts {
+				chplID = prod.ChplProductNumber
+
+				if listSource != "" && chplID != "" {
+					if softwareListMap[listSource] == nil {
+						softwareListMap[listSource] = []string{}
+					}
+					softwareListMap[listSource] = append(softwareListMap[listSource], chplID)
+				}
+			}
+		}
+	}
+
+	return softwareListMap, nil	
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
