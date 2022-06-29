@@ -9,7 +9,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type softwareInfo struct {
@@ -52,7 +51,7 @@ type CHPLEndpointEntry struct {
 	Product             details `json:"product"`
 	Version             details `json:"version"`
 	CertificationStatus details `json:"certificationStatus"`
-	CertificationDate   string
+	CertificationDate   string `json:"certificationDate"`
 	Edition             details          `json:"edition"`
 	CHPLProductNumber   string           `json:"chplProductNumber"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
@@ -61,17 +60,17 @@ type CHPLEndpointEntry struct {
 }
 
 type chplCertifiedProductEntry struct {
-	ID                  int      `json:"id"`
-	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             string   `json:"edition"`
-	PracticeType        string   `json:"practiceType"`
-	Developer           string   `json:"developer"`
-	Product             string   `json:"product"`
-	Version             string   `json:"version"`
-	CertificationDate   int64    `json:"certificationDate"`
-	CertificationStatus string   `json:"certificationStatus"`
-	CriteriaMet         []int    `json:"criteriaMet"`
-	APIDocumentation    []string `json:"apiDocumentation"`
+	ID                  int                `json:"id"`
+	ChplProductNumber   string             `json:"chplProductNumber"`
+	Edition             details            `json:"edition"`
+	PracticeType        details            `json:"practiceType"`
+	Developer           details            `json:"developer"`
+	Product             details            `json:"product"`
+	Version             details            `json:"version"`
+	CertificationDate   string             `json:"certificationDate"`
+	CertificationStatus details            `json:"certificationStatus"`
+	CriteriaMet         []certCriteria      `json:"criteriaMet"`
+	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
 }
 
 func main() {
@@ -139,48 +138,38 @@ func main() {
 			productEdition := chplEntry.Edition.Name
 			productEdition = strings.TrimSpace(productEdition)
 
-			certificationDateTime, err := time.Parse("2006-01-02", chplEntry.CertificationDate)
-			if err != nil {
-				log.Fatal("converting certification date to time failed")
-			}
-			certificationDateInt := certificationDateTime.Unix()
+		certificationDateTime := chplEntry.CertificationDate
 
-			var criteriaMetArr []int
-			for _, criteriaEntry := range chplEntry.CriteriaMet {
-				criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
-			}
+		criteriaMetArr := chplEntry.CriteriaMet
 
-			var apiDocURLArr []string
-			for _, apiURLEntry := range chplEntry.APIDocumentation {
-				apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
-			}
+		apiDocURLArr := chplEntry.APIDocumentation
 
-			var entry endpointEntry
+		var entry endpointEntry
 
-			urlString := chplEntry.ServiceBaseUrlList.Value
-			urlString = strings.TrimSpace(urlString)
+		urlString := chplEntry.ServiceBaseUrlList.Value
+		urlString = strings.TrimSpace(urlString)
 
-			var productEntry chplCertifiedProductEntry
+		var productEntry chplCertifiedProductEntry
 
-			productEntry.Product = productName
-			productEntry.ChplProductNumber = productNumber
-			productEntry.Version = productVersion
-			productEntry.CertificationStatus = productCertStatus
-			productEntry.CertificationDate = certificationDateInt
-			productEntry.Edition = productEdition
-			productEntry.CriteriaMet = criteriaMetArr
-			productEntry.APIDocumentation = apiDocURLArr
-			productEntry.Developer = developerName
+		productEntry.Product = details{Name: productName}
+		productEntry.ChplProductNumber = productNumber
+		productEntry.Version = details{Name: productVersion}
+		productEntry.CertificationStatus = details{Name: productCertStatus}
+		productEntry.CertificationDate = certificationDateTime
+		productEntry.Edition = details{Name: productEdition}
+		productEntry.CriteriaMet = criteriaMetArr
+		productEntry.APIDocumentation = apiDocURLArr
+		productEntry.Developer = details{Name: developerName}
 
-			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
-			if !softwareContained {
-				var softwareInfoEntry softwareInfo
-				softwareInfoEntry.ListSourceURL = urlString
-				softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
-				softwareInfoList = append(softwareInfoList, softwareInfoEntry)
-			} else {
-				softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
-			}
+		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
+		if !softwareContained {
+			var softwareInfoEntry softwareInfo
+			softwareInfoEntry.ListSourceURL = urlString
+			softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
+			softwareInfoList = append(softwareInfoList, softwareInfoEntry)
+		} else {
+			softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
+		}
 
 			if !containsEndpoint(endpointEntryList, urlString) {
 
