@@ -307,6 +307,38 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
+# get contact information
+get_contact_information <- function(db_connection) {
+  res <- tbl(db_connection,
+    sql("SELECT f.id as endpoint_id,
+        f.url as url,
+        vendors.name as vendor_name,
+        capability_fhir_version as fhir_version,
+        fhir_endpoints.organization_names as endpoint_names,
+		    contacts.contact_name,
+		    contacts.contact_type, 
+		    contacts.contact_value,
+        contacts.contact_preference
+        FROM fhir_endpoints_info f
+        LEFT JOIN vendors on f.vendor_id = vendors.id
+        LEFT JOIN fhir_endpoints on f.id = fhir_endpoints.id
+		    LEFT JOIN (SELECT
+				  url,
+				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
+        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
+          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
+          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
+          FROM fhir_endpoints_info
+				  ) as contacts on contacts.url = f.url
+    ")) %>%
+    collect() %>%
+    mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
+    mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
+    mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
+    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+}
+
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
 # this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
@@ -667,6 +699,8 @@ database_fetcher <- reactive({
   app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection))
 
   app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection))
+
+  app_data$contact_info_tbl(get_contact_information(db_connection))
 
   app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection))
 
