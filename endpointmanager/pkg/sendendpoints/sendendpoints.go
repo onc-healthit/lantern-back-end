@@ -51,21 +51,24 @@ func GetEnptsAndSend(
 			}
 		}
 
-		log.Infof("Waiting %d minutes", qInterval)
 		if len(listOfEndpoints) != 0 {
 			err = accessqueue.SendToQueue(ctx, "FINISHED", mq, channelID, qName)
 			if err != nil {
 				errs <- err
 			}
 		}
-		// Wait 1 second for every endpoint to ensure querier is done before starting history pruning and json export
-		time.Sleep(time.Duration(time.Duration(len(listOfEndpoints)) * time.Second))
+		log.Infof("Waiting %d seconds to start history pruning and json export", len(listOfEndpoints))
+		// Wait half a second for every endpoint to ensure querier is done before starting history pruning and json export
+		time.Sleep(time.Duration(time.Duration(len(listOfEndpoints)/2) * time.Second))
+		log.Info("Starting history pruning")
 		historypruning.PruneInfoHistory(ctx, store, true)
+		log.Info("Starting json export")
 		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json")
 		if err != nil {
 			errs <- err
 		}
 
+		log.Infof("Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
 }

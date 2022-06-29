@@ -238,7 +238,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		capability_statement, tls_version, mime_types, operation_resource,
 		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
-		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1;`
+		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('day', fhir_endpoints_info_history.updated_at) >= date_trunc('day', current_date - INTERVAL '30 day'));`
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
