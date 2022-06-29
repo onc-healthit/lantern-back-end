@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	http "net/http"
 	"strings"
+	"encoding/json"
 
 	log "github.com/sirupsen/logrus"
 
@@ -13,6 +14,8 @@ import (
 )
 
 func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
+
+	var endpointEntryList EndpointList
 
 	var DSTU2URL string
 
@@ -57,7 +60,13 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, respBody, 0644)
+	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
+	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
