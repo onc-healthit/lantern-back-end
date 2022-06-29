@@ -6,7 +6,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "contacts_tab", "location_tab", "about_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -122,6 +122,14 @@ function(input, output, session) { #nolint
         reactive(input$field))
 
       callModule(
+        contactsmodule,
+        "contacts_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$has_contact)
+      )
+
+      callModule(
         validationsmodule,
         "validations_page",
         reactive(input$fhir_version),
@@ -143,6 +151,7 @@ function(input, output, session) { #nolint
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
      "location_tab" = "Location Map",
+     "contacts_tab" = "Contact Information Page",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
@@ -170,7 +179,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
   )
 
   fhir_version_no_capstat <- reactive(
@@ -186,6 +195,8 @@ function(input, output, session) { #nolint
   )
 
   show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
+
+  show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
@@ -231,6 +242,7 @@ function(input, output, session) { #nolint
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
+      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 4, fhirDropdown),
@@ -248,6 +260,12 @@ function(input, output, session) { #nolint
           column(width = 4, fhirDropdown),
           column(width = 4, developerDropdown),
           column(width = 4, confidenceDropdown)
+        )
+      } else if (show_has_contact_filter()) {
+        fluidRow(
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown),
+          column(width = 4, contactDropdown)
         )
       } else {
         fluidRow(
@@ -267,6 +285,21 @@ function(input, output, session) { #nolint
             label = "Developer:",
             choices = app$vendor_list,
             selected = ui_special_values$ALL_DEVELOPERS
+          )
+        )
+      )
+    }
+  })
+
+  output$show_has_contact_filters <- renderUI({
+    if (show_has_contact_filter()) {
+      fluidRow(
+        column(width = 4,
+          selectInput(
+            inputId = "has_contact",
+            label = "Has Contact Data",
+            choices = list("True", "False", "Any"),
+            selected = "Any"
           )
         )
       )
@@ -589,5 +622,50 @@ function(input, output, session) { #nolint
       p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
       easyClose = TRUE
   ))
+  })
+
+  observeEvent(input$show_contact_modal, {
+    showModal(modalDialog(
+      title = "All Contacts",
+      p(input$show_contact_modal),
+      p(ifelse(is.na(
+        app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names)) 
+          ||
+          app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names) == "",
+        "-", 
+        app_data$contact_info_tbl() %>%
+        filter(url == input$show_contact_modal) %>%
+        mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
+        distinct(endpoint_names) %>%
+        select(endpoint_names)
+      ),
+      reactable::renderReactable({
+        reactable(
+          app_data$contact_info_tbl() %>%
+          mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
+          filter(url == input$show_contact_modal) %>%
+          arrange(contact_preference) %>%
+          mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
+          select(contact_name, contact_type, contact_value) %>%
+          mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
+              defaultColDef = colDef(
+                align = "center"
+              ),
+              columns = list(
+                  contact_name = colDef(name = "Contact Name"),
+                  contact_type = colDef(name = "Contact Type"),
+                  contact_value = colDef(name = "Contact Info")
+              ),
+              groupBy = "contact_name"
+        )
+      }),
+      easyClose = TRUE
+  )))
   })
 }
