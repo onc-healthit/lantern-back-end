@@ -11,7 +11,11 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
+<<<<<<< HEAD
     if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
+=======
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "contacts_tab", "location_tab", "about_tab"))) {
+>>>>>>> 892cbe17 (Contact info (#287))
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -180,10 +184,13 @@ function(input, output, session) { #nolint
 
   show_filter <- reactive(
     input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+<<<<<<< HEAD
   )
 
   fhir_version_no_capstat <- reactive(
     input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
+=======
+>>>>>>> 892cbe17 (Contact info (#287))
   )
 
   fhir_version_no_capstat <- reactive(
@@ -197,6 +204,8 @@ function(input, output, session) { #nolint
   show_validations_filter <- reactive(
     input$side_menu %in% c("validations_tab")
   )
+
+  show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
