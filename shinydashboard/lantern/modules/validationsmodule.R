@@ -68,7 +68,7 @@ validationsmodule <- function(
 
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
-    res <- selected_validations()
+    res <- selected_validations() %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>% select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
     res <- res %>%
            distinct(rule_name) %>%
            arrange(rule_name)
@@ -122,7 +122,9 @@ validationsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
-    res <- res %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
+
+    res <- res %>%
+    mutate(linkURL = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   get_validation_versions <- reactive({
@@ -144,7 +146,7 @@ validationsmodule <- function(
 
   # Creates table containing the filtered validation's rule name, if its valid, and it'c count
   select_validation_results <- reactive({
-    res <- selected_validations()
+    res <- selected_validations() %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>% select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
     res <- res %>%
       group_by(rule_name, valid) %>%
       count() %>%
@@ -156,7 +158,11 @@ validationsmodule <- function(
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   failed_validation_results <- reactive({
-    res <- selected_validations()
+    res <- selected_validations() %>%
+    mutate(url = linkURL) %>%
+    distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>%
+    select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
+
     if (length(input$validation_details_table_rows_selected) > 0) {
       selected_rule <- deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])
       res <- res %>%
@@ -167,7 +173,7 @@ validationsmodule <- function(
     }
     res <- res %>%
         filter(valid == FALSE)
-    res %>% select(url, expected, actual, vendor_name, fhir_version)
+    res %>% select(fhir_version, url, expected, actual, vendor_name)
   })
 
   # Renders the validation details table which displays all the validation rules and comments and can be selected to filter the validation failure table
@@ -258,19 +264,18 @@ validationsmodule <- function(
                 }
               ),
               columns = list(
-                url = colDef(name = "URL", minWidth = 300,
-                  cell = function(value, index) {
+                fhir_version = colDef(name = "FHIR Version",
+                    cell = function(value, index) {
                         image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
                         tagList(
                           div(style = list(display = "inline-block", width = "45px"), image),
                           value
                         )
-                  }
-                ),
+                }),
+                url = colDef(name = "URL", html = TRUE, minWidth = 300),
                 expected = colDef(name = "Expected Value"),
                 actual = colDef(name = "Actual Value"),
-                vendor_name = colDef(name = "Certified API Developer Name"),
-                fhir_version = colDef(name = "FHIR Version")
+                vendor_name = colDef(name = "Certified API Developer Name")
 
               )
             )

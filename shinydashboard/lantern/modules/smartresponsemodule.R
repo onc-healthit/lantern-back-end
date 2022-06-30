@@ -122,6 +122,7 @@ smartresponsemodule <- function(
 
   smartPageSizeNum <- reactiveVal(NULL)
 
+  # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
     if (is.null(isolate(smartPageSizeNum()))) {
       smartPageSizeNum(10)
@@ -134,6 +135,8 @@ smartresponsemodule <- function(
     mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
 
     res <- res %>%
+    distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version)
     res
   })
@@ -145,8 +148,8 @@ smartresponsemodule <- function(
               rownames = FALSE,
               escape = FALSE,
               options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(smartPageSizeNum()))
-    )}
-  )
+    )
+  })
 
   observeEvent(input$well_known_endpoints_state$length, {
     if (is.null(isolate(smartPageSizeNum()))) {

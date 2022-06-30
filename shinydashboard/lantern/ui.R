@@ -24,7 +24,6 @@ ui <- dashboardPage(
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
       menuItem("CapabilityStatement / Conformance Profiles", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "profile_tab"),
       menuItem("Values", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon"), tabName = "values_tab"),
-      menuItem("Performance", icon = tags$i(class = "fa fa-bar-chart-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "bar-chart-o icon"), tabName = "performance_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = tags$i(class = "fa fa-hdd-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "hdd-o icon"), tabName = "capabilitystatementsize_tab"),
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
@@ -68,6 +67,9 @@ ui <- dashboardPage(
       #dashboard_page-show_info {
         color: black;
       }
+      .modal-lg {
+        width: 75%!important;
+      }
     "))),
     tags$script(
       "let elems = document.getElementsByClassName('content-wrapper');
@@ -89,7 +91,6 @@ ui <- dashboardPage(
     uiOutput("resource_tab_popup"),
     h1(textOutput("page_title")),
     uiOutput("show_filters"),
-    uiOutput("show_date_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
     uiOutput("show_resource_profiles_dropdown"),
@@ -106,9 +107,6 @@ ui <- dashboardPage(
       ),
       tabItem("organizations_tab",
               organizationsmodule_UI("organizations_page")
-      ),
-      tabItem("performance_tab",
-              performance_UI("performance_page")
       ),
       tabItem("capabilitystatementsize_tab",
               capabilitystatementsize_UI("capabilitystatementsize_page")

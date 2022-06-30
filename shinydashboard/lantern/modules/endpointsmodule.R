@@ -48,8 +48,7 @@ endpointsmodule <- function(
         availability_filter_num <- as.numeric(sel_availability()) / 100
         availability_filter <- as.character(availability_filter_num)
         res <- res %>% filter(availability == availability_filter)
-      }
-      else {
+      } else {
         availability_upper_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][2]) / 100
         availability_lower_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][1]) / 100
         availability_lower <- as.character(availability_lower_num)
@@ -61,8 +60,8 @@ endpointsmodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names))
-
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
     res <- res %>% mutate(availability = availability * 100)
     res
   })
@@ -103,7 +102,8 @@ endpointsmodule <- function(
                                   }"
                             ),
                             sortable = TRUE,
-                            align = "left"),
+                            align = "left",
+                            html = TRUE),
                   endpoint_names = colDef(show = FALSE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
