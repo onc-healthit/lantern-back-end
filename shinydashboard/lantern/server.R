@@ -626,13 +626,13 @@ function(input, output, session) { #nolint
         app_data$contact_info_tbl() %>%
           filter(url == input$show_contact_modal) %>%
           distinct(endpoint_names) %>%
-          select(endpoint_names)) 
+          select(endpoint_names))
           ||
           app_data$contact_info_tbl() %>%
           filter(url == input$show_contact_modal) %>%
           distinct(endpoint_names) %>%
           select(endpoint_names) == "",
-        "-", 
+        "-",
         app_data$contact_info_tbl() %>%
         filter(url == input$show_contact_modal) %>%
         mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
