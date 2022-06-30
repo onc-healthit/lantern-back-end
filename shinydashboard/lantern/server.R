@@ -12,10 +12,14 @@ function(input, output, session) { #nolint
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
 =======
     if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "contacts_tab", "location_tab", "about_tab"))) {
 >>>>>>> 892cbe17 (Contact info (#287))
+=======
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
+>>>>>>> 7e9df39f (Endpoint Snapshot Popup Page (#286))
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -205,8 +209,11 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("validations_tab")
   )
 
+<<<<<<< HEAD
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
+=======
+>>>>>>> 7e9df39f (Endpoint Snapshot Popup Page (#286))
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
@@ -941,7 +948,11 @@ output$endpoint_location_map  <- renderLeaflet({
   get_endpoint_npi_orgs <- reactive({
     endpoint <- current_endpoint()
 
+<<<<<<< HEAD
     res <- get_npi_organization_matches(db_tables)
+=======
+    res <- get_npi_organization_matches()
+>>>>>>> 7e9df39f (Endpoint Snapshot Popup Page (#286))
     res <- res %>%
     filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
