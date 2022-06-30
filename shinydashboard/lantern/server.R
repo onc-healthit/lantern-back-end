@@ -193,13 +193,8 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("validations_tab")
   )
 
-<<<<<<< HEAD
-  show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
-
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
-=======
->>>>>>> 8a4fe2e (Remove performance module)
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
