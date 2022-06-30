@@ -1081,7 +1081,7 @@ output$plot_note_text <- renderUI({
 }
 
 
-### Endpoint Popup Modal ###
+  ### Endpoint Popup Modal ###
   observeEvent(input$endpoint_popup, {
     endpoint <- current_endpoint()
     showModal(modalDialog(
@@ -1097,4 +1097,7 @@ output$plot_note_text <- renderUI({
           tabPanel("Products", endpoint_products_page())
       ),
       size = "l",
+      easyClose = TRUE
+    ))
+  })
 }
