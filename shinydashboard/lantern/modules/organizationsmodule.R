@@ -54,14 +54,16 @@ organizationsmodule <- function(
       if (sel_confidence() == "100") {
         confidence_filter_num <- as.numeric(sel_confidence())
         res <- res %>% filter(match_score == confidence_filter_num)
-      }
-      else {
+      } else {
         confidence_upper_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][2])
         confidence_lower_num <- as.numeric(strsplit(sel_confidence(), "-")[[1]][1])
 
         res <- res %>% filter(match_score >= confidence_lower_num, match_score <= confidence_upper_num)
       }
     }
+
+    res <- res %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res
   })
@@ -76,6 +78,9 @@ organizationsmodule <- function(
       res <- res %>% filter(vendor_name == sel_vendor())
     }
 
+    res <- res %>%
+    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+
     res
   })
 
@@ -87,7 +92,7 @@ organizationsmodule <- function(
               ),
               columns = list(
                   organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
-                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE),
+                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
                   npi_id = colDef(name = "NPI ID", sortable = FALSE),
                   zipcode = colDef(name = "Zipcode", sortable = FALSE),
                   organization_secondary_name = colDef(name = "Organization Secondary Name", sortable = FALSE),
@@ -112,7 +117,7 @@ organizationsmodule <- function(
               ),
               columns = list(
                   organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
-                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE),
+                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
               ),

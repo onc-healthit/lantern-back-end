@@ -1,4 +1,9 @@
 library(shinyWidgets)
+library(reactable)
+library(shinyBS)
+library(listviewer)
+library(leaflet)
+library(dygraphs)
 
 # Define server function
 function(input, output, session) { #nolint
@@ -6,7 +11,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "contacts_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -61,11 +66,6 @@ function(input, output, session) { #nolint
         "location_page",
         reactive(input$fhir_version),
         reactive(input$vendor))
-
-      callModule(
-        performancemodule,
-        "performance_page",
-        reactive(input$date))
 
       callModule(
         capabilitystatementsizemodule,
@@ -155,7 +155,6 @@ function(input, output, session) { #nolint
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
-     "performance_tab" = "Response Time Performance",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
      "validations_tab" = "Validations Page"
   )
@@ -193,8 +192,6 @@ function(input, output, session) { #nolint
   show_validations_filter <- reactive(
     input$side_menu %in% c("validations_tab")
   )
-
-  show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
 
   show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
@@ -307,19 +304,17 @@ function(input, output, session) { #nolint
   })
 
   output$show_date_filters <- renderUI({
-    if (show_date_filter()) {
-      fluidRow(
-        column(width = 4,
-          selectInput(
-            inputId = "date",
-            label = "Date range",
-            choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
-            selected = "All time",
-            size = 1,
-            selectize = FALSE)
-        )
+    fluidRow(
+      column(width = 4,
+        selectInput(
+          inputId = "date",
+          label = "Date range",
+          choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+          selected = "All time",
+          size = 1,
+          selectize = FALSE)
       )
-    }
+    )
   })
 
   output$show_value_filters <- renderUI({
@@ -483,8 +478,7 @@ function(input, output, session) { #nolint
   observeEvent(input$selectall, {
     if (input$selectall == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = checkbox_resources())
     }
   })
@@ -632,13 +626,13 @@ function(input, output, session) { #nolint
         app_data$contact_info_tbl() %>%
           filter(url == input$show_contact_modal) %>%
           distinct(endpoint_names) %>%
-          select(endpoint_names)) 
+          select(endpoint_names))
           ||
           app_data$contact_info_tbl() %>%
           filter(url == input$show_contact_modal) %>%
           distinct(endpoint_names) %>%
           select(endpoint_names) == "",
-        "-", 
+        "-",
         app_data$contact_info_tbl() %>%
         filter(url == input$show_contact_modal) %>%
         mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
@@ -665,7 +659,445 @@ function(input, output, session) { #nolint
               groupBy = "contact_name"
         )
       }),
-      easyClose = TRUE
+            easyClose = TRUE
   )))
+  })
+# Current Endpoint that is selected to view in Modal
+current_endpoint <- reactive({
+  splitString <- strsplit(input$endpoint_popup, "&&")
+  endpointURL <- splitString[[1]][1]
+  endpoint_requested_fhir_version <- splitString[[1]][2]
+
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+  current_endpoint_list
+})
+
+
+### CHPL Products Modal Page ###
+endpoint_products <- reactive({
+  endpoint <- current_endpoint()
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+})
+
+output$endpoint_products_table <- DT::renderDataTable({
+  datatable(endpoint_products(),
+            colnames = c("Name", "Version", "CHPL ID", "API URL", "Certification Status", "Certification Edition", "Certification Date", "Last Modified in CHPL"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+endpoint_products_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint CHPL Products"),
+    DT::dataTableOutput("endpoint_products_table")
+  )
+  page
+}
+
+
+### IGs and Profiles Modal Page ###
+
+endpoint_implementation_guides <- reactive({
+  endpoint <- current_endpoint()
+
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides
+})
+
+endpoint_profiles <- reactive({
+  endpoint <- current_endpoint()
+
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles
+
+})
+
+output$endpoint_IG_table <- DT::renderDataTable({
+  datatable(endpoint_implementation_guides() %>% select(implementation_guide),
+            colnames = c("Implementation_Guides"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_profile_table <- DT::renderDataTable({
+  datatable(endpoint_profiles() %>% select(profileurl, profilename, resource),
+            colnames = c("Profile URL", "Profile Name", "Resource"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+implementation_guide_profiles_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint IGs and Profiles"),
+    bsCollapse(id = "IGs_profiles_collapse", multiple = TRUE,
+      bsCollapsePanel("Implementation Guides", fluidPage(
+        DT::dataTableOutput("endpoint_IG_table"),
+      ), style = "info"),
+      bsCollapsePanel("Endpoint Profiles", fluidPage(
+        DT::dataTableOutput("endpoint_profile_table"),
+      ), style = "info")
+  ))
+  page
+}
+
+### Capabilities Modal Page ###
+
+# Required Capability Statement fields that we are tracking
+required_fields <- c("status", "kind", "fhirVersion", "format", "date")
+
+endpoint_fields <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
+  res
+})
+
+endpoint_extensions <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
+  res
+})
+
+endpoint_resources <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+
+})
+
+endpoint_smart_capabilities <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+
+})
+
+output$endpoint_fields_table_required <- DT::renderDataTable({
+  datatable(endpoint_fields() %>% filter(field %in% required_fields) %>% select(field, exist),
+            colnames = c("Field Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_fields_table_optional <- DT::renderDataTable({
+  datatable(endpoint_fields() %>% select(field, exist),
+            colnames = c("Field Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_extensions_table <- DT::renderDataTable({
+  datatable(endpoint_extensions() %>% select(field, exist),
+            colnames = c("Extension Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+
+output$endpoint_resource_op_table <- reactable::renderReactable({
+  reactable(
+          endpoint_resources(),
+          columns = list(
+            Operation = colDef(
+              aggregate = "count",
+              format = list(aggregated = colFormat(prefix = "Total: "))
+            ),
+            Resource = colDef(
+              minWidth = 150
+            )
+          ),
+          groupBy = "Operation",
+          sortable = TRUE,
+          searchable = TRUE,
+          striped = TRUE,
+          showSortIcon = TRUE,
+          defaultPageSize = 10,
+          showPageSizeOptions = TRUE,
+          pageSizeOptions = c(10, 25, 50, 100)
+
+  )
+})
+
+output$smart_capabilities_table <- DT::renderDataTable({
+  datatable(endpoint_smart_capabilities(),
+            colnames = c("SMART Capabilities"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+get_capability_statement_json <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
+
+  capability_statement_json <- res$capability_statement
+
+  if (length(res$capability_statement) <= 0) {
+    capability_statement_json <- "{\"Not Available\": \"No Capability Statement Returned\"}"
+  }
+
+  capability_statement_json
+})
+
+
+get_smart_response_json <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
+
+  smart_response_json <- res$smart_response
+
+  if (length(res$smart_response) <= 0) {
+    smart_response_json <- "{\"Not Available\": \"No SMART Response Returned\"}"
+  }
+
+  smart_response_json
+})
+
+endpoint_capabilities_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint Capabilities"),
+    bsCollapse(id = "capabilities_collapse", multiple = TRUE,
+      bsCollapsePanel("Capability/Conformance Fields", fluidPage(
+        h3("Required Fields"),
+        DT::dataTableOutput("endpoint_fields_table_required"),
+        h3("Optional Fields"),
+        DT::dataTableOutput("endpoint_fields_table_optional"),
+        h3("Extensions"),
+        DT::dataTableOutput("endpoint_extensions_table"),
+      ), style = "info"),
+      bsCollapsePanel("Capability/Conformance Resources", reactable::reactableOutput("endpoint_resource_op_table"), style = "info"),
+      bsCollapsePanel("SMART Response Fields", DT::dataTableOutput("smart_capabilities_table"), style = "info"),
+      bsCollapsePanel("Capability Statement/Conformance Resource", renderJsonedit(jsonedit(get_capability_statement_json(),
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
+        ), style = "info"
+      ),
+      bsCollapsePanel("SMART Response", renderJsonedit(jsonedit(get_smart_response_json(),
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
+          ), style = "info"
+      )
+    )
+  )
+}
+
+
+### Organizations Modal Page ###
+
+single_endpoint_locations <- reactive({
+  endpoint <- current_endpoint()
+
+  lt <- get_single_endpoint_locations(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  lt
+})
+
+output$endpoint_location_map  <- renderLeaflet({
+  single_endpoint_locations()
+  map <- leaflet() %>%
+    addProviderTiles(providers$CartoDB.Positron) %>%
+    addCircles(data = single_endpoint_locations(), lat = ~ lat, lng = ~ lng, popup = paste0(isolate(single_endpoint_locations()$organization_name), "<br>NPI ID: ", isolate(single_endpoint_locations())$npi_id, "<br>Zipcode: ", isolate(single_endpoint_locations())$zipcode), weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
+    setView(-98.9, 37.7, zoom = 4)
+  map
+})
+
+ get_endpoint_list_orgs <- reactive({
+   endpoint <- current_endpoint()
+
+
+    res <- get_endpoint_list_matches()
+    res <- res %>%
+    filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
+    mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
+    res
+  })
+
+  get_endpoint_npi_orgs <- reactive({
+    endpoint <- current_endpoint()
+
+    res <- get_npi_organization_matches()
+    res <- res %>%
+    filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
+    mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
+    res
+  })
+
+  output$endpoint_list_org_table <- DT::renderDataTable({
+    datatable(get_endpoint_list_orgs() %>% distinct(organization_name),
+              colnames = c("Organization Name"),
+              rownames = FALSE,
+              selection = "none",
+              options = list(scrollX = TRUE))
+  })
+
+    output$npi_list_org_table <- DT::renderDataTable({
+    datatable(get_endpoint_npi_orgs() %>% select(organization_name, organization_secondary_name, npi_id, zipcode, match_score) %>% distinct(organization_name, organization_secondary_name, npi_id, zipcode, match_score),
+              colnames = c("Organization Name", "Organization Secondary Name", "NPI ID", "Zipcode", "Confidence"),
+              rownames = FALSE,
+              selection = "none",
+              options = list(scrollX = TRUE))
+  })
+
+organization_endpoint_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint Organizations"),
+    bsCollapse(id = "organizations_collapse", multiple = TRUE,
+      bsCollapsePanel("Endpoint List Organizations", fluidPage(
+        DT::dataTableOutput("endpoint_list_org_table")
+      ), style = "info"),
+      bsCollapsePanel("Matched NPI Organizations", fluidPage(
+        DT::dataTableOutput("npi_list_org_table")
+      ), style = "info"),
+      bsCollapsePanel("Linked Organizations Locations", fluidPage(
+        leafletOutput("endpoint_location_map", width = "100%", height = "600px")
+      ), style = "info")
+    )
+  )
+}
+
+### Endpoint Details Modal Page ###
+get_range <- function() {
+    if (all(input$date == "Past 7 days")) {
+      range <- "604800"
+    } else if (all(input$date == "Past 14 days")) {
+      range <- "1209600"
+    } else if (all(input$date == "Past 30 days")) {
+      range <- "2592000"
+    } else {
+      range <- "maxdate.maximum"
+    }
+    range
+}
+
+response_time_xts <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range()
+  res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+  # convert to xts format for use in dygraph
+  xts(x = cbind(res$response),
+      order.by = res$date
+  )
+})
+
+output$no_plot <- renderText({
+  if (nrow(response_time_xts()) == 0) {
+    "Sorry, there isn't enough data to show response times!"
+  }
+})
+
+output$endpoint_response_time_plot <- renderDygraph({
+  if (nrow(response_time_xts()) > 0) {
+    dygraph(response_time_xts(),
+          main = "Endpoint Response Time",
+          ylab = "seconds",
+          xlab = "Date") %>%
+    dyAxis("y", valueRange = c(-1.30, NA)) %>%
+    dySeries("V1", label = "ResponseTime") %>%
+    dyLegend(width = 450)
+  }
+})
+
+output$plot_note_text <- renderUI({
+  note_info <- "There are many variables that influence response time, such
+    as network congestion, geographic location, hosting configurations, etc.
+    This graphic only intends to convey the health of the FHIR endpoint ecosystem
+    as a whole, drastic changes to which may represent some widespread issue
+    throughout the ecosystem."
+  res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+  HTML(res)
+})
+
+ detailPage <- function() {
+
+  endpoint <- current_endpoint()
+
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+
+  page <- fluidPage(
+    h1("Endpoint Details"),
+    tags$p(paste0("Updated at ", as.character(detailsInfo$info_updated), " | Created at ", as.character(detailsInfo$info_created)), style = "font-style: italic;"),
+    br(),
+    mainPanel(
+      fluidRow(
+        infoBox("FHIR Version", as.character(detailsInfo$fhir_version), icon = icon("code"), width = 6),
+        infoBox("Supported Versions", tags$p(as.character(detailsInfo$supported_versions), style = "overflow-wrap: break-word;"), icon = icon("check"), width = 6, color = "red")
+      ),
+      fluidRow(
+        infoBox("Vendor", as.character(detailsInfo$vendor_name), icon = icon("building"), width = 6, color = "green"),
+        infoBox("List Source", tags$p(as.character(detailsInfo$list_source), style = "overflow-wrap: break-word;"), icon = icon("list"), width = 6, color = "teal")
+      ),
+      h3("Software"),
+      fluidRow(
+        infoBox("Software Name", as.character(detailsInfo$software_name), icon = icon("code-branch"), width = 6, color = "blue"),
+          infoBox("Software Version", as.character(detailsInfo$software_version), icon = icon("code"), width = 6, color = "orange"),
+          infoBox("Format", as.character(detailsInfo$format), icon = icon("file-code"), width = 6, color = "yellow"),
+          infoBox("Security", as.character(detailsInfo$security), icon = icon("lock", lib = "glyphicon"), width = 6, color = "purple")
+      ),
+      fluidRow(
+          tags$p(paste0("Last Software Version Update: ", as.character(detailsInfo$software_releasedate)), style = "font-style: italic;")
+      ),
+      br(),
+      uiOutput("show_date_filters"),
+      bsCollapse(id = "performance_collapse", multiple = TRUE,
+          bsCollapsePanel("Response Time", fluidPage(
+            textOutput("no_plot"),
+            dygraphOutput("endpoint_response_time_plot"),
+            p("Click and drag on plot to zoom in, double-click to zoom out."),
+            htmlOutput("plot_note_text")
+          ), style = "info")
+      )
+    ),
+    sidebarPanel(
+      h2("Metrics"),
+      h4("Status:"),
+      p(metricsInfo$status),
+      h4("Last HTTP Response:"),
+      p(metricsInfo$http_response),
+      h4("Availability:"),
+      p(metricsInfo$availability),
+      h4("Capability Statement Returned:"),
+      p(metricsInfo$cap_stat_exists),
+      h4("Errors:"),
+      p(metricsInfo$errors),
+      h4("SMART HTTP Response:"),
+      p(metricsInfo$smart_http_response)
+    )
+  )
+}
+
+
+  ### Endpoint Popup Modal ###
+  observeEvent(input$endpoint_popup, {
+    endpoint <- current_endpoint()
+    showModal(modalDialog(
+      title = "Endpoint Details",
+      h1("Endpoint URL:"),
+      h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
+      p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
+      tabsetPanel(type = "tabs",
+          tabPanel("Details", detailPage()),
+          tabPanel("Organizations", organization_endpoint_page()),
+          tabPanel("Capabilities", endpoint_capabilities_page()),
+          tabPanel("Implementation Guides & Profiles", implementation_guide_profiles_page()),
+          tabPanel("Products", endpoint_products_page())
+      ),
+      size = "l",
+      easyClose = TRUE
+    ))
   })
 }

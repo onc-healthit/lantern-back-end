@@ -32,7 +32,6 @@ module_files:
   - "modules/endpointsmodule.R"
   - "modules/fieldsmodule.R"
   - "modules/locationmodule.R"
-  - "modules/performancemodule.R"
   - "modules/capabilitystatementsizemodule.R"
   - "modules/securitymodule.R"
   - "modules/smartresponsemodule.R"
