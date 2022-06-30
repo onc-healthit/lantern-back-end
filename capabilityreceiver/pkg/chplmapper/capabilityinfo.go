@@ -53,7 +53,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 }
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, chplProductInfoFile string) error {
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -82,8 +82,6 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 		ep.HealthITProductID = healthITMapID
 	}
-
-	chplProductInfoFile := "/etc/lantern/resources/CHPLProductsInfo.json"
 
 	listSourceMap, err := openCHPLEndpointListInfoFile(chplProductInfoFile)
 	if err != nil {

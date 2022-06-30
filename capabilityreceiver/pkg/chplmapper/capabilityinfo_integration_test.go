@@ -163,7 +163,9 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		CapabilityStatement: cs}
 
 	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
-	err = MatchEndpointToProduct(ctx, epInfo, store, path)
+	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
+
+	err = MatchEndpointToProduct(ctx, epInfo, store, path, chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 	// No healthIT product should have matched
 	th.Assert(t, epInfo.HealthITProductID == 0, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", 0, epInfo.HealthITProductID))
@@ -186,7 +188,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
 	th.Assert(t, err == nil, err)
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
 	th.Assert(t, err == nil, err)
@@ -216,7 +218,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	epInfo.CapabilityStatement = cs
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json")
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)

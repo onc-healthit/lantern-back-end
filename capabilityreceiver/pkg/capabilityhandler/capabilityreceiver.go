@@ -39,6 +39,7 @@ type capStatQueryArgs struct {
 	store         *postgresql.Store
 	ctx           context.Context
 	chplMatchFile string
+	chplEndpointListInfoFile string
 }
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
@@ -452,6 +453,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 		store:         store,
 		ctx:           ctx,
 		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
