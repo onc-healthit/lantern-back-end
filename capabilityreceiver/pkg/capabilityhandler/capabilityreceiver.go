@@ -240,7 +240,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile))
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf("%v", qa.chplEndpointListProductInfo))
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -300,7 +300,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf(qa.chplEndpointListProductInfo))
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
