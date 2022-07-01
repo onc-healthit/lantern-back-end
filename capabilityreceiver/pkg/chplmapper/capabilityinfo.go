@@ -54,38 +54,37 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, chplProductInfoFile string) error {
-	if ep.CapabilityStatement == nil {
-		return nil
-	}
+	if ep.CapabilityStatement != nil {
 
-	chplProductNameVersion, err := openProductLinksFile(matchFile)
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-
-	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-	chplID := chplProductNameVersion[softwareName][softwareVersion]
-
-	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
-	// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-	if err == nil {
-		healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+		chplProductNameVersion, err := openProductLinksFile(matchFile)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		ep.HealthITProductID = healthITMapID
+
+		softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+		if err != nil {
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+		}
+		softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+		if err != nil {
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+		}
+		chplID := chplProductNameVersion[softwareName][softwareVersion]
+
+		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+		if err == nil {
+			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+			if err != nil {
+				return err
+			}
+			ep.HealthITProductID = healthITMapID
+		}
 	}
 
 	listSourceMap, err := openCHPLEndpointListInfoFile(chplProductInfoFile)
 	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+		return errors.Wrap(err, "error matching the endpoint list source to a CHPL product")
 	}
 
 	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)

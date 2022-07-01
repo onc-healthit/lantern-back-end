@@ -126,6 +126,12 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "CorrectVersionAndName",
 		CertificationEdition: "2014"}
+	var hitp5 = &endpointmanager.HealthITProduct{
+		Name:                 "BlueButtonPRO",
+		Version:              "2",
+		APISyntax:            "FHIR DSTU2",
+		CHPLID:               "15.04.04.1322.Blue.02.00.0.200807",
+		CertificationEdition: "2015"}
 
 	err = store.AddHealthITProduct(ctx, hitp1)
 	if err != nil {
@@ -140,6 +146,10 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
 	err = store.AddHealthITProduct(ctx, hitp4)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+	err = store.AddHealthITProduct(ctx, hitp5)
 	if err != nil {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
@@ -183,10 +193,29 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		OrganizationNames: []string{"Example2 Inc."}}
 	store.AddFHIREndpoint(ctx, ep)
 
+	// populate fhir endpoint with list source found in CHPL products info file
+	ep2 := &endpointmanager.FHIREndpoint{
+		URL:               "example3.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example2 Inc."},
+		ListSource: "https://api.bluebuttonpro.com/swagger/index.html"}
+	store.AddFHIREndpoint(ctx, ep2)
+
+	ep3 := &endpointmanager.FHIREndpoint{
+		URL: "example4.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example2 Inc."},
+		ListSource: "https://nextgen.com/api/practice-search"}
+	store.AddFHIREndpoint(ctx, ep3)
+
 	// endpoint info
 	epInfo = &endpointmanager.FHIREndpointInfo{
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
+
+	// endpoint info
+	epInfo2 := &endpointmanager.FHIREndpointInfo{
+		URL:                 ep2.URL,
+		CapabilityStatement: nil}
+
 
 	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
 	th.Assert(t, err == nil, err)
@@ -197,6 +226,16 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	// healthIT product with ID healthITProductID should have matched
 	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs[0]))
 
+	err = MatchEndpointToProduct(ctx, epInfo2, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	th.Assert(t, err == nil, err)
+	healthITProductID, err = store.GetHealthITProductIDByCHPLID(ctx, "15.04.04.1322.Blue.02.00.0.200807")
+	th.Assert(t, err == nil, err)
+	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo2.HealthITProductID)
+	th.Assert(t, err == nil, err)
+	// healthIT product with ID healthITProductID should have matched
+	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs))
+
+
 	// capability statement
 	path = filepath.Join("../../testdata", "advantagecare_physicians_stu3.json")
 	csJSON, err = ioutil.ReadFile(path)
@@ -204,23 +243,58 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 
-	var hitp5 = &endpointmanager.HealthITProduct{
+	var hitp6 = &endpointmanager.HealthITProduct{
 		Name:                 "Epic",
 		Version:              "February 2021",
 		APISyntax:            "FHIR DSTU3",
 		CHPLID:               "FakeCHPLID",
 		CertificationEdition: "2014"}
 
-	err = store.AddHealthITProduct(ctx, hitp5)
+	err = store.AddHealthITProduct(ctx, hitp6)
 	if err != nil {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
+
+	var hitp7 = &endpointmanager.HealthITProduct{
+		Name:                 "NextGen Enterprise EHR",
+		Version:              "6.2021.1 Patch 79",
+		APISyntax:            "FHIR DSTU3",
+		CHPLID:               "15.04.04.1918.Next.60.09.1.220303",
+		CertificationEdition: "2015"}
+
+	err = store.AddHealthITProduct(ctx, hitp7)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	var hitp8 = &endpointmanager.HealthITProduct{
+		Name:                 "NextGen Enterprise EHR",
+		Version:              "6.2021.1 Cures",
+		APISyntax:            "FHIR DSTU3",
+		CHPLID:               "15.04.04.1918.Next.60.10.1.220318",
+		CertificationEdition: "2015"}
+
+	err = store.AddHealthITProduct(ctx, hitp8)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	// endpoint info
+	epInfo3 := &endpointmanager.FHIREndpointInfo{
+		URL:                 ep3.URL,
+		CapabilityStatement: nil}
 
 	epInfo.CapabilityStatement = cs
 
 	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
+
+	err = MatchEndpointToProduct(ctx, epInfo3, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	th.Assert(t, err == nil, err)
+	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo3.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
 
