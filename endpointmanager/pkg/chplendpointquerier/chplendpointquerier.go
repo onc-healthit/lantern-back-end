@@ -12,6 +12,7 @@ type LanternEntry struct {
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
+var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -19,5 +20,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MedHostQuerier(chplURL, fileToWriteTo)
 	} else if chplURL == NextGenURL {
 		CHPLwebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == CanvasURL {
+		Canvaswebscraper(chplURL, fileToWriteTo)
 	}
 }
