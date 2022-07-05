@@ -10,11 +10,11 @@ type FHIRBundle struct {
 }
 
 type BundleEntry struct {
-	Resource BundleResource  `json:"resource"`
+	Resource BundleResource `json:"resource"`
 }
 
 type BundleResource struct {
-	URL string `json:"address"`
+	URL  string `json:"address"`
 	Name string `json:"name"`
 }
 

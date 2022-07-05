@@ -7,8 +7,7 @@ import (
 	http "net/http"
 	"os"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 type softwareInfo struct {
@@ -146,43 +145,9 @@ func main() {
 			criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
 		}
 
-		for _, url := range endpointURLList {
-			var entry endpointEntry
-
-			urlString, ok := url.(string)
-			if !ok {
-				log.Fatal("Error converting CHPL url to type string")
-			}
-			urlString = strings.TrimSpace(urlString)
-
-			// Remove all characters before the 'h' in http in the url
-			index := strings.Index(urlString, "h")
-			entryURL := urlString[index:]
-
-			if !contains(endpointEntryList, entryURL) {
-
-				entry.URL = entryURL
-
-				entry.EndpointName = developerName
-
-				// Get fileName from URL domain name
-				fileName := urlString
-				if strings.Count(urlString, ".") > 1 {
-					index = strings.Index(urlString, ".")
-					fileName = urlString[index+1:]
-				} else {
-					index = strings.Index(urlString, "://")
-					fileName = urlString[index+3:]
-				}
-
-				index = strings.Index(fileName, ".")
-				fileName = fileName[:index]
-
-				entry.FileName = fileName + "EndpointSources.json"
-				entry.FormatType = "Lantern"
-
-				endpointEntryList = append(endpointEntryList, entry)
-			}
+		var apiDocURLArr []string
+		for _, apiURLEntry := range chplEntry.APIDocumentation {
+			apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
 		}
 
 		var entry endpointEntry

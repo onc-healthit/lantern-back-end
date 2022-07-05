@@ -2,10 +2,10 @@ package chplendpointquerier
 
 import (
 	"context"
+	"encoding/json"
 	"io/ioutil"
 	http "net/http"
 	"strings"
-	"encoding/json"
 
 	log "github.com/sirupsen/logrus"
 
