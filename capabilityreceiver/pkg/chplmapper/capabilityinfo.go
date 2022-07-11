@@ -26,6 +26,11 @@ var fluffWords = []string{
 	"corporation.",
 }
 
+type details struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type chplEndpointListProductInfo struct {
 	ListSourceURL    string                 `json:"listSourceURL"`
 	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
@@ -33,11 +38,44 @@ type chplEndpointListProductInfo struct {
 
 type chplCertifiedProduct struct {
 	ChplProductNumber   string             `json:"chplProductNumber"`
+	Developer           details            `json:"developer"`
+}
+
+type chplMapResults struct {
+	ChplProductIDs []string
+	ChplDeveloper string
 }
 
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
-func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
+func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, chplProductInfoFile string) error {
+
+	listSourceMap, err := openCHPLEndpointListInfoFile(chplProductInfoFile)
+	if err != nil {
+		return errors.Wrap(err, "error matching the endpoint list source to a CHPL product")
+	}
+
+	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
+	if err != nil {
+		return errors.Wrap(err, "error getting fhir endpoints from DB")
+	}
+
+	for _, fhirEndpoint := range fhirEndpointList {
+		developerName := listSourceMap[fhirEndpoint.ListSource].ChplDeveloper
+
+		if len(developerName) > 0 {
+			// No errors thrown means a vendor with developer name was found and can be set on ep
+			vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
+			if err != nil {
+				return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
+			}
+
+			ep.VendorID = vendorMatch.ID
+			return nil
+		}
+	}
+
+	
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -93,7 +131,7 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	}
 
 	for _, fhirEndpoint := range fhirEndpointList {
-		chplIDList := listSourceMap[fhirEndpoint.ListSource]
+		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
 		if len(chplIDList) > 0 {
 			for _, chplID := range chplIDList {
 				
@@ -182,14 +220,15 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 	return chplMap, nil
 }
 
-func openCHPLEndpointListInfoFile(filepath string) (map[string][]string, error) {
+func openCHPLEndpointListInfoFile(filepath string) (map[string]chplMapResults, error) {
 	jsonFile, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
 	}
 	defer jsonFile.Close()
 
-	var softwareListMap = make(map[string][]string)
+	var softwareListMap = make(map[string]chplMapResults)
+
 	byteValueFile, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		return nil, err
@@ -204,17 +243,27 @@ func openCHPLEndpointListInfoFile(filepath string) (map[string][]string, error) 
 			var listSource = obj.ListSourceURL
 			var softwareProducts = obj.SoftwareProducts
 
+			chplMapResult := chplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+			
 			var chplID = ""
+			
 			for _, prod := range softwareProducts {
 				chplID = prod.ChplProductNumber
 
-				if listSource != "" && chplID != "" {
-					if softwareListMap[listSource] == nil {
-						softwareListMap[listSource] = []string{}
-					}
-					softwareListMap[listSource] = append(softwareListMap[listSource], chplID)
+				if chplID != "" {
+					chplMapResult.ChplProductIDs = append(chplMapResult.ChplProductIDs, chplID)
 				}
 			}
+
+			if listSource != "" {
+				if len(softwareProducts) > 0 {
+					// Developer is the same for all products, just grab first one
+					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				}
+
+				softwareListMap[listSource] = chplMapResult
+			}
+
 		}
 	}
 

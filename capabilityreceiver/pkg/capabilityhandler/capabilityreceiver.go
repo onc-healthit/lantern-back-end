@@ -236,7 +236,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
@@ -296,12 +296,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf(qa.chplEndpointListInfoFile))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}

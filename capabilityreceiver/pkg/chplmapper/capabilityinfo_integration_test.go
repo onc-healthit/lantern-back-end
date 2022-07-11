@@ -52,6 +52,12 @@ var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
 		DeveloperCode: "F",
 		CHPLID:        6,
 	},
+	&endpointmanager.Vendor{
+		Name:          "NextGen Healthcare",
+		DeveloperCode: "G",
+		CHPLID:       7,
+	},
+
 }
 
 func TestMain(m *testing.M) {
@@ -328,12 +334,14 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 
+	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
+
 	// endpoint info
 	epInfo := &endpointmanager.FHIREndpointInfo{
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 	// "Cerner Corporation" second item in vendor list
 	th.Assert(t, epInfo.VendorID == vendors[1].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[1].ID, epInfo.VendorID))
@@ -352,7 +360,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -361,7 +369,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
 		URL: ep.URL}
-	err = MatchEndpointToVendor(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -384,9 +392,27 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store)
+	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
+
+	// add endpoint with list source in CHPL products info file
+	// populate fhir endpoint
+	ep2 := &endpointmanager.FHIREndpoint{
+		URL:               "example2.com/FHIR/DSTU2",
+		OrganizationNames: []string{"Example Inc."},
+		ListSource: "https://nextgen.com/api/practice-search"}
+	store.AddFHIREndpoint(ctx, ep2)
+
+	// endpoint info
+	epInfo = &endpointmanager.FHIREndpointInfo{
+		URL:                 ep2.URL,
+		CapabilityStatement: cs}
+
+	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, epInfo.VendorID == vendors[6].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[6].ID, epInfo.VendorID))
+	
 }
 
 func Test_getVendorMatch(t *testing.T) {
