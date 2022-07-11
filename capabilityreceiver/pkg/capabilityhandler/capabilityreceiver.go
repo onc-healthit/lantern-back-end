@@ -36,9 +36,9 @@ type versionsQueryArgs struct {
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
 // saveMsgInDB function
 type capStatQueryArgs struct {
-	store         *postgresql.Store
-	ctx           context.Context
-	chplMatchFile string
+	store                    *postgresql.Store
+	ctx                      context.Context
+	chplMatchFile            string
 	chplEndpointListInfoFile string
 }
 
@@ -451,9 +451,9 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           ctx,
-		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+		store:                    store,
+		ctx:                      ctx,
+		chplMatchFile:            "/etc/lantern/resources/CHPLProductMapping.json",
 		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 	}
 

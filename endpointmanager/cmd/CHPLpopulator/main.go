@@ -47,12 +47,12 @@ type CHPLEndpointList struct {
 }
 
 type CHPLEndpointEntry struct {
-	ID int `json:"id"`
-	Developer           details `json:"developer"`
-	Product             details `json:"product"`
-	Version             details `json:"version"`
-	CertificationStatus details `json:"certificationStatus"`
-	CertificationDate   string `json:"certificationDate"`
+	ID                  int              `json:"id"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CertificationDate   string           `json:"certificationDate"`
 	Edition             details          `json:"edition"`
 	CHPLProductNumber   string           `json:"chplProductNumber"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
@@ -61,16 +61,16 @@ type CHPLEndpointEntry struct {
 }
 
 type chplCertifiedProductEntry struct {
-	ID                  int                `json:"id"`
-	ChplProductNumber   string             `json:"chplProductNumber"`
-	Edition             details            `json:"edition"`
-	PracticeType        details            `json:"practiceType"`
-	Developer           details            `json:"developer"`
-	Product             details            `json:"product"`
-	Version             details            `json:"version"`
-	CertificationDate   string             `json:"certificationDate"`
-	CertificationStatus details            `json:"certificationStatus"`
-	CriteriaMet         []certCriteria      `json:"criteriaMet"`
+	ID                  int              `json:"id"`
+	ChplProductNumber   string           `json:"chplProductNumber"`
+	Edition             details          `json:"edition"`
+	PracticeType        details          `json:"practiceType"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationDate   string           `json:"certificationDate"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
 }
 

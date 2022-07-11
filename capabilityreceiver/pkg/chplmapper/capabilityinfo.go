@@ -37,13 +37,13 @@ type chplEndpointListProductInfo struct {
 }
 
 type chplCertifiedProduct struct {
-	ChplProductNumber   string             `json:"chplProductNumber"`
-	Developer           details            `json:"developer"`
+	ChplProductNumber string  `json:"chplProductNumber"`
+	Developer         details `json:"developer"`
 }
 
 type chplMapResults struct {
 	ChplProductIDs []string
-	ChplDeveloper string
+	ChplDeveloper  string
 }
 
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
@@ -75,7 +75,6 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 		}
 	}
 
-	
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -134,7 +133,7 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
 		if len(chplIDList) > 0 {
 			for _, chplID := range chplIDList {
-				
+
 				healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
 
 				// No errors thrown means a healthit product with CHPLID was found and can be set on ep
@@ -148,7 +147,6 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 			}
 		}
 	}
-
 
 	return nil
 }
@@ -244,9 +242,9 @@ func openCHPLEndpointListInfoFile(filepath string) (map[string]chplMapResults, e
 			var softwareProducts = obj.SoftwareProducts
 
 			chplMapResult := chplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
-			
-			var chplID = ""
-			
+
+			chplID := ""
+
 			for _, prod := range softwareProducts {
 				chplID = prod.ChplProductNumber
 
@@ -267,7 +265,7 @@ func openCHPLEndpointListInfoFile(filepath string) (map[string]chplMapResults, e
 		}
 	}
 
-	return softwareListMap, nil	
+	return softwareListMap, nil
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
