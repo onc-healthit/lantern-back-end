@@ -3,7 +3,7 @@
 		"listSourceURL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10435,
 				"chplProductNumber": "15.04.04.1322.Blue.02.00.0.200807",
 				"edition": {
 					"id": 3,
@@ -32,19 +32,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
+						"id": 50,
+						"number": "170.315 (g)(1)",
+						"title": "Automated Numerator Recording"
 					},
 					{
 						"id": 182,
@@ -62,24 +52,9 @@
 						"title": "Multi-Factor Authentication"
 					},
 					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
 						"id": 29,
 						"number": "170.315 (d)(1)",
 						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 171,
-						"number": "170.315 (b)(10)",
-						"title": "Electronic Health Information Export"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
 					},
 					{
 						"id": 37,
@@ -92,9 +67,34 @@
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 50,
-						"number": "170.315 (g)(1)",
-						"title": "Automated Numerator Recording"
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 171,
+						"number": "170.315 (b)(10)",
+						"title": "Electronic Health Information Export"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					}
 				],
 				"apiDocumentation": [
@@ -122,7 +122,7 @@
 		"listSourceURL": "https://docs.canvasmedical.com/reference/service-base-urls",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10904,
 				"chplProductNumber": "15.04.04.3112.Canv.01.00.1.220523",
 				"edition": {
 					"id": 3,
@@ -151,119 +151,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 178,
-						"number": "170.315 (e)(1)",
-						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
 						"id": 5,
 						"number": "170.315 (a)(5)",
 						"title": "Demographics"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
 					},
 					{
 						"id": 43,
@@ -271,49 +161,9 @@
 						"title": "Transmission to Immunization Registries"
 					},
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
 						"id": 51,
@@ -321,30 +171,172 @@
 						"title": "Automated Measure Calculation"
 					},
 					{
-						"id": 166,
-						"number": "170.315 (b)(2)",
-						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
 					},
 					{
 						"id": 167,
 						"number": "170.315 (b)(3)",
 						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 178,
+						"number": "170.315 (e)(1)",
+						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 166,
+						"number": "170.315 (b)(2)",
+						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
 					}
 				],
 				"apiDocumentation": [
-					{
-						"criterion": {
-							"id": 56,
-							"number": "170.315 (g)(7)",
-							"title": "Application Access - Patient Selection"
-						},
-						"value": "https://docs.canvasmedical.com/reference/getting-started-with-your-api"
-					},
 					{
 						"criterion": {
 							"id": 181,
@@ -360,6 +352,14 @@
 							"title": "Standardized API for Patient and Population Services"
 						},
 						"value": "https://docs.canvasmedical.com/reference/getting-started-with-your-api"
+					},
+					{
+						"criterion": {
+							"id": 56,
+							"number": "170.315 (g)(7)",
+							"title": "Application Access - Patient Selection"
+						},
+						"value": "https://docs.canvasmedical.com/reference/getting-started-with-your-api"
 					}
 				]
 			}
@@ -369,7 +369,7 @@
 		"listSourceURL": "https://carefluence.com/carefluence-fhir-endpoints/",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10922,
 				"chplProductNumber": "15.04.04.2657.Care.R4.01.0.220629",
 				"edition": {
 					"id": 3,
@@ -398,34 +398,14 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
 						"id": 176,
 						"number": "170.315 (d)(12)",
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
 					},
 					{
 						"id": 53,
@@ -438,27 +418,55 @@
 						"title": "Trusted Connection"
 					},
 					{
-						"id": 175,
-						"number": "170.315 (d)(10)",
-						"title": "Auditing Actions on Health Information (Cures Update)"
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
 					},
 					{
 						"id": 182,
 						"number": "170.315 (g)(10)",
 						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 175,
+						"number": "170.315 (d)(10)",
+						"title": "Auditing Actions on Health Information (Cures Update)"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
 					}
 				],
 				"apiDocumentation": [
+					{
+						"criterion": {
+							"id": 182,
+							"number": "170.315 (g)(10)",
+							"title": "Standardized API for Patient and Population Services"
+						},
+						"value": "https://api.carefluence.com"
+					},
 					{
 						"criterion": {
 							"id": 181,
@@ -472,14 +480,6 @@
 							"id": 56,
 							"number": "170.315 (g)(7)",
 							"title": "Application Access - Patient Selection"
-						},
-						"value": "https://api.carefluence.com"
-					},
-					{
-						"criterion": {
-							"id": 182,
-							"number": "170.315 (g)(10)",
-							"title": "Standardized API for Patient and Population Services"
 						},
 						"value": "https://api.carefluence.com"
 					}
@@ -586,7 +586,7 @@
 		"listSourceURL": "https://www.dynamichealthit.com/dynamic-fhir-api",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10697,
 				"chplProductNumber": "15.02.02.2713.A122.01.02.0.210928",
 				"edition": {
 					"id": 3,
@@ -615,44 +615,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 168,
-						"number": "170.315 (b)(7)",
-						"title": "Security Tags - Summary of Care - Send (Cures Update)"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 45,
-						"number": "170.315 (f)(3)",
-						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
 					},
 					{
 						"id": 41,
@@ -660,54 +625,9 @@
 						"title": "Secure Messaging"
 					},
 					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
-					},
-					{
-						"id": 169,
-						"number": "170.315 (b)(8)",
-						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 59,
-						"number": "170.315 (h)(1)",
-						"title": "Direct Project"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 44,
@@ -715,44 +635,34 @@
 						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
 					},
 					{
-						"id": 171,
-						"number": "170.315 (b)(10)",
-						"title": "Electronic Health Information Export"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
 						"id": 43,
 						"number": "170.315 (f)(1)",
 						"title": "Transmission to Immunization Registries"
 					},
 					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
-						"id": 13,
-						"number": "170.315 (a)(13)",
-						"title": "Patient-Specific Education Resources"
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
 					},
 					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+						"id": 171,
+						"number": "170.315 (b)(10)",
+						"title": "Electronic Health Information Export"
 					},
 					{
-						"id": 178,
-						"number": "170.315 (e)(1)",
-						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
+						"id": 45,
+						"number": "170.315 (f)(3)",
+						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
 					},
 					{
 						"id": 181,
@@ -760,14 +670,104 @@
 						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
 					},
 					{
 						"id": 177,
 						"number": "170.315 (d)(13)",
 						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 13,
+						"number": "170.315 (a)(13)",
+						"title": "Patient-Specific Education Resources"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 169,
+						"number": "170.315 (b)(8)",
+						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
+					},
+					{
+						"id": 59,
+						"number": "170.315 (h)(1)",
+						"title": "Direct Project"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 178,
+						"number": "170.315 (e)(1)",
+						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 168,
+						"number": "170.315 (b)(7)",
+						"title": "Security Tags - Summary of Care - Send (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					}
 				],
 				"apiDocumentation": [
@@ -781,24 +781,24 @@
 					},
 					{
 						"criterion": {
-							"id": 181,
-							"number": "170.315 (g)(9)",
-							"title": "Application Access - All Data Request (Cures Update)"
-						},
-						"value": "https://api.dynamicfhir.com/Home/ApiDocumentation"
-					},
-					{
-						"criterion": {
 							"id": 182,
 							"number": "170.315 (g)(10)",
 							"title": "Standardized API for Patient and Population Services"
 						},
 						"value": "https://www.dynamichealthit.com/dynamic-fhir-api"
+					},
+					{
+						"criterion": {
+							"id": 181,
+							"number": "170.315 (g)(9)",
+							"title": "Application Access - All Data Request (Cures Update)"
+						},
+						"value": "https://api.dynamicfhir.com/Home/ApiDocumentation"
 					}
 				]
 			},
 			{
-				"id": 0,
+				"id": 10759,
 				"chplProductNumber": "15.02.05.2713.DY4B.04.03.0.211221",
 				"edition": {
 					"id": 3,
@@ -827,9 +827,49 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 45,
+						"number": "170.315 (f)(3)",
+						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
+					},
+					{
+						"id": 169,
+						"number": "170.315 (b)(8)",
+						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
+						"id": 41,
+						"number": "170.315 (e)(2)",
+						"title": "Secure Messaging"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
 					},
 					{
 						"id": 29,
@@ -837,9 +877,54 @@
 						"title": "Authentication, Access Control, Authorization"
 					},
 					{
-						"id": 169,
-						"number": "170.315 (b)(8)",
-						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 171,
+						"number": "170.315 (b)(10)",
+						"title": "Electronic Health Information Export"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 59,
+						"number": "170.315 (h)(1)",
+						"title": "Direct Project"
+					},
+					{
+						"id": 168,
+						"number": "170.315 (b)(7)",
+						"title": "Security Tags - Summary of Care - Send (Cures Update)"
+					},
+					{
+						"id": 43,
+						"number": "170.315 (f)(1)",
+						"title": "Transmission to Immunization Registries"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
 					},
 					{
 						"id": 182,
@@ -852,49 +937,9 @@
 						"title": "End-User Device Encryption"
 					},
 					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 41,
-						"number": "170.315 (e)(2)",
-						"title": "Secure Messaging"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 171,
-						"number": "170.315 (b)(10)",
-						"title": "Electronic Health Information Export"
-					},
-					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 59,
-						"number": "170.315 (h)(1)",
-						"title": "Direct Project"
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
 					},
 					{
 						"id": 178,
@@ -902,54 +947,9 @@
 						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
 					},
 					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 168,
-						"number": "170.315 (b)(7)",
-						"title": "Security Tags - Summary of Care - Send (Cures Update)"
-					},
-					{
 						"id": 13,
 						"number": "170.315 (a)(13)",
 						"title": "Patient-Specific Education Resources"
-					},
-					{
-						"id": 44,
-						"number": "170.315 (f)(2)",
-						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
 					},
 					{
 						"id": 34,
@@ -957,14 +957,14 @@
 						"title": "Emergency Access"
 					},
 					{
-						"id": 45,
-						"number": "170.315 (f)(3)",
-						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
 					},
 					{
 						"id": 33,
@@ -972,25 +972,17 @@
 						"title": "Automatic Access Time-out"
 					},
 					{
-						"id": 43,
-						"number": "170.315 (f)(1)",
-						"title": "Transmission to Immunization Registries"
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
 					},
 					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
+						"id": 44,
+						"number": "170.315 (f)(2)",
+						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
 					}
 				],
 				"apiDocumentation": [
-					{
-						"criterion": {
-							"id": 182,
-							"number": "170.315 (g)(10)",
-							"title": "Standardized API for Patient and Population Services"
-						},
-						"value": "https://www.dynamichealthit.com/dynamic-fhir-api"
-					},
 					{
 						"criterion": {
 							"id": 181,
@@ -998,6 +990,14 @@
 							"title": "Application Access - All Data Request (Cures Update)"
 						},
 						"value": "https://api.dynamicfhir.com/Home/ApiDocumentation"
+					},
+					{
+						"criterion": {
+							"id": 182,
+							"number": "170.315 (g)(10)",
+							"title": "Standardized API for Patient and Population Services"
+						},
+						"value": "https://www.dynamichealthit.com/dynamic-fhir-api"
 					},
 					{
 						"criterion": {
@@ -1015,7 +1015,7 @@
 		"listSourceURL": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10072,
 				"chplProductNumber": "15.04.04.2975.Cyfl.03.00.1.190813",
 				"edition": {
 					"id": 3,
@@ -1044,24 +1044,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 11,
-						"number": "170.315 (a)(11)",
-						"title": "Smoking Status"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
-					},
-					{
-						"id": 19,
-						"number": "170.315 (b)(4)",
-						"title": "Common Clinical Data Set Summary Record - Create"
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 12,
@@ -1069,139 +1054,9 @@
 						"title": "Family Health History"
 					},
 					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 21,
-						"number": "170.315 (b)(6)",
-						"title": "Data Export"
-					},
-					{
-						"id": 7,
-						"number": "170.315 (a)(7)",
-						"title": "Medication List"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
-						"id": 46,
-						"number": "170.315 (f)(4)",
-						"title": "Transmission to Cancer Registries"
-					},
-					{
-						"id": 43,
-						"number": "170.315 (f)(1)",
-						"title": "Transmission to Immunization Registries"
-					},
-					{
-						"id": 169,
-						"number": "170.315 (b)(8)",
-						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
 						"id": 53,
 						"number": "170.315 (g)(4)",
 						"title": "Quality Management System"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 168,
-						"number": "170.315 (b)(7)",
-						"title": "Security Tags - Summary of Care - Send (Cures Update)"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 20,
-						"number": "170.315 (b)(5)",
-						"title": "Common Clinical Data Set Summary Record - Receive"
-					},
-					{
-						"id": 170,
-						"number": "170.315 (b)(9)",
-						"title": "Care Plan (Cures Update)"
-					},
-					{
-						"id": 8,
-						"number": "170.315 (a)(8)",
-						"title": "Medication Allergy List"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 15,
-						"number": "170.315 (a)(15)",
-						"title": "Social, Psychological, and Behavioral Determinants Data"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
 					},
 					{
 						"id": 166,
@@ -1214,49 +1069,29 @@
 						"title": "Auditing Actions on Health Information (Cures Update)"
 					},
 					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
+						"id": 7,
+						"number": "170.315 (a)(7)",
+						"title": "Medication List"
 					},
 					{
-						"id": 41,
-						"number": "170.315 (e)(2)",
-						"title": "Secure Messaging"
-					},
-					{
-						"id": 6,
-						"number": "170.315 (a)(6)",
-						"title": "Problem List"
-					},
-					{
-						"id": 10,
-						"number": "170.315 (a)(10)",
-						"title": "Drug-Formulary and Preferred Drug List Checks"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
 					},
 					{
 						"id": 2,
@@ -1264,14 +1099,89 @@
 						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
+						"id": 43,
+						"number": "170.315 (f)(1)",
+						"title": "Transmission to Immunization Registries"
 					},
 					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 170,
+						"number": "170.315 (b)(9)",
+						"title": "Care Plan (Cures Update)"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 6,
+						"number": "170.315 (a)(6)",
+						"title": "Problem List"
+					},
+					{
+						"id": 8,
+						"number": "170.315 (a)(8)",
+						"title": "Medication Allergy List"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 41,
+						"number": "170.315 (e)(2)",
+						"title": "Secure Messaging"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
 					},
 					{
 						"id": 174,
@@ -1279,12 +1189,110 @@
 						"title": "Audit Report(s) (Cures Update)"
 					},
 					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 168,
+						"number": "170.315 (b)(7)",
+						"title": "Security Tags - Summary of Care - Send (Cures Update)"
+					},
+					{
+						"id": 15,
+						"number": "170.315 (a)(15)",
+						"title": "Social, Psychological, and Behavioral Determinants Data"
+					},
+					{
+						"id": 169,
+						"number": "170.315 (b)(8)",
+						"title": "Security Tags - Summary of Care - Receive (Cures Update)"
+					},
+					{
+						"id": 19,
+						"number": "170.315 (b)(4)",
+						"title": "Common Clinical Data Set Summary Record - Create"
+					},
+					{
+						"id": 20,
+						"number": "170.315 (b)(5)",
+						"title": "Common Clinical Data Set Summary Record - Receive"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
 						"id": 13,
 						"number": "170.315 (a)(13)",
 						"title": "Patient-Specific Education Resources"
+					},
+					{
+						"id": 21,
+						"number": "170.315 (b)(6)",
+						"title": "Data Export"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 46,
+						"number": "170.315 (f)(4)",
+						"title": "Transmission to Cancer Registries"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 10,
+						"number": "170.315 (a)(10)",
+						"title": "Drug-Formulary and Preferred Drug List Checks"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 11,
+						"number": "170.315 (a)(11)",
+						"title": "Smoking Status"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					}
 				],
 				"apiDocumentation": [
+					{
+						"criterion": {
+							"id": 181,
+							"number": "170.315 (g)(9)",
+							"title": "Application Access - All Data Request (Cures Update)"
+						},
+						"value": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
+					},
 					{
 						"criterion": {
 							"id": 182,
@@ -1300,14 +1308,6 @@
 							"title": "Application Access - Patient Selection"
 						},
 						"value": "https://app.swaggerhub.com/apis/Cyfluent/ProviderPortalApi/3.1"
-					},
-					{
-						"criterion": {
-							"id": 181,
-							"number": "170.315 (g)(9)",
-							"title": "Application Access - All Data Request (Cures Update)"
-						},
-						"value": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
 					}
 				]
 			}
@@ -1317,7 +1317,7 @@
 		"listSourceURL": "https://open.epic.com/MyApps/Endpoints",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10869,
 				"chplProductNumber": "15.04.04.1447.Epic.AM.21.1.220318",
 				"edition": {
 					"id": 3,
@@ -1346,44 +1346,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 21,
-						"number": "170.315 (b)(6)",
-						"title": "Data Export"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+						"id": 166,
+						"number": "170.315 (b)(2)",
+						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
 					},
 					{
 						"id": 42,
@@ -1391,64 +1356,24 @@
 						"title": "Patient Health Information Capture"
 					},
 					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
 						"id": 2,
 						"number": "170.315 (a)(2)",
 						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
+						"id": 178,
+						"number": "170.315 (e)(1)",
+						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
 					},
 					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					},
 					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
-					},
-					{
-						"id": 166,
-						"number": "170.315 (b)(2)",
-						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
-					},
-					{
-						"id": 43,
-						"number": "170.315 (f)(1)",
-						"title": "Transmission to Immunization Registries"
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
 					},
 					{
 						"id": 56,
@@ -1461,34 +1386,24 @@
 						"title": "Electronic Prescribing (Cures Update)"
 					},
 					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
 					},
 					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
 					},
 					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
 					},
 					{
 						"id": 59,
@@ -1496,29 +1411,29 @@
 						"title": "Direct Project"
 					},
 					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
 					},
 					{
-						"id": 178,
-						"number": "170.315 (e)(1)",
-						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
 					},
 					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
 					},
 					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
 					},
 					{
 						"id": 174,
@@ -1531,20 +1446,97 @@
 						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 43,
+						"number": "170.315 (f)(1)",
+						"title": "Transmission to Immunization Registries"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 21,
+						"number": "170.315 (b)(6)",
+						"title": "Data Export"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
 					}
 				],
 				"apiDocumentation": [
-					{
-						"criterion": {
-							"id": 56,
-							"number": "170.315 (g)(7)",
-							"title": "Application Access - Patient Selection"
-						},
-						"value": "https://open.epic.com/Interface/FHIR"
-					},
 					{
 						"criterion": {
 							"id": 182,
@@ -1560,11 +1552,19 @@
 							"title": "Application Access - All Data Request (Cures Update)"
 						},
 						"value": "https://open.epic.com/Interface/FHIR"
+					},
+					{
+						"criterion": {
+							"id": 56,
+							"number": "170.315 (g)(7)",
+							"title": "Application Access - Patient Selection"
+						},
+						"value": "https://open.epic.com/Interface/FHIR"
 					}
 				]
 			},
 			{
-				"id": 0,
+				"id": 10872,
 				"chplProductNumber": "15.04.04.1447.Epic.IN.22.1.220318",
 				"edition": {
 					"id": 3,
@@ -1598,6 +1598,26 @@
 						"title": "Emergency Access"
 					},
 					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
 						"id": 54,
 						"number": "170.315 (g)(5)",
 						"title": "Accessibility-Centered Design"
@@ -1613,34 +1633,9 @@
 						"title": "Application Access - Patient Selection"
 					},
 					{
-						"id": 59,
-						"number": "170.315 (h)(1)",
-						"title": "Direct Project"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
+						"id": 43,
+						"number": "170.315 (f)(1)",
+						"title": "Transmission to Immunization Registries"
 					},
 					{
 						"id": 32,
@@ -1648,9 +1643,9 @@
 						"title": "Amendments"
 					},
 					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 181,
@@ -1658,34 +1653,9 @@
 						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 21,
-						"number": "170.315 (b)(6)",
-						"title": "Data Export"
-					},
-					{
-						"id": 43,
-						"number": "170.315 (f)(1)",
-						"title": "Transmission to Immunization Registries"
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
 					},
 					{
 						"id": 172,
@@ -1693,44 +1663,9 @@
 						"title": "Clinical Quality Measures - Report (Cures Update)"
 					},
 					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 178,
-						"number": "170.315 (e)(1)",
-						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
 					},
 					{
 						"id": 14,
@@ -1738,24 +1673,19 @@
 						"title": "Implantable Device List"
 					},
 					{
+						"id": 59,
+						"number": "170.315 (h)(1)",
+						"title": "Direct Project"
+					},
+					{
 						"id": 25,
 						"number": "170.315 (c)(1)",
 						"title": "Clinical Quality Measures - Record and Export"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
 					},
 					{
 						"id": 5,
@@ -1763,14 +1693,24 @@
 						"title": "Demographics"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 178,
+						"number": "170.315 (e)(1)",
+						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
 					},
 					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 21,
+						"number": "170.315 (b)(6)",
+						"title": "Data Export"
 					},
 					{
 						"id": 166,
@@ -1778,9 +1718,69 @@
 						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
 					},
 					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
 						"id": 165,
 						"number": "170.315 (b)(1)",
 						"title": "Transitions of Care (Cures Update)"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					}
 				],
 				"apiDocumentation": [
@@ -1816,7 +1816,7 @@
 		"listSourceURL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10820,
 				"chplProductNumber": "15.04.04.2788.MEDH.CL.08.1.220204",
 				"edition": {
 					"id": 3,
@@ -1845,51 +1845,6 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 44,
-						"number": "170.315 (f)(2)",
-						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
-					},
-					{
-						"id": 166,
-						"number": "170.315 (b)(2)",
-						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
 						"id": 182,
 						"number": "170.315 (g)(10)",
 						"title": "Standardized API for Patient and Population Services"
@@ -1905,14 +1860,109 @@
 						"title": "Emergency Access"
 					},
 					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
 						"id": 53,
 						"number": "170.315 (g)(4)",
 						"title": "Quality Management System"
 					},
 					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 166,
+						"number": "170.315 (b)(2)",
+						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 45,
+						"number": "170.315 (f)(3)",
+						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
 						"id": 33,
 						"number": "170.315 (d)(5)",
 						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
 					},
 					{
 						"id": 43,
@@ -1925,19 +1975,14 @@
 						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
-						"id": 45,
-						"number": "170.315 (f)(3)",
-						"title": "Transmission to Public Health Agencies - Reportable Laboratory Tests and Values/Results"
-					},
-					{
 						"id": 2,
 						"number": "170.315 (a)(2)",
 						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
+						"id": 44,
+						"number": "170.315 (f)(2)",
+						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
 					},
 					{
 						"id": 4,
@@ -1945,54 +1990,9 @@
 						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
 					},
 					{
 						"id": 180,
@@ -2005,9 +2005,9 @@
 						"title": "Amendments"
 					},
 					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					}
 				],
 				"apiDocumentation": [
@@ -2021,17 +2021,17 @@
 					},
 					{
 						"criterion": {
-							"id": 56,
-							"number": "170.315 (g)(7)",
-							"title": "Application Access - Patient Selection"
+							"id": 181,
+							"number": "170.315 (g)(9)",
+							"title": "Application Access - All Data Request (Cures Update)"
 						},
 						"value": "https://developer.yourcareinteract.com/documentation"
 					},
 					{
 						"criterion": {
-							"id": 181,
-							"number": "170.315 (g)(9)",
-							"title": "Application Access - All Data Request (Cures Update)"
+							"id": 56,
+							"number": "170.315 (g)(7)",
+							"title": "Application Access - Patient Selection"
 						},
 						"value": "https://developer.yourcareinteract.com/documentation"
 					}
@@ -2043,7 +2043,7 @@
 		"listSourceURL": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10937,
 				"chplProductNumber": "15.04.04.2931.MEDI.AM.01.1.220630",
 				"edition": {
 					"id": 3,
@@ -2072,9 +2072,49 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
+						"id": 15,
+						"number": "170.315 (a)(15)",
+						"title": "Social, Psychological, and Behavioral Determinants Data"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
 					},
 					{
 						"id": 182,
@@ -2087,9 +2127,14 @@
 						"title": "Authentication, Access Control, Authorization"
 					},
 					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
 					},
 					{
 						"id": 4,
@@ -2097,24 +2142,34 @@
 						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
 						"id": 3,
 						"number": "170.315 (a)(3)",
 						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
 					},
 					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
 					},
 					{
 						"id": 36,
@@ -2132,59 +2187,19 @@
 						"title": "Implantable Device List"
 					},
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 15,
-						"number": "170.315 (a)(15)",
-						"title": "Social, Psychological, and Behavioral Determinants Data"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
 						"id": 167,
 						"number": "170.315 (b)(3)",
 						"title": "Electronic Prescribing (Cures Update)"
 					},
 					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 28,
@@ -2192,34 +2207,24 @@
 						"title": "Clinical Quality Measures - Filter"
 					},
 					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
 					},
 					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
 					},
 					{
 						"id": 176,
@@ -2227,19 +2232,14 @@
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
 					},
 					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
 					}
 				],
 				"apiDocumentation": [
@@ -2270,7 +2270,7 @@
 				]
 			},
 			{
-				"id": 0,
+				"id": 10931,
 				"chplProductNumber": "15.04.04.2931.MEDI.HC.01.1.220630",
 				"edition": {
 					"id": 3,
@@ -2304,34 +2304,14 @@
 						"title": "Clinical Quality Measures - Import and Calculate"
 					},
 					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
 					},
 					{
 						"id": 48,
@@ -2339,79 +2319,9 @@
 						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
 					},
 					{
-						"id": 39,
-						"number": "170.315 (d)(11)",
-						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
 						"id": 54,
 						"number": "170.315 (g)(5)",
 						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
 						"id": 32,
@@ -2419,39 +2329,9 @@
 						"title": "Amendments"
 					},
 					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
 					},
 					{
 						"id": 34,
@@ -2459,17 +2339,145 @@
 						"title": "Emergency Access"
 					},
 					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
 						"id": 51,
 						"number": "170.315 (g)(2)",
 						"title": "Automated Measure Calculation"
 					},
 					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 39,
+						"number": "170.315 (d)(11)",
+						"title": "Accounting of Disclosures"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
 					}
 				],
 				"apiDocumentation": [
+					{
+						"criterion": {
+							"id": 181,
+							"number": "170.315 (g)(9)",
+							"title": "Application Access - All Data Request (Cures Update)"
+						},
+						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
+					},
 					{
 						"criterion": {
 							"id": 56,
@@ -2485,19 +2493,11 @@
 							"title": "Standardized API for Patient and Population Services"
 						},
 						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
-					},
-					{
-						"criterion": {
-							"id": 181,
-							"number": "170.315 (g)(9)",
-							"title": "Application Access - All Data Request (Cures Update)"
-						},
-						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 					}
 				]
 			},
 			{
-				"id": 0,
+				"id": 10935,
 				"chplProductNumber": "15.04.04.2931.MEDI.15.01.1.220630",
 				"edition": {
 					"id": 3,
@@ -2526,44 +2526,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
 					},
 					{
 						"id": 12,
@@ -2571,49 +2536,19 @@
 						"title": "Family Health History"
 					},
 					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
 						"id": 2,
 						"number": "170.315 (a)(2)",
 						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
 					},
 					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 39,
-						"number": "170.315 (d)(11)",
-						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					},
 					{
 						"id": 36,
@@ -2621,14 +2556,69 @@
 						"title": "Integrity"
 					},
 					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
 						"id": 54,
 						"number": "170.315 (g)(5)",
 						"title": "Accessibility-Centered Design"
 					},
 					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
 						"id": 173,
 						"number": "170.315 (d)(2)",
 						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 39,
+						"number": "170.315 (d)(11)",
+						"title": "Accounting of Disclosures"
 					},
 					{
 						"id": 172,
@@ -2641,44 +2631,29 @@
 						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
 					},
 					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
 					},
 					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 48,
@@ -2686,9 +2661,34 @@
 						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
 					},
 					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
 					},
 					{
 						"id": 182,
@@ -2707,24 +2707,24 @@
 					},
 					{
 						"criterion": {
-							"id": 181,
-							"number": "170.315 (g)(9)",
-							"title": "Application Access - All Data Request (Cures Update)"
+							"id": 56,
+							"number": "170.315 (g)(7)",
+							"title": "Application Access - Patient Selection"
 						},
 						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 					},
 					{
 						"criterion": {
-							"id": 56,
-							"number": "170.315 (g)(7)",
-							"title": "Application Access - Patient Selection"
+							"id": 181,
+							"number": "170.315 (g)(9)",
+							"title": "Application Access - All Data Request (Cures Update)"
 						},
 						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 					}
 				]
 			},
 			{
-				"id": 0,
+				"id": 10928,
 				"chplProductNumber": "15.04.04.2931.2931.16.02.1.220630",
 				"edition": {
 					"id": 3,
@@ -2753,149 +2753,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
 						"id": 42,
 						"number": "170.315 (e)(3)",
 						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 28,
-						"number": "170.315 (c)(4)",
-						"title": "Clinical Quality Measures - Filter"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
 					},
 					{
 						"id": 167,
@@ -2903,19 +2763,159 @@
 						"title": "Electronic Prescribing (Cures Update)"
 					},
 					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
 						"id": 14,
 						"number": "170.315 (a)(14)",
 						"title": "Implantable Device List"
 					},
 					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
 						"id": 177,
 						"number": "170.315 (d)(13)",
 						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 28,
+						"number": "170.315 (c)(4)",
+						"title": "Clinical Quality Measures - Filter"
 					}
 				],
 				"apiDocumentation": [
@@ -2946,7 +2946,7 @@
 				]
 			},
 			{
-				"id": 0,
+				"id": 10929,
 				"chplProductNumber": "15.04.04.2931.MEDI.CO.01.1.220630",
 				"edition": {
 					"id": 3,
@@ -2975,14 +2975,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					},
 					{
 						"id": 39,
@@ -2990,74 +2985,9 @@
 						"title": "Accounting of Disclosures"
 					},
 					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
 						"id": 33,
 						"number": "170.315 (d)(5)",
 						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
 						"id": 53,
@@ -3065,24 +2995,9 @@
 						"title": "Quality Management System"
 					},
 					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
 						"id": 173,
 						"number": "170.315 (d)(2)",
 						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
 					},
 					{
 						"id": 177,
@@ -3090,19 +3005,39 @@
 						"title": "Multi-Factor Authentication"
 					},
 					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
 						"id": 172,
 						"number": "170.315 (c)(3)",
 						"title": "Clinical Quality Measures - Report (Cures Update)"
 					},
 					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
 					},
 					{
 						"id": 5,
@@ -3110,14 +3045,19 @@
 						"title": "Demographics"
 					},
 					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
 						"id": 51,
 						"number": "170.315 (g)(2)",
 						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
 					},
 					{
 						"id": 14,
@@ -3130,19 +3070,79 @@
 						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
 					},
 					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					},
 					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
 						"id": 9,
 						"number": "170.315 (a)(9)",
 						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
 					}
 				],
 				"apiDocumentation": [
@@ -3173,7 +3173,7 @@
 				]
 			},
 			{
-				"id": 0,
+				"id": 10925,
 				"chplProductNumber": "15.04.04.2931.2931.02.03.1.220630",
 				"edition": {
 					"id": 3,
@@ -3202,79 +3202,14 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
 						"id": 56,
 						"number": "170.315 (g)(7)",
 						"title": "Application Access - Patient Selection"
 					},
 					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					},
 					{
 						"id": 36,
@@ -3287,19 +3222,24 @@
 						"title": "Clinical Decision Support"
 					},
 					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
 					},
 					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
 						"id": 32,
@@ -3307,14 +3247,64 @@
 						"title": "Amendments"
 					},
 					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
 						"id": 4,
 						"number": "170.315 (a)(4)",
 						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
 					},
 					{
 						"id": 172,
@@ -3327,24 +3317,24 @@
 						"title": "Audit Report(s) (Cures Update)"
 					},
 					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
 						"id": 52,
 						"number": "170.315 (g)(3)",
 						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
 					},
 					{
 						"id": 180,
@@ -3352,14 +3342,24 @@
 						"title": "Consolidated CDA Creation Performance (Cures Update)"
 					},
 					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
 					}
 				],
 				"apiDocumentation": [
@@ -3373,24 +3373,24 @@
 					},
 					{
 						"criterion": {
-							"id": 182,
-							"number": "170.315 (g)(10)",
-							"title": "Standardized API for Patient and Population Services"
+							"id": 56,
+							"number": "170.315 (g)(7)",
+							"title": "Application Access - Patient Selection"
 						},
 						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 					},
 					{
 						"criterion": {
-							"id": 56,
-							"number": "170.315 (g)(7)",
-							"title": "Application Access - Patient Selection"
+							"id": 182,
+							"number": "170.315 (g)(10)",
+							"title": "Standardized API for Patient and Population Services"
 						},
 						"value": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 					}
 				]
 			},
 			{
-				"id": 0,
+				"id": 10926,
 				"chplProductNumber": "15.04.04.2931.MEDI.CO.02.1.220630",
 				"edition": {
 					"id": 3,
@@ -3419,49 +3419,29 @@
 				},
 				"criteriaMet": [
 					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
+					},
+					{
 						"id": 12,
 						"number": "170.315 (a)(12)",
 						"title": "Family Health History"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
 						"id": 37,
@@ -3479,19 +3459,54 @@
 						"title": "Clinical Quality Measures - Import and Calculate"
 					},
 					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
+						"id": 39,
+						"number": "170.315 (d)(11)",
+						"title": "Accounting of Disclosures"
 					},
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
 					},
 					{
 						"id": 33,
 						"number": "170.315 (d)(5)",
 						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
 						"id": 4,
@@ -3504,9 +3519,24 @@
 						"title": "Implantable Device List"
 					},
 					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 48,
+						"number": "170.315 (f)(6)",
+						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					},
 					{
 						"id": 180,
@@ -3514,59 +3544,19 @@
 						"title": "Consolidated CDA Creation Performance (Cures Update)"
 					},
 					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
 					},
 					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
 					},
 					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 48,
-						"number": "170.315 (f)(6)",
-						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 39,
-						"number": "170.315 (d)(11)",
-						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
 					},
 					{
 						"id": 1,
@@ -3574,19 +3564,29 @@
 						"title": "Computerized Provider Order Entry (CPOE) - Medications"
 					},
 					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
 						"id": 2,
 						"number": "170.315 (a)(2)",
 						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
 					}
 				],
 				"apiDocumentation": [
@@ -3617,7 +3617,7 @@
 				]
 			},
 			{
-				"id": 0,
+				"id": 10927,
 				"chplProductNumber": "15.04.04.2931.MEDI.ED.03.1.220630",
 				"edition": {
 					"id": 3,
@@ -3646,14 +3646,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
 					},
 					{
 						"id": 3,
@@ -3661,119 +3656,9 @@
 						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 39,
-						"number": "170.315 (d)(11)",
-						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
-					},
-					{
 						"id": 36,
 						"number": "170.315 (d)(8)",
 						"title": "Integrity"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
 					},
 					{
 						"id": 176,
@@ -3781,14 +3666,64 @@
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 39,
+						"number": "170.315 (d)(11)",
+						"title": "Accounting of Disclosures"
+					},
+					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
 						"id": 33,
 						"number": "170.315 (d)(5)",
 						"title": "Automatic Access Time-out"
 					},
 					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
 					},
 					{
 						"id": 173,
@@ -3796,9 +3731,29 @@
 						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
 					},
 					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
 					},
 					{
 						"id": 48,
@@ -3806,14 +3761,59 @@
 						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
 					},
 					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
 						"id": 9,
 						"number": "170.315 (a)(9)",
 						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
 					}
 				],
 				"apiDocumentation": [
@@ -3844,7 +3844,7 @@
 				]
 			},
 			{
-				"id": 0,
+				"id": 10930,
 				"chplProductNumber": "15.04.04.2931.MEDI.16.02.1.220630",
 				"edition": {
 					"id": 3,
@@ -3873,49 +3873,9 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 32,
-						"number": "170.315 (d)(4)",
-						"title": "Amendments"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
 					},
 					{
 						"id": 176,
@@ -3923,19 +3883,34 @@
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
-						"id": 54,
-						"number": "170.315 (g)(5)",
-						"title": "Accessibility-Centered Design"
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
 					},
 					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
 					},
 					{
 						"id": 173,
@@ -3943,14 +3918,24 @@
 						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
 					},
 					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
 					},
 					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
+						"id": 12,
+						"number": "170.315 (a)(12)",
+						"title": "Family Health History"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 48,
+						"number": "170.315 (f)(6)",
+						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
 					},
 					{
 						"id": 2,
@@ -3958,9 +3943,39 @@
 						"title": "CPOE - Laboratory"
 					},
 					{
-						"id": 34,
-						"number": "170.315 (d)(6)",
-						"title": "Emergency Access"
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 32,
+						"number": "170.315 (d)(4)",
+						"title": "Amendments"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
 					},
 					{
 						"id": 182,
@@ -3968,14 +3983,54 @@
 						"title": "Standardized API for Patient and Population Services"
 					},
 					{
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
+					},
+					{
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
+					},
+					{
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
 						"id": 3,
 						"number": "170.315 (a)(3)",
 						"title": "CPOE - Diagnostic Imaging"
 					},
 					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 34,
+						"number": "170.315 (d)(6)",
+						"title": "Emergency Access"
+					},
+					{
+						"id": 54,
+						"number": "170.315 (g)(5)",
+						"title": "Accessibility-Centered Design"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
 					},
 					{
 						"id": 36,
@@ -3986,61 +4041,6 @@
 						"id": 39,
 						"number": "170.315 (d)(11)",
 						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 48,
-						"number": "170.315 (f)(6)",
-						"title": "Transmission to Public Health Agencies - Antimicrobial Use and Resistance Reporting"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
-					},
-					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 12,
-						"number": "170.315 (a)(12)",
-						"title": "Family Health History"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
 					}
 				],
 				"apiDocumentation": [
@@ -4076,7 +4076,7 @@
 		"listSourceURL": "https://www.mphrx.com/fhir-service-base-url-directory",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10649,
 				"chplProductNumber": "15.04.04.3082.Mine.04.01.0.210609",
 				"edition": {
 					"id": 3,
@@ -4105,14 +4105,39 @@
 				},
 				"criteriaMet": [
 					{
+						"id": 50,
+						"number": "170.315 (g)(1)",
+						"title": "Automated Numerator Recording"
+					},
+					{
+						"id": 171,
+						"number": "170.315 (b)(10)",
+						"title": "Electronic Health Information Export"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 29,
+						"number": "170.315 (d)(1)",
+						"title": "Authentication, Access Control, Authorization"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
 						"id": 54,
 						"number": "170.315 (g)(5)",
 						"title": "Accessibility-Centered Design"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
 					},
 					{
 						"id": 42,
@@ -4125,29 +4150,9 @@
 						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
 					},
 					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
 						"id": 181,
 						"number": "170.315 (g)(9)",
 						"title": "Application Access - All Data Request (Cures Update)"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 171,
-						"number": "170.315 (b)(10)",
-						"title": "Electronic Health Information Export"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
 					},
 					{
 						"id": 33,
@@ -4155,34 +4160,14 @@
 						"title": "Automatic Access Time-out"
 					},
 					{
-						"id": 50,
-						"number": "170.315 (g)(1)",
-						"title": "Automated Numerator Recording"
-					},
-					{
-						"id": 29,
-						"number": "170.315 (d)(1)",
-						"title": "Authentication, Access Control, Authorization"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
 						"id": 56,
 						"number": "170.315 (g)(7)",
 						"title": "Application Access - Patient Selection"
 					},
 					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 174,
-						"number": "170.315 (d)(3)",
-						"title": "Audit Report(s) (Cures Update)"
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
 					},
 					{
 						"id": 176,
@@ -4190,12 +4175,35 @@
 						"title": "Encrypt Authentication Credentials"
 					},
 					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
 						"id": 173,
 						"number": "170.315 (d)(2)",
 						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 174,
+						"number": "170.315 (d)(3)",
+						"title": "Audit Report(s) (Cures Update)"
 					}
 				],
 				"apiDocumentation": [
+					{
+						"criterion": {
+							"id": 182,
+							"number": "170.315 (g)(10)",
+							"title": "Standardized API for Patient and Population Services"
+						},
+						"value": "https://www.mphrx.com/api-guide_mphrx/"
+					},
 					{
 						"criterion": {
 							"id": 181,
@@ -4211,14 +4219,6 @@
 							"title": "Application Access - Patient Selection"
 						},
 						"value": "https://www.mphrx.com/api-guide_mphrx/"
-					},
-					{
-						"criterion": {
-							"id": 182,
-							"number": "170.315 (g)(10)",
-							"title": "Standardized API for Patient and Population Services"
-						},
-						"value": "https://www.mphrx.com/api-guide_mphrx/"
 					}
 				]
 			}
@@ -4228,7 +4228,7 @@
 		"listSourceURL": "https://nextgen.com/api/practice-search",
 		"softwareProducts": [
 			{
-				"id": 0,
+				"id": 10850,
 				"chplProductNumber": "15.04.04.1918.Next.60.09.1.220303",
 				"edition": {
 					"id": 3,
@@ -4257,29 +4257,24 @@
 				},
 				"criteriaMet": [
 					{
-						"id": 166,
-						"number": "170.315 (b)(2)",
-						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
+						"id": 56,
+						"number": "170.315 (g)(7)",
+						"title": "Application Access - Patient Selection"
 					},
 					{
-						"id": 4,
-						"number": "170.315 (a)(4)",
-						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+						"id": 165,
+						"number": "170.315 (b)(1)",
+						"title": "Transitions of Care (Cures Update)"
 					},
 					{
-						"id": 172,
-						"number": "170.315 (c)(3)",
-						"title": "Clinical Quality Measures - Report (Cures Update)"
+						"id": 36,
+						"number": "170.315 (d)(8)",
+						"title": "Integrity"
 					},
 					{
-						"id": 2,
-						"number": "170.315 (a)(2)",
-						"title": "CPOE - Laboratory"
-					},
-					{
-						"id": 28,
-						"number": "170.315 (c)(4)",
-						"title": "Clinical Quality Measures - Filter"
+						"id": 26,
+						"number": "170.315 (c)(2)",
+						"title": "Clinical Quality Measures - Import and Calculate"
 					},
 					{
 						"id": 32,
@@ -4287,9 +4282,14 @@
 						"title": "Amendments"
 					},
 					{
-						"id": 181,
-						"number": "170.315 (g)(9)",
-						"title": "Application Access - All Data Request (Cures Update)"
+						"id": 1,
+						"number": "170.315 (a)(1)",
+						"title": "Computerized Provider Order Entry (CPOE) - Medications"
+					},
+					{
+						"id": 172,
+						"number": "170.315 (c)(3)",
+						"title": "Clinical Quality Measures - Report (Cures Update)"
 					},
 					{
 						"id": 59,
@@ -4297,19 +4297,34 @@
 						"title": "Direct Project"
 					},
 					{
-						"id": 9,
-						"number": "170.315 (a)(9)",
-						"title": "Clinical Decision Support"
-					},
-					{
 						"id": 29,
 						"number": "170.315 (d)(1)",
 						"title": "Authentication, Access Control, Authorization"
 					},
 					{
-						"id": 14,
-						"number": "170.315 (a)(14)",
-						"title": "Implantable Device List"
+						"id": 25,
+						"number": "170.315 (c)(1)",
+						"title": "Clinical Quality Measures - Record and Export"
+					},
+					{
+						"id": 175,
+						"number": "170.315 (d)(10)",
+						"title": "Auditing Actions on Health Information (Cures Update)"
+					},
+					{
+						"id": 167,
+						"number": "170.315 (b)(3)",
+						"title": "Electronic Prescribing (Cures Update)"
+					},
+					{
+						"id": 43,
+						"number": "170.315 (f)(1)",
+						"title": "Transmission to Immunization Registries"
+					},
+					{
+						"id": 166,
+						"number": "170.315 (b)(2)",
+						"title": "Clinical Information Reconciliation and Incorporation (Cures Update)"
 					},
 					{
 						"id": 15,
@@ -4322,109 +4337,9 @@
 						"title": "Accessibility-Centered Design"
 					},
 					{
-						"id": 179,
-						"number": "170.315 (f)(5)",
-						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
-					},
-					{
-						"id": 180,
-						"number": "170.315 (g)(6)",
-						"title": "Consolidated CDA Creation Performance (Cures Update)"
-					},
-					{
-						"id": 25,
-						"number": "170.315 (c)(1)",
-						"title": "Clinical Quality Measures - Record and Export"
-					},
-					{
-						"id": 3,
-						"number": "170.315 (a)(3)",
-						"title": "CPOE - Diagnostic Imaging"
-					},
-					{
-						"id": 49,
-						"number": "170.315 (f)(7)",
-						"title": "Transmission to Public Health Agencies - Health Care Surveys"
-					},
-					{
-						"id": 5,
-						"number": "170.315 (a)(5)",
-						"title": "Demographics"
-					},
-					{
-						"id": 182,
-						"number": "170.315 (g)(10)",
-						"title": "Standardized API for Patient and Population Services"
-					},
-					{
-						"id": 42,
-						"number": "170.315 (e)(3)",
-						"title": "Patient Health Information Capture"
-					},
-					{
-						"id": 21,
-						"number": "170.315 (b)(6)",
-						"title": "Data Export"
-					},
-					{
-						"id": 52,
-						"number": "170.315 (g)(3)",
-						"title": "Safety-Enhanced Design"
-					},
-					{
-						"id": 170,
-						"number": "170.315 (b)(9)",
-						"title": "Care Plan (Cures Update)"
-					},
-					{
-						"id": 35,
-						"number": "170.315 (d)(7)",
-						"title": "End-User Device Encryption"
-					},
-					{
-						"id": 39,
-						"number": "170.315 (d)(11)",
-						"title": "Accounting of Disclosures"
-					},
-					{
-						"id": 56,
-						"number": "170.315 (g)(7)",
-						"title": "Application Access - Patient Selection"
-					},
-					{
-						"id": 177,
-						"number": "170.315 (d)(13)",
-						"title": "Multi-Factor Authentication"
-					},
-					{
-						"id": 43,
-						"number": "170.315 (f)(1)",
-						"title": "Transmission to Immunization Registries"
-					},
-					{
-						"id": 36,
-						"number": "170.315 (d)(8)",
-						"title": "Integrity"
-					},
-					{
-						"id": 165,
-						"number": "170.315 (b)(1)",
-						"title": "Transitions of Care (Cures Update)"
-					},
-					{
-						"id": 53,
-						"number": "170.315 (g)(4)",
-						"title": "Quality Management System"
-					},
-					{
-						"id": 175,
-						"number": "170.315 (d)(10)",
-						"title": "Auditing Actions on Health Information (Cures Update)"
-					},
-					{
-						"id": 26,
-						"number": "170.315 (c)(2)",
-						"title": "Clinical Quality Measures - Import and Calculate"
+						"id": 14,
+						"number": "170.315 (a)(14)",
+						"title": "Implantable Device List"
 					},
 					{
 						"id": 34,
@@ -4432,54 +4347,9 @@
 						"title": "Emergency Access"
 					},
 					{
-						"id": 178,
-						"number": "170.315 (e)(1)",
-						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
-					},
-					{
-						"id": 167,
-						"number": "170.315 (b)(3)",
-						"title": "Electronic Prescribing (Cures Update)"
-					},
-					{
-						"id": 37,
-						"number": "170.315 (d)(9)",
-						"title": "Trusted Connection"
-					},
-					{
 						"id": 44,
 						"number": "170.315 (f)(2)",
 						"title": "Transmission to Public Health Agencies - Syndromic Surveillance"
-					},
-					{
-						"id": 51,
-						"number": "170.315 (g)(2)",
-						"title": "Automated Measure Calculation"
-					},
-					{
-						"id": 173,
-						"number": "170.315 (d)(2)",
-						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
-					},
-					{
-						"id": 176,
-						"number": "170.315 (d)(12)",
-						"title": "Encrypt Authentication Credentials"
-					},
-					{
-						"id": 46,
-						"number": "170.315 (f)(4)",
-						"title": "Transmission to Cancer Registries"
-					},
-					{
-						"id": 1,
-						"number": "170.315 (a)(1)",
-						"title": "Computerized Provider Order Entry (CPOE) - Medications"
-					},
-					{
-						"id": 33,
-						"number": "170.315 (d)(5)",
-						"title": "Automatic Access Time-out"
 					},
 					{
 						"id": 12,
@@ -4487,9 +4357,139 @@
 						"title": "Family Health History"
 					},
 					{
+						"id": 53,
+						"number": "170.315 (g)(4)",
+						"title": "Quality Management System"
+					},
+					{
+						"id": 9,
+						"number": "170.315 (a)(9)",
+						"title": "Clinical Decision Support"
+					},
+					{
+						"id": 170,
+						"number": "170.315 (b)(9)",
+						"title": "Care Plan (Cures Update)"
+					},
+					{
+						"id": 4,
+						"number": "170.315 (a)(4)",
+						"title": "Drug-Drug, Drug-Allergy Interaction Checks for CPOE"
+					},
+					{
+						"id": 49,
+						"number": "170.315 (f)(7)",
+						"title": "Transmission to Public Health Agencies - Health Care Surveys"
+					},
+					{
+						"id": 176,
+						"number": "170.315 (d)(12)",
+						"title": "Encrypt Authentication Credentials"
+					},
+					{
 						"id": 174,
 						"number": "170.315 (d)(3)",
 						"title": "Audit Report(s) (Cures Update)"
+					},
+					{
+						"id": 39,
+						"number": "170.315 (d)(11)",
+						"title": "Accounting of Disclosures"
+					},
+					{
+						"id": 173,
+						"number": "170.315 (d)(2)",
+						"title": "Auditable Events and Tamper-Resistance (Cures Update)"
+					},
+					{
+						"id": 52,
+						"number": "170.315 (g)(3)",
+						"title": "Safety-Enhanced Design"
+					},
+					{
+						"id": 35,
+						"number": "170.315 (d)(7)",
+						"title": "End-User Device Encryption"
+					},
+					{
+						"id": 42,
+						"number": "170.315 (e)(3)",
+						"title": "Patient Health Information Capture"
+					},
+					{
+						"id": 51,
+						"number": "170.315 (g)(2)",
+						"title": "Automated Measure Calculation"
+					},
+					{
+						"id": 179,
+						"number": "170.315 (f)(5)",
+						"title": "Transmission to Public Health Agencies - Electronic Case Reporting (Cures Update)"
+					},
+					{
+						"id": 182,
+						"number": "170.315 (g)(10)",
+						"title": "Standardized API for Patient and Population Services"
+					},
+					{
+						"id": 46,
+						"number": "170.315 (f)(4)",
+						"title": "Transmission to Cancer Registries"
+					},
+					{
+						"id": 177,
+						"number": "170.315 (d)(13)",
+						"title": "Multi-Factor Authentication"
+					},
+					{
+						"id": 178,
+						"number": "170.315 (e)(1)",
+						"title": "View, Download, and Transmit to 3rd Party (Cures Update)"
+					},
+					{
+						"id": 28,
+						"number": "170.315 (c)(4)",
+						"title": "Clinical Quality Measures - Filter"
+					},
+					{
+						"id": 3,
+						"number": "170.315 (a)(3)",
+						"title": "CPOE - Diagnostic Imaging"
+					},
+					{
+						"id": 37,
+						"number": "170.315 (d)(9)",
+						"title": "Trusted Connection"
+					},
+					{
+						"id": 5,
+						"number": "170.315 (a)(5)",
+						"title": "Demographics"
+					},
+					{
+						"id": 21,
+						"number": "170.315 (b)(6)",
+						"title": "Data Export"
+					},
+					{
+						"id": 181,
+						"number": "170.315 (g)(9)",
+						"title": "Application Access - All Data Request (Cures Update)"
+					},
+					{
+						"id": 180,
+						"number": "170.315 (g)(6)",
+						"title": "Consolidated CDA Creation Performance (Cures Update)"
+					},
+					{
+						"id": 2,
+						"number": "170.315 (a)(2)",
+						"title": "CPOE - Laboratory"
+					},
+					{
+						"id": 33,
+						"number": "170.315 (d)(5)",
+						"title": "Automatic Access Time-out"
 					}
 				],
 				"apiDocumentation": [

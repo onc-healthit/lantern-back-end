@@ -47,6 +47,7 @@ type CHPLEndpointList struct {
 }
 
 type CHPLEndpointEntry struct {
+	ID int `json:"id"`
 	Developer           details `json:"developer"`
 	Product             details `json:"product"`
 	Version             details `json:"version"`
@@ -139,6 +140,7 @@ func main() {
 
 		var productEntry chplCertifiedProductEntry
 
+		productEntry.ID = chplEntry.ID
 		productEntry.Product = chplEntry.Product
 		productEntry.ChplProductNumber = productNumber
 		productEntry.Version = chplEntry.Version
