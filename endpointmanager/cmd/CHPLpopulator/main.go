@@ -126,18 +126,6 @@ func main() {
 			productNumber := chplEntry.CHPLProductNumber
 			productNumber = strings.TrimSpace(productNumber)
 
-			productName := chplEntry.Product.Name
-			productName = strings.TrimSpace(productName)
-
-			productVersion := chplEntry.Version.Name
-			productVersion = strings.TrimSpace(productVersion)
-
-			productCertStatus := chplEntry.CertificationStatus.Name
-			productCertStatus = strings.TrimSpace(productCertStatus)
-
-			productEdition := chplEntry.Edition.Name
-			productEdition = strings.TrimSpace(productEdition)
-
 		certificationDateTime := chplEntry.CertificationDate
 
 		criteriaMetArr := chplEntry.CriteriaMet
@@ -151,15 +139,15 @@ func main() {
 
 		var productEntry chplCertifiedProductEntry
 
-		productEntry.Product = details{Name: productName}
+		productEntry.Product = chplEntry.Product
 		productEntry.ChplProductNumber = productNumber
-		productEntry.Version = details{Name: productVersion}
-		productEntry.CertificationStatus = details{Name: productCertStatus}
+		productEntry.Version = chplEntry.Version
+		productEntry.CertificationStatus = chplEntry.CertificationStatus
 		productEntry.CertificationDate = certificationDateTime
-		productEntry.Edition = details{Name: productEdition}
+		productEntry.Edition = chplEntry.Edition
 		productEntry.CriteriaMet = criteriaMetArr
 		productEntry.APIDocumentation = apiDocURLArr
-		productEntry.Developer = details{Name: developerName}
+		productEntry.Developer = chplEntry.Developer
 
 		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
 		if !softwareContained {
