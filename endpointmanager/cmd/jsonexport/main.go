@@ -18,9 +18,9 @@ func main() {
 	monthlyExport := false
 	var err error
 
-	if len(os.Args) == 1 {
+	if len(os.Args) == 2 {
 		exportFile = os.Args[1]
-	} else if len(os.Args) >= 2 {
+	} else if len(os.Args) > 2 {
 		exportFile = os.Args[1]
 		monthlyExport, err = strconv.ParseBool(os.Args[2])
 		helpers.FailOnError("", err)
