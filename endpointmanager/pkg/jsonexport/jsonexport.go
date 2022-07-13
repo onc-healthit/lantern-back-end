@@ -46,9 +46,9 @@ type Result struct {
 }
 
 type historyArgs struct {
-	fhirURL string
-	store   *postgresql.Store
-	result  chan Result
+	fhirURL       string
+	store         *postgresql.Store
+	result        chan Result
 	monthlyExport bool
 }
 
@@ -201,9 +201,9 @@ func createJobs(ctx context.Context,
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
-			fhirURL: urls[index],
-			store:   store,
-			result:  ch,
+			fhirURL:       urls[index],
+			store:         store,
+			result:        ch,
 			monthlyExport: monthlyExport,
 		}
 		workerDur := viper.GetInt("export_duration")
@@ -255,7 +255,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('month', fhir_endpoints_info_history.updated_at) = date_trunc('month', current_date - INTERVAL '1 month'));`
 	}
-	
+
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)
