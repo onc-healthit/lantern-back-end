@@ -312,8 +312,7 @@ function(input, output, session) { #nolint
   observeEvent(input$selectall, {
     if (input$selectall == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
   })
@@ -321,8 +320,7 @@ function(input, output, session) { #nolint
   observeEvent(input$removeall, {
     if (input$removeall == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       current_selection(NULL)
       updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
@@ -386,8 +384,7 @@ function(input, output, session) { #nolint
   observeEvent(input$removeallops, {
     if (input$removeallops == 0) {
       return(NULL)
-    }
-    else{
+    } else {
       updateSelectizeInput(session, "operations",
               label = "Click in the box below to add or remove operations:",
               choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),

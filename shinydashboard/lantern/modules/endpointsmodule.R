@@ -47,8 +47,7 @@ endpointsmodule <- function(
         availability_filter_num <- as.numeric(sel_availability()) / 100
         availability_filter <- as.character(availability_filter_num)
         res <- res %>% filter(availability == availability_filter)
-      }
-      else {
+      } else {
         availability_upper_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][2]) / 100
         availability_lower_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][1]) / 100
         availability_lower <- as.character(availability_lower_num)

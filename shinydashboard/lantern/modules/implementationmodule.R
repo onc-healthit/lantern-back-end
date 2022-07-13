@@ -56,8 +56,7 @@ implementationmodule <- function(  #nolint
       tagList(
         plotOutput(ns("implementation_guide_plot"), height = plot_height_implementation())
       )
-    }
-    else {
+    } else {
       tagList(
         plotOutput(ns("implementation_guide_empty_plot"), height = plot_height_implementation())
       )

@@ -46,8 +46,7 @@ valuesmodule <- function(
     header <- ""
     if (length(sel_fhir_version()) == 1) {
       header <- sel_capstat_values()
-    }
-    else {
+    } else {
       res <- res %>%
       group_by(field) %>%
       arrange(fhir_version, .by_group = TRUE) %>%
@@ -181,8 +180,7 @@ valuesmodule <- function(
       tagList(
         plotOutput(ns("values_chart_plot"), height = 600)
       )
-    }
-    else {
+    } else {
       tagList(
         plotOutput(ns("values_chart_empty_plot"), height = 600)
       )
