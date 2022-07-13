@@ -106,7 +106,7 @@ func Test_createJSON(t *testing.T) {
 
 	// Base case
 
-	returnedJSON, err := createJSON(ctx, store)
+	returnedJSON, err := createJSON(ctx, store, false)
 	th.Assert(t, err == nil, fmt.Sprintf("Error returned from the createJSON function: %s", err))
 	err = json.Unmarshal(returnedJSON, &jsonAsObj)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while unmarshalling the JSON. Error: %s", err))
@@ -145,6 +145,8 @@ func Test_getHistory(t *testing.T) {
 		fhirURL: "www.testURL.com",
 		store:   store,
 		result:  resultCh,
+		monthlyExport: false,
+
 	}
 
 	go getHistory(ctx, &jobArgs)
@@ -174,6 +176,7 @@ func Test_getHistory(t *testing.T) {
 		fhirURL: "thisurldoesntexist.com",
 		store:   store,
 		result:  resultCh3,
+		monthlyExport: false,
 	}
 
 	go getHistory(ctx, &jobArgs3)
