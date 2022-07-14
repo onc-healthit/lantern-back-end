@@ -13,7 +13,7 @@ capabilitystatementsize_UI <- function(id) {
         htmlOutput(ns("notes_text"))
       ),
         column(width = 4,
-        h4("CapabilityStatement / Conformance Resource Size"),
+        h2("CapabilityStatement / Conformance Resource Size"),
         tableOutput(ns("stats_table"))
       )
     )

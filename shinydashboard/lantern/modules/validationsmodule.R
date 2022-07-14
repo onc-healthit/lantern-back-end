@@ -10,7 +10,7 @@ validationsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12,
         p("For information about the validation rules that Lantern evaluates, including their descriptions and references, please see the",
-                a("documentation available here.", href = "Lantern Validation Rules and Descriptions.pdf", target = "_blank")
+                a("documentation available here.", href = "Lantern Validation Rules and Descriptions.pdf", target = "_blank", class = "lantern-url")
         )
       )
     ),
@@ -63,7 +63,7 @@ validationsmodule <- function(
   })
 
   output$anchorlink <- renderUI({
-    HTML("<p>See additional validation details and failure information <a href='#anchorid'>below</a></p>")
+    HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
   })
 
   # Create table with all the distinct validation rule names

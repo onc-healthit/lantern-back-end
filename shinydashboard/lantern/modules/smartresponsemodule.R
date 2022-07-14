@@ -17,9 +17,9 @@ smartresponsemodule_UI <- function(id) {
       column(width = 6,
              tableOutput(ns("smart_capability_count_table")))
     ),
-    h3("Endpoints by Well Known URI support"),
+    h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
-    DT::dataTableOutput(ns("well_known_endpoints"))
+    reactable::reactableOutput(ns("well_known_endpoints"))
   )
 }
 
@@ -136,18 +136,23 @@ smartresponsemodule <- function(
 
     res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
-    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version)
     res
   })
 
-  output$well_known_endpoints <-  DT::renderDataTable({
-    datatable(selected_endpoints(),
-              colnames = c("URL", "Organization", "Developer", "FHIR Version"),
-              selection = "none",
-              rownames = FALSE,
-              escape = FALSE,
-              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(smartPageSizeNum()))
+  output$well_known_endpoints <-  reactable::renderReactable({
+    reactable(selected_endpoints(),
+                columns = list(
+                  url = colDef(name = "URL", html = TRUE),
+                  condensed_organization_names = colDef(name = "Organization"),
+                  vendor_name = colDef(name = "Developer"),
+                  capability_fhir_version = colDef(name = "FHIR Version")
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = isolate(smartPageSizeNum())
     )
   })
 
