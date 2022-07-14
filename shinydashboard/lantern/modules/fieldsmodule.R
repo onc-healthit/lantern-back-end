@@ -7,7 +7,7 @@ fieldsmodule_UI <- function(id) {
     h1("FHIR CapabilityStatement / Conformance Fields"),
     p("This is the list of fields included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
-      .field-list {
+      .field-list ul {
         display: grid;
         grid-template-columns: repeat(4, minmax(350px, auto));
         overflow-x: scroll;
@@ -18,19 +18,19 @@ fieldsmodule_UI <- function(id) {
     htmlOutput(ns("capstat_fields_text")),
     fluidRow(
       column(width = 5,
-             h4("Required Fields"),
+             h2("Required Fields"),
              reactable::reactableOutput(ns("capstat_fields_table_required")),
-             h4("Optional Fields"),
+             h2("Optional Fields"),
              reactable::reactableOutput(ns("capstat_fields_table_optional"))),
       column(width = 7,
-             h4("Supported CapabilityStatement / Conformance Fields"),
+             h2("Supported CapabilityStatement / Conformance Fields"),
              uiOutput(ns("fields_plot"))
       )
     ),
     h1("FHIR CapabilityStatement / Conformance Extensions"),
     p("This is the list of extensions included in the FHIR CapabilityStatements / Conformance Resources from the endpoints."),
     tags$style(HTML("
-      .extension-list {
+      .extension-list ul{
         display: grid;
         grid-template-columns: repeat(3, minmax(480px, auto));
         overflow-x: scroll;
@@ -41,10 +41,10 @@ fieldsmodule_UI <- function(id) {
     htmlOutput(ns("capstat_extension_text")),
     fluidRow(
       column(width = 5,
-             h4("Supported Extensions:"),
+             h2("Supported Extensions:"),
              reactable::reactableOutput(ns("capstat_extensions_table"))),
       column(width = 7,
-             h4("Supported CapabilityStatement / Conformance Extensions"),
+             h2("Supported CapabilityStatement / Conformance Extensions"),
              uiOutput(ns("extensions_plot"))
       )
     )
@@ -103,19 +103,25 @@ fieldsmodule <- function(
 }
 
 output$capstat_fields_text <- renderUI({
-    col <- get_capstat_values(FALSE) %>% pull(2)
-    liElem <- paste("<li>", col, "</li>", collapse = " ")
-    divElem <- paste("<div class='field-list'>", liElem, "</div>")
-    fullHtml <- paste("Lantern checks for the following fields: ", divElem)
-    HTML(fullHtml)
+    col <- get_capstat_values(FALSE)
+    liElem <- tagList()
+    if (length(col) > 0) {
+      liElem <- apply(col, 1, function(x) tags$li(x['field_version']))
+    }
+    ulElem <- tags$ul(liElem, tabindex = "0")
+    divElem <- div(ulElem, class = "field-list")
+    tagList(HTML("Lantern checks for the following fields: "), divElem)
   })
 
 output$capstat_extension_text <- renderUI({
-    col <- get_capstat_values(TRUE) %>% pull(2)
-    liElem <- paste("<li>", col, "</li>", collapse = " ")
-    divElem <- paste("<div class='extension-list'>", liElem, "</div>")
-    fullHtml <- paste("Lantern checks for the following extensions: ", divElem)
-    HTML(fullHtml)
+    col <- get_capstat_values(TRUE)
+    liElem <- tagList()
+    if (length(col) > 0) {
+      liElem <- apply(col, 1, function(x) tags$li(x['field_version']))
+    }
+    ulElem <- tags$ul(liElem, tabindex = "0")
+    divElem <- div(ulElem, class = "extension-list")
+    tagList(HTML("Lantern checks for the following extensions: "), divElem)
 })
 
   selected_fhir_endpoints <- reactive({

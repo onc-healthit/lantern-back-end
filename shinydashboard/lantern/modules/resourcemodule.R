@@ -9,7 +9,7 @@ resourcemodule_UI <- function(id) {
     fluidRow(
       h3("Resource Count", style = "margin-left:5px"),
       column(width = 12, style = "margin-right: 5px; margin-left: 5px;",
-        tabsetPanel(type = "tabs",
+        tabsetPanel(id = "resource_tabset", type = "tabs",
               tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
               tabPanel("Table", reactable::reactableOutput(ns("resource_op_table")))
         )
