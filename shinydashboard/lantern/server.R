@@ -161,7 +161,7 @@ function(input, output, session) { #nolint
 
   output$resource_tab_popup <- renderUI({
     if (show_resource_tab_popup()) {
-      div(class = "pull-right", actionButton("resource_popup", "How to use this page", icon = icon("question-circle")))
+      div(class = "pull-right", actionButton("resource_popup", "How to use this page", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question icon")))
     }
   })
 
