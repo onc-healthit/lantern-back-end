@@ -11,14 +11,18 @@ ui <- dashboardPage(
           span(textOutput("version"),
                style = "color: white; font-size: 16px; line-height: 45px")
         )
-      )
+    ),
+    tags$li(a(href = 'https://github.com/onc-healthit/lantern-back-end',
+                                      img(src="images/GitHub-Mark-Light-32px.png", height="60%", width="60%"),
+                                      title = "Github Link"),
+                                    class = "dropdown")
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
     sidebarMenu(id = "side_menu",
       menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", "aria-hidden" = "true", role = "presentation", "aria-label" = "dashboard icon")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon")),
-      menuItem("Organizations", tabName = "organizations_tab", icon = tags$i(class = "fa fa-hospital", "aria-hidden" = "true", role = "presentation", "aria-label" = "hospital icon"), badgeLabel = "new", badgeColor = "green"),
+      menuItem("Organizations", tabName = "organizations_tab", icon = tags$i(class = "fa fa-hospital", "aria-hidden" = "true", role = "presentation", "aria-label" = "hospital icon")),
       menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
@@ -173,7 +177,10 @@ ui <- dashboardPage(
                 class = "footer",
                 includeHTML("about-lantern.html"),
                 p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
-                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank"))
+                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank")),
+                h3("Source Code"),
+                p("The code behind Lantern can be found on GitHub ",
+                a("here.", href = "https://github.com/onc-healthit/lantern-back-end"))
               )
         )
     ),
