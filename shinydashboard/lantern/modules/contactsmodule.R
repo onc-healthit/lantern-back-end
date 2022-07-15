@@ -23,6 +23,7 @@ contactsmodule <- function(
 
     selected_contacts <- reactive({
         res <- app_data$contact_info_tbl()
+        req(sel_fhir_version(), sel_vendor(), sel_has_contact())
 
         res <- res %>% filter(fhir_version %in% sel_fhir_version())
 
