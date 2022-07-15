@@ -106,7 +106,7 @@ output$capstat_fields_text <- renderUI({
     col <- get_capstat_values(FALSE)
     liElem <- tagList()
     if (length(col) > 0) {
-      liElem <- apply(col, 1, function(x) tags$li(x['field_version']))
+      liElem <- apply(col, 1, function(x) tags$li(x["field_version"]))
     }
     ulElem <- tags$ul(liElem, tabindex = "0")
     divElem <- div(ulElem, class = "field-list")
@@ -117,7 +117,7 @@ output$capstat_extension_text <- renderUI({
     col <- get_capstat_values(TRUE)
     liElem <- tagList()
     if (length(col) > 0) {
-      liElem <- apply(col, 1, function(x) tags$li(x['field_version']))
+      liElem <- apply(col, 1, function(x) tags$li(x["field_version"]))
     }
     ulElem <- tags$ul(liElem, tabindex = "0")
     divElem <- div(ulElem, class = "extension-list")
