@@ -33,17 +33,26 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
+	// get document from html string
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// find <a> tags and iterateover them
 	doc.Find("a").Each(func(index int, linkhtml *goquery.Selection) {
-		href, _ := linkhtml.Attr("href")
-		DSTU2URL = strings.TrimSpace(href)
+		// select only the 6th link on the page for DSTU2 endpoints
+		if index == 5 {
+			// get href from link
+			href, _ := linkhtml.Attr("href")
+			DSTU2URL = strings.TrimSpace(href)
+		}
 	})
 
+	log.Info(DSTU2URL)
+
 	client := &http.Client{}
+	// concatenate dstu2 link onto base allscripts url to get full url and make request
 	req, err := http.NewRequest("GET", allscriptsURL+"/"+strings.Join(strings.Split(DSTU2URL, "/")[2:], "/"), nil)
 	if err != nil {
 		log.Fatal(err)
@@ -60,6 +69,7 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
+	// convert bundle data to lantern format
 	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
 	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
 	if err != nil {

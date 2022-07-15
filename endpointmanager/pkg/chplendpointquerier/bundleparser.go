@@ -58,8 +58,6 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 			entry.OrganizationName = bundleEntry.Resource.Name
 		}
 
-		log.Info(entry.OrganizationName)
-
 		lanternEntryList = append(lanternEntryList, entry)
 	}
 
