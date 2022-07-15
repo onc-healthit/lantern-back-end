@@ -17,7 +17,7 @@ validationsmodule_UI <- function(id) {
     # Row for validation results chart
     fluidRow(
       column(width = 12,
-        h3("Validation Results Count"),
+        h2("Validation Results Count"),
         htmlOutput(ns("anchorlink")),
         uiOutput(ns("validation_results_plot"))
       )
@@ -25,7 +25,7 @@ validationsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12,
         p("The ONC Final Rule requires endpoints to support FHIR version 4.0.1, but we have included all endpoints for reference"),
-        p("*Note: The messagingEndptRule is not broken, there is an issue with the Capability Statement invariant ", a("(cpb-3).", href = "http://hl7.org/fhir/capabilitystatement.html#invs", target = "_blank"),
+        p("*Note: The messagingEndptRule is not broken, there is an issue with the Capability Statement invariant ", a("(cpb-3).", href = "http://hl7.org/fhir/capabilitystatement.html#invs", target = "_blank", class = "lantern-url"),
         "The invariant states that the Messaging endpoint has to be present when the kind is 'instance', and Messaging endpoint cannot be present when kind is NOT 'instance', but the FHIRPath expression is \"messaging.endpoint.empty() or kind = 'instance'\", which
          is not consistent with the expectation for the invariant and will not properly evaluate the conditions required.")
       )
@@ -35,7 +35,7 @@ validationsmodule_UI <- function(id) {
       column(width = 3,
         h3("Validation Details"),
         p("Click on a rule below to filter the validation failure details table."),
-        DT::dataTableOutput(ns("validation_details_table"))
+        reactable::reactableOutput(ns("validation_details_table"))
       ),
       column(width = 9,
         h3("Validation Failure Details"),
@@ -124,7 +124,7 @@ validationsmodule <- function(
     }
 
     res <- res %>%
-    mutate(linkURL = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    mutate(linkURL = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   get_validation_versions <- reactive({
@@ -162,9 +162,8 @@ validationsmodule <- function(
     mutate(url = linkURL) %>%
     distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>%
     select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
-
-    if (length(input$validation_details_table_rows_selected) > 0) {
-      selected_rule <- deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])
+    if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
+      selected_rule <- deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
       res <- res %>%
         filter(rule_name == selected_rule)
     } else {
@@ -176,14 +175,16 @@ validationsmodule <- function(
     res %>% select(fhir_version, url, expected, actual, vendor_name)
   })
 
-  # Renders the validation details table which displays all the validation rules and comments and can be selected to filter the validation failure table
-  output$validation_details_table <- DT::renderDataTable({
-    datatable(validation_details() %>% select(entry),
-      colnames = "",
-      rownames = FALSE,
-      escape = FALSE,
-      selection = list(mode = "single", selected = c(1), target = "row"),
-      options = list(scrollX = TRUE, scrollY = 500, scrollCollapse = TRUE, paging = FALSE, dom = "t", ordering = FALSE)
+   output$validation_details_table <-  reactable::renderReactable({
+    reactable(validation_details() %>% select(entry),
+                columns = list(
+                  entry = colDef(name = "Validation Rules", html = TRUE)
+                ),
+                selection = "single",
+                onClick = "select",
+                defaultSelected = c(1),
+                pagination = FALSE,
+                height = 500
     )
   })
 
@@ -249,7 +250,7 @@ validationsmodule <- function(
   }
 
   output$failure_table_subtitle <- renderUI({
-    p(paste("Rule: ", deframe(validation_rules()[input$validation_details_table_rows_selected, "rule_name"])))
+    p(paste("Rule: ", deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])))
   })
 
 
@@ -259,7 +260,7 @@ validationsmodule <- function(
               defaultColDef = colDef(
                 style = function(value, index) {
                   if (failed_validation_results()$fhir_version[index] == "No Cap Stat") {
-                    list(background = "rgba(0, 0, 0, 0.03)", fontWeight = "lighter")
+                    list(background = "rgba(0, 0, 0, 0.03)")
                   }
                 }
               ),
