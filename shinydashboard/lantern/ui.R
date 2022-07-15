@@ -13,7 +13,7 @@ ui <- dashboardPage(
         )
     ),
     tags$li(a(href = 'https://github.com/onc-healthit/lantern-back-end',
-                                      img(src="images/GitHub-Mark-Light-32px.png", height="60%", width="60%"),
+                                      img(src="images/GitHub-Mark-Light-32px.png", height="60%", width="60%", alt = "Github logo"),
                                       title = "Github Link"),
                                     class = "dropdown")
   ),
