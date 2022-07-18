@@ -25,7 +25,7 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 	// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(vendorURL),
-		chromedp.WaitVisible(".WordSection1"),
+		chromedp.WaitVisible(".WordSection1", chromedp.ByQuery),
 		chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 	)
 	if err != nil {

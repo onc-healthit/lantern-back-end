@@ -22,12 +22,10 @@ func Athenawebscraper(vendorURL string, fileToWriteTo string) {
 
 	var htmlContent string
 
-	log.Info("Getting the changes")
-
 	// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(vendorURL),
-		chromedp.WaitVisible(".content"),
+		chromedp.WaitVisible("table", chromedp.ByQuery),
 		chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 	)
 	if err != nil {
@@ -39,23 +37,21 @@ func Athenawebscraper(vendorURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	log.Fatalf("%v", htmlContent)
+	doc.Find("app-api-servers").Each(func(index int, apiServers *goquery.Selection) {
+		apiServers.Find("table").Each(func(indextr int, rowhtml *goquery.Selection) {
+			rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
+				var entry LanternEntry
+				tableEntries := rowbodyhtml.Find("td")
+				if tableEntries.Length() > 0 {
+					organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
+					fhirURL := strings.TrimSpace(tableEntries.Eq(1).Text())
 
-	doc.Find("table").Each(func(index int, rowhtml *goquery.Selection) {
-		rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
-			var entry LanternEntry
-			tableEntries := rowbodyhtml.Find("td")
-			if tableEntries.Length() > 0 {
-				organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
-				fhirURL := strings.TrimSpace(tableEntries.Eq(1).Text())
+					entry.OrganizationName = organizationName
+					entry.URL = fhirURL
 
-				entry.OrganizationName = organizationName
-				entry.URL = fhirURL
-
-				log.Infof("%v", fhirURL)
-
-				lanternEntryList = append(lanternEntryList, entry)
-			}
+					lanternEntryList = append(lanternEntryList, entry)
+				}
+			})
 		})
 	})
 
@@ -66,7 +62,6 @@ func Athenawebscraper(vendorURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	log.Infof("%v", endpointEntryList)
 	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		log.Fatal(err)
