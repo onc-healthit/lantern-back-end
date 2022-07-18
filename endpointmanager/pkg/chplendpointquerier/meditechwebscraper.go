@@ -24,8 +24,8 @@ func Meditechwebscraper(CHPLURL string, fileToWriteTo string) {
 
 	// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
 	err := chromedp.Run(ctx,
-		chromedp.Navigate(CHPLURL),
-		chromedp.WaitVisible(".table"),
+		chromedp.Navigate(vendorURL),
+		chromedp.WaitVisible("table", chromedp.ByQuery),
 		chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 	)
 	if err != nil {
