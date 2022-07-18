@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointwebscraper"
@@ -20,7 +20,7 @@ func main() {
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
-
+	
 	endpointwebscraper.EndpointListWebscraper(vendorURL, vendor, fileToWriteTo)
 
 }

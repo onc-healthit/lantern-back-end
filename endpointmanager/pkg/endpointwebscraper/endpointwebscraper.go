@@ -1,9 +1,5 @@
 package endpointwebscraper
 
-import (
-	log "github.com/sirupsen/logrus"
-)
-
 type EndpointList struct {
 	Endpoints []LanternEntry `json:"Endpoints"`
 }
@@ -25,7 +21,6 @@ func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo strin
 	if vendorURL == oneUpURL || vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
 	} else if vendorURL == athenaHealthURL {
-		log.Info("Going to run athena webscraper")
 		Athenawebscraper(vendorURL, fileToWriteTo)
 	} else if vendorURL == techCareURL {
 		Techcarewebscraper(vendorURL, fileToWriteTo)
