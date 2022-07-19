@@ -24,14 +24,11 @@ performancemodule <- function(
   get_range <- function() {
     if (all(sel_date() == "Past 7 days")) {
       range <- "604800"
-    }
-    else if (all(sel_date() == "Past 14 days")) {
+    } else if (all(sel_date() == "Past 14 days")) {
       range <- "1209600"
-    }
-    else if (all(sel_date() == "Past 30 days")) {
+    } else if (all(sel_date() == "Past 30 days")) {
       range <- "2592000"
-    }
-    else{
+    } else {
       range <- "maxdate.maximum"
     }
     range

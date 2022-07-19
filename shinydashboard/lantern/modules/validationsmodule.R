@@ -95,7 +95,7 @@ validationsmodule <- function(
         distinct(num, rule_name_line, comment_line, versions_line) %>%
         mutate(entry = paste(num,  rule_name_line, versions_line, comment_line, sep = "<br>")) %>%
         select(entry)
-      }else {
+      } else {
         res <- res %>%
         distinct(num, rule_name_line, comment_line) %>%
         mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%

@@ -232,8 +232,7 @@ output$capstat_extension_text <- renderUI({
       tagList(
         plotOutput(ns("fields_bar_plot"), height = plot_height())
       )
-    }
-    else {
+    } else {
       tagList(
         plotOutput(ns("fields_bar_empty_plot"), height = plot_height())
       )
@@ -277,8 +276,7 @@ output$capstat_extension_text <- renderUI({
       tagList(
         plotOutput(ns("extensions_bar_plot"), height = plot_height_extensions())
       )
-    }
-    else {
+    } else {
       tagList(
         plotOutput(ns("extensions_bar_empty_plot"), height = plot_height_extensions())
       )
