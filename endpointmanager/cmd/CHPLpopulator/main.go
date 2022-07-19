@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"strconv"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	http "net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -41,10 +41,10 @@ type serviceBaseURL struct {
 }
 
 type CHPLEndpointList struct {
-	PageSize int `json:"pageSize"`
-	PageNumber int `json:"pageNumber"`
-	RecordCount int `json:"recordCount"`
-	Results []CHPLEndpointEntry `json:"results"`
+	PageSize    int                 `json:"pageSize"`
+	PageNumber  int                 `json:"pageNumber"`
+	RecordCount int                 `json:"recordCount"`
+	Results     []CHPLEndpointEntry `json:"results"`
 }
 
 type CHPLEndpointEntry struct {
@@ -75,9 +75,7 @@ type chplCertifiedProductEntry struct {
 }
 
 func main() {
-
-	var ctx context.Context
-	ctx = context.Background()
+	ctx := context.Background()
 	client := &http.Client{
 		Timeout: time.Second * 60,
 	}
@@ -238,9 +236,9 @@ func main() {
 }
 
 func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx context.Context, client *http.Client) ([]byte, error) {
-	
+
 	chplURL = chplURL + "&pageSize=" + strconv.Itoa(pageSize) + "&pageNumber=" + strconv.Itoa(pageNumber)
-	
+
 	req, err := http.NewRequest("GET", chplURL, nil)
 	if err != nil {
 		return nil, err
