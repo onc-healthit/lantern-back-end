@@ -54,7 +54,7 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 						lanternEntryList = append(lanternEntryList, entry)
 					}
 
-					count++;
+					count++
 				}
 			}
 		})
