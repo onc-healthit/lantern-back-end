@@ -20,7 +20,7 @@ func main() {
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
-	
+
 	endpointwebscraper.EndpointListWebscraper(vendorURL, vendor, fileToWriteTo)
 
 }

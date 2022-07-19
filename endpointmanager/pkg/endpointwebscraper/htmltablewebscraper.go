@@ -3,8 +3,8 @@ package endpointwebscraper
 import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
-	http "net/http"
 	"io/ioutil"
+	http "net/http"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
