@@ -10,8 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-
-
 func main() {
 	log.Info("Starting to export endpoints")
 
@@ -56,6 +54,5 @@ func main() {
 
 	_, err = store.DB.ExecContext(ctx, getCHPLEndpointsStatement)
 	helpers.FailOnError("Error exporting csv. Error: ", err)
-
 
 }
