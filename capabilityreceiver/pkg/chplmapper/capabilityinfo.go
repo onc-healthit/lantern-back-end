@@ -86,14 +86,17 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
-	if ep.CapabilityStatement != nil {
+	
+	softwareName := ""
+	chplIDArr := []string{}
 
+	if ep.CapabilityStatement != nil {
 		chplProductNameVersion, err := openProductLinksFile(matchFile)
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
 
-		softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+		softwareName, err = ep.CapabilityStatement.GetSoftwareName()
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
@@ -101,16 +104,11 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		chplID := chplProductNameVersion[softwareName][softwareVersion]
-
-		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
-		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-		if err == nil {
-			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
-			if err != nil {
-				return err
-			}
-			ep.HealthITProductID = healthITMapID
+		
+		chplIDMatchFile := chplProductNameVersion[softwareName][softwareVersion]
+	
+		if chplIDMatchFile != "" {
+			chplIDArr = append(chplIDArr, chplIDMatchFile)
 		}
 	}
 
@@ -124,18 +122,37 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
 		if len(chplIDList) > 0 {
 			for _, chplID := range chplIDList {
+				chplIDArr = append(chplIDArr, chplID)
+			}
+		}
+	}
 
-				healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+	if softwareName != nil {
+		healthITProductsArr, err := store.GetActiveHealthITProductsUsingName(ctx, softwareName);
+		if err != nil {
+			return err
+		}
 
-				// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-				if err == nil {
-					healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
-					if err != nil {
-						return err
-					}
-					ep.HealthITProductID = healthITMapID
+		for _, healthITProduct := range healthITProductsArr {
+			if softwareVersion == "" {
+				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
+			} else {
+				if strings.ToLower(healthITProduct.Version) == strings.ToLower(softwareVersion) {
+					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
+		}
+	}
+	
+	for _, chplID := range chplIDArr {
+		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+		if err == nil {
+			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+			if err != nil {
+				return err
+			}
+			ep.HealthITProductID = healthITMapID
 		}
 	}
 
