@@ -23,6 +23,7 @@ func main() {
 	var source string
 	var listURL string
 	var format string
+	var isChpl bool
 
 	err := config.SetupConfig()
 	helpers.FailOnError("Error setting up config", err)
@@ -50,18 +51,20 @@ func main() {
 		log.Fatalf("There are %d messages in the queue. Queue must be empty to run the endpoint populator.", count)
 	}
 
-	if len(os.Args) == 4 {
+	if len(os.Args) == 5 {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-	} else if len(os.Args) == 5 {
+		isChpl = (os.Args[4] == "true")
+	} else if len(os.Args) == 6 {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		listURL = os.Args[4]
-	} else if len(os.Args) == 2 {
-		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
+		isChpl = (os.Args[4] == "true")
+		listURL = os.Args[5]
 	} else if len(os.Args) == 3 {
+		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
+	} else if len(os.Args) == 4 {
 		log.Fatalf("ERROR: Missing endpoints list source command-line argument")
 	} else {
 		log.Fatalf("ERROR: Endpoints list command-line arguments are not correct")
@@ -91,4 +94,25 @@ func main() {
 		dbErr := endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listSource)
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
+
+	addListSourceStatement := `
+	INSERT INTO list_source_info (
+		list_source,
+		is_chpl
+	)
+	SELECT $1, $2
+	WHERE
+    NOT EXISTS (
+        SELECT list_source FROM list_source_info WHERE list_source = $3
+    );
+	`
+	var listSource string
+	if listURL != "" {
+		listSource = listURL
+	} else {
+		listSource = source
+	}
+
+	_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, isChpl, listSource)
+	helpers.FailOnError("Adding source to list_source database error: ", sourceErr)
 }
