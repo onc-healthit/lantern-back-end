@@ -228,6 +228,89 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	return hitps, nil
 }
 
+// GetHealthITProductsUsingName returns a slice of active HealthITProducts that were created by the given name
+func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name string) ([]*endpointmanager.HealthITProduct, error) {
+	var hitps []*endpointmanager.HealthITProduct
+	var hitp endpointmanager.HealthITProduct
+	var locationJSON []byte
+	var certificationCriteriaJSON []byte
+	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
+
+	sqlStatement := `
+	SELECT
+		id,
+		name,
+		version,
+		vendor_id,
+		location,
+		authorization_standard,
+		api_syntax,
+		api_url,
+		certification_criteria,
+		certification_status,
+		certification_date,
+		certification_edition,
+		last_modified_in_chpl,
+		chpl_id,
+		practice_type,
+		created_at,
+		updated_at
+	FROM healthit_products WHERE LOWER(name)=LOWER($1) and certification_status = 'Active'`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement, name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&hitp.ID,
+			&hitp.Name,
+			&hitp.Version,
+			&vendorIDNullable,
+			&locationJSON,
+			&hitp.AuthorizationStandard,
+			&hitp.APISyntax,
+			&hitp.APIURL,
+			&certificationCriteriaJSON,
+			&hitp.CertificationStatus,
+			&hitp.CertificationDate,
+			&hitp.CertificationEdition,
+			&hitp.LastModifiedInCHPL,
+			&hitp.CHPLID,
+			&practiceTypeString,
+			&hitp.CreatedAt,
+			&hitp.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
+		hitp.VendorID = ints[0]
+
+		if !practiceTypeString.Valid {
+			hitp.PracticeType = ""
+		} else {
+			hitp.PracticeType = practiceTypeString.String
+		}
+
+		err = json.Unmarshal(locationJSON, &hitp.Location)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(certificationCriteriaJSON, &hitp.CertificationCriteria)
+		if err != nil {
+			return nil, err
+		}
+
+		hitps = append(hitps, &hitp)
+	}
+
+	return hitps, nil
+}
+
 // GetHealthITProductIDByCHPLID gets the HealthITProduct db ID for the product with chpl_id=CHPLID
 func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string) (int, error) {
 	var retProductID int
