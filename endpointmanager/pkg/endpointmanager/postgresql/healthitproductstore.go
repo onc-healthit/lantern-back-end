@@ -256,7 +256,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		practice_type,
 		created_at,
 		updated_at
-	FROM healthit_products WHERE LOWER(name)=LOWER($1) and certification_status = 'Active'`
+	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=LOWER($1) and certification_status = 'Active'`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement, name)
 	if err != nil {
 		return nil, err
