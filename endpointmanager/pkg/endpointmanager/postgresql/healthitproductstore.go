@@ -181,7 +181,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 		var certificationCriteriaJSON []byte
 		var vendorIDNullable sql.NullInt64
 		var practiceTypeString sql.NullString
-		
+
 		err = rows.Scan(
 			&hitp.ID,
 			&hitp.Name,
@@ -252,7 +252,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		practice_type,
 		created_at,
 		updated_at
-	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=LOWER($1) and certification_status = 'Active'`
+	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=regexp_replace(LOWER($1), '\W+', '', 'g') and certification_status = 'Active'`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement, name)
 	if err != nil {
 		return nil, err
