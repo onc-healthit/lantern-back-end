@@ -148,11 +148,6 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 // GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given vendor_id
 func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int) ([]*endpointmanager.HealthITProduct, error) {
 	var hitps []*endpointmanager.HealthITProduct
-	var hitp endpointmanager.HealthITProduct
-	var locationJSON []byte
-	var certificationCriteriaJSON []byte
-	var vendorIDNullable sql.NullInt64
-	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -181,6 +176,12 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	defer rows.Close()
 
 	for rows.Next() {
+		var hitp endpointmanager.HealthITProduct
+		var locationJSON []byte
+		var certificationCriteriaJSON []byte
+		var vendorIDNullable sql.NullInt64
+		var practiceTypeString sql.NullString
+		
 		err = rows.Scan(
 			&hitp.ID,
 			&hitp.Name,
@@ -264,7 +265,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		var certificationCriteriaJSON []byte
 		var vendorIDNullable sql.NullInt64
 		var practiceTypeString sql.NullString
-		
+
 		err = rows.Scan(
 			&hitp.ID,
 			&hitp.Name,
