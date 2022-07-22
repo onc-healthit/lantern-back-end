@@ -133,11 +133,14 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 			return err
 		}
 
-		for _, healthITProduct := range healthITProductsArr {
-			if softwareVersion == "" {
+	for _, healthITProduct := range healthITProductsArr {
+		if softwareVersion == "" {
+			if arrContains(chplIDArr, healthITProduct.CHPLID) {
 				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
-			} else {
-				if strings.ToLower(healthITProduct.Version) == strings.ToLower(softwareVersion) {
+			}
+		} else {
+			if strings.ToLower(healthITProduct.Version) == strings.ToLower(softwareVersion) {
+				if arrContains(chplIDArr, healthITProduct.CHPLID) {
 					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
