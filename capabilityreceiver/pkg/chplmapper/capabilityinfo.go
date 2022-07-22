@@ -107,7 +107,7 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		
 		chplIDMatchFile := chplProductNameVersion[softwareName][softwareVersion]
 	
-		if chplIDMatchFile != "" {
+		if len(chplIDMatchFile) != 0 {
 			chplIDArr = append(chplIDArr, chplIDMatchFile)
 		}
 	}
@@ -134,13 +134,13 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 
 	for _, healthITProduct := range healthITProductsArr {
-		if softwareVersion == "" {
-			if arrContains(chplIDArr, healthITProduct.CHPLID) {
+		if len(softwareVersion) == 0 {
+			if !arrContains(chplIDArr, healthITProduct.CHPLID) {
 				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 			}
 		} else {
 			if strings.ToLower(healthITProduct.Version) == strings.ToLower(softwareVersion) {
-				if arrContains(chplIDArr, healthITProduct.CHPLID) {
+				if !arrContains(chplIDArr, healthITProduct.CHPLID) {
 					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
