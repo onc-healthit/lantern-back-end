@@ -31,12 +31,12 @@ type details struct {
 	Name string `json:"name"`
 }
 
-type chplEndpointListProductInfo struct {
+type ChplEndpointListProductInfo struct {
 	ListSourceURL    string                 `json:"listSourceURL"`
-	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
+	SoftwareProducts []ChplCertifiedProduct `json:"softwareProducts"`
 }
 
-type chplCertifiedProduct struct {
+type ChplCertifiedProduct struct {
 	ChplProductNumber string  `json:"chplProductNumber"`
 	Developer         details `json:"developer"`
 }

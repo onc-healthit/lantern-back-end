@@ -525,7 +525,7 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]chplmapper.ChplMa
 	if err != nil {
 		return nil, err
 	}
-	var chplMap []chplEndpointListProductInfo
+	var chplMap []chplmapper.ChplEndpointListProductInfo
 	if len(byteValueFile) != 0 {
 		err = json.Unmarshal(byteValueFile, &chplMap)
 		if err != nil {
