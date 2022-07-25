@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -106,7 +107,7 @@ func Test_createJSON(t *testing.T) {
 
 	// Base case
 
-	returnedJSON, err := createJSON(ctx, store, false)
+	returnedJSON, err := createJSON(ctx, store, "30days")
 	th.Assert(t, err == nil, fmt.Sprintf("Error returned from the createJSON function: %s", err))
 	err = json.Unmarshal(returnedJSON, &jsonAsObj)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while unmarshalling the JSON. Error: %s", err))
@@ -146,7 +147,6 @@ func Test_getHistory(t *testing.T) {
 		store:   store,
 		result:  resultCh,
 		exportType: "30days",
-
 	}
 
 	go getHistory(ctx, &jobArgs)
@@ -159,30 +159,78 @@ func Test_getHistory(t *testing.T) {
 	}
 
 	// base case with export type equal to month
-	jobArgs["historyArgs"].exportType = "month"
 
-	go getHistory(ctx, &jobArgs)
+	oldDate := time.Now().AddDate(0, -1, 0).Format("2006-01-02 15:04:05.000000000")
 
-	for res := range resultCh {
+	updateEndpointInfoHistoryDate := `
+	UPDATE fhir_endpoints_info_history
+	SET
+		updated_at = $1
+	WHERE url = $2 AND validation_result_id = $3;`
+
+	_, err = store.DB.ExecContext(ctx, updateEndpointInfoHistoryDate, oldDate, firstEndpoint.URL, firstEndpoint.ValidationID)
+	th.Assert(t, err == nil, fmt.Sprintf("Error when updating updated at time for endpoint in the history table %s", err))
+
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = rows.Scan(&actualNumEndptsStored)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, actualNumEndptsStored == 1, fmt.Sprintf("Expected 1 endpoints stored. Actually had %d endpoints stored.", actualNumEndptsStored))
+
+	resultChMonth := make(chan Result)
+	jobArgsMonth := make(map[string]interface{})
+	jobArgsMonth["historyArgs"] = historyArgs{
+		fhirURL: "www.testURL.com",
+		store:   store,
+		result:  resultChMonth,
+		exportType: "month",
+	}
+
+	go getHistory(ctx, &jobArgsMonth)
+
+	for res := range resultChMonth {
 		th.Assert(t, len(res.Rows) == 1, fmt.Sprintf("Expected 1 entry in history table. Actually had %d entries.", len(res.Rows)))
 		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
 		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
-		close(resultCh)
+		close(resultChMonth)
 	}
 
 	// base case with export type equal to all
-	jobArgs["historyArgs"].exportType = "all"
 
-	go getHistory(ctx, &jobArgs)
 
-	for res := range resultCh {
-		th.Assert(t, len(res.Rows) == 1, fmt.Sprintf("Expected 1 entry in history table. Actually had %d entries.", len(res.Rows)))
-		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
-		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
-		close(resultCh)
+	_, err = store.DB.Exec("DElETE FROM fhir_endpoints_info;")
+	th.Assert(t, err == nil, err)
+
+	metadataID2, err := store.AddFHIREndpointMetadata(ctx, secondEndpoint.Metadata)
+	valResID2, err := store.AddValidationResult(ctx)
+	th.Assert(t, err == nil, fmt.Sprintf("Error adding validation result ID: %s", err))
+	secondEndpoint.ValidationID = valResID2
+	err = store.AddFHIREndpointInfo(ctx, &secondEndpoint, metadataID2)
+	th.Assert(t, err == nil, err)
+
+	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history;")
+	err = rows.Scan(&actualNumEndptsStored)
+	th.Assert(t, err == nil, err)
+	// 3 endpoints should be stored since 1 entry will also be added for deleting from the fhir_endpoints_info table
+	th.Assert(t, actualNumEndptsStored == 3, fmt.Sprintf("Expected 3 endpoints stored. Actually had %d endpoints stored.", actualNumEndptsStored))
+
+
+	resultChAll := make(chan Result)
+	jobArgsAll := make(map[string]interface{})
+	jobArgsAll["historyArgs"] = historyArgs{
+		fhirURL: "www.testURL.com",
+		store:   store,
+		result:  resultChAll,
+		exportType: "all",
 	}
 
-	jobArgs["historyArgs"].exportType = "30days"
+	go getHistory(ctx, &jobArgsAll)
+
+	for res := range resultChAll {
+		th.Assert(t, len(res.Rows) == 3, fmt.Sprintf("Expected 3 entries in history table. Actually had %d entries.", len(res.Rows)))
+		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
+		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.4", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
+		close(resultChAll)
+	}
 
 	// If the args are not properly formatted
 
