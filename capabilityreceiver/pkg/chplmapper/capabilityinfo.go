@@ -139,14 +139,14 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 			}
 		} else {
-			if strings.ToLower(healthITProduct.Version) == strings.ToLower(softwareVersion) {
+			if strings.EqualFold(healthITProduct.Version, softwareVersion) {
 				if !arrContains(chplIDArr, healthITProduct.CHPLID) {
 					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
 		}
 	}
-	
+
 	for _, chplID := range chplIDArr {
 		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
 		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
