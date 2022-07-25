@@ -46,9 +46,9 @@ type Result struct {
 }
 
 type historyArgs struct {
-	fhirURL       string
-	store         *postgresql.Store
-	result        chan Result
+	fhirURL    string
+	store      *postgresql.Store
+	result     chan Result
 	exportType string
 }
 
@@ -201,9 +201,9 @@ func createJobs(ctx context.Context,
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
-			fhirURL:       urls[index],
-			store:         store,
-			result:        ch,
+			fhirURL:    urls[index],
+			store:      store,
+			result:     ch,
 			exportType: exportType,
 		}
 		workerDur := viper.GetInt("export_duration")
@@ -254,7 +254,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('day', fhir_endpoints_info_history.updated_at) >= date_trunc('day', current_date - INTERVAL '30 day'));`
-	} else if exportType == "all" { 
+	} else if exportType == "all" {
 		selectHistory = `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
