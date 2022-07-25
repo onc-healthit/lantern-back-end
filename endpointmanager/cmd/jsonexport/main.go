@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"strconv"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -15,15 +14,14 @@ import (
 
 func main() {
 	var exportFile string
-	monthlyExport := false
+	exportType := "30days"
 	var err error
 
 	if len(os.Args) == 2 {
 		exportFile = os.Args[1]
 	} else if len(os.Args) > 2 {
 		exportFile = os.Args[1]
-		monthlyExport, err = strconv.ParseBool(os.Args[2])
-		helpers.FailOnError("", err)
+		exportType = os.Args[2]
 	} else {
 		log.Fatalf("ERROR: Missing export file name command-line argument")
 	}
@@ -36,6 +34,6 @@ func main() {
 	ctx := context.Background()
 	log.Info("Successfully connected to DB!")
 
-	err = jsonexport.CreateJSONExport(ctx, store, exportFile, monthlyExport)
+	err = jsonexport.CreateJSONExport(ctx, store, exportFile, exportType)
 	helpers.FailOnError("", err)
 }

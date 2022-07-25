@@ -63,7 +63,7 @@ func GetEnptsAndSend(
 		log.Info("Starting history pruning")
 		historypruning.PruneInfoHistory(ctx, store, true)
 		log.Info("Starting json export")
-		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", false)
+		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", "30days")
 		if err != nil {
 			errs <- err
 		}

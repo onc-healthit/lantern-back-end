@@ -145,7 +145,7 @@ func Test_getHistory(t *testing.T) {
 		fhirURL: "www.testURL.com",
 		store:   store,
 		result:  resultCh,
-		monthlyExport: false,
+		exportType: "30days",
 
 	}
 
@@ -157,6 +157,32 @@ func Test_getHistory(t *testing.T) {
 		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
 		close(resultCh)
 	}
+
+	// base case with export type equal to month
+	jobArgs["historyArgs"].exportType = "month"
+
+	go getHistory(ctx, &jobArgs)
+
+	for res := range resultCh {
+		th.Assert(t, len(res.Rows) == 1, fmt.Sprintf("Expected 1 entry in history table. Actually had %d entries.", len(res.Rows)))
+		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
+		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
+		close(resultCh)
+	}
+
+	// base case with export type equal to all
+	jobArgs["historyArgs"].exportType = "all"
+
+	go getHistory(ctx, &jobArgs)
+
+	for res := range resultCh {
+		th.Assert(t, len(res.Rows) == 1, fmt.Sprintf("Expected 1 entry in history table. Actually had %d entries.", len(res.Rows)))
+		th.Assert(t, res.URL == "www.testURL.com", fmt.Sprintf("Expected URL to equal 'www.testURL.com'. Is actually '%s'.", res.URL))
+		th.Assert(t, res.Rows[0].TLSVersion == "TLS 1.3", fmt.Sprintf("Should be the current entry in the fhir_endpoints_info table. %+v", res.Rows[0].TLSVersion))
+		close(resultCh)
+	}
+
+	jobArgs["historyArgs"].exportType = "30days"
 
 	// If the args are not properly formatted
 
@@ -176,7 +202,7 @@ func Test_getHistory(t *testing.T) {
 		fhirURL: "thisurldoesntexist.com",
 		store:   store,
 		result:  resultCh3,
-		monthlyExport: false,
+		exportType: "30days",
 	}
 
 	go getHistory(ctx, &jobArgs3)
