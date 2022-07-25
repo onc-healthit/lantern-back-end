@@ -529,8 +529,8 @@ github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220325163655-25ad923
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220328191848-f5a8f2b05fa5/go.mod h1:jVuZMoJ27WSRPb/3JdjmwfKeXBCpf2mQtMEWbFkGje0=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220503200549-8d45f857a44a/go.mod h1:40ASIRCf8bvf1ZmFCu+lVg2w8mF+q1bigSJhF02Rugo=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220608172509-27fe0eeefe3d/go.mod h1:AX8MPw7coMCQm/Bd7GoJz/0NDNnZ8Iy7jHMpNZ0Enno=
-github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220718164503-297922967563 h1:jS4fdJoTRcRAzSl6nUTDjspSPezzxVlOETDDiHh+Ljw=
-github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220718164503-297922967563/go.mod h1:vm56CKKs6n8dmiJf0AiY1fPxHxrDAHDpN4kgjIGk7IM=
+github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220725151823-6a5d83cda804 h1:Tt8KRuYPGmfqAty5pKrY6BB4jbBCRqzxaFuZzaY/Wj4=
+github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20220725151823-6a5d83cda804/go.mod h1:vm56CKKs6n8dmiJf0AiY1fPxHxrDAHDpN4kgjIGk7IM=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:jPu3HTPUBd+0vKKBa4yKFouFWo+HvwXoY4hKCrfiAOw=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:jPu3HTPUBd+0vKKBa4yKFouFWo+HvwXoY4hKCrfiAOw=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
