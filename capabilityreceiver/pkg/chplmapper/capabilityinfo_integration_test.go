@@ -181,7 +181,10 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
 	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, path, chplEndpointListPath)
+	listSourceMap, err := capabilityhandler.OpenCHPLEndpointListInfoFile(chplEndpointListPath)
+	th.Assert(t, err == nil, err)
+
+	err = MatchEndpointToProduct(ctx, epInfo, store, path, listSourceMap)
 	th.Assert(t, err == nil, err)
 	// No healthIT product should have matched
 	th.Assert(t, epInfo.HealthITProductID == 0, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", 0, epInfo.HealthITProductID))
@@ -223,7 +226,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		CapabilityStatement: nil}
 
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", listSourceMap)
 	th.Assert(t, err == nil, err)
 	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, "CorrectVersionAndName")
 	th.Assert(t, err == nil, err)
@@ -232,7 +235,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	// healthIT product with ID healthITProductID should have matched
 	th.Assert(t, actualHealthITProductIDs[0] == healthITProductID, fmt.Sprintf("expected HealthITProductID value to be %d. Instead got %d", healthITProductID, actualHealthITProductIDs[0]))
 
-	err = MatchEndpointToProduct(ctx, epInfo2, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	err = MatchEndpointToProduct(ctx, epInfo2, store, "../../testdata/test_chpl_product_mapping.json", listSourceMap)
 	th.Assert(t, err == nil, err)
 	healthITProductID, err = store.GetHealthITProductIDByCHPLID(ctx, "15.04.04.1322.Blue.02.00.0.200807")
 	th.Assert(t, err == nil, err)
@@ -292,13 +295,13 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	epInfo.CapabilityStatement = cs
 
-	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	err = MatchEndpointToProduct(ctx, epInfo, store, "../../testdata/test_chpl_product_mapping.json", listSourceMap)
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
 
-	err = MatchEndpointToProduct(ctx, epInfo3, store, "../../testdata/test_chpl_product_mapping.json", "../../testdata/test_chpl_products_info.json")
+	err = MatchEndpointToProduct(ctx, epInfo3, store, "../../testdata/test_chpl_product_mapping.json", listSourceMap)
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo3.HealthITProductID)
 	th.Assert(t, err == nil, err)
@@ -335,13 +338,15 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
+	listSourceMap, err := capabilityhandler.OpenCHPLEndpointListInfoFile(chplEndpointListPath)
+	th.Assert(t, err == nil, err)
 
 	// endpoint info
 	epInfo := &endpointmanager.FHIREndpointInfo{
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	// "Cerner Corporation" second item in vendor list
 	th.Assert(t, epInfo.VendorID == vendors[1].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[1].ID, epInfo.VendorID))
@@ -360,7 +365,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -369,7 +374,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	// endpoint
 	epInfo = &endpointmanager.FHIREndpointInfo{
 		URL: ep.URL}
-	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -392,7 +397,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		URL:                 ep.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err != nil, "expected an error from accessing the publisher field in the capability statment.")
 	th.Assert(t, epInfo.VendorID == 0, fmt.Sprintf("expected no vendor value. Instead got %d", epInfo.VendorID))
 
@@ -409,7 +414,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		URL:                 ep2.URL,
 		CapabilityStatement: cs}
 
-	err = MatchEndpointToVendor(ctx, epInfo, store, chplEndpointListPath)
+	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == vendors[6].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[6].ID, epInfo.VendorID))
 	

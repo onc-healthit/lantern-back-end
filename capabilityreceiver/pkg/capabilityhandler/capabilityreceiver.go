@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
+	"io/ioutil"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/spf13/viper"
@@ -233,15 +235,20 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
+	softwareListMap, err := OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+	if err != nil {
+		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
+	}
+
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
 
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -296,12 +303,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
@@ -503,4 +510,54 @@ func ReceiveVersionResponses(ctx context.Context,
 	}
 
 	return nil
+}
+
+func OpenCHPLEndpointListInfoFile(filepath string) (map[string]chplmapper.ChplMapResults, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareListMap = make(map[string]chplmapper.ChplMapResults)
+
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap []chplEndpointListProductInfo
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &chplMap)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range chplMap {
+			var listSource = obj.ListSourceURL
+			var softwareProducts = obj.SoftwareProducts
+
+			chplMapResult := chplmapper.ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+
+			chplID := ""
+
+			for _, prod := range softwareProducts {
+				chplID = prod.ChplProductNumber
+
+				if chplID != "" {
+					chplMapResult.ChplProductIDs = append(chplMapResult.ChplProductIDs, chplID)
+				}
+			}
+
+			if listSource != "" {
+				if len(softwareProducts) > 0 {
+					// Developer is the same for all products, just grab first one
+					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				}
+
+				softwareListMap[listSource] = chplMapResult
+			}
+
+		}
+	}
+
+	return softwareListMap, nil
 }
