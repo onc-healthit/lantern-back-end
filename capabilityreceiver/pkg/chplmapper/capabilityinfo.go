@@ -288,3 +288,53 @@ func normalizeName(name string) string {
 	name = strings.TrimRight(name, ",. ")
 	return name
 }
+
+func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareListMap = make(map[string]ChplMapResults)
+
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap []ChplEndpointListProductInfo
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &chplMap)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range chplMap {
+			var listSource = obj.ListSourceURL
+			var softwareProducts = obj.SoftwareProducts
+
+			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+
+			chplID := ""
+
+			for _, prod := range softwareProducts {
+				chplID = prod.ChplProductNumber
+
+				if chplID != "" {
+					chplMapResult.ChplProductIDs = append(chplMapResult.ChplProductIDs, chplID)
+				}
+			}
+
+			if listSource != "" {
+				if len(softwareProducts) > 0 {
+					// Developer is the same for all products, just grab first one
+					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				}
+
+				softwareListMap[listSource] = chplMapResult
+			}
+
+		}
+	}
+
+	return softwareListMap, nil
+}

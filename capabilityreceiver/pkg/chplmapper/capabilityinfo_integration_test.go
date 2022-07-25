@@ -181,7 +181,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
 	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
 
-	listSourceMap, err := capabilityhandler.OpenCHPLEndpointListInfoFile(chplEndpointListPath)
+	listSourceMap, err := OpenCHPLEndpointListInfoFile(chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 
 	err = MatchEndpointToProduct(ctx, epInfo, store, path, listSourceMap)
@@ -338,7 +338,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	chplEndpointListPath := filepath.Join("../../testdata", "test_chpl_products_info.json")
-	listSourceMap, err := capabilityhandler.OpenCHPLEndpointListInfoFile(chplEndpointListPath)
+	listSourceMap, err := OpenCHPLEndpointListInfoFile(chplEndpointListPath)
 	th.Assert(t, err == nil, err)
 
 	// endpoint info
