@@ -16,6 +16,10 @@ downloadsmodule_UI <- function(id) {
              h2("JSON Downloads"),
              downloadButton(ns("download_data_json"), "Download Endpoint Data"),
              downloadButton(ns("download_descriptions_markdown"), "Download Field Descriptions"),
+      ),
+      column(width = 12, 
+            p("Formerly, the json export file included all data, but now only includes the past 30 days. To see export files for previous months created by Lantern, visit the repository ",
+            a("available here.", href = "https://github.com/onc-healthit/lantern-back-end", target = "_blank"))
       )
     ),
     fluidRow(
