@@ -4,7 +4,7 @@ library(leaflet)
 locationmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    h3("Map of Endpoints Linked to an Organization"),
+    h2("Map of Endpoints Linked to an Organization"),
     p("This map visualizes the locations of the API Information Sources which Lantern has associated with a FHIR endpoint by matching an API
     Information Source (organization name), as reported by a Certified API Developer, with an organization name in the National Payer and
     Provider Enumeration System (NPPES). An endpoint will have an entry on the map for each version of FHIR which it supports. Caution should be

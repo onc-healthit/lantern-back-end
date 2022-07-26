@@ -13,7 +13,7 @@ downloadsmodule_UI <- function(id) {
     ),
     fluidRow(
       column(width = 12,
-             h3("JSON Downloads"),
+             h2("JSON Downloads"),
              downloadButton(ns("download_data_json"), "Download Endpoint Data"),
              downloadButton(ns("download_descriptions_markdown"), "Download Field Descriptions"),
       )
