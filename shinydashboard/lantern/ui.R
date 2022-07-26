@@ -12,8 +12,8 @@ ui <- dashboardPage(
                style = "color: white; font-size: 16px; line-height: 45px")
         )
     ),
-    tags$li(a(href = 'https://github.com/onc-healthit/lantern-back-end',
-                                      img(src="images/GitHub-Mark-Light-32px.png", height="60%", width="60%"),
+    tags$li(a(href = "https://github.com/onc-healthit/lantern-back-end",
+                                      img(src = "images/GitHub-Mark-Light-32px.png", height = "60%", width = "60%", alt = "Github logo"),
                                       title = "Github Link"),
                                     class = "dropdown")
   ),
@@ -171,16 +171,16 @@ ui <- dashboardPage(
               contactsmodule_UI("contacts_page")
       ),
       tabItem("about_tab",
-              img(src = "images/lantern-logo@1x.png", width = "300px"),
+              img(src = "images/lantern-logo@1x.png", width = "300px", alt = "Lantern Logo"),
               br(),
               div(
                 class = "footer",
                 includeHTML("about-lantern.html"),
                 p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
-                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank")),
+                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank", class = "lantern-url")),
                 h3("Source Code"),
                 p("The code behind Lantern can be found on GitHub ",
-                a("here.", href = "https://github.com/onc-healthit/lantern-back-end"))
+                a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
               )
         )
     ),

@@ -14,10 +14,10 @@ securitymodule_UI <- function(id) {
              tableOutput(ns("auth_type_count_table"))
       )
     ),
-    h3("Endpoints by Authorization Type"),
+    h2("Endpoints by Authorization Type"),
     div(
       uiOutput("show_security_filter"),
-      DT::dataTableOutput(ns("security_endpoints"))
+      reactable::reactableOutput(ns("security_endpoints"))
     )
   )
 }
@@ -62,18 +62,25 @@ securitymodule <- function(
 
     res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
-    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })
 
-  output$security_endpoints <-  DT::renderDataTable({
-    datatable(selected_endpoints(),
-              colnames = c("URL", "Organization", "Developer", "FHIR Version", "TLS Version", "Authorization"),
-              selection = "none",
-              rownames = FALSE,
-              escape = FALSE,
-              options = list(scrollX = TRUE, stateSave = TRUE, pageLength = isolate(securityPageSizeNum()))
+  output$security_endpoints <-  reactable::renderReactable({
+    reactable(selected_endpoints(),
+                columns = list(
+                  url = colDef(name = "URL", html = TRUE),
+                  condensed_organization_names = colDef(name = "Organization"),
+                  vendor_name = colDef(name = "Developer"),
+                  capability_fhir_version = colDef(name = "FHIR Version"),
+                  tls_version = colDef(name = "TLS Version"),
+                  code = colDef(name = "Authorization")
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = isolate(securityPageSizeNum())
     )
   })
 
