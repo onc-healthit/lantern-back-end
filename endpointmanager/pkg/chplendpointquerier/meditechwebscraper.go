@@ -38,21 +38,21 @@ func Meditechwebscraper(CHPLURL string, fileToWriteTo string) {
 	}
 
 	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
-			tablehtml.Find("tbody").Each(func(indextr int, rowhtml *goquery.Selection) {
-				rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
-					var entry LanternEntry
-					tableEntries := rowbodyhtml.Find("td")
-					if tableEntries.Length() > 0 {
-						organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
-						URL := strings.TrimSpace(tableEntries.Eq(1).Text())
+		tablehtml.Find("tbody").Each(func(indextr int, rowhtml *goquery.Selection) {
+			rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
+				var entry LanternEntry
+				tableEntries := rowbodyhtml.Find("td")
+				if tableEntries.Length() > 0 {
+					organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
+					URL := strings.TrimSpace(tableEntries.Eq(1).Text())
 
-						entry.OrganizationName = organizationName
-						entry.URL = URL
+					entry.OrganizationName = organizationName
+					entry.URL = URL
 
-						lanternEntryList = append(lanternEntryList, entry)
-					}
-				})
+					lanternEntryList = append(lanternEntryList, entry)
+				}
 			})
+		})
 	})
 
 	endpointEntryList.Endpoints = lanternEntryList
