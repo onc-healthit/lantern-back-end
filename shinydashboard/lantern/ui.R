@@ -12,15 +12,10 @@ ui <- dashboardPage(
                style = "color: white; font-size: 16px; line-height: 45px")
         )
     ),
-<<<<<<< HEAD
     tags$li(a(href = "https://github.com/onc-healthit/lantern-back-end",
-                                      img(src = "images/GitHub-Mark-Light-32px.png", height = "60%", width = "60%", alt = "Github logo"),
-=======
-    tags$li(a(href = 'https://github.com/onc-healthit/lantern-back-end',
-                                      img(src="images/GitHub-Mark-Light-32px.png", height="60%", width="60%"),
->>>>>>> 970c73f9 (Bug fixes (#292))
-                                      title = "Github Link"),
-                                    class = "dropdown")
+        img(src = "images/GitHub-Mark-Light-32px.png", height = "60%", width = "60%", alt = "Github logo"),
+        title = "Github Link"),
+      class = "dropdown")
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
