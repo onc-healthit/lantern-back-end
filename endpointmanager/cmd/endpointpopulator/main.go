@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -55,12 +56,14 @@ func main() {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl = strconv.ParseBool(os.Args[4])
+		isChpl, err = strconv.ParseBool(os.Args[4])
+		helpers.FailOnError("", err)
 	} else if len(os.Args) == 6 {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl = strconv.ParseBool(os.Args[4])
+		isChpl, err = strconv.ParseBool(os.Args[4])
+		helpers.FailOnError("", err)
 		listURL = os.Args[5]
 	} else if len(os.Args) == 3 {
 		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
