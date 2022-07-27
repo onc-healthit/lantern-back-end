@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS list_source_info (
     is_chpl                    BOOLEAN
 );
 
-END;
+COMMIT;
