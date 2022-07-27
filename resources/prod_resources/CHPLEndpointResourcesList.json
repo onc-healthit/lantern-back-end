@@ -1,9 +1,21 @@
 [
 	{
 		"FormatType": "Lantern",
-		"URL": "https://api.bluebuttonpro.com/",
+		"URL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"EndpointName": "Darena Solutions LLC",
 		"FileName": "bluebuttonproEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://docs.canvasmedical.com/reference/service-base-urls",
+		"EndpointName": "Canvas Medical, Inc.",
+		"FileName": "canvasmedicalEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://carefluence.com/carefluence-fhir-endpoints/",
+		"EndpointName": "Carefluence",
+		"FileName": "carefluenceEndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -13,9 +25,33 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir",
+		"EndpointName": "Cyfluent",
+		"FileName": "swaggerhubEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://open.epic.com/MyApps/Endpoints",
+		"EndpointName": "Epic Systems Corporation",
+		"FileName": "epicEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://demo.interopx.com/ix-auth-server/#/endpoints",
+		"EndpointName": "InteropX",
+		"FileName": "interopxEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
 		"EndpointName": "MEDHOST",
 		"FileName": "mhdi10xasaydEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
+		"EndpointName": "Medical Information Technology, Inc. (MEDITECH)",
+		"FileName": "meditechEndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -31,8 +67,32 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
+		"EndpointName": "OpenEMR Foundation",
+		"FileName": "open-emrEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
 		"FileName": "solidpracticeEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://open.allscripts.com/fhirendpoints",
+		"EndpointName": "Allscripts",
+		"FileName": "allscriptsEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://devportal.techcareehr.com/Serviceurls",
+		"EndpointName": "NaphCare, Inc.",
+		"FileName": "techcareehrEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://mydata.athenahealth.com/home",
+		"EndpointName": "athenahealth, Inc.",
+		"FileName": "athenahealthEndpointSources.json"
 	}
 ]
