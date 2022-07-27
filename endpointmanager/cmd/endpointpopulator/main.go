@@ -55,12 +55,12 @@ func main() {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl = (os.Args[4] == "true")
+		isChpl = strconv.ParseBool(os.Args[4])
 	} else if len(os.Args) == 6 {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl = (os.Args[4] == "true")
+		isChpl = strconv.ParseBool(os.Args[4])
 		listURL = os.Args[5]
 	} else if len(os.Args) == 3 {
 		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
