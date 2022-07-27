@@ -43,12 +43,12 @@ func main() {
 	userAgent = strings.TrimSuffix(userAgent, "\n")
 	log.Infof("user agent is %s", userAgent)
 
-	err = chplquerier.GetCHPLCriteria(ctx, store, client, userAgent)
-	helpers.FailOnError("", err)
-	err = chplquerier.GetCHPLVendors(ctx, store, client, userAgent)
-	helpers.FailOnError("", err)
-	err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)
-	helpers.FailOnError("", err)
+	// err = chplquerier.GetCHPLCriteria(ctx, store, client, userAgent)
+	// helpers.FailOnError("", err)
+	// err = chplquerier.GetCHPLVendors(ctx, store, client, userAgent)
+	// helpers.FailOnError("", err)
+	// err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)
+	// helpers.FailOnError("", err)
 	err = chplquerier.GetCHPLEndpointListProducts(ctx, store)
 	helpers.FailOnError("", err)
 }
