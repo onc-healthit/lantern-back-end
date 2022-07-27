@@ -6,7 +6,10 @@ import (
 	"io/ioutil"
 	http "net/http"
 	"os"
+<<<<<<< HEAD
 	"regexp"
+=======
+>>>>>>> 0c553cb8 (Chpl endpoint list api fix (#299))
 	"strconv"
 	"strings"
 	"time"
