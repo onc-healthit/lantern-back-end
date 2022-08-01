@@ -228,6 +228,11 @@ CREATE TABLE endpoint_organization (
     CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
 );
 
+CREATE TABLE list_source_info (
+    list_source            VARCHAR(500),
+    is_chpl                BOOLEAN 
+);
+
 CREATE TABLE product_criteria (
     healthit_product_id      INT REFERENCES healthit_products(id) ON DELETE CASCADE,
     certification_id         INTEGER,

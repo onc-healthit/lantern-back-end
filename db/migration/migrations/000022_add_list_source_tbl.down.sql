@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP TABLE IF EXISTS list_source_info;
+
+COMMIT;
