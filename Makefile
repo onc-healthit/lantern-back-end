@@ -88,6 +88,9 @@ json_export:
 chpl_report:
 	cd endpointmanager/cmd/CHPLreport; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_chpl_report.csv
 
+chpl_report:
+	cd endpointmanager/cmd/CHPLreport; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_chpl_report.csv
+
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
 	cd ./lanternmq; go test -covermode=atomic -race -count=1 -p 1 ./...
