@@ -49,8 +49,6 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 		}
 	})
 
-	log.Info(DSTU2URL)
-
 	client := &http.Client{}
 	// concatenate dstu2 link onto base allscripts url to get full url and make request
 	req, err := http.NewRequest("GET", allscriptsURL+"/"+strings.Join(strings.Split(DSTU2URL, "/")[2:], "/"), nil)
