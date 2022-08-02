@@ -10,8 +10,8 @@ import (
 	"net/url"
 	"sort"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

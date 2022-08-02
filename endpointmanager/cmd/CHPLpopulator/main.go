@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type softwareInfo struct {
@@ -127,39 +128,39 @@ func main() {
 			productNumber := chplEntry.CHPLProductNumber
 			productNumber = strings.TrimSpace(productNumber)
 
-		certificationDateTime := chplEntry.CertificationDate
+			certificationDateTime := chplEntry.CertificationDate
 
-		criteriaMetArr := chplEntry.CriteriaMet
+			criteriaMetArr := chplEntry.CriteriaMet
 
-		apiDocURLArr := chplEntry.APIDocumentation
+			apiDocURLArr := chplEntry.APIDocumentation
 
-		var entry endpointEntry
+			var entry endpointEntry
 
-		urlString := chplEntry.ServiceBaseUrlList.Value
-		urlString = strings.TrimSpace(urlString)
+			urlString := chplEntry.ServiceBaseUrlList.Value
+			urlString = strings.TrimSpace(urlString)
 
-		var productEntry chplCertifiedProductEntry
+			var productEntry chplCertifiedProductEntry
 
-		productEntry.ID = chplEntry.ID
-		productEntry.Product = chplEntry.Product
-		productEntry.ChplProductNumber = productNumber
-		productEntry.Version = chplEntry.Version
-		productEntry.CertificationStatus = chplEntry.CertificationStatus
-		productEntry.CertificationDate = certificationDateTime
-		productEntry.Edition = chplEntry.Edition
-		productEntry.CriteriaMet = criteriaMetArr
-		productEntry.APIDocumentation = apiDocURLArr
-		productEntry.Developer = chplEntry.Developer
+			productEntry.ID = chplEntry.ID
+			productEntry.Product = chplEntry.Product
+			productEntry.ChplProductNumber = productNumber
+			productEntry.Version = chplEntry.Version
+			productEntry.CertificationStatus = chplEntry.CertificationStatus
+			productEntry.CertificationDate = certificationDateTime
+			productEntry.Edition = chplEntry.Edition
+			productEntry.CriteriaMet = criteriaMetArr
+			productEntry.APIDocumentation = apiDocURLArr
+			productEntry.Developer = chplEntry.Developer
 
-		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
-		if !softwareContained {
-			var softwareInfoEntry softwareInfo
-			softwareInfoEntry.ListSourceURL = urlString
-			softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
-			softwareInfoList = append(softwareInfoList, softwareInfoEntry)
-		} else {
-			softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
-		}
+			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
+			if !softwareContained {
+				var softwareInfoEntry softwareInfo
+				softwareInfoEntry.ListSourceURL = urlString
+				softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
+				softwareInfoList = append(softwareInfoList, softwareInfoEntry)
+			} else {
+				softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
+			}
 
 			if !containsEndpoint(endpointEntryList, urlString) {
 
