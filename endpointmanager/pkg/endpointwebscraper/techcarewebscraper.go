@@ -42,8 +42,9 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 	doc.Find(".WordSection1").Each(func(index int, wordSectionElem *goquery.Selection) {
 		wordSectionElem.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
 			// Only the first two entries are production server endpoints
-			if count < 2 {
+			if count < 1 {
 				var entry LanternEntry
+				fhirURLLink := phtml.Find("a")
 				fhirURLLink := phtml.Find("a")
 				if fhirURLLink.Length() > 0 {
 
