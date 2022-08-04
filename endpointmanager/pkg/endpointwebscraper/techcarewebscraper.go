@@ -45,7 +45,6 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 			if count < 1 {
 				var entry LanternEntry
 				fhirURLLink := phtml.Find("a")
-				fhirURLLink := phtml.Find("a")
 				if fhirURLLink.Length() > 0 {
 
 					fhirURL, ok := fhirURLLink.Attr("href")
