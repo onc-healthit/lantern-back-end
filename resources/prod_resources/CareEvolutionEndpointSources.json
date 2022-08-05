@@ -2,39 +2,38 @@
 	"Endpoints": [
 		{
 			"URL": "https://hcfl.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "Holy Cross in Florida - Trinity Health"
-		},
-		{
-			"URL": "https://api-v5-dstu2.hspconsortium.org/CareEvolutionDemo/data",
-			"OrganizationName": "Kidney Care Center of Michigan"
-		},
-		{
-			"URL": "https://ollnj.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "Lourdes in New Jersey - Trinity Health"
+			"OrganizationName": "Holy Cross in Florida - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://sepa.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "Mercy Health System in Pennsylvania - Trinity Health"
+			"OrganizationName": "Mercy Health System in Pennsylvania - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://sphsma.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "Mercy Medical Center in Massachusetts - Trinity Health"
+			"OrganizationName": "Mercy Medical Center in Massachusetts - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://spny.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "St Peter's Health Partners in New York - Trinity Health"
+			"OrganizationName": "St Peter's Health Partners in New York - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://sfnj.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "St. Francis in New Jersey - Trinity Health"
+			"OrganizationName": "St. Francis in New Jersey - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://smpa.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "St. Mary Medical Center in Pennsylvania - Trinity Health"
+			"OrganizationName": "St. Mary Medical Center in Pennsylvania - Trinity Health",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://smga.patient.trinity-health.org/api/fhir",
-			"OrganizationName": "St. Mary's in Athens, Georgia - Trinity Health"
+			"OrganizationName": "St. Mary's in Athens, Georgia - Trinity Health",
+			"NPIID": ""
 		}
 	]
 }
