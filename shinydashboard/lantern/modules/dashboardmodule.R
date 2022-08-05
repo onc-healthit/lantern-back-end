@@ -27,6 +27,7 @@ dashboard_UI <- function(id) {
       infoBoxOutput(ns("total_endpoints_box"), width = 4),
       infoBoxOutput(ns("indexed_endpoints_box"), width = 4)
     ),
+    tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;"),
     h2("Current endpoint responses:"),
     fluidRow(
       valueBoxOutput(ns("http_200_box")),
@@ -54,7 +55,8 @@ dashboard_UI <- function(id) {
       custom_column_large(
            plotOutput(ns("response_code_plot"))
       )
-    )
+    ),
+    tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;")
   )
 }
 
@@ -73,14 +75,14 @@ dashboard <- function(
       res <- res %>%
         filter(vendor_name == sel_vendor()) %>%
         left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
-        select(id, code, label, fhir_version) %>%
-        group_by(code, label, fhir_version) %>%
+        select(id, code, label) %>%
+        group_by(code, label) %>%
         summarise(count = n())
     } else {
       res <- res %>%
         left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
-        select(id, code, label, fhir_version) %>%
-        group_by(code, label, fhir_version) %>%
+        select(id, code, label) %>%
+        group_by(code, label) %>%
         summarise(count = n())
         
     }
@@ -107,7 +109,7 @@ dashboard <- function(
 
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
-      "Indexed Endpoints",
+      "Indexed Endpoints*",
       isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
       icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
@@ -137,7 +139,7 @@ dashboard <- function(
 
   output$http_code_table   <- renderTable(
     selected_http_summary() %>%
-      rename("HTTP Response" = code, Status = label, "FHIR Version" = fhir_version, Count = count) 
+      rename("HTTP Response" = code, Status = label, Count = count) 
   )
 
   output$fhir_vendor_table <- renderTable(
@@ -164,8 +166,8 @@ dashboard <- function(
     }
   )
   output$response_code_plot <- renderCachedPlot({
-    ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = fhir_version, y = count)) +
-    geom_bar(stat = "identity") +
+    ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
+    geom_bar(stat = "identity", show.legend = FALSE) +
       geom_text(aes(label = stat(y), group = code),
                 stat = "summary", fun = sum, vjust = -1
       ) +
