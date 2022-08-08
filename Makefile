@@ -83,6 +83,7 @@ csv_export:
 
 json_export:
 	docker exec -it --workdir /go/src/app/cmd/jsonexport lantern-back-end_endpoint_manager_1 go run main.go $(file) $(exportType)
+	docker cp lantern-back-end_endpoint_manager_1:/go/src/app/cmd/jsonexport/$(file) ./
 
 chpl_report:
 	cd endpointmanager/cmd/CHPLreport; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_chpl_report.csv
