@@ -27,7 +27,6 @@ dashboard_UI <- function(id) {
       infoBoxOutput(ns("total_endpoints_box"), width = 4),
       infoBoxOutput(ns("indexed_endpoints_box"), width = 4)
     ),
-    tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;"),
     h2("Current endpoint responses:"),
     fluidRow(
       valueBoxOutput(ns("http_200_box")),
