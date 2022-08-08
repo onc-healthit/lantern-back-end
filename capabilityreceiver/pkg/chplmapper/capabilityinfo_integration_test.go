@@ -303,6 +303,10 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo3.HealthITProductID)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(actualHealthITProductIDs) == 2, fmt.Sprintf("Expected endpoint to map to 2 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92ea5194 (Chpl endpoint list mapping (#293))
 
 }
 
@@ -413,7 +417,6 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == vendors[6].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[6].ID, epInfo.VendorID))
-
 }
 
 func Test_getVendorMatch(t *testing.T) {
