@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -199,14 +200,14 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 	}
 
 	dbProd := endpointmanager.HealthITProduct{
-		Name:                  prod.Product.Name,
-		Version:               prod.Version.Name,
+		Name:                  strings.TrimSpace(prod.Product.Name),
+		Version:               strings.TrimSpace(prod.Version.Name),
 		VendorID:              id,
-		CertificationStatus:   prod.CertificationStatus.Name,
-		CertificationEdition:  prod.Edition.Name,
+		CertificationStatus:   strings.TrimSpace(prod.CertificationStatus.Name),
+		CertificationEdition:  strings.TrimSpace(prod.Edition.Name),
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
-		PracticeType:          prod.PracticeType.Name,
+		PracticeType:          strings.TrimSpace(prod.PracticeType.Name),
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)

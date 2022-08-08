@@ -31,6 +31,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://ehryourway.com/content/fhir-service-urls.pdf",
+		"EndpointName": "Adaptamed, LLC",
+		"FileName": "com/content/fhir-service-urlsEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://open.epic.com/MyApps/Endpoints",
 		"EndpointName": "Epic Systems Corporation",
 		"FileName": "epicEndpointSources.json"
@@ -55,7 +61,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.mphrx.com/fhir-service-base-url-directory",
+		"URL": "https://www.mphrx.com/fhir-service-base-url-directory/",
 		"EndpointName": "My Personal Health Records Express Inc. d/b/a MphRx",
 		"FileName": "mphrxEndpointSources.json"
 	},
@@ -88,6 +94,12 @@
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
 		"FileName": "techcareehrEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://docs.athenahealth.com/api/base-fhir-urls",
+		"EndpointName": "athenahealth, Inc.",
+		"FileName": "athenahealthEndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

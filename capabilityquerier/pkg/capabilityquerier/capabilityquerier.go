@@ -386,12 +386,12 @@ func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	return false
 }
 
-// responds with
-//   http status code
-//   tls version
-//   mime type match
-//   capability statement
-//   error
+// responds with:
+// http status code
+// tls version
+// mime type match
+// capability statement
+// error
 func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (int, string, bool, []byte, float64, error) {
 	var httpResponseCode int
 	var tlsVersion string

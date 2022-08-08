@@ -48,11 +48,12 @@ type CHPLEndpointList struct {
 }
 
 type CHPLEndpointEntry struct {
-	Developer           details `json:"developer"`
-	Product             details `json:"product"`
-	Version             details `json:"version"`
-	CertificationStatus details `json:"certificationStatus"`
-	CertificationDate   string
+	ID                  int              `json:"id"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CertificationDate   string           `json:"certificationDate"`
 	Edition             details          `json:"edition"`
 	CHPLProductNumber   string           `json:"chplProductNumber"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
@@ -61,17 +62,17 @@ type CHPLEndpointEntry struct {
 }
 
 type chplCertifiedProductEntry struct {
-	ID                  int      `json:"id"`
-	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             string   `json:"edition"`
-	PracticeType        string   `json:"practiceType"`
-	Developer           string   `json:"developer"`
-	Product             string   `json:"product"`
-	Version             string   `json:"version"`
-	CertificationDate   int64    `json:"certificationDate"`
-	CertificationStatus string   `json:"certificationStatus"`
-	CriteriaMet         []int    `json:"criteriaMet"`
-	APIDocumentation    []string `json:"apiDocumentation"`
+	ID                  int              `json:"id"`
+	ChplProductNumber   string           `json:"chplProductNumber"`
+	Edition             details          `json:"edition"`
+	PracticeType        details          `json:"practiceType"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationDate   string           `json:"certificationDate"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CriteriaMet         []certCriteria   `json:"criteriaMet"`
+	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
 }
 
 func main() {
@@ -127,33 +128,11 @@ func main() {
 			productNumber := chplEntry.CHPLProductNumber
 			productNumber = strings.TrimSpace(productNumber)
 
-			productName := chplEntry.Product.Name
-			productName = strings.TrimSpace(productName)
+			certificationDateTime := chplEntry.CertificationDate
 
-			productVersion := chplEntry.Version.Name
-			productVersion = strings.TrimSpace(productVersion)
+			criteriaMetArr := chplEntry.CriteriaMet
 
-			productCertStatus := chplEntry.CertificationStatus.Name
-			productCertStatus = strings.TrimSpace(productCertStatus)
-
-			productEdition := chplEntry.Edition.Name
-			productEdition = strings.TrimSpace(productEdition)
-
-			certificationDateTime, err := time.Parse("2006-01-02", chplEntry.CertificationDate)
-			if err != nil {
-				log.Fatal("converting certification date to time failed")
-			}
-			certificationDateInt := certificationDateTime.Unix()
-
-			var criteriaMetArr []int
-			for _, criteriaEntry := range chplEntry.CriteriaMet {
-				criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
-			}
-
-			var apiDocURLArr []string
-			for _, apiURLEntry := range chplEntry.APIDocumentation {
-				apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
-			}
+			apiDocURLArr := chplEntry.APIDocumentation
 
 			var entry endpointEntry
 
@@ -162,15 +141,16 @@ func main() {
 
 			var productEntry chplCertifiedProductEntry
 
-			productEntry.Product = productName
+			productEntry.ID = chplEntry.ID
+			productEntry.Product = chplEntry.Product
 			productEntry.ChplProductNumber = productNumber
-			productEntry.Version = productVersion
-			productEntry.CertificationStatus = productCertStatus
-			productEntry.CertificationDate = certificationDateInt
-			productEntry.Edition = productEdition
+			productEntry.Version = chplEntry.Version
+			productEntry.CertificationStatus = chplEntry.CertificationStatus
+			productEntry.CertificationDate = certificationDateTime
+			productEntry.Edition = chplEntry.Edition
 			productEntry.CriteriaMet = criteriaMetArr
 			productEntry.APIDocumentation = apiDocURLArr
-			productEntry.Developer = developerName
+			productEntry.Developer = chplEntry.Developer
 
 			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
 			if !softwareContained {

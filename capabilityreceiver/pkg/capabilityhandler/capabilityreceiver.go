@@ -36,9 +36,10 @@ type versionsQueryArgs struct {
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
 // saveMsgInDB function
 type capStatQueryArgs struct {
-	store         *postgresql.Store
-	ctx           context.Context
-	chplMatchFile string
+	store                    *postgresql.Store
+	ctx                      context.Context
+	chplMatchFile            string
+	chplEndpointListInfoFile string
 }
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
@@ -230,16 +231,22 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	store := qa.store
 	ctx := qa.ctx
 
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+	if err != nil {
+		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
+	}
+
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile))
+
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -294,12 +301,12 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
@@ -449,9 +456,10 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           ctx,
-		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+		store:                    store,
+		ctx:                      ctx,
+		chplMatchFile:            "/etc/lantern/resources/CHPLProductMapping.json",
+		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
