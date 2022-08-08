@@ -83,7 +83,6 @@ dashboard <- function(
         select(id, code, label) %>%
         group_by(code, label) %>%
         summarise(count = n())
-        
     }
 
     res
@@ -138,7 +137,7 @@ dashboard <- function(
 
   output$http_code_table   <- renderTable(
     selected_http_summary() %>%
-      rename("HTTP Response" = code, Status = label, Count = count) 
+      rename("HTTP Response" = code, Status = label, Count = count)
   )
 
   output$fhir_vendor_table <- renderTable(
