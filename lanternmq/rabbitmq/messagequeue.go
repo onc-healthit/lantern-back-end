@@ -39,7 +39,8 @@ var _ lanternmq.Messages = &Messages{}
 // * state how many messages a receiver can process at one time
 // * declare a durable queue, and send and receive from that queue
 // * declare a durable exchange, and send and receive from that exchange
-//	 * potential exchange options are: 'direct', 'topic', 'headers', and 'fanout'
+//   - potential exchange options are: 'direct', 'topic', 'headers', and 'fanout'
+//
 // * close the MessageQueue, which includes closing all channels and the connection to the underlying service.
 type MessageQueue struct {
 	connection *amqp.Connection
@@ -191,9 +192,10 @@ func (mq *MessageQueue) DeclareQueue(chID lanternmq.ChannelID, qName string) err
 // mandatory: false
 // immediate: false
 // publishing:
-//   DeliveryMode: amqp.Persistent
-//   ContentType: "text/plain"
-//   Body: []byte(message)
+//
+//	DeliveryMode: amqp.Persistent
+//	ContentType: "text/plain"
+//	Body: []byte(message)
 func (mq *MessageQueue) PublishToQueue(chID lanternmq.ChannelID, qName string, message string) error {
 	ch, err := mq.getChannel(chID)
 	if err != nil {
@@ -248,7 +250,8 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 // lanternmq.MessageHandler 'handler'. An acknowledgement is sent to the sender after each message is processed.
 // If there's an error processing a message, the error is sent to the 'errs' channel.
 // ProcessMessages should be called as a goroutine. Example:
-//     go mq.ProcessMessages(msgs, handler, nil, errs)
+//
+//	go mq.ProcessMessages(msgs, handler, nil, errs)
 func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 	msgsd, ok := msgs.(*Messages)
 	if !ok {
@@ -311,8 +314,9 @@ func (mq *MessageQueue) DeclareExchange(chID lanternmq.ChannelID, name string, e
 // mandatory: false
 // immediate: false
 // publishing:
-//   ContentType: "text/plain"
-//   Body: []byte(message)
+//
+//	ContentType: "text/plain"
+//	Body: []byte(message)
 func (mq *MessageQueue) PublishToExchange(chID lanternmq.ChannelID, name string, routingKey string, message string) error {
 	ch, err := mq.getChannel(chID)
 	if err != nil {

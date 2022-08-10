@@ -3,7 +3,8 @@ package capabilityhandler
 // RunSupportedResourcesChecks takes the given capability statement and creates a map
 // of the operations to the endpoint's resources that specified that operation. Example:
 // { "read": ["AllergyInformation", "Medication"...],
-//   "search-type": ["Medication", "Document"...], ...}
+//
+//	"search-type": ["Medication", "Document"...], ...}
 func RunSupportedResourcesChecks(capInt map[string]interface{}) map[string][]string {
 	var mapOpToResList = make(map[string][]string)
 	if capInt == nil {
