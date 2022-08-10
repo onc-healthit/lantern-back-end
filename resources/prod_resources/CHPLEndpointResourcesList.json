@@ -123,6 +123,6 @@
 		"FormatType": "Lantern",
 		"URL": "https://mydata.athenahealth.com/home",
 		"EndpointName": "athenahealth, Inc.",
-		"FileName": "athenahealthEndpointSources.json"
+		"FileName": "mydata.athenahealthEndpointSources.json"
 	}
 ]
