@@ -16,8 +16,6 @@ var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
 var AllScriptsURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
-var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
-var MyDataAthenaURL = "https://mydata.athenahealth.com/home"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -33,9 +31,5 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if chplURL == MeditechURL {
 		Meditechwebscraper("https://fhir.meditech.com/explorer/endpoints", fileToWriteTo)
-	} else if chplURL == DocsAthenaURL {
-		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
-	} else if chplURL == MyDataAthenaURL {
-		Athenawebscraper("https://mydata.athenahealth.com/aserver", fileToWriteTo)
 	}
 }

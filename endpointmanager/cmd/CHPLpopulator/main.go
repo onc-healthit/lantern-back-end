@@ -181,13 +181,6 @@ func main() {
 				index := strings.Index(fileName, ".")
 				fileName = fileName[:index]
 
-				// Ensure we do not have any file names that are the same
-				if containsFileName(endpointEntryList, fileName) {
-					index1 := strings.Index(urlString, "://")
-					index2 := strings.Index(urlString, ".com")
-					fileName = urlString[index1+3:index2]
-				}
-
 				entry.FileName = fileName + "EndpointSources.json"
 				entry.FormatType = "Lantern"
 
@@ -251,15 +244,6 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 	for _, e := range endpointEntryList {
 		if e.URL == url {
-			return true
-		}
-	}
-	return false
-}
-
-func containsFileName(endpointEntryList []endpointEntry, filename string) bool {
-	for _, e := range endpointEntryList {
-		if e.FileName == filename + "EndpointSources.json" {
 			return true
 		}
 	}

@@ -97,12 +97,6 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.vision-works.com/cert/FHIR",
-		"EndpointName": "Vision Works, Inc.",
-		"FileName": "vision-worksEndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://docs.athenahealth.com/api/base-fhir-urls",
 		"EndpointName": "athenahealth, Inc.",
 		"FileName": "athenahealthEndpointSources.json"
@@ -111,6 +105,6 @@
 		"FormatType": "Lantern",
 		"URL": "https://mydata.athenahealth.com/home",
 		"EndpointName": "athenahealth, Inc.",
-		"FileName": "mydata.athenahealthEndpointSources.json"
+		"FileName": "athenahealthEndpointSources.json"
 	}
 ]
