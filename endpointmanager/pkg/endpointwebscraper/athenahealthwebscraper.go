@@ -1,4 +1,4 @@
-package chplendpointquerier
+package endpointwebscraper
 
 import (
 	"context"
