@@ -23,6 +23,7 @@ contactsmodule <- function(
 
     selected_contacts <- reactive({
         res <- app_data$contact_info_tbl()
+        req(sel_fhir_version(), sel_vendor(), sel_has_contact())
 
         res <- res %>% filter(fhir_version %in% sel_fhir_version())
 
@@ -46,7 +47,7 @@ contactsmodule <- function(
 
         res <- res %>%
             rowwise() %>%
-            mutate(show_all = ifelse(has_contact, paste0("<a onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", url, "&quot,{priority: \'event\'});\"> Show All Contacts </a>"), "-"))
+            mutate(show_all = ifelse(has_contact, paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", url, "&quot,{priority: \'event\'});\"> Show All Contacts </a>"), "-"))
 
         if (sel_has_contact() != "Any") {
             res <- res %>% filter(ifelse(sel_has_contact() == "True", has_contact == TRUE, has_contact == FALSE))

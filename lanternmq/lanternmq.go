@@ -7,7 +7,6 @@ import (
 // MessageQueue is an interface for writing messages to either a basic queue or a topic. Below are
 // some usage examples.
 //
-//
 // Example: Publish a message to a queue
 // --------
 // mq := <implementation of MessageQueue
@@ -15,7 +14,6 @@ import (
 // chID, err := mq.CreateChannel()
 // err = mq.DeclareQueue(chID, "queueName")
 // err = mq.PublishToQueue(chID, "queueName", "message")
-//
 //
 // Example: Read a message from a queue
 // --------
@@ -27,12 +25,14 @@ import (
 // forever := make(chan bool)
 // errs := make(chan error)
 // go mq.ProcessMessages(
-// 		msgs,
-// 		func(msg []byte, _ *map[string]interface{}) error {
-//			fmt.Printf("Received message: %s\n")
-// 		},
-// 		nil,
-//      errs)
+//
+//			msgs,
+//			func(msg []byte, _ *map[string]interface{}) error {
+//				fmt.Printf("Received message: %s\n")
+//			},
+//			nil,
+//	     errs)
+//
 // <-forever
 //
 // Example: Publish a message to a topic
@@ -42,7 +42,6 @@ import (
 // chID, err := mq.CreateChannel()
 // err = mq.DeclareExchange(chID, "topicName", "topic")
 // err = mq.PublishToExchange(chID, "topicName", "topicRoutingKey", "message")
-//
 //
 // Example: Read a message from a topic
 // --------
@@ -55,12 +54,14 @@ import (
 // forever := make(chan bool)
 // errs := make(chan error)
 // go mq.ProcessMessages(
-// 		msgs,
-// 		func(msg []byte, _ *map[string]interface{}) error {
-//			fmt.Printf("Received message: %s\n")
-// 		},
-// 		nil,
-//      errs)
+//
+//			msgs,
+//			func(msg []byte, _ *map[string]interface{}) error {
+//				fmt.Printf("Received message: %s\n")
+//			},
+//			nil,
+//	     errs)
+//
 // <-forever
 type MessageQueue interface {
 	// Connect opens a connection with the underlying queuing service.

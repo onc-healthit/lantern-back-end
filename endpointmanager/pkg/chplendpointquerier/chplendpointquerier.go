@@ -13,6 +13,9 @@ type LanternEntry struct {
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
+var AllScriptsURL = "https://open.allscripts.com/fhirendpoints"
+var EpicURL = "https://open.epic.com/MyApps/Endpoints"
+var MeditechURL = "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -22,5 +25,11 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CHPLwebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == CanvasURL {
 		Canvaswebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == AllScriptsURL {
+		AllScriptsQuerier(chplURL, fileToWriteTo)
+	} else if chplURL == EpicURL {
+		EpicQuerier(chplURL, fileToWriteTo)
+	} else if chplURL == MeditechURL {
+		Meditechwebscraper("https://fhir.meditech.com/explorer/endpoints", fileToWriteTo)
 	}
 }

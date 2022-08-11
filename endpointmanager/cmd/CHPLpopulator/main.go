@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	http "net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -39,15 +41,19 @@ type serviceBaseURL struct {
 }
 
 type CHPLEndpointList struct {
-	Results []CHPLEndpointEntry `json:"results"`
+	PageSize    int                 `json:"pageSize"`
+	PageNumber  int                 `json:"pageNumber"`
+	RecordCount int                 `json:"recordCount"`
+	Results     []CHPLEndpointEntry `json:"results"`
 }
 
 type CHPLEndpointEntry struct {
-	Developer           details `json:"developer"`
-	Product             details `json:"product"`
-	Version             details `json:"version"`
-	CertificationStatus details `json:"certificationStatus"`
-	CertificationDate   string
+	ID                  int              `json:"id"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CertificationDate   string           `json:"certificationDate"`
 	Edition             details          `json:"edition"`
 	CHPLProductNumber   string           `json:"chplProductNumber"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
@@ -56,20 +62,24 @@ type CHPLEndpointEntry struct {
 }
 
 type chplCertifiedProductEntry struct {
-	ID                  int      `json:"id"`
-	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             string   `json:"edition"`
-	PracticeType        string   `json:"practiceType"`
-	Developer           string   `json:"developer"`
-	Product             string   `json:"product"`
-	Version             string   `json:"version"`
-	CertificationDate   int64    `json:"certificationDate"`
-	CertificationStatus string   `json:"certificationStatus"`
-	CriteriaMet         []int    `json:"criteriaMet"`
-	APIDocumentation    []string `json:"apiDocumentation"`
+	ID                  int              `json:"id"`
+	ChplProductNumber   string           `json:"chplProductNumber"`
+	Edition             details          `json:"edition"`
+	PracticeType        details          `json:"practiceType"`
+	Developer           details          `json:"developer"`
+	Product             details          `json:"product"`
+	Version             details          `json:"version"`
+	CertificationDate   string           `json:"certificationDate"`
+	CertificationStatus details          `json:"certificationStatus"`
+	CriteriaMet         []certCriteria   `json:"criteriaMet"`
+	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
 }
 
 func main() {
+	ctx := context.Background()
+	client := &http.Client{
+		Timeout: time.Second * 60,
+	}
 
 	var chplURL string
 	var fileToWriteToCHPLList string
@@ -85,123 +95,102 @@ func main() {
 	var endpointEntryList []endpointEntry
 	var softwareInfoList []softwareInfo
 
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", chplURL, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	pageSize := 100
+	pageNumber := 0
+	savedEntries := 0
 
-	req.Header.Set("Accept", "application/json")
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	respBody, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var chplJSON CHPLEndpointList
-	err = json.Unmarshal(respBody, &chplJSON)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	chplResultsList := chplJSON.Results
-	if chplResultsList == nil {
-		log.Fatal("CHPL endpoint list is empty")
-	}
-
-	for _, chplEntry := range chplResultsList {
-
-		developerName := chplEntry.Developer.Name
-		developerName = strings.TrimSpace(developerName)
-
-		productNumber := chplEntry.CHPLProductNumber
-		productNumber = strings.TrimSpace(productNumber)
-
-		productName := chplEntry.Product.Name
-		productName = strings.TrimSpace(productName)
-
-		productVersion := chplEntry.Version.Name
-		productVersion = strings.TrimSpace(productVersion)
-
-		productCertStatus := chplEntry.CertificationStatus.Name
-		productCertStatus = strings.TrimSpace(productCertStatus)
-
-		productEdition := chplEntry.Edition.Name
-		productEdition = strings.TrimSpace(productEdition)
-
-		certificationDateTime, err := time.Parse("2006-01-02", chplEntry.CertificationDate)
+	for {
+		respBody, err := getEndpointListJSON(chplURL, pageSize, pageNumber, ctx, client)
 		if err != nil {
-			log.Fatal("converting certification date to time failed")
-		}
-		certificationDateInt := certificationDateTime.Unix()
-
-		var criteriaMetArr []int
-		for _, criteriaEntry := range chplEntry.CriteriaMet {
-			criteriaMetArr = append(criteriaMetArr, criteriaEntry.ID)
+			log.Fatal(err)
 		}
 
-		var apiDocURLArr []string
-		for _, apiURLEntry := range chplEntry.APIDocumentation {
-			apiDocURLArr = append(apiDocURLArr, apiURLEntry.Value)
+		var chplJSON CHPLEndpointList
+		err = json.Unmarshal(respBody, &chplJSON)
+		if err != nil {
+			log.Fatal(err)
 		}
 
-		var entry endpointEntry
-
-		urlString := chplEntry.ServiceBaseUrlList.Value
-		urlString = strings.TrimSpace(urlString)
-
-		var productEntry chplCertifiedProductEntry
-
-		productEntry.Product = productName
-		productEntry.ChplProductNumber = productNumber
-		productEntry.Version = productVersion
-		productEntry.CertificationStatus = productCertStatus
-		productEntry.CertificationDate = certificationDateInt
-		productEntry.Edition = productEdition
-		productEntry.CriteriaMet = criteriaMetArr
-		productEntry.APIDocumentation = apiDocURLArr
-		productEntry.Developer = developerName
-
-		softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
-		if !softwareContained {
-			var softwareInfoEntry softwareInfo
-			softwareInfoEntry.ListSourceURL = urlString
-			softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
-			softwareInfoList = append(softwareInfoList, softwareInfoEntry)
-		} else {
-			softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
+		if savedEntries >= chplJSON.RecordCount {
+			break
 		}
 
-		if !containsEndpoint(endpointEntryList, urlString) {
+		chplResultsList := chplJSON.Results
+		if chplResultsList == nil {
+			log.Fatal("CHPL endpoint list is empty")
+		}
 
-			entry.URL = urlString
+		for _, chplEntry := range chplResultsList {
 
-			entry.EndpointName = developerName
+			developerName := chplEntry.Developer.Name
+			developerName = strings.TrimSpace(developerName)
 
-			// Get fileName from URL domain name
-			fileName := urlString
-			if strings.Count(urlString, ".") > 1 {
-				index := strings.Index(urlString, ".")
-				fileName = urlString[index+1:]
+			productNumber := chplEntry.CHPLProductNumber
+			productNumber = strings.TrimSpace(productNumber)
+
+			certificationDateTime := chplEntry.CertificationDate
+
+			criteriaMetArr := chplEntry.CriteriaMet
+
+			apiDocURLArr := chplEntry.APIDocumentation
+
+			var entry endpointEntry
+
+			urlString := chplEntry.ServiceBaseUrlList.Value
+			urlString = strings.TrimSpace(urlString)
+
+			var productEntry chplCertifiedProductEntry
+
+			productEntry.ID = chplEntry.ID
+			productEntry.Product = chplEntry.Product
+			productEntry.ChplProductNumber = productNumber
+			productEntry.Version = chplEntry.Version
+			productEntry.CertificationStatus = chplEntry.CertificationStatus
+			productEntry.CertificationDate = certificationDateTime
+			productEntry.Edition = chplEntry.Edition
+			productEntry.CriteriaMet = criteriaMetArr
+			productEntry.APIDocumentation = apiDocURLArr
+			productEntry.Developer = chplEntry.Developer
+
+			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
+			if !softwareContained {
+				var softwareInfoEntry softwareInfo
+				softwareInfoEntry.ListSourceURL = urlString
+				softwareInfoEntry.SoftwareProducts = append(softwareInfoEntry.SoftwareProducts, productEntry)
+				softwareInfoList = append(softwareInfoList, softwareInfoEntry)
 			} else {
-				index := strings.Index(urlString, "://")
-				fileName = urlString[index+3:]
+				softwareInfoList[softwareIndex].SoftwareProducts = append(softwareInfoList[softwareIndex].SoftwareProducts, productEntry)
 			}
 
-			index := strings.Index(fileName, ".")
-			fileName = fileName[:index]
+			if !containsEndpoint(endpointEntryList, urlString) {
 
-			entry.FileName = fileName + "EndpointSources.json"
-			entry.FormatType = "Lantern"
+				entry.URL = urlString
 
-			endpointEntryList = append(endpointEntryList, entry)
+				entry.EndpointName = developerName
+
+				// Get fileName from URL domain name
+				fileName := urlString
+				if strings.Count(urlString, ".") > 1 {
+					index := strings.Index(urlString, ".")
+					fileName = urlString[index+1:]
+				} else {
+					index := strings.Index(urlString, "://")
+					fileName = urlString[index+3:]
+				}
+
+				index := strings.Index(fileName, ".")
+				fileName = fileName[:index]
+
+				entry.FileName = fileName + "EndpointSources.json"
+				entry.FormatType = "Lantern"
+
+				endpointEntryList = append(endpointEntryList, entry)
+			}
+
 		}
 
+		pageNumber = pageNumber + 1
+		savedEntries = savedEntries + len(chplJSON.Results)
 	}
 
 	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
@@ -224,6 +213,32 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx context.Context, client *http.Client) ([]byte, error) {
+
+	chplURL = chplURL + "&pageSize=" + strconv.Itoa(pageSize) + "&pageNumber=" + strconv.Itoa(pageNumber)
+
+	req, err := http.NewRequest("GET", chplURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req = req.WithContext(ctx)
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	respBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBody, nil
 }
 
 func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {

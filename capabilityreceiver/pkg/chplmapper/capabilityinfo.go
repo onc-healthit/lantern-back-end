@@ -26,9 +26,50 @@ var fluffWords = []string{
 	"corporation.",
 }
 
+type details struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type ChplEndpointListProductInfo struct {
+	ListSourceURL    string                 `json:"listSourceURL"`
+	SoftwareProducts []ChplCertifiedProduct `json:"softwareProducts"`
+}
+
+type ChplCertifiedProduct struct {
+	ChplProductNumber string  `json:"chplProductNumber"`
+	Developer         details `json:"developer"`
+}
+
+type ChplMapResults struct {
+	ChplProductIDs []string
+	ChplDeveloper  string
+}
+
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
-func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store) error {
+func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, listSourceMap map[string]ChplMapResults) error {
+
+	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
+	if err != nil {
+		return errors.Wrap(err, "error getting fhir endpoints from DB")
+	}
+
+	for _, fhirEndpoint := range fhirEndpointList {
+		developerName := listSourceMap[fhirEndpoint.ListSource].ChplDeveloper
+
+		if len(developerName) > 0 {
+			// No errors thrown means a vendor with developer name was found and can be set on ep
+			vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
+			if err != nil {
+				return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
+			}
+
+			ep.VendorID = vendorMatch.ID
+			return nil
+		}
+	}
+
 	if ep.CapabilityStatement == nil {
 		return nil
 	}
@@ -44,34 +85,58 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 }
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string) error {
-	if ep.CapabilityStatement == nil {
-		return nil
-	}
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
+	if ep.CapabilityStatement != nil {
 
-	chplProductNameVersion, err := openProductLinksFile(matchFile)
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-
-	softwareName, err := ep.CapabilityStatement.GetSoftwareName()
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-	softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
-	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a CHPL product")
-	}
-	chplID := chplProductNameVersion[softwareName][softwareVersion]
-
-	healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
-	// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-	if err == nil {
-		healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+		chplProductNameVersion, err := openProductLinksFile(matchFile)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		ep.HealthITProductID = healthITMapID
+
+		softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+		if err != nil {
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+		}
+		softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+		if err != nil {
+			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
+		}
+		chplID := chplProductNameVersion[softwareName][softwareVersion]
+
+		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+		if err == nil {
+			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+			if err != nil {
+				return err
+			}
+			ep.HealthITProductID = healthITMapID
+		}
+	}
+
+	// If endpoint's list source found in CHPL endpoint list, match to product associated with that list source
+	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
+	if err != nil {
+		return errors.Wrap(err, "error getting fhir endpoints from DB")
+	}
+
+	for _, fhirEndpoint := range fhirEndpointList {
+		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
+		if len(chplIDList) > 0 {
+			for _, chplID := range chplIDList {
+
+				healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+
+				// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+				if err == nil {
+					healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+					if err != nil {
+						return err
+					}
+					ep.HealthITProductID = healthITMapID
+				}
+			}
+		}
 	}
 
 	return nil
@@ -222,4 +287,54 @@ func normalizeName(name string) string {
 
 	name = strings.TrimRight(name, ",. ")
 	return name
+}
+
+func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, error) {
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	var softwareListMap = make(map[string]ChplMapResults)
+
+	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	var chplMap []ChplEndpointListProductInfo
+	if len(byteValueFile) != 0 {
+		err = json.Unmarshal(byteValueFile, &chplMap)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range chplMap {
+			var listSource = obj.ListSourceURL
+			var softwareProducts = obj.SoftwareProducts
+
+			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+
+			chplID := ""
+
+			for _, prod := range softwareProducts {
+				chplID = prod.ChplProductNumber
+
+				if chplID != "" {
+					chplMapResult.ChplProductIDs = append(chplMapResult.ChplProductIDs, chplID)
+				}
+			}
+
+			if listSource != "" {
+				if len(softwareProducts) > 0 {
+					// Developer is the same for all products, just grab first one
+					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				}
+
+				softwareListMap[listSource] = chplMapResult
+			}
+
+		}
+	}
+
+	return softwareListMap, nil
 }

@@ -40,7 +40,7 @@ type queryArgs struct {
 // This function is expected to be called by the lanternmq ProcessMessages function.
 // parameter message:  the queue message that is being processed by this function, which is just an endpoint.
 // parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
-// 					   this way because queue processing is generalized.
+// this way because queue processing is generalized.
 func queryEndpointsCapabilityStatement(message []byte, args *map[string]interface{}) error {
 	// Get arguments
 	qa, ok := (*args)["queryArgs"].(queryArgs)
@@ -95,7 +95,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 // This function is expected to be called by the lanternmq ProcessMessages function.
 // parameter message:  the queue message that is being processed by this function, which is just an endpoint.
 // parameter args:     expected to be a map of the string "queryArgs" to the above queryArgs struct. It is formatted
-// 					   this way because queue processing is generalized.
+// this way because queue processing is generalized.
 func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{}) error {
 	// Get arguments
 	qa, ok := (*args)["queryArgs"].(queryArgs)

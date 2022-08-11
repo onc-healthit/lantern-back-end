@@ -246,6 +246,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           ctx,
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 
 	// populate vendors
@@ -276,6 +277,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           testCtx,
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
@@ -290,6 +292,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           context.Background(),
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
