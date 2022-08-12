@@ -2,12 +2,12 @@ package chplmapper
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"strings"
-	log "github.com/sirupsen/logrus"
-	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
