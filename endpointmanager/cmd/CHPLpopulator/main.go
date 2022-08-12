@@ -185,7 +185,7 @@ func main() {
 				if containsFileName(endpointEntryList, fileName) {
 					index1 := strings.Index(urlString, "://")
 					index2 := strings.Index(urlString, ".com")
-					fileName = urlString[index1+3:index2]
+					fileName = urlString[index1+3 : index2]
 				}
 
 				entry.FileName = fileName + "EndpointSources.json"
@@ -259,7 +259,7 @@ func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 
 func containsFileName(endpointEntryList []endpointEntry, filename string) bool {
 	for _, e := range endpointEntryList {
-		if e.FileName == filename + "EndpointSources.json" {
+		if e.FileName == filename+"EndpointSources.json" {
 			return true
 		}
 	}

@@ -2,13 +2,13 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"io"
-	"strings"
+	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"encoding/csv"
-    "os"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -77,7 +77,6 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 }
-
 
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
