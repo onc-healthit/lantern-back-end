@@ -12,7 +12,7 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func CHPLwebscraper(CHPLURL string, fileToWriteTo string) {
+func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
