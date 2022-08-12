@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	log "github.com/sirupsen/logrus"
+	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -61,10 +63,12 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 		if len(developerName) > 0 {
 			// No errors thrown means a vendor with developer name was found and can be set on ep
 			vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
-			if err != nil {
-				return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
+			if err == sql.ErrNoRows {
+				log.Infof("No vendor found matching the CHPL endpoint list developer name. Ensure the vendor table is not empty.")
+				return nil
+			} else if err != nil {
+				return errors.Wrap(err, "error matching the CHPL endpoint list developer name to a vendor for endpoint")
 			}
-
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
