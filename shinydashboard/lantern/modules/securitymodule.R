@@ -17,6 +17,7 @@ securitymodule_UI <- function(id) {
     h2("Endpoints by Authorization Type"),
     div(
       uiOutput("show_security_filter"),
+      tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
       reactable::reactableOutput(ns("security_endpoints"))
     )
   )
@@ -71,7 +72,7 @@ securitymodule <- function(
     reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
-                  condensed_organization_names = colDef(name = "Organization"),
+                  condensed_organization_names = colDef(name = "Organization", html = TRUE),
                   vendor_name = colDef(name = "Developer"),
                   capability_fhir_version = colDef(name = "FHIR Version"),
                   tls_version = colDef(name = "TLS Version"),
