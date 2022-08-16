@@ -32,7 +32,7 @@ validation_group_list <- fromJSON(here(root, "validation_groups.json"))
 validation_rules_descriptions <- fromJSON(here(root, "rule_descriptions.json"))
 validation_group_names <- names(validation_group_list)
 
-valid_fhir_versions <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 
 dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
 stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
@@ -41,13 +41,16 @@ r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
 # Define magic numbers for user interface
 ui_special_values <- list(
   "ALL_DEVELOPERS" = "All Developers",
-  "ALL_RESOURCES" = "All Resources"
+  "ALL_RESOURCES" = "All Resources",
+  "ALL_PROFILES" = "All Profiles"
 )
 
 # The list of fhir versions and vendors are unlikely to change during a user's session
 # we'll update them on timer, but not refresh the UI
 app <<- list(
-  fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl)),
+  fhir_version_list_no_capstat      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, TRUE)),
+  fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, FALSE)),
+  distinct_fhir_version_list_no_capstat      = reactiveVal(get_distinct_fhir_version_list_no_capstat(endpoint_export_tbl)),
   distinct_fhir_version_list      = reactiveVal(get_distinct_fhir_version_list(endpoint_export_tbl)),
   vendor_list            = get_vendor_list(endpoint_export_tbl),
   http_response_code_tbl =
@@ -65,8 +68,10 @@ app_data <<- list(
   http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
   vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
+  contact_info_tbl = reactiveVal(NULL),
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement
+  supported_profiles = reactiveVal(NULL),          # Profiles from the capability statement/conformance resource
   last_updated = reactiveVal(NULL),                # time app_data was last updated
   security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint
   security_endpoints_tbl = reactiveVal(NULL),      # list of endpoints filterable by auth type

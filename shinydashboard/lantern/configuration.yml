@@ -25,19 +25,21 @@ function_files:
   - "functions/ui_functions.R"
   
 module_files:
-  - "modules/capabilitymodule.R"
+  - "modules/resourcemodule.R"
   - "modules/implementationmodule.R"
   - "modules/dashboardmodule.R"
   - "modules/downloadsmodule.R"
   - "modules/endpointsmodule.R"
   - "modules/fieldsmodule.R"
   - "modules/locationmodule.R"
-  - "modules/performancemodule.R"
   - "modules/capabilitystatementsizemodule.R"
   - "modules/securitymodule.R"
   - "modules/smartresponsemodule.R"
   - "modules/valuesmodule.R"
   - "modules/validationsmodule.R"
+  - "modules/contactsmodule.R"
+  - "modules/profilemodule.R"
+  - "modules/organizationsmodule.R"
 
 refresh_timeout_minutes:
   - 1440

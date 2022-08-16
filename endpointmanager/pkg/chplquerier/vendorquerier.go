@@ -171,7 +171,11 @@ func persistVendor(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	existingDbVendor, err := store.GetVendorUsingName(ctx, vendor.Name)
+
+	existingDbVendor, err := store.GetVendorUsingCHPLID(ctx, vendor.DeveloperID)
+	if err == sql.ErrNoRows {
+		existingDbVendor, err = store.GetVendorUsingName(ctx, vendor.Name)
+	}
 
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddVendor(ctx, newDbVendor)

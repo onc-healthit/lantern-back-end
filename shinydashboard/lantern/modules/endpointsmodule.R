@@ -9,12 +9,13 @@ endpointsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
-             h3(style = "margin-top:0", textOutput(ns("endpoint_count"))),
-             downloadButton(ns("download_data"), "Download Endpoint Data (CSV)"),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)")
+             h2(style = "margin-top:0", textOutput(ns("endpoint_count"))),
+             downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
       ),
     ),
     reactable::reactableOutput(ns("endpoints_table")),
+    tags$p("* An asterisk after a 'true' value in the 'Capability Statement Returned' field indicates that the returned Capability Statement for the endpoint is not of kind 'instance', which is the kind Lantern expects.", role = "comment"),
     htmlOutput(ns("note_text"))
   )
 }
@@ -56,6 +57,12 @@ endpointsmodule <- function(
         res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
       }
     }
+
+    res <- res %>%
+    rowwise() %>%
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+
     res <- res %>% mutate(availability = availability * 100)
     res
   })
@@ -82,7 +89,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -96,12 +103,14 @@ endpointsmodule <- function(
                                   }"
                             ),
                             sortable = TRUE,
-                            align = "left"),
-                  endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE),
+                            align = "left",
+                            html = TRUE),
+                  endpoint_names = colDef(show = FALSE),
+                  condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   format = colDef(name = "Supported Formats", sortable = FALSE),
-                  cap_stat_exists = colDef(name = "Valid Capability Statement", sortable = FALSE),
+                  cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = FALSE),
                   status = colDef(name = "HTTP Response", sortable = FALSE),
                   availability = colDef(name = "Availability", sortable = FALSE)
               ),
@@ -109,7 +118,6 @@ endpointsmodule <- function(
               showSortIcon = TRUE,
               highlight = TRUE,
               defaultPageSize = 10
-
      )
   })
 
@@ -117,7 +125,7 @@ endpointsmodule <- function(
   csv_format <- reactive({
     res <- selected_fhir_endpoints() %>%
       select(-label, -status, -availability, -fhir_version) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(api_information_source_name = condensed_endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
   })

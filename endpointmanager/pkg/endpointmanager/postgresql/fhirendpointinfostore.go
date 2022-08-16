@@ -26,6 +26,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var includedFieldsJSON []byte
+	var supportedProfilesJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var validationResultIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
@@ -37,7 +38,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -47,6 +48,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		smart_response,
 		included_fields,
 		operation_resource,
+		supported_profiles,
 		validation_result_id,
 		metadata_id,
 		requested_fhir_version,
@@ -67,6 +69,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&supportedProfilesJSON,
 		&validationResultIDNullable,
 		&metadataID,
 		&endpointInfo.RequestedFhirVersion,
@@ -99,6 +102,12 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 			return nil, err
 		}
 	}
+	if supportedProfilesJSON != nil {
+		err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if smartResponseJSON != nil {
 		endpointInfo.SMARTResponse, err = smartparser.NewSMARTResp(smartResponseJSON)
@@ -124,7 +133,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -135,6 +144,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		smart_response,
 		included_fields,
 		operation_resource,
+		supported_profiles,
 		metadata_id,
 		requested_fhir_version,
 		capability_fhir_version
@@ -149,6 +159,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		var endpointInfo endpointmanager.FHIREndpointInfo
 		var capabilityStatementJSON []byte
 		var includedFieldsJSON []byte
+		var supportedProfilesJSON []byte
 		var healthitProductIDNullable sql.NullInt64
 		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
@@ -169,6 +180,7 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			&smartResponseJSON,
 			&includedFieldsJSON,
 			&operResourceJSON,
+			&supportedProfilesJSON,
 			&metadataID,
 			&endpointInfo.RequestedFhirVersion,
 			&endpointInfo.CapabilityFhirVersion)
@@ -190,6 +202,13 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if supportedProfilesJSON != nil {
+			err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
 			if err != nil {
 				return nil, err
 			}
@@ -220,6 +239,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 	var endpointInfo endpointmanager.FHIREndpointInfo
 	var capabilityStatementJSON []byte
 	var includedFieldsJSON []byte
+	var supportedProfilesJSON []byte
 	var healthitProductIDNullable sql.NullInt64
 	var validationResultIDNullable sql.NullInt64
 	var vendorIDNullable sql.NullInt64
@@ -231,7 +251,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 	SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -241,6 +261,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		smart_response,
 		included_fields,
 		operation_resource,
+		supported_profiles,
 		validation_result_id,
 		metadata_id,
 		requested_fhir_version,
@@ -262,6 +283,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
+		&supportedProfilesJSON,
 		&validationResultIDNullable,
 		&metadataID,
 		&endpointInfo.RequestedFhirVersion,
@@ -291,6 +313,13 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 
 	if operResourceJSON != nil {
 		err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if supportedProfilesJSON != nil {
+		err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
 		if err != nil {
 			return nil, err
 		}
@@ -329,11 +358,8 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
-	if e.CapabilityStatement != nil {
-		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
-		if err != nil {
-			return err
-		}
+	if e.CapabilityStatementBytes != nil {
+		capabilityStatementJSON = e.CapabilityStatementBytes
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -348,12 +374,14 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		return err
 	}
 
+	supportedProfilesJSON, err := json.Marshal(e.SupportedProfiles)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
-	if e.SMARTResponse != nil {
-		smartResponseJSON, err = e.SMARTResponse.GetJSON()
-		if err != nil {
-			return err
-		}
+	if e.SMARTResponseBytes != nil {
+		smartResponseJSON = e.SMARTResponseBytes
 	} else {
 		smartResponseJSON = []byte("null")
 	}
@@ -370,6 +398,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		supportedProfilesJSON,
 		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
@@ -385,7 +414,9 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var err error
 	var capabilityStatementJSON []byte
 
-	if e.CapabilityStatement != nil {
+	if e.CapabilityStatementBytes != nil {
+		capabilityStatementJSON = e.CapabilityStatementBytes
+	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
@@ -404,8 +435,15 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		return err
 	}
 
+	supportedProfilesJSON, err := json.Marshal(e.SupportedProfiles)
+	if err != nil {
+		return err
+	}
+
 	var smartResponseJSON []byte
-	if e.SMARTResponse != nil {
+	if e.SMARTResponseBytes != nil {
+		smartResponseJSON = e.SMARTResponseBytes
+	} else if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
 		if err != nil {
 			return err
@@ -426,6 +464,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
+		supportedProfilesJSON,
 		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
@@ -476,6 +515,7 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 		var endpointInfo endpointmanager.FHIREndpointInfo
 		var capabilityStatementJSON []byte
 		var includedFieldsJSON []byte
+		var supportedProfilesJSON []byte
 		var healthitProductIDNullable sql.NullInt64
 		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
@@ -496,6 +536,7 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			&smartResponseJSON,
 			&includedFieldsJSON,
 			&operResourceJSON,
+			&supportedProfilesJSON,
 			&metadataID,
 			&endpointInfo.RequestedFhirVersion,
 			&endpointInfo.CapabilityFhirVersion)
@@ -517,6 +558,13 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 
 		if includedFieldsJSON != nil {
 			err = json.Unmarshal(includedFieldsJSON, &endpointInfo.IncludedFields)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if supportedProfilesJSON != nil {
+			err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
 			if err != nil {
 				return nil, err
 			}
@@ -547,7 +595,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	addFHIREndpointInfoStatement, err = s.DB.Prepare(`
 		INSERT INTO fhir_endpoints_info (
 			url,
-			healthit_product_id,
+			healthit_mapping_id,
 			vendor_id,
 			tls_version,
 			mime_types,
@@ -555,11 +603,12 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response,
 			included_fields,
 			operation_resource,
+			supported_profiles,
 			validation_result_id,
 			metadata_id,
 			requested_fhir_version,
 			capability_fhir_version)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -568,7 +617,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		UPDATE fhir_endpoints_info
 		SET 
 		    url = $1,
-		    healthit_product_id = $2,
+		    healthit_mapping_id = $2,
 			vendor_id = $3,
 			tls_version = $4,
 			mime_types = $5,
@@ -576,11 +625,12 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 			smart_response = $7,
 			included_fields = $8,
 			operation_resource = $9,
-			validation_result_id = $10,
-			metadata_id = $11,
-			requested_fhir_version = $12,
-			capability_fhir_version = $13		
-		WHERE id = $14`)
+			supported_profiles = $10,
+			validation_result_id = $11,
+			metadata_id = $12,
+			requested_fhir_version = $13,
+			capability_fhir_version = $14		
+		WHERE id = $15`)
 	if err != nil {
 		return err
 	}
@@ -602,7 +652,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		SELECT
 		id,
 		url,
-		healthit_product_id,
+		healthit_mapping_id,
 		vendor_id,
 		tls_version,
 		mime_types,
@@ -613,6 +663,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 		smart_response,
 		included_fields,
 		operation_resource,
+		supported_profiles,
 		metadata_id,
 		requested_fhir_version,
 		capability_fhir_version

@@ -5,8 +5,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -14,43 +16,51 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-var chplAPICertProdListPath string = "/search/beta"
-var delimiter string = "☹"
+var chplAPICertProdListPath string = "/search/v2"
 
-var fields [11]string = [11]string{
-	"id",
-	"edition",
-	"developer",
-	"product",
-	"version",
-	"chplProductNumber",
-	"certificationStatus",
-	"criteriaMet",
-	"apiDocumentation",
-	"certificationDate",
-	"practiceType"}
+type chplEndpointListProductInfo struct {
+	ListSourceURL    string                 `json:"listSourceURL"`
+	SoftwareProducts []chplCertifiedProduct `json:"softwareProducts"`
+}
 
 type chplCertifiedProductList struct {
 	Results     []chplCertifiedProduct `json:"results"`
 	RecordCount int                    `json:"recordCount"`
 }
 
+type details struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type criteriaMet struct {
+	Id     int    `json:"id"`
+	Number string `json:"number"`
+	Title  string `json:"title"`
+}
+
+type apiDocumentation struct {
+	Criterion criteriaMet `json:"criterion"`
+	Value     string      `json:"value"`
+}
+
 type chplCertifiedProduct struct {
-	ID                  int      `json:"id"`
-	ChplProductNumber   string   `json:"chplProductNumber"`
-	Edition             string   `json:"edition"`
-	PracticeType        string   `json:"practiceType"`
-	Developer           string   `json:"developer"`
-	Product             string   `json:"product"`
-	Version             string   `json:"version"`
-	CertificationDate   int64    `json:"certificationDate"`
-	CertificationStatus string   `json:"certificationStatus"`
-	CriteriaMet         []int    `json:"criteriaMet"`
-	APIDocumentation    []string `json:"apiDocumentation"`
+	ID                  int                `json:"id"`
+	ChplProductNumber   string             `json:"chplProductNumber"`
+	Edition             details            `json:"edition"`
+	PracticeType        details            `json:"practiceType"`
+	Developer           details            `json:"developer"`
+	Product             details            `json:"product"`
+	Version             details            `json:"version"`
+	CertificationDate   string             `json:"certificationDate"`
+	CertificationStatus details            `json:"certificationStatus"`
+	CriteriaMet         []criteriaMet      `json:"criteriaMet"`
+	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -92,6 +102,45 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	return nil
 }
 
+// GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
+// within the given context 'ctx'.
+func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
+
+	var CHPLEndpointListProducts []chplEndpointListProductInfo
+
+	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
+	// Get CHPL Endpoint list stored in Lantern resources folder
+	CHPLFile, err := ioutil.ReadFile("/etc/lantern/resources/CHPLProductsInfo.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Debug("Converting product information into list of chplCertifiedProducts")
+	err = json.Unmarshal(CHPLFile, &CHPLEndpointListProducts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, listSourceEntry := range CHPLEndpointListProducts {
+		var prodList []chplCertifiedProduct
+		var CHPLProductList chplCertifiedProductList
+
+		prodList = listSourceEntry.SoftwareProducts
+
+		CHPLProductList.Results = prodList
+		CHPLProductList.RecordCount = len(prodList)
+
+		log.Debug("persisting chpl products")
+		err = persistProducts(ctx, store, &CHPLProductList)
+		if err != nil {
+			return errors.Wrap(err, "persisting the list of retrieved health IT products failed")
+		}
+	}
+
+	log.Debug("done persisting chpl products")
+	return nil
+}
+
 // makes the request to CHPL and returns the byte string
 func getProductJSON(ctx context.Context, client *http.Client, userAgent string, pageSize int, pageNumber int) ([]byte, error) {
 	chplURL, err := makeCHPLProductURL(pageSize, pageNumber)
@@ -109,8 +158,6 @@ func getProductJSON(ctx context.Context, client *http.Client, userAgent string, 
 
 func makeCHPLProductURL(pageSize int, pageNumber int) (*url.URL, error) {
 	queryArgs := make(map[string]string)
-	fieldStr := strings.Join(fields[:], ",")
-	queryArgs["fields"] = fieldStr
 
 	chplURL, err := makeCHPLURL(chplAPICertProdListPath, queryArgs, pageSize, pageNumber)
 	if err != nil {
@@ -147,59 +194,65 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		return nil, errors.Wrap(err, "getting the product's vendor id failed")
 	}
 
-	dbProd := endpointmanager.HealthITProduct{
-		Name:                  prod.Product,
-		Version:               prod.Version,
-		VendorID:              id,
-		CertificationStatus:   prod.CertificationStatus,
-		CertificationDate:     time.Unix(prod.CertificationDate/1000, 0).UTC(),
-		CertificationEdition:  prod.Edition,
-		CHPLID:                prod.ChplProductNumber,
-		CertificationCriteria: prod.CriteriaMet,
+	var criteriaMetArr []int
+	for _, criteriaEntry := range prod.CriteriaMet {
+		criteriaMetArr = append(criteriaMetArr, criteriaEntry.Id)
 	}
 
-	apiURL, err := getAPIURL(prod.APIDocumentation)
+	dbProd := endpointmanager.HealthITProduct{
+		Name:                  strings.TrimSpace(prod.Product.Name),
+		Version:               strings.TrimSpace(prod.Version.Name),
+		VendorID:              id,
+		CertificationStatus:   strings.TrimSpace(prod.CertificationStatus.Name),
+		CertificationEdition:  strings.TrimSpace(prod.Edition.Name),
+		CHPLID:                prod.ChplProductNumber,
+		CertificationCriteria: criteriaMetArr,
+		PracticeType:          strings.TrimSpace(prod.PracticeType.Name),
+	}
+
+	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
+	if err != nil {
+		return nil, errors.Wrap(err, "converting certification date to time failed")
+	}
+	dbProd.CertificationDate = certificationDateTime.UTC()
+
+	apiDocURL, err := getAPIURL(prod.APIDocumentation)
 	if err != nil {
 		return nil, errors.Wrap(err, "retreiving the API URL from the health IT product API documentation list failed")
 	}
-	dbProd.APIURL = apiURL
+	dbProd.APIURL = apiDocURL
 
 	return &dbProd, nil
 }
 
 // returns 0 if no match found.
 func getProductVendorID(ctx context.Context, prod *chplCertifiedProduct, store *postgresql.Store) (int, error) {
-	vendor, err := store.GetVendorUsingName(ctx, prod.Developer)
+	vendor, err := store.GetVendorUsingName(ctx, prod.Developer.Name)
 	if err == sql.ErrNoRows {
-		log.Warnf("no vendor match for product %s with vendor %s", prod.Product, prod.Developer)
+		log.Warnf("no vendor match for product %s with vendor %s", prod.Product.Name, prod.Developer.Name)
 		return 0, nil
 	}
 	if err != nil {
-		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product, prod.Version, prod.Developer)
+		return 0, errors.Wrapf(err, "getting vendor for product %s %s using vendor name %s", prod.Product.Name, prod.Version.Name, prod.Developer.Name)
 	}
 
 	return vendor.ID, nil
 }
 
-// parses 'apiDocStr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
+// parses 'apiDocArr' to extract the associated URL. Returns only the first URL. There may be many URLs but observationally,
 // all listed URLs are the same.
-// assumes that criteria/url chunks are delimited by delimiter1 and that criteria and url are separated by delimiter2.
-func getAPIURL(apiDocArr []string) (string, error) {
+func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if len(apiDocArr) == 0 {
 		return "", nil
 	}
-	apiURL := apiDocArr[0]
-	apiCritAndURL := strings.Split(apiURL, delimiter)
-	if len(apiCritAndURL) == 2 {
-		apiURL = apiCritAndURL[1]
-		// check that it's a valid URL
-		_, err := url.ParseRequestURI(apiURL)
-		if err != nil {
-			return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
-		}
-		return apiURL, nil
+	apiURL := apiDocArr[0].Value
+
+	// check that it's a valid URL
+	_, err := url.ParseRequestURI(apiURL)
+	if err != nil {
+		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-	return "", errors.New("unexpected format for api doc string")
+	return apiURL, nil
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry
@@ -235,7 +288,7 @@ func persistProduct(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, prod.Product, prod.Version)
+	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
 	if err == sql.ErrNoRows { // need to add new entry
@@ -315,11 +368,6 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
 	}
 
-	if newCertEdition == existingCertEdition && existingDbProd.CertificationDate == newDbProd.CertificationDate {
-		// cert dates are the same. unknown update precedence. throw error and don't perform update.
-		return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
-	}
-
 	// if new prod has more recent cert edition, should update.
 	if newCertEdition > existingCertEdition {
 		return true, nil
@@ -334,8 +382,43 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
-	// cert dates are the same. unknown update precedence. throw error and don't perform update.
-	return false, fmt.Errorf("HealthITProducts certification edition and date are equal; unknown precendence for updates; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	existingCriteriaLength := len(existingDbProd.CertificationCriteria)
+	newCriteriaLength := len(newDbProd.CertificationCriteria)
+
+	// If new criteria list is bigger than old update it, if it is smaller do not update it
+	if newCriteriaLength > existingCriteriaLength {
+		return true, nil
+	} else if newCriteriaLength < existingCriteriaLength {
+		return false, nil
+	}
+
+	// Do not update or throw error if the practice types are not the same
+	if existingDbProd.PracticeType != newDbProd.PracticeType {
+		return false, nil
+	}
+
+	// If the criteria lists are the same length but they are not equal, throw an error
+	if !certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
+		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+	}
+
+	// If the new product has a different vendor ID, update it
+	if existingDbProd.VendorID != newDbProd.VendorID {
+		return true, nil
+	}
+
+	// If the new product has a different certification status, update it
+	if existingDbProd.CertificationStatus != newDbProd.CertificationStatus {
+		return true, nil
+	}
+
+	// If the new product has a different API url, update it
+	if existingDbProd.APIURL != newDbProd.APIURL {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
+
 }
 
 // linkProductToCriteria checks whether the product and certification have been linked before, and if not
@@ -360,4 +443,15 @@ func linkProductToCriteria(ctx context.Context,
 		return err
 	}
 	return nil
+}
+
+// certificationCriteriaMatch checks if the two certification criteria lists have the same contents regardless of order.
+func certificationCriteriaMatch(l1 []int, l2 []int) bool {
+	// This Transformer sorts a []int.
+	trans := cmp.Transformer("Sort", func(in []int) []int {
+		out := append([]int(nil), in...) // Copy input to avoid mutating it
+		sort.Ints(out)
+		return out
+	})
+	return cmp.Equal(l1, l2, trans)
 }

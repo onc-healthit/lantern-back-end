@@ -86,7 +86,9 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		TLSVersion:            "TLS 1.1",
 		MIMETypes:             []string{"application/json+fhir"},
 		CapabilityStatement:   cs,
+		CapabilityStatementBytes: csJSON,
 		SMARTResponse:         nil,
+		SMARTResponseBytes: []byte("null"),
 		RequestedFhirVersion:  "None",
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadata1}
@@ -97,7 +99,9 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 		TLSVersion:            "TLS 1.1",
 		MIMETypes:             []string{"application/json+fhir"},
 		CapabilityStatement:   cs,
+		CapabilityStatementBytes: csJSON,
 		SMARTResponse:         nil,
+		SMARTResponseBytes: []byte("null"),
 		RequestedFhirVersion:  "1.0.0",
 		CapabilityFhirVersion: "1.0.2",
 		Metadata:              endpointMetadata1RequestedVersion}
@@ -116,7 +120,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 				Valid:    true,
 				Expected: "true",
 				Actual:   "true",
-				Comment:  "The Capability Statement exists.",
+				Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 			},
 		},
 	}

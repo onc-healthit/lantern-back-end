@@ -1,23 +1,24 @@
 # Capability Module
 library(reactable)
 
-capabilitymodule_UI <- function(id) {
+resourcemodule_UI <- function(id) {
 
   ns <- NS(id)
 
   tagList(
     fluidRow(
-      column(width = 5,
-             reactable::reactableOutput(ns("resource_op_table"))),
-      column(width = 7,
-             h4("Resource Count"),
-             uiOutput(ns("resource_full_plot"))
+      h3("Resource Count", style = "margin-left:5px"),
+      column(width = 12, style = "margin-right: 5px; margin-left: 5px;",
+        tabsetPanel(id = "resource_tabset", type = "tabs",
+              tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
+              tabPanel("Table", reactable::reactableOutput(ns("resource_op_table")))
+        )
       )
     )
   )
 }
 
-capabilitymodule <- function(  #nolint
+resourcemodule <- function(  #nolint
   input,
   output,
   session,
@@ -101,13 +102,24 @@ capabilitymodule <- function(  #nolint
     res
   })
 
+  pageSizeNum <- reactiveVal(NULL)
+
+  observe({
+    page <- getReactableState("resource_op_table", "pageSize")
+    pageSizeNum(page)
+  })
+
   select_table_format <- reactive({
+    if (is.null(pageSizeNum())) {
+      pageSizeNum(50)
+    }
     op_table <- select_operations()
     if ("type" %in% colnames(op_table)) {
       op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
   })
+
 
    output$resource_op_table <- reactable::renderReactable({
      reactable(
@@ -129,7 +141,7 @@ capabilitymodule <- function(  #nolint
               searchable = TRUE,
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = number_resources()$n - 1,
+              defaultPageSize = isolate(pageSizeNum()),
               showPageSizeOptions = TRUE,
               pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
 

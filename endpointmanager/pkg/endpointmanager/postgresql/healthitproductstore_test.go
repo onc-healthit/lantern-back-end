@@ -61,13 +61,15 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+		PracticeType: "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",
 		VendorID:             vendors[1].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
-		CertificationEdition: "2014"}
+		CertificationEdition: "2014",
+		PracticeType: "Ambulatory"}
 	// add products
 
 	err = store.AddHealthITProduct(ctx, hitp1)
@@ -120,6 +122,40 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	}
 	if !h2s[0].Equal(hitp2) {
 		t.Errorf("retrieved product is not equal to saved product.")
+	}
+
+	// Add to healthITProduct Map table with no reference ID given
+	healthITMapID, err := store.AddHealthITProductMap(ctx, 0, hitp1.ID) 
+	if err != nil {
+		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
+	}
+	if healthITMapID == 0 {
+		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
+	}
+	// Add to healthITProduct Map table with given reference ID
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp1.ID) 
+	if err != nil {
+		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
+	}
+	if healthITMapID != 5 {
+		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
+	}
+	// Add another healthITProduct Map table with same reference ID
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp2.ID) 
+	if err != nil {
+		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
+	}
+	if healthITMapID != 5 {
+		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
+	}
+
+	// Retrieve healthITProduct map info
+	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 5)
+	if err != nil {
+		t.Errorf("Error retrieving healthITProduct array from healthITProduct map table: %s", err.Error())
+	}
+	if len(healthITProductIDs) != 2 {
+		t.Errorf("Expected healthITProductIDs array to have 2 healthITProduct entries, had %d", len(healthITProductIDs))
 	}
 
 	// update product
@@ -195,14 +231,16 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		CertificationDate:     time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+	    PracticeType: "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                  "Health IT System 2",
 		Version:               "2.0",
 		VendorID:              vendors[1].ID, // cerner
 		APISyntax:             "FHIR DSTU2",
 		CertificationCriteria: []int{64},
-		CertificationEdition:  "2014"}
+		CertificationEdition:  "2014",
+	    PracticeType: "Ambulatory"}
 
 	// criteria
 	var crit1 = &endpointmanager.CertificationCriteria{

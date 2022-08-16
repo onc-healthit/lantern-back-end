@@ -8,6 +8,10 @@
         "organizationID": "1"
     },
     {
+        "endpointURL": "example3.com/FHIR/DSTU2",
+        "organizationID": "2"
+    },
+    {
         "endpointURL": "example.com/FHIR/DSTU2",
         "organizationID": "1"
     }

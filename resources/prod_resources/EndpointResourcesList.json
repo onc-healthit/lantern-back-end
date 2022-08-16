@@ -1,17 +1,5 @@
 [
     {
-        "FormatType": "FHIR",
-        "EndpointName":"Epic",
-        "FileName":"EpicEndpointSourcesDSTU2.json",
-        "URL":"https://open.epic.com/Endpoints/DSTU2"
-    },
-    {
-        "FormatType": "FHIR",
-        "EndpointName":"Epic",
-        "FileName":"EpicEndpointSourcesR4.json",
-        "URL":"https://open.epic.com/Endpoints/R4"
-    },
-    {
         "FormatType": "Cerner",
         "EndpointName":"Cerner",
         "FileName":"CernerEndpointSources.json",
@@ -34,5 +22,23 @@
         "EndpointName": "1Up",
         "FileName": "1UpEndpointSources.json",
         "URL": "https://1up.health/fhir-endpoint-directory"
+    },
+    {
+        "FormatType": "Lantern",
+        "EndpointName": "AthenaHealth",
+        "FileName": "AthenaHealthEndpointSources.json",
+        "URL": "https://mydata.athenahealth.com/aserver"
+    },
+    {
+        "FormatType": "Lantern",
+        "EndpointName": "TechCare",
+        "FileName": "TechCareEndpointSources.json",
+        "URL": "https://devportal.techcareehr.com/Serviceurls"
+    },
+    {
+        "FormatType": "Lantern",
+        "EndpointName": "Carefluence",
+        "FileName": "CarefluenceEndpointSources.json",
+        "URL": "https://carefluence.com/carefluence-fhir-endpoints/"
     }
 ]

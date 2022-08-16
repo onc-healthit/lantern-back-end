@@ -14,14 +14,19 @@ import (
 
 func main() {
 	var exportFile string
+	exportType := "30days"
+	var err error
 
-	if len(os.Args) >= 1 {
+	if len(os.Args) == 2 {
 		exportFile = os.Args[1]
+	} else if len(os.Args) > 2 {
+		exportFile = os.Args[1]
+		exportType = os.Args[2]
 	} else {
 		log.Fatalf("ERROR: Missing export file name command-line argument")
 	}
 
-	err := config.SetupConfig()
+	err = config.SetupConfig()
 	helpers.FailOnError("", err)
 
 	store, err := postgresql.NewStore(viper.GetString("dbhost"), viper.GetInt("dbport"), viper.GetString("dbuser"), viper.GetString("dbpassword"), viper.GetString("dbname"), viper.GetString("dbsslmode"))
@@ -29,6 +34,6 @@ func main() {
 	ctx := context.Background()
 	log.Info("Successfully connected to DB!")
 
-	err = jsonexport.CreateJSONExport(ctx, store, exportFile)
+	err = jsonexport.CreateJSONExport(ctx, store, exportFile, exportType)
 	helpers.FailOnError("", err)
 }

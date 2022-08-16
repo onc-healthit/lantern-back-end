@@ -129,34 +129,34 @@ The populate db prod script expects the resources directory to contain the same 
       make update_source_data_prod
       ```
 
-3. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
-  -Note: Since you are doing development, use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
+    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
+    -Note: Since you are doing development, use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
 
-The populate db script expects the resources directory to contain the following files:
-  * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
-  * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
-  * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
-  * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
-  * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
-  * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
-  * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
-  * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
-    * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
-  * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
+    The populate db script expects the resources directory to contain the following files:
+      * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
+      * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
+      * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
+      * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
+      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
+      * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
+      * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
+      * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
+        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
+      * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
 
-  ```bash
-  make populatedb
-  ```
+      ```bash
+      make populatedb
+      ```
 
-  This runs the following tasks inside the endpoint manager container:
-  * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
-  * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
-  * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-  * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
-  * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
+      This runs the following tasks inside the endpoint manager container:
+      * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+      * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
+      * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
+      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
+      * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
 
 
-4. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
+3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1
@@ -167,7 +167,6 @@ The populate db script expects the resources directory to contain the following 
 ### Production Environment
 
 To stop Lantern when running with a production environment, run:
-
 ```bash
 make stop_prod
 ```
@@ -224,7 +223,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
 |  `make lint_R` | Runs the R lintr |
-| `make json_export file=<export file name>` | Exports the history of the endpoint data to a JSON file specified by the 'file' parameter |
+| `make json_export file=<export file name> exportType=<month/30days/all>` | Exports the history of the endpoint data to a JSON file specified by the 'file' parameter. This 'file' parameter must only be a file name with the appropriate `.json` file extension, not a file path. Setting exportType equal to "month" creates the export file using only the last months history data, setting it to "30days" or leaving it blank will create the export file with all the history information from the last 30 days, and setting it to "all" will create an export file using all of the history data Lantern has stored. |
 | `make history_pruning` | Prunes the fhir_endpoint_info_history table to remove duplicate entries |
 | `make create_archive start=<start date> end=<end date> file=<archive file name>` | Creates an archive of the data in the database between the given dates in a JSON format and saves it to the given 'file' name. The dates format is '2021-01-31' (year, month, date). Example: `make create_archive start=2020-06-01 end=2021-06-01 file=archive_file.json`. Note: If the archive period includes any time between the current date and the LANTERN_PRUNING_THRESHOLD, then the given number of updates might be higher than expected because the history pruning algorithm is only run on data older than the threshold. |
 |  `make migrate_validations direction=<up/down>` | Runs validation migrations when direction is set to up. If direction is set to down, undos validation migrations |
@@ -270,7 +269,67 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
- # Configure History Pruning and JSON Export System
+# Configure History Pruning and JSON Export System
+
+You can configure a system to run the history pruning and json export processes using cron and the history_prune_json_export.sh script located in the scripts directory to first prune the fhir_endpoints_info_history table and then create the JSON fhir endpoint export file. 
+    * NOTE: The history pruning and json export processes already run automatically by the endpoint manager every query interval after it finishes sending all the endpoints to the capability querier.
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full Path to script directory> && ./history_prune_json_export.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * cd <Full Path to script directory> && ./history_prune_json_export.sh` to run the script at minute 0 of every 23rd hour
+
+# Configure CHPL Endpoint List Updater
+
+You can configure a CHPL Endpoint List update checker using cron and the chpl_endpoint_list_check.sh script located in the scripts directory to send an email notification whenever the CHPL Endpoint List has been updated with new URLs. This script queries CHPL's list of endpoints and compares it to the CHPL endpoint list currently stored in the `resources/prod_resources` directory. If the CHPL list has been updated, the system will send an alert email with the updated URLs, and it will automatically update the list stored in `resources/prod_resources` with the new endpoint lists. 
+
+To set up the script for this CHPL endpoint list updater, you must insert the correct information into the following variables located at the beginning of the update checker script.
+  * Set the EMAIL variable to the email you want the CHPL endpoint list updater to send alerts to
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full path to scripts directory> && ./chpl_endpoint_list_check.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * cd <Full path to scripts directory> && ./chpl_endpoint_list_check.sh` to run the script at minute 0 of every 23rd hour
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
+# Configure Automatic Endpoint Resource Updater
+
+You can configure an automatic endpoint resource update checker using cron and the `automatic_endpoint_update.sh` script located in the scripts directory to automatically update the resource lists found in the `resources/prod_resources` directory and then save all this information in the database. The task will send an email notification if the automatic update fails to be saved in the database. 
+
+To set up the script for this automatic endpoint resource updater, you must insert the correct information into the following variables located at the beginning of the update checker script.
+  * Set the EMAIL variable to the email you want the automatic endpoint resource updater to send failure alerts to in the `automatic_endpoint_update.sh` script
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full path to scripts directory> && ./automatic_endpoint_update.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `1 * 1 */1 * cd <Full path to scripts directory> && ./automatic_endpoint_update.sh` to run the script at minute 1 on day 1 in every month
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
+ # Configure Monthly JSON Export System
+
+You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails.
+
+To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the save_monthly_json_export script.
+  * Set the EMAIL variable to the email you want to send json export failure alerts to
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) <Full Path to save_monthly_json_export.sh>` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `0 */23 * * * <Full Path to save_monthly_json_export.sh>` to run the script at minute 0 of every 23rd hour
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
+
+# Configure History Pruning and JSON Export System
 
 You can configure a system to run the history pruning and json export processes using cron and the history_prune_json_export.sh script located in the scripts directory to first prune the fhir_endpoints_info_history table and then create the JSON fhir endpoint export file. 
     * NOTE: The history pruning and json export processes already run automatically by the endpoint manager every query interval after it finishes sending all the endpoints to the capability querier.

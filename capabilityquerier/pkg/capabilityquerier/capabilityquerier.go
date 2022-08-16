@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
@@ -31,6 +30,8 @@ const (
 
 var fhir3PlusJSONMIMEType = "application/fhir+json"
 var fhir2LessJSONMIMEType = "application/json+fhir"
+var fhir2LessXMLMIMEType = "application/xml+fhir"
+var fhir3PlusXMLMIMEType = "application/fhir+xml"
 
 var ssl30 = "SSL 3.0"
 var tls10 = "TLS 1.0"
@@ -44,17 +45,19 @@ var tlsNone = "No TLS"
 // the FHIR API, any errors from making the FHIR API request, the MIME type, the TLS version, and the capability
 // statement itself.
 type Message struct {
-	URL                  string      `json:"url"`
-	Err                  string      `json:"err"`
-	MIMETypes            []string    `json:"mimeTypes"`
-	TLSVersion           string      `json:"tlsVersion"`
-	HTTPResponse         int         `json:"httpResponse"`
-	CapabilityStatement  interface{} `json:"capabilityStatement"`
-	SMARTHTTPResponse    int         `json:"smarthttpResponse"`
-	SMARTResp            interface{} `json:"smartResp"`
-	ResponseTime         float64     `json:"responseTime"`
-	RequestedFhirVersion string      `json:"requestedFhirVersion"`
-	DefaultFhirVersion   string      `json:"defaultFhirVersion"`
+	URL                      string      `json:"url"`
+	Err                      string      `json:"err"`
+	MIMETypes                []string    `json:"mimeTypes"`
+	TLSVersion               string      `json:"tlsVersion"`
+	HTTPResponse             int         `json:"httpResponse"`
+	CapabilityStatement      interface{} `json:"capabilityStatement"`
+	CapabilityStatementBytes []byte      `json:"capabilityStatementBytes"`
+	SMARTHTTPResponse        int         `json:"smarthttpResponse"`
+	SMARTResp                interface{} `json:"smartResp"`
+	SMARTRespBytes           []byte      `json:"smartRespBytes"`
+	ResponseTime             float64     `json:"responseTime"`
+	RequestedFhirVersion     string      `json:"requestedFhirVersion"`
+	DefaultFhirVersion       string      `json:"defaultFhirVersion"`
 }
 
 // VersionMessage is the structure that gets sent on the queue with $versions response inforation. It includes the URL of
@@ -223,13 +226,14 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 // fills out message with http response code, tls version, capability statement, and supported mime types
 func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, userAgent string, message *Message) error {
 	var err error
+	var httpErr error
 	var httpResponseCode int
 	var mimeTypeWorked bool
-	var otherMimeWorked bool
 	var tlsVersion string
 	var capResp []byte
 	var jsonResponse interface{}
 	var responseTime float64
+	var triedMIMEType string
 
 	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
 	time.Sleep(time.Duration(500 * time.Millisecond))
@@ -246,87 +250,93 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 		req.Header.Set("fhirVersion", message.RequestedFhirVersion)
 	}
 
-	firstMIME := fhir3PlusJSONMIMEType
-	randomMimeIdx := 0
-
-	// If there are mime types saved in the database for this URL
-	if endptType == metadata && len(message.MIMETypes) > 0 {
-		// Choose a random mime type in the list if there's more than one
-		if len(message.MIMETypes) == 2 {
-			rand.Seed(time.Now().UnixNano())
-			randomMimeIdx = rand.Intn(2)
-			firstMIME = message.MIMETypes[randomMimeIdx]
-		} else {
-			firstMIME = message.MIMETypes[randomMimeIdx]
-		}
-		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, firstMIME, client)
-		if err != nil {
-			return err
-		}
-	} else if endptType == wellknown && len(message.MIMETypes) > 0 {
-		firstMIME = message.MIMETypes[0]
-		httpResponseCode, _, _, capResp, _, err = requestWithMimeType(req, firstMIME, client)
-		if err != nil {
-			return err
-		}
-	} else {
-		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, err = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
-		if err != nil {
+	// If there is a mime type saved in the database for this URL, try those ones first when requesting the capability statement
+	if len(message.MIMETypes) == 1 {
+		savedMIME := message.MIMETypes[0]
+		httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, savedMIME, client)
+		if httpErr != nil && httpResponseCode != 0 {
 			return err
 		}
 	}
 
-	if endptType == metadata {
-		otherMime := fhir2LessJSONMIMEType
-		if httpResponseCode != http.StatusOK || !mimeTypeWorked {
-			// Try the other mime type and remove the mime type that was initially saved
-			// but no longer works
-			if len(message.MIMETypes) == 2 {
-				otherMimeIdx := (randomMimeIdx + 1) % 2
-				otherMime = message.MIMETypes[otherMimeIdx]
-				message.MIMETypes = []string{otherMime}
-			} else if len(message.MIMETypes) == 1 {
-				if message.MIMETypes[0] == otherMime {
-					otherMime = fhir3PlusJSONMIMEType
+	// If there was no MIME type saved in the database, or the saved MIME type did not work, go through process of trying others
+	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
+		// If the endpoint is a well known endpoint and it did not already have MIME type saved, try the fhir3PlusJSONMIMEType
+		if endptType == wellknown {
+			if len(message.MIMETypes) == 0 {
+				httpResponseCode, _, _, capResp, _, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
 				}
+			}
+		} else if endptType == metadata {
+
+			// If there was a MIME type saved in the database, remove it from the list of MIME types since it did not work
+			oldMIMEType := ""
+			if len(message.MIMETypes) == 1 {
+				oldMIMEType = message.MIMETypes[0]
+				message.MIMETypes = []string{}
+			} else if len(message.MIMETypes) > 1 {
 				message.MIMETypes = []string{}
 			}
-			// replace all values based on the other mime type if there were any issues with the first mime type request
-			httpResponseCode, tlsVersion, otherMimeWorked, capResp, responseTime, err = requestWithMimeType(req, otherMime, client)
-			if err != nil {
-				return err
-			}
-		} else if len(message.MIMETypes) == 0 {
-			// only check fhir 2 mime type support if the first request worked and there were no
-			// mimeTypes saved in the database
-			_, _, otherMimeWorked, _, _, err = requestWithMimeType(req, otherMime, client)
-			if err != nil {
-				return err
-			}
-		}
 
-		finalMimeList := []string{}
-		// If there was a 2nd saved mime type and it also did not work, remove it from the MIMETypes array
-		if len(message.MIMETypes) == 1 && (httpResponseCode != http.StatusOK || !otherMimeWorked) {
-			message.MIMETypes = []string{}
-		} else if otherMimeWorked {
-			// If the 2nd tried mime type did work, add it to the MIMETypes array
-			finalMimeList = append(finalMimeList, otherMime)
-		}
-		// If the first mimeType worked and it wasn't saved in the database, add it to MIMETypes array
-		if mimeTypeWorked && len(message.MIMETypes) == 0 {
-			finalMimeList = append(finalMimeList, firstMIME)
-		}
-		// Update the message.MIMETypes as long as nothing was already saved there
-		if len(message.MIMETypes) == 0 {
-			message.MIMETypes = finalMimeList
+			// Try fhir3PlusJSONMIMEType first if it was not the MIME type saved in the database
+			if oldMIMEType != fhir3PlusJSONMIMEType {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
+				}
+				triedMIMEType = fhir3PlusJSONMIMEType
+			}
+			// Try fhir2LessJSONMIMEType second if it was not the MIME type saved in the database and the first MIME type did not work
+			if oldMIMEType != fhir2LessJSONMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessJSONMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
+				}
+				triedMIMEType = fhir2LessJSONMIMEType
+			}
+			// Try fhir3PlusXMLMIMEType third if it was not the MIME type saved in the database and the first two MIME types did not work
+			if oldMIMEType != fhir3PlusXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir3PlusXMLMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
+				}
+				triedMIMEType = fhir3PlusXMLMIMEType
+			}
+			// Try fhir2LessXMLMIMEType last if it was not the MIME type saved in the database and the first three MIME types did not work
+			if oldMIMEType != fhir2LessXMLMIMEType && (!mimeTypeWorked || httpResponseCode != http.StatusOK) {
+				httpResponseCode, tlsVersion, mimeTypeWorked, capResp, responseTime, httpErr = requestWithMimeType(req, fhir2LessXMLMIMEType, client)
+				if httpErr != nil && httpResponseCode != 0 {
+					return err
+				}
+				triedMIMEType = fhir2LessXMLMIMEType
+			}
+
+			// If there are no MIME types saved, and a new MIME type worked and had a valid HTTP response, save it in the db
+			if len(message.MIMETypes) != 1 && mimeTypeWorked && httpResponseCode == http.StatusOK {
+				message.MIMETypes = append(message.MIMETypes, triedMIMEType)
+			}
 		}
 	}
 
 	if capResp != nil {
-		err = json.Unmarshal(capResp, &(jsonResponse))
-		if err != nil {
-			return err
+		if endptType == metadata {
+			message.CapabilityStatementBytes = capResp
+		} else if endptType == wellknown {
+			message.SMARTRespBytes = capResp
+		}
+		err := json.Unmarshal(capResp, &jsonResponse)
+		if err == nil {
+			if endptType == metadata {
+				message.CapabilityStatement = jsonResponse
+			} else if endptType == wellknown {
+				message.SMARTResp = jsonResponse
+			}
+		} else {
+			if httpErr == nil {
+				httpErr = err
+			}
 		}
 	}
 
@@ -334,14 +344,12 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	case metadata:
 		message.TLSVersion = tlsVersion
 		message.HTTPResponse = httpResponseCode
-		message.CapabilityStatement = jsonResponse
 		message.ResponseTime = responseTime
 	case wellknown:
 		message.SMARTHTTPResponse = httpResponseCode
-		message.SMARTResp = jsonResponse
 	}
 
-	return nil
+	return httpErr
 }
 
 func getTLSVersion(resp *http.Response) string {
@@ -378,12 +386,12 @@ func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	return false
 }
 
-// responds with
-//   http status code
-//   tls version
-//   mime type match
-//   capability statement
-//   error
+// responds with:
+// http status code
+// tls version
+// mime type match
+// capability statement
+// error
 func requestWithMimeType(req *http.Request, mimeType string, client *http.Client) (int, string, bool, []byte, float64, error) {
 	var httpResponseCode int
 	var tlsVersion string
@@ -397,7 +405,8 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return -1, "", false, nil, -1, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
+		// Return http status code 0 on failure
+		return 0, "", false, nil, -1, errors.Wrapf(err, "making the GET request to %s failed", req.URL.String())
 	}
 
 	var responseTime = float64(time.Since(start).Seconds())

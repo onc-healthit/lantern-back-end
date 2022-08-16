@@ -17,6 +17,9 @@ var getProductCriteriaLinkStatement *sql.Stmt
 var linkProductToCriteriaStatement *sql.Stmt
 var getHealthITProductIDByCHPLID *sql.Stmt
 var getHealthITProductUsingNameAndVersion *sql.Stmt
+var addHealthITProductMapStatement *sql.Stmt
+var addHealthITProductMapStatementNoID *sql.Stmt
+var getHealthITProductByMapID *sql.Stmt
 
 // GetHealthITProduct gets a HealthITProduct from the database using the database ID as a key.
 // If the HealthITProduct does not exist in the database, sql.ErrNoRows will be returned.
@@ -25,6 +28,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -42,6 +46,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE id=$1`
@@ -62,6 +67,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -70,6 +76,12 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -88,6 +100,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
@@ -106,6 +119,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.CertificationEdition,
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
+		&practiceTypeString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -114,6 +128,12 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 
 	ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 	hitp.VendorID = ints[0]
+
+	if !practiceTypeString.Valid {
+		hitp.PracticeType = ""
+	} else {
+		hitp.PracticeType = practiceTypeString.String
+	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
 	if err != nil {
@@ -132,6 +152,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	var locationJSON []byte
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
+	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -149,6 +170,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE vendor_id=$1`
@@ -174,6 +196,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 			&hitp.CertificationEdition,
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
+			&practiceTypeString,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -182,6 +205,12 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 
 		ints := getRegularInts([]sql.NullInt64{vendorIDNullable})
 		hitp.VendorID = ints[0]
+
+		if !practiceTypeString.Valid {
+			hitp.PracticeType = ""
+		} else {
+			hitp.PracticeType = practiceTypeString.String
+		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
 		if err != nil {
@@ -208,6 +237,43 @@ func (s *Store) GetHealthITProductIDByCHPLID(ctx context.Context, CHPLID string)
 	err := row.Scan(&retProductID)
 
 	return retProductID, err
+}
+
+// GetHealthITProductIDsByMapID gets the HealthITProduct db ID with the HealthIT mapping table ID
+func (s *Store) GetHealthITProductIDsByMapID(ctx context.Context, mapID int) ([]int, error) {
+	var retProductIDs []int
+	var healthITProductID int
+
+	rows, err := getHealthITProductByMapID.QueryContext(ctx, mapID)
+	if err != nil {
+		return retProductIDs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&healthITProductID)
+		if err != nil {
+			return retProductIDs, err
+		}
+		retProductIDs = append(retProductIDs, healthITProductID)
+	}
+
+	return retProductIDs, err
+}
+
+// AddHealthITProductMap creates a new ID for all the healthit products for a particular endpoint and returns it
+func (s *Store) AddHealthITProductMap(ctx context.Context, id int, healthITProductID int) (int, error) {
+	var err error
+	var softwareMapRow *sql.Row
+	if id == 0 {
+		softwareMapRow = addHealthITProductMapStatementNoID.QueryRowContext(ctx, healthITProductID)
+	} else {
+		softwareMapRow = addHealthITProductMapStatement.QueryRowContext(ctx, id, healthITProductID)
+	}
+	softwareMapID := 0
+	err = softwareMapRow.Scan(&softwareMapID)
+
+	return softwareMapID, err
 }
 
 // AddHealthITProduct adds the HealthITProduct to the database.
@@ -237,7 +303,8 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.CertificationDate,
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
-		hitp.CHPLID)
+		hitp.CHPLID,
+		hitp.PracticeType)
 
 	err = row.Scan(&hitp.ID)
 
@@ -270,6 +337,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
+		hitp.PracticeType,
 		locationJSON,
 		certificationCriteriaJSON,
 		hitp.ID)
@@ -322,6 +390,27 @@ func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
 
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
+	addHealthITProductMapStatement, err = s.DB.Prepare(`
+		INSERT INTO healthit_products_map (id, healthit_product_id)
+		VALUES ($1, $2)
+		RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	addHealthITProductMapStatementNoID, err = s.DB.Prepare(`
+	INSERT INTO healthit_products_map (healthit_product_id)
+	VALUES ($1)
+	RETURNING id;`)
+	if err != nil {
+		return err
+	}
+	getHealthITProductByMapID, err = s.DB.Prepare(`
+	SELECT healthit_product_id
+		FROM healthit_products_map
+	WHERE id=$1;`)
+	if err != nil {
+		return err
+	}
 	addHealthITProductStatement, err = s.DB.Prepare(`
 		INSERT INTO healthit_products (
 			name,
@@ -336,8 +425,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_date,
 			certification_edition,
 			last_modified_in_chpl,
-			chpl_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+			chpl_id,
+			practice_type)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -355,9 +445,10 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_edition = $9,
 			last_modified_in_chpl = $10,
 			chpl_id = $11,
-			location = $12,
-			certification_criteria = $13
-		WHERE id=$14`)
+			practice_type = $12,
+			location = $13,
+			certification_criteria = $14
+		WHERE id=$15`)
 	if err != nil {
 		return err
 	}
@@ -411,6 +502,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		certification_edition,
 		last_modified_in_chpl,
 		chpl_id,
+		practice_type,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE name=$1 AND version=$2`)

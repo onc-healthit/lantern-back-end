@@ -20,6 +20,7 @@ var testQueueMsg = map[string]interface{}{
 	"tlsVersion":           "TLS 1.2",
 	"smarthttpResponse":    0,
 	"smartResp":            nil,
+	"smartRespBytes":       []byte("null"),
 	"responseTime":         0.1234,
 	"availability":         1.0,
 	"requestedFhirVersion": "None",
@@ -238,6 +239,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion:  "None",
 	CapabilityFhirVersion: "1.0.2",
 	SMARTResponse:         nil,
+	SMARTResponseBytes:    []byte("null"),
 	IncludedFields:        testIncludedFields,
 	OperationResource:     testOperations,
 }
@@ -258,10 +260,12 @@ func setupCapabilityStatement(t *testing.T, path string) {
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	testFhirEndpointInfo.CapabilityStatement = cs
+	testFhirEndpointInfo.CapabilityStatementBytes = csJSON
 	var capStat map[string]interface{}
 	err = json.Unmarshal(csJSON, &capStat)
 	th.Assert(t, err == nil, err)
 	testQueueMsg["capabilityStatement"] = capStat
+	testQueueMsg["capabilityStatementBytes"] = csJSON
 }
 
 func Test_formatMessage(t *testing.T) {
@@ -388,7 +392,7 @@ func Test_formatMessage(t *testing.T) {
 	th.Assert(t, returnErr == nil, returnErr)
 
 	// Check if versions response validation is included when requestedFhirVersion is None
-	versionValidation := validation.Results[2]
+	versionValidation := validation.Results[1]
 	th.Assert(t, versionValidation.RuleName == endpointmanager.VersionsResponseRule, "Expected versions response rule to be included in validation since requestedFhirVersion is None")
 	th.Assert(t, versionValidation.Valid == true, "Expected versions response rule to be valid")
 	th.Assert(t, versionValidation.Actual == "4.0.1", "Expected validation actual version to equal 4.0.1")
@@ -571,6 +575,46 @@ func Test_RunSupportedResourcesChecks(t *testing.T) {
 	th.Assert(t, operationResource["search-type"] != nil, "Expected the Operation to include 'search-type', is instead nil")
 	th.Assert(t, operationResource["read"][0] == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource["read"][0]))
 	th.Assert(t, operationResource["search-type"][0] == "DocumentReference", fmt.Sprintf("Expected the Resource to equal 'DocumentReference', is instead %s", operationResource["search-type"][0]))
+}
+
+func Test_RunSupportedProfilesCheck(t *testing.T) {
+	// Test DSTU2 Conformance Resource
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "supported_profiles_dstu2.json"))
+	capInt := testQueueMsg["capabilityStatement"].(map[string]interface{})
+	fhirVersion := "1.0.2"
+	supportedProfiles := RunSupportedProfilesCheck(capInt, fhirVersion)
+	th.Assert(t, len(supportedProfiles) == 12, "Expected supportedProfiles length to be 12 entries")
+	expectedName := "U.S. Data Access Framework (DAF) AllergyIntolerance Profile"
+	expectedURL := "http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance"
+	expectedResource := ""
+	th.Assert(t, supportedProfiles[0].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[0].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[0].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be %s, was %s", supportedProfiles[0].ProfileName, expectedName))
+	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[0].Resource))
+	expectedName = "U.S. Data Access Framework (DAF) Patient Profile"
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/daf-patient"
+	expectedResource = ""
+	th.Assert(t, supportedProfiles[7].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[7].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[7].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be %s, was %s", supportedProfiles[7].ProfileName, expectedName))
+	th.Assert(t, supportedProfiles[7].Resource == expectedResource, fmt.Sprintf("Expected resource to be an empty string, was %s", supportedProfiles[7].Resource))
+
+	// Test R4 Capability Statement
+	setupCapabilityStatement(t, filepath.Join("../../testdata", "supported_profiles_r4.json"))
+	capInt = testQueueMsg["capabilityStatement"].(map[string]interface{})
+	fhirVersion = "4.0.1"
+	supportedProfiles = RunSupportedProfilesCheck(capInt, fhirVersion)
+	th.Assert(t, len(supportedProfiles) == 39, "Expected supportedProfiles length to be 39 entries")
+	expectedName = ""
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/Account"
+	expectedResource = "Account"
+	th.Assert(t, supportedProfiles[0].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[0].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[0].Resource == expectedResource, fmt.Sprintf("Expected Resource to be %s, was %s", supportedProfiles[0].Resource, expectedResource))
+	th.Assert(t, supportedProfiles[0].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be an empty string, was %s", supportedProfiles[0].ProfileName))
+	expectedName = ""
+	expectedURL = "http://hl7.org/fhir/StructureDefinition/ClaimResponse"
+	expectedResource = "ClaimResponse"
+	th.Assert(t, supportedProfiles[19].ProfileURL == expectedURL, fmt.Sprintf("Expected ProfileURL to be %s, was %s", supportedProfiles[19].ProfileURL, expectedURL))
+	th.Assert(t, supportedProfiles[19].Resource == expectedResource, fmt.Sprintf("Expected Resource to be %s, was %s", supportedProfiles[19].Resource, expectedResource))
+	th.Assert(t, supportedProfiles[19].ProfileName == expectedName, fmt.Sprintf("Expected ProfileName to be an empty string, was %s", supportedProfiles[19].ProfileName))
 }
 
 func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {

@@ -52,7 +52,7 @@ var testValidation = endpointmanager.Validation{
 			Valid:    true,
 			Expected: "true",
 			Actual:   "true",
-			Comment:  "The Capability Statement exists.",
+			Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 		},
 	},
 }
@@ -64,14 +64,14 @@ var testValidation2 = endpointmanager.Validation{
 			Valid:    true,
 			Expected: "true",
 			Actual:   "true",
-			Comment:  "The Capability Statement exists.",
+			Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
 		},
 		{
-			RuleName: endpointmanager.GeneralMimeTypeRule,
+			RuleName: endpointmanager.DocumentValidRule,
 			Valid:    false,
-			Expected: "application/json+fhir",
-			Actual:   "application/fhir+json",
-			Comment:  "FHIR Version 1.0.2 requires the Mime Type to be application/fhir+json",
+			Expected: "true",
+			Actual:   "false",
+			Comment:  "The Conformance Resource does not exist; cannot check documents.",
 		},
 	},
 }

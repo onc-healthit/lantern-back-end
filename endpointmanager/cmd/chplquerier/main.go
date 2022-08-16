@@ -49,4 +49,6 @@ func main() {
 	helpers.FailOnError("", err)
 	err = chplquerier.GetCHPLProducts(ctx, store, client, userAgent)
 	helpers.FailOnError("", err)
+	err = chplquerier.GetCHPLEndpointListProducts(ctx, store)
+	helpers.FailOnError("", err)
 }

@@ -11,7 +11,18 @@ jq -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpo
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
     LISTURL=$(echo $endpoint | jq -c -r '.URL')
 
-    go run main.go /etc/lantern/resources/$FILENAME $FORMAT $NAME $LISTURL
+    go run main.go /etc/lantern/resources/$FILENAME $FORMAT $NAME false $LISTURL
+done
+
+jq -c '.[]' /etc/lantern/resources/CHPLEndpointResourcesList.json | while read endpoint; do
+    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
+    FORMAT=$(echo $endpoint | jq -c -r '.FormatType')
+    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
+    LISTURL=$(echo $endpoint | jq -c -r '.URL')
+    
+    if [ -f "/etc/lantern/resources/$FILENAME" ]; then
+        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" true $LISTURL
+    fi
 done
 
 # Only use the line below that populates the database with CareEvolution for development

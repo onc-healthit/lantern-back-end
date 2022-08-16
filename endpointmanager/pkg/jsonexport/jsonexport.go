@@ -46,15 +46,16 @@ type Result struct {
 }
 
 type historyArgs struct {
-	fhirURL string
-	store   *postgresql.Store
-	result  chan Result
+	fhirURL    string
+	store      *postgresql.Store
+	result     chan Result
+	exportType string
 }
 
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
-func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string) error {
-	finalFormatJSON, err := createJSON(ctx, store)
+func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string, exportType string) error {
+	finalFormatJSON, err := createJSON(ctx, store, exportType)
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 	return err
 }
 
-func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
+func createJSON(ctx context.Context, store *postgresql.Store, exportType string) ([]byte, error) {
 	// Get everything from the fhir_endpoints_info table
 	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
@@ -123,7 +124,7 @@ func createJSON(ctx context.Context, store *postgresql.Store) ([]byte, error) {
 	}
 
 	resultCh := make(chan Result)
-	go createJobs(ctx, resultCh, urls, store, allWorkers)
+	go createJobs(ctx, resultCh, urls, store, allWorkers, exportType)
 
 	// Add the results from createJobs to mapURLHistory
 	count := 0
@@ -195,13 +196,15 @@ func createJobs(ctx context.Context,
 	ch chan Result,
 	urls []string,
 	store *postgresql.Store,
-	allWorkers *workers.Workers) {
+	allWorkers *workers.Workers,
+	exportType string) {
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
-			fhirURL: urls[index],
-			store:   store,
-			result:  ch,
+			fhirURL:    urls[index],
+			store:      store,
+			result:     ch,
+			exportType: exportType,
 		}
 		workerDur := viper.GetInt("export_duration")
 		// If duration not set, default to 120 seconds
@@ -232,13 +235,34 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		return fmt.Errorf("unable to cast arguments to type historyArgs")
 	}
 
+	exportType := ha.exportType
+
 	// Get everything from the fhir_endpoints_info_history table for the given URL
-	selectHistory := `
+
+	var selectHistory string
+	if exportType == "month" {
+		selectHistory = `
+		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
+		capability_statement, tls_version, mime_types, operation_resource,
+		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
+		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
+		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('month', fhir_endpoints_info_history.updated_at) = date_trunc('month', current_date - INTERVAL '1 month'));`
+	} else if exportType == "30days" {
+		selectHistory = `
+		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
+		capability_statement, tls_version, mime_types, operation_resource,
+		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
+		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
+		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('day', fhir_endpoints_info_history.updated_at) >= date_trunc('day', current_date - INTERVAL '30 day'));`
+	} else if exportType == "all" {
+		selectHistory = `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
 		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1;`
+	}
+
 	historyRows, err := ha.store.DB.QueryContext(ctx, selectHistory, ha.fhirURL)
 	if err != nil {
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", ha.fhirURL, err)

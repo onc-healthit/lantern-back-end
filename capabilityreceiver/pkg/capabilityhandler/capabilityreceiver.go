@@ -3,6 +3,7 @@ package capabilityhandler
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -35,9 +36,10 @@ type versionsQueryArgs struct {
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
 // saveMsgInDB function
 type capStatQueryArgs struct {
-	store         *postgresql.Store
-	ctx           context.Context
-	chplMatchFile string
+	store                    *postgresql.Store
+	ctx                      context.Context
+	chplMatchFile            string
+	chplEndpointListInfoFile string
 }
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
@@ -117,6 +119,37 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 			return nil, nil, errors.Wrap(err, fmt.Sprintf("%s: unable to parse CapabilityStatement out of message", url))
 		}
 	}
+
+	var capStatBytes []byte
+	if msgJSON["capabilityStatementBytes"] != nil {
+		capStatStringBytes, ok := msgJSON["capabilityStatementBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to string")
+		}
+
+		rawDecodedCapStat, err := base64.StdEncoding.DecodeString(capStatStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast capStatBytes to decoded string")
+		}
+
+		capStatBytes = []byte(rawDecodedCapStat)
+	}
+
+	var smartResponseBytes []byte
+	if msgJSON["smartRespBytes"] != nil {
+		smartRespStringBytes, ok := msgJSON["smartRespBytes"].(string)
+		if !ok {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to string")
+		}
+
+		rawDecodedSmartResp, err := base64.StdEncoding.DecodeString(smartRespStringBytes)
+		if err != nil {
+			return nil, nil, fmt.Errorf("unable to cast smartRespBytes to decoded string")
+		}
+
+		smartResponseBytes = []byte(rawDecodedSmartResp)
+	}
+
 	var smartResponse smartparser.SMARTResponse
 	if msgJSON["smartResp"] != nil {
 		smartInt, ok := msgJSON["smartResp"].(map[string]interface{})
@@ -138,9 +171,10 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 
 	validator := validation.ValidatorForFHIRVersion(fhirVersion)
 
-	validationObj := validator.RunValidation(capStat, mimeTypes, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
+	validationObj := validator.RunValidation(capStat, fhirVersion, tlsVersion, smartResponse, requestedFhirVersion, defaultFhirVersion)
 	includedFields := RunIncludedFieldsAndExtensionsChecks(capInt, fhirVersion)
 	operationResource := RunSupportedResourcesChecks(capInt)
+	supportedProfiles := RunSupportedProfilesCheck(capInt, fhirVersion)
 
 	FHIREndpointMetadata := &endpointmanager.FHIREndpointMetadata{
 		URL:                  url,
@@ -152,16 +186,19 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 	}
 
 	fhirEndpoint := endpointmanager.FHIREndpointInfo{
-		URL:                   url,
-		TLSVersion:            tlsVersion,
-		MIMETypes:             mimeTypes,
-		CapabilityStatement:   capStat,
-		SMARTResponse:         smartResponse,
-		IncludedFields:        includedFields,
-		OperationResource:     operationResource,
-		Metadata:              FHIREndpointMetadata,
-		RequestedFhirVersion:  requestedFhirVersion,
-		CapabilityFhirVersion: fhirVersion,
+		URL:                      url,
+		TLSVersion:               tlsVersion,
+		MIMETypes:                mimeTypes,
+		CapabilityStatement:      capStat,
+		SMARTResponse:            smartResponse,
+		IncludedFields:           includedFields,
+		OperationResource:        operationResource,
+		Metadata:                 FHIREndpointMetadata,
+		RequestedFhirVersion:     requestedFhirVersion,
+		CapabilityFhirVersion:    fhirVersion,
+		SupportedProfiles:        supportedProfiles,
+		CapabilityStatementBytes: capStatBytes,
+		SMARTResponseBytes:       smartResponseBytes,
 	}
 
 	return &fhirEndpoint, &validationObj, nil
@@ -194,16 +231,22 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	store := qa.store
 	ctx := qa.ctx
 
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
+	if err != nil {
+		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
+	}
+
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
 	if err == sql.ErrNoRows {
 
 		// If the endpoint info entry doesn't exist, add it to the DB
-		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store)
+		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
-		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile))
+
+		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
@@ -248,19 +291,22 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
+			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
+			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
 			existingEndpt.TLSVersion = fhirEndpoint.TLSVersion
 			existingEndpt.MIMETypes = fhirEndpoint.MIMETypes
 			existingEndpt.SMARTResponse = fhirEndpoint.SMARTResponse
 			existingEndpt.IncludedFields = fhirEndpoint.IncludedFields
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
+			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store)
+			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
 			}
 
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile))
+			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 			if err != nil {
 				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 			}
@@ -410,9 +456,10 @@ func ReceiveCapabilityStatements(ctx context.Context,
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           ctx,
-		chplMatchFile: "/etc/lantern/resources/CHPLProductMapping.json",
+		store:                    store,
+		ctx:                      ctx,
+		chplMatchFile:            "/etc/lantern/resources/CHPLProductMapping.json",
+		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)

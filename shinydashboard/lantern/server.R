@@ -1,4 +1,9 @@
 library(shinyWidgets)
+library(reactable)
+library(shinyBS)
+library(listviewer)
+library(leaflet)
+library(dygraphs)
 
 # Define server function
 function(input, output, session) { #nolint
@@ -6,7 +11,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "capability_tab", "implementation_tab", "fields_tab", "values_tab", "validations_tab", "performance_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -50,15 +55,17 @@ function(input, output, session) { #nolint
         "downloads_page")
 
       callModule(
+        organizationsmodule,
+        "organizations_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$match_confidence))
+
+      callModule(
         locationmodule,
         "location_page",
         reactive(input$fhir_version),
         reactive(input$vendor))
-
-      callModule(
-        performancemodule,
-        "performance_page",
-        reactive(input$date))
 
       callModule(
         capabilitystatementsizemodule,
@@ -80,8 +87,8 @@ function(input, output, session) { #nolint
         reactive(input$vendor))
 
       callModule(
-        capabilitymodule,
-        "capability_page",
+        resourcemodule,
+        "resource_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$resources),
@@ -100,11 +107,27 @@ function(input, output, session) { #nolint
         reactive(input$vendor))
 
       callModule(
+        profilemodule,
+        "profile_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$profile_resource),
+        reactive(input$profiles))
+
+      callModule(
         valuesmodule,
         "values_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$field))
+
+      callModule(
+        contactsmodule,
+        "contacts_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$has_contact)
+      )
 
       callModule(
         validationsmodule,
@@ -121,21 +144,45 @@ function(input, output, session) { #nolint
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads Page",
-     "capability_tab" = "Capability Page",
-     "implementation_tab" = "Implmentation Page",
+     "organizations_tab" = "Organizations Page",
+     "resource_tab" = "Resource Page",
+     "implementation_tab" = "Implementation Page",
      "fields_tab" = "Fields Page",
+     "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
      "location_tab" = "Location Map",
+     "contacts_tab" = "Contact Information Page",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
-     "performance_tab" = "Response Time Performance",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
      "validations_tab" = "Validations Page"
   )
 
+  output$resource_tab_popup <- renderUI({
+    if (show_resource_tab_popup()) {
+      div(class = "pull-right", actionButton("resource_popup", "How to use this page", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question icon")))
+    }
+  })
+
+  observeEvent(input$resource_popup, {
+    showModal(modalDialog(
+      title = "How to use this page...",
+      p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Clicking a resource in the left box selects it and moves it to the right box. Remove a resource from the list by clicking the resource in the right box.", style = "font-size:16px; margin-left:5px;"),
+      p("You may also change the FHIR Version or Developer filtering criteria to filter the applicable supported resources from the default list.
+        Any resources at that point will be removed from the list of resources if no endpoints that pass the selected filtering criteria support the given resource.
+        If you make other changes to the FHIR Version or Developer filtering criteria, resources that are filtered out of the list will re-appear on the left side of the list, regardless if they were selected previously.", style = "font-size:16px; margin-left:5px;"),
+      p("You will have to re-select these resources, either by clicking the resource on the left box, or clicking the 'Select All Resources' button.", style = "font-size:16px; margin-left:5px;"),
+      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:13px; margin-left:5px;"),
+  ))})
+
+
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "capability_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+  )
+
+  fhir_version_no_capstat <- reactive(
+    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
   )
 
   show_availability_filter <- reactive(
@@ -146,18 +193,36 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("validations_tab")
   )
 
-  show_date_filter <- reactive(input$side_menu %in% c("performance_tab"))
+  show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
 
-  show_resource_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
+  show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
-  show_operation_checkbox <- reactive(input$side_menu %in% c("capability_tab"))
+  show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
+
+  show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
+
+  show_resource_tab_popup <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
 
+  show_confidence_filter <- reactive(input$side_menu %in% c("organizations_tab") && (input$organization_tabset == "NPI Organizations"))
+
   page_name <- reactive({
     page_name_list[[input$side_menu]]
+  })
+
+  output$htmlFooter <- renderUI({
+    if (input$side_menu %in% c("about_tab")) {
+      div(class = "footer",
+        includeHTML("aboutInfo.html")
+      )
+    } else {
+      div(class = "footer",
+        includeHTML("disclaimer.html")
+      )
+    }
   })
 
   output$page_title <- renderText(page_name())
@@ -165,10 +230,16 @@ function(input, output, session) { #nolint
 
   output$show_filters <- renderUI({
     if (show_filter()) {
-      fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      if (fhir_version_no_capstat()) {
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      } else {
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+      }
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
+      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
+      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 4, fhirDropdown),
@@ -180,6 +251,18 @@ function(input, output, session) { #nolint
           column(width = 4, validationsDropdown),
           column(width = 4, fhirDropdown),
           column(width = 4, developerDropdown)
+        )
+      } else if (show_confidence_filter()) {
+        fluidRow(
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown),
+          column(width = 4, confidenceDropdown)
+        )
+      } else if (show_has_contact_filter()) {
+        fluidRow(
+          column(width = 4, fhirDropdown),
+          column(width = 4, developerDropdown),
+          column(width = 4, contactDropdown)
         )
       } else {
         fluidRow(
@@ -205,20 +288,33 @@ function(input, output, session) { #nolint
     }
   })
 
-  output$show_date_filters <- renderUI({
-    if (show_date_filter()) {
+  output$show_has_contact_filters <- renderUI({
+    if (show_has_contact_filter()) {
       fluidRow(
         column(width = 4,
           selectInput(
-            inputId = "date",
-            label = "Date range",
-            choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
-            selected = "All time",
-            size = 1,
-            selectize = FALSE)
+            inputId = "has_contact",
+            label = "Has Contact Data",
+            choices = list("True", "False", "Any"),
+            selected = "Any"
+          )
         )
       )
     }
+  })
+
+  output$show_date_filters <- renderUI({
+    fluidRow(
+      column(width = 4,
+        selectInput(
+          inputId = "date",
+          label = "Date range",
+          choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+          selected = "All time",
+          size = 1,
+          selectize = FALSE)
+      )
+    )
   })
 
   output$show_value_filters <- renderUI({
@@ -253,6 +349,54 @@ function(input, output, session) { #nolint
     }
   })
 
+  profile_options <- reactive({
+    res <- isolate(app_data$supported_profiles())
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    res <- res %>%
+    distinct(profileurl) %>%
+    arrange(profileurl) %>%
+    split(.$profileurl) %>%
+    purrr::map(~ .$profileurl)
+
+    profile_list <- list(
+      "All Profiles" = ui_special_values$ALL_PROFILES
+    )
+
+    return(c(profile_list, res))
+  })
+
+  resource_options <- reactive({
+    res <- isolate(app_data$supported_profiles())
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>%
+    filter(fhir_version %in% input$fhir_version) %>%
+    filter(resource != "")
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+    resource_list <- list(
+        "All Resources" = ui_special_values$ALL_RESOURCES
+    )
+
+    res <- res %>%
+    distinct(resource) %>%
+    arrange(resource) %>%
+    split(.$resource) %>%
+    purrr::map(~ .$resource)
+    return(c(resource_list, res))
+  })
+
+
   checkbox_resources <- reactive({
     res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
@@ -284,24 +428,46 @@ function(input, output, session) { #nolint
     return(res)
   })
 
-  output$show_resource_checkboxes <- renderUI({
-    if (show_resource_checkbox()) {
+  #                                          #
+  # Display Resource and Operations Checkbox #
+  #                                          #
+
+  output$show_resource_operation_checkboxes <- renderUI({
+    if (show_resource_checkbox() && show_operation_checkbox()) {
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          p("By default, the list of resources below contains the supported resources across all endpoints and FHIR versions. Remove a resource from the list by clicking the 'x' in each box.
-            You may also change the FHIR Version or Developer filtering criteria to select the applicable supported resources from the default list.
-            Any selected resources at that point will be removed if no endpoints that pass the selected filtering criteria support the given resource.
-            Resources that are filtered out of the selected list will not re-appear in the list if you make other changes to the FHIR Version or Developer filtering criteria.
-            You must either (1) select a resource from the resources drop down to add it to the list, or (2) click the 'Select All Resources' button to add all resources that are supported by the endpoints passing the selected criteria.", style = "font-size:19px; margin-left:5px;"),
-          p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:15px; margin-left:5px;"),
-          selectizeInput("resources", "Click in the box below to add or remove resources:", choices = checkbox_resources_no_filter(), selected = checkbox_resources_no_filter(), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
-          actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
+          column(width = 4,
+            multiInput(
+              inputId = "resources",
+              width = "500px",
+              label = "Click a resource on the left to add, and on the right to remove:",
+              choices = checkbox_resources_no_filter(),
+              selected = checkbox_resources_no_filter(),
+              options = list(
+                non_selected_header = "Choose resources:",
+                selected_header = "Selected resources:"
+              )
+            ),
+            actionButton("selectall", "Select All Resources", style = "margin-top: -15px; margin-bottom: 20px;"),
+            actionButton("removeall", "Remove All Resources", style = "margin-top: -15px; margin-bottom: 20px;")
+          ),
+          column(width = 8,
+            selectizeInput("operations", "Click in the box below to add or remove operations:",
+            choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
+            selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
+            actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
+            p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
+            Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance Resource.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
+          )
         )
       )
     }
   })
+
+  #                     #
+  # Resource Checkbox #
+  #                     #
 
   current_selection <- reactiveVal(NULL)
 
@@ -313,7 +479,7 @@ function(input, output, session) { #nolint
     if (input$selectall == 0) {
       return(NULL)
     } else {
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = checkbox_resources())
     }
   })
 
@@ -322,7 +488,7 @@ function(input, output, session) { #nolint
       return(NULL)
     } else {
       current_selection(NULL)
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources())
     }
   })
 
@@ -330,7 +496,7 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
@@ -338,29 +504,13 @@ function(input, output, session) { #nolint
     if (!show_resource_checkbox() || is.null(current_selection())) {
       return(NULL)
     } else {
-      updateSelectizeInput(session, "resources", label = "Click in the box below to add or remove resources:", choices = checkbox_resources(), selected = current_selection(), options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
+      updateMultiInput(session, "resources", label = "Click a resource on the left to add, and on the right to remove:", choices = checkbox_resources(), selected = current_selection())
     }
   })
 
   #                     #
   # Operations Checkbox #
   #                     #
-
-  # Operations checkbox display
-  output$show_operation_checkboxes <- renderUI({
-    if (show_operation_checkbox()) {
-      fluidPage(
-        fluidRow(
-          selectizeInput("operations", "Click in the box below to add or remove operations:",
-          choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
-          selected = c("read"), multiple = TRUE, options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE), width = "100%"),
-          actionButton("removeallops", "Clear All Operations", style = "margin-top: -15px;"),
-          p("Note: When selecting multiple operations, only the resources that implement all selected operations will be displayed in the table and graph below.
-          Choosing the 'not specified' option will display resources where no operation was defined in the CapabilityStatement / Conformance Resource.", style = "font-size:15px; margin-left:5px; margin-top:5px;")
-        )
-      )
-    }
-  })
 
   current_op_selection <- reactiveVal(NULL)
 
@@ -390,5 +540,564 @@ function(input, output, session) { #nolint
               choices = c("read", "vread", "update", "patch", "delete", "history-instance", "history-type", "create", "search-type", "not specified"),
               options = list("plugins" = list("remove_button"), "create" = TRUE, "persist" = FALSE))
     }
+  })
+
+  #                                          #
+  #   Display Resource and Profile Filters   #
+  #                                          #
+
+  output$resource_filter_tab <- renderUI({
+    fluidPage(
+      fluidRow(
+        column(width = 12,
+          selectInput(
+            inputId = "profile_resource",
+            label = "Resources:",
+            choices = resource_options(),
+            selected = ui_special_values$ALL_RESOURCES,
+            selectize = FALSE,
+            size = 1,
+            width = paste0(max(nchar(profile_options())) * 8, "px")
+          )
+        )
+      ),
+      p("Note: DSTU2 endpoints will not be visible if resource filter selected.")
+    )
+  })
+
+  output$profile_filter_tab <- renderUI({
+    fluidPage(
+      fluidRow(
+        column(width = 12,
+          selectInput(
+            inputId = "profiles",
+            label = "Profiles:",
+            choices = profile_options(),
+            selected = ui_special_values$ALL_PROFILES,
+            selectize = FALSE,
+            size = 1,
+            width = paste0(max(nchar(profile_options())) * 8, "px")
+          )
+        )
+      )
+    )
+  })
+
+  output$show_resource_profiles_dropdown <- renderUI({
+    if (show_profiles_filters()) {
+      tagList(
+        fluidRow(
+          column(width = 12,
+            tabsetPanel(id = "profile_resource_tab", type = "tabs",
+              tabPanel("Profile Filtering", uiOutput("profile_filter_tab")),
+              tabPanel("Resource Filtering", uiOutput("resource_filter_tab")))
+          )
+        )
+      )
+    }
+  })
+
+  # Resets the filters when switching between filtering tabs
+  observeEvent(input$profile_resource_tab, {
+      updateSelectInput(session, "profiles",
+        label = "Profiles:",
+        choices = profile_options(),
+        selected = ui_special_values$ALL_PROFILES)
+
+      updateSelectInput(session, "profile_resource",
+        label = "Resources:",
+        choices = resource_options(),
+        selected = ui_special_values$ALL_RESOURCES)
+  })
+
+  observeEvent(input$show_details, {
+    showModal(modalDialog(
+      title = "All API Information Source Names",
+      p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
+      easyClose = TRUE
+  ))
+  })
+
+  observeEvent(input$show_contact_modal, {
+    showModal(modalDialog(
+      title = "All Contacts",
+      p(input$show_contact_modal),
+      p(ifelse(is.na(
+        app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names))
+          ||
+          app_data$contact_info_tbl() %>%
+          filter(url == input$show_contact_modal) %>%
+          distinct(endpoint_names) %>%
+          select(endpoint_names) == "",
+        "-",
+        app_data$contact_info_tbl() %>%
+        filter(url == input$show_contact_modal) %>%
+        mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
+        distinct(endpoint_names) %>%
+        select(endpoint_names)
+      ),
+      reactable::renderReactable({
+        reactable(
+          app_data$contact_info_tbl() %>%
+          mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
+          filter(url == input$show_contact_modal) %>%
+          arrange(contact_preference) %>%
+          mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
+          select(contact_name, contact_type, contact_value) %>%
+          mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
+              defaultColDef = colDef(
+                align = "center"
+              ),
+              columns = list(
+                  contact_name = colDef(name = "Contact Name"),
+                  contact_type = colDef(name = "Contact Type"),
+                  contact_value = colDef(name = "Contact Info")
+              ),
+              groupBy = "contact_name"
+        )
+      }),
+            easyClose = TRUE
+  )))
+  })
+# Current Endpoint that is selected to view in Modal
+current_endpoint <- reactive({
+  splitString <- strsplit(input$endpoint_popup, "&&")
+  endpointURL <- splitString[[1]][1]
+  endpoint_requested_fhir_version <- splitString[[1]][2]
+
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+  current_endpoint_list
+})
+
+
+### CHPL Products Modal Page ###
+endpoint_products <- reactive({
+  endpoint <- current_endpoint()
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+})
+
+output$endpoint_products_table <- DT::renderDataTable({
+  datatable(endpoint_products(),
+            colnames = c("Name", "Version", "CHPL ID", "API URL", "Certification Status", "Certification Edition", "Certification Date", "Last Modified in CHPL"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+endpoint_products_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint CHPL Products"),
+    DT::dataTableOutput("endpoint_products_table")
+  )
+  page
+}
+
+
+### IGs and Profiles Modal Page ###
+
+endpoint_implementation_guides <- reactive({
+  endpoint <- current_endpoint()
+
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides
+})
+
+endpoint_profiles <- reactive({
+  endpoint <- current_endpoint()
+
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles
+
+})
+
+output$endpoint_IG_table <- DT::renderDataTable({
+  datatable(endpoint_implementation_guides() %>% select(implementation_guide),
+            colnames = c("Implementation_Guides"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_profile_table <- DT::renderDataTable({
+  datatable(endpoint_profiles() %>% select(profileurl, profilename, resource),
+            colnames = c("Profile URL", "Profile Name", "Resource"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+implementation_guide_profiles_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint IGs and Profiles"),
+    bsCollapse(id = "IGs_profiles_collapse", multiple = TRUE,
+      bsCollapsePanel("Implementation Guides", fluidPage(
+        DT::dataTableOutput("endpoint_IG_table"),
+      ), style = "info"),
+      bsCollapsePanel("Endpoint Profiles", fluidPage(
+        DT::dataTableOutput("endpoint_profile_table"),
+      ), style = "info")
+  ))
+  page
+}
+
+### Capabilities Modal Page ###
+
+# Required Capability Statement fields that we are tracking
+required_fields <- c("status", "kind", "fhirVersion", "format", "date")
+
+endpoint_fields <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
+  res
+})
+
+endpoint_extensions <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
+  res
+})
+
+endpoint_resources <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+
+})
+
+endpoint_smart_capabilities <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res
+
+})
+
+output$endpoint_fields_table_required <- DT::renderDataTable({
+  datatable(endpoint_fields() %>% filter(field %in% required_fields) %>% select(field, exist),
+            colnames = c("Field Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_fields_table_optional <- DT::renderDataTable({
+  datatable(endpoint_fields() %>% select(field, exist),
+            colnames = c("Field Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+output$endpoint_extensions_table <- DT::renderDataTable({
+  datatable(endpoint_extensions() %>% select(field, exist),
+            colnames = c("Extension Name", "Exists"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+
+output$endpoint_resource_op_table <- reactable::renderReactable({
+  reactable(
+          endpoint_resources(),
+          columns = list(
+            Operation = colDef(
+              aggregate = "count",
+              format = list(aggregated = colFormat(prefix = "Total: "))
+            ),
+            Resource = colDef(
+              minWidth = 150
+            )
+          ),
+          groupBy = "Operation",
+          sortable = TRUE,
+          searchable = TRUE,
+          striped = TRUE,
+          showSortIcon = TRUE,
+          defaultPageSize = 10,
+          showPageSizeOptions = TRUE,
+          pageSizeOptions = c(10, 25, 50, 100)
+
+  )
+})
+
+output$smart_capabilities_table <- DT::renderDataTable({
+  datatable(endpoint_smart_capabilities(),
+            colnames = c("SMART Capabilities"),
+            rownames = FALSE,
+            selection = "none",
+            options = list(scrollX = TRUE))
+})
+
+get_capability_statement_json <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
+
+  capability_statement_json <- res$capability_statement
+
+  if (length(res$capability_statement) <= 0) {
+    capability_statement_json <- "{\"Not Available\": \"No Capability Statement Returned\"}"
+  }
+
+  capability_statement_json
+})
+
+
+get_smart_response_json <- reactive({
+  endpoint <- current_endpoint()
+
+  res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
+
+  smart_response_json <- res$smart_response
+
+  if (length(res$smart_response) <= 0) {
+    smart_response_json <- "{\"Not Available\": \"No SMART Response Returned\"}"
+  }
+
+  smart_response_json
+})
+
+endpoint_capabilities_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint Capabilities"),
+    bsCollapse(id = "capabilities_collapse", multiple = TRUE,
+      bsCollapsePanel("Capability/Conformance Fields", fluidPage(
+        h3("Required Fields"),
+        DT::dataTableOutput("endpoint_fields_table_required"),
+        h3("Optional Fields"),
+        DT::dataTableOutput("endpoint_fields_table_optional"),
+        h3("Extensions"),
+        DT::dataTableOutput("endpoint_extensions_table"),
+      ), style = "info"),
+      bsCollapsePanel("Capability/Conformance Resources", reactable::reactableOutput("endpoint_resource_op_table"), style = "info"),
+      bsCollapsePanel("SMART Response Fields", DT::dataTableOutput("smart_capabilities_table"), style = "info"),
+      bsCollapsePanel("Capability Statement/Conformance Resource", renderJsonedit(jsonedit(get_capability_statement_json(),
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
+        ), style = "info"
+      ),
+      bsCollapsePanel("SMART Response", renderJsonedit(jsonedit(get_smart_response_json(),
+              mode = "view", modes =  c("view", "code"),
+              "onEditable" = htmlwidgets::JS("function() { return false;}"))
+          ), style = "info"
+      )
+    )
+  )
+}
+
+
+### Organizations Modal Page ###
+
+single_endpoint_locations <- reactive({
+  endpoint <- current_endpoint()
+
+  lt <- get_single_endpoint_locations(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  lt
+})
+
+output$endpoint_location_map  <- renderLeaflet({
+  single_endpoint_locations()
+  map <- leaflet() %>%
+    addProviderTiles(providers$CartoDB.Positron) %>%
+    addCircles(data = single_endpoint_locations(), lat = ~ lat, lng = ~ lng, popup = paste0(isolate(single_endpoint_locations()$organization_name), "<br>NPI ID: ", isolate(single_endpoint_locations())$npi_id, "<br>Zipcode: ", isolate(single_endpoint_locations())$zipcode), weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
+    setView(-98.9, 37.7, zoom = 4)
+  map
+})
+
+ get_endpoint_list_orgs <- reactive({
+   endpoint <- current_endpoint()
+
+
+    res <- get_endpoint_list_matches()
+    res <- res %>%
+    filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
+    mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
+    res
+  })
+
+  get_endpoint_npi_orgs <- reactive({
+    endpoint <- current_endpoint()
+
+    res <- get_npi_organization_matches()
+    res <- res %>%
+    filter(url == endpoint$url) %>%
+    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
+    mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
+    res
+  })
+
+  output$endpoint_list_org_table <- DT::renderDataTable({
+    datatable(get_endpoint_list_orgs() %>% distinct(organization_name),
+              colnames = c("Organization Name"),
+              rownames = FALSE,
+              selection = "none",
+              options = list(scrollX = TRUE))
+  })
+
+    output$npi_list_org_table <- DT::renderDataTable({
+    datatable(get_endpoint_npi_orgs() %>% select(organization_name, organization_secondary_name, npi_id, zipcode, match_score) %>% distinct(organization_name, organization_secondary_name, npi_id, zipcode, match_score),
+              colnames = c("Organization Name", "Organization Secondary Name", "NPI ID", "Zipcode", "Confidence"),
+              rownames = FALSE,
+              selection = "none",
+              options = list(scrollX = TRUE))
+  })
+
+organization_endpoint_page <- function() {
+  page <- fluidPage(
+    h1("Endpoint Organizations"),
+    bsCollapse(id = "organizations_collapse", multiple = TRUE,
+      bsCollapsePanel("Endpoint List Organizations", fluidPage(
+        DT::dataTableOutput("endpoint_list_org_table")
+      ), style = "info"),
+      bsCollapsePanel("Matched NPI Organizations", fluidPage(
+        DT::dataTableOutput("npi_list_org_table")
+      ), style = "info"),
+      bsCollapsePanel("Linked Organizations Locations", fluidPage(
+        leafletOutput("endpoint_location_map", width = "100%", height = "600px")
+      ), style = "info")
+    )
+  )
+}
+
+### Endpoint Details Modal Page ###
+get_range <- function() {
+    if (all(input$date == "Past 7 days")) {
+      range <- "604800"
+    } else if (all(input$date == "Past 14 days")) {
+      range <- "1209600"
+    } else if (all(input$date == "Past 30 days")) {
+      range <- "2592000"
+    } else {
+      range <- "maxdate.maximum"
+    }
+    range
+}
+
+response_time_xts <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range()
+  res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+  # convert to xts format for use in dygraph
+  xts(x = cbind(res$response),
+      order.by = res$date
+  )
+})
+
+output$no_plot <- renderText({
+  if (nrow(response_time_xts()) == 0) {
+    "Sorry, there isn't enough data to show response times!"
+  }
+})
+
+output$endpoint_response_time_plot <- renderDygraph({
+  if (nrow(response_time_xts()) > 0) {
+    dygraph(response_time_xts(),
+          main = "Endpoint Response Time",
+          ylab = "seconds",
+          xlab = "Date") %>%
+    dyAxis("y", valueRange = c(-1.30, NA)) %>%
+    dySeries("V1", label = "ResponseTime") %>%
+    dyLegend(width = 450)
+  }
+})
+
+output$plot_note_text <- renderUI({
+  note_info <- "There are many variables that influence response time, such
+    as network congestion, geographic location, hosting configurations, etc.
+    This graphic only intends to convey the health of the FHIR endpoint ecosystem
+    as a whole, drastic changes to which may represent some widespread issue
+    throughout the ecosystem."
+  res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+  HTML(res)
+})
+
+ detailPage <- function() {
+
+  endpoint <- current_endpoint()
+
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+
+  page <- fluidPage(
+    h1("Endpoint Details"),
+    tags$p(paste0("Updated at ", as.character(detailsInfo$info_updated), " | Created at ", as.character(detailsInfo$info_created)), style = "font-style: italic;"),
+    br(),
+    mainPanel(
+      fluidRow(
+        infoBox("FHIR Version", as.character(detailsInfo$fhir_version), icon = icon("code"), width = 6),
+        infoBox("Supported Versions", tags$p(as.character(detailsInfo$supported_versions), style = "overflow-wrap: break-word;"), icon = icon("check"), width = 6, color = "red")
+      ),
+      fluidRow(
+        infoBox("Vendor", as.character(detailsInfo$vendor_name), icon = icon("building"), width = 6, color = "green"),
+        infoBox("List Source", tags$p(as.character(detailsInfo$list_source), style = "overflow-wrap: break-word;"), icon = icon("list"), width = 6, color = "teal")
+      ),
+      h3("Software"),
+      fluidRow(
+        infoBox("Software Name", as.character(detailsInfo$software_name), icon = icon("code-branch"), width = 6, color = "blue"),
+          infoBox("Software Version", as.character(detailsInfo$software_version), icon = icon("code"), width = 6, color = "orange"),
+          infoBox("Format", as.character(detailsInfo$format), icon = icon("file-code"), width = 6, color = "yellow"),
+          infoBox("Security", as.character(detailsInfo$security), icon = icon("lock", lib = "glyphicon"), width = 6, color = "purple")
+      ),
+      fluidRow(
+          tags$p(paste0("Last Software Version Update: ", as.character(detailsInfo$software_releasedate)), style = "font-style: italic;")
+      ),
+      br(),
+      uiOutput("show_date_filters"),
+      bsCollapse(id = "performance_collapse", multiple = TRUE,
+          bsCollapsePanel("Response Time", fluidPage(
+            textOutput("no_plot"),
+            dygraphOutput("endpoint_response_time_plot"),
+            p("Click and drag on plot to zoom in, double-click to zoom out."),
+            htmlOutput("plot_note_text")
+          ), style = "info")
+      )
+    ),
+    sidebarPanel(
+      h2("Metrics"),
+      h4("Status:"),
+      p(metricsInfo$status),
+      h4("Last HTTP Response:"),
+      p(metricsInfo$http_response),
+      h4("Availability:"),
+      p(metricsInfo$availability),
+      h4("Capability Statement Returned:"),
+      p(metricsInfo$cap_stat_exists),
+      h4("Errors:"),
+      p(metricsInfo$errors),
+      h4("SMART HTTP Response:"),
+      p(metricsInfo$smart_http_response)
+    )
+  )
+}
+
+
+  ### Endpoint Popup Modal ###
+  observeEvent(input$endpoint_popup, {
+    endpoint <- current_endpoint()
+    showModal(modalDialog(
+      title = "Endpoint Details",
+      h1("Endpoint URL:"),
+      h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
+      p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
+      tabsetPanel(type = "tabs",
+          tabPanel("Details", detailPage()),
+          tabPanel("Organizations", organization_endpoint_page()),
+          tabPanel("Capabilities", endpoint_capabilities_page()),
+          tabPanel("Implementation Guides & Profiles", implementation_guide_profiles_page()),
+          tabPanel("Products", endpoint_products_page())
+      ),
+      size = "l",
+      easyClose = TRUE
+    ))
   })
 }

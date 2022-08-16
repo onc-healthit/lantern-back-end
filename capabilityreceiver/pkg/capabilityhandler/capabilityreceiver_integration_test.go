@@ -246,6 +246,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           ctx,
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 
 	// populate vendors
@@ -276,6 +277,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           testCtx,
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
@@ -290,6 +292,7 @@ func Test_saveMsgInDB(t *testing.T) {
 		store:         store,
 		ctx:           context.Background(),
 		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)
@@ -330,7 +333,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	valResRows = store.DB.QueryRow("SELECT COUNT(*) FROM validations WHERE validation_result_id=$1", valID1)
 	err = valResRows.Scan(&validationCount)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, validationCount == 3, fmt.Sprintf("Should be 3 validation entries for ID %d, is instead %d", valID1, validationCount))
+	th.Assert(t, validationCount == 7, fmt.Sprintf("Should be 7 validation entries for ID %d, is instead %d", valID1, validationCount))
 
 	// check that a second new item is stored
 	queueTmp["url"] = "https://test-two.com"
@@ -371,7 +374,7 @@ func Test_saveMsgInDB(t *testing.T) {
 	valResRows = store.DB.QueryRow("SELECT COUNT(*) FROM validations WHERE validation_result_id=$1", valID2)
 	err = valResRows.Scan(&validationCount)
 	th.Assert(t, err == nil, err)
-	th.Assert(t, validationCount == 3, fmt.Sprintf("Should be 3 validation entries for ID %d, is instead %d", valID2, validationCount))
+	th.Assert(t, validationCount == 7, fmt.Sprintf("Should be 7 validation entries for ID %d, is instead %d", valID2, validationCount))
 
 	// check that an item with the same URL updates the endpoint in the database
 	queueTmp["tlsVersion"] = "TLS 1.3"

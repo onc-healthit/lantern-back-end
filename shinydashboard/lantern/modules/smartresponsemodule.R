@@ -17,9 +17,9 @@ smartresponsemodule_UI <- function(id) {
       column(width = 6,
              tableOutput(ns("smart_capability_count_table")))
     ),
-    h3("Endpoints by Well Known URI support"),
+    h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
-    DT::dataTableOutput(ns("well_known_endpoints"))
+    reactable::reactableOutput(ns("well_known_endpoints"))
   )
 }
 
@@ -120,19 +120,48 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
+  smartPageSizeNum <- reactiveVal(NULL)
+
+  # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    }
     res <- isolate(app_data$well_known_endpoints_tbl())
-    res <- get_filtered_data(res) %>%
-    select(url, organization_names, vendor_name, capability_fhir_version)
+    res <- get_filtered_data(res)
+
+    res <- res %>%
+    rowwise() %>%
+    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
+
+    res <- res %>%
+    distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    select(url, condensed_organization_names, vendor_name, capability_fhir_version)
     res
   })
 
-  output$well_known_endpoints <-  DT::renderDataTable({
-    datatable(selected_endpoints(),
-              colnames = c("URL", "Organization", "Developer", "FHIR Version"),
-              rownames = FALSE,
-              options = list(scrollX = TRUE)
+  output$well_known_endpoints <-  reactable::renderReactable({
+    reactable(selected_endpoints(),
+                columns = list(
+                  url = colDef(name = "URL", html = TRUE),
+                  condensed_organization_names = colDef(name = "Organization"),
+                  vendor_name = colDef(name = "Developer"),
+                  capability_fhir_version = colDef(name = "FHIR Version")
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = isolate(smartPageSizeNum())
     )
+  })
+
+  observeEvent(input$well_known_endpoints_state$length, {
+    if (is.null(isolate(smartPageSizeNum()))) {
+      smartPageSizeNum(10)
+    }
+    page <- input$well_known_endpoints_state$length
+    smartPageSizeNum(page)
   })
 
 }

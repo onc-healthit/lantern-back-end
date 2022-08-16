@@ -123,7 +123,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that newer updated item replaces item
-	prod.Edition = "2015"
+	prod.Edition = details{Id: 1, Name: "2015"}
 	hitp.CertificationEdition = "2015"
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -136,7 +136,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that older updated item does not replace item
-	prod.Edition = "2014"
+	prod.Edition = details{Id: 1, Name: "2014"}
 	hitp.CertificationEdition = "2015" // keeping 2015
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
@@ -148,30 +148,28 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
-	// check that malformed product throws error
-	prod.APIDocumentation = []string{",http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
-	err = persistProduct(ctx, store, &prod)
-	th.Assert(t, err != nil, "expected error parsing product")
-
-	// check that ambiguous update throws error
+	// check that practice type does not update
 	prod = testCHPLProd
-	prod.Edition = "2015" // same date as what is in store
-	prod.CertificationStatus = "Retired"
+	prod.Edition = details{Id: 1, Name: "2015"} // same date as what is in store
+	prod.PracticeType = details{Id: 1, Name: "New_Practice_Type"}
 	err = persistProduct(ctx, store, &prod)
-	th.Assert(t, err != nil, "expected error updating product")
+	th.Assert(t, err == nil, err)
+	storedHitp, err = store.GetHealthITProductUsingNameAndVersion(ctx, "Carefluence Open API", "1")
+	th.Assert(t, err == nil, err)
+	th.Assert(t, hitp.Equal(storedHitp), "stored data does not equal expected store data")
 
 	// check that error adding to store throws error
 	prod = testCHPLProd
-	prod.Product = "A new product"
+	prod.Product = details{Id: 1, Name: "A new product"}
 	prod.ChplProductNumber = strings.Repeat("a", 510) // name too long. throw db error.
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error adding product")
 
 	// check that error updating to store throws error
 	prod = testCHPLProd
-	prod.Product = "A new product"
-	prod.Edition = "2016"
-	prod.CertificationStatus = strings.Repeat("a", 510) // name too long. throw db error.
+	prod.Product = details{Id: 1, Name: "A new product"}
+	prod.Edition = details{Id: 1, Name: "2016"}
+	prod.CertificationStatus = details{Id: 1, Name: strings.Repeat("a", 510)} // name too long. throw db error.
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err != nil, "expected error updating product")
 
@@ -183,7 +181,7 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, err == nil, "did not expect error adding criteria")
 
 	prod = testCHPLProd
-	prod.Product = "A new product for criteria testing"
+	prod.Product = details{Id: 1, Name: "A new product for criteria testing"}
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
 
@@ -200,8 +198,8 @@ func Test_persistProduct(t *testing.T) {
 	th.Assert(t, retCritNum == tmpCrit.CertificationNumber, "returned criteria number is not expected value")
 
 	// test critera linking update
-	prod.CriteriaMet = []int{31, 32, 33, 34, 35, 36, 37, 38}
-	prod.Edition = "2020"
+	prod.CriteriaMet = criteriaMetArr
+	prod.Edition = details{Id: 1, Name: "2020"}
 	err = persistProduct(ctx, store, &prod)
 	th.Assert(t, err == nil, err)
 
@@ -234,7 +232,7 @@ func Test_persistProducts(t *testing.T) {
 
 	prod1 := testCHPLProd
 	prod2 := testCHPLProd
-	prod2.Product = "another prod"
+	prod2.Product = details{Id: 1, Name: "another prod"}
 
 	prodList := chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
@@ -245,9 +243,9 @@ func Test_persistProducts(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not persist two products as expected")
 
-	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod1.Product, prod1.Version)
+	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod1.Product.Name, prod1.Version.Name)
 	th.Assert(t, err == nil, "Did not store first product as expected")
-	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod2.Product, prod2.Version)
+	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod2.Product.Name, prod2.Version.Name)
 	th.Assert(t, err == nil, "Did not store second product as expected")
 
 	// persist with errors
@@ -257,8 +255,17 @@ func Test_persistProducts(t *testing.T) {
 
 	hook := logtest.NewGlobal()
 
-	prod2.APIDocumentation = []string{"☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html☹"}
-	expectedErr := "retreiving the API URL from the health IT product API documentation list failed: unexpected format for api doc string"
+	prod2.APIDocumentation = []apiDocumentation{
+		{
+			Criterion: criteriaMet{
+				Id: 1,
+				Number: "170.315 (g)(7)",
+				Title: "Application Access - Patient Selection",
+			},
+			Value: ".com/Carefluence-OpenAPI-Documentation.html",
+		},
+	}
+	expectedErr := "retreiving the API URL from the health IT product API documentation list failed: the URL in the health IT product API documentation string is not valid: parse \".com/Carefluence-OpenAPI-Documentation.html\": invalid URI for request"
 	prodList = chplCertifiedProductList{Results: []chplCertifiedProduct{prod1, prod2}}
 
 	err = persistProducts(ctx, store, &prodList)
@@ -269,7 +276,7 @@ func Test_persistProducts(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not persist one product as expected")
 
-	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod1.Product, prod1.Version)
+	_, err = store.GetHealthITProductUsingNameAndVersion(ctx, prod1.Product.Name, prod1.Version.Name)
 	th.Assert(t, err == nil, "Did not store first product as expected")
 
 	// expect presence of a log message
@@ -280,8 +287,8 @@ func Test_persistProducts(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected an api error to be logged")
-
+	th.Assert(t, found, "expected an api error to be logged")	
+	
 	// persist when context has ended
 
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
@@ -291,7 +298,7 @@ func Test_persistProducts(t *testing.T) {
 	cancel()
 
 	prod2 = testCHPLProd
-	prod2.Product = "another prod"
+	prod2.Product = details{Id: 1, Name: "another prod"}
 
 	err = persistProducts(ctx, store, &prodList)
 }
@@ -315,7 +322,32 @@ func Test_parseHITProd(t *testing.T) {
 
 	// test bad url in api doc string
 
-	prod.APIDocumentation = []string{"☹.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html", "☹http://carefluence.com/Carefluence-OpenAPI-Documentation.html"}
+	prod.APIDocumentation = []apiDocumentation{
+		{
+			Criterion: criteriaMet{
+				Id: 1,
+				Number: "170.315 (g)(7)",
+				Title: "Application Access - Patient Selection",
+			},
+			Value: ".com/Carefluence-OpenAPI-Documentation.html",
+		},
+		{
+			Criterion: criteriaMet{
+				Id: 1,
+				Number: "170.315 (g)(7)",
+				Title: "Application Access - Patient Selection",
+			},
+			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+		},
+		{
+			Criterion: criteriaMet{
+				Id: 1,
+				Number: "170.315 (g)(7)",
+				Title: "Application Access - Patient Selection",
+			},
+			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
+		},
+	}
 	_, err = parseHITProd(ctx, &prod, store)
 	switch errors.Cause(err).(type) {
 	case *url.Error:
@@ -375,7 +407,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/beta?api_key=tmp_api_key&fields=id%2Cedition%2Cdeveloper%2Cproduct%2Cversion%2CchplProductNumber%2CcertificationStatus%2CcriteriaMet%2CapiDocumentation%2CcertificationDate%2CpracticeType&pageNumber=0&pageSize=100\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100\": context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()

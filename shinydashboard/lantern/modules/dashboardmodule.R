@@ -3,12 +3,25 @@ library(shinydashboard)
 library(readr)
 library(scales)
 
+custom_column_small <- function(...) {
+    tags$div(
+      class = "col-md-4",
+      ...
+    )
+}
+
+custom_column_large <- function(...) {
+    tags$div(
+      class = "col-md-8",
+      ...
+    )
+}
+
 dashboard_UI <- function(id) {
 
   ns <- NS(id)
 
   tagList(
-    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon"), class = "pull-right"),
     textOutput(ns("last_updated")),
     br(),
     fluidRow(
@@ -22,12 +35,13 @@ dashboard_UI <- function(id) {
       valueBoxOutput(ns("http_404_box")),
       valueBoxOutput(ns("http_503_box"))
     ),
-    h2("Endpoint Counts by Developer and FHIR Version"),
+    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon")),
+    h3("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
-      column(width = 4,
+      custom_column_small(
              tableOutput(ns("fhir_vendor_table"))
       ),
-      column(width = 8,
+      custom_column_large(
              plotOutput(ns("vendor_share_plot")),
              htmlOutput(ns("note_text"))
       )
@@ -35,11 +49,11 @@ dashboard_UI <- function(id) {
     h3("All Endpoint Responses"),
     uiOutput("show_http_vendor_filters"),
     fluidRow(
-      column(width = 4,
+      custom_column_small(
              tableOutput(ns("http_code_table")),
              p("All HTTP response codes ever received and count of endpoints which returned that code at some point in history"),
       ),
-      column(width = 8,
+      custom_column_large(
            plotOutput(ns("response_code_plot"))
       )
     )
@@ -174,7 +188,8 @@ dashboard <- function(
     showModal(modalDialog(
       title = "Information About Lantern",
       "Lantern takes a strict approach to showing FHIR Version and Developer information. If a given FHIR
-      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version and Developer information as 'Unknown'.
+      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version as 'No Cap Stat' and
+      Developer information as 'Unknown'.
       Other endpoints may fail to properly indicate FHIR Version or Developer information in their CapabilityStatement / Conformance Resource.",
       easyClose = TRUE
     ))

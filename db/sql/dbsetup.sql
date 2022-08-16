@@ -122,9 +122,15 @@ CREATE TABLE healthit_products (
     certification_edition   VARCHAR(500),
     last_modified_in_chpl   DATE,
     chpl_id                 VARCHAR(500),
+    practice_type           VARCHAR(500),
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT healthit_product_info UNIQUE(name, version)
+);
+
+CREATE TABLE healthit_products_map (
+    id SERIAL,
+    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
 );
 
 CREATE TABLE certification_criteria (
@@ -171,18 +177,19 @@ CREATE TABLE validation_results (
 
 CREATE TABLE fhir_endpoints_info (
     id                      SERIAL PRIMARY KEY,
-    healthit_product_id     INT REFERENCES healthit_products(id) ON DELETE SET NULL,
+    healthit_mapping_id     INT, -- should link to healthit_products_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key
     vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    capability_statement    JSONB,
+    capability_statement    JSON,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
+    supported_profiles      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB,
+    smart_response          JSON,
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500),
@@ -194,18 +201,19 @@ CREATE TABLE fhir_endpoints_info_history (
     entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     user_id                 VARCHAR(500),
     id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
-    healthit_product_id     INT, -- should link to healthit_product(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
+    healthit_mapping_id     INT, -- should link to healthit_products_map(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
     vendor_id               INT,  -- should link to vendor_id(id). not using 'reference' because if the referenced vendor is deleted, we still want the historical copies to retain the ID.
     url                     VARCHAR(500),
     tls_version             VARCHAR(500),
     mime_types              VARCHAR(500)[],
-    capability_statement    JSONB,
+    capability_statement    JSON,
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
     included_fields         JSONB,
     operation_resource      JSONB,
+    supported_profiles      JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSONB, 
+    smart_response          JSON, 
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500)
@@ -218,6 +226,11 @@ CREATE TABLE endpoint_organization (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
+);
+
+CREATE TABLE list_source_info (
+    list_source            VARCHAR(500),
+    is_chpl                BOOLEAN 
 );
 
 CREATE TABLE product_criteria (
@@ -318,17 +331,18 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
-    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
+    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement::jsonb != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
     endpts_info.capability_fhir_version AS FHIR_VERSION,
     endpts_info.capability_statement->>'publisher' AS PUBLISHER,
     endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
     endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
     endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
     endpts_info.capability_statement->'format' AS FORMAT,
+    endpts_info.capability_statement->>'kind' AS KIND,
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     endpts_info.requested_fhir_version,
     orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
-    orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE,
+    orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, orgs.npi_id as NPI_ID,
     links.confidence AS MATCH_SCORE, endpts_metadata.availability
 FROM endpoint_organization AS links
 RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
@@ -380,7 +394,7 @@ CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_v
 CREATE INDEX security_code_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security,service}'->'coding'->>'code'));
 CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security}' -> 'service' ->> 'text'));
 
-CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->'capabilities'));
+CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->>'capabilities'));
 
 CREATE INDEX location_zipcode_idx ON npi_organizations ((location->>'zipcode'));
 

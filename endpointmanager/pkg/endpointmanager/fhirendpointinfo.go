@@ -14,22 +14,25 @@ import (
 // Information about the FHIR API endpoint is populated by the FHIR
 // capability statement found at that endpoint.
 type FHIREndpointInfo struct {
-	ID                    int
-	HealthITProductID     int
-	URL                   string
-	TLSVersion            string
-	MIMETypes             []string
-	VendorID              int
-	CapabilityStatement   capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
-	ValidationID          int
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-	SMARTResponse         smartparser.SMARTResponse
-	IncludedFields        []IncludedField
-	OperationResource     map[string][]string
-	Metadata              *FHIREndpointMetadata
-	RequestedFhirVersion  string
-	CapabilityFhirVersion string
+	ID                       int
+	HealthITProductID        int
+	URL                      string
+	TLSVersion               string
+	MIMETypes                []string
+	VendorID                 int
+	CapabilityStatement      capabilityparser.CapabilityStatement // the JSON representation of the FHIR capability statement
+	CapabilityStatementBytes []byte
+	ValidationID             int
+	CreatedAt                time.Time
+	UpdatedAt                time.Time
+	SMARTResponse            smartparser.SMARTResponse
+	SMARTResponseBytes       []byte
+	IncludedFields           []IncludedField
+	OperationResource        map[string][]string
+	Metadata                 *FHIREndpointMetadata
+	RequestedFhirVersion     string
+	CapabilityFhirVersion    string
+	SupportedProfiles        []SupportedProfile
 }
 
 // EqualExcludeMetadata checks each field of the two FHIREndpointInfos except for metadata fields to see if they are equal.
@@ -90,6 +93,11 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 
+	// May need to change this so that order doesn't matter
+	if !cmp.Equal(e.SupportedProfiles, e2.SupportedProfiles) {
+		return false
+	}
+
 	// If the two endpoints have the same values in a different order, the Equal
 	// function will return false, so the resources need to be sorted for the Equal
 	// function to work as expected
@@ -126,6 +134,13 @@ type IncludedField struct {
 	Extension bool
 }
 
+// SupportedProfile is a struct used to keep track of all of the profiles in the capability statement
+type SupportedProfile struct {
+	ProfileURL  string
+	ProfileName string
+	Resource    string
+}
+
 // Validation holds all of the validation results from running the validation checks
 type Validation struct {
 	Results []Rule
@@ -146,7 +161,6 @@ type Rule struct {
 type RuleOption string
 
 const (
-	GeneralMimeTypeRule  RuleOption = "generalMimeType"
 	CapStatExistRule     RuleOption = "capStatExist"
 	TLSVersion           RuleOption = "tlsVersion"
 	PatResourceExists    RuleOption = "patResourceExists"
