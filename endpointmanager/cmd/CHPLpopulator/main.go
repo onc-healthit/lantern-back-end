@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	http "net/http"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type softwareInfo struct {

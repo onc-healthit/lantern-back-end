@@ -69,10 +69,7 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
-<<<<<<< HEAD
 		&supportedProfilesJSON,
-=======
->>>>>>> 4c239fa3 (Validation migration fix (#253))
 		&validationResultIDNullable,
 		&metadataID,
 		&endpointInfo.RequestedFhirVersion,
@@ -286,10 +283,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		&smartResponseJSON,
 		&includedFieldsJSON,
 		&operResourceJSON,
-<<<<<<< HEAD
 		&supportedProfilesJSON,
-=======
->>>>>>> 4c239fa3 (Validation migration fix (#253))
 		&validationResultIDNullable,
 		&metadataID,
 		&endpointInfo.RequestedFhirVersion,
@@ -404,10 +398,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-<<<<<<< HEAD
 		supportedProfilesJSON,
-=======
->>>>>>> 4c239fa3 (Validation migration fix (#253))
 		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
@@ -473,10 +464,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 		smartResponseJSON,
 		includedFieldsJSON,
 		operResourceJSON,
-<<<<<<< HEAD
 		supportedProfilesJSON,
-=======
->>>>>>> 4c239fa3 (Validation migration fix (#253))
 		nullableInts[2],
 		metadataID,
 		e.RequestedFhirVersion,
