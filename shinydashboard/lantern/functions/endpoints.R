@@ -50,8 +50,8 @@ get_endpoint_organization_list <- function(endpoint) {
 
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
-  vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
-  short_name = c("Allscripts", "CareEvolution", "Cerner", "Epic", "MEDITECH", "Unknown"),
+  vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Microsoft Corporation", "Unknown"),
+  short_name = c("Allscripts", "CareEvolution", "Cerner", "Epic", "MEDITECH", "Microsoft", "Unknown"),
   stringsAsFactors = FALSE)
 
 # Get Endpoint Totals
@@ -131,13 +131,16 @@ get_http_response_summary_tbl <- function(db_tables) {
 
 # Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
-  endpoint_tbl %>%
+  tbl <- endpoint_tbl %>%
     distinct(vendor_name, url, fhir_version) %>%
     group_by(vendor_name, fhir_version) %>%
     tally() %>%
     ungroup() %>%
     select(vendor_name, fhir_version, n) %>%
-    left_join(vendor_short_names)
+    left_join(vendor_short_names) %>%
+    mutate(short_name = ifelse(is.na(short_name), vendor_name, short_name))
+
+    tbl
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
