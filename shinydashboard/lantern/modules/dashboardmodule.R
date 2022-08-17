@@ -22,12 +22,10 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    textOutput(ns("last_updated")),
-    br(),
     fluidRow(
+      infoBoxOutput(ns("updated_time_box"), width = 4),
       infoBoxOutput(ns("total_endpoints_box"), width = 4),
-      infoBoxOutput(ns("indexed_endpoints_box"), width = 4),
-      infoBoxOutput(ns("nonindexed_endpoints_box"), width = 4)
+      infoBoxOutput(ns("indexed_endpoints_box"), width = 4)
     ),
     h2("Current endpoint responses:"),
     fluidRow(
@@ -56,7 +54,8 @@ dashboard_UI <- function(id) {
       custom_column_large(
            plotOutput(ns("response_code_plot"))
       )
-    )
+    ),
+    tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;")
   )
 }
 
@@ -92,7 +91,12 @@ dashboard <- function(
   # create a summary table to show the response codes received along with
   # the description for each code
 
-  output$last_updated <- renderText(paste("Last Updated:", get_endpoint_last_updated(db_tables)))
+    output$updated_time_box <- renderInfoBox({
+    infoBox(
+      "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
+      color = "purple"
+    )
+  })
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
@@ -103,17 +107,10 @@ dashboard <- function(
 
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
-      "Indexed Endpoints",
+      "Indexed Endpoints*",
       isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
       icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
-    )
-  })
-
-  output$nonindexed_endpoints_box <- renderInfoBox({
-    infoBox(
-      "Non-Indexed Endpoints", isolate(app_data$fhir_endpoint_totals()$nonindexed_endpoints), icon = tags$i(class = "fa fa-comment-slash", "aria-hidden" = "true", role = "presentation", "aria-label" = "comment-slash icon"),
-      color = "maroon"
     )
   })
 
@@ -168,7 +165,7 @@ dashboard <- function(
   )
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
-    geom_bar(stat = "identity") +
+    geom_bar(stat = "identity", show.legend = FALSE) +
       geom_text(aes(label = stat(y), group = code),
                 stat = "summary", fun = sum, vjust = -1
       ) +
@@ -186,11 +183,21 @@ dashboard <- function(
 
   observeEvent(input$show_info, {
     showModal(modalDialog(
-      title = "Information About Lantern",
-      "Lantern takes a strict approach to showing FHIR Version and Developer information. If a given FHIR
-      endpoint returns an error or cannot be reached during the current query period, Lantern will report FHIR Version as 'No Cap Stat' and
-      Developer information as 'Unknown'.
-      Other endpoints may fail to properly indicate FHIR Version or Developer information in their CapabilityStatement / Conformance Resource.",
+      title = "Information About Lantern FHIR Version and Developer Data",
+       p(HTML("Lantern takes a strict approach to showing FHIR Version and Developer Information. Some terminology Lantern uses to describe FHIR Version and Developer Information are as follows: <br><br>
+       
+      <strong>Endpoints may return an error, may not be able to be reached during the current query period, or may not return a CapabilityStatement / Conformance Resource. Lantern reports FHIR Version and Developer Information for these situations as follows:</strong> <br><br>
+       &ensp;- <b>Developer:</b> Lantern will report Developer information as \"Unknown\" in any of these situations, since Developer information is collected from the publisher field of an endpoint's CapabilityStatement / Conformance Resource. <br>
+       &ensp;- <b>FHIR Version:</b> Lantern will report a FHIR Version as \"No Cap Stat\" in any of these situations, since FHIR Version information is collected from the fhirVersion field of an endpoint's CapabilityStatement / Conformance Resource.<br><br>
+       
+       <strong>Endpoints may fail to properly indicate FHIR Version or Developer information in their CapabilityStatement / Conformance Resource. Lantern handles these situations as follows:</strong> <br><br>
+       &ensp;- <b>Developer:</b> If an endpoint fails to properly indicate Developer Information such that Lantern cannot make a match between the Developer information included in the publisher field of the CapabilityStatement / Conformance Resource and the list of Developers Lantern 
+       has stored, Lantern will report the Developer information as \"Unknown\". <br>
+       &ensp;- <b>FHIR Version:</b> If an endpoint fails to properly indicate FHIR Version Information such that Lantern cannot recognize the FHIR Version included in the fhirVersion field of the CapabilityStatement / Conformance Resource as one of the valid published FHIR Versions, Lantern will take the following steps: <br>
+       &emsp;1. Lantern will check if the FHIR Version contains any dash (-) characters. If it does, Lantern will remove the dash and everything that comes after it, and then check if it is a valid FHIR Version. <br>
+       &emsp;2. If the FHIR Version does not have any dashes, or if after removing the dash and everything after it from the reported FHIR Version it is still is invalid, Lantern will report the FHIR Version as \"Unknown\". <br>
+       &emsp;- <i>Note: Lantern will still display the invalid FHIR Version exactly as indicated by the endpoint's capability statement on the endpoint tab table for that endpoint, and within the popup modal for that particular endpoint.</i>
+       ")),
       easyClose = TRUE
     ))
   })
