@@ -1,3 +1,4 @@
+tags$a("Skip to Content", href = "#content", class = "show-on-focus")
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
@@ -333,7 +334,7 @@ ui <- dashboardPage(
           attributeFilter: [\"tabindex\"]
         });
       }
-
+      
       let sideMenu = document.getElementsByClassName(\"sidebar-menu\")
       let sideMenuList = sideMenu[0].getElementsByTagName(\"li\")
       for (let liElem of sideMenuList) {
