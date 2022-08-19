@@ -133,24 +133,24 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 	// Add to healthITProduct Map table with given reference ID
-	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp1.ID) 
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 9999, hitp1.ID) 
 	if err != nil {
 		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
 	}
-	if healthITMapID != 5 {
+	if healthITMapID != 9999 {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 	// Add another healthITProduct Map table with same reference ID
-	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp2.ID) 
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 9999, hitp2.ID) 
 	if err != nil {
 		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
 	}
-	if healthITMapID != 5 {
+	if healthITMapID != 9999 {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 
 	// Retrieve healthITProduct map info
-	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 5)
+	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 9999)
 	if err != nil {
 		t.Errorf("Error retrieving healthITProduct array from healthITProduct map table: %s", err.Error())
 	}
