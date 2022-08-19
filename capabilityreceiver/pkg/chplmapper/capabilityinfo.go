@@ -89,6 +89,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
 	
 	softwareName := ""
+	softwareVersion := ""
 	chplIDArr := []string{}
 
 	if ep.CapabilityStatement != nil {
@@ -101,7 +102,7 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+		softwareVersion, err = ep.CapabilityStatement.GetSoftwareVersion()
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
@@ -128,11 +129,13 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 	}
 
-	if softwareName != nil {
-		healthITProductsArr, err := store.GetActiveHealthITProductsUsingName(ctx, softwareName);
+	var healthITProductsArr []*endpointmanager.HealthITProduct
+	if len(softwareName) != 0 {
+		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName);
 		if err != nil {
 			return err
 		}
+	}
 
 	for _, healthITProduct := range healthITProductsArr {
 		if len(softwareVersion) == 0 {

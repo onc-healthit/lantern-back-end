@@ -348,7 +348,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example3.com/FHIR/DSTU2",
+		URL:               "example5.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Inc."}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -365,7 +365,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		CapabilityStatement: cs}
 
 	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
-	err = MatchEndpointToProduct(ctx, epInfo, store, path)
+	err = MatchEndpointToProduct(ctx, epInfo, store, path, listSourceMap)
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
@@ -377,7 +377,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example4.com/FHIR/DSTU2",
+		URL:               "example6.com/FHIR/DSTU2",
 		OrganizationNames: []string{"Example Inc."}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -406,7 +406,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		CapabilityStatement: cs}
 
 	path = filepath.Join("../../testdata", "test_chpl_product_mapping.json")
-	err = MatchEndpointToProduct(ctx, epInfo, store, path)
+	err = MatchEndpointToProduct(ctx, epInfo, store, path, listSourceMap)
 	th.Assert(t, err == nil, err)
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
