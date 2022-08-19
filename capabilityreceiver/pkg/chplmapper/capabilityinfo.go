@@ -10,6 +10,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 )
 
@@ -135,12 +136,12 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 
 	for _, healthITProduct := range healthITProductsArr {
 		if len(softwareVersion) == 0 {
-			if !arrContains(chplIDArr, healthITProduct.CHPLID) {
+			if !helpers.StringArrayContains(chplIDArr, healthITProduct.CHPLID) {
 				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 			}
 		} else {
 			if strings.EqualFold(healthITProduct.Version, softwareVersion) {
-				if !arrContains(chplIDArr, healthITProduct.CHPLID) {
+				if !helpers.StringArrayContains(chplIDArr, healthITProduct.CHPLID) {
 					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
