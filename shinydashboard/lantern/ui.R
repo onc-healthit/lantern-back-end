@@ -1,3 +1,4 @@
+tags$a("Skip to Content", href = "#content", class = "show-on-focus")
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
