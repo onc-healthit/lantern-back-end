@@ -75,6 +75,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		Version:              "1.0",
 		VendorID:             vendors[2].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:   "Active",
 		CertificationEdition: "2014",
 		PracticeType: "Ambulatory"}
 	var hitp4 = &endpointmanager.HealthITProduct{
@@ -82,6 +83,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		Version:              "2.0",
 		VendorID:             vendors[2].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:   "Active",
 		CertificationEdition: "2014",
 		PracticeType: "Ambulatory"}
 	var hitp5 = &endpointmanager.HealthITProduct{
@@ -89,6 +91,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		Version:              "2.0",
 		VendorID:             vendors[2].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:   "Active",
 		CertificationEdition: "2014",
 		PracticeType: "Ambulatory"}
 	// add products
@@ -143,53 +146,27 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
 	if len(hitp1s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h1s))
+		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(hitp1s))
 	}
 	if !hitp1s[0].Equal(hitp1) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
+	// Should be zero since healthit product 2 is not active
 	hitp2s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp2.Name)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
-	if len(hitp2s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h2s))
-	}
-	if !hitp2s[0].Equal(hitp2) {
-		t.Errorf("retrieved product is not equal to saved product.")
+	if len(hitp2s) != 0 {
+		t.Errorf("Expected to retrieve 0 entries from DB. Retrieved %d.", len(hitp2s))
 	}
 
-	hitp2s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp3.Name)
+	hitp3s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp3.Name)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
-	if len(hitp2s) != 3 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h2s))
-	}
-
-	// retrieve products using vendor
-
-	h1s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[0].ID)
-	if err != nil {
-		t.Errorf("Error getting health it product: %s", err.Error())
-	}
-	if len(h1s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h1s))
-	}
-	if !h1s[0].Equal(hitp1) {
-		t.Errorf("retrieved product is not equal to saved product.")
-	}
-
-	h2s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[1].ID)
-	if err != nil {
-		t.Errorf("Error getting health it product: %s", err.Error())
-	}
-	if len(h2s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h2s))
-	}
-	if !h2s[0].Equal(hitp2) {
-		t.Errorf("retrieved product is not equal to saved product.")
+	if len(hitp3s) != 3 {
+		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(hitp3s))
 	}
 
 	// Add to healthITProduct Map table with no reference ID given
