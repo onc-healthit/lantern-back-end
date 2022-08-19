@@ -229,7 +229,7 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 	return hitps, nil
 }
 
-// GetHealthITProductsUsingName returns a slice of active HealthITProducts that were created by the given name
+// GetActiveHealthITProductsUsingName returns a slice of active HealthITProducts that were created by the given name
 func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name string) ([]*endpointmanager.HealthITProduct, error) {
 	var hitps []*endpointmanager.HealthITProduct
 
