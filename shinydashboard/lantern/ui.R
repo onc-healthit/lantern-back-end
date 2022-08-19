@@ -1,3 +1,4 @@
+tags$a("Skip to Content", href = "#content", class = "show-on-focus")
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
@@ -42,7 +43,31 @@ ui <- dashboardPage(
 
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
+    tags$script(HTML("
+      $(document).ready(function() {
+        $(\"header\").find(\"nav\").prepend(\"<a href='#content' class='show-on-focus'>Skip to Content</a>\");
+      })
+     ")
+    ),
     tags$head(tags$style(HTML("
+      .show-on-focus {     
+        position: absolute;
+        top: -10em;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        
+      }
+      .show-on-focus:focus {  
+        top: 5px;   
+        position: absolute;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+      }
       .content-wrapper, .right-side {
         background-color: #F6F7F8;
       }
@@ -99,22 +124,100 @@ ui <- dashboardPage(
         color: #4F4F4F;
         opacity: 1!important;
       }
+      a:link {
+        text-decoration: none;
+      }
+      a:visited {
+        text-decoration: none;
+      }
+      a:hover {
+        font-weight: bold;
+      }
+      button:hover {
+        border: 3px solid!important;
+      }      
+      select:hover {
+        border: 3px solid!important;
+      }
+      a:active {
+        font-weight: bold;
+      }
+      button:active {
+        border: 3px solid!important;
+      }      
+      select:active {
+        border: 3px solid!important;
+      }
+      a:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      button:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      select:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .selectize-input:hover {
+        border: 3px solid!important;
+      }
+      .selectize-input:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      input:hover {
+        border: 3px solid!important;
+      }
+      input:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-th:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-sort-header:hover {
+        font-weight: bold;
+      }
+      .rt-td:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-td:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      #location_page-location_map:focus-visible {
+        border: 4px solid!important;
+      }
+
     "))),
-    tags$script(
+    tags$script(HTML(
       "let elems = document.getElementsByClassName('content-wrapper');
-        elems[0].setAttribute('role', 'main');
+      elems[0].setAttribute('role', 'main');
+      elems[0].id = 'content'
 
-        var e = document.getElementById('side_menu');
+      var e = document.getElementById('side_menu');
 
-        var d = document.createElement('li');
-        d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input')
-        d.dataset.value = e.dataset.value;
+      var d = document.createElement('li');
+      d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input');
+      d.dataset.value = e.dataset.value;
 
-        e.parentNode.replaceChild(d, e);
-        e.remove();
-        d.id = 'side_menu'
-        "
-    ),
+      e.parentNode.replaceChild(d, e);
+      e.remove();
+      d.id = 'side_menu';
+      "
+    )),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
     uiOutput("resource_tab_popup"),
@@ -186,6 +289,25 @@ ui <- dashboardPage(
     ),
     tags$footer(class = "footer",
       includeHTML("disclaimer.html")
-    )
+    ),
+    tags$script("
+      let observer = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.type === \"attributes\") {
+            if (mutation.target.hasAttribute(\"tabindex\")) {
+              mutation.target.removeAttribute(\"tabindex\");
+            }
+          }
+        }
+      });
+
+      let tabPanes = document.getElementsByClassName(\"tab-pane\");
+      for (let tab of tabPanes) {
+        observer.observe(tab, {
+          attributes: true,
+          attributeFilter: [\"tabindex\"]
+        });
+      }
+    ")
   )
 )
