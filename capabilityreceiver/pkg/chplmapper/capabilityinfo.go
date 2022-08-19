@@ -87,7 +87,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
-	
+
 	softwareName := ""
 	softwareVersion := ""
 	chplIDArr := []string{}
@@ -106,9 +106,9 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		
+
 		chplIDMatchFile := chplProductNameVersion[softwareName][softwareVersion]
-	
+
 		if len(chplIDMatchFile) != 0 {
 			chplIDArr = append(chplIDArr, chplIDMatchFile)
 		}
@@ -123,15 +123,13 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	for _, fhirEndpoint := range fhirEndpointList {
 		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
 		if len(chplIDList) > 0 {
-			for _, chplID := range chplIDList {
-				chplIDArr = append(chplIDArr, chplID)
-			}
+			chplIDArr = append(chplIDArr, chplIDList...)
 		}
 	}
 
 	var healthITProductsArr []*endpointmanager.HealthITProduct
 	if len(softwareName) != 0 {
-		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName);
+		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName)
 		if err != nil {
 			return err
 		}
