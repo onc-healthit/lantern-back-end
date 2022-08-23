@@ -19,6 +19,7 @@ smartresponsemodule_UI <- function(id) {
     ),
     h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
+    tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
     reactable::reactableOutput(ns("well_known_endpoints"))
   )
 }
