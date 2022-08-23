@@ -290,11 +290,11 @@ ui <- dashboardPage(
     tags$footer(class = "footer",
       includeHTML("disclaimer.html")
     ),
-    tags$script("
-      let observer = new MutationObserver(function(mutations) {
+    tags$script(HTML("
+      let tabIndexObserver = new MutationObserver(function(mutations) {
         for (let mutation of mutations) {
           if (mutation.type === \"attributes\") {
-            if (mutation.target.hasAttribute(\"tabindex\")) {
+            if (mutation.target.hasAttribute(\"tabindex\") && mutation.target.getAttribute(\"tabindex\") !== \"-5\") {
               mutation.target.removeAttribute(\"tabindex\");
             }
           }
@@ -303,11 +303,53 @@ ui <- dashboardPage(
 
       let tabPanes = document.getElementsByClassName(\"tab-pane\");
       for (let tab of tabPanes) {
-        observer.observe(tab, {
+        tabIndexObserver.observe(tab, {
           attributes: true,
           attributeFilter: [\"tabindex\"]
         });
       }
-    ")
+
+      let sideMenu = document.getElementsByClassName(\"sidebar-menu\")
+      let sideMenuList = sideMenu[0].getElementsByTagName(\"li\")
+      for (let liElem of sideMenuList) {
+        let sideMenuLinks = liElem.getElementsByTagName(\"a\")
+        if (sideMenuLinks.length > 0) {
+          for (let aElem of sideMenuLinks) {
+            tabIndexObserver.observe(aElem, {
+              attributes: true,
+              attributeFilter: [\"tabindex\"]
+            });
+          }
+        }
+      }
+
+      let sideBarCollapsedObserver = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.type === \"attributes\") {
+            let sidebarMenu = document.getElementsByClassName(\"sidebar-menu\")
+            let sidebarMenuList = sidebarMenu[0].getElementsByTagName(\"li\")
+            for (let liElem of sidebarMenuList) {
+              let sidebarMenuLinks = liElem.getElementsByTagName(\"a\")
+              if (sidebarMenuLinks.length > 0) {
+                for (let aElem of sidebarMenuLinks) {
+                  if (mutation.target.getAttribute(\"data-collapsed\") === \"true\") {
+                    aElem.setAttribute(\"tabindex\", \"-5\")
+                  } else {
+                    aElem.removeAttribute(\"tabindex\");
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      let sideBarCollapsed = document.getElementById(\"sidebarCollapsed\")
+      sideBarCollapsedObserver.observe(sideBarCollapsed, {
+        attributes: true,
+        attributeFilter: [\"data-collapsed\"]
+      });
+
+    "))
   )
 )
