@@ -63,6 +63,8 @@ This removes all docker images, networks, and local volumes.
      ```bash
       make update_source_data_prod
       ```
+    -Note: Google chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
+    
 3. Run the following command to query NPPES for their endpoint and npi data files and automatically populate the database with this information, as the files are too large to be persisted in our list of resources, as well as populate the database using the data found in `lantern-back-end/resources/prod_resources`.
 -Note: The NPPES npidata_pfile and endpoint_pfile are very large and therefore are not persisted in our directory of prod resources, so to add the full NPPES data into the database, you must run this `make populatedb_prod` command which will query NPPES for their endpoint and npi data files, cut out all the entries in the npi data file that are not organization entries, and automatically add the information to the database before deleting these large NPPES files. It will also add the data found in `lantern-back-end/resources/prod_resources` to the database.
 
@@ -123,11 +125,13 @@ The populate db prod script expects the resources directory to contain the same 
      ```bash
       make update_source_data
       ```
+    -Note: Google chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
 
     Run the following command to only query the endpoint sources listed in EndpointResourceList.json, which can be found in `lantern-back-end/resources/prod_resources`, and CHPL for it's list of endpoint list sources. 
        ```bash
       make update_source_data_prod
       ```
+    -Note: Google chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
 
     2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
     -Note: Since you are doing development, use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
@@ -551,7 +555,7 @@ If you make changes in one package and would like to use those changes in anothe
 
 # License
 
-Copyright 2021 The MITRE Corporation
+Copyright 2022 The MITRE Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
