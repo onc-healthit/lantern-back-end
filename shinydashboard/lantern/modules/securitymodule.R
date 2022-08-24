@@ -62,7 +62,7 @@ securitymodule <- function(
 
     res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
     res
   })

@@ -124,7 +124,7 @@ validationsmodule <- function(
     }
 
     res <- res %>%
-    mutate(linkURL = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   get_validation_versions <- reactive({
