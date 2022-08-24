@@ -200,6 +200,14 @@ ui <- dashboardPage(
       #location_page-location_map:focus-visible {
         border: 4px solid!important;
       }
+      table.dataTable thead .sorting:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      table.dataTable thead .sorting:hover {
+        border: 2px solid!important;
+      }
 
     "))),
     tags$script(HTML(
@@ -349,6 +357,48 @@ ui <- dashboardPage(
         attributes: true,
         attributeFilter: [\"data-collapsed\"]
       });
+
+      let newNodesObserver = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.addedNodes.length > 0) {
+            for (let newNode of mutation.addedNodes) {
+              if (newNode.id === \"shiny-modal-wrapper\") {
+                
+                let modalTabPanes = document.getElementsByClassName(\"tab-pane\");
+                for (let tab of modalTabPanes) {
+                  tabIndexObserver.observe(tab, {
+                    attributes: true,
+                    attributeFilter: [\"tabindex\"]
+                  });
+                }
+
+                
+                let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
+                for (let navTab of navBarTabs) {
+                  liElements = navTab.getElementsByTagName(\"li\")
+                  for (liElem of liElements) {
+                    let aElements = liElem.getElementsByTagName(\"a\")
+                    if (aElements.length > 0) {
+                      tabIndexObserver.observe(aElements[0], {
+                        attributes: true,
+                        attributeFilter: [\"tabindex\"]
+                      });
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+        }
+      })
+
+      newNodesObserver.observe(document.body, {
+          childList: true, 
+          subtree: true, 
+          attributes: false, 
+          characterData: false
+      })
 
     "))
   )
