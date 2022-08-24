@@ -691,7 +691,8 @@ output$endpoint_products_table <- DT::renderDataTable({
 endpoint_products_page <- function() {
   page <- fluidPage(
     h1("Endpoint CHPL Products"),
-    DT::dataTableOutput("endpoint_products_table")
+    DT::dataTableOutput("endpoint_products_table"),
+    p("Note: The software products shown in the table above are matched with the best guess possible given the information Lantern has available, and therefore may not be completely accurate.")
   )
   page
 }
