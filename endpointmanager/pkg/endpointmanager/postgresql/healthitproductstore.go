@@ -145,14 +145,9 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	return &hitp, err
 }
 
-// GetHealthITProductsUsingVendor returns a slice of HealthITProducts that were created by the given vendor_id
-func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int) ([]*endpointmanager.HealthITProduct, error) {
+// GetActiveHealthITProductsUsingName returns a slice of active HealthITProducts that were created by the given name
+func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name string) ([]*endpointmanager.HealthITProduct, error) {
 	var hitps []*endpointmanager.HealthITProduct
-	var hitp endpointmanager.HealthITProduct
-	var locationJSON []byte
-	var certificationCriteriaJSON []byte
-	var vendorIDNullable sql.NullInt64
-	var practiceTypeString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -173,14 +168,20 @@ func (s *Store) GetHealthITProductsUsingVendor(ctx context.Context, vendorID int
 		practice_type,
 		created_at,
 		updated_at
-	FROM healthit_products WHERE vendor_id=$1`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement, vendorID)
+	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=regexp_replace(LOWER($1), '\W+', '', 'g') and certification_status = 'Active'`
+	rows, err := s.DB.QueryContext(ctx, sqlStatement, name)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
+		var hitp endpointmanager.HealthITProduct
+		var locationJSON []byte
+		var certificationCriteriaJSON []byte
+		var vendorIDNullable sql.NullInt64
+		var practiceTypeString sql.NullString
+
 		err = rows.Scan(
 			&hitp.ID,
 			&hitp.Name,
