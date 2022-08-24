@@ -166,7 +166,7 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
 	if len(hitp3s) != 3 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(hitp3s))
+		t.Errorf("Expected to retrieve 3 entries from DB. Retrieved %d.", len(hitp3s))
 	}
 
 	// Add to healthITProduct Map table with no reference ID given
