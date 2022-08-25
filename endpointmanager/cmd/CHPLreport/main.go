@@ -29,14 +29,14 @@ func main() {
 			vendors.name as developer,
    			CASE WHEN COUNT(metadata.http_response)=0
         		THEN NULL
-        		ELSE ROUND(100 - COUNT(NULLIF(metadata.http_response, 200))::numeric/COUNT(metadata.http_response) * 100,2)
+        		ELSE ROUND(COUNT(NULLIF(metadata.http_response, 200))::numeric/COUNT(metadata.http_response) * 100,2)
    			END AS server_status_percent,
-   			string_agg(DISTINCT metadata.http_response::varchar, ',') AS server_status_info,
+   			string_agg(DISTINCT metadata.http_response::varchar, ',') AS server_status,
    			CASE WHEN hist.capability_statement = 'null'
         		THEN 'missing'
         		ELSE 'valid'
    			END AS cap_stat_status,
-   			ROUND(COUNT(NULLIF(hist.capability_statement, 'null'))::numeric / COUNT(hist.capability_statement) * 100,2) AS cap_stat_status_days,
+   			ROUND(COUNT(hist.capability_statement = 'null')::numeric / COUNT(hist.capability_statement) * 100,2) AS cap_stat_status_percent,
 			CASE WHEN metadata.http_response != 200
 				THEN 'Unreachable'
 			    ELSE 'Doesn''t service Capability Statement request'
