@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
@@ -60,13 +58,6 @@ func GetEnptsAndSend(
 		log.Infof("Waiting %d seconds to start history pruning and json export", len(listOfEndpoints))
 		// Wait half a second for every endpoint to ensure querier is done before starting history pruning and json export
 		time.Sleep(time.Duration(time.Duration(len(listOfEndpoints)/2) * time.Second))
-		log.Info("Starting history pruning")
-		historypruning.PruneInfoHistory(ctx, store, true)
-		log.Info("Starting json export")
-		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", "30days")
-		if err != nil {
-			errs <- err
-		}
 
 		log.Infof("Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
