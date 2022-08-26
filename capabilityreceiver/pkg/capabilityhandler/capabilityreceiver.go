@@ -288,6 +288,16 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// until there's a reason to update it
 		fhirEndpoint.ValidationID = existingEndpt.ValidationID
 
+		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
+		if err != nil {
+			return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
+		}
+
+		err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
+		if err != nil {
+			return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
+		}
+
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
@@ -300,16 +310,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.OperationResource = fhirEndpoint.OperationResource
 			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
-
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
-			if err != nil {
-				return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
-			}
-
-			err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
-			if err != nil {
-				return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
-			}
 
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
