@@ -1,6 +1,18 @@
 [
 	{
 		"FormatType": "Lantern",
+		"URL": "https://apidocs.onemedical.io/fhir/overview/",
+		"EndpointName": "1Life Healthcare, Inc",
+		"FileName": "onemedicalEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://cmpl.aidbox.app/smart",
+		"EndpointName": "Health Samurai, Inc.",
+		"FileName": "aidboxEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"EndpointName": "Darena Solutions LLC",
 		"FileName": "bluebuttonproEndpointSources.json"
@@ -94,6 +106,12 @@
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
 		"FileName": "techcareehrEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.vision-works.com/cert/FHIR",
+		"EndpointName": "Vision Works, Inc.",
+		"FileName": "vision-worksEndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

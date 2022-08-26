@@ -1,0 +1,509 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://mtrestapis-live02.andersonhealthcare.org:443/v2/argonaut/v1",
+			"OrganizationName": "Anderson Hosp Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.avhnh.org:443/v2/argonaut/v1",
+			"OrganizationName": "North Country Healthcare Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.arh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Appalachian Reg HC Expanse READY LEV 4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.atchhosp.org:443/v2/argonaut/v1",
+			"OrganizationName": "Amberwell Health- Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://meadehospitalapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Artesian Valley MaaS Pod 003 04",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.boonehospital.com:443/v2/argonaut/v1",
+			"OrganizationName": "Boone County Hospital 6.1 (Hosted-ICE Technologies)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.beauregard.org:443/v2/argonaut/v1",
+			"OrganizationName": "Beauregard Health System Expanse (Hosted by Engage)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.bmhsc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Beaufort Memorial Hosp 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.chc.net:443/v2/argonaut/v1",
+			"OrganizationName": "Med Center Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.bidh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Beth Israel Deaconess Expanse (Hosted by MEDITECH)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hollandbloorview.ca:443/v2/argonaut/v1",
+			"OrganizationName": "Holland Bloorview Kids Rehab - C/S",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hollandbloorview.ca:443/v2/argonaut/v1",
+			"OrganizationName": "Holland Bloorview Kids Rehab Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.bchsi.org:443/v2/argonaut/v1",
+			"OrganizationName": "Bacon County Hospital Expanse (Hosted by Cloud Wave)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://booneapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Boone Hospital Ctr MaaS Pod 004 01 GCP",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.brhc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Bothwell Regional Health Ctr 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.broadlawns.org:443/v2/argonaut/v1",
+			"OrganizationName": "Broadlawns Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapi-live01.bartletthospital.org:443/v2/argonaut/v1",
+			"OrganizationName": "Bartlett Reg Hosp Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.bvhpr.org:443/v2/argonaut/v1",
+			"OrganizationName": "Bella Vista Hospital 6.1 Trdl (Hosted NTTDATA)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.cmhlink.org:443/v2/argonaut/v1",
+			"OrganizationName": "CalvertHealth Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mountnittany.org:443/v2/argonaut/v1",
+			"OrganizationName": "Mount Nittany Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.ccmh.co:443/v2/argonaut/v1",
+			"OrganizationName": "Cedar Cnty Mem Hosp Expanse READY Lev 1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.crmcinc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Coffeyville Reg Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-explive01.gjhosp.org:443/v2/argonaut/v1",
+			"OrganizationName": "Community Hospital Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mychamp.ca:443/v2/argonaut/v1",
+			"OrganizationName": "CHAMP Queens/Bruy/Mont/Glen Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.catawbavalleymc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Catawba Valley Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://cmhospapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Community Mem Hosp MaaS Pod 001 08",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.cchwyo.org:443/v2/argonaut/v1",
+			"OrganizationName": "Campbell County Mem Hosp 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://coonmemapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Dallam Hartley County Hosp MaaS Pod 007 12",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-cap.app.medcity.net/v2/argonaut/v1",
+			"OrganizationName": "HCA-CAPELLA UNIVERSE \u003cCOC\u003e",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://copiahhealthapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Copiah County Med Ctr MaaS Pod 003 03",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.colquittregional.com:443/v2/argonaut/v1",
+			"OrganizationName": "Colquitt Reg Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://cascademedicalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Cascade Medical Center MaaS Pod 005 03",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://ccmcapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Comanche County Med Ctr MaaS Pod 003 01",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://meditech-api.citizensmemorial.com:443/v2/argonaut/v1",
+			"OrganizationName": "Citizens Memorial Healthcare Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://cmhecuapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Cumberland Mem Hosp MaaS POD 007 06",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live-exp01.conwayregional.org:443/v2/argonaut/v1",
+			"OrganizationName": "Conway Regional Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.cmcfc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Community Medical Center 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.mmc-pr.com:443/v2/argonaut/v1",
+			"OrganizationName": "Manati Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.dcmh.net:443/v2/argonaut/v1",
+			"OrganizationName": "Decatur County Mem Hosp 6.1 (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.deborah.org:443/v2/argonaut/v1",
+			"OrganizationName": "Deborah Heart and Lung Ctr Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-exp-live01.dchsystem.com:443/v2/argonaut/v1",
+			"OrganizationName": "DCH Health Sys Expanse RDY Lev 4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.dh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Doylestown Hospital Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.deltaregional.com:443/v2/argonaut/v1",
+			"OrganizationName": "Delta Reg Med Ctr 6.1 (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-expanselive.duncanregional.com:443/v2/argonaut/v1",
+			"OrganizationName": "Duncan Reg Hosp Expanse (hosted by Engage)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.etch.com:443/v2/argonaut/v1",
+			"OrganizationName": "East Tennessee Children's Hosp Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.ermchealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Eaton Rapids Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.fcmcpa.org:443/v2/argonaut/v1",
+			"OrganizationName": "Fulton County Med Ctr 6.1 (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://restapi-live01.firelands.com:443/v2/argonaut/v1",
+			"OrganizationName": "Firelands Reg Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api01.myfhn.org:443/v2/argonaut/v1",
+			"OrganizationName": "FHN Memorial Hospital 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://avemapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Avem Health Group MaaS 006 02",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.fmdh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Frances Mahon Deaconess Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://frdrestapis-live01.fmh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Frederick Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.fmhospital.com:443/v2/argonaut/v1",
+			"OrganizationName": "Frisbie Memorial Hospital 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapi-live01.tidelandshealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Tidelands Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.goshenhealth.com:443/v2/argonaut/v1",
+			"OrganizationName": "Goshen Health Expanse (Hosted by Opsus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.oncologicopr.org:443/v2/argonaut/v1",
+			"OrganizationName": "Liga Puertorriquena Contra el Cancer Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.griffinhealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Griffin Hospital Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.grahamhospital.org:443/v2/argonaut/v1",
+			"OrganizationName": "Graham Hosp (Illinois) Expanse Desktop (Hosted: OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://giregionalapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Grand Island Reg Med Ctr MaaS Pod 003 02",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.gvh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Grand View Hospital Expanse   (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.gvmh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Golden Valley Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.gvmh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Golden Valley Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-explive01.hamptonregional.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hampton Regional Med Ctr Ready Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hancockregional.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hancock Reg Hospital Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-crd-live.app.medcity.net/v2/argonaut/v1",
+			"OrganizationName": "FRANKFORT (HCACRD) UNIVERSE",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapi.haysmed.com:443/v2/argonaut/v1",
+			"OrganizationName": "Hays Medical Center 6.15",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis.myhcchart.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hill Country Memorial Expanse - CereCore",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://henrycountyhospitalapi.meditech.global/v2/argonaut/v1",
+			"OrganizationName": "Henry County Hospital MaaS Pod 001 04",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mghpr.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hosp General Menonita 6.15 (Hosted by Teknicor)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.halifaxhealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Halifax Health - Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://ehimtrestapi-live.hhsc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hilo Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hmhosp.org:443/v2/argonaut/v1",
+			"OrganizationName": "Harrison Mem Hosp 6.1 to Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mbmcapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Mile Bluff Medical Center MaaS Pod 007 01",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hscbpr.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hospital San Carlos Borromeo 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api-live01.hhc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Houston Hospitals 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hospitalconcepcion.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hospital de la Concepcion Expanse Trdl (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hebrewseniorlife.org:443/v2/argonaut/v1",
+			"OrganizationName": "Hebrew Senior Life Ready Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.hcmc.us.com:443/v2/argonaut/v1",
+			"OrganizationName": "Howard County Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.islandhospital.org:443/v2/argonaut/v1",
+			"OrganizationName": "Island Hospital Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrest-live.andersonregional.org:443/v2/argonaut/v1",
+			"OrganizationName": "Anderson Reg Med Ctr - Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-explive01.jcmh.com:443/v2/argonaut/v1",
+			"OrganizationName": "Jackson County Mem Hosp Expanse Lev 2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.kirbyhealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Kirby Medical Center Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.cabinetpeaks.org:443/v2/argonaut/v1",
+			"OrganizationName": "Logan Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.krh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Logan Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mmcmt.org:443/v2/argonaut/v1",
+			"OrganizationName": "Logan Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.stlukehealthcare.org:443/v2/argonaut/v1",
+			"OrganizationName": "Logan Health Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.kdmc.org:443/v2/argonaut/v1",
+			"OrganizationName": "King's Daughters MC Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://kvhealthapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Klickitat Valley Hosp MaaS Pod 005 02",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.azkrmc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Kingman Reg Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.krmcmed.com:443/v2/argonaut/v1",
+			"OrganizationName": "Kearney Reg Med Ctr (Hosted by Engage)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.lanermc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Lane Reg Med Ctr Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.lcgh.net:443/v2/argonaut/v1",
+			"OrganizationName": "Lewis County Gen\u0026Res Hlth Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.limamemorial.org:443/v2/argonaut/v1",
+			"OrganizationName": "Lima Memorial Health System Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.lincolnsurgery.com:443/v2/argonaut/v1",
+			"OrganizationName": "Lincoln Surgical Hospital 6.15",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://luhapi.meditech.global:443/v2/argonaut/v1",
+			"OrganizationName": "Lower Umpqua Hosp Dist MaaS Pod 001 06",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.lakeregional.com:443/v2/argonaut/v1",
+			"OrganizationName": "Lake Regional Health System 6.15",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.lawrencegeneral.org:443/v2/argonaut/v1",
+			"OrganizationName": "Lawrence Gen Hosp Expanse RDY Lev 3 (Hosted by Opsus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mymhp.org:443/v2/argonaut/v1",
+			"OrganizationName": "Major Hospital Expanse (Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mrhc.org:443/v2/argonaut/v1",
+			"OrganizationName": "Magnolia Regional Hlth Ctr 6.1",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.mrhcok.com:443/v2/argonaut/v1",
+			"OrganizationName": "McAlester Regional Health Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.mmchs.org:443/v2/argonaut/v1",
+			"OrganizationName": "Meadville Medical Center 6.1 (Hosted by OpSus)",
+			"NPIID": ""
+		}
+	]
+}

@@ -1,13 +1,23 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
+			"OrganizationName": "Websters",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
 			"NPIID": ""
 		},
 		{
+			"URL": "https://jbosstrnpapp02.vhpads.com:9443/ahgtraining_mmAPIServer/fhir/r4",
+			"OrganizationName": "Self",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-mlAPIServer/fhir/r4",
-			"OrganizationName": "Cnow",
+			"OrganizationName": "athenahealth",
 			"NPIID": ""
 		}
 	]
