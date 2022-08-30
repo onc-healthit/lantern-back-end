@@ -4,6 +4,24 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times
 library(lubridate)
 
+# Get the Endpoint export table and clean up for UI
+get_endpoint_export_tbl <- function(db_tables) {
+endpoint_export_tbl <- db_tables$endpoint_export %>%
+  collect() %>%
+  mutate(vendor_name = na_if(vendor_name, "")) %>%
+  tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+  mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
+  rename(capability_fhir_version = fhir_version) %>%
+  mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
+  mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
+  mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
+  mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
+  mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
+  mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))
+
+  endpoint_export_tbl
+}
+
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
   vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
@@ -27,10 +45,10 @@ get_endpoint_totals_list <- function(db_tables) {
 
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function() {
-  ret_tbl <- endpoint_export_tbl %>%
+  ret_tbl <- app$endpoint_export_tbl() %>%
     distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
     select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version) %>%
-    left_join(app$http_response_code_tbl %>% select(code, label),
+    left_join(app$http_response_code_tbl() %>% select(code, label),
       by = c("http_response" = "code")) %>%
       mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
       mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
@@ -71,7 +89,7 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     filter(requested_fhir_version == "None") %>%
-    left_join(endpoint_export_tbl %>%
+    left_join(app$endpoint_export_tbl() %>%
       select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
       select(url, id, http_response, vendor_name, fhir_version) %>%
       mutate(code = as.character(http_response)) %>%
@@ -664,7 +682,7 @@ get_organization_locations <- function(db_connection) {
       sql("SELECT id, name, left(location->>'zipcode',5) as zipcode from npi_organizations")
   ) %>%
     collect() %>%
-    left_join(app$zip_to_zcta, by = c("zipcode" = "zipcode")) %>%
+    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
     filter(!is.na(lng), !is.na(lat))
   res
 }
@@ -679,10 +697,10 @@ get_endpoint_locations <- function(db_connection) {
           vendor_name,
           match_score,
           left(zipcode,5) as zipcode
-        FROM endpoint_export where zipcode is NOT NULL AND match_score > .97 ")
+        FROM organization_location where zipcode is NOT NULL AND match_score > .97 ")
     ) %>%
     collect() %>%
-    left_join(app$zip_to_zcta, by = c("zipcode" = "zipcode")) %>%
+    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
     filter(!is.na(lng), !is.na(lat)) %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
@@ -699,10 +717,10 @@ get_single_endpoint_locations <- function(db_connection, endpointURL, requestedF
           npi_id,
           match_score,
           left(zipcode,5) as zipcode
-        FROM endpoint_export where zipcode is NOT NULL AND match_score > .97 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
+        FROM organization_location where zipcode is NOT NULL AND match_score > .97 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
     ) %>%
     collect() %>%
-    left_join(app$zip_to_zcta, by = c("zipcode" = "zipcode")) %>%
+    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
     filter(!is.na(lng), !is.na(lat)) %>%
     distinct(organization_name, match_score, zipcode, lat, lng, npi_id)
   res
@@ -781,7 +799,7 @@ get_validation_results <- function(db_connection) {
 }
 
 get_endpoint_list_matches <- function() {
-    el <- endpoint_export_tbl %>%
+    el <- app$endpoint_export_tbl() %>%
           separate_rows(endpoint_names, sep = ";") %>%
           select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
           rename(organization_name = endpoint_names) %>%
@@ -789,13 +807,14 @@ get_endpoint_list_matches <- function() {
     el
 }
 
-get_npi_organization_matches <- function() {
-  nl <- endpoint_export_tbl %>%
-          select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
-          mutate(match_score = match_score * 100)  %>%
-          filter(match_score >= 97) %>%
-          tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown", zipcode = "Unknown")) %>%
-          mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
+get_npi_organization_matches <- function(db_tables) {
+  nl <- db_tables$organization_location %>%
+    select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
+    collect() %>%
+    mutate(match_score = match_score * 100)  %>%
+    filter(match_score >= 97) %>%
+    tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown", zipcode = "Unknown")) %>%
+    mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
   nl
 }
 
@@ -810,17 +829,17 @@ get_capability_and_smart_response <- function(db_connection, endpointURL, reques
 }
 
 get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
-  res <- endpoint_export_tbl %>%
+  res <- app$endpoint_export_tbl() %>%
     filter(url == endpointURL) %>%
     filter(requested_fhir_version == requestedFhirVersion) %>%
     distinct(url, http_response, smart_http_response, errors, cap_stat_exists, availability) %>%
     mutate(status = if_else(http_response == 200, "ACTIVE", "INACTIVE")) %>%
     mutate(errors = if_else(errors == "", "None", errors)) %>%
     mutate(availability = availability * 100) %>%
-    left_join(app$http_response_code_tbl %>% select(code, label),
+    left_join(app$http_response_code_tbl() %>% select(code, label),
           by = c("http_response" = "code")) %>%
       mutate(http_response = if_else(http_response == 200, paste(http_response, "-", label), paste(http_response, "-", label))) %>%
-      left_join(app$http_response_code_tbl %>% select(code, label),
+      left_join(app$http_response_code_tbl() %>% select(code, label),
           by = c("smart_http_response" = "code")) %>%
           mutate(smart_http_response = if_else(smart_http_response == 200, paste(smart_http_response, "-", label.y), paste(smart_http_response, "-", label.y)))
   res
@@ -828,12 +847,12 @@ get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
 }
 
 get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connection) {
-    res <- endpoint_export_tbl %>%
+    res <- app$endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(url, fhir_version, vendor_name, software_name, software_version, software_releasedate, format, info_created, info_updated)
 
-    resListSource <- endpoint_export_tbl %>%
+    resListSource <- app$endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(list_source)
@@ -870,13 +889,14 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 }
 
 database_fetcher <- reactive({
+
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
 
   app_data$response_tally(get_response_tally_list(db_tables))
 
   app_data$http_pct(get_http_response_summary_tbl(db_tables))
 
-  app_data$vendor_count_tbl(get_fhir_version_vendor_count(endpoint_export_tbl))
+  app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl()))
 
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
 
@@ -916,4 +936,26 @@ database_fetcher <- reactive({
 
   app_data$validation_tbl(get_validation_results(db_connection))
 
+})
+
+app_fetcher <- reactive({
+
+  app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables))
+
+  app$fhir_version_list_no_capstat(get_fhir_version_list(app$endpoint_export_tbl(), TRUE))
+
+  app$fhir_version_list(get_fhir_version_list(app$endpoint_export_tbl(), FALSE))
+
+  app$distinct_fhir_version_list_no_capstat(get_distinct_fhir_version_list_no_capstat(app$endpoint_export_tbl()))
+
+  app$distinct_fhir_version_list(get_distinct_fhir_version_list(app$endpoint_export_tbl()))
+
+  app$vendor_list(get_vendor_list(app$endpoint_export_tbl()))
+
+  app$http_response_code_tbl(
+    read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
+    mutate(code_chr = as.character(code))
+  )
+
+  app$zip_to_zcta(read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c")))
 })
