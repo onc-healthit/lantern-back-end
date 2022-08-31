@@ -343,7 +343,7 @@ SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_nam
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN fhir_endpoints_fmetadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id;
 
 CREATE or REPLACE VIEW organization_location AS
