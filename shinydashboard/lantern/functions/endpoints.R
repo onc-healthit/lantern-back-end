@@ -697,7 +697,7 @@ get_endpoint_locations <- function(db_connection) {
           vendor_name,
           match_score,
           left(zipcode,5) as zipcode
-        FROM organization_location where zipcode is NOT NULL AND match_score > .97 ")
+        FROM organization_location")
     ) %>%
     collect() %>%
     left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
@@ -717,7 +717,7 @@ get_single_endpoint_locations <- function(db_connection, endpointURL, requestedF
           npi_id,
           match_score,
           left(zipcode,5) as zipcode
-        FROM organization_location where zipcode is NOT NULL AND match_score > .97 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
+        FROM organization_location where url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
     ) %>%
     collect() %>%
     left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
@@ -812,8 +812,7 @@ get_npi_organization_matches <- function(db_tables) {
     select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
     collect() %>%
     mutate(match_score = match_score * 100)  %>%
-    filter(match_score >= 97) %>%
-    tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown", zipcode = "Unknown")) %>%
+    tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown")) %>%
     mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
   nl
 }
