@@ -41,7 +41,7 @@ organizationsmodule <- function(
   ns <- session$ns
 
   selected_npi_orgs <- reactive({
-    res <- get_npi_organization_matches()
+    res <- get_npi_organization_matches(db_tables)
     req(sel_fhir_version(), sel_vendor(), sel_confidence())
 
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
