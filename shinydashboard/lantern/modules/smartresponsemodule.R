@@ -54,7 +54,7 @@ smartresponsemodule <- function(
   })
 
   selected_smart_count_total <- reactive({
-    all <- endpoint_export_tbl
+    all <- app$endpoint_export_tbl()
     all <- get_filtered_data(all)
     all <- all %>% distinct(url) %>% count() %>% pull(n)
     all
@@ -85,7 +85,7 @@ smartresponsemodule <- function(
   })
 
   selected_well_known_endpoints_count <- reactive({
-    res <- endpoint_export_tbl
+    res <- app$endpoint_export_tbl()
       res <- get_filtered_data(res)
     res <- res %>% filter(smart_http_response == 200)
     res <- res %>% distinct(url) %>% count() %>% pull(n)

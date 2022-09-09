@@ -48,16 +48,14 @@ ui_special_values <- list(
 # The list of fhir versions and vendors are unlikely to change during a user's session
 # we'll update them on timer, but not refresh the UI
 app <<- list(
-  fhir_version_list_no_capstat      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, TRUE)),
-  fhir_version_list      = reactiveVal(get_fhir_version_list(endpoint_export_tbl, FALSE)),
-  distinct_fhir_version_list_no_capstat      = reactiveVal(get_distinct_fhir_version_list_no_capstat(endpoint_export_tbl)),
-  distinct_fhir_version_list      = reactiveVal(get_distinct_fhir_version_list(endpoint_export_tbl)),
-  vendor_list            = get_vendor_list(endpoint_export_tbl),
-  http_response_code_tbl =
-    read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
-    mutate(code_chr = as.character(code)),
-  zip_to_zcta =
-    read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c"))
+  fhir_version_list_no_capstat      = reactiveVal(NULL),
+  fhir_version_list      = reactiveVal(NULL),
+  distinct_fhir_version_list_no_capstat      = reactiveVal(NULL),
+  distinct_fhir_version_list      = reactiveVal(NULL),
+  vendor_list            = reactiveVal(NULL),
+  http_response_code_tbl = reactiveVal(NULL),
+  zip_to_zcta = reactiveVal(NULL),
+  endpoint_export_tbl = reactiveVal(NULL)
 )
 
 # define global app_data which is computed at application startup, and

@@ -73,13 +73,13 @@ dashboard <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>%
         filter(vendor_name == sel_vendor()) %>%
-        left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
+        left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
         summarise(count = n())
     } else {
       res <- res %>%
-        left_join(app$http_response_code_tbl, by = c("code" = "code_chr")) %>%
+        left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
         summarise(count = n())
