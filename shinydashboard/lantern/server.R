@@ -229,21 +229,46 @@ function(input, output, session) { #nolint
   output$page_title <- renderText(page_name())
   output$version <- renderText(version_title)
 
+  observeEvent(input$fhirversion_selectall, {
+    if (input$fhirversion_selectall == 0) {
+      return(NULL)
+    } else {
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()))
+    }
+  })
+
+  observeEvent(input$fhirversion_removeall, {
+    if (input$fhirversion_removeall == 0) {
+      return(NULL)
+    } else {
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()))
+    }
+  })
+
   output$show_filters <- renderUI({
     if (show_filter()) {
+    if (show_filter()) {
       if (fhir_version_no_capstat()) {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       } else {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
-      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 4, fhirDropdown),
+          column(width = 4, 
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, availabilityDropdown)
         )
@@ -278,7 +303,7 @@ function(input, output, session) { #nolint
     if (show_http_vendor_filter()) {
       fluidRow(
         column(width = 4,
-          selectInput(
+          pickerInput(
             inputId = "httpvendor",
             label = "Developer:",
             choices = app$vendor_list(),

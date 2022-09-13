@@ -151,6 +151,10 @@ ui <- dashboardPage(
       a:hover {
         font-weight: bold;
       }
+      button.dropdown-toggle {
+        background-color: white!important;
+        color: black;
+      }
       button:hover {
         border: 3px solid!important;
       }      
@@ -225,6 +229,36 @@ ui <- dashboardPage(
       }
       table.dataTable thead .sorting:hover {
         border: 2px solid!important;
+      }
+      a.btn {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white;
+      }
+      a.btn:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      a.btn:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
+      }
+      .action-button {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white!important;
+      }
+      .action-button:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      .action-button:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
       }
 
     "))),
@@ -404,6 +438,20 @@ ui <- dashboardPage(
                     }
                   }
                 }
+              }
+              
+              if (newNode.className === \"field-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
+              }
+
+              if (newNode.className === \"extension-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_extension_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"extension-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
               }
             }
           }
