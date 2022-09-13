@@ -440,7 +440,7 @@ ui <- dashboardPage(
                   }
                 }
               }
-
+              
               if (newNode.className === \"field-list\") {
                 let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
                 let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
@@ -453,7 +453,7 @@ ui <- dashboardPage(
                 let fieldList = fieldsListTextSection.getElementsByClassName(\"extension-list\")[0];
                 let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
                 ulFieldList.removeAttribute(\"tabindex\");
-              }   
+              }
             }
 
             if (mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains(\"container-fluid\")) {
