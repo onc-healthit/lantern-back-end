@@ -38,7 +38,7 @@ type chplStatus struct {
 }
 
 type chplVendor struct {
-	DeveloperID      int         `json:"id"`
+	DeveloperID      int         `json:"developerId"`
 	DeveloperCode    string      `json:"developerCode"`
 	Name             string      `json:"name"`
 	Website          string      `json:"website"`
