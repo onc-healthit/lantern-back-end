@@ -1,7 +1,7 @@
 {
     "developers": [
         {
-            "id": 2048,
+            "developerId": 2048,
             "developerCode": "3047",
             "name": "Caremesh Inc",
             "website": "https://caremesh.com",
@@ -78,7 +78,7 @@
             }
         },
         {
-            "id": 2049,
+            "developerId": 2049,
             "developerCode": "3048",
             "name": "Office Practicum",
             "website": "https://www.officepracticum.com",
@@ -155,7 +155,7 @@
             }
         },
         {
-            "id": 2050,
+            "developerId": 2050,
             "developerCode": "3049",
             "name": "Ulrich Medical Concepts",
             "website": "http://www.ulrichmedicalconcepts.com",
@@ -232,7 +232,7 @@
             }
         },
         {
-            "id": 2051,
+            "developerId": 2051,
             "developerCode": "3050",
             "name": "PHI Medical Office Solutions",
             "website": "https://www.phimedos.com",
@@ -309,7 +309,7 @@
             }
         },
         {
-            "id": 2052,
+            "developerId": 2052,
             "developerCode": "3051",
             "name": "EyeCare Partners, LLC",
             "website": "http://eyecare-partners.com",
@@ -386,7 +386,7 @@
             }
         },
         {
-            "id": 5,
+            "developerId": 5,
             "developerCode": "1004",
             "name": "A-Z Professional Provider Services, LLC",
             "website": null,
@@ -445,7 +445,7 @@
             }
         },
         {
-            "id": 2053,
+            "developerId": 2053,
             "developerCode": "3052",
             "name": "Sapphire Health",
             "website": "https://www.sapphire-health.com",
@@ -522,7 +522,7 @@
             }
         },
         {
-            "id": 2054,
+            "developerId": 2054,
             "developerCode": "3053",
             "name": "Rhinogram, LLC",
             "website": "https://www.rhinogram.com/",
@@ -599,7 +599,7 @@
             }
         },
         {
-            "id": 6,
+            "developerId": 6,
             "developerCode": "1005",
             "name": "A1 Medical Software Systems Inc.",
             "website": "http://www.a1mss.com",
@@ -673,7 +673,7 @@
             }
         },
         {
-            "id": 2055,
+            "developerId": 2055,
             "developerCode": "3054",
             "name": "Payoda Technology Inc.",
             "website": "https://www.healthviewx.com",
@@ -750,7 +750,7 @@
             }
         },
         {
-            "id": 7,
+            "developerId": 7,
             "developerCode": "1006",
             "name": "A21 Healthcare IT Solutions",
             "website": null,
@@ -809,7 +809,7 @@
             }
         },
         {
-            "id": 2056,
+            "developerId": 2056,
             "developerCode": "3055",
             "name": "Skilled Wound Care",
             "website": "https://www.skilledwoundcare.com",
@@ -886,7 +886,7 @@
             }
         },
         {
-            "id": 2057,
+            "developerId": 2057,
             "developerCode": "3056",
             "name": "PRN Software (DoseSpot)",
             "website": "https://www.dosespot.com",
@@ -963,7 +963,7 @@
             }
         },
         {
-            "id": 2058,
+            "developerId": 2058,
             "developerCode": "3057",
             "name": "Medicus Clinical, LLC",
             "website": "https://assertus.com",
@@ -1040,7 +1040,7 @@
             }
         },
         {
-            "id": 11,
+            "developerId": 11,
             "developerCode": "1010",
             "name": "ABH Enterprises, LLC",
             "website": null,
@@ -1099,7 +1099,7 @@
             }
         },
         {
-            "id": 2059,
+            "developerId": 2059,
             "developerCode": "3058",
             "name": "Lille Group, Inc.",
             "website": "https://www.lillegroup.com",
@@ -1176,7 +1176,7 @@
             }
         },
         {
-            "id": 12,
+            "developerId": 12,
             "developerCode": "1011",
             "name": "ACL Laboratories",
             "website": null,
@@ -1238,7 +1238,7 @@
             }
         },
         {
-            "id": 2060,
+            "developerId": 2060,
             "developerCode": "3059",
             "name": "mdTimeline, LLC",
             "website": "https://mdtimeline.com/",
@@ -1315,7 +1315,7 @@
             }
         },
         {
-            "id": 2061,
+            "developerId": 2061,
             "developerCode": "3060",
             "name": "DocToMe, Inc.",
             "website": "https://www.ethizo.com",
@@ -1392,7 +1392,7 @@
             }
         },
         {
-            "id": 15,
+            "developerId": 15,
             "developerCode": "1014",
             "name": "ACS State Healthcare, LLC",
             "website": null,
@@ -1451,7 +1451,7 @@
             }
         },
         {
-            "id": 2065,
+            "developerId": 2065,
             "developerCode": "3064",
             "name": "DB Consultants, Inc.",
             "website": "http://www.quick-charts.com",
@@ -1528,7 +1528,7 @@
             }
         },
         {
-            "id": 18,
+            "developerId": 18,
             "developerCode": "1017",
             "name": "ADS Technologies, Inc.",
             "website": "https://fiehr.com/",
@@ -1605,7 +1605,7 @@
             }
         },
         {
-            "id": 2066,
+            "developerId": 2066,
             "developerCode": "3065",
             "name": "Radiologex",
             "website": "https://www.radiologex.com/",
@@ -1682,7 +1682,7 @@
             }
         },
         {
-            "id": 2067,
+            "developerId": 2067,
             "developerCode": "3066",
             "name": "Viviphi Ltd",
             "website": "http://www.viecure.com",
@@ -1759,7 +1759,7 @@
             }
         },
         {
-    "id": 448,
+    "developerId": 448,
     "developerCode": "1447",
     "name": "Epic Systems Corporation",
     "website": "http://www.epic.com",
@@ -1839,7 +1839,7 @@
     }
 },
 {
-    "id": 223,
+    "developerId": 223,
     "developerCode": "1222",
     "name": "Cerner Health Services, Inc.",
     "website": "http://www.cerner.com",
@@ -1916,7 +1916,7 @@
     }
 },
 {
-    "id": 224,
+    "developerId": 224,
     "developerCode": "1223",
     "name": "ChartLogic, a Division of Medsphere Systems Corporation",
     "website": "http://www.medsphere.com",
@@ -1997,7 +1997,7 @@
 },
 
 {
-    "id": 428,
+    "developerId": 428,
     "developerCode": "1427",
     "name": "Emerge Clinical Decision Solutions",
     "website": null,
@@ -2066,7 +2066,7 @@
     }
 },
 {
-    "id": 429,
+    "developerId": 429,
     "developerCode": "1428",
     "name": "Emergisoft",
     "website": null,
@@ -2125,7 +2125,7 @@
     }
 },
 {
-    "id": 430,
+    "developerId": 430,
     "developerCode": "1429",
     "name": "Emmi Solutions",
     "website": null,
@@ -2187,7 +2187,7 @@
     }
 },
 {
-    "id": 431,
+    "developerId": 431,
     "developerCode": "1430",
     "name": "Emory Healthcare",
     "website": null,
@@ -2246,7 +2246,7 @@
     }
 },
 {
-    "id": 432,
+    "developerId": 432,
     "developerCode": "1431",
     "name": "Empathic Clinical Suites, LLC",
     "website": "https://www.empathicsoftware.com",
@@ -2326,7 +2326,7 @@
     }
 },
 {
-    "id": 433,
+    "developerId": 433,
     "developerCode": "1432",
     "name": "Empower Technologies, Inc.",
     "website": null,
@@ -2388,7 +2388,7 @@
     }
 },
 {
-    "id": 435,
+    "developerId": 435,
     "developerCode": "1434",
     "name": "EnSoftek, Inc",
     "website": "https://www.drcloudemr.com/",
@@ -2465,7 +2465,7 @@
     }
 },
 {
-    "id": 440,
+    "developerId": 440,
     "developerCode": "1439",
     "name": "EnableDoc LLC",
     "website": "http://www.enabledoc.com/",
@@ -2542,7 +2542,7 @@
     }
 },
 {
-    "id": 441,
+    "developerId": 441,
     "developerCode": "1440",
     "name": "Encite, Inc.",
     "website": "http://www.encite.us",
@@ -2619,7 +2619,7 @@
     }
 },
 {
-    "id": 446,
+    "developerId": 446,
     "developerCode": "1445",
     "name": "Engineered Care, Inc.",
     "website": null,
@@ -2678,7 +2678,7 @@
     }
 },
 {
-    "id": 447,
+    "developerId": 447,
     "developerCode": "1446",
     "name": "Enterprise Healthcare Systems Inc. (MDPlus.Net)",
     "website": null,
