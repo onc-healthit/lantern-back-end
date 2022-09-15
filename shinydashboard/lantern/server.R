@@ -1036,6 +1036,17 @@ output$plot_note_text <- renderUI({
   HTML(res)
 })
 
+endpoint_http_responses <- reactive({
+  endpoint <- current_endpoint()
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
+  left_join(app$http_response_code_tbl, by = c("http_response" = "code")) %>%
+  mutate(http_response = paste(http_response, "-", label)) %>%
+  select(date, http_response)
+  
+  res
+})
+
 http_response_xts <- reactive({
   endpoint <- current_endpoint()
 
@@ -1045,17 +1056,6 @@ http_response_xts <- reactive({
   xts(x = cbind(res$http_response),
       order.by = res$date
   )
-})
-
-endpoint_http_responses <- reactive ({
-  endpoint <- current_endpoint()
-  range <- get_range(input$http_date)
-  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
-  left_join(app$http_response_code_tbl, by = c("code" = "http_response")) %>%
-  mutate(http_response = paste(http_response, "-", label)) %>%
-  select(date, http_response)
-  
-  res
 })
 
 output$http_no_plot <- renderText({
@@ -1136,16 +1136,17 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       br(),
       uiOutput("show_http_date_filters"),
       bsCollapse(id = "http_over_time_collapse", multiple = TRUE,
-          bsCollapsePanel("HTTP Responses Over Time", 
-            fluidPage(
-              fluidRow(
-                textOutput("http_no_plot"),
-                dygraphOutput("endpoint_http_response_plot"),
-                p("Click and drag on plot to zoom in, double-click to zoom out."),
-                reactable::reactableOutput("endpoint_http_response_table")
-              )
+          bsCollapsePanel("HTTP Responses Over Time", fluidPage(
+            fluidRow(
+              textOutput("http_no_plot"),
+              dygraphOutput("endpoint_http_response_plot"),
+              p("Click and drag on plot to zoom in, double-click to zoom out.")
+            ),
+            fluidRow(
+              reactable::reactableOutput("endpoint_http_response_table")
             )
           ), style = "info")
+      )
     ),
     sidebarPanel(
       h2("Metrics"),
