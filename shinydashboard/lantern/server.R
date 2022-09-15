@@ -317,6 +317,20 @@ function(input, output, session) { #nolint
     )
   })
 
+    output$show_http_date_filters <- renderUI({
+    fluidRow(
+      column(width = 4,
+        selectInput(
+          inputId = "http_date",
+          label = "Date range",
+          choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+          selected = "All time",
+          size = 1,
+          selectize = FALSE)
+      )
+    )
+  })
+
   output$show_value_filters <- renderUI({
     if (show_value_filter()) {
       fluidRow(
@@ -970,12 +984,12 @@ organization_endpoint_page <- function() {
 }
 
 ### Endpoint Details Modal Page ###
-get_range <- function() {
-    if (all(input$date == "Past 7 days")) {
+get_range <- function(date) {
+    if (all(date == "Past 7 days")) {
       range <- "604800"
-    } else if (all(input$date == "Past 14 days")) {
+    } else if (all(date == "Past 14 days")) {
       range <- "1209600"
-    } else if (all(input$date == "Past 30 days")) {
+    } else if (all(date == "Past 30 days")) {
       range <- "2592000"
     } else {
       range <- "maxdate.maximum"
@@ -986,7 +1000,7 @@ get_range <- function() {
 response_time_xts <- reactive({
   endpoint <- current_endpoint()
 
-  range <- get_range()
+  range <- get_range(input$date)
   res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
   # convert to xts format for use in dygraph
   xts(x = cbind(res$response),
@@ -1020,6 +1034,63 @@ output$plot_note_text <- renderUI({
     throughout the ecosystem."
   res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
   HTML(res)
+})
+
+http_response_xts <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+  # convert to xts format for use in dygraph
+  xts(x = cbind(res$http_response),
+      order.by = res$date
+  )
+})
+
+endpoint_http_responses <- reactive ({
+  endpoint <- current_endpoint()
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
+  left_join(app$http_response_code_tbl, by = c("code" = "http_response")) %>%
+  mutate(http_response = paste(http_response, "-", label)) %>%
+  select(date, http_response)
+  
+  res
+})
+
+output$http_no_plot <- renderText({
+  if (nrow(http_response_xts()) == 0) {
+    "Sorry, there isn't enough data to show http responses over time!"
+  }
+})
+
+output$endpoint_http_response_plot <- renderDygraph({
+  if (nrow(http_response_xts()) > 0) {
+    dygraph(http_response_xts(),
+          main = "Endpoint HTTP Responses",
+          ylab = "HTTP Codes",
+          xlab = "Date") %>%
+    dyAxis("y", valueRange = c(-1.30, 600)) %>%
+    dySeries("V1", label = "HTTPCode") %>%
+    dyLegend(width = 450)
+  }
+})
+
+output$endpoint_http_response_table <- reactable::renderReactable({
+  reactable(
+        endpoint_http_responses() %>% select(date, http_response) %>% mutate_all(as.character),
+        defaultColDef = colDef(
+          align = "center"
+        ),
+        columns = list(
+            date = colDef(name = "Date", sortable = TRUE),
+            http_response = colDef(name = "HTTP Response", sortable = FALSE)
+        ),
+        searchable = TRUE,
+        showSortIcon = TRUE,
+        highlight = TRUE,
+        defaultPageSize = 10
+  )
 })
 
  detailPage <- function() {
@@ -1061,7 +1132,20 @@ output$plot_note_text <- renderUI({
             p("Click and drag on plot to zoom in, double-click to zoom out."),
             htmlOutput("plot_note_text")
           ), style = "info")
-      )
+      ),
+      br(),
+      uiOutput("show_http_date_filters"),
+      bsCollapse(id = "http_over_time_collapse", multiple = TRUE,
+          bsCollapsePanel("HTTP Responses Over Time", 
+            fluidPage(
+              fluidRow(
+                textOutput("http_no_plot"),
+                dygraphOutput("endpoint_http_response_plot"),
+                p("Click and drag on plot to zoom in, double-click to zoom out."),
+                reactable::reactableOutput("endpoint_http_response_table")
+              )
+            )
+          ), style = "info")
     ),
     sidebarPanel(
       h2("Metrics"),
