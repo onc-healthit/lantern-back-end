@@ -1043,34 +1043,81 @@ endpoint_http_responses <- reactive({
   left_join(app$http_response_code_tbl, by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
-  
+
   res
 })
 
-http_response_xts <- reactive({
+endpoint_http_codes_table <- reactive({
   endpoint <- current_endpoint()
 
   range <- get_range(input$http_date)
   res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
-  # convert to xts format for use in dygraph
-  xts(x = cbind(res$http_response),
-      order.by = res$date
-  )
+
+  http_code_table <- app$http_response_code_tbl %>%
+  inner_join(res, by = c("code" = "http_response")) %>%
+  distinct(code,label) %>%
+  mutate(row_num = row_number()) %>%
+  select(code, row_num, label)
+})
+
+endpoint_http_responses_mapping <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+
+  http_code_table <- endpoint_http_codes_table()
+
+  res <- res %>%
+  left_join(http_code_table, by = c("http_response" = "code")) %>%
+  tidyr::replace_na(list(row_num = 0)) %>%
+  mutate(http_response = paste(http_response, "-", label)) %>%
+  select(date, http_response, row_num)
+  res
+
+})
+
+create_dygraph_json <- reactive({
+  res <- endpoint_http_responses_mapping() %>%
+  distinct(row_num, http_response) %>%
+  rename(v = row_num, label = http_response)
+  
+  toJSON(res)
+
+})
+
+endpoint_http_responses_xts <- reactive({
+  res <- endpoint_http_responses_mapping()
+  xts(x = cbind(res$row_num), order.by = res$date)
 })
 
 output$http_no_plot <- renderText({
-  if (nrow(http_response_xts()) == 0) {
+  if (nrow(endpoint_http_responses_xts()) == 0) {
     "Sorry, there isn't enough data to show http responses over time!"
   }
 })
 
 output$endpoint_http_response_plot <- renderDygraph({
-  if (nrow(http_response_xts()) > 0) {
-    dygraph(http_response_xts(),
+  if (nrow(endpoint_http_responses_xts()) > 0) {
+    dygraph(endpoint_http_responses_xts(),
           main = "Endpoint HTTP Responses",
           ylab = "HTTP Codes",
           xlab = "Date") %>%
-    dyAxis("y", valueRange = c(-1.30, 600)) %>%
+    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table())+.2), 
+    axisLabelWidth = 70, ticker = htmlwidgets::JS(
+      paste("function(min, max, pixels, opts, dygraph, vals) {
+      return ", create_dygraph_json(), ";}")), 
+      valueFormatter = htmlwidgets::JS(
+      paste("function(v){
+        let jsonfile = `", create_dygraph_json(),"`;
+        let jsonobj = JSON.parse(jsonfile);
+        for (let obj of jsonobj) {
+          if (obj.v === v) {
+            return obj.label;
+          }
+        }
+      }"))
+    ) %>%
     dySeries("V1", label = "HTTPCode") %>%
     dyLegend(width = 450)
   }
