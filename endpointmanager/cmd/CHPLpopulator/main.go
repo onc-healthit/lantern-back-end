@@ -194,11 +194,10 @@ func main() {
 					fileName = fileName + strconv.Itoa(matchedFiles) + "_"
 				}
 
+				matchedFiles := containsFileName(endpointEntryList, fileName)
 				// Ensure we do not have any file names that are the same
-				if containsFileName(endpointEntryList, fileName) {
-					index1 := strings.Index(urlString, "://")
-					index2 := strings.Index(urlString, ".com")
-					fileName = urlString[index1+3 : index2]
+				if matchedFiles > 0 {
+					fileName = fileName + strconv.Itoa(matchedFiles+1)
 				}
 
 				entry.FileName = fileName + "EndpointSources.json"
