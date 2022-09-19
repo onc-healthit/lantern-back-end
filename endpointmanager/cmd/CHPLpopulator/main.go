@@ -181,11 +181,10 @@ func main() {
 				index := strings.Index(fileName, ".")
 				fileName = fileName[:index]
 
+				matchedFiles := containsFileName(endpointEntryList, fileName)
 				// Ensure we do not have any file names that are the same
-				if containsFileName(endpointEntryList, fileName) {
-					index1 := strings.Index(urlString, "://")
-					index2 := strings.Index(urlString, ".com")
-					fileName = urlString[index1+3 : index2]
+				if matchedFiles > 0 {
+					fileName = fileName + strconv.Itoa(matchedFiles + 1);
 				}
 
 				entry.FileName = fileName + "EndpointSources.json"
@@ -257,13 +256,14 @@ func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 	return false
 }
 
-func containsFileName(endpointEntryList []endpointEntry, filename string) bool {
+func containsFileName(endpointEntryList []endpointEntry, filename string) int {
+	matchedFiles := 0
 	for _, e := range endpointEntryList {
 		if e.FileName == filename+"EndpointSources.json" {
-			return true
+			matchedFiles = matchedFiles + 1
 		}
 	}
-	return false
+	return matchedFiles
 }
 
 func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int) {
