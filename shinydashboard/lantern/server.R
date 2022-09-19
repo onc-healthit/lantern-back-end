@@ -1054,7 +1054,7 @@ endpoint_http_codes_table <- reactive({
 
   http_code_table <- app$http_response_code_tbl %>%
   inner_join(res, by = c("code" = "http_response")) %>%
-  distinct(code,label) %>%
+  distinct(code, label) %>%
   mutate(row_num = row_number()) %>%
   select(code, row_num, label)
 })
@@ -1080,7 +1080,7 @@ create_dygraph_json <- reactive({
   res <- endpoint_http_responses_mapping() %>%
   distinct(row_num, http_response) %>%
   rename(v = row_num, label = http_response)
-  
+
   toJSON(res)
 
 })
@@ -1102,13 +1102,13 @@ output$endpoint_http_response_plot <- renderDygraph({
           main = "Endpoint HTTP Responses",
           ylab = "HTTP Codes",
           xlab = "Date") %>%
-    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table())+.5), 
+    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table()) + .5),
     axisLabelWidth = 70, ticker = htmlwidgets::JS(
       paste("function(min, max, pixels, opts, dygraph, vals) {
-      return ", create_dygraph_json(), ";}")), 
+      return ", create_dygraph_json(), ";}")),
       valueFormatter = htmlwidgets::JS(
       paste("function(v){
-        let jsonfile = `", create_dygraph_json(),"`;
+        let jsonfile = `", create_dygraph_json(), "`;
         let jsonobj = JSON.parse(jsonfile);
         for (let obj of jsonobj) {
           if (obj.v === v) {
