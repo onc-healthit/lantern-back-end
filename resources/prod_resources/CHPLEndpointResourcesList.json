@@ -153,13 +153,13 @@
 		"FormatType": "Lantern",
 		"URL": "https://mydata.athenahealth.com/home",
 		"EndpointName": "athenahealth, Inc.",
-		"FileName": "athenahealth2EndpointSources.json"
+		"FileName": "athenahealth1EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html",
 		"EndpointName": "TriMed Technologies",
-		"FileName": "trimedtech2EndpointSources.json"
+		"FileName": "trimedtech1EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
