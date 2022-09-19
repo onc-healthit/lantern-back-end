@@ -1043,7 +1043,6 @@ endpoint_http_responses <- reactive({
   left_join(app$http_response_code_tbl, by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
-
   res
 })
 
@@ -1103,7 +1102,7 @@ output$endpoint_http_response_plot <- renderDygraph({
           main = "Endpoint HTTP Responses",
           ylab = "HTTP Codes",
           xlab = "Date") %>%
-    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table())+.2), 
+    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table())+.5), 
     axisLabelWidth = 70, ticker = htmlwidgets::JS(
       paste("function(min, max, pixels, opts, dygraph, vals) {
       return ", create_dygraph_json(), ";}")), 
