@@ -262,7 +262,7 @@ function(input, output, session) { #nolint
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 4, 
+          column(width = 4,
           tags$div(
             p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
             actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
