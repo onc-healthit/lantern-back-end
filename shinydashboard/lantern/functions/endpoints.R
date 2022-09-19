@@ -865,10 +865,12 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 
     resSupportedVersions <- tbl(db_connection,
         sql(paste0("SELECT
-            DISTINCT versions_response->>'versions' as supported_versions, versions_response->>'default' as default_version
+            DISTINCT versions_response->'Response'->>'versions' as supported_versions, versions_response->'Response'->>'default' as default_version
             FROM fhir_endpoints
             WHERE url = '", endpointURL, "'"))) %>%
-    collect()
+    collect() %>%
+    mutate(supported_versions = gsub("\\[\"|\"\\]", "", as.character(supported_versions))) %>%
+    mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
     res$security <- paste0(resSecurity$security, collapse = ",")
