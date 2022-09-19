@@ -25,6 +25,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://unify-developer.chbase.com/?page=FHIRAPI",
+		"EndpointName": "Get Real Health",
+		"FileName": "chbaseEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://docs.canvasmedical.com/reference/service-base-urls",
 		"EndpointName": "Canvas Medical, Inc.",
 		"FileName": "Canvas_Medical_Inc_EndpointSources.json"
@@ -85,6 +91,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://bill.medgenehr.com:7043/fhir/.well-known/smart-configuration",
+		"EndpointName": "Comtron Inc.",
+		"FileName": "medgenehrEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.mphrx.com/fhir-service-base-url-directory/",
 		"EndpointName": "My Personal Health Records Express Inc. d/b/a MphRx",
 		"FileName": "My_Personal_Health_Records_Express_Inc_dba_MphRx_EndpointSources.json"
@@ -115,6 +127,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.ihs.gov/cis/",
+		"EndpointName": "Indian Health Service",
+		"FileName": "ihsEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
 		"FileName": "SolidPractice_Technologies_LLC_EndpointSources.json"
@@ -139,6 +157,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html",
+		"EndpointName": "TriMed Technologies",
+		"FileName": "trimedtechEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.vision-works.com/cert/FHIR",
 		"EndpointName": "Vision Works, Inc.",
 		"FileName": "Vision_Works_Inc_EndpointSources.json"
@@ -148,6 +172,12 @@
 		"URL": "https://api.fhir.wrs.cloud/docs",
 		"EndpointName": "WRS Health",
 		"FileName": "WRS_Health_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://api.fhir.wrs.cloud/docs",
+		"EndpointName": "WRS Health",
+		"FileName": "fhirEndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
