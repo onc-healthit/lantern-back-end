@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	http "net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"regexp"
 )
 
 type softwareInfo struct {
@@ -169,22 +169,22 @@ func main() {
 
 				entry.EndpointName = developerName
 
-				// Get fileName from developer name	
+				// Get fileName from developer name
 				re, err := regexp.Compile(`[^\w\s\']|_`)
 				if err != nil {
 					log.Fatal(err)
 				}
 
 				developerNameNormalized := re.ReplaceAllString(developerName, "")
-				
+
 				fileNameArr := strings.Fields(developerNameNormalized)
-				fileName := "";
+				fileName := ""
 				if len(fileNameArr) > 0 {
 					for _, s := range fileNameArr {
-						fileName = fileName + s + "_";
+						fileName = fileName + s + "_"
 					}
 				} else {
-					fileName = "Unknown_Developer_";
+					fileName = "Unknown_Developer_"
 				}
 
 				matchedFiles := containsFileName(endpointEntryList, fileName)
