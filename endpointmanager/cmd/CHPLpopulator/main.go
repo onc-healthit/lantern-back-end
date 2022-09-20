@@ -168,8 +168,24 @@ func main() {
 
 				entry.EndpointName = developerName
 
-				// Get fileName from URL domain name
-				fileName := urlString
+				// Get fileName from developer name
+				developerNameNormalized := strings.ReplaceAll(developerName, ".", "")
+				developerNameNormalized = strings.ReplaceAll(developerName, ",", "")
+				fileNameArr := strings.Fields(developerNameNormalized)
+				fileName := "";
+				if len(fileNameArr) > 0 {
+					for i, s := range fileNameArr {
+						if i == 0 {
+							fileName = fileName + s
+						} else {
+							fileName = fileName + "_" + s;
+						}
+					}
+				} else {
+					fileName = "Unknown_Developer";
+				}
+
+
 				if strings.Count(urlString, ".") > 1 {
 					index := strings.Index(urlString, ".")
 					fileName = urlString[index+1:]
@@ -259,7 +275,7 @@ func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 func containsFileName(endpointEntryList []endpointEntry, filename string) int {
 	matchedFiles := 0
 	for _, e := range endpointEntryList {
-		if e.FileName == filename+"EndpointSources.json" {
+		if strings.Contains(e.FileName, filename) {
 			matchedFiles = matchedFiles + 1
 		}
 	}
