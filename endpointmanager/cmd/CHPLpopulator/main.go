@@ -177,7 +177,6 @@ func main() {
 				}
 
 				developerNameNormalized := re.ReplaceAllString(developerName, "")
-
 				fileNameArr := strings.Fields(developerNameNormalized)
 				fileName := ""
 				if len(fileNameArr) > 0 {
@@ -191,7 +190,7 @@ func main() {
 				matchedFiles := containsFileName(endpointEntryList, fileName)
 				// Ensure we do not have any file names that are the same
 				if matchedFiles > 0 {
-					fileName = fileName + strconv.Itoa(matchedFiles)
+					fileName = fileName + strconv.Itoa(matchedFiles) + "_"
 				}
 
 				entry.FileName = fileName + "EndpointSources.json"
