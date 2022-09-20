@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
 )
 
 type softwareInfo struct {
@@ -168,39 +169,28 @@ func main() {
 
 				entry.EndpointName = developerName
 
-				// Get fileName from developer name
-				developerNameNormalized := strings.ReplaceAll(developerName, ".", "")
-				developerNameNormalized = strings.ReplaceAll(developerName, ",", "")
+				// Get fileName from developer name	
+				re, err := regexp.Compile(`[^\w\s\']|_`)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				developerNameNormalized := re.ReplaceAllString(developerName, "")
+				
 				fileNameArr := strings.Fields(developerNameNormalized)
 				fileName := "";
 				if len(fileNameArr) > 0 {
-					for i, s := range fileNameArr {
-						if i == 0 {
-							fileName = fileName + s
-						} else {
-							fileName = fileName + "_" + s;
-						}
+					for _, s := range fileNameArr {
+						fileName = fileName + s + "_";
 					}
 				} else {
-					fileName = "Unknown_Developer";
+					fileName = "Unknown_Developer_";
 				}
-
-
-				if strings.Count(urlString, ".") > 1 {
-					index := strings.Index(urlString, ".")
-					fileName = urlString[index+1:]
-				} else {
-					index := strings.Index(urlString, "://")
-					fileName = urlString[index+3:]
-				}
-
-				index := strings.Index(fileName, ".")
-				fileName = fileName[:index]
 
 				matchedFiles := containsFileName(endpointEntryList, fileName)
 				// Ensure we do not have any file names that are the same
 				if matchedFiles > 0 {
-					fileName = fileName + strconv.Itoa(matchedFiles)
+					fileName = fileName + strconv.Itoa(matchedFiles) + "_"
 				}
 
 				entry.FileName = fileName + "EndpointSources.json"
