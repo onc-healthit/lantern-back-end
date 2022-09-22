@@ -41,8 +41,6 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 			gdocPage.Find("article").Each(func(index int, articleElem *goquery.Selection) {
 				articleElem.Find("p").Each(func(index int, pElem *goquery.Selection) {
 					var entry LanternEntry
-
-					log.Info(pElem.Text())
 			
 					if pElem.Length() > 0 {
 						if strings.Contains(pElem.Text(), "Production root URL:") {	
@@ -50,7 +48,7 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 
 							if aElems.Length() > 0 {
 
-								entryURL, exists := pElem.Eq(0).Attr("href")
+								entryURL, exists := aElems.Eq(0).Attr("href")
 
 								if exists {
 									entryURL = strings.TrimSpace(entryURL)
