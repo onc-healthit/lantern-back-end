@@ -46,7 +46,7 @@ func UnifyWebscraper(unifyURL string, fileToWriteTo string) {
 				var entry LanternEntry
 
 				aElem := pEntries.Find("a")
-				
+
 				entryURL := strings.TrimSpace(aElem.Text())
 				entry.URL = entryURL
 

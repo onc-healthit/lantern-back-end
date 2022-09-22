@@ -3,10 +3,10 @@ package chplendpointquerier
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
-	"strings"
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
+	"strings"
 
 	"github.com/chromedp/chromedp"
 )
@@ -41,9 +41,9 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 			gdocPage.Find("article").Each(func(index int, articleElem *goquery.Selection) {
 				articleElem.Find("p").Each(func(index int, pElem *goquery.Selection) {
 					var entry LanternEntry
-			
+
 					if pElem.Length() > 0 {
-						if strings.Contains(pElem.Text(), "Production root URL:") {	
+						if strings.Contains(pElem.Text(), "Production root URL:") {
 							aElems := pElem.Find("a")
 
 							if aElems.Length() > 0 {
@@ -53,7 +53,7 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 								if exists {
 									entryURL = strings.TrimSpace(entryURL)
 									entry.URL = entryURL
-									
+
 									lanternEntryList = append(lanternEntryList, entry)
 									return
 								}

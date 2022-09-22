@@ -44,14 +44,14 @@ func TriMedTechV8Webscraper(trimedtechURL string, fileToWriteTo string) {
 					hrefText, exists := aElems.Attr("href")
 					if exists && !strings.Contains(hrefText, "#") {
 						var entry LanternEntry
-						
+
 						entryURL := strings.TrimSpace(hrefText)
 						entry.URL = entryURL
 
 						lanternEntryList = append(lanternEntryList, entry)
 
 						return
-					}	
+					}
 				}
 			})
 		}
