@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	http "net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -168,18 +169,29 @@ func main() {
 
 				entry.EndpointName = developerName
 
-				// Get fileName from URL domain name
-				fileName := urlString
-				if strings.Count(urlString, ".") > 1 {
-					index := strings.Index(urlString, ".")
-					fileName = urlString[index+1:]
-				} else {
-					index := strings.Index(urlString, "://")
-					fileName = urlString[index+3:]
+				// Get fileName from developer name
+				re, err := regexp.Compile(`[^\w\s\']|_`)
+				if err != nil {
+					log.Fatal(err)
 				}
 
-				index := strings.Index(fileName, ".")
-				fileName = fileName[:index]
+				developerNameNormalized := re.ReplaceAllString(developerName, "")
+
+				fileNameArr := strings.Fields(developerNameNormalized)
+				fileName := ""
+				if len(fileNameArr) > 0 {
+					for _, s := range fileNameArr {
+						fileName = fileName + s + "_"
+					}
+				} else {
+					fileName = "Unknown_Developer_"
+				}
+
+				matchedFiles := containsFileName(endpointEntryList, fileName)
+				// Ensure we do not have any file names that are the same
+				if matchedFiles > 0 {
+					fileName = fileName + strconv.Itoa(matchedFiles) + "_"
+				}
 
 				entry.FileName = fileName + "EndpointSources.json"
 				entry.FormatType = "Lantern"
@@ -248,6 +260,16 @@ func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
 		}
 	}
 	return false
+}
+
+func containsFileName(endpointEntryList []endpointEntry, filename string) int {
+	matchedFiles := 0
+	for _, e := range endpointEntryList {
+		if strings.Contains(e.FileName, filename) {
+			matchedFiles = matchedFiles + 1
+		}
+	}
+	return matchedFiles
 }
 
 func containsSoftware(softwareProductList []softwareInfo, url string) (bool, int) {

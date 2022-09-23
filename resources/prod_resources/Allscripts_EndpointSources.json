@@ -652,7 +652,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035150",
-			"OrganizationName": "Alabama Neurology and Sleep Medicine",
+			"OrganizationName": "Alabama Neurology \u0026 Sleep Medicine",
 			"NPIID": ""
 		},
 		{
@@ -14391,11 +14391,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10016169",
-			"OrganizationName": "St Clair Specialty Physicians Pc",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/56101",
 			"OrganizationName": "St Clair Vascular",
 			"NPIID": ""
@@ -14438,6 +14433,11 @@
 		{
 			"URL": "https://fhir-allscripts.sbrmc.org/FHIR",
 			"OrganizationName": "St. Bernards Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10016169",
+			"OrganizationName": "ST. CLAIR SPECIALTY SERVICES",
 			"NPIID": ""
 		},
 		{
@@ -16367,7 +16367,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10023759",
-			"OrganizationName": "Urology Associates of NE Florida",
+			"OrganizationName": "Urology Associates Of NE Florida",
 			"NPIID": ""
 		},
 		{
@@ -17096,8 +17096,28 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://WE0SCM1AFHRV001.WE1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
-			"OrganizationName": "Wise Health",
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Open",
+			"OrganizationName": "Wise Health System - PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/Fhir",
+			"OrganizationName": "Wise Health System - PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/Open",
+			"OrganizationName": "Wise Health System - PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Fhir",
+			"OrganizationName": "Wise Health System - PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-PROD",
+			"OrganizationName": "Wise Health System - PROD",
 			"NPIID": ""
 		},
 		{
@@ -17202,7 +17222,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10014069",
-			"OrganizationName": "Woodlands Sports Medicine Centre, PA",
+			"OrganizationName": "Woodlands Sports Medicine",
 			"NPIID": ""
 		},
 		{

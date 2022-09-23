@@ -3,126 +3,174 @@
 		"FormatType": "Lantern",
 		"URL": "https://apidocs.onemedical.io/fhir/overview/",
 		"EndpointName": "1Life Healthcare, Inc",
-		"FileName": "onemedicalEndpointSources.json"
+		"FileName": "1Life_Healthcare_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://cmpl.aidbox.app/smart",
 		"EndpointName": "Health Samurai, Inc.",
-		"FileName": "aidboxEndpointSources.json"
+		"FileName": "Health_Samurai_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"EndpointName": "Darena Solutions LLC",
-		"FileName": "bluebuttonproEndpointSources.json"
+		"FileName": "Darena_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://unify-developer.chbase.com/?page=FHIRAPI",
+		"EndpointName": "Get Real Health",
+		"FileName": "Get_Real_Health_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://docs.canvasmedical.com/reference/service-base-urls",
 		"EndpointName": "Canvas Medical, Inc.",
-		"FileName": "canvasmedicalEndpointSources.json"
+		"FileName": "Canvas_Medical_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://carefluence.com/carefluence-fhir-endpoints/",
 		"EndpointName": "Carefluence",
-		"FileName": "carefluenceEndpointSources.json"
+		"FileName": "Carefluence_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://www.dynamichealthit.com/dynamic-fhir-api",
 		"EndpointName": "Dynamic Health IT, Inc",
-		"FileName": "dynamichealthitEndpointSources.json"
+		"FileName": "Dynamic_Health_IT_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir",
 		"EndpointName": "Cyfluent",
-		"FileName": "swaggerhubEndpointSources.json"
+		"FileName": "Cyfluent_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://ehryourway.com/content/fhir-service-urls.pdf",
 		"EndpointName": "Adaptamed, LLC",
-		"FileName": "com/content/fhir-service-urlsEndpointSources.json"
+		"FileName": "Adaptamed_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://open.epic.com/MyApps/Endpoints",
 		"EndpointName": "Epic Systems Corporation",
-		"FileName": "epicEndpointSources.json"
+		"FileName": "Epic_Systems_Corporation_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://demo.interopx.com/ix-auth-server/#/endpoints",
 		"EndpointName": "InteropX",
-		"FileName": "interopxEndpointSources.json"
+		"FileName": "InteropX_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
 		"EndpointName": "MEDHOST",
-		"FileName": "mhdi10xasaydEndpointSources.json"
+		"FileName": "MEDHOST_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
 		"EndpointName": "Medical Information Technology, Inc. (MEDITECH)",
-		"FileName": "meditechEndpointSources.json"
+		"FileName": "Medical_Information_Technology_Inc_MEDITECH_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://bill.medgenehr.com:7043/fhir/.well-known/smart-configuration",
+		"EndpointName": "Comtron Inc.",
+		"FileName": "Comtron_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://www.mphrx.com/fhir-service-base-url-directory/",
 		"EndpointName": "My Personal Health Records Express Inc. d/b/a MphRx",
-		"FileName": "mphrxEndpointSources.json"
+		"FileName": "My_Personal_Health_Records_Express_Inc_dba_MphRx_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://nextgen.com/api/practice-search",
 		"EndpointName": "NextGen Healthcare",
-		"FileName": "nextgenEndpointSources.json"
+		"FileName": "NextGen_Healthcare_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
 		"EndpointName": "OpenEMR Foundation",
-		"FileName": "open-emrEndpointSources.json"
+		"FileName": "OpenEMR_Foundation_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.ihs.gov/cis/",
+		"EndpointName": "Indian Health Service",
+		"FileName": "Indian_Health_Service_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json",
+		"EndpointName": "Cerner Corporation",
+		"FileName": "Cerner_Corporation_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
-		"FileName": "solidpracticeEndpointSources.json"
+		"FileName": "SolidPractice_Technologies_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://open.allscripts.com/fhirendpoints",
 		"EndpointName": "Allscripts",
-		"FileName": "allscriptsEndpointSources.json"
+		"FileName": "Allscripts_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
-		"FileName": "techcareehrEndpointSources.json"
+		"FileName": "NaphCare_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html",
+		"EndpointName": "TriMed Technologies",
+		"FileName": "TriMed_Technologies_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://www.vision-works.com/cert/FHIR",
 		"EndpointName": "Vision Works, Inc.",
-		"FileName": "vision-worksEndpointSources.json"
+		"FileName": "Vision_Works_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://api.fhir.wrs.cloud/docs",
+		"EndpointName": "WRS Health",
+		"FileName": "WRS_Health_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://docs.athenahealth.com/api/base-fhir-urls",
 		"EndpointName": "athenahealth, Inc.",
-		"FileName": "athenahealthEndpointSources.json"
+		"FileName": "athenahealth_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
 		"URL": "https://mydata.athenahealth.com/home",
 		"EndpointName": "athenahealth, Inc.",
-		"FileName": "athenahealthEndpointSources.json"
+		"FileName": "athenahealth_Inc_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html",
+		"EndpointName": "TriMed Technologies",
+		"FileName": "TriMed_Technologies_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://eph-solutions.com/FHIR_Service_URL_08162022.pdf",
+		"EndpointName": "ePH Solutions, Inc",
+		"FileName": "ePH_Solutions_Inc_EndpointSources.json"
 	}
 ]

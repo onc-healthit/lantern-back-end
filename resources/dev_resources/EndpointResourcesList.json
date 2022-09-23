@@ -25,12 +25,6 @@
     },
     {
         "FormatType": "Lantern",
-        "EndpointName": "AthenaHealth",
-        "FileName": "AthenaHealthEndpointSources.json",
-        "URL": "https://mydata.athenahealth.com/aserver"
-    },
-    {
-        "FormatType": "Lantern",
         "EndpointName": "TechCare",
         "FileName": "TechCareEndpointSources.json",
         "URL": "https://devportal.techcareehr.com/Serviceurls"

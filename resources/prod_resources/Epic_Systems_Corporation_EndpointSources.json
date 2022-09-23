@@ -2166,6 +2166,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://icon.utoledo.edu/ic-oa2-prd/api/FHIR/DSTU2/",
+			"OrganizationName": "University of Toledo",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
 			"NPIID": ""
@@ -2921,6 +2926,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicedge.upstate.edu/fhir/api/FHIR/R4/",
+			"OrganizationName": "SUNY Upstate Medical University",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://haikuak.providence.org/fhirproxy/api/FHIR/R4/",
 			"OrganizationName": "Providence Health \u0026 Services - Alaska",
 			"NPIID": ""
@@ -3138,6 +3148,11 @@
 		{
 			"URL": "https://epicrpprd.inova.org/fhirrp/api/FHIR/R4/",
 			"OrganizationName": "Inova and Valley Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://FHIR.valleymed.org/FHIR-PRD/api/FHIR/R4/",
+			"OrganizationName": "Valley Medical Center",
 			"NPIID": ""
 		},
 		{
