@@ -31,7 +31,6 @@ get_endpoint_organizations <- function(db_connection) {
     collect() %>%
     group_by(url) %>%
     summarise(endpoint_names_list = list(endpoint_names_list))
-
     res
 }
 
@@ -42,7 +41,7 @@ get_endpoint_organization_list <- function(endpoint) {
     group_by(url) %>%
     summarise(endpoint_names_list = list(endpoint_names_list)) %>%
     mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
-    mutate(endpoint_names_list = gsub("(\", )", "\"; ", as.character(endpoint_names_list)))
+    mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list)))
     
     res$endpoint_names_list
 }
