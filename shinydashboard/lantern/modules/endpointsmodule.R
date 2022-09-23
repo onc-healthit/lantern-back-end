@@ -60,8 +60,8 @@ endpointsmodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res <- res %>% mutate(availability = availability * 100)
     res
