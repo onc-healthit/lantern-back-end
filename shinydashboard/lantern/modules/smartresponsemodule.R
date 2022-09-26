@@ -132,7 +132,7 @@ smartresponsemodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
+    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
 
     res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
@@ -145,7 +145,7 @@ smartresponsemodule <- function(
     reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
-                  condensed_organization_names = colDef(name = "Organization"),
+                  condensed_organization_names = colDef(name = "Organization", html = TRUE),
                   vendor_name = colDef(name = "Developer"),
                   capability_fhir_version = colDef(name = "FHIR Version")
                 ),
