@@ -1,4 +1,3 @@
-tags$a("Skip to Content", href = "#content", class = "show-on-focus")
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
@@ -67,6 +66,24 @@ ui <- dashboardPage(
         display: block;
         font-weight: 600;
         font-size: 20px;
+      }
+      .show-on-focus-resources {     
+        position: absolute;
+        top: -10em;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;  
+        width: 180px;  
+      }
+      .show-on-focus-resources:focus {  
+        position: static;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+        width: 180px;
       }
       .content-wrapper, .right-side {
         background-color: #F6F7F8;
@@ -375,7 +392,7 @@ ui <- dashboardPage(
                 
                 let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
                 for (let navTab of navBarTabs) {
-                  liElements = navTab.getElementsByTagName(\"li\")
+                  let liElements = navTab.getElementsByTagName(\"li\")
                   for (liElem of liElements) {
                     let aElements = liElem.getElementsByTagName(\"a\")
                     if (aElements.length > 0) {
@@ -387,13 +404,54 @@ ui <- dashboardPage(
                   }
                 }
               }
+            }
+          }
 
+          if (mutation.target.id === \"page_title\") {
+            let pageTitleText = mutation.target.textContent
+            if (pageTitleText === \"Organizations Page\" || pageTitleText === \"Resource Page\" || pageTitleText === \"Profile Page\") {
+              
+              let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
+              
+              let tabbable = document.getElementsByClassName(\"tabbable\")
+              let tabContents = tabbable[0].getElementsByClassName(\"tab-content\")
+              
+              for (let navTab of navBarTabs) {
+                let liElements = navTab.getElementsByTagName(\"li\")
+                for (liElem of liElements) {
+                  let aElements = liElem.getElementsByTagName(\"a\")
+                  if (aElements.length > 0) {
+                    tabIndexObserver.observe(aElements[0], {
+                      attributes: true,
+                      attributeFilter: [\"tabindex\"]
+                    });
+                  }
+                }
+              }
+
+              for (let tabContent of tabContents) {
+                let tabPanes = tabContent.getElementsByClassName(\"tab-pane\")
+                for (let tabPane of tabPanes) {
+                  tabIndexObserver.observe(tabPane, {
+                      attributes: true,
+                      attributeFilter: [\"tabindex\"]
+                    });
+                }
+              }
             }
           }
         }
       })
 
       newNodesObserver.observe(document.body, {
+          childList: true, 
+          subtree: true, 
+          attributes: false, 
+          characterData: false
+      })
+
+      let tabContent = document.getElementsByClassName(\"tab-content\")
+      newNodesObserver.observe(tabContent[0], {
           childList: true, 
           subtree: true, 
           attributes: false, 
