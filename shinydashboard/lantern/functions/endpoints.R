@@ -42,7 +42,7 @@ get_endpoint_organization_list <- function(endpoint) {
     summarise(endpoint_names_list = list(endpoint_names_list)) %>%
     mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
     mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list)))
-    
+
     res$endpoint_names_list
 }
 
