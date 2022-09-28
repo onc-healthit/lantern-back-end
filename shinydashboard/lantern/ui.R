@@ -160,6 +160,7 @@ ui <- dashboardPage(
       }      
       select:hover {
         border: 3px solid!important;
+        background-color: white!important;
       }
       a:active {
         font-weight: bold;
@@ -167,9 +168,6 @@ ui <- dashboardPage(
       button:active {
         border: 3px solid!important;
       }      
-      select:active {
-        border: 3px solid!important;
-      }
       a:focus-visible  {
         border: 4px solid!important;
         background-color: yellow!important;
@@ -182,7 +180,7 @@ ui <- dashboardPage(
       }
       select:focus-visible  {
         border: 4px solid!important;
-        background-color: yellow!important;
+        background-color: yellow;
         color: black!important; 
       }
       .selectize-input:hover {
@@ -414,9 +412,18 @@ ui <- dashboardPage(
         for (let mutation of mutations) {
           if (mutation.addedNodes.length > 0) {
             for (let newNode of mutation.addedNodes) {
+              
+              if (mutation.target.id === \"show_date_filters\" && newNode.classList && newNode.classList.contains(\"row\")) {
+                let selectInputNodes = newNode.querySelectorAll(\"select.shiny-bound-input\")
+                for (let selectInputNode of selectInputNodes) {
+                  console.log(\"FINALLY GETTING HERE\")
+                  selectInputNode.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
+                }
+              }
+              
               if (newNode.id === \"shiny-modal-wrapper\") {
                 
-                let modalTabPanes = document.getElementsByClassName(\"tab-pane\");
+                let modalTabPanes = newNode.getElementsByClassName(\"tab-pane\");
                 for (let tab of modalTabPanes) {
                   tabIndexObserver.observe(tab, {
                     attributes: true,
@@ -424,7 +431,6 @@ ui <- dashboardPage(
                   });
                 }
 
-                
                 let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
                 for (let navTab of navBarTabs) {
                   let liElements = navTab.getElementsByTagName(\"li\")
@@ -439,7 +445,11 @@ ui <- dashboardPage(
                   }
                 }
               }
+<<<<<<< HEAD
               
+=======
+
+>>>>>>> 024e3f5 (Add aria label to dropdown in endpoint modal popup)
               if (newNode.className === \"field-list\") {
                 let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
                 let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
@@ -485,6 +495,21 @@ ui <- dashboardPage(
                       attributes: true,
                       attributeFilter: [\"tabindex\"]
                     });
+                }
+              }
+
+              if (mutation.addedNodes && mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains(\"container-fluid\")) {
+                let containerNode = mutation.addedNodes[0]
+                let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
+                for (selectDropdown of selectDropdowns) {
+                  selectDropdown.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+                }
+              }
+
+              if (mutation.target.id === \"page_title\") {
+                let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
+                for (let selectInput of selectInputButtons) {
+                  selectInput.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
                 }
               }
             }

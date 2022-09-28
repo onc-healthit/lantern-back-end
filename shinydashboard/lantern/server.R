@@ -307,7 +307,8 @@ function(input, output, session) { #nolint
             inputId = "httpvendor",
             label = "Developer:",
             choices = app$vendor_list(),
-            selected = ui_special_values$ALL_DEVELOPERS
+            selected = ui_special_values$ALL_DEVELOPERS,
+            selectize = FALSE
           )
         )
       )
