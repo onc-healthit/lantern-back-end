@@ -440,7 +440,6 @@ ui <- dashboardPage(
                   }
                 }
               }
-              
               if (newNode.className === \"field-list\") {
                 let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
                 let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
@@ -495,7 +494,22 @@ ui <- dashboardPage(
                       attributeFilter: [\"tabindex\"]
                     });
                 }
-              }            
+              }
+
+              if (mutation.addedNodes && mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains(\"container-fluid\")) {
+                let containerNode = mutation.addedNodes[0]
+                let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
+                for (selectDropdown of selectDropdowns) {
+                  selectDropdown.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+                }
+              }
+
+              if (mutation.target.id === \"page_title\") {
+                let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
+                for (let selectInput of selectInputButtons) {
+                  selectInput.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
+                }
+              }
             }
             
             let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
