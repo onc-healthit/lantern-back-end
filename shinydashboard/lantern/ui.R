@@ -416,7 +416,6 @@ ui <- dashboardPage(
               if (mutation.target.id === \"show_date_filters\" && newNode.classList && newNode.classList.contains(\"row\")) {
                 let selectInputNodes = newNode.querySelectorAll(\"select.shiny-bound-input\")
                 for (let selectInputNode of selectInputNodes) {
-                  console.log(\"FINALLY GETTING HERE\")
                   selectInputNode.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
                 }
               }
