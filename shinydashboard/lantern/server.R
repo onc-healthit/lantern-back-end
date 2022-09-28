@@ -303,7 +303,7 @@ function(input, output, session) { #nolint
     if (show_http_vendor_filter()) {
       fluidRow(
         column(width = 4,
-          pickerInput(
+          selectInput(
             inputId = "httpvendor",
             label = "Developer:",
             choices = app$vendor_list(),
