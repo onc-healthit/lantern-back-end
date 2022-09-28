@@ -501,7 +501,7 @@ ui <- dashboardPage(
                 let containerNode = mutation.addedNodes[0]
                 let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
                 for (selectDropdown of selectDropdowns) {
-                  selectDropdown.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+                  selectDropdown.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
                 }
               }
 
