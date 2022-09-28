@@ -489,6 +489,13 @@ ui <- dashboardPage(
               }
             }
           }
+
+          if (mutation.target.id === \"show_filters\") {
+            let dropDownButtons = document.getElementsByClassName(\"dropdown-toggle\")
+            for (let dropDownButton of dropDownButtons) {
+              dropDownButton.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+            }  
+          }     
         }
       })
 
