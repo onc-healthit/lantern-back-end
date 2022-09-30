@@ -458,6 +458,7 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
+          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources"),
           column(width = 4,
             multiInput(
               inputId = "resources",
