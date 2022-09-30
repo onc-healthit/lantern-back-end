@@ -1,9 +1,0 @@
-{
-	"Endpoints": [
-		{
-			"URL": "https://fhir-modernfamilypractice.canvasmedical.com",
-			"OrganizationName": "modernfamilypractice",
-			"NPIID": ""
-		}
-	]
-}
