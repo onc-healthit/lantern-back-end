@@ -24,7 +24,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	if chplURL == MedHostURL {
 		MedHostQuerier(chplURL, fileToWriteTo)
 	} else if chplURL == NextGenURL {
-		CHPLwebscraper(chplURL, fileToWriteTo)
+		NextGenwebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == CanvasURL {
 		Canvaswebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == AllScriptsURL {
