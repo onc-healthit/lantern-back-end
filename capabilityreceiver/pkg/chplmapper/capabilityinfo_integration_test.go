@@ -113,7 +113,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "somefakeCHPLID",
 		CertificationEdition: "2014",
-		CertificationStatus: "Active"}
+		CertificationStatus:  "Active"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Allscripts FHIR",
 		Version:              "2.0",
@@ -126,14 +126,14 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "correctVersionIncorrectName",
 		CertificationEdition: "2014",
-		CertificationStatus: "Active"}
+		CertificationStatus:  "Active"}
 	var hitp4 = &endpointmanager.HealthITProduct{
 		Name:                 "Allscripts FHIR",
 		Version:              "19.4.121.0",
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "CorrectVersionAndName",
 		CertificationEdition: "2014",
-		CertificationStatus: "Active"}
+		CertificationStatus:  "Active"}
 	var hitp5 = &endpointmanager.HealthITProduct{
 		Name:                 "BlueButtonPRO",
 		Version:              "2",
@@ -146,21 +146,21 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "CHP-019353",
 		CertificationEdition: "2014",
-		CertificationStatus: "Active"}
+		CertificationStatus:  "Active"}
 	var hitp7 = &endpointmanager.HealthITProduct{
 		Name:                 "HIEBus™",
 		Version:              "30.0.5",
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "CHP-019355",
 		CertificationEdition: "2014",
-		CertificationStatus: "Active"}
+		CertificationStatus:  "Active"}
 	var hitp8 = &endpointmanager.HealthITProduct{
 		Name:                 "HIEBus",
 		Version:              "20.0.0",
 		APISyntax:            "FHIR DSTU2",
 		CHPLID:               "CHP-019350",
 		CertificationEdition: "2014",
-		CertificationStatus: "Retired"}
+		CertificationStatus:  "Retired"}
 
 	err = store.AddHealthITProduct(ctx, hitp1)
 	if err != nil {
@@ -342,8 +342,11 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 >>>>>>> 92ea5194 (Chpl endpoint list mapping (#293))
 
+=======
+>>>>>>> 276305f4 (Merge main to dev 2 (#317))
 	// Test matching to product by name and version
 
 	// populate fhir endpoint
@@ -370,7 +373,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	actualHealthITProductIDs, err = store.GetHealthITProductIDsByMapID(ctx, epInfo.HealthITProductID)
 	th.Assert(t, err == nil, err)
 
-	// Should only be one match with the correct name and version 
+	// Should only be one match with the correct name and version
 	th.Assert(t, len(actualHealthITProductIDs) == 1, fmt.Sprintf("Expected endpoint to map to 1 healthIT products, instead mapped to %d", len(actualHealthITProductIDs)))
 
 	// Test matching to product by name and no version
@@ -522,6 +525,10 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	err = MatchEndpointToVendor(ctx, epInfo, store, listSourceMap)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, epInfo.VendorID == vendors[6].ID, fmt.Sprintf("expected vendor value to be %d. Instead got %d", vendors[6].ID, epInfo.VendorID))
+<<<<<<< HEAD
+=======
+
+>>>>>>> 276305f4 (Merge main to dev 2 (#317))
 }
 
 func Test_getVendorMatch(t *testing.T) {

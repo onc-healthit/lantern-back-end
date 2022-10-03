@@ -160,7 +160,7 @@ The populate db prod script expects the resources directory to contain the same 
       * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
 
 
-4. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
+3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1

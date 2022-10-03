@@ -951,10 +951,14 @@ output$endpoint_location_map  <- renderLeaflet({
     endpoint <- current_endpoint()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     res <- get_npi_organization_matches(db_tables)
 =======
     res <- get_npi_organization_matches()
 >>>>>>> 7e9df39f (Endpoint Snapshot Popup Page (#286))
+=======
+    res <- get_npi_organization_matches(db_tables)
+>>>>>>> 276305f4 (Merge main to dev 2 (#317))
     res <- res %>%
     filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
