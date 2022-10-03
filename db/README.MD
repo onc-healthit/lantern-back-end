@@ -31,10 +31,17 @@ The fhir_ endpoints table is the master list of FHIR service-base URLs that will
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | organization_names | VARCHAR(500)[]      |    Organization names this endpoint is reported as |
 | npi_ids | VARCHAR(500)[]      |    NPI IDs of matching organizations |
-| list_source | VARCHAR(500)      |   Name/URL of list source that the ednpoint came from |
+| list_source | VARCHAR(500)      |   Name/URL of list source that the endpoint came from |
 | versions_response | JSONB      |    The response returned from querying the endpoint's versions operation |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## list_source_info table
+The list_source_info table stores information about whether each list source came from CHPL or not.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| list_source     | VARCHAR(500)  | Name/URL of list sources that Lantern collects  |
+| is_chpl     | BOOLEAN     |  Whether the list source comes from chpl (true) or not (false). |
 
 ## npi_organizations 
 The entries in this table are from the npi data file in the NPPES monthly dissemination package.
@@ -79,7 +86,7 @@ The fhir_endpoints_info table contains the data collected from the last query of
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | id     | INTEGER | Database ID of endpoint |
-| healthit_product_id     | INTEGER | Healthit product ID of endpoint |
+| healthit_mapping_id     | INTEGER | healthit product mapping id that links an endpoint to the healthit_products_map table in order to map an endpoint to one or many healthit products |
 | vendor_id     | INTEGER | Vendor ID of endpoint |
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | tls_version     | VARCHAR(500)      |   Transport Layer Security (TLS) version of endpoint |
@@ -88,6 +95,7 @@ The fhir_endpoints_info table contains the data collected from the last query of
 | validation_result_id     | INTEGER      |   Validation id referencing the validation_results table |
 | included_fields | JSONB      |    Structure that shows which capability statement fields and extensions are supported/unsupported by endpoint |
 | operation_resource | JSONB     |    Stores the resources and their supported operations from the FHIR endpoint. |
+| supported_profiles | JSONB | Stores the supported FHIR profiles from the FHIR endpoint. |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
@@ -103,7 +111,7 @@ The fhir_endpoints_info_history table contains the history of the fhir_endpoints
 | entered_at | TIMESTAMPTZ      |    Timestamp of creation |
 | user_id     | VARCHAR(500) | database user ID |
 | id     | INTEGER | database ID of endpoint |
-| healthit_product_id     | INTEGER | healthit product ID of endpoint |
+| healthit_mapping_id     | INTEGER | healthit product mapping id that links an endpoint to the healthit_products_map table in order to map an endpoint to one or many healthit products |
 | vendor_id     | INTEGER | vendor ID of endpoint |
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | tls_version     | VARCHAR(500)      |   Transport Layer Security (TLS) version of endpoint |
@@ -112,6 +120,7 @@ The fhir_endpoints_info_history table contains the history of the fhir_endpoints
 | validation_result_id     | INTEGER      |   Validation id referencing the validation_results table |
 | included_fields | JSONB      |    Structure that shows which capability statement fields and extensions are supported/unsupported by endpoint |
 | operation_resource | JSONB     |    Stores the resources and their supported operations from the FHIR endpoint. |
+| supported_profiles | JSONB | Stores the supported FHIR profiles from the FHIR endpoint. |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 | smart_response     | JSONB      |   SMART response receieved from endpoint|
@@ -194,8 +203,16 @@ The healthit_products table stores health IT product information gathered from C
 | certification_edition     | VARCHAR(500)      |   healthit product certification edition |
 | last_modified_in_chpl | DATE     |    Timestamp of last time healthit product modified in CHPL |
 | chpl_id | VARCHAR(500)      |    Healthit product CHPL ID |
+| practice_type | VARCHAR(500) | The practice type of the product, either Ambulatory or Inpatient |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## healthit_products_map table
+The healthit_products_map table stores IDs that link FHIR endpoints to one or many health IT products
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | healthit product mapping database ID that is used to connect a single endpoint to one or many healthit products |
+| healthit_product_id     | INTEGER    | healthIT product ID referencing a healthIT product in the healthit_products table. |
 
 ## certification_criteria table
 The certification_criteria table stores certification criteria information gathered from CHPL.
@@ -229,5 +246,6 @@ The FHIR endpoints availability table keeps track of how many HTTP 200 responses
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
 | http_200_count | BIGINT | Count of HTTP 200 responses ever received from endpoint |
 | http_all_count | BIGINT | Total count of all HTTP requests sent to the endpoint |
+| requested_fhir_version  | VARCHAR(500)  | The FHIR version requested when querying the endpoint. Defaults to 'None' for endpoint entries where no specific FHIR version was requested. |
 | created_at | TIMESTAMPTZ | Timestamp of creation |
 | updated_at | TIMESTAMPTZ | Timestamp of last update |

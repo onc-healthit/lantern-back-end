@@ -34,21 +34,8 @@ db_tables <- list(
   hit_prod                    = tbl(db_connection, "healthit_products"),
   npi_organizations           = tbl(db_connection, "npi_organizations"),
   endpoint_export             = tbl(db_connection, "endpoint_export"),
+  organization_location       = tbl(db_connection, "organization_location"),
   vendors                     = tbl(db_connection, "vendors")
 )
 
 valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
-
-# Get the Endpoint export table and clean up for UI
-endpoint_export_tbl <- db_tables$endpoint_export %>%
-  collect() %>%
-  mutate(vendor_name = na_if(vendor_name, "")) %>%
-  tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-  mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-  rename(capability_fhir_version = fhir_version) %>%
-  mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-  mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-  mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
-  mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
-  mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
-  mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))

@@ -25,6 +25,7 @@ function(input, output, session) { #nolint
         spin = "double-bounce",
         color = "#112446",
         text = "Please Wait, Lantern is fetching the most up-to-date data")
+      app_fetcher()
       database_fetcher()
       database_fetch(0)
       remove_modal_spinner()
@@ -235,7 +236,7 @@ function(input, output, session) { #nolint
       } else {
         fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
       }
-      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list, selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
@@ -280,7 +281,7 @@ function(input, output, session) { #nolint
           selectInput(
             inputId = "httpvendor",
             label = "Developer:",
-            choices = app$vendor_list,
+            choices = app$vendor_list(),
             selected = ui_special_values$ALL_DEVELOPERS
           )
         )
@@ -929,7 +930,7 @@ output$endpoint_location_map  <- renderLeaflet({
   get_endpoint_npi_orgs <- reactive({
     endpoint <- current_endpoint()
 
-    res <- get_npi_organization_matches()
+    res <- get_npi_organization_matches(db_tables)
     res <- res %>%
     filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%

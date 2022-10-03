@@ -29,7 +29,7 @@ func GetEnptsAndSend(
 	defer wg.Done()
 
 	for {
-		listOfEndpoints, err := store.GetAllFHIREndpoints(ctx)
+		listOfEndpoints, err := store.GetAllDistinctFHIREndpoints(ctx)
 		if err != nil {
 			errs <- err
 		}

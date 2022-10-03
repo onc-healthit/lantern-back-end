@@ -122,7 +122,7 @@ func Test_convertVendorJSONToObj(t *testing.T) {
 	vendorListJSON := `{
 		"developers": [
 			{
-				"developerId": 448,
+				"id": 448,
 				"developerCode": "1447",
 				"name": "Epic Systems Corporation",
 				"website": "http://www.epic.com",
@@ -202,7 +202,7 @@ func Test_convertVendorJSONToObj(t *testing.T) {
 				}
 			},
 			{
-				"developerId": 222,
+				"id": 222,
 				"developerCode": "1221",
 				"name": "Cerner Corporation",
 				"website": "http://www.cerner.com",

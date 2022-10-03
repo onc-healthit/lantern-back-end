@@ -19,6 +19,7 @@ smartresponsemodule_UI <- function(id) {
     ),
     h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
+    tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
     reactable::reactableOutput(ns("well_known_endpoints"))
   )
 }
@@ -53,7 +54,7 @@ smartresponsemodule <- function(
   })
 
   selected_smart_count_total <- reactive({
-    all <- endpoint_export_tbl
+    all <- app$endpoint_export_tbl()
     all <- get_filtered_data(all)
     all <- all %>% distinct(url) %>% count() %>% pull(n)
     all
@@ -84,7 +85,7 @@ smartresponsemodule <- function(
   })
 
   selected_well_known_endpoints_count <- reactive({
-    res <- endpoint_export_tbl
+    res <- app$endpoint_export_tbl()
       res <- get_filtered_data(res)
     res <- res %>% filter(smart_http_response == 200)
     res <- res %>% distinct(url) %>% count() %>% pull(n)

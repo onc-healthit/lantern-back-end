@@ -14,6 +14,7 @@ endpointsmodule_UI <- function(id) {
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
       ),
     ),
+    tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
     reactable::reactableOutput(ns("endpoints_table")),
     tags$p("* An asterisk after a 'true' value in the 'Capability Statement Returned' field indicates that the returned Capability Statement for the endpoint is not of kind 'instance', which is the kind Lantern expects.", role = "comment"),
     htmlOutput(ns("note_text"))

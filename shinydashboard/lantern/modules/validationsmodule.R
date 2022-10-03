@@ -41,6 +41,7 @@ validationsmodule_UI <- function(id) {
         h3("Validation Failure Details"),
         htmlOutput(ns("anchorpoint")),
         htmlOutput(ns("failure_table_subtitle")),
+        tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
         reactable::reactableOutput(ns("validation_failure_table")),
         p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement.")
       )
@@ -101,7 +102,7 @@ validationsmodule <- function(
         distinct(num, rule_name_line, comment_line, versions_line) %>%
         mutate(entry = paste(num,  rule_name_line, versions_line, comment_line, sep = "<br>")) %>%
         select(entry)
-      }else {
+      } else {
         res <- res %>%
         distinct(num, rule_name_line, comment_line) %>%
         mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%
