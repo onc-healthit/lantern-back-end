@@ -439,6 +439,15 @@ ui <- dashboardPage(
                     }
                   }
                 }
+                
+                let bsCollapses = newNode.getElementsByClassName(\"panel-group\")
+                for (bsCollapse of bsCollapses) {
+                  let tabInfos = bsCollapse.getElementsByClassName(\"panel-info\")
+                  for (tabInfo of tabInfos) {
+                    tabInfo.setAttribute('aria-label', 'You are currently on a collapsed panel. To open and view the additional information inside, press enter. To close once open, press enter again.')
+                  }
+                }
+
               }
               if (newNode.className === \"field-list\") {
                 let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
