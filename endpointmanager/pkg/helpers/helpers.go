@@ -85,6 +85,7 @@ func FailOnError(errString string, err error) {
 	}
 }
 
+// ChromedpQueryEndpointList queries the given endpoint list using chromedp and returns the html document
 func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string) (*goquery.Document, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -118,6 +119,7 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 	return doc, nil
 }
 
+// QueryEndpointList queries the given endpoint list using http client and returns the response body of the GET request
 func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", endpointListURL, nil)

@@ -57,6 +57,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	}
 }
 
+// WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory
 func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
 	if err != nil {
