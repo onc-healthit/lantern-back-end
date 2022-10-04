@@ -3716,6 +3716,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10166739",
+			"OrganizationName": "CUA Opco, LLC",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10044371",
 			"OrganizationName": "Cumberland Valley ENT Consultants",
 			"NPIID": ""
@@ -11976,11 +11981,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10166739",
-			"OrganizationName": "Peninsula Urology Associates P.A.",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031887",
 			"OrganizationName": "Penn State Health CMG, LLC Berks Cardiology",
 			"NPIID": ""
@@ -15146,6 +15146,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "http://test.fhir.api.com/fhir",
+			"OrganizationName": "Test c1a0 FHIR Instance From CloudApiTester",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://testclinic.com/fhir",
 			"OrganizationName": "Test Clinic",
 			"NPIID": ""
@@ -17093,31 +17098,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/77188",
 			"OrganizationName": "Winston Thomas Md Pc",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Open",
-			"OrganizationName": "Wise Health System - PROD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/Fhir",
-			"OrganizationName": "Wise Health System - PROD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/Open",
-			"OrganizationName": "Wise Health System - PROD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Fhir",
-			"OrganizationName": "Wise Health System - PROD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-PROD",
-			"OrganizationName": "Wise Health System - PROD",
 			"NPIID": ""
 		},
 		{

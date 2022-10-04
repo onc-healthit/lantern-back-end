@@ -2166,8 +2166,33 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://rp.stjude.org/oauth2-prd/api/FHIR/DSTU2/",
+			"OrganizationName": "St. Jude Children's Research Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1254.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Aspen Valley Hospital",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://icon.utoledo.edu/ic-oa2-prd/api/FHIR/DSTU2/",
 			"OrganizationName": "University of Toledo",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"OrganizationName": "CHI Memorial",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"OrganizationName": "CHI Saint Joseph Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/api/FHIR/DSTU2/",
+			"OrganizationName": "CHI St. Alexius Health",
 			"NPIID": ""
 		},
 		{
@@ -3033,6 +3058,11 @@
 		{
 			"URL": "https://psacesoap.whhs.com/interconnect-fhir-prd/api/FHIR/R4/",
 			"OrganizationName": "Washington Hospital Healthcare System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jpshealth.org:4431/fhir/api/FHIR/R4/",
+			"OrganizationName": "JPS Health Network",
 			"NPIID": ""
 		},
 		{
@@ -4181,6 +4211,16 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://icon.utoledo.edu/ic-oa2-prd/api/FHIR/R4/",
+			"OrganizationName": "University of Toledo",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.stjude.org/oauth2-prd/api/FHIR/R4/",
+			"OrganizationName": "St. Jude Children's Research Hospital",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.et1225.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Pikeville Medical Center",
 			"NPIID": ""
@@ -4188,6 +4228,11 @@
 		{
 			"URL": "https://epicinterconnect.walmarthealth.com/Interconnect-OAuth2-PRD/api/FHIR/R4/",
 			"OrganizationName": "Walmart",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1254.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Aspen Valley Hospital",
 			"NPIID": ""
 		},
 		{

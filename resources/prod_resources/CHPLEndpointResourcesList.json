@@ -61,6 +61,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://academy.practicesuite.com/fhir-server-links/",
+		"EndpointName": "PracticeSuite, Inc.",
+		"FileName": "PracticeSuite_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhirtest.intelichart.com/",
 		"EndpointName": "InteliChart LLC",
 		"FileName": "InteliChart_LLC_EndpointSources.json"
