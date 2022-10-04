@@ -1,5 +1,10 @@
 package endpointwebscraper
 
+import (
+	"encoding/json"
+	"io/ioutil"
+)
+
 type EndpointList struct {
 	Endpoints []LanternEntry `json:"Endpoints"`
 }
@@ -24,4 +29,18 @@ func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo strin
 	} else if vendorURL == carefluenceURL {
 		Carefluenceebscraper(vendorURL, fileToWriteTo)
 	}
+}
+
+func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
+	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

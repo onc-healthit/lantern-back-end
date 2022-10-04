@@ -60,7 +60,10 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	err = os.Remove(csvFilePath)
 	if err != nil {

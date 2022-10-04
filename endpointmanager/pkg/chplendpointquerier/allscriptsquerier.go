@@ -3,9 +3,9 @@ package chplendpointquerier
 import (
 	"strings"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
 	"github.com/PuerkitoBio/goquery"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
@@ -14,7 +14,10 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 
 	var DSTU2URL string
 
-	doc := helpers.ChromedpQueryEndpointList(allscriptsURL, "")
+	doc, err := helpers.ChromedpQueryEndpointList(allscriptsURL, "")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// find <a> tags and iterateover them
 	doc.Find("a").Each(func(index int, linkhtml *goquery.Selection) {
@@ -27,11 +30,16 @@ func AllScriptsQuerier(allscriptsURL string, fileToWriteTo string) {
 	})
 
 	// concatenate dstu2 link onto base allscripts url to get full url and make request
-	respBody := helpers.QueryEndpointList(allscriptsURL + "/" + strings.Join(strings.Split(DSTU2URL, "/")[2:], "/"))
+	respBody, err := helpers.QueryEndpointList(allscriptsURL + "/" + strings.Join(strings.Split(DSTU2URL, "/")[2:], "/"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// convert bundle data to lantern format
 	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
-
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func UnifyWebscraper(unifyURL string, fileToWriteTo string) {
@@ -12,7 +13,10 @@ func UnifyWebscraper(unifyURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(unifyURL, ".main-container")
+	doc, err := helpers.ChromedpQueryEndpointList(unifyURL, ".main-container")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find(".box").Each(func(index int, boxElems *goquery.Selection) {
 		h3Elem := boxElems.Find("h3")
@@ -36,6 +40,9 @@ func UnifyWebscraper(unifyURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

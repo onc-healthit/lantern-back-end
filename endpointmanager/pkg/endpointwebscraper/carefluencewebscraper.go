@@ -1,8 +1,6 @@
 package endpointwebscraper
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -15,7 +13,10 @@ func Carefluenceebscraper(vendorURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(vendorURL, ".main-content-inner")
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".main-content-inner")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find(".main-content-inner").Each(func(index int, mainContent *goquery.Selection) {
 		mainContent.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
@@ -30,12 +31,7 @@ func Carefluenceebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
@@ -12,7 +13,10 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(oneMedicalURL, "root-url")
+	doc, err := helpers.ChromedpQueryEndpointList(oneMedicalURL, "root-url")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find("main").Each(func(index int, mainElem *goquery.Selection) {
 		mainElem.Find(".gdoc-page").Each(func(index int, gdocPage *goquery.Selection) {
@@ -45,6 +49,9 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

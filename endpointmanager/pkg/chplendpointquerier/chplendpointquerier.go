@@ -3,9 +3,6 @@ package chplendpointquerier
 import (
 	"encoding/json"
 	"io/ioutil"
-
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplendpointquerier"
-	log "github.com/sirupsen/logrus"
 )
 
 type EndpointList struct {
@@ -60,14 +57,16 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	}
 }
 
-func WriteCHPLFile(endpointEntryList chplendpointquerier.EndpointList, fileToWriteTo string) {
+func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }

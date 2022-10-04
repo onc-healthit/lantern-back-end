@@ -12,7 +12,10 @@ func MedHostQuerier(medhostURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	respBody := helpers.QueryEndpointList(medhostURL)
+	respBody, err := helpers.QueryEndpointList(medhostURL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var medhostArr []map[string]interface{}
 	err = json.Unmarshal(respBody, &medhostArr)
@@ -44,6 +47,9 @@ func MedHostQuerier(medhostURL string, fileToWriteTo string) {
 	}
 
 	endpointEntryList.Endpoints = lanternEntryList
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

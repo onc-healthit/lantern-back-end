@@ -1,8 +1,6 @@
 package endpointwebscraper
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -15,7 +13,10 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(vendorURL, ".WordSection1")
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".WordSection1")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	count := 0
 
@@ -42,12 +43,7 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

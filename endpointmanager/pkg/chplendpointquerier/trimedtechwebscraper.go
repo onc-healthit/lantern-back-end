@@ -5,6 +5,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func TriMedTechWebscraper(trimedtechURL string, fileToWriteTo string) {
@@ -12,7 +13,10 @@ func TriMedTechWebscraper(trimedtechURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(trimedtechURL, "get-smartconfiguration")
+	doc, err := helpers.ChromedpQueryEndpointList(trimedtechURL, "get-smartconfiguration")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find("h4").Each(func(index int, h4Elems *goquery.Selection) {
 		if strings.Contains(h4Elems.Text(), "main service base endpoint") {
@@ -36,6 +40,9 @@ func TriMedTechWebscraper(trimedtechURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

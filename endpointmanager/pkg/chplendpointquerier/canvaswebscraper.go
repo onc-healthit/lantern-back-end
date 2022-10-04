@@ -5,6 +5,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func Canvaswebscraper(CHPLURL string, fileToWriteTo string) {
@@ -12,7 +13,10 @@ func Canvaswebscraper(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(CHPLURL, "")
+	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
 		if index == 1 {
@@ -36,6 +40,9 @@ func Canvaswebscraper(CHPLURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

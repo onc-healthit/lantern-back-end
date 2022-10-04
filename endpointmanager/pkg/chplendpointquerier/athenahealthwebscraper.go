@@ -5,6 +5,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func Athenawebscraper(vendorURL string, fileToWriteTo string) {
@@ -12,7 +13,10 @@ func Athenawebscraper(vendorURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc := helpers.ChromedpQueryEndpointList(vendorURL, "table")
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "table")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	doc.Find("app-api-servers").Each(func(index int, apiServers *goquery.Selection) {
 		apiServers.Find("table").Each(func(indextr int, rowhtml *goquery.Selection) {
@@ -34,6 +38,8 @@ func Athenawebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
-
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

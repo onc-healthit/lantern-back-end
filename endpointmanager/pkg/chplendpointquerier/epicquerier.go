@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 func EpicQuerier(epicURL string, fileToWriteTo string) {
@@ -13,14 +14,23 @@ func EpicQuerier(epicURL string, fileToWriteTo string) {
 
 	var endpointEntryList EndpointList
 
-	respBody := helpers.QueryEndpointList(DSTU2URL)
+	respBody, err := helpers.QueryEndpointList(DSTU2URL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
 
-	respBody = helpers.QueryEndpointList(R4URL)
+	respBody, err = helpers.QueryEndpointList(R4URL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody)...)
 
-	WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
