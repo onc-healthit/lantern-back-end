@@ -13,7 +13,7 @@ func TriMedTechWebscraper(trimedtechURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(trimedtechURL, "get-smartconfiguration")
+	doc, err := helpers.ChromedpQueryEndpointList(trimedtechURL, "#get-smartconfiguration")
 	if err != nil {
 		log.Fatal(err)
 	}

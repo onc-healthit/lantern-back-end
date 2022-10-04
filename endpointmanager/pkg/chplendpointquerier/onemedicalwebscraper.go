@@ -13,7 +13,7 @@ func oneMedicalWebscraper(oneMedicalURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(oneMedicalURL, "root-url")
+	doc, err := helpers.ChromedpQueryEndpointList(oneMedicalURL, "#root-url")
 	if err != nil {
 		log.Fatal(err)
 	}
