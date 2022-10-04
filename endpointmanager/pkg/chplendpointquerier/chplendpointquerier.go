@@ -1,5 +1,13 @@
 package chplendpointquerier
 
+import (
+	"encoding/json"
+	"io/ioutil"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplendpointquerier"
+	log "github.com/sirupsen/logrus"
+)
+
 type EndpointList struct {
 	Endpoints []LanternEntry `json:"Endpoints"`
 }
@@ -49,5 +57,17 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		TriMedTechWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == trimedtechv8URL {
 		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
+	}
+}
+
+func WriteCHPLFile(endpointEntryList chplendpointquerier.EndpointList, fileToWriteTo string) {
+	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 }

@@ -1,9 +1,7 @@
 package chplendpointquerier
 
 import (
-	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -62,15 +60,7 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	WriteCHPLFile(endpointEntryList, fileToWriteTo)
 
 	err = os.Remove(csvFilePath)
 	if err != nil {

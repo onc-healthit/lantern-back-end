@@ -2,10 +2,11 @@ package endpointwebscraper
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	http "net/http"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -14,16 +15,7 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 
 	var endpointEntryList EndpointList
 
-	res, err := http.Get(vendorURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	doc := helpers.ChromedpQueryEndpointList(vendorURL, "")
 
 	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
 		tablehtml.Find("tr").Each(func(indextr int, rowhtml *goquery.Selection) {
