@@ -1,4 +1,3 @@
-tags$a("Skip to Content", href = "#content", class = "show-on-focus")
 # Define base user interface
 ui <- dashboardPage(
   dashboardHeader(
@@ -44,7 +43,7 @@ ui <- dashboardPage(
   dashboardBody(
     tags$script(HTML("
       $(document).ready(function() {
-        $(\"header\").find(\"nav\").prepend(\"<a href='#content' class='show-on-focus'>Skip to Content</a>\");
+        $(\"header\").find(\"nav\").prepend(\"<a href='#content' aria-label='Click the enter key to skip to the main content of this page, skipping over navigation tabs.' class='show-on-focus'>Skip to Content</a>\");
       })
      ")
     ),
