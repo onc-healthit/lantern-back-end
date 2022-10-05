@@ -484,14 +484,29 @@ get_endpoint_response_time <- function(db_connection, date, endpointURL, request
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, response_time_seconds as response
-                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND requested_fhir_version = 'None' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as date,
-                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE requested_fhir_version = 'None' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as date,
+                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     ORDER BY time"))
         )
     ) %>%
     mutate(date = as_datetime(time)) %>%
     select(date, response)
+}
+
+
+get_endpoint_http_over_time <- function(db_connection, date, endpointURL, requestedFhirVersion) {
+  endpoint_http_over_time <- as_tibble(
+    tbl(db_connection,
+        sql(paste0("SELECT http_responses.http_response AS http_response, http_responses.datetime AS time
+                    FROM (SELECT http_response, floor(extract(epoch from updated_at)) AS datetime FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as http_responses,
+                    (SELECT max(floor(extract(epoch from updated_at))) AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    WHERE http_responses.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
+                    ORDER BY time"))
+        )
+    ) %>%
+    mutate(date = as_datetime(time)) %>%
+    select(date, http_response)
 }
 
 # get tibble of endpoints which include a security service attribute
@@ -868,10 +883,12 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 
     resSupportedVersions <- tbl(db_connection,
         sql(paste0("SELECT
-            DISTINCT versions_response->>'versions' as supported_versions, versions_response->>'default' as default_version
+            DISTINCT versions_response->'Response'->>'versions' as supported_versions, versions_response->'Response'->>'default' as default_version
             FROM fhir_endpoints
             WHERE url = '", endpointURL, "'"))) %>%
-    collect()
+    collect() %>%
+    mutate(supported_versions = gsub("\\[\"|\"\\]", "", as.character(supported_versions))) %>%
+    mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
     res$security <- paste0(resSecurity$security, collapse = ",")

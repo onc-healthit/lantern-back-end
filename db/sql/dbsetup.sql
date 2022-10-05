@@ -411,3 +411,5 @@ CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
 
 CREATE INDEX healthit_product_name_version_idx ON healthit_products (name, version);
 CREATE INDEX metadata_response_time_idx ON fhir_endpoints_metadata(response_time_seconds);
+CREATE INDEX metadata_requested_version_idx ON fhir_endpoints_metadata(requested_fhir_version);
+CREATE INDEX metadata_url_idx ON fhir_endpoints_metadata(url);
