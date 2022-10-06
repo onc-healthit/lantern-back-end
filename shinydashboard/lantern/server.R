@@ -63,12 +63,6 @@ function(input, output, session) { #nolint
         reactive(input$match_confidence))
 
       callModule(
-        locationmodule,
-        "location_page",
-        reactive(input$fhir_version),
-        reactive(input$vendor))
-
-      callModule(
         capabilitystatementsizemodule,
         "capabilitystatementsize_page",
         reactive(input$fhir_version),

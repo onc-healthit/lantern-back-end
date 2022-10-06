@@ -292,9 +292,6 @@ ui <- dashboardPage(
       tabItem("smartresponse_tab",
               smartresponsemodule_UI("smartresponse_page")
       ),
-      tabItem("location_tab",
-              locationmodule_UI("location_page")
-      ),
       tabItem("contacts_tab",
               contactsmodule_UI("contacts_page")
       ),
