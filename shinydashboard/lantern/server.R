@@ -494,7 +494,7 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources", "aria-label" = "Press the enter key to skip past the resource checkbox options and jump directly to select all and deselect all resource buttons"),
+          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources", "aria-label" = "Click the enter key to skip past the resource checkbox options and jump directly to select all and deselect all resource buttons"),
           column(width = 4,
             multiInput(
               inputId = "resources",
