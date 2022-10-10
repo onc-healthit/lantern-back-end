@@ -31,7 +31,7 @@ func Carefluenceebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteEndpointListFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

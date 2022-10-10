@@ -41,7 +41,7 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 		})
 	})
 
-	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err = WriteEndpointListFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
