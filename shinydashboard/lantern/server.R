@@ -494,7 +494,7 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources"),
+          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources", "aria-label" = "Press the enter key to skip past the resource checkbox options and jump directly to select all and deselect all resource buttons"),
           column(width = 4,
             multiInput(
               inputId = "resources",
@@ -1262,17 +1262,15 @@ output$endpoint_http_response_table <- reactable::renderReactable({
     endpoint <- current_endpoint()
     showModal(modalDialog(
       title = "Endpoint Details",
-      tagList(
-        h1("Endpoint URL:"),
-        h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
-        p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
-        tabsetPanel(id = "modal_tabset", type = "tabs",
-            tabPanel("Details", detailPage()),
-            tabPanel("Organizations", organization_endpoint_page()),
-            tabPanel("Capabilities", endpoint_capabilities_page()),
-            tabPanel("Implementation Guides & Profiles", implementation_guide_profiles_page()),
-            tabPanel("Products", endpoint_products_page())
-        )
+      h1("Endpoint URL:"),
+      h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
+      p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
+      tabsetPanel(id = "endpoint_modal_tabset", type = "tabs",
+          tabPanel("Details", detailPage()),
+          tabPanel("Organizations", organization_endpoint_page()),
+          tabPanel("Capabilities", endpoint_capabilities_page()),
+          tabPanel("Implementation Guides & Profiles", implementation_guide_profiles_page()),
+          tabPanel("Products", endpoint_products_page())
       ),
       size = "l",
       easyClose = TRUE
