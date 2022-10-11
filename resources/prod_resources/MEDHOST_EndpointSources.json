@@ -36,9 +36,19 @@
 			"NPIID": "1295169910"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/47b7af45-a0f3-4509-b194-d0e646d655f9",
+			"OrganizationName": "Medhost General Hospital (Demo01)",
+			"NPIID": "1295169910"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/174285d6-efb7-4560-a7ba-f3ae332b091f",
 			"OrganizationName": "Medhost Test Facility IIP02",
 			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/51c6b6d1-0692-4788-ba2b-65a21c495bcb",
+			"OrganizationName": "Minden Medical Center",
+			"NPIID": "1891873337"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/42bff086-54d1-4189-b088-510423a727ff",

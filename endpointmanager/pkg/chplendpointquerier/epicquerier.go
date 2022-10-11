@@ -1,11 +1,9 @@
 package chplendpointquerier
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	http "net/http"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,50 +14,21 @@ func EpicQuerier(epicURL string, fileToWriteTo string) {
 
 	var endpointEntryList EndpointList
 
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", DSTU2URL, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := helpers.QueryEndpointList(DSTU2URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
 
-	client = &http.Client{}
-	req, err = http.NewRequest("GET", R4URL, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	res, err = client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	respBody, err = ioutil.ReadAll(res.Body)
+	respBody, err = helpers.QueryEndpointList(R4URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody)...)
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

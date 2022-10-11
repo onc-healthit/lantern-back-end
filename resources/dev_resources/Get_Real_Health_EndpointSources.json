@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://unify-fhir.sbx.chbase.com/",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

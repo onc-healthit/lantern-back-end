@@ -1,11 +1,9 @@
 package endpointwebscraper
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	http "net/http"
 	"strings"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/PuerkitoBio/goquery"
@@ -15,13 +13,7 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 
 	var endpointEntryList EndpointList
 
-	res, err := http.Get(vendorURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,12 +41,7 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 		})
 	})
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = WriteEndpointListFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

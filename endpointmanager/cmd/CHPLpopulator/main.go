@@ -185,9 +185,12 @@ func main() {
 
 				developerNameNormalized := re.ReplaceAllString(developerName, "")
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> cc0aedaf (Athena csv Parser (#306))
+=======
+>>>>>>> bcd62ed1 (New CHPL Endpoint Lists (#314))
 				fileNameArr := strings.Fields(developerNameNormalized)
 				fileName := ""
 				if len(fileNameArr) > 0 {

@@ -1,5 +1,10 @@
 package chplendpointquerier
 
+import (
+	"encoding/json"
+	"io/ioutil"
+)
+
 type EndpointList struct {
 	Endpoints []LanternEntry `json:"Endpoints"`
 }
@@ -18,6 +23,10 @@ var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
 var MyDataAthenaURL = "https://mydata.athenahealth.com/home"
+var OneMedicalURL = "https://apidocs.onemedical.io/fhir/overview/"
+var unifyURL = "https://unify-developer.chbase.com/?page=FHIRAPI"
+var trimedtechURL = "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html"
+var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -37,5 +46,28 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if chplURL == MyDataAthenaURL {
 		Athenawebscraper("https://mydata.athenahealth.com/aserver", fileToWriteTo)
+	} else if chplURL == OneMedicalURL {
+		oneMedicalWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == unifyURL {
+		UnifyWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == trimedtechURL {
+		TriMedTechWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == trimedtechv8URL {
+		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
 	}
+}
+
+// WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory
+func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
+	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

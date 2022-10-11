@@ -1,15 +1,11 @@
 package chplendpointquerier
 
 import (
-	"context"
-	"encoding/json"
-	"io/ioutil"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/chromedp/chromedp"
 )
 
 func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
@@ -17,22 +13,7 @@ func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
-
-	var htmlContent string
-
-	// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
-	err := chromedp.Run(ctx,
-		chromedp.Navigate(CHPLURL),
-		chromedp.WaitVisible(".api-search-result"),
-		chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "table")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,14 +43,8 @@ func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	finalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 }
