@@ -177,7 +177,6 @@ func main() {
 				}
 
 				developerNameNormalized := re.ReplaceAllString(developerName, "")
-
 				fileNameArr := strings.Fields(developerNameNormalized)
 				fileName := ""
 				if len(fileNameArr) > 0 {
