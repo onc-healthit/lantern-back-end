@@ -672,7 +672,7 @@
 		},
 		{
 			"URL": "https://ahsfhirprod.amc.edu/FHIR",
-			"OrganizationName": "Albany Medical Center",
+			"OrganizationName": "Albany Medical Center - PROD",
 			"NPIID": ""
 		},
 		{
@@ -3612,7 +3612,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10042857",
-			"OrganizationName": "Cornerstone Medical Care Brandon",
+			"OrganizationName": "Cornerstone Medical Care",
 			"NPIID": ""
 		},
 		{
@@ -8596,11 +8596,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://10.0.0.53/fhir",
-			"OrganizationName": "JT TW System redo 432",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/9653",
 			"OrganizationName": "Jui Chih Hsu Md",
 			"NPIID": ""
@@ -12541,6 +12536,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/ProdR2CDH",
+			"OrganizationName": "ProdR2",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10067025",
 			"OrganizationName": "Professional Orthopedic Medical Associat",
 			"NPIID": ""
@@ -13531,7 +13531,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://sangmobile.sunrisecommunitycare.com/FHIR",
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/FHIR",
 			"OrganizationName": "San Gorgonio Memorial Hospital",
 			"NPIID": ""
 		},
@@ -16198,6 +16198,41 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10046784",
 			"OrganizationName": "Twin Lakes Medical Foundation",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/Fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/Open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R4/fhir-R4TWStandalone",
+			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
 		{
