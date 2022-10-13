@@ -24,7 +24,7 @@ type BundleResource struct {
 type ManagingOrgReference struct {
 	Reference string `json:"reference"`
 	Display   string `json:"display"`
-	Id		  string `json:"id"`
+	Id        string `json:"id"`
 }
 
 type Organization struct {
@@ -47,7 +47,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 		entry.URL = bundleEntry.Resource.URL
 		if bundleEntry.Resource.Name == "" {
 			if bundleEntry.Resource.ManagingOrg.Display == "" {
-				
+
 				orgId := bundleEntry.Resource.ManagingOrg.Reference
 
 				if orgId == "" {
