@@ -2,8 +2,9 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type FHIRBundle struct {
