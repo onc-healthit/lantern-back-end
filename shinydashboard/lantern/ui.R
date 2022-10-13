@@ -416,7 +416,7 @@ ui <- dashboardPage(
               if (mutation.target.id === \"show_date_filters\" && newNode.classList && newNode.classList.contains(\"row\")) {
                 let selectInputNodes = newNode.querySelectorAll(\"select.shiny-bound-input\")
                 for (let selectInputNode of selectInputNodes) {
-                  selectInputNode.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
+                  selectInputNode.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
                 }
               }
               
@@ -464,7 +464,7 @@ ui <- dashboardPage(
               let containerNode = mutation.addedNodes[0]
               let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
               for (selectDropdown of selectDropdowns) {
-                selectDropdown.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
+                selectDropdown.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
               }
             } 
           }
@@ -504,7 +504,7 @@ ui <- dashboardPage(
             
             let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
             for (let selectInput of selectInputButtons) {
-              selectInput.setAttribute('aria-label', 'Use the arrow keys to naviate the filter menu.')
+              selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
             }
           }
           
