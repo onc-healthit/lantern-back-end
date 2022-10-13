@@ -18,16 +18,17 @@ endpoint_export_tbl <- db_tables$endpoint_export %>%
   mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
   mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
   left_join(endpoint_organization_tbl) %>%
-  mutate(endpoint_names = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
+  mutate(endpoint_names = gsub("^c\\(|\\)$", "", as.character(endpoint_names_list))) %>%
   mutate(endpoint_names = gsub("(\", )", "\"; ", as.character(endpoint_names))) %>%
+  mutate(endpoint_names = gsub("NULL", "", as.character(endpoint_names))) %>%
+  mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
   mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))
-
   endpoint_export_tbl
 }
 
 get_endpoint_organizations <- function(db_connection) {
     res <- tbl(db_connection,
-    sql("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export")) %>%
+    sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
     collect() %>%
     group_by(url) %>%
     summarise(endpoint_names_list = list(endpoint_names_list))
@@ -36,12 +37,13 @@ get_endpoint_organizations <- function(db_connection) {
 
 get_endpoint_organization_list <- function(endpoint) {
     res <- tbl(db_connection,
-    sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "'"))) %>%
+    sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
     collect() %>%
     group_by(url) %>%
     summarise(endpoint_names_list = list(endpoint_names_list)) %>%
     mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
-    mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list)))
+    mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list))) %>%
+    mutate(endpoint_names_list = gsub("\"", "", endpoint_names_list))
 
     res$endpoint_names_list
 }
