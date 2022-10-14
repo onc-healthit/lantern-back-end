@@ -112,6 +112,7 @@ func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	hitp.LastModifiedInCHPL = hitp2.LastModifiedInCHPL
 	hitp.CHPLID = hitp2.CHPLID
 	hitp.PracticeType = hitp2.PracticeType
+	hitp.ACB = hitp2.ACB
 
 	return nil
 }

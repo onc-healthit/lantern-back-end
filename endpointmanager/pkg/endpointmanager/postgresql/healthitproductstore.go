@@ -305,7 +305,8 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
-		hitp.PracticeType)
+		hitp.PracticeType,
+	    hitp.ACB)
 
 	err = row.Scan(&hitp.ID)
 
@@ -341,6 +342,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		hitp.PracticeType,
 		locationJSON,
 		certificationCriteriaJSON,
+		hitp.ACB,
 		hitp.ID)
 
 	return err
@@ -427,8 +429,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_edition,
 			last_modified_in_chpl,
 			chpl_id,
-			practice_type)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			practice_type,
+			acb)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -448,8 +451,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			chpl_id = $11,
 			practice_type = $12,
 			location = $13,
-			certification_criteria = $14
-		WHERE id=$15`)
+			certification_criteria = $14,
+			acb = $15
+		WHERE id=$16`)
 	if err != nil {
 		return err
 	}

@@ -61,6 +61,7 @@ type chplCertifiedProduct struct {
 	CertificationStatus details            `json:"certificationStatus"`
 	CriteriaMet         []criteriaMet      `json:"criteriaMet"`
 	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
+	ACB					string			   `json:"acb"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -102,7 +103,7 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	return nil
 }
 
-// GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
+// GetCHPLEndpointListProducts grabs software information from the CHPLProductsInfo.json file and stores the products in 'store'
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
 
