@@ -61,7 +61,7 @@ type chplCertifiedProduct struct {
 	CertificationStatus details            `json:"certificationStatus"`
 	CriteriaMet         []criteriaMet      `json:"criteriaMet"`
 	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
-	ACB					string			   `json:"acb"`
+	ACB                 string             `json:"acb"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -209,7 +209,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
 		PracticeType:          strings.TrimSpace(prod.PracticeType.Name),
-		ACB:				   strings.TrimSpace(prod.ACB),
+		ACB:                   strings.TrimSpace(prod.ACB),
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
@@ -293,7 +293,7 @@ func persistProduct(ctx context.Context,
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
-	
+
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
@@ -422,7 +422,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	}
 
 	// If the new product has a populate ACB field, update it
-	if (newDbProd.ACB != "" && (existingDbProd.ACB != newDbProd.ACB)) {
+	if newDbProd.ACB != "" && (existingDbProd.ACB != newDbProd.ACB) {
 		return true, nil
 	}
 
