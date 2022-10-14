@@ -47,6 +47,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE id=$1`
@@ -68,6 +69,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
+		&hitp.ACB,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -120,6 +122,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
+		&hitp.ACB,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -166,6 +169,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=regexp_replace(LOWER($1), '\W+', '', 'g') and certification_status = 'Active'`
@@ -198,6 +202,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
 			&practiceTypeString,
+			&hitp.ACB,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -508,6 +513,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE name=$1 AND version=$2`)
