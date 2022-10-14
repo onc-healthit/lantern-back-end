@@ -61,7 +61,7 @@ type CHPLEndpointEntry struct {
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	ServiceBaseUrlList  serviceBaseURL   `json:"serviceBaseUrlList"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
-	ACB					details			 `json:"certificationBody"`
+	ACB                 details          `json:"certificationBody"`
 }
 
 type chplCertifiedProductEntry struct {
@@ -76,7 +76,7 @@ type chplCertifiedProductEntry struct {
 	CertificationStatus details          `json:"certificationStatus"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
-	ACB					string			 `json:"acb"`
+	ACB                 string           `json:"acb"`
 }
 
 func main() {

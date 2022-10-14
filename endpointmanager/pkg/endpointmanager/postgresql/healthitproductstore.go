@@ -311,7 +311,7 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
 		hitp.PracticeType,
-	    hitp.ACB)
+		hitp.ACB)
 
 	err = row.Scan(&hitp.ID)
 

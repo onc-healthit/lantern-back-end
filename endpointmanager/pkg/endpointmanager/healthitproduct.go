@@ -30,7 +30,7 @@ type HealthITProduct struct {
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 	PracticeType          string
-	ACB 				  string
+	ACB                   string
 }
 
 // Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.
