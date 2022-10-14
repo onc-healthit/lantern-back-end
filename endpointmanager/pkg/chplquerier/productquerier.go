@@ -293,7 +293,6 @@ func persistProduct(ctx context.Context,
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
-
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
@@ -429,6 +428,11 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// If the new product has a different API url, update it
 	if existingDbProd.APIURL != newDbProd.APIURL {
+		return true, nil
+	}
+
+	// If the new product has a populate ACB field, update it
+	if newDbProd.ACB != "" && (existingDbProd.ACB != newDbProd.ACB) {
 		return true, nil
 	}
 
