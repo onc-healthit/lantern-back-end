@@ -106,8 +106,7 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	CriteriaMet:         criteriaMetArr,
 	APIDocumentation:    apiDocArr,
 	PracticeType:        details{Id: 1, Name: "Inpatient"},
-	ACB:				 "SLI Compliance",
-
+	ACB:                 "SLI Compliance",
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -525,7 +524,6 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	apiURLChange := testHITP
 	apiURLChange.APIURL = "http:/newapiURL.html"
 	expectedResults = append(expectedResults, expectedResult{name: "apiURL", hitProd: apiURLChange, needsUpdate: true, err: nil})
-
 
 	acbChange := testHITP
 	acbChange.ACB = "Drummond Group"
