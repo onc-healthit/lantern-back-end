@@ -28,6 +28,8 @@ var unifyURL = "https://unify-developer.chbase.com/?page=FHIRAPI"
 var trimedtechURL = "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html"
 var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html"
 var cernerR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
+var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
+var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -57,6 +59,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
 	} else if chplURL == cernerR4URL {
 		CernerQuerier(chplURL, fileToWriteTo)
+	} else if chplURL == techCareURL {
+		Techcarewebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == carefluenceURL {
+		Carefluenceebscraper(chplURL, fileToWriteTo)
 	}
 }
 
