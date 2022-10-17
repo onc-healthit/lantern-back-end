@@ -22,17 +22,5 @@
         "EndpointName": "1Up",
         "FileName": "1UpEndpointSources.json",
         "URL": "https://1up.health/fhir-endpoint-directory"
-    },
-    {
-        "FormatType": "Lantern",
-        "EndpointName": "TechCare",
-        "FileName": "TechCareEndpointSources.json",
-        "URL": "https://devportal.techcareehr.com/Serviceurls"
-    },
-    {
-        "FormatType": "Lantern",
-        "EndpointName": "Carefluence",
-        "FileName": "CarefluenceEndpointSources.json",
-        "URL": "https://carefluence.com/carefluence-fhir-endpoints/"
     }
 ]
