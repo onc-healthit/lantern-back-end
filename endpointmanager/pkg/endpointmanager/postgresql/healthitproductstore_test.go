@@ -62,7 +62,8 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CHPLID:                "ID",
-		PracticeType:          "Ambulatory"}
+		PracticeType:          "Ambulatory",
+		ACB:				   "SLI Compliance"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",

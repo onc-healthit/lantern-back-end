@@ -106,6 +106,8 @@ var testCHPLProd chplCertifiedProduct = chplCertifiedProduct{
 	CriteriaMet:         criteriaMetArr,
 	APIDocumentation:    apiDocArr,
 	PracticeType:        details{Id: 1, Name: "Inpatient"},
+	ACB:				 "SLI Compliance",
+
 }
 
 var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
@@ -118,6 +120,7 @@ var testHITP endpointmanager.HealthITProduct = endpointmanager.HealthITProduct{
 	CertificationCriteria: []int{30, 31, 32, 33, 34, 35, 36, 37, 38},
 	APIURL:                "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 	PracticeType:          "Inpatient",
+	ACB:                   "SLI Compliance",
 }
 
 func Test_makeCHPLProductURL(t *testing.T) {
@@ -178,6 +181,7 @@ func Test_convertProductJSONToObj(t *testing.T) {
 			"certificationDate": "2016-07-01",
 			"certificationStatus": {"name": "Active", "id": 1},
 			"practiceType": {"name": "Inpatient", "id":1},
+			"acb": "SLI Compliance",
 			"criteriaMet": [
                 {
                     "id": 30,
@@ -521,6 +525,15 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	apiURLChange := testHITP
 	apiURLChange.APIURL = "http:/newapiURL.html"
 	expectedResults = append(expectedResults, expectedResult{name: "apiURL", hitProd: apiURLChange, needsUpdate: true, err: nil})
+
+
+	acbChange := testHITP
+	acbChange.ACB = "Drummond Group"
+	expectedResults = append(expectedResults, expectedResult{name: "acbChange", hitProd: acbChange, needsUpdate: true, err: nil})
+
+	acbChangeNoValue := testHITP
+	acbChangeNoValue.ACB = ""
+	expectedResults = append(expectedResults, expectedResult{name: "acbNoValue", hitProd: acbChangeNoValue, needsUpdate: false, err: nil})
 
 	for _, expRes := range expectedResults {
 		needsUpdate, err := prodNeedsUpdate(&base, &(expRes.hitProd))

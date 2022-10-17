@@ -29,7 +29,8 @@ func Test_HealthITProductEqual(t *testing.T) {
 		CertificationDate:     now,
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    now,
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+		ACB:				   "SLI Compliance"}
 	var hitp2 = &HealthITProduct{
 		ID:       1,
 		Name:     "Health IT System 1",
@@ -49,7 +50,8 @@ func Test_HealthITProductEqual(t *testing.T) {
 		CertificationDate:     now,
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    now,
-		CHPLID:                "ID"}
+		CHPLID:                "ID",
+		ACB:				   "SLI Compliance"}
 
 	if !hitp1.Equal(hitp2) {
 		t.Errorf("Expected hitp1 to equal hitp2. They are not equal.")
@@ -144,6 +146,12 @@ func Test_HealthITProductEqual(t *testing.T) {
 		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. Name should be different. %s vs %s", hitp1.Name, hitp2.Name)
 	}
 	hitp2.Name = hitp1.Name
+
+	hitp2.ACB = "other"
+	if hitp1.Equal(hitp2) {
+		t.Errorf("Did not expect healthit product 1 to equal healthit product 2. ACB should be different. %s vs %s", hitp1.ACB, hitp2.ACB)
+	}
+	hitp2.ACB = hitp1.ACB
 
 	hitp2 = nil
 	if hitp1.Equal(hitp2) {
