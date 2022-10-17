@@ -32,7 +32,6 @@ ui <- dashboardPage(
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
-      menuItem("Location", tabName = "location_tab", icon = tags$i(class = "fa fa-map", "aria-hidden" = "true", role = "presentation", "aria-label" = "map icon")),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
@@ -214,7 +213,7 @@ ui <- dashboardPage(
         background-color: yellow!important;
         color: black!important; 
       }
-      #location_page-location_map:focus-visible {
+      #organizations_page-location_map:focus-visible {
         border: 4px solid!important;
       }
       table.dataTable thead .sorting:focus-visible  {

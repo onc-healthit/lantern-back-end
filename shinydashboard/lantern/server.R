@@ -145,7 +145,6 @@ function(input, output, session) { #nolint
      "fields_tab" = "Fields Page",
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
-     "location_tab" = "Location Map",
      "contacts_tab" = "Contact Information Page",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
