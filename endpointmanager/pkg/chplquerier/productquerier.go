@@ -433,7 +433,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// If the new product has a new ACB field, update it unless the field is not populated
 	if existingDbProd.ACB != newDbProd.ACB {
-		
+
 		if newDbProd.ACB == "" {
 			return false, nil
 		} else {
