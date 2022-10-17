@@ -431,9 +431,14 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	}
 
-	// If the new product has a populate ACB field, update it
-	if newDbProd.ACB != "" && (existingDbProd.ACB != newDbProd.ACB) {
-		return true, nil
+	// If the new product has a new ACB field, update it unless the field is not populated
+	if existingDbProd.ACB != newDbProd.ACB {
+		
+		if newDbProd.ACB == "" {
+			return false, nil
+		} else {
+			return true, nil
+		}
 	}
 
 	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)

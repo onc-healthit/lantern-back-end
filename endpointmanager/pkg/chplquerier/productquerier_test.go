@@ -525,6 +525,10 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	apiURLChange.APIURL = "http:/newapiURL.html"
 	expectedResults = append(expectedResults, expectedResult{name: "apiURL", hitProd: apiURLChange, needsUpdate: true, err: nil})
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1044125a (Update healthit product tests with acb information)
 	acbChange := testHITP
 	acbChange.ACB = "Drummond Group"
 	expectedResults = append(expectedResults, expectedResult{name: "acbChange", hitProd: acbChange, needsUpdate: true, err: nil})
