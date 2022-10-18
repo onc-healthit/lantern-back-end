@@ -22,6 +22,7 @@ organizationsmodule_UI <- function(id) {
                             Lantern uses the organization name which each endpoint list provides, and the primary and
                             secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints
                             based on their names and assign a match confidence score. This table shows matches with a match confidence of 97% and up."),
+                        htmlOutput(ns("map_anchor_link")),
                         reactable::reactableOutput(ns("npi_orgs_table")),
                         tagList(
                           h3("Map of Endpoints Linked to an Organization"),
@@ -33,6 +34,7 @@ organizationsmodule_UI <- function(id) {
                           NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where
                           services are provided, or may not be the geolocation of any individual endpoint. This is especially true for API Information Sources which may
                           have more than one physical location, which may vary by facility type and geographic location."),
+                          htmlOutput(ns("map_anchor_point")),
                           leafletOutput(ns("location_map"), width = "100%", height = "600px"),
                           htmlOutput(ns("note_text_nppes_organizations"))
                         )),
@@ -191,6 +193,14 @@ organizationsmodule <- function(
 
     res <- paste("<div style='font-size: 18px;'><b>Notes:</b>", note_info, "</div>")
     HTML(res)
+  })
+
+  output$map_anchor_point <- renderUI({
+    HTML("<span id='mapanchorid'></span>")
+  })
+
+  output$map_anchor_link <- renderUI({
+    HTML("<br><p>See the locations of endpoints on the map <a class=\"lantern-url\" href='#mapanchorid'>below</a></p>")
   })
 
 }
