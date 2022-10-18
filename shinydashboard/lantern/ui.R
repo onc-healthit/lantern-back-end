@@ -69,7 +69,7 @@ ui <- dashboardPage(
       }
       .show-on-focus-resources {     
         position: absolute;
-        top: -10em;
+        top: -200em;
         background: #fff;
         color: #112e51;
         display: block;
@@ -150,11 +150,16 @@ ui <- dashboardPage(
       a:hover {
         font-weight: bold;
       }
+      button.dropdown-toggle {
+        background-color: white!important;
+        color: black;
+      }
       button:hover {
         border: 3px solid!important;
       }      
       select:hover {
         border: 3px solid!important;
+        background-color: white!important;
       }
       a:active {
         font-weight: bold;
@@ -162,9 +167,6 @@ ui <- dashboardPage(
       button:active {
         border: 3px solid!important;
       }      
-      select:active {
-        border: 3px solid!important;
-      }
       a:focus-visible  {
         border: 4px solid!important;
         background-color: yellow!important;
@@ -177,7 +179,7 @@ ui <- dashboardPage(
       }
       select:focus-visible  {
         border: 4px solid!important;
-        background-color: yellow!important;
+        background-color: yellow;
         color: black!important; 
       }
       .selectize-input:hover {
@@ -224,6 +226,36 @@ ui <- dashboardPage(
       }
       table.dataTable thead .sorting:hover {
         border: 2px solid!important;
+      }
+      a.btn {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white;
+      }
+      a.btn:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      a.btn:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
+      }
+      .action-button {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white!important;
+      }
+      .action-button:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      .action-button:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
       }
 
     "))),
@@ -333,7 +365,7 @@ ui <- dashboardPage(
           attributeFilter: [\"tabindex\"]
         });
       }
-
+      
       let sideMenu = document.getElementsByClassName(\"sidebar-menu\")
       let sideMenuList = sideMenu[0].getElementsByTagName(\"li\")
       for (let liElem of sideMenuList) {
@@ -379,9 +411,17 @@ ui <- dashboardPage(
         for (let mutation of mutations) {
           if (mutation.addedNodes.length > 0) {
             for (let newNode of mutation.addedNodes) {
+              
+              if (mutation.target.id === \"show_date_filters\" && newNode.classList && newNode.classList.contains(\"row\")) {
+                let selectInputNodes = newNode.querySelectorAll(\"select.shiny-bound-input\")
+                for (let selectInputNode of selectInputNodes) {
+                  selectInputNode.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+                }
+              }
+              
               if (newNode.id === \"shiny-modal-wrapper\") {
                 
-                let modalTabPanes = document.getElementsByClassName(\"tab-pane\");
+                let modalTabPanes = newNode.getElementsByClassName(\"tab-pane\");
                 for (let tab of modalTabPanes) {
                   tabIndexObserver.observe(tab, {
                     attributes: true,
@@ -389,7 +429,6 @@ ui <- dashboardPage(
                   });
                 }
 
-                
                 let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
                 for (let navTab of navBarTabs) {
                   let liElements = navTab.getElementsByTagName(\"li\")
@@ -404,7 +443,29 @@ ui <- dashboardPage(
                   }
                 }
               }
+
+              if (newNode.className === \"field-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
+              }
+
+              if (newNode.className === \"extension-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_extension_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"extension-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
+              }   
             }
+
+            if (mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains(\"container-fluid\")) {
+              let containerNode = mutation.addedNodes[0]
+              let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
+              for (selectDropdown of selectDropdowns) {
+                selectDropdown.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+              }
+            } 
           }
 
           if (mutation.target.id === \"page_title\") {
@@ -437,8 +498,20 @@ ui <- dashboardPage(
                       attributeFilter: [\"tabindex\"]
                     });
                 }
-              }
+              }            
             }
+            
+            let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
+            for (let selectInput of selectInputButtons) {
+              selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+            }
+          }
+          
+          if (mutation.target.id === \"show_filters\") {
+            let dropDownButtons = document.getElementsByClassName(\"dropdown-toggle\")
+            for (let dropDownButton of dropDownButtons) {
+              dropDownButton.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+            }  
           }
         }
       })
@@ -457,7 +530,6 @@ ui <- dashboardPage(
           attributes: false, 
           characterData: false
       })
-
     "))
   )
 )
