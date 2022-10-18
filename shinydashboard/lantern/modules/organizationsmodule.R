@@ -1,6 +1,7 @@
 library(DT)
 library(purrr)
 library(reactable)
+library(leaflet)
 
 organizationsmodule_UI <- function(id) {
 
@@ -13,20 +14,36 @@ organizationsmodule_UI <- function(id) {
     tabsetPanel(id = "organization_tabset", type = "tabs",
               tabPanel("NPI Organizations",
                         h3("NPI Organization Matches"),
-                        p("Endpoints can be linked to organizations in two ways, either by the NPI ID (preferred), or by the
-                            organization name. Links made between organizations and endpoints using an
+                        p("Endpoints can be linked to organizations in two ways, either by the National Provider Identifier (NPI)
+                            as found in the National Payer and Provider Enumeration System (NPPES), which is preferred,
+                            or by the organization name as reported by a Certified API Developer. Links made between organizations and endpoints using an
                             NPI ID are given a match confidence value of 100%, which is higher than any possible confidence
                             value for matches made using the organization name. In instances where a unique identifier to match an organization to an endpoint is not provided,
                             Lantern uses the organization name which each endpoint list provides, and the primary and
                             secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints
                             based on their names and assign a match confidence score. This table shows matches with a match confidence of 97% and up."),
-                        reactable::reactableOutput(ns("npi_orgs_table"))),
+                        htmlOutput(ns("map_anchor_link")),
+                        reactable::reactableOutput(ns("npi_orgs_table")),
+                        tagList(
+                          h3("Map of Endpoints Linked to an Organization"),
+                          p("This map visualizes the locations of endpoints which Lantern has associated with an organization
+                          name in NPPES. An endpoint will have an entry on the map for each version of FHIR which it supports. Caution should be
+                          taken when gathering insights from this map as linking an API Information Source to an organization name in NPPES based on reported organization
+                          name may not be done with 100% confidence. See note below the map for more information."),
+                          p("The points on the map, below, represent the zip code associated with the primary address of matched organizations. The location reported by
+                          NPPES may not be the physical location of the API Information Source serviced by a given endpoint, may not represent a physical location where
+                          services are provided, or may not be the geolocation of any individual endpoint. This is especially true for API Information Sources which may
+                          have more than one physical location, which may vary by facility type and geographic location."),
+                          htmlOutput(ns("map_anchor_point")),
+                          leafletOutput(ns("location_map"), width = "100%", height = "600px"),
+                          htmlOutput(ns("note_text_nppes_organizations"))
+                        )),
               tabPanel("Endpoint List Organizations",
                         h3("Endpoint List Organization Matches"),
                         p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
-                        reactable::reactableOutput(ns("endpoint_list_orgs_table")))
-    ),
-    htmlOutput(ns("note_text"))
+                        reactable::reactableOutput(ns("endpoint_list_orgs_table")),
+                        htmlOutput(ns("note_text")))
+    )
   )
 }
 
@@ -138,6 +155,52 @@ organizationsmodule <- function(
       in existence. Insights gathered from this data should be framed accordingly."
     res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
+  })
+
+  selected_fhir_endpoints <- reactive({
+    res <- isolate(app_data$endpoint_locations())
+    req(sel_fhir_version(), sel_vendor())
+    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
+    # the capability statement fields by which fhir verison they're associated with
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+    # Same as above but with the developer dropdown
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+    res
+  })
+
+
+  output$location_map  <- renderLeaflet({
+    map <- leaflet() %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addCircles(data = selected_fhir_endpoints(), lat = ~ lat, lng = ~ lng, popup = paste(isolate(selected_fhir_endpoints())$organization_name, "<br>", isolate(selected_fhir_endpoints())$url),  weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
+      setView(-98.9, 37.7, zoom = 4)
+    map
+  })
+
+  output$note_text_nppes_organizations <- renderUI({
+
+    note_info <- "<br>(1) These points only represent indexed endpoints which have been mapped to an
+    organization with a match score greater than 0.97. The match scores are derived from the
+    algorithms used by the Lantern application and are subject to change.<br>
+    (2) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
+    Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
+    with the ONC Cures Act Final Rule, or discovered through the National Plan and Provider
+    Enumeration System (NPPES). This data, therefore, may not represent all FHIR endpoints
+    in existence. Insights gathered from this data should be framed accordingly.
+    "
+
+    res <- paste("<div style='font-size: 18px;'><b>Notes:</b>", note_info, "</div>")
+    HTML(res)
+  })
+
+  output$map_anchor_point <- renderUI({
+    HTML("<span id='mapanchorid'></span>")
+  })
+
+  output$map_anchor_link <- renderUI({
+    HTML("<br><p>See the locations of endpoints on the map <a class=\"lantern-url\" href='#mapanchorid'>below</a></p>")
   })
 
 }

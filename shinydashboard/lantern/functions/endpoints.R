@@ -714,7 +714,8 @@ get_endpoint_locations <- function(db_connection) {
           fhir_version,
           vendor_name,
           match_score,
-          left(zipcode,5) as zipcode
+          left(zipcode,5) as zipcode,
+          npi_id
         FROM organization_location")
     ) %>%
     collect() %>%
