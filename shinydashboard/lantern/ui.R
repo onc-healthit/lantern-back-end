@@ -69,7 +69,7 @@ ui <- dashboardPage(
       }
       .show-on-focus-resources {     
         position: absolute;
-        top: -10em;
+        top: -200em;
         background: #fff;
         color: #112e51;
         display: block;
