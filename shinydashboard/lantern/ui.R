@@ -554,10 +554,6 @@ ui <- dashboardPage(
               selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
             }
             
-            let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
-            for (let selectInput of selectInputButtons) {
-              selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
-            }
           }
           
           if (mutation.target.id === \"show_filters\") {

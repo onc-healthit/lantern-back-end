@@ -1084,7 +1084,7 @@ endpoint_http_responses <- reactive({
   endpoint <- current_endpoint()
   range <- get_range(input$http_date)
   res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
-  left_join(app$http_response_code_tbl, by = c("http_response" = "code")) %>%
+  left_join(app$http_response_code_tbl(), by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
   res
@@ -1096,7 +1096,7 @@ endpoint_http_codes_table <- reactive({
   range <- get_range(input$http_date)
   res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
 
-  http_code_table <- app$http_response_code_tbl %>%
+  http_code_table <- app$http_response_code_tbl() %>%
   inner_join(res, by = c("code" = "http_response")) %>%
   distinct(code, label) %>%
   mutate(row_num = row_number()) %>%
