@@ -392,34 +392,26 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
 
 # get contact information
 get_contact_information <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-        f.url as url,
-        vendors.name as vendor_name,
-        capability_fhir_version as fhir_version,
-        fhir_endpoints.organization_names as endpoint_names,
-		    contacts.contact_name,
-		    contacts.contact_type, 
-		    contacts.contact_value,
-        contacts.contact_preference
-        FROM fhir_endpoints_info f
-        LEFT JOIN vendors on f.vendor_id = vendors.id
-        LEFT JOIN fhir_endpoints on f.id = fhir_endpoints.id
-		    LEFT JOIN (SELECT
+
+  contacts_tbl <- tbl(db_connection,
+    sql("SELECT DISTINCT
 				  url,
 				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
         	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
           json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
           json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
           FROM fhir_endpoints_info
-				  ) as contacts on contacts.url = f.url
-    ")) %>%
-    collect() %>%
-    mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
-    mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
-    mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
+    collect()
+
+
+    res <- app$endpoint_export_tbl() %>%
+        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
+        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
+        filter(requested_fhir_version == "None") %>%
+        left_join(contacts_tbl, by = c("url" = "url"))
+
+    res
 }
 
 # get values from specific fields we're interested in displaying

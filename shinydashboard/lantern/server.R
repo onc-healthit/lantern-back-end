@@ -494,7 +494,7 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
-          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources"),
+          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources", "aria-label" = "Click the enter key to skip past the resource checkbox options and jump directly to select all and deselect all resource buttons"),
           column(width = 4,
             multiInput(
               inputId = "resources",
@@ -1084,7 +1084,7 @@ endpoint_http_responses <- reactive({
   endpoint <- current_endpoint()
   range <- get_range(input$http_date)
   res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
-  left_join(app$http_response_code_tbl, by = c("http_response" = "code")) %>%
+  left_join(app$http_response_code_tbl(), by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
   res
@@ -1096,7 +1096,7 @@ endpoint_http_codes_table <- reactive({
   range <- get_range(input$http_date)
   res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
 
-  http_code_table <- app$http_response_code_tbl %>%
+  http_code_table <- app$http_response_code_tbl() %>%
   inner_join(res, by = c("code" = "http_response")) %>%
   distinct(code, label) %>%
   mutate(row_num = row_number()) %>%
@@ -1265,7 +1265,7 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       h1("Endpoint URL:"),
       h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
       p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
-      tabsetPanel(type = "tabs",
+      tabsetPanel(id = "endpoint_modal_tabset", type = "tabs",
           tabPanel("Details", detailPage()),
           tabPanel("Organizations", organization_endpoint_page()),
           tabPanel("Capabilities", endpoint_capabilities_page()),

@@ -133,11 +133,11 @@ smartresponsemodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
+    mutate(condensed_organization_names = ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", organization_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names))
 
     res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version)
     res
   })
