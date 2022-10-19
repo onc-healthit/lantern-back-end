@@ -43,7 +43,7 @@ ui <- dashboardPage(
   dashboardBody(
     tags$script(HTML("
       $(document).ready(function() {
-        $(\"header\").find(\"nav\").prepend(\"<a href='#content' class='show-on-focus'>Skip to Content</a>\");
+        $(\"header\").find(\"nav\").prepend(\"<a href='#content' aria-label='Click the enter key to skip to the main content of this page, skipping over the header elements and navigation tabs.' class='show-on-focus'>Skip to Content</a>\");
       })
      ")
     ),
@@ -427,19 +427,39 @@ ui <- dashboardPage(
 
                 let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
                 for (let navTab of navBarTabs) {
+                  navTab.setAttribute(\"role\", \"tablist\")
+                  let navTabID = navTab.getAttribute(\"data-tabsetid\")
+                  navTab.classList.add(\"shiny-tab-input\", \"shiny-bound-input\")
                   let liElements = navTab.getElementsByTagName(\"li\")
-                  for (liElem of liElements) {
+                  for (let liElem of liElements) {
+                    liElem.setAttribute(\"role\", \"presentation\")
                     let aElements = liElem.getElementsByTagName(\"a\")
                     if (aElements.length > 0) {
                       tabIndexObserver.observe(aElements[0], {
                         attributes: true,
                         attributeFilter: [\"tabindex\"]
                       });
+                      
+                      for (let aElem of aElements) {
+                        aElem.setAttribute(\"role\", \"tab\")
+                        aElem.setAttribute(\"aria-selected\", \"true\")
+                        aElem.setAttribute(\"aria-controls\", \"tab-\" + navTabID + \"-1\")
+                        aElem.setAttribute(\"aria-expanded\", \"true\")
+                        aElem.setAttribute(\"aria-label\", \"Press enter to select the \" + aElem.textContent +\" tab and show this tab's content below\")
+                      }
                     }
                   }
                 }
-              }
+                
+                let bsCollapses = newNode.getElementsByClassName(\"panel-group\")
+                for (bsCollapse of bsCollapses) {
+                  let tabInfos = bsCollapse.getElementsByClassName(\"panel-info\")
+                  for (tabInfo of tabInfos) {
+                    tabInfo.setAttribute('aria-label', 'You are currently on a collapsed panel. To open and view the additional information inside, press enter. To close once open, press enter again.')
+                  }
+                }
 
+              }
               if (newNode.className === \"field-list\") {
                 let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
                 let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
@@ -464,24 +484,56 @@ ui <- dashboardPage(
             } 
           }
 
+          if (mutation.target.id === \"validations_page-validation_details_table\") {
+            let reactTable = mutation.target.getElementsByClassName(\"ReactTable\")
+            let rtTable = reactTable[0].getElementsByClassName(\"rt-table\")
+            let rtTHead = rtTable[0].getElementsByClassName(\"rt-thead\")
+            let rtTr = rtTHead[0].getElementsByClassName(\"rt-tr\")
+            
+            let rtTh = rtTr[0].getElementsByClassName(\"rt-align-left -cursor-pointer rt-th\")
+            let rtSortHeader = rtTh[0].getElementsByClassName(\"rt-sort-header\")
+            let rtThContent = rtSortHeader[0].getElementsByClassName(\"rt-th-content\")
+
+            rtThContent[0].setAttribute(\"aria-label\", \"You are currently on a table whose entries serve as a filter for the validation failure table. To enter the table, press the tab key. Then, use the up and down arrow keys to move through the filter options. The filter option you are currently focused on will be automatically selected to filter the validation failure table. To exit the filter table, press the tab key again\")
+          }
+
+          if (mutation.target.classList && mutation.target.classList.contains(\"selectize-dropdown-content\")) {
+            let optionElems = mutation.target.getElementsByClassName(\"option\")
+            optionElems[0].setAttribute(\"aria-label\", \"You are currently in an input filter by FHIR operations box. Type to search for an operation, or use the arrow keys to navigate through the operations and select using enter. Remove selected operations by pressing the backspace key. Exit the filter input box by pressing the tab key\")
+          }
+
           if (mutation.target.id === \"page_title\") {
             let pageTitleText = mutation.target.textContent
             if (pageTitleText === \"Organizations Page\" || pageTitleText === \"Resource Page\" || pageTitleText === \"Profile Page\") {
               
               let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
+
               
               let tabbable = document.getElementsByClassName(\"tabbable\")
               let tabContents = tabbable[0].getElementsByClassName(\"tab-content\")
               
               for (let navTab of navBarTabs) {
+                navTab.setAttribute(\"role\", \"tablist\")
+                let navTabID = navTab.getAttribute(\"data-tabsetid\")
+                navTab.classList.add(\"shiny-tab-input\", \"shiny-bound-input\")
+
                 let liElements = navTab.getElementsByTagName(\"li\")
                 for (liElem of liElements) {
+                  liElem.setAttribute(\"role\", \"presentation\")
                   let aElements = liElem.getElementsByTagName(\"a\")
                   if (aElements.length > 0) {
                     tabIndexObserver.observe(aElements[0], {
                       attributes: true,
                       attributeFilter: [\"tabindex\"]
                     });
+
+                    for (let aElem of aElements) {
+                      aElem.setAttribute(\"role\", \"tab\")
+                      aElem.setAttribute(\"aria-selected\", \"true\")
+                      aElem.setAttribute(\"aria-controls\", \"tab-\" + navTabID + \"-1\")
+                      aElem.setAttribute(\"aria-expanded\", \"true\")
+                      aElem.setAttribute(\"aria-label\", \"Press enter to select the \" + aElem.textContent +\" tab and show this tab's content below\")
+                    }
                   }
                 }
               }
@@ -501,6 +553,14 @@ ui <- dashboardPage(
             for (let selectInput of selectInputButtons) {
               selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
             }
+            
+          }
+          
+          if (mutation.target.id === \"show_filters\") {
+            let dropDownButtons = document.getElementsByClassName(\"dropdown-toggle\")
+            for (let dropDownButton of dropDownButtons) {
+              dropDownButton.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+            }  
           }
           
           if (mutation.target.id === \"show_filters\") {
