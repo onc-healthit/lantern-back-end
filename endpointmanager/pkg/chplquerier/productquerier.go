@@ -252,23 +252,7 @@ func getAPIURL(apiDocArr []apiDocumentation) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "the URL in the health IT product API documentation string is not valid")
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 1bf2b109 (CHPL endpoint beta to v2 (#274))
 	return apiURL, nil
-=======
-	return "", errors.New("unexpected format for api doc string")
->>>>>>> c6ba8b68 (Revert "CHPL endpoint beta to v2 (#274)")
-=======
-
-=======
->>>>>>> 85d1f2aa (HealthIT Product Warning (#275))
-	return apiURL, nil
->>>>>>> 76690a5e (CHPL endpoint beta to v2 (#274))
 }
 
 // persists the products parsed from CHPL. Of note, CHPL includes many entries for a single product. The entry

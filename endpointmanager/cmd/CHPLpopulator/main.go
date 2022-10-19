@@ -6,14 +6,7 @@ import (
 	"io/ioutil"
 	http "net/http"
 	"os"
-<<<<<<< HEAD
-<<<<<<< HEAD
 	"regexp"
-=======
->>>>>>> 0c553cb8 (Chpl endpoint list api fix (#299))
-=======
-	"regexp"
->>>>>>> cc0aedaf (Athena csv Parser (#306))
 	"strconv"
 	"strings"
 	"time"
@@ -184,13 +177,6 @@ func main() {
 				}
 
 				developerNameNormalized := re.ReplaceAllString(developerName, "")
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> cc0aedaf (Athena csv Parser (#306))
-=======
->>>>>>> bcd62ed1 (New CHPL Endpoint Lists (#314))
 				fileNameArr := strings.Fields(developerNameNormalized)
 				fileName := ""
 				if len(fileNameArr) > 0 {

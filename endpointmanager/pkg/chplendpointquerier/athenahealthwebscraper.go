@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
+func Athenawebscraper(CHPLURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
