@@ -392,7 +392,7 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
 
 # get contact information
 get_contact_information <- function(db_connection) {
-  
+
   contacts_tbl <- tbl(db_connection,
     sql("SELECT DISTINCT
 				  url,
@@ -408,7 +408,7 @@ get_contact_information <- function(db_connection) {
     res <- app$endpoint_export_tbl() %>%
         distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
         select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == 'None') %>%
+        filter(requested_fhir_version == "None") %>%
         left_join(contacts_tbl, by = c("url" = "url"))
 
     res
