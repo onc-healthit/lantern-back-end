@@ -35,7 +35,8 @@ contactsmodule <- function(
             arrange(contact_preference) %>%
             group_by(url) %>%
             mutate(num_contacts = n()) %>%
-            distinct(url, .keep_all = TRUE)
+            distinct(url, .keep_all = TRUE) %>%
+            mutate(linkurl = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
         res <- res %>%
             rowwise() %>%
@@ -59,13 +60,13 @@ contactsmodule <- function(
     output$contacts_table <- reactable::renderReactable({
      reactable(
               selected_contacts() %>%
-              select(url, fhir_version, condensed_endpoint_names, vendor_name, has_contact, contact_name, contact_type, contact_value, contact_preference, show_all) %>%
-              arrange(url),
+              select(linkurl, fhir_version, condensed_endpoint_names, vendor_name, has_contact, contact_name, contact_type, contact_value, contact_preference, show_all) %>%
+              arrange(linkurl),
               defaultColDef = colDef(
                 align = "center"
               ),
               columns = list(
-                  url = colDef(name = "URL", minWidth = 300),
+                  linkurl = colDef(name = "URL", minWidth = 300, html = TRUE),
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE, aggregate = "unique"),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", aggregate = "unique", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", aggregate = "unique", minWidth = 110, sortable = FALSE),
