@@ -209,11 +209,11 @@ function(input, output, session) { #nolint
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("aboutInfo.html")
       )
     } else {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("disclaimer.html")
       )
     }

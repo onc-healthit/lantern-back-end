@@ -340,9 +340,7 @@ ui <- dashboardPage(
               )
         )
     ),
-    tags$footer(class = "footer",
-      includeHTML("disclaimer.html")
-    ),
+    uiOutput("htmlFooter"),
     tags$script(HTML("
       let tabIndexObserver = new MutationObserver(function(mutations) {
         for (let mutation of mutations) {
