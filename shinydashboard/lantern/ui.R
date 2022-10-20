@@ -426,7 +426,7 @@ ui <- dashboardPage(
         // Tabindex is removed from elements for two different reasons: 
           // 1. R Shiny automatically adds a tabindex of some elements, like the sidebar tab items, to -1 when they are clicked off of, meaning you can no longer tab to those items. 
                 Removing the tabindex solves this problem. Some elements are focusable by default, and thus we can remove the tab index attribute entirely.
-          // 2. R Shiny automatically adds soem tabindex attributes to elements we do not want to be focusable, so the attribute is removed on these elements.
+          // 2. R Shiny automatically adds some tabindex attributes to elements we do not want to be focusable, so the attribute is removed on these elements.
       */
       let tabIndexObserver = new MutationObserver(function(mutations) {
         for (let mutation of mutations) {
