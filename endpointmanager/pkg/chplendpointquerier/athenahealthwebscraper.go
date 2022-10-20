@@ -13,7 +13,7 @@ func Athenawebscraper(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "table")
+	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "table")
 	if err != nil {
 		log.Fatal(err)
 	}
