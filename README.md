@@ -1,4 +1,8 @@
 # Lantern
+
+Lantern is an open source tool developed by the Office of the National Coordinator for Health Information Technology (ONC) and the MITRE Corporation that monitors and provides analytics about the availability and adoption of FHIR API service base URLs (endpoints) across healthcare organizations in the United States. It also gathers information about FHIR Capability Statements returned by these endpoints and provides visualizations to show FHIR adoption and patient data availability. For more information, check out the “About Lantern” page on our website, [https://www.lantern.healthit.gov](https://lantern.healthit.gov/?tab=dashboard_tab).
+
+# Index
 * [Running Lantern - Basic Flow](#running-lantern---basic-flow)
 * [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
 * [Make Commands](#make-commands)
