@@ -61,8 +61,8 @@ endpointsmodule <- function(
 
     res <- res %>%
     rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", endpoint_names, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+    mutate(urlModal = paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" onclick=\"Shiny.setInputValue(\'show_details\',\'", url, "\',{priority: \'event\'});\"> Click For More... </a>")), endpoint_names))
 
     res <- res %>% mutate(availability = availability * 100)
     res
@@ -90,15 +90,15 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(url, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(url) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
               columns = list(
-                  url = colDef(name = "URL", minWidth = 300,
+                  urlModal = colDef(name = "URL", minWidth = 300,
                             style = JS("function(rowInfo, colInfo, state) {
                                     var prevRow = state.pageRows[rowInfo.viewIndex - 1]
-                                    if (prevRow && rowInfo.row['url'] === prevRow['url']) {
+                                    if (prevRow && rowInfo.row['urlModal'] === prevRow['urlModal']) {
                                       return { visibility: 'hidden' }
                                     }
                                   }"
@@ -125,8 +125,9 @@ endpointsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- selected_fhir_endpoints() %>%
-      select(-label, -status, -availability, -fhir_version) %>%
-      rename(api_information_source_name = condensed_endpoint_names, certified_api_developer_name = vendor_name) %>%
+      select(-label, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
+      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
+      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
   })

@@ -209,11 +209,11 @@ function(input, output, session) { #nolint
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("aboutInfo.html")
       )
     } else {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("disclaimer.html")
       )
     }
@@ -671,7 +671,7 @@ function(input, output, session) { #nolint
   observeEvent(input$show_details, {
     showModal(modalDialog(
       title = "All API Information Source Names",
-      p(HTML(str_replace_all(input$show_details, ";", "<br>"))),
+      p(HTML(str_replace_all(get_endpoint_organization_list(input$show_details), ";", "<br>"))),
       easyClose = TRUE
   ))
   })
@@ -972,8 +972,7 @@ output$endpoint_location_map  <- renderLeaflet({
 })
 
  get_endpoint_list_orgs <- reactive({
-   endpoint <- current_endpoint()
-
+    endpoint <- current_endpoint()
 
     res <- get_endpoint_list_matches()
     res <- res %>%

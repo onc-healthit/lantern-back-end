@@ -243,9 +243,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           ctx,
-		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		store:                    store,
+		ctx:                      ctx,
+		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
 		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 
@@ -274,9 +274,9 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that nothing is stored and that saveMsgInDB throws an error if the context is canceled
 	testCtx, cancel := context.WithCancel(context.Background())
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           testCtx,
-		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		store:                    store,
+		ctx:                      testCtx,
+		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
 		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	cancel()
@@ -289,9 +289,9 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// reset context
 	args["queryArgs"] = capStatQueryArgs{
-		store:         store,
-		ctx:           context.Background(),
-		chplMatchFile: "../../testdata/test_chpl_product_mapping.json",
+		store:                    store,
+		ctx:                      context.Background(),
+		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
 		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
 	}
 	// check that new item is stored
