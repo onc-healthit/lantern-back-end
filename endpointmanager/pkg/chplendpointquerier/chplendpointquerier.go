@@ -30,6 +30,13 @@ var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAP
 var cernerR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
 var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
 var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
+var abeoSolutionsURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
+var practiceSuiteURL = "https://academy.practicesuite.com/fhir-server-links/"
+var intelichartLLCURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
+var bizmaticsURL = "https://prognocis.com/fhir/index.html"
+var indianHealthServiceURL = "https://www.ihs.gov/cis/"
+var geniusSolutionsURL = "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html"
+var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -63,6 +70,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == carefluenceURL {
 		Carefluenceebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == abeoSolutionsURL {
+		AbeoSolutionsCSVParser(chplURL, fileToWriteTo)
+	} else if chplURL == bizmaticsURL {
+		BizmaticsBundleParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
+	} else if chplURL == assureCareURL {
+		AssureCareCSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo)
 	}
 }
 
