@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"encoding/csv"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -17,26 +18,11 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	csvFilePath := "./athenanet-fhir-base-urls.csv"
 
-	err := DownloadFile(csvFilePath, CHPLURL)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// open file
-	f, err := os.Open(csvFilePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	// read csv values using csv.Reader
-	csvReader := csv.NewReader(f)
-
-	// Read first line to skip over headers
-	_, err = csvReader.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	defer file.Close()
 
 	for {
 		rec, err := csvReader.Read()

@@ -2,9 +2,12 @@ package helpers
 
 import (
 	"context"
+	"encoding/csv"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 
@@ -138,4 +141,49 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 		return nil, err
 	}
 	return respBody, nil
+}
+
+func QueryAndOpenCSV(csvURL string, csvFilePath string) (*csv.Reader, *os.File, error) {
+
+	err := downloadFile(csvFilePath, csvURL)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// open file
+	f, err := os.Open(csvFilePath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// read csv values using csv.Reader
+	csvReader := csv.NewReader(f)
+
+	// Read first line to skip over headers
+	_, err = csvReader.Read()
+	if err != nil {
+		return nil, f, err
+	}
+
+	return csvReader, f, nil
+}
+
+func downloadFile(filepath string, url string) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
