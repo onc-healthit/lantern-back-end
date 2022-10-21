@@ -172,7 +172,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "location_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
   )
 
   fhir_version_no_capstat <- reactive(
