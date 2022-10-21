@@ -1,4 +1,8 @@
 # Lantern
+
+Lantern is an open source tool developed by the Office of the National Coordinator for Health Information Technology (ONC) and the MITRE Corporation that monitors and provides analytics about the availability and adoption of FHIR API service base URLs (endpoints) across healthcare organizations in the United States. It also gathers information about FHIR Capability Statements returned by these endpoints and provides visualizations to show FHIR adoption and patient data availability. For more information, check out the “About Lantern” page on our website, [https://www.lantern.healthit.gov](https://lantern.healthit.gov/?tab=dashboard_tab).
+
+# Index
 * [Running Lantern - Basic Flow](#running-lantern---basic-flow)
 * [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
 * [Make Commands](#make-commands)
@@ -272,17 +276,6 @@ To configure this script to run using cron, do:
   * Example: Add `0 */23 * * * <Full Path to backup.sh>` to run the script at minute 0 of every 23rd hour
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
-
-# Configure History Pruning and JSON Export System
-
-You can configure a system to run the history pruning and json export processes using cron and the history_prune_json_export.sh script located in the scripts directory to first prune the fhir_endpoints_info_history table and then create the JSON fhir endpoint export file. 
-    * NOTE: The history pruning and json export processes already run automatically by the endpoint manager every query interval after it finishes sending all the endpoints to the capability querier.
-To configure this script to run using cron, do:
- * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
- * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full Path to script directory> && ./history_prune_json_export.sh` to the crontab file
-  * A `*` can be added to any field in the crontab expression to mean always
-  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
-  * Example: Add `0 */23 * * * cd <Full Path to script directory> && ./history_prune_json_export.sh` to run the script at minute 0 of every 23rd hour
 
 # Configure CHPL Endpoint List Updater
 

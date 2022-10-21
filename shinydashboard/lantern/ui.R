@@ -13,9 +13,9 @@ ui <- dashboardPage(
         )
     ),
     tags$li(a(href = "https://github.com/onc-healthit/lantern-back-end",
-                                      img(src = "images/GitHub-Mark-Light-32px.png", height = "60%", width = "60%", alt = "Github logo"),
-                                      title = "Github Link"),
-                                    class = "dropdown")
+        img(src = "images/GitHub-Mark-Light-32px.png", height = "60%", width = "60%", alt = "Github logo"),
+        title = "Github Link"),
+      class = "dropdown")
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
@@ -32,7 +32,6 @@ ui <- dashboardPage(
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
-      menuItem("Location", tabName = "location_tab", icon = tags$i(class = "fa fa-map", "aria-hidden" = "true", role = "presentation", "aria-label" = "map icon")),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
@@ -42,7 +41,49 @@ ui <- dashboardPage(
 
   # Set up contents for each menu item (tab) in the sidebar
   dashboardBody(
+    tags$script(HTML("
+      $(document).ready(function() {
+        $(\"header\").find(\"nav\").prepend(\"<a href='#content' aria-label='Click the enter key to skip to the main content of this page, skipping over the header elements and navigation tabs.' class='show-on-focus'>Skip to Content</a>\");
+      })
+     ")
+    ),
     tags$head(tags$style(HTML("
+      .show-on-focus {     
+        position: absolute;
+        top: -10em;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        
+      }
+      .show-on-focus:focus {  
+        top: 5px;   
+        position: absolute;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+      }
+      .show-on-focus-resources {     
+        position: absolute;
+        top: -200em;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;  
+        width: 180px;  
+      }
+      .show-on-focus-resources:focus {  
+        position: static;
+        background: #fff;
+        color: #112e51;
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+        width: 180px;
+      }
       .content-wrapper, .right-side {
         background-color: #F6F7F8;
       }
@@ -99,22 +140,140 @@ ui <- dashboardPage(
         color: #4F4F4F;
         opacity: 1!important;
       }
+      a:link {
+        text-decoration: none;
+      }
+      a:visited {
+        text-decoration: none;
+      }
+      a:hover {
+        font-weight: bold;
+      }
+      button.dropdown-toggle {
+        background-color: white!important;
+        color: black;
+      }
+      button:hover {
+        border: 3px solid!important;
+      }      
+      select:hover {
+        border: 3px solid!important;
+        background-color: white!important;
+      }
+      a:active {
+        font-weight: bold;
+      }
+      button:active {
+        border: 3px solid!important;
+      }      
+      a:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      button:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      select:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow;
+        color: black!important; 
+      }
+      .selectize-input:hover {
+        border: 3px solid!important;
+      }
+      .selectize-input:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      input:hover {
+        border: 3px solid!important;
+      }
+      input:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-th:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-sort-header:hover {
+        font-weight: bold;
+      }
+      .rt-td:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      .rt-td:focus-visible {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important; 
+      }
+      #organizations_page-location_map:focus-visible {
+        border: 4px solid!important;
+      }
+      table.dataTable thead .sorting:focus-visible  {
+        border: 4px solid!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      table.dataTable thead .sorting:hover {
+        border: 2px solid!important;
+      }
+      a.btn {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white;
+      }
+      a.btn:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      a.btn:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
+      }
+      .action-button {
+        background-color: #1B5A7F!important;
+        border: 1px solid black!important;
+        color: white!important;
+      }
+      .action-button:focus-visible  {
+        border: 4px solid black!important;
+        background-color: yellow!important;
+        color: black!important;
+      }
+      .action-button:hover {
+        border: 2px solid black!important;
+        font-weight: bold!important;
+        color: white!important;
+      }
+
     "))),
-    tags$script(
+    tags$script(HTML(
       "let elems = document.getElementsByClassName('content-wrapper');
-        elems[0].setAttribute('role', 'main');
+      elems[0].setAttribute('role', 'main');
+      elems[0].id = 'content'
 
-        var e = document.getElementById('side_menu');
+      var e = document.getElementById('side_menu');
 
-        var d = document.createElement('li');
-        d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input')
-        d.dataset.value = e.dataset.value;
+      var d = document.createElement('li');
+      d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input');
+      d.dataset.value = e.dataset.value;
 
-        e.parentNode.replaceChild(d, e);
-        e.remove();
-        d.id = 'side_menu'
-        "
-    ),
+      e.parentNode.replaceChild(d, e);
+      e.remove();
+      d.id = 'side_menu';
+      "
+    )),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
     development_banner(devbanner),
     uiOutput("resource_tab_popup"),
@@ -164,9 +323,6 @@ ui <- dashboardPage(
       tabItem("smartresponse_tab",
               smartresponsemodule_UI("smartresponse_page")
       ),
-      tabItem("location_tab",
-              locationmodule_UI("location_page")
-      ),
       tabItem("contacts_tab",
               contactsmodule_UI("contacts_page")
       ),
@@ -184,8 +340,250 @@ ui <- dashboardPage(
               )
         )
     ),
-    tags$footer(class = "footer",
-      includeHTML("disclaimer.html")
-    )
+    uiOutput("htmlFooter"),
+    tags$script(HTML("
+      let tabIndexObserver = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.type === \"attributes\") {
+            if (mutation.target.hasAttribute(\"tabindex\") && mutation.target.getAttribute(\"tabindex\") !== \"-5\") {
+              mutation.target.removeAttribute(\"tabindex\");
+            }
+          }
+        }
+      });
+
+      let tabPanes = document.getElementsByClassName(\"tab-pane\");
+      for (let tab of tabPanes) {
+        tabIndexObserver.observe(tab, {
+          attributes: true,
+          attributeFilter: [\"tabindex\"]
+        });
+      }
+      
+      let sideMenu = document.getElementsByClassName(\"sidebar-menu\")
+      let sideMenuList = sideMenu[0].getElementsByTagName(\"li\")
+      for (let liElem of sideMenuList) {
+        let sideMenuLinks = liElem.getElementsByTagName(\"a\")
+        if (sideMenuLinks.length > 0) {
+          for (let aElem of sideMenuLinks) {
+            tabIndexObserver.observe(aElem, {
+              attributes: true,
+              attributeFilter: [\"tabindex\"]
+            });
+          }
+        }
+      }
+
+      let sideBarCollapsedObserver = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.type === \"attributes\") {
+            let sidebarMenu = document.getElementsByClassName(\"sidebar-menu\")
+            let sidebarMenuList = sidebarMenu[0].getElementsByTagName(\"li\")
+            for (let liElem of sidebarMenuList) {
+              let sidebarMenuLinks = liElem.getElementsByTagName(\"a\")
+              if (sidebarMenuLinks.length > 0) {
+                for (let aElem of sidebarMenuLinks) {
+                  if (mutation.target.getAttribute(\"data-collapsed\") === \"true\") {
+                    aElem.setAttribute(\"tabindex\", \"-5\")
+                  } else {
+                    aElem.removeAttribute(\"tabindex\");
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      let sideBarCollapsed = document.getElementById(\"sidebarCollapsed\")
+      sideBarCollapsedObserver.observe(sideBarCollapsed, {
+        attributes: true,
+        attributeFilter: [\"data-collapsed\"]
+      });
+
+      let newNodesObserver = new MutationObserver(function(mutations) {
+        for (let mutation of mutations) {
+          if (mutation.addedNodes.length > 0) {
+            for (let newNode of mutation.addedNodes) {
+              
+              if (mutation.target.id === \"show_date_filters\" && newNode.classList && newNode.classList.contains(\"row\")) {
+                let selectInputNodes = newNode.querySelectorAll(\"select.shiny-bound-input\")
+                for (let selectInputNode of selectInputNodes) {
+                  selectInputNode.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+                }
+              }
+              
+              if (newNode.id === \"shiny-modal-wrapper\") {
+                
+                let modalTabPanes = newNode.getElementsByClassName(\"tab-pane\");
+                for (let tab of modalTabPanes) {
+                  tabIndexObserver.observe(tab, {
+                    attributes: true,
+                    attributeFilter: [\"tabindex\"]
+                  });
+                }
+
+                let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
+                for (let navTab of navBarTabs) {
+                  navTab.setAttribute(\"role\", \"tablist\")
+                  let navTabID = navTab.getAttribute(\"data-tabsetid\")
+                  navTab.classList.add(\"shiny-tab-input\", \"shiny-bound-input\")
+                  let liElements = navTab.getElementsByTagName(\"li\")
+                  for (let liElem of liElements) {
+                    liElem.setAttribute(\"role\", \"presentation\")
+                    let aElements = liElem.getElementsByTagName(\"a\")
+                    if (aElements.length > 0) {
+                      tabIndexObserver.observe(aElements[0], {
+                        attributes: true,
+                        attributeFilter: [\"tabindex\"]
+                      });
+                      
+                      for (let aElem of aElements) {
+                        aElem.setAttribute(\"role\", \"tab\")
+                        aElem.setAttribute(\"aria-selected\", \"true\")
+                        aElem.setAttribute(\"aria-controls\", \"tab-\" + navTabID + \"-1\")
+                        aElem.setAttribute(\"aria-expanded\", \"true\")
+                        aElem.setAttribute(\"aria-label\", \"Press enter to select the \" + aElem.textContent +\" tab and show this tab's content below\")
+                      }
+                    }
+                  }
+                }
+                
+                let bsCollapses = newNode.getElementsByClassName(\"panel-group\")
+                for (bsCollapse of bsCollapses) {
+                  let tabInfos = bsCollapse.getElementsByClassName(\"panel-info\")
+                  for (tabInfo of tabInfos) {
+                    tabInfo.setAttribute('aria-label', 'You are currently on a collapsed panel. To open and view the additional information inside, press enter. To close once open, press enter again.')
+                  }
+                }
+
+              }
+              if (newNode.className === \"field-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_fields_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"field-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
+              }
+
+              if (newNode.className === \"extension-list\") {
+                let fieldsListTextSection = document.getElementById(\"fields_page-capstat_extension_text\");
+                let fieldList = fieldsListTextSection.getElementsByClassName(\"extension-list\")[0];
+                let ulFieldList = fieldList.getElementsByTagName(\"ul\")[0];
+                ulFieldList.removeAttribute(\"tabindex\");
+              }   
+            }
+
+            if (mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains(\"container-fluid\")) {
+              let containerNode = mutation.addedNodes[0]
+              let selectDropdowns = containerNode.querySelectorAll(\"select.shiny-bound-input\")
+              for (selectDropdown of selectDropdowns) {
+                selectDropdown.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+              }
+            } 
+          }
+
+          if (mutation.target.id === \"validations_page-validation_details_table\") {
+            let reactTable = mutation.target.getElementsByClassName(\"ReactTable\")
+            let rtTable = reactTable[0].getElementsByClassName(\"rt-table\")
+            let rtTHead = rtTable[0].getElementsByClassName(\"rt-thead\")
+            let rtTr = rtTHead[0].getElementsByClassName(\"rt-tr\")
+            
+            let rtTh = rtTr[0].getElementsByClassName(\"rt-align-left -cursor-pointer rt-th\")
+            let rtSortHeader = rtTh[0].getElementsByClassName(\"rt-sort-header\")
+            let rtThContent = rtSortHeader[0].getElementsByClassName(\"rt-th-content\")
+
+            rtThContent[0].setAttribute(\"aria-label\", \"You are currently on a table whose entries serve as a filter for the validation failure table. To enter the table, press the tab key. Then, use the up and down arrow keys to move through the filter options. The filter option you are currently focused on will be automatically selected to filter the validation failure table. To exit the filter table, press the tab key again\")
+          }
+
+          if (mutation.target.classList && mutation.target.classList.contains(\"selectize-dropdown-content\")) {
+            let optionElems = mutation.target.getElementsByClassName(\"option\")
+            optionElems[0].setAttribute(\"aria-label\", \"You are currently in an input filter by FHIR operations box. Type to search for an operation, or use the arrow keys to navigate through the operations and select using enter. Remove selected operations by pressing the backspace key. Exit the filter input box by pressing the tab key\")
+          }
+
+          if (mutation.target.id === \"page_title\") {
+            let pageTitleText = mutation.target.textContent
+            if (pageTitleText === \"Organizations Page\" || pageTitleText === \"Resource Page\" || pageTitleText === \"Profile Page\") {
+              
+              let navBarTabs = document.getElementsByClassName(\"nav nav-tabs\");
+
+              
+              let tabbable = document.getElementsByClassName(\"tabbable\")
+              let tabContents = tabbable[0].getElementsByClassName(\"tab-content\")
+              
+              for (let navTab of navBarTabs) {
+                navTab.setAttribute(\"role\", \"tablist\")
+                let navTabID = navTab.getAttribute(\"data-tabsetid\")
+                navTab.classList.add(\"shiny-tab-input\", \"shiny-bound-input\")
+
+                let liElements = navTab.getElementsByTagName(\"li\")
+                for (liElem of liElements) {
+                  liElem.setAttribute(\"role\", \"presentation\")
+                  let aElements = liElem.getElementsByTagName(\"a\")
+                  if (aElements.length > 0) {
+                    tabIndexObserver.observe(aElements[0], {
+                      attributes: true,
+                      attributeFilter: [\"tabindex\"]
+                    });
+
+                    for (let aElem of aElements) {
+                      aElem.setAttribute(\"role\", \"tab\")
+                      aElem.setAttribute(\"aria-selected\", \"true\")
+                      aElem.setAttribute(\"aria-controls\", \"tab-\" + navTabID + \"-1\")
+                      aElem.setAttribute(\"aria-expanded\", \"true\")
+                      aElem.setAttribute(\"aria-label\", \"Press enter to select the \" + aElem.textContent +\" tab and show this tab's content below\")
+                    }
+                  }
+                }
+              }
+
+              for (let tabContent of tabContents) {
+                let tabPanes = tabContent.getElementsByClassName(\"tab-pane\")
+                for (let tabPane of tabPanes) {
+                  tabIndexObserver.observe(tabPane, {
+                      attributes: true,
+                      attributeFilter: [\"tabindex\"]
+                    });
+                }
+              }            
+            }
+            
+            let selectInputButtons = document.querySelectorAll(\"select.shiny-bound-input\")
+            for (let selectInput of selectInputButtons) {
+              selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.')
+            }
+            
+          }
+          
+          if (mutation.target.id === \"show_filters\") {
+            let dropDownButtons = document.getElementsByClassName(\"dropdown-toggle\")
+            for (let dropDownButton of dropDownButtons) {
+              dropDownButton.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+            }  
+          }
+          
+          if (mutation.target.id === \"show_filters\") {
+            let dropDownButtons = document.getElementsByClassName(\"dropdown-toggle\")
+            for (let dropDownButton of dropDownButtons) {
+              dropDownButton.setAttribute('aria-label', 'Dropdown filter menu button. Press the down arrow key to open the filter menu, use the tab or arrow keys to navigate through options, press enter to select a filter option, and use the escape key to close the filter menu.')
+            }  
+          }
+        }
+      })
+
+      newNodesObserver.observe(document.body, {
+          childList: true, 
+          subtree: true, 
+          attributes: false, 
+          characterData: false
+      })
+
+      let tabContent = document.getElementsByClassName(\"tab-content\")
+      newNodesObserver.observe(tabContent[0], {
+          childList: true, 
+          subtree: true, 
+          attributes: false, 
+          characterData: false
+      })
+    "))
   )
 )

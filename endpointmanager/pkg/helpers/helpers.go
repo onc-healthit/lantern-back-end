@@ -1,8 +1,15 @@
 package helpers
 
 import (
+	"context"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"sort"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/chromedp"
 )
 
 // StringArrayContains checks if the string array contains the provided string.
@@ -76,4 +83,59 @@ func FailOnError(errString string, err error) {
 			log.Fatalf("%s %s", errString, err)
 		}
 	}
+}
+
+// ChromedpQueryEndpointList queries the given endpoint list using chromedp and returns the html document
+func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string) (*goquery.Document, error) {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	var htmlContent string
+	var err error
+
+	if len(waitVisibleElement) > 0 {
+		// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
+		err = chromedp.Run(ctx,
+			chromedp.Navigate(endpointListURL),
+			chromedp.WaitVisible(waitVisibleElement, chromedp.ByQuery),
+			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
+		)
+	} else {
+		err = chromedp.Run(ctx,
+			chromedp.Navigate(endpointListURL),
+			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
+		)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
+	if err != nil {
+		return nil, err
+	}
+
+	return doc, nil
+}
+
+// QueryEndpointList queries the given endpoint list using http client and returns the response body of the GET request
+func QueryEndpointList(endpointListURL string) ([]byte, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", endpointListURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	respBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return respBody, nil
 }

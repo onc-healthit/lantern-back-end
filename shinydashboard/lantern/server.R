@@ -11,7 +11,7 @@ function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "location_tab", "about_tab", "contacts_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -61,12 +61,6 @@ function(input, output, session) { #nolint
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$match_confidence))
-
-      callModule(
-        locationmodule,
-        "location_page",
-        reactive(input$fhir_version),
-        reactive(input$vendor))
 
       callModule(
         capabilitystatementsizemodule,
@@ -151,7 +145,6 @@ function(input, output, session) { #nolint
      "fields_tab" = "Fields Page",
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
-     "location_tab" = "Location Map",
      "contacts_tab" = "Contact Information Page",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
@@ -174,7 +167,7 @@ function(input, output, session) { #nolint
         Any resources at that point will be removed from the list of resources if no endpoints that pass the selected filtering criteria support the given resource.
         If you make other changes to the FHIR Version or Developer filtering criteria, resources that are filtered out of the list will re-appear on the left side of the list, regardless if they were selected previously.", style = "font-size:16px; margin-left:5px;"),
       p("You will have to re-select these resources, either by clicking the resource on the left box, or clicking the 'Select All Resources' button.", style = "font-size:16px; margin-left:5px;"),
-      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:13px; margin-left:5px;"),
+      p("Note: This is the list of FHIR resource types reported by the CapabilityStatement / Conformance Resources from the endpoints. This reflects the most recent successful response only. Endpoints which are down, unreachable during the last query or have not returned a valid CapabilityStatement / Conformance Resource, are not included in this list.", style = "font-size:13px; margin-left:5px;")
   ))})
 
 
@@ -183,7 +176,7 @@ function(input, output, session) { #nolint
   )
 
   fhir_version_no_capstat <- reactive(
-    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "location_tab", "validations_tab")
+    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "validations_tab")
   )
 
   show_availability_filter <- reactive(
@@ -216,11 +209,11 @@ function(input, output, session) { #nolint
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("aboutInfo.html")
       )
     } else {
-      div(class = "footer",
+      tags$footer(class = "footer",
         includeHTML("disclaimer.html")
       )
     }
@@ -229,12 +222,30 @@ function(input, output, session) { #nolint
   output$page_title <- renderText(page_name())
   output$version <- renderText(version_title)
 
+  observeEvent(input$fhirversion_selectall, {
+    if (input$fhirversion_selectall == 0) {
+      return(NULL)
+    } else {
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()))
+    }
+  })
+
+  observeEvent(input$fhirversion_removeall, {
+    if (input$fhirversion_removeall == 0) {
+      return(NULL)
+    } else {
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()))
+    }
+  })
+
   output$show_filters <- renderUI({
     if (show_filter()) {
       if (fhir_version_no_capstat()) {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       } else {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`actions-box` = TRUE, `multiple-separator` = " | ", size = 5))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
@@ -243,31 +254,61 @@ function(input, output, session) { #nolint
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 4, fhirDropdown),
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, availabilityDropdown)
         )
       } else if (show_validations_filter()) {
         fluidRow(
-          column(width = 4, validationsDropdown),
-          column(width = 4, fhirDropdown),
-          column(width = 4, developerDropdown)
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
+          column(width = 4, developerDropdown),
+          column(width = 4, validationsDropdown)
         )
       } else if (show_confidence_filter()) {
         fluidRow(
-          column(width = 4, fhirDropdown),
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, confidenceDropdown)
         )
       } else if (show_has_contact_filter()) {
         fluidRow(
-          column(width = 4, fhirDropdown),
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, contactDropdown)
         )
       } else {
         fluidRow(
-          column(width = 4, fhirDropdown),
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
           column(width = 4, developerDropdown)
         )
       }
@@ -282,7 +323,8 @@ function(input, output, session) { #nolint
             inputId = "httpvendor",
             label = "Developer:",
             choices = app$vendor_list(),
-            selected = ui_special_values$ALL_DEVELOPERS
+            selected = ui_special_values$ALL_DEVELOPERS,
+            selectize = FALSE
           )
         )
       )
@@ -309,6 +351,20 @@ function(input, output, session) { #nolint
       column(width = 4,
         selectInput(
           inputId = "date",
+          label = "Date range",
+          choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
+          selected = "All time",
+          size = 1,
+          selectize = FALSE)
+      )
+    )
+  })
+
+    output$show_http_date_filters <- renderUI({
+    fluidRow(
+      column(width = 4,
+        selectInput(
+          inputId = "http_date",
           label = "Date range",
           choices = list("Past 7 days", "Past 14 days", "Past 30 days", "All time"),
           selected = "All time",
@@ -438,6 +494,7 @@ function(input, output, session) { #nolint
       fluidPage(
         fluidRow(
           h2("FHIR Resource Types"),
+          tags$a("Skip Past Resources", href = "#selectall", class = "show-on-focus-resources", "aria-label" = "Click the enter key to skip past the resource checkbox options and jump directly to select all and deselect all resource buttons"),
           column(width = 4,
             multiInput(
               inputId = "resources",
@@ -692,7 +749,8 @@ output$endpoint_products_table <- DT::renderDataTable({
 endpoint_products_page <- function() {
   page <- fluidPage(
     h1("Endpoint CHPL Products"),
-    DT::dataTableOutput("endpoint_products_table")
+    DT::dataTableOutput("endpoint_products_table"),
+    p("Note: The software products shown in the table above are matched with the best guess possible given the information Lantern has available, and therefore may not be completely accurate.")
   )
   page
 }
@@ -914,8 +972,7 @@ output$endpoint_location_map  <- renderLeaflet({
 })
 
  get_endpoint_list_orgs <- reactive({
-   endpoint <- current_endpoint()
-
+    endpoint <- current_endpoint()
 
     res <- get_endpoint_list_matches()
     res <- res %>%
@@ -970,12 +1027,12 @@ organization_endpoint_page <- function() {
 }
 
 ### Endpoint Details Modal Page ###
-get_range <- function() {
-    if (all(input$date == "Past 7 days")) {
+get_range <- function(date) {
+    if (all(date == "Past 7 days")) {
       range <- "604800"
-    } else if (all(input$date == "Past 14 days")) {
+    } else if (all(date == "Past 14 days")) {
       range <- "1209600"
-    } else if (all(input$date == "Past 30 days")) {
+    } else if (all(date == "Past 30 days")) {
       range <- "2592000"
     } else {
       range <- "maxdate.maximum"
@@ -986,7 +1043,7 @@ get_range <- function() {
 response_time_xts <- reactive({
   endpoint <- current_endpoint()
 
-  range <- get_range()
+  range <- get_range(input$date)
   res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
   # convert to xts format for use in dygraph
   xts(x = cbind(res$response),
@@ -1020,6 +1077,109 @@ output$plot_note_text <- renderUI({
     throughout the ecosystem."
   res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
   HTML(res)
+})
+
+endpoint_http_responses <- reactive({
+  endpoint <- current_endpoint()
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
+  left_join(app$http_response_code_tbl(), by = c("http_response" = "code")) %>%
+  mutate(http_response = paste(http_response, "-", label)) %>%
+  select(date, http_response)
+  res
+})
+
+endpoint_http_codes_table <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+
+  http_code_table <- app$http_response_code_tbl() %>%
+  inner_join(res, by = c("code" = "http_response")) %>%
+  distinct(code, label) %>%
+  mutate(row_num = row_number()) %>%
+  select(code, row_num, label)
+})
+
+endpoint_http_responses_mapping <- reactive({
+  endpoint <- current_endpoint()
+
+  range <- get_range(input$http_date)
+  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+
+  http_code_table <- endpoint_http_codes_table()
+
+  res <- res %>%
+  left_join(http_code_table, by = c("http_response" = "code")) %>%
+  tidyr::replace_na(list(row_num = 0)) %>%
+  mutate(http_response = paste(http_response, "-", label)) %>%
+  select(date, http_response, row_num)
+  res
+
+})
+
+create_dygraph_json <- reactive({
+  res <- endpoint_http_responses_mapping() %>%
+  distinct(row_num, http_response) %>%
+  rename(v = row_num, label = http_response)
+
+  toJSON(res)
+
+})
+
+endpoint_http_responses_xts <- reactive({
+  res <- endpoint_http_responses_mapping()
+  xts(x = cbind(res$row_num), order.by = res$date)
+})
+
+output$http_no_plot <- renderText({
+  if (nrow(endpoint_http_responses_xts()) == 0) {
+    "Sorry, there isn't enough data to show http responses over time!"
+  }
+})
+
+output$endpoint_http_response_plot <- renderDygraph({
+  if (nrow(endpoint_http_responses_xts()) > 0) {
+    dygraph(endpoint_http_responses_xts(),
+          main = "Endpoint HTTP Responses",
+          ylab = "HTTP Codes",
+          xlab = "Date") %>%
+    dyAxis("y", valueRange = c(-0.2, nrow(endpoint_http_codes_table()) + .5),
+    axisLabelWidth = 70, ticker = htmlwidgets::JS(
+      paste("function(min, max, pixels, opts, dygraph, vals) {
+      return ", create_dygraph_json(), ";}")),
+      valueFormatter = htmlwidgets::JS(
+      paste("function(v){
+        let jsonfile = `", create_dygraph_json(), "`;
+        let jsonobj = JSON.parse(jsonfile);
+        for (let obj of jsonobj) {
+          if (obj.v === v) {
+            return obj.label;
+          }
+        }
+      }"))
+    ) %>%
+    dySeries("V1", label = "HTTPCode") %>%
+    dyLegend(width = 450)
+  }
+})
+
+output$endpoint_http_response_table <- reactable::renderReactable({
+  reactable(
+        endpoint_http_responses() %>% select(date, http_response) %>% mutate_all(as.character),
+        defaultColDef = colDef(
+          align = "center"
+        ),
+        columns = list(
+            date = colDef(name = "Date", sortable = TRUE),
+            http_response = colDef(name = "HTTP Response", sortable = FALSE)
+        ),
+        searchable = TRUE,
+        showSortIcon = TRUE,
+        highlight = TRUE,
+        defaultPageSize = 10
+  )
 })
 
  detailPage <- function() {
@@ -1061,6 +1221,20 @@ output$plot_note_text <- renderUI({
             p("Click and drag on plot to zoom in, double-click to zoom out."),
             htmlOutput("plot_note_text")
           ), style = "info")
+      ),
+      br(),
+      uiOutput("show_http_date_filters"),
+      bsCollapse(id = "http_over_time_collapse", multiple = TRUE,
+          bsCollapsePanel("HTTP Responses Over Time", fluidPage(
+            fluidRow(
+              textOutput("http_no_plot"),
+              dygraphOutput("endpoint_http_response_plot"),
+              p("Click and drag on plot to zoom in, double-click to zoom out.")
+            ),
+            fluidRow(
+              reactable::reactableOutput("endpoint_http_response_table")
+            )
+          ), style = "info")
       )
     ),
     sidebarPanel(
@@ -1090,7 +1264,7 @@ output$plot_note_text <- renderUI({
       h1("Endpoint URL:"),
       h3(tags$a(as.character(endpoint$url)), style = "word-wrap: break-word;"),
       p("Note: The blue boxes found in many of the tabs below can be clicked on and expanded to display additional information."),
-      tabsetPanel(type = "tabs",
+      tabsetPanel(id = "endpoint_modal_tabset", type = "tabs",
           tabPanel("Details", detailPage()),
           tabPanel("Organizations", organization_endpoint_page()),
           tabPanel("Capabilities", endpoint_capabilities_page()),

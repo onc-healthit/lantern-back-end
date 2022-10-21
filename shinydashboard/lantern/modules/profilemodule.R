@@ -48,7 +48,7 @@ selected_fhir_endpoint_profiles <- reactive({
     distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
     select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
     group_by(url) %>%
-    mutate(url = paste0("<a onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     mutate_all(as.character)
 
     res

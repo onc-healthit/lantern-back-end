@@ -62,14 +62,38 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CHPLID:                "ID",
-		PracticeType: "Ambulatory"}
+		PracticeType:          "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                 "Health IT System 2",
 		Version:              "2.0",
 		VendorID:             vendors[1].ID, // cerner
 		APISyntax:            "FHIR DSTU2",
 		CertificationEdition: "2014",
-		PracticeType: "Ambulatory"}
+		PracticeType:         "Ambulatory"}
+	var hitp3 = &endpointmanager.HealthITProduct{
+		Name:                 "Health IT System Duplicate Name",
+		Version:              "1.0",
+		VendorID:             vendors[2].ID, // cerner
+		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:  "Active",
+		CertificationEdition: "2014",
+		PracticeType:         "Ambulatory"}
+	var hitp4 = &endpointmanager.HealthITProduct{
+		Name:                 "Health IT System Duplicate Name",
+		Version:              "2.0",
+		VendorID:             vendors[2].ID, // cerner
+		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:  "Active",
+		CertificationEdition: "2014",
+		PracticeType:         "Ambulatory"}
+	var hitp5 = &endpointmanager.HealthITProduct{
+		Name:                 "Health IT SYSTEM; Duplicate Name",
+		Version:              "2.0",
+		VendorID:             vendors[2].ID, // cerner
+		APISyntax:            "FHIR DSTU2",
+		CertificationStatus:  "Active",
+		CertificationEdition: "2014",
+		PracticeType:         "Ambulatory"}
 	// add products
 
 	err = store.AddHealthITProduct(ctx, hitp1)
@@ -78,6 +102,21 @@ func Test_PersistHealthITProduct(t *testing.T) {
 	}
 
 	err = store.AddHealthITProduct(ctx, hitp2)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	err = store.AddHealthITProduct(ctx, hitp3)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	err = store.AddHealthITProduct(ctx, hitp4)
+	if err != nil {
+		t.Errorf("Error adding health it product: %s", err.Error())
+	}
+
+	err = store.AddHealthITProduct(ctx, hitp5)
 	if err != nil {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
@@ -100,32 +139,38 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
-	// retrieve products using vendor
+	// retrieve products using name
 
-	h1s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[0].ID)
+	hitp1s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp1.Name)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
-	if len(h1s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h1s))
+	if len(hitp1s) != 1 {
+		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(hitp1s))
 	}
-	if !h1s[0].Equal(hitp1) {
+	if !hitp1s[0].Equal(hitp1) {
 		t.Errorf("retrieved product is not equal to saved product.")
 	}
 
-	h2s, err := store.GetHealthITProductsUsingVendor(ctx, vendors[1].ID)
+	// Should be zero since healthit product 2 is not active
+	hitp2s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp2.Name)
 	if err != nil {
 		t.Errorf("Error getting health it product: %s", err.Error())
 	}
-	if len(h2s) != 1 {
-		t.Errorf("Expected to retrieve 1 entry from DB. Retrieved %d.", len(h2s))
+	if len(hitp2s) != 0 {
+		t.Errorf("Expected to retrieve 0 entries from DB. Retrieved %d.", len(hitp2s))
 	}
-	if !h2s[0].Equal(hitp2) {
-		t.Errorf("retrieved product is not equal to saved product.")
+
+	hitp3s, err := store.GetActiveHealthITProductsUsingName(ctx, hitp3.Name)
+	if err != nil {
+		t.Errorf("Error getting health it product: %s", err.Error())
+	}
+	if len(hitp3s) != 3 {
+		t.Errorf("Expected to retrieve 3 entries from DB. Retrieved %d.", len(hitp3s))
 	}
 
 	// Add to healthITProduct Map table with no reference ID given
-	healthITMapID, err := store.AddHealthITProductMap(ctx, 0, hitp1.ID) 
+	healthITMapID, err := store.AddHealthITProductMap(ctx, 0, hitp1.ID)
 	if err != nil {
 		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
 	}
@@ -133,24 +178,24 @@ func Test_PersistHealthITProduct(t *testing.T) {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 	// Add to healthITProduct Map table with given reference ID
-	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp1.ID) 
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 9999, hitp1.ID)
 	if err != nil {
 		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
 	}
-	if healthITMapID != 5 {
+	if healthITMapID != 9999 {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 	// Add another healthITProduct Map table with same reference ID
-	healthITMapID, err = store.AddHealthITProductMap(ctx, 5, hitp2.ID) 
+	healthITMapID, err = store.AddHealthITProductMap(ctx, 9999, hitp2.ID)
 	if err != nil {
 		t.Errorf("Error adding ID to healthITProduct map table: %s", err.Error())
 	}
-	if healthITMapID != 5 {
+	if healthITMapID != 9999 {
 		t.Errorf("Expected healthITMapID to be 1, was %d", healthITMapID)
 	}
 
 	// Retrieve healthITProduct map info
-	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 5)
+	healthITProductIDs, err := store.GetHealthITProductIDsByMapID(ctx, 9999)
 	if err != nil {
 		t.Errorf("Error retrieving healthITProduct array from healthITProduct map table: %s", err.Error())
 	}
@@ -232,7 +277,7 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		CertificationEdition:  "2015",
 		LastModifiedInCHPL:    time.Date(2019, 10, 19, 0, 0, 0, 0, time.UTC),
 		CHPLID:                "ID",
-	    PracticeType: "Ambulatory"}
+		PracticeType:          "Ambulatory"}
 	var hitp2 = &endpointmanager.HealthITProduct{
 		Name:                  "Health IT System 2",
 		Version:               "2.0",
@@ -240,7 +285,7 @@ func Test_LinkProductToCriteria(t *testing.T) {
 		APISyntax:             "FHIR DSTU2",
 		CertificationCriteria: []int{64},
 		CertificationEdition:  "2014",
-	    PracticeType: "Ambulatory"}
+		PracticeType:          "Ambulatory"}
 
 	// criteria
 	var crit1 = &endpointmanager.CertificationCriteria{

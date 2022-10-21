@@ -31,7 +31,6 @@ module_files:
   - "modules/downloadsmodule.R"
   - "modules/endpointsmodule.R"
   - "modules/fieldsmodule.R"
-  - "modules/locationmodule.R"
   - "modules/capabilitystatementsizemodule.R"
   - "modules/securitymodule.R"
   - "modules/smartresponsemodule.R"

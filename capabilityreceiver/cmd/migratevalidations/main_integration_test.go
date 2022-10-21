@@ -100,7 +100,7 @@ func Test_addToValidationTableHistory(t *testing.T) {
 	// Add metadata
 	metadataID1, err := store.AddFHIREndpointMetadata(ctx, &testMetadata1)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding first metadata object: %s", err))
-	
+
 	metadataID2, err := store.AddFHIREndpointMetadata(ctx, &testMetadata2)
 	th.Assert(t, err == nil, fmt.Sprintf("Error while adding first metadata object: %s", err))
 

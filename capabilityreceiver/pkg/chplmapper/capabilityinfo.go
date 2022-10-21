@@ -4,14 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 )
 
@@ -90,31 +92,30 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
 func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
-	if ep.CapabilityStatement != nil {
 
+	softwareName := ""
+	softwareVersion := ""
+	chplIDArr := []string{}
+
+	if ep.CapabilityStatement != nil {
 		chplProductNameVersion, err := openProductLinksFile(matchFile)
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
 
-		softwareName, err := ep.CapabilityStatement.GetSoftwareName()
+		softwareName, err = ep.CapabilityStatement.GetSoftwareName()
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		softwareVersion, err := ep.CapabilityStatement.GetSoftwareVersion()
+		softwareVersion, err = ep.CapabilityStatement.GetSoftwareVersion()
 		if err != nil {
 			return errors.Wrap(err, "error matching the capability statement to a CHPL product")
 		}
-		chplID := chplProductNameVersion[softwareName][softwareVersion]
 
-		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
-		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-		if err == nil {
-			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
-			if err != nil {
-				return err
-			}
-			ep.HealthITProductID = healthITMapID
+		chplIDMatchFile := chplProductNameVersion[softwareName][softwareVersion]
+
+		if len(chplIDMatchFile) != 0 {
+			chplIDArr = append(chplIDArr, chplIDMatchFile)
 		}
 	}
 
@@ -127,19 +128,41 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 	for _, fhirEndpoint := range fhirEndpointList {
 		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
 		if len(chplIDList) > 0 {
-			for _, chplID := range chplIDList {
+			chplIDArr = append(chplIDArr, chplIDList...)
+		}
+	}
 
-				healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+	var healthITProductsArr []*endpointmanager.HealthITProduct
+	if len(softwareName) != 0 {
+		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName)
+		if err != nil {
+			return err
+		}
+	}
 
-				// No errors thrown means a healthit product with CHPLID was found and can be set on ep
-				if err == nil {
-					healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
-					if err != nil {
-						return err
-					}
-					ep.HealthITProductID = healthITMapID
+	for _, healthITProduct := range healthITProductsArr {
+		if len(softwareVersion) == 0 {
+			if !helpers.StringArrayContains(chplIDArr, healthITProduct.CHPLID) {
+				chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
+			}
+		} else {
+			if strings.EqualFold(healthITProduct.Version, softwareVersion) {
+				if !helpers.StringArrayContains(chplIDArr, healthITProduct.CHPLID) {
+					chplIDArr = append(chplIDArr, healthITProduct.CHPLID)
 				}
 			}
+		}
+	}
+
+	for _, chplID := range chplIDArr {
+		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
+		// No errors thrown means a healthit product with CHPLID was found and can be set on ep
+		if err == nil {
+			healthITMapID, err := store.AddHealthITProductMap(ctx, ep.HealthITProductID, healthITProductID)
+			if err != nil {
+				return err
+			}
+			ep.HealthITProductID = healthITMapID
 		}
 	}
 

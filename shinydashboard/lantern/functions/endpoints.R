@@ -50,8 +50,8 @@ get_endpoint_organization_list <- function(endpoint) {
 
 # Will need scalable solution for creating short names from Vendor names for UI
 vendor_short_names <- data.frame(
-  vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Unknown"),
-  short_name = c("Allscripts", "CareEvolution", "Cerner", "Epic", "MEDITECH", "Unknown"),
+  vendor_name = c("Allscripts", "CareEvolution, Inc.", "Cerner Corporation", "Epic Systems Corporation", "Medical Information Technology, Inc. (MEDITECH)", "Microsoft Corporation", "Unknown"),
+  short_name = c("Allscripts", "CareEvolution", "Cerner", "Epic", "MEDITECH", "Microsoft", "Unknown"),
   stringsAsFactors = FALSE)
 
 # Get Endpoint Totals
@@ -131,13 +131,16 @@ get_http_response_summary_tbl <- function(db_tables) {
 
 # Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
-  endpoint_tbl %>%
+  tbl <- endpoint_tbl %>%
     distinct(vendor_name, url, fhir_version) %>%
     group_by(vendor_name, fhir_version) %>%
     tally() %>%
     ungroup() %>%
     select(vendor_name, fhir_version, n) %>%
-    left_join(vendor_short_names)
+    left_join(vendor_short_names) %>%
+    mutate(short_name = ifelse(is.na(short_name), vendor_name, short_name))
+
+    tbl
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
@@ -415,34 +418,26 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
 
 # get contact information
 get_contact_information <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-        f.url as url,
-        vendors.name as vendor_name,
-        capability_fhir_version as fhir_version,
-        fhir_endpoints.organization_names as endpoint_names,
-		    contacts.contact_name,
-		    contacts.contact_type, 
-		    contacts.contact_value,
-        contacts.contact_preference
-        FROM fhir_endpoints_info f
-        LEFT JOIN vendors on f.vendor_id = vendors.id
-        LEFT JOIN fhir_endpoints on f.id = fhir_endpoints.id
-		    LEFT JOIN (SELECT
+
+  contacts_tbl <- tbl(db_connection,
+    sql("SELECT DISTINCT
 				  url,
 				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
         	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
           json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
           json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
           FROM fhir_endpoints_info
-				  ) as contacts on contacts.url = f.url
-    ")) %>%
-    collect() %>%
-    mutate(endpoint_names = gsub("(\\{|\\})", "", as.character(endpoint_names))) %>%
-    mutate(endpoint_names = gsub("(\",\")", "; ", as.character(endpoint_names))) %>%
-    mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
+    collect()
+
+
+    res <- app$endpoint_export_tbl() %>%
+        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
+        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
+        filter(requested_fhir_version == "None") %>%
+        left_join(contacts_tbl, by = c("url" = "url"))
+
+    res
 }
 
 # get values from specific fields we're interested in displaying
@@ -507,14 +502,29 @@ get_endpoint_response_time <- function(db_connection, date, endpointURL, request
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, response_time_seconds as response
-                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND requested_fhir_version = 'None' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as date,
-                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE requested_fhir_version = 'None' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as date,
+                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     ORDER BY time"))
         )
     ) %>%
     mutate(date = as_datetime(time)) %>%
     select(date, response)
+}
+
+
+get_endpoint_http_over_time <- function(db_connection, date, endpointURL, requestedFhirVersion) {
+  endpoint_http_over_time <- as_tibble(
+    tbl(db_connection,
+        sql(paste0("SELECT http_responses.http_response AS http_response, http_responses.datetime AS time
+                    FROM (SELECT http_response, floor(extract(epoch from updated_at)) AS datetime FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as http_responses,
+                    (SELECT max(floor(extract(epoch from updated_at))) AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    WHERE http_responses.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
+                    ORDER BY time"))
+        )
+    ) %>%
+    mutate(date = as_datetime(time)) %>%
+    select(date, http_response)
 }
 
 # get tibble of endpoints which include a security service attribute
@@ -722,7 +732,8 @@ get_endpoint_locations <- function(db_connection) {
           fhir_version,
           vendor_name,
           match_score,
-          left(zipcode,5) as zipcode
+          left(zipcode,5) as zipcode,
+          npi_id
         FROM organization_location")
     ) %>%
     collect() %>%
@@ -838,6 +849,7 @@ get_npi_organization_matches <- function(db_tables) {
     select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
     collect() %>%
     mutate(match_score = match_score * 100)  %>%
+    filter(match_score >= 97) %>%
     tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown")) %>%
     mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
   nl
@@ -891,10 +903,12 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 
     resSupportedVersions <- tbl(db_connection,
         sql(paste0("SELECT
-            DISTINCT versions_response->>'versions' as supported_versions, versions_response->>'default' as default_version
+            DISTINCT versions_response->'Response'->>'versions' as supported_versions, versions_response->'Response'->>'default' as default_version
             FROM fhir_endpoints
             WHERE url = '", endpointURL, "'"))) %>%
-    collect()
+    collect() %>%
+    mutate(supported_versions = gsub("\\[\"|\"\\]", "", as.character(supported_versions))) %>%
+    mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
     res$security <- paste0(resSecurity$security, collapse = ",")

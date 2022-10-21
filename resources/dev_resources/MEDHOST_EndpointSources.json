@@ -1,0 +1,34 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/076f2d84-f49c-4917-b4e7-787ac8749ee2",
+			"OrganizationName": "Grant Memorial Hospital",
+			"NPIID": "1598763666"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/479a0965-68cb-4474-868a-5efbbbeb2895",
+			"OrganizationName": "IIP01 - Test Facility",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/c91e7cb8-16f6-43af-aa73-f42df176474c",
+			"OrganizationName": "Medhost Community Hospital (Demo02)",
+			"NPIID": "1295169910"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/174285d6-efb7-4560-a7ba-f3ae332b091f",
+			"OrganizationName": "Medhost Test Facility IIP02",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/42bff086-54d1-4189-b088-510423a727ff",
+			"OrganizationName": "Northwest Medical Center",
+			"NPIID": "1750495941"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/966271d9-392f-4763-af53-b6f343c6e2f9",
+			"OrganizationName": "Summit Medical Center",
+			"NPIID": "1609297506"
+		}
+	]
+}
