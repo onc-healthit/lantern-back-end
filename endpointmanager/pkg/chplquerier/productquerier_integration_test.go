@@ -258,9 +258,9 @@ func Test_persistProducts(t *testing.T) {
 	prod2.APIDocumentation = []apiDocumentation{
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: ".com/Carefluence-OpenAPI-Documentation.html",
 		},
@@ -287,8 +287,8 @@ func Test_persistProducts(t *testing.T) {
 			break
 		}
 	}
-	th.Assert(t, found, "expected an api error to be logged")	
-	
+	th.Assert(t, found, "expected an api error to be logged")
+
 	// persist when context has ended
 
 	_, err = store.DB.Exec("DELETE FROM healthit_products;") // reset values
@@ -325,25 +325,25 @@ func Test_parseHITProd(t *testing.T) {
 	prod.APIDocumentation = []apiDocumentation{
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: ".com/Carefluence-OpenAPI-Documentation.html",
 		},
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 		},
 		{
 			Criterion: criteriaMet{
-				Id: 1,
+				Id:     1,
 				Number: "170.315 (g)(7)",
-				Title: "Application Access - Patient Selection",
+				Title:  "Application Access - Patient Selection",
 			},
 			Value: "http://carefluence.com/Carefluence-OpenAPI-Documentation.html",
 		},
