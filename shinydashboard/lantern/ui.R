@@ -173,11 +173,13 @@ ui <- dashboardPage(
       .nav-tabs>li.active>a {
         color: #555!important;
       }
-
-      .multi-wrapper div a {
+   
+      /* Change color of the selected links in the resources checkbox */
+      .multi-wrapper .selected-wrapper .item.selected  {
         color: #024A96;
       }
 
+      /* Change color of the non selected links in the resources checkbox */
       .multi-wrapper .non-selected-wrapper .item.selected {
         color: #4F4F4F;
         opacity: 1!important;
