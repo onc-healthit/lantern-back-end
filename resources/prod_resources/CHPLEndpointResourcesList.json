@@ -43,6 +43,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.crystalpm.com/FHIRServiceURLs.csv",
+		"EndpointName": "Abeo Solutions, Inc",
+		"FileName": "Abeo_Solutions_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir",
 		"EndpointName": "Cyfluent",
 		"FileName": "Cyfluent_EndpointSources.json"
@@ -67,7 +73,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhirtest.intelichart.com/",
+		"URL": "https://fhirtest.intelichart.com/Help/BaseUrl",
 		"EndpointName": "InteliChart LLC",
 		"FileName": "InteliChart_LLC_EndpointSources.json"
 	},
@@ -134,8 +140,8 @@
 	{
 		"FormatType": "Lantern",
 		"URL": "https://open.allscripts.com/fhirendpoints",
-		"EndpointName": "Allscripts",
-		"FileName": "Allscripts_EndpointSources.json"
+		"EndpointName": "Altera Digital Health Inc.",
+		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -184,5 +190,17 @@
 		"URL": "https://eph-solutions.com/FHIR_Service_URL_08162022.pdf",
 		"EndpointName": "ePH Solutions, Inc",
 		"FileName": "ePH_Solutions_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html",
+		"EndpointName": "Genius Solutions Inc.",
+		"FileName": "Genius_Solutions_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://ipatientcare.com/onc-acb-certified-2015-edition/",
+		"EndpointName": "AssureCare LLC",
+		"FileName": "AssureCare_LLC_EndpointSources.json"
 	}
 ]
