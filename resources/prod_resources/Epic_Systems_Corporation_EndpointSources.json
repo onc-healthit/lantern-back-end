@@ -802,7 +802,7 @@
 		},
 		{
 			"URL": "https://soap.phci.org/Interconnect-FHIR/api/FHIR/DSTU2/",
-			"OrganizationName": "Prohealth Care",
+			"OrganizationName": "ProHealth Care",
 			"NPIID": ""
 		},
 		{
@@ -1176,7 +1176,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/DSTU2/",
+			"URL": "https://epicprisfd.ahn.org/PRD-FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Allegheny Health Network",
 			"NPIID": ""
 		},
@@ -2201,11 +2201,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.kp.org/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/200/api/FHIR/R4/",
-			"OrganizationName": "Kaiser Permanente – Georgia",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://FHIR.KP.ORG/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/190/api/FHIR/R4/",
 			"OrganizationName": "Kaiser Permanente – Oregon – SW Washington",
 			"NPIID": ""
@@ -2258,6 +2253,11 @@
 		{
 			"URL": "https://proxy.healthpartners.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "HealthPartners",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.kp.org/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/200/api/FHIR/R4/",
+			"OrganizationName": "Kaiser Permanente – Georgia",
 			"NPIID": ""
 		},
 		{
@@ -3076,6 +3076,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://soap.phci.org/Interconnect-FHIR/api/FHIR/R4/",
+			"OrganizationName": "ProHealth Care",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://soapprod.hattiesburgclinic.com/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Hattiesburg Clinic and Forrest General Hospital",
 			"NPIID": ""
@@ -3481,7 +3486,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/R4/",
+			"URL": "https://epicprisfd.ahn.org/PRD-FHIR/api/FHIR/R4/",
 			"OrganizationName": "Allegheny Health Network",
 			"NPIID": ""
 		},
