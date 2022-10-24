@@ -97,6 +97,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
+		"EndpointName": "MedInformatix",
+		"FileName": "MedInformatix_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://bill.medgenehr.com:7043/fhir/.well-known/smart-configuration",
 		"EndpointName": "Comtron Inc.",
 		"FileName": "Comtron_Inc_EndpointSources.json"
@@ -115,6 +121,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://fhir.meditouchehr.com/api/fhir/r4",
+		"EndpointName": "NextGen Healthcare",
+		"FileName": "NextGen_Healthcare_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
 		"EndpointName": "OpenEMR Foundation",
 		"FileName": "OpenEMR_Foundation_EndpointSources.json"
@@ -124,6 +136,12 @@
 		"URL": "https://prognocis.com/fhir/index.html",
 		"EndpointName": "Bizmatics Inc.",
 		"FileName": "Bizmatics_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://fhir.myqone.com/Endpoints",
+		"EndpointName": "TRIARQ Practice Services",
+		"FileName": "TRIARQ_Practice_Services_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -142,6 +160,12 @@
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
 		"FileName": "SolidPractice_Technologies_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/",
+		"EndpointName": "CorrecTek",
+		"FileName": "CorrecTek_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
