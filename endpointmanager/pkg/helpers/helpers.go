@@ -10,6 +10,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
@@ -90,7 +91,11 @@ func FailOnError(errString string, err error) {
 
 // ChromedpQueryEndpointList queries the given endpoint list using chromedp and returns the html document
 func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string) (*goquery.Document, error) {
+
 	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	timeoutContext, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	var htmlContent string
@@ -98,13 +103,13 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 
 	if len(waitVisibleElement) > 0 {
 		// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
-		err = chromedp.Run(ctx,
+		err = chromedp.Run(timeoutContext,
 			chromedp.Navigate(endpointListURL),
 			chromedp.WaitVisible(waitVisibleElement, chromedp.ByQuery),
 			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 		)
 	} else {
-		err = chromedp.Run(ctx,
+		err = chromedp.Run(timeoutContext,
 			chromedp.Navigate(endpointListURL),
 			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 		)
