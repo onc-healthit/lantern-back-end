@@ -853,6 +853,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://fhir.myqone.com/Endpoints",
+		"EndpointName": "TRIARQ Practice Services",
+		"FileName": "TRIARQ_Practice_Services_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.ihs.gov/cis/",
 		"EndpointName": "Indian Health Service",
 		"FileName": "Indian_Health_Service_EndpointSources.json"
