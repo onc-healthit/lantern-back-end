@@ -76,6 +76,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BizmaticsBundleParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if chplURL == assureCareURL {
 		AssureCareCSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo)
+	} else if chplURL == practiceSuiteURL {
+		PracticeSuiteWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == indianHealthServiceURL {
+		IndianHealthWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == geniusSolutionsURL {
+		GeniusSolutionsWebscraper(chplURL, fileToWriteTo)
 	}
 }
 
