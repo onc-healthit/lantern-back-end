@@ -38,6 +38,7 @@ var indianHealthServiceURL = "https://www.ihs.gov/cis/"
 var geniusSolutionsURL = "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html"
 var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
 var intelichartURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
+<<<<<<< HEAD
 var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
 var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
@@ -56,6 +57,8 @@ var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/intro
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
 var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
 var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
+=======
+>>>>>>> 748dccfb (Add webscraper for Intelichart list)
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
