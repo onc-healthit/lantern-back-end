@@ -36,6 +36,7 @@ var bizmaticsURL = "https://prognocis.com/fhir/index.html"
 var indianHealthServiceURL = "https://www.ihs.gov/cis/"
 var geniusSolutionsURL = "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html"
 var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
+var intelichartURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -81,6 +82,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		IndianHealthWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == geniusSolutionsURL {
 		GeniusSolutionsWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == intelichartURL {
+		IntelichartWebscraper(chplURL, fileToWriteTo)
 	}
 }
 
