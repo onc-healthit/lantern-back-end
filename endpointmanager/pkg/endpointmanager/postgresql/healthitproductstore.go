@@ -29,6 +29,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
 	var practiceTypeString sql.NullString
+	var ACBString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -69,7 +70,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
-		&hitp.ACB,
+		&ACBString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -83,6 +84,12 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		hitp.PracticeType = ""
 	} else {
 		hitp.PracticeType = practiceTypeString.String
+	}
+
+	if !ACBString.Valid {
+		hitp.ACB = ""
+	} else {
+		hitp.ACB = ACBString.String
 	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
@@ -103,6 +110,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
 	var practiceTypeString sql.NullString
+	var ACBString sql.NullString
 
 	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
@@ -122,7 +130,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
-		&hitp.ACB,
+		&ACBString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -136,6 +144,12 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		hitp.PracticeType = ""
 	} else {
 		hitp.PracticeType = practiceTypeString.String
+	}
+
+	if !ACBString.Valid {
+		hitp.ACB = ""
+	} else {
+		hitp.ACB = ACBString.String
 	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
@@ -185,6 +199,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		var certificationCriteriaJSON []byte
 		var vendorIDNullable sql.NullInt64
 		var practiceTypeString sql.NullString
+		var ACBString sql.NullString
 
 		err = rows.Scan(
 			&hitp.ID,
@@ -202,7 +217,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
 			&practiceTypeString,
-			&hitp.ACB,
+			&ACBString,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -216,6 +231,12 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 			hitp.PracticeType = ""
 		} else {
 			hitp.PracticeType = practiceTypeString.String
+		}
+
+		if !ACBString.Valid {
+			hitp.ACB = ""
+		} else {
+			hitp.ACB = ACBString.String
 		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)

@@ -109,7 +109,7 @@ func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) e
 
 	var CHPLEndpointListProducts []chplEndpointListProductInfo
 
-	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
+	log.Info("Getting chpl product information from CHPLProductsInfo.json file")
 	// Get CHPL Endpoint list stored in Lantern resources folder
 	CHPLFile, err := ioutil.ReadFile("/etc/lantern/resources/CHPLProductsInfo.json")
 	if err != nil {
