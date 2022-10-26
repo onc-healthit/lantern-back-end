@@ -85,6 +85,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv",
+		"EndpointName": "Health Care 2000, Inc.",
+		"FileName": "Health_Care_2000_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
 		"EndpointName": "MEDHOST",
 		"FileName": "MEDHOST_EndpointSources.json"
@@ -94,6 +100,12 @@
 		"URL": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
 		"EndpointName": "Medical Information Technology, Inc. (MEDITECH)",
 		"FileName": "Medical_Information_Technology_Inc_MEDITECH_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/",
+		"EndpointName": "First Insight Corporation",
+		"FileName": "First_Insight_Corporation_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
