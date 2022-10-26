@@ -67,7 +67,27 @@ dashboard <- function(
 ) {
   ns <- session$ns
 
+
+  all_vendor_counts <- reactive({
+    res <- isolate(app_data$vendor_count_tbl())
+    res <- res %>%
+      group_by(vendor_name) %>%
+      summarise(developer_count = sum(n)) %>%
+      select(vendor_name, developer_count)
+  })
+
+  vendor_count_table <- reactive({
+    res <- isolate(app_data$vendor_count_tbl())
+    res <- res %>%
+      left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
+      mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+      mutate(percentage = paste0(percentage, "%")) %>%
+      select(Vendor = vendor_name, "FHIR Version" = fhir_version, Count = n, "Developer Percentage" = percentage)
+    res
+  })
+
   selected_http_summary <- reactive({
+
     res <- isolate(app_data$http_pct())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -141,8 +161,7 @@ dashboard <- function(
   )
 
   output$fhir_vendor_table <- renderTable(
-    isolate(app_data$vendor_count_tbl()) %>%
-      select(Vendor = vendor_name, "FHIR Version" = fhir_version, Count = n)
+    vendor_count_table()
   )
 
   output$vendor_share_plot <- renderCachedPlot({
