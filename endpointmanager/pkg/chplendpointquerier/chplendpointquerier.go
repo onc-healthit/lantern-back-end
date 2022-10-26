@@ -37,6 +37,11 @@ var indianHealthServiceURL = "https://www.ihs.gov/cis/"
 var geniusSolutionsURL = "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html"
 var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
 var intelichartURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
+var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
+var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
+var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
+var triarqURL = "https://fhir.myqone.com/Endpoints"
+var napchareURL = "https://devportal.techcareehr.com/Serviceurls"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -84,6 +89,16 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		GeniusSolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == intelichartURL {
 		IntelichartWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == healthCare2000URL {
+		HealthCare2000SVParser(chplURL, fileToWriteTo)
+	} else if chplURL == firstInsightURL {
+		FirstInsightBundleParser(chplURL, fileToWriteTo)
+	} else if chplURL == healthSamuraiURL {
+		HealthSamuraiWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == triarqURL {
+		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == napchareURL {
+		NaphCareWebscraper(chplURL, fileToWriteTo)
 	}
 }
 

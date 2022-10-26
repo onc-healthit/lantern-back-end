@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.myqone.com/api/FHIR/R4/",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}
