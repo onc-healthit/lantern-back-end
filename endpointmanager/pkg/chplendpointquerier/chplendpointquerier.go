@@ -11,9 +11,10 @@ type EndpointList struct {
 }
 
 type LanternEntry struct {
-	URL              string `json:"URL"`
-	OrganizationName string `json:"OrganizationName"`
-	NPIID            string `json:"NPIID"`
+	URL                 string `json:"URL"`
+	OrganizationName    string `json:"OrganizationName"`
+	NPIID               string `json:"NPIID"`
+	OrganizationZipCode string `json:"OrganizationZipCode"`
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
@@ -38,7 +39,6 @@ var indianHealthServiceURL = "https://www.ihs.gov/cis/"
 var geniusSolutionsURL = "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html"
 var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
 var intelichartURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
-<<<<<<< HEAD
 var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
 var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
@@ -57,8 +57,31 @@ var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/intro
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
 var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
 var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
-=======
->>>>>>> 748dccfb (Add webscraper for Intelichart list)
+var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
+var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
+var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
+var varianmedicalURL = "https://variandev.dynamicfhir.com/"
+var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
+var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
+var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
+var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/"
+var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
+var azaleahealthURL = "https://api.azaleahealth.com/fhir/R4/Endpoint"
+var cloudcraftURL = "https://fhirapitest.naiacorp.net/fhir/r4/endpoints/"
+var darenasolutionsURL = "https://hub.meldrx.com"
+var glenwoodsystemsURL = "https://static.glaceemr.com/endpoints/urls.json"
+var practicefusionURL = "https://www.practicefusion.com/assets/static_files/ServiceBaseURLs.json"
+var universalEHRURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-universalehr.json"
+var welligentURL = "https://mu3test.welligent.com/fhir/r4/endpoints/"
+var astronautURL = "https://astronautehr.com/index.php/fhir-base-urls/"
+var bestpracticesacademyURL = "https://ipatientcare.com/onc-acb-certified-2015-edition"
+var californiamedicalsystemsURL = "https://cal-med.com/fhir/Fhir-base-urls.csv"
+var claimpowerURL = "https://www.claimpowerehr.com/2015ECURES/documents/CP_FHIR_URLS.csv"
+var dextersolutionsURL = "https://img1.wsimg.com/blobby/go/f698f3eb-0d14-4f25-a21e-9ac5944696fe/downloads/ezdocs-fhir-base-urls.csv"
+var mendelsonURL = "https://orthoplex.mkoss.com/Fhirdocs"
+var netsmarttechnologiesURL = "https://careconnect-uat.netsmartcloud.com/baseUrls/"
+var patagoniahealthURL = "https://patagoniahealth.com/wp-content/uploads/2022/12/fhir-base-urls.csv"
+var webedoctorURL = "https://www.webedoctor.com/docs/fhir-base-urls.csv"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -73,7 +96,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, EpicURL) {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, MeditechURL) {
-		MeditechWebscraper(MeditechURL, fileToWriteTo)
+		MeditechWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, DocsAthenaURL) {
 		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, MyDataAthenaURL) {
@@ -99,7 +122,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, bizmaticsURL) {
 		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if URLsEqual(chplURL, assureCareURL) {
-		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1, 2)
+		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, practiceSuiteURL) {
 		PracticeSuiteWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, indianHealthServiceURL) {
@@ -129,7 +152,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, medinfoengineeringURL) {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, relimedsolutionsURL) {
-		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3)
+		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3, true, 1, -1)
 	} else if URLsEqual(chplURL, eclinicalworksURL) {
 		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
 	} else if URLsEqual(chplURL, integraconnectURL) {
@@ -144,6 +167,58 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MicroFourWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, magilenenterprisesURL) {
 		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == interopxURL {
+		InteropxWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == mphrxURL {
+		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
+	} else if chplURL == correctekURL {
+		CorrecTekWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == varianmedicalURL {
+		VarianMedicalWebscraper("https://variandev.dynamicfhir.com/dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
+	} else if chplURL == caretrackerURL {
+		BundleQuerierParser("https://hag-fhir.amazingcharts.com/ac/endpoints/r4", fileToWriteTo)
+	} else if chplURL == zhhealthcareURL {
+		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == medinfoengineeringURL {
+		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == emedpracticeURL {
+		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+	} else if chplURL == modernizingmedicineURL {
+		ModernizingMedicineQuerier("qa.fhir.ema-api.com/fhir/r4/Endpoint?connection-type=hl7-fhir-rest", fileToWriteTo)
+	} else if chplURL == doc_torURL {
+		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
+	} else if URLsEqual(chplURL, azaleahealthURL) {
+		BundleQuerierParser(chplURL+"?_format=application/json", fileToWriteTo)
+	} else if URLsEqual(chplURL, cloudcraftURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, darenasolutionsURL) {
+		BundleQuerierParser("https://api.meldrx.com/Directories/fhir/endpoints", fileToWriteTo)
+	} else if URLsEqual(chplURL, glenwoodsystemsURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, practicefusionURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, universalEHRURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, welligentURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, astronautURL) {
+		CSVParser("https://astronautehr.com/wp-content/uploads/2022/12/Astronaut-fhir-base-urls.csv", fileToWriteTo, "./astronaut_fhir_base_urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, bestpracticesacademyURL) {
+		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir_base_urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, californiamedicalsystemsURL) {
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", 1, 0, true, 1, -1)
+	} else if URLsEqual(chplURL, claimpowerURL) {
+		CSVParser(chplURL, fileToWriteTo, "./cp_fhir_urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, mendelsonURL) {
+		CSVParser("https://orthoplex.mkoss.com/FhirDocs/DownloadCSV", fileToWriteTo, "./baseurl.csv", 1, 0, true, 1, 0)
+	} else if URLsEqual(chplURL, patagoniahealthURL) {
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, webedoctorURL) {
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, dextersolutionsURL) {
+		CSVParser(chplURL, fileToWriteTo, "./ezdocs_fhir_base_urls.csv", 1, 0, true, 3, 1)
+	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
 	}
 
 }
