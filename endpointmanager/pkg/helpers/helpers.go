@@ -148,6 +148,22 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	return respBody, nil
 }
 
+func QueryAndReadFile(URL string, filePath string) ([]byte, error) {
+
+	err := downloadFile(filePath, URL)
+	if err != nil {
+		return nil, err
+	}
+
+	// read file
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}
+
 func QueryAndOpenCSV(csvURL string, csvFilePath string) (*csv.Reader, *os.File, error) {
 
 	err := downloadFile(csvFilePath, csvURL)
