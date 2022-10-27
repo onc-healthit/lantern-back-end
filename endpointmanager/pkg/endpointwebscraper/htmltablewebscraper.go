@@ -29,13 +29,6 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 						entry.URL = strings.TrimSpace(tableEntries.Eq(1).Text())
 						endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
 					}
-				} else if vendor == "1Up" {
-					endpointType := strings.TrimSpace(tableEntries.Eq(2).Text())
-					if endpointType == "Health System" {
-						entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Find("a").Text())
-						entry.URL = strings.TrimSpace(tableEntries.Eq(1).Text())
-						endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
-					}
 				}
 			}
 		})

@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointwebscraper"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 )
 
 func main() {
@@ -20,6 +21,11 @@ func main() {
 		fileToWriteTo = os.Args[3]
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
+	}
+
+	err := config.SetupConfig()
+	if err != nil {
+		log.Fatalf("Error setting up config")
 	}
 
 	endpointwebscraper.EndpointListWebscraper(vendorURL, vendor, fileToWriteTo)
