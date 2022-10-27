@@ -1,4 +1,4 @@
-package endpointwebscraper
+package chplendpointquerier
 
 import (
 	"strings"
@@ -31,7 +31,7 @@ func Carefluenceebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	err = WriteEndpointListFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
