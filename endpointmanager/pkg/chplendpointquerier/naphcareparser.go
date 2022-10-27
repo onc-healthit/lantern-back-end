@@ -13,7 +13,7 @@ func NaphCareWebscraper(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "#page-header")
+	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, ".container")
 	if err != nil {
 		log.Fatal(err)
 	}
