@@ -20,7 +20,6 @@ var careEvolutionURL = "https://fhir.docs.careevolution.com/overview/public_endp
 
 func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo string) {
 
-	
 	if vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
 	} else if vendorURL == oneUpURL {

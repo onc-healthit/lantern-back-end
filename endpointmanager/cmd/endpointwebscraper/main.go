@@ -5,8 +5,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointwebscraper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointwebscraper"
 )
 
 func main() {
