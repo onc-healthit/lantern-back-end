@@ -355,7 +355,6 @@ func persistProduct(ctx context.Context,
 // - the certification criteria list is the same length but not equal
 // - the two products are not equal but their differences don't fall into the categories noted above.
 func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd *endpointmanager.HealthITProduct) (bool, error) {
-
 	// check if the two are equal.
 	if existingDbProd.Equal(newDbProd) {
 		return false, nil
@@ -429,16 +428,6 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	// If the new product has a different API url, update it
 	if existingDbProd.APIURL != newDbProd.APIURL {
 		return true, nil
-	}
-
-	// If the new product has a new ACB field, update it unless the field is not populated
-	if existingDbProd.ACB != newDbProd.ACB {
-
-		if newDbProd.ACB == "" {
-			return false, nil
-		} else {
-			return true, nil
-		}
 	}
 
 	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
