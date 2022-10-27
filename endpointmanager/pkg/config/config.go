@@ -109,7 +109,6 @@ func SetupConfig() error {
 		return err
 	}
 
-
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
 	viper.SetDefault("dbuser", "lantern")

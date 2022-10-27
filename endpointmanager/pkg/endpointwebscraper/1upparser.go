@@ -13,7 +13,7 @@ func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
 	clientSecret := viper.GetString("1up_client_secret")
 	clientID := viper.GetString("1up_client_id")
 
-	if clientSecret == "" &&  clientID == ""{
+	if clientSecret == "" && clientID == "" {
 		return
 	}
 
