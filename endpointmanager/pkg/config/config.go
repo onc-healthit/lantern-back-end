@@ -99,6 +99,17 @@ func SetupConfig() error {
 		return err
 	}
 
+	// 1Up API Keys
+	err = viper.BindEnv("1up_client_secret")
+	if err != nil {
+		return err
+	}
+	err = viper.BindEnv("1up_client_id")
+	if err != nil {
+		return err
+	}
+
+
 	viper.SetDefault("dbhost", "localhost")
 	viper.SetDefault("dbport", 5432)
 	viper.SetDefault("dbuser", "lantern")
