@@ -7,7 +7,6 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointwebscraper"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 )
 
 func main() {
