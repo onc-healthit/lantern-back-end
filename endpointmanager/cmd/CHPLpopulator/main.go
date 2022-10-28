@@ -228,6 +228,21 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Save smaller copy of software products info file in the dev resources folder
+	if len(softwareInfoList) > 10 {
+		softwareInfoList = softwareInfoList[0:10]
+	}
+
+	reducedfinalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToSoftwareInfo, reducedfinalFormatJSONSoftware, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx context.Context, client *http.Client) ([]byte, error) {
