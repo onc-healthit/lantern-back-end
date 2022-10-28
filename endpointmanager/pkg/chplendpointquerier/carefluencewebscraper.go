@@ -20,7 +20,6 @@ func Carefluencewebscraper(vendorURL string, fileToWriteTo string) {
 
 	doc.Find(".page-content").Each(func(index int, mainContent *goquery.Selection) {
 		mainContent.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
-			// Only the first two entries are production server endpoints
 			var entry LanternEntry
 
 			fhirURL := strings.TrimSpace(phtml.Text())
