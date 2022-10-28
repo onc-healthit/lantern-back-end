@@ -7,6 +7,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://variandev.dynamicfhir.com/",
+		"EndpointName": "Varian Medical Systems",
+		"FileName": "Varian_Medical_Systems_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://cmpl.aidbox.app/smart",
 		"EndpointName": "Health Samurai, Inc.",
 		"FileName": "Health_Samurai_Inc_EndpointSources.json"
@@ -145,6 +151,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://open.allscripts.com/fhirendpoints",
+		"EndpointName": "Altera Digital Health Inc.",
+		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://prognocis.com/fhir/index.html",
 		"EndpointName": "Bizmatics Inc.",
 		"FileName": "Bizmatics_Inc_EndpointSources.json"
@@ -181,12 +193,6 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://open.allscripts.com/fhirendpoints",
-		"EndpointName": "Altera Digital Health Inc.",
-		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
 		"FileName": "NaphCare_Inc_EndpointSources.json"
@@ -196,6 +202,12 @@
 		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html",
 		"EndpointName": "TriMed Technologies",
 		"FileName": "TriMed_Technologies_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://api-datamanager.carecloud.com:8081/fhirurl",
+		"EndpointName": "Meridian Medical Management",
+		"FileName": "Meridian_Medical_Management_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

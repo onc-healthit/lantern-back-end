@@ -1,23 +1,53 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
-			"OrganizationName": "Websters",
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "RI - Anchor",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
-			"OrganizationName": "athenahealth",
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KS - Community Health Ministry, Inc.",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://jbosstrnpapp02.vhpads.com:9443/ahgtraining_mmAPIServer/fhir/r4",
-			"OrganizationName": "Self",
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NC - Sollus Pediatrics",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-mlAPIServer/fhir/r4",
-			"OrganizationName": "athenahealth",
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - Scott \u0026 Jonah Mds",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "First Physicians",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Trophy Club Pediatrics, PA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MA - The Sharewood Project",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "GA - Contemporary Women's Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "WA - Dr. Stephen B. Hillis, MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - Margarita M Vendrell MD",
 			"NPIID": ""
 		}
 	]

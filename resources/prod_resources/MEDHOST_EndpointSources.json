@@ -21,6 +21,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/a54e9bab-c2b3-4f54-b35a-04b9f0b8cff6",
+			"OrganizationName": "Keralty Hospital",
+			"NPIID": "1548284177"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/15ccfc48-8123-499c-be14-3dda9ff453c2",
 			"OrganizationName": "Larkin Community Hospital",
 			"NPIID": "1952311243"
