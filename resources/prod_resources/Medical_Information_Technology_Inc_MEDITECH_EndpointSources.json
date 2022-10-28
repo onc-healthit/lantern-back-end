@@ -741,6 +741,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://mtrestapis-live01.ohow.com:443/v2/argonaut/v1",
+			"OrganizationName": "Orthopaedic Hospital of Wisconsin READY Small",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtapi-live01.oswegohealth.org:443/v2/argonaut/v1",
 			"OrganizationName": "Oswego Health Expanse",
 			"NPIID": ""
@@ -1818,6 +1823,11 @@
 		{
 			"URL": "https://mtrestapis-live01.onslow.org:443/v1/uscore/R4",
 			"OrganizationName": "Onslow Memorial Hospital Expanse(Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.ohow.com:443/v1/uscore/R4",
+			"OrganizationName": "Orthopaedic Hospital of Wisconsin READY Small",
 			"NPIID": ""
 		},
 		{

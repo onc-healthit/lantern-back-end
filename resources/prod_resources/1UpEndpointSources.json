@@ -94,11 +94,6 @@
 			"URL": "https://epicproxy.et0905.epichosted.com/FHIRproxy/SEH/api/FHIR/DSTU2",
 			"OrganizationName": "Southeastern Health",
 			"NPIID": ""
-		},
-		{
-			"URL": "https://mtrestapis-live01.halifaxhealth.org/v1/argonaut/v1",
-			"OrganizationName": "Halifax Health",
-			"NPIID": ""
 		}
 	]
 }

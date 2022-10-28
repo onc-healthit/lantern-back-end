@@ -16221,41 +16221,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Fhir",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/\\open",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Open",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/Fhir",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/\\fhir",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/Open",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R4/fhir-R4TWStandalone",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://twqademoweb3.rd.allscripts.com//FHIR",
 			"OrganizationName": "TWQADEMOSQL3",
 			"NPIID": ""
