@@ -31550,6 +31550,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "City of Winchester",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Contour Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48845,6 +48850,11 @@
 			"OrganizationName": "MD - Cynthia J Moorman MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MD - Cynthia J Moorman MD",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
@@ -71744,6 +71754,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NC - Legacy Medical Group, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - McAllen Hand Center, P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -71825,6 +71840,11 @@
 			"OrganizationName": "KY - Radcliff Urgent Care Clinic, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - Radcliff Urgent Care Clinic, LLC",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
@@ -72821,6 +72841,11 @@
 			"OrganizationName": "NJ - NP XPERIENCE LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NJ - NP XPERIENCE LLC",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
@@ -82277,6 +82302,11 @@
 			"OrganizationName": "FL - Family Care Center Corp",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - Marianna Family Care Center LLC",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
