@@ -11,7 +11,8 @@ endpointsmodule_UI <- function(id) {
       column(width = 12, style = "padding-bottom:20px",
              h2(style = "margin-top:0", textOutput(ns("endpoint_count"))),
              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+             htmlOutput(ns("anchorlink"))
       ),
     ),
     tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
@@ -30,6 +31,10 @@ endpointsmodule <- function(
   sel_availability
 ) {
   ns <- session$ns
+
+  output$anchorlink <- renderUI({
+    HTML("<p>You may also download endpoint data over time in the JSON format as well as current endpoint data in the CSV format as available here by visiting the <a id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
+  })
 
   output$endpoint_count <- renderText({
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
