@@ -32,6 +32,12 @@ downloadsmodule_UI <- function(id) {
       )
     ),
     fluidRow(
+      column(width = 12,
+              h2("CSV Download"),
+              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+      )
+    ),
+    fluidRow(
       column(width = 12, style = "padding-top:50px",
              htmlOutput(ns("note_text"))
       )
