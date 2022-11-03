@@ -732,6 +732,13 @@ ui <- dashboardPage(
                 let downloads_tab = document.querySelector(\"a[href = '#shiny-tab-downloads_tab']\"); 
                 downloads_tab.click();
               });
+
+              downloads_tab_link.addEventListener('keyup', function (e) {
+                if (event.keyCode === 13) {
+                  let downloads_tab = document.querySelector(\"a[href = '#shiny-tab-downloads_tab']\"); 
+                  downloads_tab.click();
+                }
+              });
             }
             
             /*
