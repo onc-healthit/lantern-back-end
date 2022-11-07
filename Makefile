@@ -58,7 +58,7 @@ restore_database:
 
 migrate_database:
 	docker-compose run -d --name=postgres_migrate postgres
-	cd ./db/migration; docker build --tag migration . --build-arg cert_dir=./certs --build-arg force_version=$(force_version)
+	cd ./db/migration; docker build --tag migration . --build-arg cert_dir=./certs --build-arg --build-arg direction=$(direction) force_version=$(force_version)
 	docker run --env-file .env -e LANTERN_DBHOST=postgres_migrate --network=lantern-back-end_default migration; docker stop postgres_migrate; docker rm postgres_migrate
 
 history_pruning:
