@@ -61,6 +61,7 @@ type CHPLEndpointEntry struct {
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	ServiceBaseUrlList  serviceBaseURL   `json:"serviceBaseUrlList"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
+	ACB                 details          `json:"certificationBody"`
 }
 
 type chplCertifiedProductEntry struct {
@@ -75,6 +76,7 @@ type chplCertifiedProductEntry struct {
 	CertificationStatus details          `json:"certificationStatus"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
+	ACB                 string           `json:"acb"`
 }
 
 func main() {
@@ -153,6 +155,7 @@ func main() {
 			productEntry.CriteriaMet = criteriaMetArr
 			productEntry.APIDocumentation = apiDocURLArr
 			productEntry.Developer = chplEntry.Developer
+			productEntry.ACB = chplEntry.ACB.Name
 
 			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
 			if !softwareContained {

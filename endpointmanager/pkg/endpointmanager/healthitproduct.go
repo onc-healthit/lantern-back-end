@@ -30,6 +30,7 @@ type HealthITProduct struct {
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 	PracticeType          string
+	ACB                   string
 }
 
 // Equal checks each field of the two HealthITProducts except for the database ID, CHPL ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -88,6 +89,9 @@ func (hitp *HealthITProduct) Equal(hitp2 *HealthITProduct) bool {
 	if hitp.PracticeType != hitp2.PracticeType {
 		return false
 	}
+	if hitp.ACB != hitp2.ACB {
+		return false
+	}
 
 	return true
 }
@@ -112,6 +116,7 @@ func (hitp *HealthITProduct) Update(hitp2 *HealthITProduct) error {
 	hitp.LastModifiedInCHPL = hitp2.LastModifiedInCHPL
 	hitp.CHPLID = hitp2.CHPLID
 	hitp.PracticeType = hitp2.PracticeType
+	hitp.ACB = hitp2.ACB
 
 	return nil
 }
