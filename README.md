@@ -4,12 +4,12 @@ Lantern is an open source tool developed by the Office of the National Coordinat
 
 # Index
 * [Running Lantern - Basic Flow](#running-lantern---basic-flow)
+* [Using Docker Compose](#using-docker-compose)
 * [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
 * [Make Commands](#make-commands)
 * [Configure Data Collection Failure System](#configure-data-collection-failure-system)
 * [Configure Backup System](#configure-backup-system)
 * [Running Lantern Services Individually](#running-lantern-services-individually)
-* [Using Docker Compose](#using-docker-compose)
 * [Testing - Details](#testing---details)
 * [Contributing](#contributing)
 * [License](#license)
@@ -171,6 +171,14 @@ If you are operating behind a proxy that does SSL-Inspection you will have to co
   * `shinydashboard/certs/`
   * `e2e/certs`
   * `db/migration/certs`
+
+# Using Docker Compose
+
+Lantern is a multi-container application that runs using Docker, and therefore Docker must be downloaded in order to set up the project. You can download Docker Desktop [here](https://docs.docker.com/get-docker/), which includes Docker Compose. You can find more information about Docker compose [here](https://docs.docker.com/compose/). Using Docker compose is a three-step process:
+  1. Define app environment with a Dockerfile so it can be reproduced anywhere
+  2. Define services that make up app in docker-compose.yml so they can be run together in an isolated environment
+  3. Run docker compose up and the Docker compose command starts and runs the entire app. Lantern's Makefile command `make run` and `make run prod` can be used to run the docker compose command to start the application
+
 
 # Testing Lantern - Basic Flow
 
