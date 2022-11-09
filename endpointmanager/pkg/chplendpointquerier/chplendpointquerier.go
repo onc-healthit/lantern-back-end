@@ -3,6 +3,7 @@ package chplendpointquerier
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 )
 
 type EndpointList struct {
@@ -76,7 +77,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == techCareURL {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == carefluenceURL {
-		Carefluenceebscraper(chplURL, fileToWriteTo)
+		Carefluencewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == abeoSolutionsURL {
 		AbeoSolutionsCSVParser(chplURL, fileToWriteTo)
 	} else if chplURL == bizmaticsURL {
