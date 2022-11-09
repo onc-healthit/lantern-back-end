@@ -82,7 +82,7 @@ ui <- dashboardPage(
         width: 180px;  
       }
 
-      /* Makes the Skip To Content button appear when it is focused on */
+      /* Makes the Skip To Resources button appear when it is focused on */
       .show-on-focus-resources:focus {  
         position: static;
         background: #fff;
@@ -243,7 +243,7 @@ ui <- dashboardPage(
         color: black!important; 
       }
 
-      /* Add a border when an input tag (textbox) is hovered over /*
+      /* Add a border when an input tag (textbox) is hovered over */
       input:hover {
         border: 3px solid!important;
       }
@@ -262,7 +262,7 @@ ui <- dashboardPage(
         color: black!important; 
       }
 
-      /* Make text bold when a sortable reactable table header is hovered over /*
+      /* Make text bold when a sortable reactable table header is hovered over */
       .rt-sort-header:hover {
         font-weight: bold;
       }
@@ -286,7 +286,7 @@ ui <- dashboardPage(
         color: black!important;
       }
 
-      /* Make text bold when a dataTable sortable header is hovered over /*
+      /* Make text bold when a dataTable sortable header is hovered over */
       table.dataTable thead .sorting:hover {
         border: 2px solid!important;
       }
@@ -423,6 +423,10 @@ ui <- dashboardPage(
       /*
         // Create an observer that watches if an element's tabindex attribute has been set or altered
         // If the altered attribute is the tabindex attribute, and its value is not -5, remove the tabindex attribute
+        // Tabindex is removed from elements for two different reasons: 
+          // 1. R Shiny automatically adds a tabindex of some elements, like the sidebar tab items, to -1 when they are clicked off of, meaning you can no longer tab to those items. 
+                Removing the tabindex solves this problem. Some elements are focusable by default, and thus we can remove the tab index attribute entirely.
+          // 2. R Shiny automatically adds soem tabindex attributes to elements we do not want to be focusable, so the attribute is removed on these elements.
       */
       let tabIndexObserver = new MutationObserver(function(mutations) {
         for (let mutation of mutations) {
