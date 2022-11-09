@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gonum/stat"
+	"gonum.org/v1/gonum/stat"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
