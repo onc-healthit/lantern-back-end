@@ -14,4 +14,4 @@ ENV GO111MODULE=on
 RUN go install ./...
 RUN go build cmd/main.go 
 
-CMD ./main $env_force_version $env_direction
+CMD ./main $env_direction $env_force_version
