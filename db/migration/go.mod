@@ -10,4 +10,5 @@ require (
 	github.com/opencontainers/image-spec v1.1.0-rc2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
+	github.com/containerd/containerd v1.6.9
 )
