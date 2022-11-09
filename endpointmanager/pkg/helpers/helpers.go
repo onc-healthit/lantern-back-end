@@ -102,7 +102,7 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 	var err error
 
 	if len(waitVisibleElement) > 0 {
-		// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
+		// Chromedp will wait a max of 30 seconds for webpage to run javascript code to generate api search results before grapping HTML
 		err = chromedp.Run(timeoutContext,
 			chromedp.Navigate(endpointListURL),
 			chromedp.WaitVisible(waitVisibleElement, chromedp.ByQuery),

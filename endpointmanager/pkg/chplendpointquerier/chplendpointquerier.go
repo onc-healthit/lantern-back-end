@@ -70,7 +70,9 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == trimedtechv8URL {
 		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
 	} else if chplURL == cernerR4URL {
-		CernerQuerier(chplURL, fileToWriteTo)
+		chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
+		chplURL = strings.Replace(chplURL, "/blob", "", 1)
+		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if chplURL == techCareURL {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == carefluenceURL {
@@ -78,7 +80,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == abeoSolutionsURL {
 		AbeoSolutionsCSVParser(chplURL, fileToWriteTo)
 	} else if chplURL == bizmaticsURL {
-		BizmaticsBundleParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
+		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if chplURL == assureCareURL {
 		AssureCareCSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo)
 	} else if chplURL == practiceSuiteURL {
