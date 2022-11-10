@@ -1,14 +1,14 @@
 run:
-	docker-compose up --build
+	docker compose up --build
 
 run_prod:
-	docker-compose -f docker-compose.yml up --build
+	docker compose -f docker-compose.yml up --build
 
 stop:
-	docker-compose down
+	docker compose down
 
 stop_prod:
-	docker-compose -f docker-compose.yml down
+	docker compose -f docker-compose.yml down
 
 clean:
 	@while [ -z "$$CONTINUE" ]; do \
@@ -16,9 +16,9 @@ clean:
     done ; \
     [ $$CONTINUE = "y" ] || [ $$CONTINUE = "Y" ] || (echo "Exiting."; exit 1;)
 
-	docker-compose down --rmi local -v
-	docker-compose -f docker-compose.yml down --rmi local -v
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi local -v
+	docker compose down --rmi local -v
+	docker compose -f docker-compose.yml down --rmi local -v
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi local -v
 
 clean_remote:
 	@while [ -z "$$CONTINUE" ]; do \
@@ -26,9 +26,9 @@ clean_remote:
     done ; \
     [ $$CONTINUE = "y" ] || [ $$CONTINUE = "Y" ] || (echo "Exiting."; exit 1;)
 
-	docker-compose down --rmi all -v
-	docker-compose -f docker-compose.yml down --rmi all -v
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
+	docker compose down --rmi all -v
+	docker compose -f docker-compose.yml down --rmi all -v
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down --rmi all -v
 
 update_source_data:
 	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
@@ -57,7 +57,7 @@ restore_database:
 	@echo "Database was restored from $(file)"
 
 migrate_database:
-	docker-compose run -d --name=postgres_migrate postgres
+	docker compose run -d --name=postgres_migrate postgres
 	cd ./db/migration; docker build --tag migration . --build-arg cert_dir=./certs --build-arg force_version=$(force_version)
 	docker run --env-file .env -e LANTERN_DBHOST=postgres_migrate --network=lantern-back-end_default migration; docker stop postgres_migrate; docker rm postgres_migrate
 
@@ -103,22 +103,22 @@ test_int:
 	cd ./capabilityreceiver; go test -covermode=atomic -race -count=1 -p 1 -tags=integration ./...
 
 test_e2e:
-	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from lantern-e2e || exit 1
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
+	docker compose down
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from lantern-e2e || exit 1
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 test_all:
 	make stop
-	docker-compose up -d --build
+	docker compose up -d --build
 	make test || exit $?
 	make test_int || exit $?
 	make stop
 	make test_e2e || exit $?
 
 test_e2e_CI:
-	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from lantern-e2e postgres lantern-mq endpoint_manager capability_querier capability_receiver lantern-e2e || exit 1
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
+	docker compose down
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from lantern-e2e postgres lantern-mq endpoint_manager capability_querier capability_receiver lantern-e2e || exit 1
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down
 
 update_mods:
 	@[  -z "$(branch)" ] && echo "No branch name specified, will update gomods to master" || echo "Updating gomods to point to branch $(branch)"
