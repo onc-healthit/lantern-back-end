@@ -79,11 +79,11 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == carefluenceURL {
 		Carefluencewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == abeoSolutionsURL {
-		AbeoSolutionsCSVParser(chplURL, fileToWriteTo)
+		CSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", 1)
 	} else if chplURL == bizmaticsURL {
 		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if chplURL == assureCareURL {
-		AssureCareCSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo)
+		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1)
 	} else if chplURL == practiceSuiteURL {
 		PracticeSuiteWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == indianHealthServiceURL {

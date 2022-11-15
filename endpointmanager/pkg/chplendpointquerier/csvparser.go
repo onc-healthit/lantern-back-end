@@ -11,11 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AssureCareCSVParser(CHPLURL string, fileToWriteTo string) {
+func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-
-	csvFilePath := "./fhir-base-urls.csv"
 
 	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
 	if err != nil {
@@ -23,6 +21,7 @@ func AssureCareCSVParser(CHPLURL string, fileToWriteTo string) {
 	}
 	defer file.Close()
 
+	records := 0
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {
@@ -30,6 +29,9 @@ func AssureCareCSVParser(CHPLURL string, fileToWriteTo string) {
 		}
 		if err != nil {
 			log.Fatal(err)
+		}
+		if records >= numrecords {
+			break
 		}
 
 		var entry LanternEntry
@@ -41,6 +43,7 @@ func AssureCareCSVParser(CHPLURL string, fileToWriteTo string) {
 		entry.URL = URL
 
 		lanternEntryList = append(lanternEntryList, entry)
+		records++
 	}
 
 	endpointEntryList.Endpoints = lanternEntryList
