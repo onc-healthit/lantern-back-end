@@ -1,27 +1,10 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://uat-fhir.ipatientcare.net:9443/fhir-server/api/v4/",
-			"OrganizationName": "",
-			"NPIID": ""
-<<<<<<< HEAD
-=======
-		},
-		{
-			"URL": "https://uat-oauth.ipatientcare.net/",
-			"OrganizationName": "",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://ipc-fhir.ipatientcare.net:9443/fhir-server/api/v4/",
 			"OrganizationName": "",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://ipc-oauth.ipatientcare.net/",
-			"OrganizationName": "",
-			"NPIID": ""
->>>>>>> a4499c13 (Create parsers and add resource files for Abeo Solutions, AssureCare, and Bizmatics)
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }
