@@ -85,6 +85,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv",
+		"EndpointName": "Health Care 2000, Inc.",
+		"FileName": "Health_Care_2000_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json",
 		"EndpointName": "MEDHOST",
 		"FileName": "MEDHOST_EndpointSources.json"
@@ -94,6 +100,18 @@
 		"URL": "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm",
 		"EndpointName": "Medical Information Technology, Inc. (MEDITECH)",
 		"FileName": "Medical_Information_Technology_Inc_MEDITECH_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/",
+		"EndpointName": "First Insight Corporation",
+		"FileName": "First_Insight_Corporation_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
+		"EndpointName": "MedInformatix",
+		"FileName": "MedInformatix_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -115,6 +133,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://fhir.meditouchehr.com/api/fhir/r4",
+		"EndpointName": "NextGen Healthcare",
+		"FileName": "NextGen_Healthcare_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
 		"EndpointName": "OpenEMR Foundation",
 		"FileName": "OpenEMR_Foundation_EndpointSources.json"
@@ -124,6 +148,12 @@
 		"URL": "https://prognocis.com/fhir/index.html",
 		"EndpointName": "Bizmatics Inc.",
 		"FileName": "Bizmatics_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://fhir.myqone.com/Endpoints",
+		"EndpointName": "TRIARQ Practice Services",
+		"FileName": "TRIARQ_Practice_Services_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -142,6 +172,12 @@
 		"URL": "https://fhir.solidpractice.com/.well-known/smart-configuration",
 		"EndpointName": "SolidPractice Technologies, LLC",
 		"FileName": "SolidPractice_Technologies_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/",
+		"EndpointName": "CorrecTek",
+		"FileName": "CorrecTek_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

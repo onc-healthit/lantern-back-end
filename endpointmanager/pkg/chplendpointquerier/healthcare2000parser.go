@@ -1,7 +1,6 @@
 package chplendpointquerier
 
 import (
-	"io"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
@@ -11,11 +10,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
+func HealthCare2000SVParser(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	csvFilePath := "./athenanet-fhir-base-urls.csv"
+	csvFilePath := "./MDVitaFHIRUrls.csv"
 
 	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
 	if err != nil {
@@ -23,25 +22,19 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 	}
 	defer file.Close()
 
-	for {
-		rec, err := csvReader.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var entry LanternEntry
-
-		organizationName := strings.TrimSpace(rec[1])
-		URL := strings.TrimSpace(rec[3])
-
-		entry.OrganizationName = organizationName
-		entry.URL = URL
-
-		lanternEntryList = append(lanternEntryList, entry)
+	// Only want the first URL in the csv file
+	rec, err := csvReader.Read()
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	var entry LanternEntry
+
+	URL := strings.TrimSpace(rec[1])
+
+	entry.URL = URL
+
+	lanternEntryList = append(lanternEntryList, entry)
 
 	endpointEntryList.Endpoints = lanternEntryList
 

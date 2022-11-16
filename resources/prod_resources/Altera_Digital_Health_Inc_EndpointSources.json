@@ -3612,7 +3612,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10042857",
-			"OrganizationName": "Cornerstone Medical Care",
+			"OrganizationName": "Cornerstone Medical Care Brandon",
 			"NPIID": ""
 		},
 		{
@@ -9196,6 +9196,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10010297",
+			"OrganizationName": "Lori Spoor",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10051563",
 			"OrganizationName": "Los Angeles LGBT Center",
 			"NPIID": ""
@@ -13866,6 +13871,26 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Open",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R2/Open",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Fhir",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R2/Fhir",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhirprod184.sheppardpratt.org/FHIR",
 			"OrganizationName": "Sheppard Pratt Health System",
 			"NPIID": ""
@@ -14217,7 +14242,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10045969",
-			"OrganizationName": "SOUTHVIEW MEDICAL GROUP P.C.",
+			"OrganizationName": "Southview Medical Group",
 			"NPIID": ""
 		},
 		{
@@ -15598,11 +15623,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/0009833",
 			"OrganizationName": "The Endocrine Clinic",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10010297",
-			"OrganizationName": "The Family Doctors",
 			"NPIID": ""
 		},
 		{

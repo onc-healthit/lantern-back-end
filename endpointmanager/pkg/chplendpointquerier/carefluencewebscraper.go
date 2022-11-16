@@ -8,17 +8,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Carefluenceebscraper(vendorURL string, fileToWriteTo string) {
+func Carefluencewebscraper(vendorURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".main-content-inner")
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".page-content")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	doc.Find(".main-content-inner").Each(func(index int, mainContent *goquery.Selection) {
+	doc.Find(".page-content").Each(func(index int, mainContent *goquery.Selection) {
 		mainContent.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
 			// Only the first two entries are production server endpoints
 			var entry LanternEntry

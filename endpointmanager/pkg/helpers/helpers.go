@@ -2,11 +2,15 @@ package helpers
 
 import (
 	"context"
+	"encoding/csv"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
@@ -87,21 +91,25 @@ func FailOnError(errString string, err error) {
 
 // ChromedpQueryEndpointList queries the given endpoint list using chromedp and returns the html document
 func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string) (*goquery.Document, error) {
+
 	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	timeoutContext, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	var htmlContent string
 	var err error
 
 	if len(waitVisibleElement) > 0 {
-		// Chromedp will wait for webpage to run javascript code to generate api search results before grapping HTML
-		err = chromedp.Run(ctx,
+		// Chromedp will wait a max of 30 seconds for webpage to run javascript code to generate api search results before grapping HTML
+		err = chromedp.Run(timeoutContext,
 			chromedp.Navigate(endpointListURL),
 			chromedp.WaitVisible(waitVisibleElement, chromedp.ByQuery),
 			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 		)
 	} else {
-		err = chromedp.Run(ctx,
+		err = chromedp.Run(timeoutContext,
 			chromedp.Navigate(endpointListURL),
 			chromedp.OuterHTML("html", &htmlContent, chromedp.ByQuery),
 		)
@@ -138,4 +146,65 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 		return nil, err
 	}
 	return respBody, nil
+}
+
+func QueryAndReadFile(URL string, filePath string) ([]byte, error) {
+
+	err := downloadFile(filePath, URL)
+	if err != nil {
+		return nil, err
+	}
+
+	// read file
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}
+
+func QueryAndOpenCSV(csvURL string, csvFilePath string) (*csv.Reader, *os.File, error) {
+
+	err := downloadFile(csvFilePath, csvURL)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// open file
+	f, err := os.Open(csvFilePath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// read csv values using csv.Reader
+	csvReader := csv.NewReader(f)
+
+	// Read first line to skip over headers
+	_, err = csvReader.Read()
+	if err != nil {
+		return nil, f, err
+	}
+
+	return csvReader, f, nil
+}
+
+func downloadFile(filepath string, url string) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }

@@ -1602,11 +1602,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "The Comprehensive Pain Center at Anna Jaques Hospital",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Home Physicians Medical Group, Inc.",
 			"NPIID": ""
 		},
@@ -2797,7 +2792,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FAITH COMMUNITY HOSPITAL",
+			"OrganizationName": "FAITH COMMUNITY HEALTH SYSTEM",
 			"NPIID": ""
 		},
 		{
@@ -4223,6 +4218,16 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Clearway Pain Solutions",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "RelievUS",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "RenewUS",
 			"NPIID": ""
 		},
 		{
@@ -10832,7 +10837,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Medworks Medical Center",
+			"OrganizationName": "CA - Akeso Occupational Health",
 			"NPIID": ""
 		},
 		{
@@ -11222,7 +11227,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - The Pelvic Floor Institute",
+			"OrganizationName": "The Pelvic Floor Institute",
 			"NPIID": ""
 		},
 		{
@@ -16682,7 +16687,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MO - Bates County Memorial Hospital",
+			"OrganizationName": "BCMH",
 			"NPIID": ""
 		},
 		{
@@ -26347,17 +26352,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Test Environment",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Tietex",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - Empire Medical",
+			"OrganizationName": "NJ - Optum Medical Care of N.J., P.C.",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Optum Medical Care of New Jersey, P.C.",
+			"OrganizationName": "Optum",
 			"NPIID": ""
 		},
 		{
@@ -27558,11 +27568,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "UT - Carlson, Vera",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - Singh, Harveen",
 			"NPIID": ""
 		},
 		{
@@ -33172,6 +33177,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC010_CAMELBACK WOMENS HEALTH",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GENESIS OB/GYN",
 			"NPIID": ""
 		},
@@ -34113,6 +34123,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Renal Specialists of Houston",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "The Kidney Institute",
 			"NPIID": ""
 		},
 		{
@@ -38267,6 +38282,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "GA - Foot \u0026 Ankle Reconstruction Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - James Reppert, M.D.",
 			"NPIID": ""
 		},
@@ -41512,7 +41532,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "UT - Utah Therapeutic Health Center",
+			"OrganizationName": "KindlyMD",
 			"NPIID": ""
 		},
 		{
@@ -48062,11 +48082,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - UMEDLY",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - BASIN CLINIC, INC",
 			"NPIID": ""
 		},
@@ -50582,7 +50597,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Neil Frey, NP - Startup",
+			"OrganizationName": "FL - Glomar Medical",
 			"NPIID": ""
 		},
 		{
@@ -50763,6 +50778,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Aspire Pain Management",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "BRANDON NGUYEN, MD",
 			"NPIID": ""
 		},
 		{
@@ -52078,6 +52098,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Heale Medical LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Hillside Health",
 			"NPIID": ""
 		},
 		{
@@ -53628,6 +53653,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Peak Telemedicine",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MI - For the Love of Health",
 			"NPIID": ""
 		},
 		{
@@ -55727,7 +55757,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - DFW Advanced Surgical Group PLLC",
+			"OrganizationName": "TX - North Texas Adv Laparoscopic Surg",
 			"NPIID": ""
 		},
 		{
@@ -56637,6 +56667,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OH - BEP MEDICAL GROUP LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - Sandman Center For Veins",
 			"NPIID": ""
 		},
@@ -56727,7 +56762,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - CRAIG K MOORE, M.D.",
+			"OrganizationName": "Craig K Moore MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FAIRHAVEN FAMILY MEDICAL",
 			"NPIID": ""
 		},
 		{
@@ -56758,6 +56798,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IA - Central Iowa Surgery",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MA - HEALTH CARE WITHOUT WALLS, INC.",
 			"NPIID": ""
 		},
 		{
@@ -57382,7 +57427,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - The Concussion Center, LLC",
+			"OrganizationName": "The Concussion Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Topple Clinic",
 			"NPIID": ""
 		},
 		{
@@ -58807,11 +58857,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KS - Midwest Surgery Center",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Midwest Surgery Center",
 			"NPIID": ""
 		},
@@ -59537,6 +59582,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Verde Medical Group, PC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - Integrative Family Medicine",
 			"NPIID": ""
 		},
@@ -59952,7 +60002,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CARLSBAD VEIN AND VASCULAR CENTER OF NEW MEXICO",
+			"OrganizationName": "ADVANCED HEART AND VASCULAR CENTER OF NEW MEXICO",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OH - Lisa Larkin MD \u0026 Associates",
 			"NPIID": ""
 		},
 		{
@@ -60092,6 +60147,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MI - HAMILTON COMMUNITY HEALTH NETWORK,",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "DE - QUALITICARE COMMUNITY MEDICAL SERVI",
 			"NPIID": ""
 		},
@@ -60158,6 +60218,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Premier Aesthetics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MS - Blissful Nursing and Mental Health",
 			"NPIID": ""
 		},
 		{
@@ -60487,6 +60552,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - VAZCARE, PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - BRIDGEWATER PRIMARY CARE AND CARDIO",
 			"NPIID": ""
 		},
@@ -60517,6 +60587,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "LA - Laurie Stumpf FNPc llc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IN - Steuben County Health Department",
 			"NPIID": ""
 		},
@@ -60538,6 +60613,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Fisher, Tobin",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MA - SYZYGY HEALTH LLC",
 			"NPIID": ""
 		},
 		{
@@ -60598,6 +60678,31 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Alvaro Dangond MD PA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC000_MICHIGAN TEST",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC001_ALLIANCE OBSTETRICS AND GYNECOLOGY PC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC002_METRO PARTNERS IN WOMEN'S HEALTH PC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC003_WOMENS HEALTH CONSULTANTS PLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CC004_ASSOCIATES IN OBSTETRICS AND GYNECOLOGY PC",
 			"NPIID": ""
 		},
 		{
@@ -60802,6 +60907,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MD - Divine Care Services, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Savannah Age Management Medicine",
 			"NPIID": ""
 		},
@@ -60893,6 +61003,16 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - John M Tumolo MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "WA - Cameron Pediatrics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CO - Alpine Woods Medical LLC",
 			"NPIID": ""
 		},
 		{
@@ -61152,7 +61272,17 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - The Spine Institute of El Paso, PLL",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - MCKNIGHT CLINIC, PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NC - Integrous Family Care",
 			"NPIID": ""
 		},
 		{
@@ -61182,7 +61312,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "IL - Total Foot and Ankle - Startup",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "PA - Pennsbury Medical",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Integrity Primary Med LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AZ - Kenneth J Proefrock NMD PLLC dba To",
 			"NPIID": ""
 		},
 		{
@@ -61218,6 +61363,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Naples Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "WI - Mercyland Psychiatry",
 			"NPIID": ""
 		},
 		{
@@ -61272,6 +61422,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Connecticut Childbirth \u0026 Women's Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - The Brain District",
 			"NPIID": ""
 		},
@@ -61282,7 +61437,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - New ME Health Center, PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Acclaimed Rheumatology and Wellness",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OR - Tanasbourne Plastic Surgery, P.C.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MS - Cardiovascular Institute Of Mississ",
 			"NPIID": ""
 		},
 		{
@@ -61347,6 +61517,16 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AL - Sparks HealthCare Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "PA - Institute on Healthcare Directives,",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Winsome Technologies, PLLC",
 			"NPIID": ""
 		},
@@ -61362,6 +61542,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Unique Passionate Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Eastside Integrative Medicine",
 			"NPIID": ""
 		},
@@ -61373,6 +61558,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Brandon Lampe MD - Startup",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Neurology Center of San Antonio",
 			"NPIID": ""
 		},
 		{
@@ -61402,7 +61592,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Access WellBeing PLLC - Startup",
+			"OrganizationName": "TX - Terra Telehealth",
 			"NPIID": ""
 		},
 		{
@@ -61413,6 +61603,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - ANNA M BARBIERI MEDICAL",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "IN - Fort Wayne Primary Care",
 			"NPIID": ""
 		},
 		{
@@ -61428,6 +61623,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KS - Orthopedic Surgery and Sports Medic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AZ - PRINCE MARTIN NP LLC",
 			"NPIID": ""
 		},
 		{
@@ -61457,6 +61657,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NE - Inspire Your Why Company",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - PRESTIGE HEALTHCARE OBGYN LLC",
 			"NPIID": ""
 		},
@@ -61472,7 +61677,17 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NC - Adult and Geriatric Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MS - Hancock Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - Hobson Health Clinic",
 			"NPIID": ""
 		},
 		{
@@ -61532,12 +61747,27 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Orthopedic Center of Palm Beach County, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - Fort Collins Pain Treatment Center",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Coastal Concierge Internal Medicine",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "GA - SmartMed",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OR - UMPQUA FAMILY THERAPY, LLC",
 			"NPIID": ""
 		},
 		{
@@ -61587,7 +61817,17 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "ME - MIDCOAST INTEGRATIVE HEALTHCARE, P.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NV - David Johnson",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NC - Superior Health Medical, PLLC",
 			"NPIID": ""
 		},
 		{
@@ -61622,6 +61862,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - Healthy Home Primary Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PA - LEWIN \u0026 NADAR ASSOCIATES, LLP",
 			"NPIID": ""
 		},
@@ -61642,6 +61887,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OH - MODERN ALLERGY, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Quadrant Laboratories, LLC",
 			"NPIID": ""
 		},
@@ -61652,12 +61902,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MD - ALICIA M. PRICE, AOCNP, LLC DBA NEW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Thompson Family Health",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Robert Ollins, M.D.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Lonestar Wound Care \u0026 Hyperbarics",
 			"NPIID": ""
 		},
 		{
@@ -61722,6 +61982,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Rocky Ford Family Health Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AR - OCLM",
 			"NPIID": ""
 		},
@@ -61747,6 +62012,16 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FACIAL EXPRESSIONS PRESENTED BY K. THOMAS PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Kenisha Thomas, NP",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - 1st Med, PLLC",
 			"NPIID": ""
 		},
@@ -61757,12 +62032,32 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NV - AMEDURI HEALTH SERVICES LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - Mount Sterling Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - The 40-20 Collective",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - All Around Pediatrics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - Wesleyan Medical Complex, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "SC - Mays Mobile Wellness LLC",
 			"NPIID": ""
 		},
 		{
@@ -61782,6 +62077,21 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Aaron Berger MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Sunrise Medical",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TRAUBE, MARUSH \u0026 PLAWES, MD PC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Allen, David W. M.D.",
 			"NPIID": ""
 		},
@@ -61797,12 +62107,32 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OR - Tracy Graham",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "ND - Clarity Mind \u0026 Memory Clinic, PLLC",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AR - Tonymon Neuro Spine Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "ND - CC's Physical Therapy",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Diabetes Osteoporosis Weight Loss C",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "HI - Olakino Family Practice",
 			"NPIID": ""
 		},
 		{
@@ -61882,6 +62212,21 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NJ - DYANA THOMPSON PMHNP-BC LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - Orthopaedic Consultants of Kentucky",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Hoskinson Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Justin Feldschau, NP",
 			"NPIID": ""
 		},
@@ -61893,6 +62238,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Advanced Dermatology",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NJ - INSITE MEDICAL NJ PA",
 			"NPIID": ""
 		},
 		{
@@ -61913,6 +62263,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Vilasagar Gynecologic Surgery",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - Infectious Disease Associates of Na",
 			"NPIID": ""
 		},
 		{
@@ -61952,6 +62307,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Nadeen Soederbaum MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - Meredith J Hixson, MD, APMC",
 			"NPIID": ""
 		},
@@ -61982,7 +62342,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Epsilon Kidney Care, P.C.",
+			"OrganizationName": "NC - John P Murray Community Care Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MD - Reset Kidney Health",
 			"NPIID": ""
 		},
 		{
@@ -62002,6 +62367,16 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MD - J \u0026 G Family Practice - Startup",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AZ - Jasmine Infusion and Med Spa PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Mary K. Oates, MD, INC.",
 			"NPIID": ""
 		},
@@ -62017,12 +62392,27 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Bethany Starks Start Up",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Southwest Kidney Institute, PLC",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CT - Gynecological Care, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Cardiology Wellness Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MO - Volunteers in Medicine Christian Co",
 			"NPIID": ""
 		},
 		{
@@ -62042,7 +62432,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "LA - Southern Sprouts Pediatrics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Gateway Medical Weight Loss Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "WV - PAIN MANAGEMENT 360 LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Chiro \u0026 Rehab",
 			"NPIID": ""
 		},
 		{
@@ -62072,6 +62477,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KY - MUSCULOSKELETAL ASSOCIATES, PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Royalty Nephrology Medical Group",
 			"NPIID": ""
 		},
@@ -62087,7 +62497,22 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - KRUMIAN, RAZMIG D.O.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Brittany L. Goss, DO, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "PA - Master Your Emotions LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL -  DIVERSITY HEALTHCARE",
 			"NPIID": ""
 		},
 		{
@@ -62107,12 +62532,32 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Amin Foot Care - Startup",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Terry L. Franklin, MD",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - Mobile Medical Services California",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Neuroglee Therapeutics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Millennium Gynecology, PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - Dr. Lorna Fedelem's Office",
 			"NPIID": ""
 		},
 		{
@@ -66263,6 +66708,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Upperline Health Florida Vein Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Upperline Health Georgia",
 			"NPIID": ""
 		},
 		{
@@ -75027,7 +75477,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Scottsdale Medical Center",
+			"OrganizationName": "Direct Healthcare PLLC",
 			"NPIID": ""
 		},
 		{

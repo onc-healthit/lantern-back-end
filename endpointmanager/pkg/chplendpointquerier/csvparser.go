@@ -11,11 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
+func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-
-	csvFilePath := "./athenanet-fhir-base-urls.csv"
 
 	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
 	if err != nil {
@@ -23,6 +21,7 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 	}
 	defer file.Close()
 
+	records := 0
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {
@@ -31,16 +30,20 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		if records >= numrecords {
+			break
+		}
 
 		var entry LanternEntry
 
-		organizationName := strings.TrimSpace(rec[1])
-		URL := strings.TrimSpace(rec[3])
+		organizationName := ""
+		URL := strings.TrimSpace(rec[1])
 
 		entry.OrganizationName = organizationName
 		entry.URL = URL
 
 		lanternEntryList = append(lanternEntryList, entry)
+		records++
 	}
 
 	endpointEntryList.Endpoints = lanternEntryList

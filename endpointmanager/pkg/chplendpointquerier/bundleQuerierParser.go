@@ -3,26 +3,22 @@ package chplendpointquerier
 import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
-func CernerQuerier(chplURL string, fileToWriteTo string) {
-
-	chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
-	chplURL = strings.Replace(chplURL, "/blob", "", 1)
+func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	var endpointEntryList EndpointList
 
-	respBody, err := helpers.QueryEndpointList(chplURL)
+	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// convert bundle data to lantern format
 	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
