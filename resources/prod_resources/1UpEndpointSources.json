@@ -1,3 +1,99 @@
 {
-	"Endpoints": null
+	"Endpoints": [
+		{
+			"URL": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Spectrum Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://arrprod.midmichigan.net/ProdFHIR/api/FHIR/DSTU2",
+			"OrganizationName": "MidMichigan Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://eprescribe.sanfordhealth.org/FHIR/api/FHIR/DSTU2",
+			"OrganizationName": "Sanford Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/1ff00bc8-0ecb-4ee5-8444-70f6c6b68888",
+			"OrganizationName": "Lawrence Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et0927.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
+			"OrganizationName": "Hospital for Special Surgery",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://armc-mtrestapis-live01.sbcounty.gov/v1/argonaut/v1",
+			"OrganizationName": "Arrowhead Regional Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicsf.med.utah.edu/FHIRMYCHART/api/FHIR/DSTU2",
+			"OrganizationName": "University of Utah Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://pep.api.mayo.edu/epicfhirdstu2mu/v1/api/FHIR/DSTU2",
+			"OrganizationName": "Mayo Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://sehproxy.stelizabeth.com/arr-fhir/api/FHIR/DSTU2",
+			"OrganizationName": "St. Elizabeth Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/cehQG_SigJUv0o-Q08WrVZtDzYZ_7ohK",
+			"OrganizationName": "David Plotkin DPM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live-uvm.ps-msite.com/v1/argonaut/v1",
+			"OrganizationName": "Uvalde Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/cPXkxGWnH-HHwThIezCJp4EJYz7iHU2Y",
+			"OrganizationName": "MEDICAL CENTER OF CENTRAL GEORGIA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://common.virginiahospitalcenter.com/FHIRPRD/api/FHIR/DSTU2",
+			"OrganizationName": "Virginia Hospital Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.morrowcountyhospital.com/v1/argonaut/v1",
+			"OrganizationName": "Morrow County Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/ecb0768b-f462-488f-a03b-0c40f4d77fbb",
+			"OrganizationName": "Humane Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/bf2bc40a-17cb-4353-8de2-68c75c849bc8",
+			"OrganizationName": "Scotland Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/gVhfMvu-XwQRgQosgHcm4vmauyjhpt-k",
+			"OrganizationName": "Jeffery W Watson DPM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.slchospital.org/v1/argonaut/v1",
+			"OrganizationName": "St. Luke's Cornwall Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et0905.epichosted.com/FHIRproxy/SEH/api/FHIR/DSTU2",
+			"OrganizationName": "Southeastern Health",
+			"NPIID": ""
+		}
+	]
 }
