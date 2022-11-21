@@ -1,6 +1,11 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://achospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Allendale County Hospital MaaS Pod 006 07",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtrestapis.achosp.org:443/v2/argonaut/v1",
 			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by NTTDATA)",
 			"NPIID": ""
@@ -43,11 +48,6 @@
 		{
 			"URL": "https://mtrestapi-live01.bartletthospital.org:443/v2/argonaut/v1",
 			"OrganizationName": "Bartlett Reg Hosp Expanse",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://mtrestapis-live01.bmhsc.org:443/v2/argonaut/v1",
-			"OrganizationName": "Beaufort Memorial Hosp 6.1",
 			"NPIID": ""
 		}
 	]
