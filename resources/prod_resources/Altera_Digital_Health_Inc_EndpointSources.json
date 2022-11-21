@@ -2011,6 +2011,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
+			"OrganizationName": "Branko Banar",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10008998",
 			"OrganizationName": "Breast Care Specialists, LLC",
 			"NPIID": ""
