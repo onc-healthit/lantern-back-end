@@ -56,6 +56,11 @@ var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/intro
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
 var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
 var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
+var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
+var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
+var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
+var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
+var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -143,6 +148,18 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
 	}
 
+	} else if chplURL == interopxURL {
+		InteropxWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == mphrxURL {
+		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
+	} else if chplURL == correctekURL {
+		CorrecTekWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == meridianURL {
+		MeridianWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == varianmedicalURL {
+		VarianMedicalWebscraper("https://variandev.dynamicfhir.com/dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
+	}
+	
 }
 
 // WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory

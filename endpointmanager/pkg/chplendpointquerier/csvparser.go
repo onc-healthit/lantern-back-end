@@ -30,10 +30,10 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 		if err != nil {
 			log.Fatal(err)
 		}
-		if records >= numrecords+startrecord {
+		if records >= numrecords + startrecord {
 			break
 		}
-
+		
 		if records >= startrecord {
 			var entry LanternEntry
 
