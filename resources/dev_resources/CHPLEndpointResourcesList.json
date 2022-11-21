@@ -859,6 +859,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv",
+		"EndpointName": "ReLi Med Solutions, LLC",
+		"FileName": "ReLi_Med_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.ihs.gov/cis/",
 		"EndpointName": "Indian Health Service",
 		"FileName": "Indian_Health_Service_EndpointSources.json"
