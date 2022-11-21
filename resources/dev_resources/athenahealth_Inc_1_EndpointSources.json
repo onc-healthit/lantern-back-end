@@ -1,6 +1,11 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://agpmiasrv.genesismedical.org:9443/gmaAPIServer/fhir/r4",
+			"OrganizationName": "Genesis",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://guthrie.vowaz.com:9443/guthrieAPIServer/fhir/r4",
 			"OrganizationName": "Debra Guthrie, MD",
 			"NPIID": ""
