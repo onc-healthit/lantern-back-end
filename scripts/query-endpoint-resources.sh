@@ -25,7 +25,7 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
          then
             jq 'del(.endpoints[10:])' $FILENAME > ../dev_resources/$FILENAME
          else
-            jq '.Endpoints.[10:]' $FILENAME > ../dev_resources/$FILENAME
+            jq 'del(.Endpoints.[10:])' $FILENAME > ../dev_resources/$FILENAME
          fi
       fi
       echo "done"
