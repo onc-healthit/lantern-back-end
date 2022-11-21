@@ -8,12 +8,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Meditechwebscraper(CHPLURL string, fileToWriteTo string) {
+func MeditechWebscraper(CHPLURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, ".table")
+	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "table")
 	if err != nil {
 		log.Fatal(err)
 	}

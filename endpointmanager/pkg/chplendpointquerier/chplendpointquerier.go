@@ -19,7 +19,7 @@ type LanternEntry struct {
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
-var AllScriptsURL = "https://open.allscripts.com/fhirendpoints"
+var AlteraURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://home.meditech.com/en/d/restapiresources/pages/apidoc.htm"
 var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
@@ -43,6 +43,13 @@ var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_end
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
 var triarqURL = "https://fhir.myqone.com/Endpoints"
 var napchareURL = "https://devportal.techcareehr.com/Serviceurls"
+var goldblattURL = "https://www.goldblattsystems.com/apis"
+var cyfluentURL = "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
+var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
+var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
+var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
+var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
+var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -52,12 +59,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		NextGenwebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == CanvasURL {
 		Canvaswebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == AllScriptsURL {
-		AllScriptsQuerier(chplURL, fileToWriteTo)
+	} else if chplURL == AlteraURL {
+		AlteraQuerier(chplURL, fileToWriteTo)
 	} else if chplURL == EpicURL {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if chplURL == MeditechURL {
-		Meditechwebscraper("https://fhir.meditech.com/explorer/endpoints", fileToWriteTo)
+		MeditechWebscraper("https://fhir.meditech.com/explorer/endpoints", fileToWriteTo)
 	} else if chplURL == DocsAthenaURL {
 		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if chplURL == MyDataAthenaURL {
@@ -77,13 +84,13 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == techCareURL {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == carefluenceURL {
-		Carefluencewebscraper(chplURL, fileToWriteTo)
+		CarefluenceWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == abeoSolutionsURL {
-		CSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", 1)
+		CSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", 1, 0)
 	} else if chplURL == bizmaticsURL {
 		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if chplURL == assureCareURL {
-		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1)
+		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1, 2)
 	} else if chplURL == practiceSuiteURL {
 		PracticeSuiteWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == indianHealthServiceURL {
@@ -102,7 +109,22 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == napchareURL {
 		NaphCareWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == goldblattURL {
+		BundleQuerierParser("https://fhir-test.csn.health/gs-fhir-domain-server/public-base-service-endpoints.json", fileToWriteTo)
+	} else if chplURL == cyfluentURL {
+		SwaggerUIWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == interopxURL {
+		InteropxWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == mphrxURL {
+		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
+	} else if chplURL == correctekURL {
+		CorrecTekWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == meridianURL {
+		MeridianWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == varianmedicalURL {
+		VarianMedicalWebscraper("https://variandev.dynamicfhir.com/dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
 	}
+	
 }
 
 // WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory

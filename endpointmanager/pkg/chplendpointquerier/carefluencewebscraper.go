@@ -8,12 +8,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Carefluencewebscraper(vendorURL string, fileToWriteTo string) {
+func CarefluenceWebscraper(vendorURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".page-content")
+	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "main")
 	if err != nil {
 		log.Fatal(err)
 	}
