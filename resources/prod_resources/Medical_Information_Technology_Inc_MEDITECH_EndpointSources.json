@@ -1,6 +1,11 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://achospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Allendale County Hospital MaaS Pod 006 07",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtrestapis.achosp.org:443/v2/argonaut/v1",
 			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by NTTDATA)",
 			"NPIID": ""
@@ -336,6 +341,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://gmhapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Grady Mem Hos Authority MaaS Pod 10 02",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.grahamhospital.org:443/v2/argonaut/v1",
 			"OrganizationName": "Graham Hosp (Illinois) Expanse Desktop (Hosted: OpSus)",
 			"NPIID": ""
@@ -388,6 +398,16 @@
 		{
 			"URL": "https://mtrestapi.haysmed.com:443/v2/argonaut/v1",
 			"OrganizationName": "Hays Medical Center 6.15 to Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.nh.hca.meditech.cloud/v2/argonaut/v1",
+			"OrganizationName": "HCA - NEW HAMPSHIRE UNIVERSE",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.nh.hca.meditech.cloud/v2/argonaut/v1",
+			"OrganizationName": "HCA - NEW HAMPSHIRE UNIVERSE",
 			"NPIID": ""
 		},
 		{
@@ -468,6 +488,11 @@
 		{
 			"URL": "https://mtrestapis-live01.hcmc.us.com:443/v2/argonaut/v1",
 			"OrganizationName": "Howard County Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.nahospital.org:443/v2/argonaut/v1",
+			"OrganizationName": "Humboldt Park Health MAGIC to Expanse Small",
 			"NPIID": ""
 		},
 		{
@@ -607,7 +632,7 @@
 		},
 		{
 			"URL": "https://mtrestapis-live01.mmchs.org:443/v2/argonaut/v1",
-			"OrganizationName": "Meadville Medical Center 6.1 (Hosted by OpSus)",
+			"OrganizationName": "Meadville Medical Center Expanse  (Hosted by OpSus)",
 			"NPIID": ""
 		},
 		{
@@ -738,6 +763,11 @@
 		{
 			"URL": "https://mtrestapis-live01.onslow.org:443/v2/argonaut/v1",
 			"OrganizationName": "Onslow Memorial Hospital Expanse(Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.ohow.com:443/v2/argonaut/v1",
+			"OrganizationName": "Orthopaedic Hospital of Wisconsin READY Small",
 			"NPIID": ""
 		},
 		{
@@ -946,6 +976,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://smhapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "St. Margaret's Health MaaS Pod 007 10",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.srhca.org:443/v2/argonaut/v1",
 			"OrganizationName": "St. Rose Hospital Expanse-Hosted by Teknicor",
 			"NPIID": ""
@@ -1078,6 +1113,11 @@
 		{
 			"URL": "https://mtrestapis-live01.wchosp.org:443/v2/argonaut/v1",
 			"OrganizationName": "Wooster Community Hosp Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://achospitalapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Allendale County Hospital MaaS Pod 006 07",
 			"NPIID": ""
 		},
 		{
@@ -1416,6 +1456,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://gmhapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Grady Mem Hos Authority MaaS Pod 10 02",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.grahamhospital.org:443/v1/uscore/R4",
 			"OrganizationName": "Graham Hosp (Illinois) Expanse Desktop (Hosted: OpSus)",
 			"NPIID": ""
@@ -1468,6 +1513,16 @@
 		{
 			"URL": "https://mtrestapi.haysmed.com:443/v1/uscore/R4",
 			"OrganizationName": "Hays Medical Center 6.15 to Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.nh.hca.meditech.cloud/v1/uscore/R4",
+			"OrganizationName": "HCA - NEW HAMPSHIRE UNIVERSE",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.nh.hca.meditech.cloud/v1/uscore/R4",
+			"OrganizationName": "HCA - NEW HAMPSHIRE UNIVERSE",
 			"NPIID": ""
 		},
 		{
@@ -1548,6 +1603,11 @@
 		{
 			"URL": "https://mtrestapis-live01.hcmc.us.com:443/v1/uscore/R4",
 			"OrganizationName": "Howard County Med Ctr Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live02.nahospital.org:443/v1/uscore/R4",
+			"OrganizationName": "Humboldt Park Health MAGIC to Expanse Small",
 			"NPIID": ""
 		},
 		{
@@ -1687,7 +1747,7 @@
 		},
 		{
 			"URL": "https://mtrestapis-live01.mmchs.org:443/v1/uscore/R4",
-			"OrganizationName": "Meadville Medical Center 6.1 (Hosted by OpSus)",
+			"OrganizationName": "Meadville Medical Center Expanse  (Hosted by OpSus)",
 			"NPIID": ""
 		},
 		{
@@ -1818,6 +1878,11 @@
 		{
 			"URL": "https://mtrestapis-live01.onslow.org:443/v1/uscore/R4",
 			"OrganizationName": "Onslow Memorial Hospital Expanse(Hosted by OpSus)",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.ohow.com:443/v1/uscore/R4",
+			"OrganizationName": "Orthopaedic Hospital of Wisconsin READY Small",
 			"NPIID": ""
 		},
 		{
@@ -2023,6 +2088,11 @@
 		{
 			"URL": "https://mtrestapis-live01.slhduluth.com:443/v1/uscore/R4",
 			"OrganizationName": "St. Luke's Hospital Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://smhapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "St. Margaret's Health MaaS Pod 007 10",
 			"NPIID": ""
 		},
 		{

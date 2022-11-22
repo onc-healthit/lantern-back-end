@@ -117,5 +117,19 @@ func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 		return err
 	}
 
+	if len(endpointEntryList.Endpoints) > 10 {
+		endpointEntryList.Endpoints = endpointEntryList.Endpoints[0:10]
+	}
+
+	reducedFinalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

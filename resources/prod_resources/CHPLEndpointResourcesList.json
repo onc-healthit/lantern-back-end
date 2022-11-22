@@ -7,15 +7,33 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://variandev.dynamicfhir.com/",
+		"EndpointName": "Varian Medical Systems",
+		"FileName": "Varian_Medical_Systems_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://cmpl.aidbox.app/smart",
 		"EndpointName": "Health Samurai, Inc.",
 		"FileName": "Health_Samurai_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://hag-fhir.amazingcharts.com/ac/endpoints",
+		"EndpointName": "CareTracker, Inc.",
+		"FileName": "CareTracker_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"EndpointName": "Darena Solutions LLC",
 		"FileName": "Darena_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://blueehr.com/fhir-urls/",
+		"EndpointName": "ZH Healthcare, Inc.",
+		"FileName": "ZH_Healthcare_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -34,6 +52,12 @@
 		"URL": "https://carefluence.com/carefluence-fhir-endpoints/",
 		"EndpointName": "Carefluence",
 		"FileName": "Carefluence_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.goldblattsystems.com/apis",
+		"EndpointName": "Goldblatt Systems, LLC",
+		"FileName": "Goldblatt_Systems_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -73,6 +97,18 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
+		"EndpointName": "GEMMS",
+		"FileName": "GEMMS_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://qualifacts.com/API-Page/platform/insync/insync-fhir-org-list.html",
+		"EndpointName": "Qualifacts Systems, LLC",
+		"FileName": "Qualifacts_Systems_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhirtest.intelichart.com/Help/BaseUrl",
 		"EndpointName": "InteliChart LLC",
 		"FileName": "InteliChart_LLC_EndpointSources.json"
@@ -103,21 +139,27 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://fhir.meditech.com/explorer/endpoints",
+		"EndpointName": "Medical Information Technology, Inc. (MEDITECH)",
+		"FileName": "Medical_Information_Technology_Inc_MEDITECH_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/",
 		"EndpointName": "First Insight Corporation",
 		"FileName": "First_Insight_Corporation_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
-		"EndpointName": "MedInformatix",
-		"FileName": "MedInformatix_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://bill.medgenehr.com:7043/fhir/.well-known/smart-configuration",
 		"EndpointName": "Comtron Inc.",
 		"FileName": "Comtron_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://github.com/cerner/ignite-endpoints",
+		"EndpointName": "Cerner Corporation",
+		"FileName": "Cerner_Corporation_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -139,9 +181,21 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.novomedici.com/wp-content/uploads/2022/11/FHIR-Service-URLs.pdf",
+		"EndpointName": "NovoMedici, LLC",
+		"FileName": "NovoMedici_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
 		"EndpointName": "OpenEMR Foundation",
 		"FileName": "OpenEMR_Foundation_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://open.allscripts.com/fhirendpoints",
+		"EndpointName": "Altera Digital Health Inc.",
+		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -157,6 +211,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv",
+		"EndpointName": "ReLi Med Solutions, LLC",
+		"FileName": "ReLi_Med_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.ihs.gov/cis/",
 		"EndpointName": "Indian Health Service",
 		"FileName": "Indian_Health_Service_EndpointSources.json"
@@ -165,7 +225,7 @@
 		"FormatType": "Lantern",
 		"URL": "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json",
 		"EndpointName": "Cerner Corporation",
-		"FileName": "Cerner_Corporation_EndpointSources.json"
+		"FileName": "Cerner_Corporation_1_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -181,12 +241,6 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://open.allscripts.com/fhirendpoints",
-		"EndpointName": "Altera Digital Health Inc.",
-		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
 		"FileName": "NaphCare_Inc_EndpointSources.json"
@@ -199,6 +253,24 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://emr.vohrawoundteam.com/FHIRBaseUrls.csv",
+		"EndpointName": "Vohra Wound Physicians Management, LLC",
+		"FileName": "Vohra_Wound_Physicians_Management_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://fhirstage.fhirpointstage.open.allscripts.com/fhirroute/open/ProCertStageCH",
+		"EndpointName": "Allscripts",
+		"FileName": "Allscripts_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://api-datamanager.carecloud.com:8081/fhirurl",
+		"EndpointName": "Meridian Medical Management",
+		"FileName": "Meridian_Medical_Management_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.vision-works.com/cert/FHIR",
 		"EndpointName": "Vision Works, Inc.",
 		"FileName": "Vision_Works_Inc_EndpointSources.json"
@@ -208,6 +280,12 @@
 		"URL": "https://api.fhir.wrs.cloud/docs",
 		"EndpointName": "WRS Health",
 		"FileName": "WRS_Health_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/",
+		"EndpointName": "Medical Informatics Engineering",
+		"FileName": "Medical_Informatics_Engineering_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -226,6 +304,24 @@
 		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html",
 		"EndpointName": "TriMed Technologies",
 		"FileName": "TriMed_Technologies_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://fhir.eclinicalworks.com/ecwopendev",
+		"EndpointName": "eClinicalWorks, LLC",
+		"FileName": "eClinicalWorks_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.ehana.com/s/fhir-base-urls.csv",
+		"EndpointName": "eHana",
+		"FileName": "eHana_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://emedpractice.com/Fhir/FhirHelpDocument.html",
+		"EndpointName": "eMedPractice LLC",
+		"FileName": "eMedPractice_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

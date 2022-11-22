@@ -401,11 +401,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049336",
-			"OrganizationName": "Academic Urology and Urogynecology of Arizona",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/1700131A",
 			"OrganizationName": "Accent Family Healthcare",
 			"NPIID": ""
@@ -2011,6 +2006,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
+			"OrganizationName": "Branko Banar",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10008998",
 			"OrganizationName": "Breast Care Specialists, LLC",
 			"NPIID": ""
@@ -2311,8 +2311,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10026918",
-			"OrganizationName": "Cardiology \u0026 Internal Medicine, P. A.",
+			"URL": "https://fhireastus-2.allscripts.pro/fhirroute/fhir/0008994",
+			"OrganizationName": "Cardiology and Internal Medicine",
 			"NPIID": ""
 		},
 		{
@@ -3346,7 +3346,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://TESTFHIR.colaneph.com/FHIR",
+			"URL": "https://FHIR.colaneph.com/FHIR",
 			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": ""
 		},
@@ -4036,7 +4036,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10028551",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/75616",
 			"OrganizationName": "Delmar Family Medicine",
 			"NPIID": ""
 		},
@@ -9761,6 +9761,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049336",
+			"OrganizationName": "Megham Reed",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/72250Q",
 			"OrganizationName": "Melanie C Firman Md",
 			"NPIID": ""
@@ -10498,11 +10503,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/70244",
 			"OrganizationName": "Neeta Rekhi MD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
-			"OrganizationName": "Neighborhood Health Association",
 			"NPIID": ""
 		},
 		{
@@ -13926,6 +13926,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031459",
+			"OrganizationName": "Silver Pine Family Practice",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10038286",
 			"OrganizationName": "Siouxland Medical Education Foundation",
 			"NPIID": ""
@@ -14368,11 +14373,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74082",
 			"OrganizationName": "Spine Works Physical Therapy",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031459",
-			"OrganizationName": "SPMG Sterling Heights",
 			"NPIID": ""
 		},
 		{
@@ -15081,8 +15081,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10857851",
-			"OrganizationName": "Tallahassee Medical Group",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10041264",
+			"OrganizationName": "Tallahassee Primary Care Associates",
 			"NPIID": ""
 		},
 		{
@@ -15147,7 +15147,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10177742",
-			"OrganizationName": "Tennessee Urology Assoc",
+			"OrganizationName": "Tennessee Urology Associates",
 			"NPIID": ""
 		},
 		{
@@ -15607,7 +15607,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10020578",
-			"OrganizationName": "The ChildHealth Center, P.A.",
+			"OrganizationName": "The Childhealth Center, PA",
 			"NPIID": ""
 		},
 		{
@@ -16221,7 +16221,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Fhir",
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/fhir",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
@@ -16231,12 +16231,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R2/Open",
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/open",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/Fhir",
+			"URL": "https://twr10devweb2.rd.allscripts.com/fhir",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
@@ -16246,7 +16246,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/Open",
+			"URL": "https://twr10devweb2.rd.allscripts.com/open",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},

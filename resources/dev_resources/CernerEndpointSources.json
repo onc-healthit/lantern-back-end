@@ -29,6 +29,26 @@
       "name": "Abilene Dermatology & Skin Surgery Center",
       "baseUrl": "https://fhir-myrecord.cerner.com/dstu2/SmNYHC0VcbDwo9dhIcNAf8B842LDSm0s/",
       "type": "prod"
+    },
+    {
+      "name": "Adult Internal Medicine",
+      "baseUrl": "https://fhir-myrecord.cerner.com/dstu2/R7Xi5VKCF7I0nz39ERM0XL_mBu0AaiHV/",
+      "type": "prod"
+    },
+    {
+      "name": "Adult Medical Associates",
+      "baseUrl": "https://fhir-myrecord.cerner.com/dstu2/a124d63f-4821-4c46-aa22-72b63de7afb9/",
+      "type": "prod"
+    },
+    {
+      "name": "Adult Medicine Specialists",
+      "baseUrl": "https://fhir-myrecord.cerner.com/dstu2/73913c65-6ffa-4558-9bd4-9feeebb396eb/",
+      "type": "prod"
+    },
+    {
+      "name": "Advanced Digestive Care Center",
+      "baseUrl": "https://fhir-myrecord.cerner.com/dstu2/2eaec831-8bc2-4f3d-9dea-0cf59436cebb/",
+      "type": "prod"
     }
   ]
 }

@@ -218,12 +218,34 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Save a copy of CHPL Endpoint Lists file in the dev resources folder
+	devfinalFormatJSONEndpoints, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToCHPLList, devfinalFormatJSONEndpoints, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	finalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToSoftwareInfo, finalFormatJSONSoftware, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Save a copy of software products info file in the dev resources folder
+	devfinalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToSoftwareInfo, devfinalFormatJSONSoftware, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

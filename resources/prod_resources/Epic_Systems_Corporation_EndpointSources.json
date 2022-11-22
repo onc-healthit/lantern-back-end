@@ -2146,6 +2146,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicrp-prd.eushc.org/OAUTH2-PRD/api/FHIR/DSTU2/",
+			"OrganizationName": "Emory Healthcare",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://hkc.nationwidechildrens.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Nationwide Children's Hospital",
 			"NPIID": ""
@@ -4188,6 +4193,11 @@
 		{
 			"URL": "https://epicproxy.et1221.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Muscogee - Creek Nation Department of Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicrp-prd.eushc.org/OAUTH2-PRD/api/FHIR/R4/",
+			"OrganizationName": "Emory Healthcare",
 			"NPIID": ""
 		},
 		{

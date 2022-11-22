@@ -1,0 +1,169 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/725ea83c-53c1-458f-a3a4-190e038b73c9/",
+			"OrganizationName": "Albany Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/a5f4ce6b-ab0a-413b-affc-47ff1650194e/",
+			"OrganizationName": "Archbold Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/5cec35cb-ca56-453f-a1d3-fc5e20bab214/",
+			"OrganizationName": "Arkansas Heart Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/710eea77-1a9e-42cf-bdab-ee56306083f4/",
+			"OrganizationName": "Bay Area Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e19f3f05-57a5-4b12-a164-8453dfcc6a5e/",
+			"OrganizationName": "Bethesda Health Baptist Health South Florida",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/59753f4d-fc7f-4929-b587-a7a7ff7bde03/",
+			"OrganizationName": "Cape Cod Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e71212a1-08a3-40bc-88aa-974471e03d3e/",
+			"OrganizationName": "Cape Regional Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/9bf27703-dcb7-4f20-a363-35a28d8bbf38/",
+			"OrganizationName": "Catholic Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/b9b77dc1-8db8-486e-b0ce-6b2a89edb7e5/",
+			"OrganizationName": "CentraState Healthcare System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/3f25c0e5-282c-4d6e-ade5-aa2b86ec03e9/",
+			"OrganizationName": "Crouse Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/acbac89f-af87-49b4-ac98-0111c80ac50e/",
+			"OrganizationName": "Garden City Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/610e8cdb-2c3e-496a-b07b-c914f86e14f3/",
+			"OrganizationName": "Greenwood Leflore Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/b8387c42-2bb1-4fa9-94a8-9fe03ababf1c/",
+			"OrganizationName": "Hawaii Health System Corp",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/20eda2fa-ebed-437e-8b30-7ddd2a35effa/",
+			"OrganizationName": "Holy Redeemer Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/29d5e7f6-9579-4aa3-8893-01210e29a651/",
+			"OrganizationName": "Howard University Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/5e5ac40c-fee9-4710-b84c-a8f15dec5750/",
+			"OrganizationName": "Ingalls Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/c030faeb-65aa-4fe6-b969-2d16df0bbbf7/",
+			"OrganizationName": "Lake Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/0961344f-cd79-4193-b040-37669ae302a2/",
+			"OrganizationName": "Long Island Community Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/75eca3cd-998f-432e-bfe8-402fa3cd1d00/",
+			"OrganizationName": "Mountain States Health Alliance",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/118786cd-a5ec-4920-96f9-757c12e60137/",
+			"OrganizationName": "Nacogdoches Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/87b13152-c009-4570-8dd1-30220e3ffccb/",
+			"OrganizationName": "New England Baptist Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/7b369db7-2eec-4328-8928-30b66cd39a3a/",
+			"OrganizationName": "Northwest Hospital and Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/be754400-3834-4653-96ed-453314fc77d8/",
+			"OrganizationName": "Peconic Bay Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/2f8f5ec1-b7b8-4be5-ae27-e308284dd9c1/",
+			"OrganizationName": "R0SE - Soarian Clinicals Public Sandbox",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/d099f3aa-0761-4b26-afb2-b7a6d565f0ce/",
+			"OrganizationName": "Saint Joseph's Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/1c8544d5-3744-479c-ad10-a92153184d75/",
+			"OrganizationName": "Southampton Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/fc36758d-3d0d-4ea2-93a7-8d9c3f463f00/",
+			"OrganizationName": "Southern New Hampshire Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/8c4b7810-13a5-4a82-9e13-439865842bde/",
+			"OrganizationName": "St. Mary's Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/42848181-4d10-4640-9fb1-3da5b778a8ab/",
+			"OrganizationName": "Temple Health Jeanes Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/842d94c1-b0f5-4184-a4df-f56e9e72e1d3/",
+			"OrganizationName": "Tufts Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/85a1aeea-0a1b-4f73-95b1-6d8e34f513ef/",
+			"OrganizationName": "UHS Health Care System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/7b7ea749-dbe4-4414-b730-5843f9cf7acf/",
+			"OrganizationName": "UT Health East Texas",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e3780ef1-62a9-42cb-b6ff-304b3fcb2e6c/",
+			"OrganizationName": "Weirton Medical Center",
+			"NPIID": ""
+		}
+	]
+}

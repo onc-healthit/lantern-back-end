@@ -1,0 +1,54 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/725ea83c-53c1-458f-a3a4-190e038b73c9/",
+			"OrganizationName": "Albany Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/a5f4ce6b-ab0a-413b-affc-47ff1650194e/",
+			"OrganizationName": "Archbold Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/5cec35cb-ca56-453f-a1d3-fc5e20bab214/",
+			"OrganizationName": "Arkansas Heart Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/710eea77-1a9e-42cf-bdab-ee56306083f4/",
+			"OrganizationName": "Bay Area Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e19f3f05-57a5-4b12-a164-8453dfcc6a5e/",
+			"OrganizationName": "Bethesda Health Baptist Health South Florida",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/59753f4d-fc7f-4929-b587-a7a7ff7bde03/",
+			"OrganizationName": "Cape Cod Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e71212a1-08a3-40bc-88aa-974471e03d3e/",
+			"OrganizationName": "Cape Regional Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/9bf27703-dcb7-4f20-a363-35a28d8bbf38/",
+			"OrganizationName": "Catholic Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/b9b77dc1-8db8-486e-b0ce-6b2a89edb7e5/",
+			"OrganizationName": "CentraState Healthcare System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord-sc.cerner.com/r4/3f25c0e5-282c-4d6e-ade5-aa2b86ec03e9/",
+			"OrganizationName": "Crouse Hospital",
+			"NPIID": ""
+		}
+	]
+}
