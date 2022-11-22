@@ -85,10 +85,9 @@ dashboard <- function(
       mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
       mutate(percentage = paste0(percentage, "%")) %>%
       select(vendor_name, fhir_version, n, percentage)
-    
 
     if (is.null(fhirVendorTableSize())) {
-      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl())/2))
+      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
     }
 
     res
