@@ -9,7 +9,8 @@ downloadsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              p("The files below include the endpoint data over time in the JSON format,
-              and the current endpoint data found on the endpoints tab in the CSV format.")
+              the current endpoint data found on the endpoints tab in the CSV format,
+              and the endpoint tab table field descriptions in both the JSON and CSV format.")
       )
     ),
     fluidRow(
@@ -26,7 +27,8 @@ downloadsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12,
               h2("CSV Download"),
-              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
       )
     ),
     fluidRow(
@@ -82,6 +84,16 @@ downloadsmodule <- function(
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
   })
+
+  # Download csv of the field descriptions in the dataset csv
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoints_fields.csv", file)
+    }
+  )
 
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability

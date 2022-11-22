@@ -33,7 +33,7 @@ endpointsmodule <- function(
   ns <- session$ns
 
   output$anchorlink <- renderUI({
-    HTML("<p>You may also download endpoint data over time in the JSON format as well as current endpoint data in the CSV format as available here by visiting the <a tabindex=\"0\" id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
+    HTML("<p>You may also download endpoint data over time in the JSON format by visiting the <a tabindex=\"0\" id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
   })
 
   output$endpoint_count <- renderText({
