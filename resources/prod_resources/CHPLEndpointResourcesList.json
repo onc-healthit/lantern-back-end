@@ -19,9 +19,21 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://hag-fhir.amazingcharts.com/ac/endpoints",
+		"EndpointName": "CareTracker, Inc.",
+		"FileName": "CareTracker_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api.bluebuttonpro.com/swagger/index.html",
 		"EndpointName": "Darena Solutions LLC",
 		"FileName": "Darena_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://blueehr.com/fhir-urls/",
+		"EndpointName": "ZH Healthcare, Inc.",
+		"FileName": "ZH_Healthcare_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -49,7 +61,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.dynamicheaxlthit.com/dynamic-fhir-api",
+		"URL": "https://www.dynamichealthit.com/dynamic-fhir-api",
 		"EndpointName": "Dynamic Health IT, Inc",
 		"FileName": "Dynamic_Health_IT_Inc_EndpointSources.json"
 	},
@@ -82,6 +94,18 @@
 		"URL": "https://academy.practicesuite.com/fhir-server-links/",
 		"EndpointName": "PracticeSuite, Inc.",
 		"FileName": "PracticeSuite_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
+		"EndpointName": "GEMMS",
+		"FileName": "GEMMS_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://qualifacts.com/API-Page/platform/insync/insync-fhir-org-list.html",
+		"EndpointName": "Qualifacts Systems, LLC",
+		"FileName": "Qualifacts_Systems_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -124,12 +148,6 @@
 		"URL": "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/",
 		"EndpointName": "First Insight Corporation",
 		"FileName": "First_Insight_Corporation_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://medinformatix-company-website.s3.us-west-2.amazonaws.com/www/development/docs/FHIR_Service_URLs_MI.pdf",
-		"EndpointName": "MedInformatix",
-		"FileName": "MedInformatix_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -193,6 +211,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv",
+		"EndpointName": "ReLi Med Solutions, LLC",
+		"FileName": "ReLi_Med_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.ihs.gov/cis/",
 		"EndpointName": "Indian Health Service",
 		"FileName": "Indian_Health_Service_EndpointSources.json"
@@ -229,6 +253,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://emr.vohrawoundteam.com/FHIRBaseUrls.csv",
+		"EndpointName": "Vohra Wound Physicians Management, LLC",
+		"FileName": "Vohra_Wound_Physicians_Management_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhirstage.fhirpointstage.open.allscripts.com/fhirroute/open/ProCertStageCH",
 		"EndpointName": "Allscripts",
 		"FileName": "Allscripts_EndpointSources.json"
@@ -253,6 +283,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/",
+		"EndpointName": "Medical Informatics Engineering",
+		"FileName": "Medical_Informatics_Engineering_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://docs.athenahealth.com/api/base-fhir-urls",
 		"EndpointName": "athenahealth, Inc.",
 		"FileName": "athenahealth_Inc_EndpointSources.json"
@@ -271,9 +307,21 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://fhir.eclinicalworks.com/ecwopendev",
+		"EndpointName": "eClinicalWorks, LLC",
+		"FileName": "eClinicalWorks_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.ehana.com/s/fhir-base-urls.csv",
 		"EndpointName": "eHana",
 		"FileName": "eHana_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://emedpractice.com/Fhir/FhirHelpDocument.html",
+		"EndpointName": "eMedPractice LLC",
+		"FileName": "eMedPractice_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

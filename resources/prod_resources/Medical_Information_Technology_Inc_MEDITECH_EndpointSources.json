@@ -256,12 +256,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mtrestapis-live01.ovmc-eorh.com:443/v2/argonaut/v1",
+			"URL": "https://null/v2/argonaut/v1",
 			"OrganizationName": "East Ohio Regional Hospital 6.15 (Tegria Hosted)",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://null/v2/argonaut/v1",
+			"URL": "https://mtrestapis-live01.ovmc-eorh.com:443/v2/argonaut/v1",
 			"OrganizationName": "East Ohio Regional Hospital 6.15 (Tegria Hosted)",
 			"NPIID": ""
 		},
@@ -1371,12 +1371,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mtrestapis-live01.ovmc-eorh.com:443/v1/uscore/R4",
+			"URL": "https://null/v1/uscore/R4",
 			"OrganizationName": "East Ohio Regional Hospital 6.15 (Tegria Hosted)",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://null/v1/uscore/R4",
+			"URL": "https://mtrestapis-live01.ovmc-eorh.com:443/v1/uscore/R4",
 			"OrganizationName": "East Ohio Regional Hospital 6.15 (Tegria Hosted)",
 			"NPIID": ""
 		},

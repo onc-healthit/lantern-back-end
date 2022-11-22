@@ -50,6 +50,13 @@ var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
 var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
 var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
 var varianmedicalURL = "https://variandev.dynamicfhir.com/"
+var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
+var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
+var qualifactsURL = "https://qualifacts.com/API-Page/platform/insync/insync-fhir-org-list.html"
+var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
+var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
+var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
+var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -123,6 +130,20 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MeridianWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == varianmedicalURL {
 		VarianMedicalWebscraper("https://variandev.dynamicfhir.com/dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
+	} else if chplURL == caretrackerURL {
+		BundleQuerierParser("https://hag-fhir.amazingcharts.com/ac/endpoints/r4", fileToWriteTo)
+	} else if chplURL == zhhealthcareURL {
+		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == qualifactsURL {
+		QualifactsWebscraper("https://qualifacts.com/API-Page/_downloads/insync-fhir-org-list.json", fileToWriteTo)
+	} else if chplURL == medinfoengineeringURL {
+		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == emedpracticeURL {
+		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+	} else if chplURL == relimedsolutionsURL {
+		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3)
+	} else if chplURL == eclinicalworksURL{
+		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
 	}
 	
 }
