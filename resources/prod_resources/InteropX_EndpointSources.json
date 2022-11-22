@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://demo.interopx.com/InteropXFHIR/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

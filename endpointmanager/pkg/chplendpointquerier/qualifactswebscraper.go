@@ -3,9 +3,8 @@ package chplendpointquerier
 import (
 	"strings"
 
-	"encoding/json"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	"encoding/json"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,7 +12,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-
+		
 	jsonResponse, err := helpers.QueryEndpointList(chplURL)
 	if err != nil {
 		log.Fatal(err)
@@ -39,7 +38,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 			if !ok {
 				log.Fatal(err)
 			}
-
+			
 			if URL != "" {
 				entryURL := strings.TrimSpace(URL)
 				entry.URL = entryURL
