@@ -8,7 +8,9 @@ downloadsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
-             p("These files include the endpoint data over time in JSON format.")
+             p("The files below include the endpoint data over time in the JSON format,
+              the current endpoint data found on the endpoints tab in the CSV format,
+              and the endpoint tab table field descriptions in both the JSON and CSV format.")
       )
     ),
     fluidRow(
@@ -20,6 +22,13 @@ downloadsmodule_UI <- function(id) {
       column(width = 12,
             p("Formerly, the json export file included all data, but now only includes the past 30 days. To see export files for previous months created by Lantern, visit the repository ",
             a("available here.", href = "https://github.com/onc-healthit/lantern-back-end", target = "_blank"))
+      )
+    ),
+    fluidRow(
+      column(width = 12,
+              h2("CSV Download"),
+              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
       )
     ),
     fluidRow(
@@ -52,6 +61,37 @@ downloadsmodule <- function(
     },
     content = function(file) {
       file.copy("fhir_endpoints_fields_json.md", file)
+    }
+  )
+
+  # Downloadable csv of selected dataset
+  output$download_data <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints.csv"
+    },
+    content = function(file) {
+      write.csv(csv_format(), file, row.names = FALSE)
+    }
+  )
+
+  # Create the format for the csv
+  csv_format <- reactive({
+    res <- get_fhir_endpoints_tbl() %>%
+      select(-label, -status, -availability, -fhir_version) %>%
+      rowwise() %>%
+      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
+      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(created_at = info_created, updated = info_updated) %>%
+      rename(http_response_time_second = response_time_seconds)
+  })
+
+  # Download csv of the field descriptions in the dataset csv
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoints_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoints_fields.csv", file)
     }
   )
 

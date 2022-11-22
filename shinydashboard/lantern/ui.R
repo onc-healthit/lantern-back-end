@@ -725,6 +725,21 @@ ui <- dashboardPage(
                 }
               }            
             }
+
+            if (pageTitleText === \"List of Endpoints\") {
+              let downloads_tab_link = document.getElementById(\"downloads_page_link\")
+              downloads_tab_link.addEventListener('click', function (e) {
+                let downloads_tab = document.querySelector(\"a[href = '#shiny-tab-downloads_tab']\"); 
+                downloads_tab.click();
+              });
+
+              downloads_tab_link.addEventListener('keyup', function (e) {
+                if (event.keyCode === 13) {
+                  let downloads_tab = document.querySelector(\"a[href = '#shiny-tab-downloads_tab']\"); 
+                  downloads_tab.click();
+                }
+              });
+            }
             
             /*
               // Set the aria labels for all the select HTML elements with class shiny-bound-input on the Lantern website
