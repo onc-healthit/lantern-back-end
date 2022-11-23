@@ -27,7 +27,8 @@ endpointsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_availability
+  sel_availability,
+  sel_is_chpl
 ) {
   ns <- session$ns
 
@@ -44,6 +45,11 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+
+    if (sel_is_chpl() != "All") {
+      res <- res %>% filter(is_chpl == toupper(sel_is_chpl()))
+    }
+
     if (sel_availability() != "0-100") {
       if (sel_availability() == "0" || sel_availability() == "100") {
         availability_filter_num <- as.numeric(sel_availability()) / 100
