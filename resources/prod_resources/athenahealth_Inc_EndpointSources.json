@@ -16992,6 +16992,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "DocDX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "JIVANA CARE",
 			"NPIID": ""
 		},
@@ -28642,7 +28647,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Greene County General Hospital - My Clinics",
+			"OrganizationName": "Greene County General Hospital - Clinics",
 			"NPIID": ""
 		},
 		{
@@ -53182,17 +53187,17 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Colorado OB/GYN",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Optimal Health Associates",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Seasons Midwifery and Birth Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "The Women's Health Group",
 			"NPIID": ""
 		},
 		{
@@ -54182,7 +54187,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Sleep wellness clinics - Start up",
+			"OrganizationName": "TN - Sleep wellness clinics",
 			"NPIID": ""
 		},
 		{
@@ -56392,6 +56397,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Louetta Foot and Ankle",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Michael S Lenertz DPM PA",
 			"NPIID": ""
 		},
@@ -57603,6 +57613,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Access Family \u0026 Functional Medicine",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OH - HEALTHY ME WELLNESS SERVICES, LLC",
 			"NPIID": ""
 		},
 		{
@@ -59232,6 +59247,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "IL - Grace N Joseph",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Lighthouse Spine Center",
 			"NPIID": ""
 		},
@@ -60292,6 +60312,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TN - Alivio Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - SOUTH TEXAS FAMILY MEDICINE AND URG",
 			"NPIID": ""
 		},
@@ -61008,11 +61033,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Cameron Pediatrics",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - Alpine Woods Medical LLC",
 			"NPIID": ""
 		},
 		{
@@ -61962,6 +61982,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OH - RX KINETICS, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Arman Kalamkarian, MD",
 			"NPIID": ""
 		},
@@ -62233,6 +62258,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - Lowcountry NextCare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "WA - Hansen Foot \u0026 Ankle",
 			"NPIID": ""
 		},
 		{
@@ -62562,6 +62592,26 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Cannon Family Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Dry Ridge Family Medicine",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Hopscotch Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Sandra L Mccormack MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Linder Family Care",
 			"NPIID": ""
 		},
@@ -62678,6 +62728,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Mary K. Oates, MD, INC.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "LA - Pediatrics Primary Care Clinic",
 			"NPIID": ""
 		},
 		{
@@ -62802,7 +62857,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Midi Health",
+			"OrganizationName": "MIDI HEALTH",
 			"NPIID": ""
 		},
 		{
@@ -62927,6 +62982,11 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - PRIMARY CARE EVERYWHERE, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Terry L. Franklin, MD",
 			"NPIID": ""
 		},
@@ -62943,6 +63003,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Neuroglee Therapeutics",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - Primasun, LLC",
 			"NPIID": ""
 		},
 		{
@@ -63058,6 +63123,11 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - Hall Medical, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "IN - SCCH Mental Health",
 			"NPIID": ""
 		},
 		{
@@ -70277,7 +70347,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Mid Dakota Clinic",
+			"OrganizationName": "Essentia Health Mid Dakota",
 			"NPIID": ""
 		},
 		{
