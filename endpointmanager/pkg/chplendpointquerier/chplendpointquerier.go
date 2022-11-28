@@ -68,6 +68,8 @@ var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-speci
 var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
 var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
+var integraconnectURL = "https://www.integraconnect.com/certifications/"
+var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -179,6 +181,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3)
 	} else if chplURL == eclinicalworksURL{
 		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
+	} else if chplURL == integraconnectURL{
+		IntegraConnectWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == streamlinemdURL{
+		StreamlineMDCSVParser(chplURL, fileToWriteTo)
 	}
 	
 }

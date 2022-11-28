@@ -109,9 +109,21 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.integraconnect.com/certifications/",
+		"EndpointName": "Integra Connect Newco, LLC",
+		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://fhirtest.intelichart.com/Help/BaseUrl",
 		"EndpointName": "InteliChart LLC",
 		"FileName": "InteliChart_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.nextech.com/developers-portal",
+		"EndpointName": "Nextech",
+		"FileName": "Nextech_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -181,6 +193,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://select.nextech-api.com/api/r4",
+		"EndpointName": "Nextech",
+		"FileName": "Nextech_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.novomedici.com/wp-content/uploads/2022/11/FHIR-Service-URLs.pdf",
 		"EndpointName": "NovoMedici, LLC",
 		"FileName": "NovoMedici_LLC_EndpointSources.json"
@@ -238,6 +256,12 @@
 		"URL": "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/",
 		"EndpointName": "CorrecTek",
 		"FileName": "CorrecTek_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv",
+		"EndpointName": "StreamlineMD, LLC",
+		"FileName": "StreamlineMD_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
