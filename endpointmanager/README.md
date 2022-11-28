@@ -13,6 +13,18 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/api).
 
+* **LANTERN_1UP_CLIENT_SECRET**: The client secret necessary for accessing the 1Up API
+  
+  Default value: none. 
+  
+  You can obtain a 1UP client secret by following the registration instructions [here](https://1up.health/docs/start/quick-start-guide/register).
+
+* **LANTERN_1UP_CLIENT_ID**: The client id necessary for accessing the 1Up API
+  
+  Default value: none. 
+  
+  You can obtain a 1UP client ID by following the registration instructions [here](https://1up.health/docs/start/quick-start-guide/register).
+
 * **LANTERN_DBUSER_READONLY**: The database user that the application will use to read from the database.
 
   Default value: none. This value is not used within the code. Suggested value: 'lantern_ro'
