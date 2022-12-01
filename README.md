@@ -317,6 +317,22 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
+ # Configure Automatic Production Database Population
+
+You can configure an automatic production database population system using cron and the `automatic_populatedb_prod.sh` script located in the scripts directory to save all the endpoint information from the endpoint resource lists found in the `resources/prod_resources` directory into the database. The script also downloads the most recent NPPES file, stores all the information from that file into the database, and then deletes the NPPES file in order to save storage space. The task will send an email notification if the endpoint list information or NPPES information fails to be saved in the database. 
+
+To set up the script for this automatic production database population system, you must insert the correct information into the following variables located at the beginning of the automatic production database populator script.
+  * Set the EMAIL variable to the email you want the automatic production database populator to send failure alerts to in the `automatic_populatedb_prod.sh` script
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full path to scripts directory> && ./automatic_populatedb_prod.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `1 * 1 */1 * cd <Full path to scripts directory> && ./automatic_populatedb_prod.sh` to run the script at minute 1 on day 1 in every month
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
  # Configure Monthly JSON Export System
 
 You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails.
