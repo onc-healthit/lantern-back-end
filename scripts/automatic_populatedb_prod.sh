@@ -29,7 +29,7 @@ curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not availa
 echo "Extracting endpoint and npidata files from NPPES zip file..."
 unzip -q temp.zip endpoint_pfile\*.csv
 unzip -q temp.zip npidata_pfile\*.csv 
-rm *fileHeader.csv
+rm *fileheader.csv
 mv endpoint_pfile*.csv endpoint_pfile.csv
 mv npidata_pfile*.csv npidata_pfile.csv
 rm temp.zip
