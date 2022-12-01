@@ -20,8 +20,10 @@ var careEvolutionURL = "https://fhir.docs.careevolution.com/overview/public_endp
 
 func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo string) {
 
-	if vendorURL == oneUpURL || vendorURL == careEvolutionURL {
+	if vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
+	} else if vendorURL == oneUpURL {
+		OneUpQuerier("https://api.1up.health/connect/system/clinical", fileToWriteTo)
 	}
 }
 

@@ -1,53 +1,53 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://epicarr02.spectrumhealth.org/EpicFHIR/api/FHIR/DSTU2",
-			"OrganizationName": "Spectrum Health",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/EHEDBD",
+			"OrganizationName": "",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://arrprod.midmichigan.net/ProdFHIR/api/FHIR/DSTU2",
-			"OrganizationName": "MidMichigan Health",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BJFJAD",
+			"OrganizationName": "",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://eprescribe.sanfordhealth.org/FHIR/api/FHIR/DSTU2",
-			"OrganizationName": "Sanford Health",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FIFEAA",
+			"OrganizationName": "139 Medical Group ",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/1ff00bc8-0ecb-4ee5-8444-70f6c6b68888",
-			"OrganizationName": "Lawrence Memorial Hospital",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FEIJCA",
+			"OrganizationName": "1Foot 2Foot Centre for Foot and Ankle Care",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicproxy.et0927.epichosted.com/FHIRProxy/api/FHIR/DSTU2",
-			"OrganizationName": "Hospital for Special Surgery",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDFHBD",
+			"OrganizationName": "1 The Doctor Is At Your Door AUSTIN TX",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://armc-mtrestapis-live01.sbcounty.gov/v1/argonaut/v1",
-			"OrganizationName": "Arrowhead Regional Medical Center",
+			"URL": "https://api.1updemohealthplans.com/r4",
+			"OrganizationName": "1up Demo Health Plan",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicsf.med.utah.edu/FHIRMYCHART/api/FHIR/DSTU2",
-			"OrganizationName": "University of Utah Healthcare",
+			"URL": "https://api.1uphealthdemo.com/r4",
+			"OrganizationName": "1upHealth Demo",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://pep.api.mayo.edu/epicfhirdstu2mu/v1/api/FHIR/DSTU2",
-			"OrganizationName": "Mayo Clinic",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JACADA",
+			"OrganizationName": "20/20 Eye Specialists",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://sehproxy.stelizabeth.com/arr-fhir/api/FHIR/DSTU2",
-			"OrganizationName": "St. Elizabeth Healthcare",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AGEGBD",
+			"OrganizationName": "21st Century Oncology Broward Urology MIRAMAR FL",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/cehQG_SigJUv0o-Q08WrVZtDzYZ_7ohK",
-			"OrganizationName": "David Plotkin DPM",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HCBBCA",
+			"OrganizationName": "24/7 Heart and Vascular Specialists",
 			"NPIID": ""
 		}
 	]
