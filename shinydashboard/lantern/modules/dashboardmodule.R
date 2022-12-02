@@ -196,16 +196,17 @@ dashboard <- function(
   })
 
   output$vendor_share_plot <- renderCachedPlot({
-   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = short_name, fill = fhir_version)) +
-      geom_bar(stat = "identity") +
-      geom_text(aes(label = stat(y), group = short_name),
-        stat = "summary", fun = sum, vjust = -1
+   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
+      geom_col(width = 0.8) +
+      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)
       ) +
+      theme(legend.position = "top") +
       theme(text = element_text(size = 15)) +
       labs(fill = "FHIR Version",
-           x = NULL,
+           x = "",
            y = "Number of Endpoints",
            title = "Endpoints by Developer and FHIR Version") +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip()
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 400,
