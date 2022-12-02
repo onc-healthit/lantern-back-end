@@ -206,10 +206,7 @@ dashboard <- function(
            x = "",
            y = "Number of Endpoints",
            title = "Endpoints by Developer and FHIR Version") +
-<<<<<<< HEAD
       scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
-=======
->>>>>>> b9ba30d3 (Update dashboard module to flip axes on vendor plot and convert vendor fhir version table into reactable)
       coord_flip()
   }, sizePolicy = sizeGrowthRatio(width = 400,
                                   height = 400,
