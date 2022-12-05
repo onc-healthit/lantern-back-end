@@ -37,10 +37,10 @@ dashboard_UI <- function(id) {
     h2("Endpoint Counts by Developer and FHIR Version"),
     fluidRow(
       custom_column_small(
-             tableOutput(ns("fhir_vendor_table"))
+            reactable::reactableOutput((ns("fhir_vendor_table")))
       ),
       custom_column_large(
-             plotOutput(ns("vendor_share_plot")),
+              uiOutput(ns("vendors_plot")),
              htmlOutput(ns("note_text"))
       )
     ),
@@ -76,14 +76,41 @@ dashboard <- function(
       select(vendor_name, developer_count)
   })
 
+  fhirVendorTableSize <- reactiveVal(NULL)
+
   vendor_count_table <- reactive({
     res <- isolate(app_data$vendor_count_tbl())
     res <- res %>%
       left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
       mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
       mutate(percentage = paste0(percentage, "%")) %>%
-      select(Vendor = vendor_name, "FHIR Version" = fhir_version, Count = n, "Developer Percentage" = percentage)
+      select(vendor_name, fhir_version, n, percentage)
+
+    if (is.null(fhirVendorTableSize())) {
+      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
+    }
+
     res
+  })
+
+  output$fhir_vendor_table <-  reactable::renderReactable({
+    reactable(vendor_count_table(),
+                columns = list(
+                  vendor_name = colDef(name = "Vendor"),
+                  fhir_version = colDef(name = "FHIR Version"),
+                  n = colDef(name = "Count"),
+                  percentage = colDef(name = "Developer Percentage")
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = isolate(fhirVendorTableSize())
+    )
+  })
+
+  observeEvent(input$fhir_vendor_table_state$length, {
+    page <- input$fhir_vendor_table_state$length
+    fhirVendorTableSize(page)
   })
 
   selected_http_summary <- reactive({
@@ -160,23 +187,29 @@ dashboard <- function(
       rename("HTTP Response" = code, Status = label, Count = count)
   )
 
-  output$fhir_vendor_table <- renderTable(
-    vendor_count_table()
-  )
+  plot_height_vendors <- reactive({
+    max(fhirVendorTableSize() * 75, 400)
+  })
+
+  output$vendors_plot <- renderUI({
+    plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
+  })
 
   output$vendor_share_plot <- renderCachedPlot({
-   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = short_name, fill = fhir_version)) +
-      geom_bar(stat = "identity") +
-      geom_text(aes(label = stat(y), group = short_name),
-        stat = "summary", fun = sum, vjust = -1
+   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
+      geom_col(width = 0.8) +
+      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)
       ) +
+      theme(legend.position = "top") +
       theme(text = element_text(size = 15)) +
       labs(fill = "FHIR Version",
-           x = NULL,
+           x = "",
            y = "Number of Endpoints",
-           title = "Endpoints by Developer and FHIR Version")
+           title = "Endpoints by Developer and FHIR Version") +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
+      coord_flip()
   }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 333,
+                                  height = 400,
                                   growthRate = 1.2),
     res = 72, cache = "app", cacheKeyExpr = {
       app_data$last_updated()
