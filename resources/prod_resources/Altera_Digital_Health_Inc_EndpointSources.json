@@ -17406,12 +17406,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.comopen/HCAPROD_36",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/HCAPROD_36",
 			"OrganizationName": "HCAPROD_36",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.comfhir/HCAPROD_36",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/HCAPROD_36",
 			"OrganizationName": "HCAPROD_36",
 			"NPIID": ""
 		},
@@ -17433,16 +17433,6 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/PARAGONSUPPORTCDH",
 			"OrganizationName": "Paragon Support",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/PFP",
-			"OrganizationName": "PRODFHIRPOINT",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/PFP",
-			"OrganizationName": "PRODFHIRPOINT",
 			"NPIID": ""
 		},
 		{
@@ -17523,16 +17513,6 @@
 		{
 			"URL": "https://inv-r4-qatst2.rd.allscripts.com/open-ProdSCMR4",
 			"OrganizationName": "ProdSCMR4",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/open-ProdR4",
-			"OrganizationName": "ProductionR4",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/fhir-ProdR4",
-			"OrganizationName": "ProductionR4",
 			"NPIID": ""
 		},
 		{
