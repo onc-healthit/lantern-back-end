@@ -70,6 +70,12 @@ var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-u
 var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
 var integraconnectURL = "https://www.integraconnect.com/certifications/"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
+var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints"
+var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
+var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/"
+var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
+var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
+var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -185,7 +191,19 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		IntegraConnectWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == streamlinemdURL{
 		StreamlineMDCSVParser(chplURL, fileToWriteTo)
-	}
+	} else if chplURL == bridgepatientportalURL{
+		BridgePatientPortalWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == medicalmineURL{
+		MedicalMineWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == modernizingmedicineURL{
+		ModernizingMedicineQuerier("qa.fhir.ema-api.com/fhir/r4/Endpoint?connection-type=hl7-fhir-rest", fileToWriteTo)
+	} else if chplURL == doc_torURL{
+		BundleQuerierParser(chplURL + "/r4", fileToWriteTo)
+	} else if chplURL == microfourURL{
+		MicroFourWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == magilenenterprisesURL{
+		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
+	} 
 	
 }
 

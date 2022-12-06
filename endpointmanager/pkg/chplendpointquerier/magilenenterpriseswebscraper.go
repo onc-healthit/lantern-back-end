@@ -41,7 +41,7 @@ func MagilenEnterprisesWebscraper(CHPLURL string, fileToWriteTo string) {
 
 										var entry LanternEntry
 
-										fhirURL := strings.TrimSpace(fhirstHalfURLText + secondHalfURLText)
+										fhirURL := strings.TrimSpace(fhirstHalfURLText + secondHalfURLText) 
 										entry.URL = fhirURL
 										lanternEntryList = append(lanternEntryList, entry)
 									}

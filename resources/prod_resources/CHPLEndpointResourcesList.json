@@ -19,6 +19,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://altheafhir.mdsynergy.com",
+		"EndpointName": "MD Synergy Solutions, LLC",
+		"FileName": "MD_Synergy_Solutions_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://hag-fhir.amazingcharts.com/ac/endpoints",
 		"EndpointName": "CareTracker, Inc.",
 		"FileName": "CareTracker_Inc_EndpointSources.json"
@@ -37,6 +43,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints",
+		"EndpointName": "Bridge Patient Portal LLC",
+		"FileName": "Bridge_Patient_Portal_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://unify-developer.chbase.com/?page=FHIRAPI",
 		"EndpointName": "Get Real Health",
 		"FileName": "Get_Real_Health_EndpointSources.json"
@@ -52,6 +64,18 @@
 		"URL": "https://carefluence.com/carefluence-fhir-endpoints/",
 		"EndpointName": "Carefluence",
 		"FileName": "Carefluence_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints",
+		"EndpointName": "MedicalMine Inc.",
+		"FileName": "MedicalMine_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://dev2-charteasy.theoriamedical.com/fhir/app",
+		"EndpointName": "Theoria Medical, PLLC",
+		"FileName": "Theoria_Medical_PLLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -82,6 +106,12 @@
 		"URL": "https://ehryourway.com/content/fhir-service-urls.pdf",
 		"EndpointName": "Adaptamed, LLC",
 		"FileName": "Adaptamed_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/",
+		"EndpointName": "Modernizing Medicine",
+		"FileName": "Modernizing_Medicine_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -211,15 +241,45 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.pcesystems.com/g10APIInfo.html",
+		"EndpointName": "PCE Systems",
+		"FileName": "PCE_Systems_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://open.allscripts.com/fhirendpoints",
 		"EndpointName": "Altera Digital Health Inc.",
 		"FileName": "Altera_Digital_Health_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "http://mraemr.com:47102/api/FHIR_Service_URLs.asp",
+		"EndpointName": "MD Charts, LLC",
+		"FileName": "MD_Charts_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://hag-fhir.amazingcharts.com/pc/endpoints",
+		"EndpointName": "Doc-tor.com",
+		"FileName": "Doctorcom_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls",
+		"EndpointName": "MicroFour, Inc.",
+		"FileName": "MicroFour_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://prognocis.com/fhir/index.html",
 		"EndpointName": "Bizmatics Inc.",
 		"FileName": "Bizmatics_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.qsmartcare.com/api-documentation.html",
+		"EndpointName": "Magilen Enterprises Inc",
+		"FileName": "Magilen_Enterprises_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -268,6 +328,12 @@
 		"URL": "https://devportal.techcareehr.com/Serviceurls",
 		"EndpointName": "NaphCare, Inc.",
 		"FileName": "NaphCare_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://twcert1web3.rd.allscripts.com/R4/fhir-Certification",
+		"EndpointName": "Altera Digital Health Inc.",
+		"FileName": "Altera_Digital_Health_Inc_1_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
