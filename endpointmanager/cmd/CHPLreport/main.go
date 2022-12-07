@@ -51,7 +51,7 @@ func main() {
 		) AS hist ON f.url = hist.url
 		LEFT JOIN vendors ON hist.vendor_id = vendors.id
 		LEFT JOIN fhir_endpoints_metadata AS metadata ON hist.metadata_id = metadata.id
-		LEFT JOIN (SELECT f.url, COUNT(f.capability_statement::jsonb) as cap_stat_total, COUNT(m.http_response) as metadata_total 
+		LEFT JOIN (SELECT f.url, COUNT(f.capability_statement) as cap_stat_total, COUNT(m.http_response) as metadata_total 
 				   FROM fhir_endpoints_info_history f, fhir_endpoints_metadata m WHERE f.metadata_id = m.id AND age(f.updated_at) < '30 days'
 				   GROUP BY f.url) as totals ON totals.url = hist.url
 		WHERE list_source_info.is_chpl = true AND age(hist.updated_at) < '30 days'
