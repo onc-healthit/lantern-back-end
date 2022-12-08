@@ -47,7 +47,6 @@ var goldblattURL = "https://www.goldblattsystems.com/apis"
 var cyfluentURL = "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
 var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
 var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
-var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
 var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
 var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
@@ -132,8 +131,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		InteropxWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == mphrxURL {
 		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
-	} else if chplURL == correctekURL {
-		CorrecTekWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == meridianURL {
 		MeridianWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == varianmedicalURL {
