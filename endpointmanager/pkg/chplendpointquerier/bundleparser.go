@@ -21,6 +21,7 @@ type BundleResource struct {
 	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
 	Orgs         []Organization       `json:"contained"`
 	ResourceType string               `json:"resourceType"`
+	OrgId        string               `json:"id"`
 }
 
 type ManagingOrgReference struct {
@@ -30,17 +31,37 @@ type ManagingOrgReference struct {
 }
 
 type Organization struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id           string    `json:"id"`
+	Name         string    `json:"name"`
+	Address      []Address `json:"address"`
+	ResourceType string    `json:"resourceType"`
+}
+
+type Address struct {
+	PostalCode string `json:"postalCode"`
 }
 
 func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	var lanternEntryList []LanternEntry
+	var organizationZip = make(map[string]string)
 
 	var structBundle FHIRBundle
 	err := json.Unmarshal(bundle, &structBundle)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	for _, bundleEntry := range structBundle.Entries {
+		if bundleEntry.Resource.ResourceType == "Organization" {
+			addressMapArr := bundleEntry.Resource.Address.([]interface{})
+			for _, address := range addressMapArr {
+				addressMap := address.(map[string]interface{})
+				postalCode, ok := addressMap["postalCode"].(string)
+				if ok {
+					organizationZip[bundleEntry.Resource.OrgId] = postalCode
+				}
+			}
+		}
 	}
 
 	for _, bundleEntry := range structBundle.Entries {
@@ -72,6 +93,25 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 					}
 				} else {
 					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
+				}
+
+				orgZipAdded := false
+
+				for _, org := range bundleEntry.Resource.Orgs {
+					if len(org.Address) > 0 {
+						address := org.Address[0]
+						if address.PostalCode != "" {
+							entry.OrganizationZipCode = address.PostalCode
+							orgZipAdded = true
+						}
+					}
+
+					if !orgZipAdded && len(organizationZip) > 0 {
+						postalCode, ok := organizationZip[org.Id]
+						if ok {
+							entry.OrganizationZipCode = postalCode
+						}
+					}
 				}
 
 				lanternEntryList = append(lanternEntryList, entry)

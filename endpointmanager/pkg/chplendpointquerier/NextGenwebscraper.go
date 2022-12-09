@@ -26,14 +26,17 @@ func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 				tableEntries := rowbodyhtml.Find("td")
 				if tableEntries.Length() > 0 {
 					organizationName := strings.TrimSpace(tableEntries.Eq(1).Text())
+					zipCode := strings.TrimSpace(tableEntries.Eq(5).Text())
 					DSTU2URL := strings.TrimSpace(tableEntries.Eq(6).Text())
 					R4URL := strings.TrimSpace(tableEntries.Eq(7).Text())
 
 					entryDSTU2.OrganizationName = organizationName
 					entryDSTU2.URL = DSTU2URL
+					entryDSTU2.OrganizationZipCode = zipCode
 
 					entryR4.OrganizationName = organizationName
 					entryR4.URL = R4URL
+					entryR4.OrganizationZipCode = zipCode
 
 					lanternEntryList = append(lanternEntryList, entryDSTU2, entryR4)
 				}
