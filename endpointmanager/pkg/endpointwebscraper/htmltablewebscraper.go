@@ -6,6 +6,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 
+	"regexp"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -27,6 +29,19 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 					if indextr != 1 {
 						entry.OrganizationName = strings.TrimSpace(tableEntries.Eq(0).Text())
 						entry.URL = strings.TrimSpace(tableEntries.Eq(1).Text())
+
+						zipCodeText := strings.TrimSpace(tableEntries.Eq(2).Text())
+						if zipCodeText != "" {
+
+							// Remove all other text surrounding zip code number
+							re, err := regexp.Compile(`[^0-9]`)
+							if err != nil {
+								log.Fatal(err)
+							}
+
+							zipCodeNums := re.ReplaceAllString(zipCodeText, "")
+							entry.OrganizationZipCode = strings.TrimSpace(zipCodeNums)
+						}
 						endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, entry)
 					}
 				}
