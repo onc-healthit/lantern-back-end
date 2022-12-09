@@ -103,6 +103,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://digidms.com/documents/DigiDMSFHIR_ServiceURL.pdf",
+		"EndpointName": "DigiDMS, Inc.",
+		"FileName": "DigiDMS_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://ehryourway.com/content/fhir-service-urls.pdf",
 		"EndpointName": "Adaptamed, LLC",
 		"FileName": "Adaptamed_LLC_EndpointSources.json"
@@ -163,6 +169,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://www.mdlogic.com/solutions/standard-api-documentation",
+		"EndpointName": "MD Logic, Inc.",
+		"FileName": "MD_Logic_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv",
 		"EndpointName": "Health Care 2000, Inc.",
 		"FileName": "Health_Care_2000_Inc_EndpointSources.json"
@@ -196,6 +208,12 @@
 		"URL": "https://bill.medgenehr.com:7043/fhir/.well-known/smart-configuration",
 		"EndpointName": "Comtron Inc.",
 		"FileName": "Comtron_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://micromddev.dynamicfhir.com/fhir/r4/endpoints",
+		"EndpointName": "Henry Schein Medical Systems",
+		"FileName": "Henry_Schein_Medical_Systems_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -235,6 +253,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://atlas-docs-dev.patientmedrecords.com/endpoints",
+		"EndpointName": "Office Practicum",
+		"FileName": "Office_Practicum_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.open-emr.org/wiki/index.php/OpenEMR_7.0.0_API",
 		"EndpointName": "OpenEMR Foundation",
 		"FileName": "OpenEMR_Foundation_EndpointSources.json"
@@ -262,6 +286,12 @@
 		"URL": "https://hag-fhir.amazingcharts.com/pc/endpoints",
 		"EndpointName": "Doc-tor.com",
 		"FileName": "Doctorcom_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.practicefusion.com/assets/static_files/ServiceBaseURLs.json",
+		"EndpointName": "Practice Fusion",
+		"FileName": "Practice_Fusion_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -298,6 +328,12 @@
 		"URL": "https://www.ihs.gov/cis/",
 		"EndpointName": "Indian Health Service",
 		"FileName": "Indian_Health_Service_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html",
+		"EndpointName": "SmileCDR",
+		"FileName": "SmileCDR_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -424,6 +460,12 @@
 		"URL": "https://gsehrwebapi.geniussolutions.com/Help/html/ServiceUrl.html",
 		"EndpointName": "Genius Solutions Inc.",
 		"FileName": "Genius_Solutions_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.modmed.com/public-api/",
+		"EndpointName": "Modernizing Medicine Gastroenterology, Inc.",
+		"FileName": "Modernizing_Medicine_Gastroenterology_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

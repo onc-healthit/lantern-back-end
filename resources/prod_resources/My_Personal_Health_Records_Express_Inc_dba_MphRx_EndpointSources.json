@@ -3,7 +3,8 @@
 		{
 			"URL": "atdevportal.mphrx.com/minerva/fhir/r4/",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

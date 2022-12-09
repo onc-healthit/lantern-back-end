@@ -3,37 +3,44 @@
 		{
 			"URL": "https://hcfl.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "Holy Cross in Florida - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://sepa.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "Mercy Health System in Pennsylvania - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "19428"
 		},
 		{
 			"URL": "https://sphsma.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "Mercy Medical Center in Massachusetts - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "01102"
 		},
 		{
 			"URL": "https://spny.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "St Peter's Health Partners in New York - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "12208"
 		},
 		{
 			"URL": "https://sfnj.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "St. Francis in New Jersey - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "08629"
 		},
 		{
 			"URL": "https://smpa.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "St. Mary Medical Center in Pennsylvania - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "19047"
 		},
 		{
 			"URL": "https://smga.patient.trinity-health.org/api/fhir",
 			"OrganizationName": "St. Mary's in Athens, Georgia - Trinity Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "30606"
 		}
 	]
 }

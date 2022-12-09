@@ -3,52 +3,62 @@
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0011",
 			"OrganizationName": "360care Of Alabama",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "",
 			"OrganizationName": "360care Of Alabama",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0020",
 			"OrganizationName": "360care Of Delaware",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "",
 			"OrganizationName": "360care Of Delaware",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0003",
 			"OrganizationName": "360care Of Georgia",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "",
 			"OrganizationName": "360care Of Georgia",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0004",
 			"OrganizationName": "360care Of Indiana",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "436979614"
 		},
 		{
 			"URL": "",
 			"OrganizationName": "360care Of Indiana",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "436979614"
 		},
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0007",
 			"OrganizationName": "360care Of Kansas",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		},
 		{
 			"URL": "",
 			"OrganizationName": "360care Of Kansas",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "402432404"
 		}
 	]
 }

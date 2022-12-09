@@ -3,12 +3,14 @@
 		{
 			"URL": "https://api.prod.1life.com/fhir/4.0",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.prod.1life.com/fhir/chirp/4.0",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

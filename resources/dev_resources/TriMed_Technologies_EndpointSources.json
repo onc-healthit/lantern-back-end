@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhir.trimed.cloud",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

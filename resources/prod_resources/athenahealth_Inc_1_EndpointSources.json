@@ -3,17 +3,26 @@
 		{
 			"URL": "https://agpmiasrv.genesismedical.org:9443/gmaAPIServer/fhir/r4",
 			"OrganizationName": "Genesis",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://guthrie.vowaz.com:9443/guthrieAPIServer/fhir/r4",
 			"OrganizationName": "Debra Guthrie, MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ciocca.vowaz.com:9443/cioccaAPIServer/fhir/r4",
 			"OrganizationName": "Joseph J. Ciocca, MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
+			"OrganizationName": "AHG",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://10.218.32.142/demoAPIServer/fhir/r4",
@@ -33,7 +42,8 @@
 		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://cssecure.xlcon.com:9443/centricitypsAPIServer/fhir/r4",
@@ -43,17 +53,20 @@
 		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://bustleton.vowaz.com:9443/bustletonAPIServer/fhir/r4",
 			"OrganizationName": "Bustleton Gastroenterology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://jbosstrnpapp02.vhpads.com:9443/ahgtraining_mmAPIServer/fhir/r4",
 			"OrganizationName": "Self",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://berks.vowaz.com:9443/berksliveAPIServer/fhir/r4",
@@ -63,12 +76,14 @@
 		{
 			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-mlAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-tutAPIServer/fhir/r4",
 			"OrganizationName": "athenaflow",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }
