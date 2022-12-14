@@ -1,10 +1,10 @@
 package endpointmanager
 
 import (
+	"sort"
 	"strings"
 	"time"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/versionsoperatorparser"
 )
 
@@ -14,14 +14,21 @@ import (
 // capability statement found at that endpoint as well as information
 // discovered about the IP address of the endpoint.
 type FHIREndpoint struct {
-	ID                int
-	URL               string
-	OrganizationNames []string
-	NPIIDs            []string
-	ListSource        string
-	VersionsResponse  versionsoperatorparser.VersionsResponse
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	ID               int
+	URL              string
+	OrgDatabaseMapID int
+	OrganizationList []*FHIREndpointOrganization
+	ListSource       string
+	VersionsResponse versionsoperatorparser.VersionsResponse
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+}
+
+type FHIREndpointOrganization struct {
+	ID                  int
+	OrganizationName    string
+	OrganizationZipCode string
+	OrganizationNPIID   string
 }
 
 // Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -37,16 +44,61 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 	if e.URL != e2.URL {
 		return false
 	}
-	if !helpers.StringArraysEqual(e.OrganizationNames, e2.OrganizationNames) {
-		return false
-	}
-	if !helpers.StringArraysEqual(e.NPIIDs, e2.NPIIDs) {
-		return false
-	}
 	if !e.VersionsResponse.Equal(e2.VersionsResponse) {
 		return false
 	}
 	if e.ListSource != e2.ListSource {
+		return false
+	}
+
+	if !organizationListEquals(e.OrganizationList, e2.OrganizationList) {
+		return false
+	}
+
+	return true
+}
+
+func organizationListEquals(orgList1 []*FHIREndpointOrganization, orgList2 []*FHIREndpointOrganization) bool {
+
+	if len(orgList1) != len(orgList2) {
+		return false
+	}
+
+	sort.Slice(orgList1, func(i, j int) bool {
+		return orgList1[i].OrganizationName < orgList1[j].OrganizationName
+	})
+	sort.Slice(orgList2, func(i, j int) bool {
+		return orgList2[i].OrganizationName < orgList2[j].OrganizationName
+	})
+
+	for i := 0; i < len(orgList1); i++ {
+		equals := orgList1[i].Equal(orgList2[i])
+		if !equals {
+			return false
+		}
+	}
+
+	return true
+
+}
+
+// Equal checks each field of the two FHIREndpointOrganizations except for the database ID to see if they are equal.
+func (o *FHIREndpointOrganization) Equal(o2 *FHIREndpointOrganization) bool {
+	if o == nil && o == nil {
+		return true
+	} else if o == nil {
+		return false
+	} else if o == nil {
+		return false
+	}
+
+	if o.OrganizationName != o.OrganizationName {
+		return false
+	}
+	if o.OrganizationZipCode != o.OrganizationZipCode {
+		return false
+	}
+	if o.OrganizationNPIID != o.OrganizationNPIID {
 		return false
 	}
 
@@ -78,18 +130,25 @@ func NormalizeEndpointURL(url string) string {
 	return normalized
 }
 
-// AddOrganizationName adds the name to the endpoint's OrganizationNames list if it's not present already. If it is, it does nothing.
-func (e *FHIREndpoint) AddOrganizationName(orgName string) {
-	if !helpers.StringArrayContains(e.OrganizationNames, orgName) {
-		e.OrganizationNames = append(e.OrganizationNames, orgName)
-	}
-}
+// AddOrganization adds the Organizations to the endpoint's Organization list if they are not present already, and returns all the organizations that need to be added to the db.
+func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
 
-// AddNPIID adds the name to the endpoint's NPIIDs list if it's not present already. If it is, it does nothing.
-func (e *FHIREndpoint) AddNPIID(npiID string) {
-	if !helpers.StringArrayContains(e.NPIIDs, npiID) {
-		e.NPIIDs = append(e.NPIIDs, npiID)
+	var newOrganizations []*FHIREndpointOrganization
+	for _, o := range orgList {
+		for _, org := range e.OrganizationList {
+			if org.OrganizationName != o.OrganizationName || org.OrganizationNPIID != o.OrganizationNPIID || org.OrganizationZipCode != o.OrganizationZipCode {
+				organizationEntry := FHIREndpointOrganization{
+					OrganizationName:    o.OrganizationName,
+					OrganizationZipCode: o.OrganizationNPIID,
+					OrganizationNPIID:   o.OrganizationZipCode,
+				}
+
+				e.OrganizationList = append(e.OrganizationList, &organizationEntry)
+				newOrganizations = append(newOrganizations, &organizationEntry)
+			}
+		}
 	}
+	return newOrganizations
 }
 
 // Prepends url with https:// and appends with .well-know/smart-configuration/ if needed

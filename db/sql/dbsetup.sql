@@ -150,13 +150,25 @@ CREATE TABLE certification_criteria (
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
-    organization_names      VARCHAR(500)[],
-    npi_ids                 VARCHAR(500)[],
+    org_database_map_id     INT, -- should link to fhir_endpoint_organizations_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key
     list_source             VARCHAR(500),
     versions_response       JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
+);
+
+CREATE TABLE fhir_endpoint_organizations_map (
+    id SERIAL,
+    org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
+);
+
+CREATE TABLE fhir_endpoint_organizations (
+    id                      SERIAL PRIMARY KEY,
+    organization_name       VARCHAR(500),
+    organization_zipcode    VARCHAR(500),
+    organization_npi_id    VARCHAR(500),
+    npi_id                  VARCHAR(500)
 );
 
 CREATE TABLE fhir_endpoints_metadata (
