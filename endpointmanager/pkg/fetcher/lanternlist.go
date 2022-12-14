@@ -25,12 +25,17 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 			}
 			orgName, orgOk := lanternList[entry]["OrganizationName"].(string)
 			if orgOk {
-				fhirEntry.OrganizationNames = []string{orgName}
+				fhirEntry.OrganizationName = orgName
 			}
 			npiID, npiIDOk := lanternList[entry]["NPIID"].(string)
 			if npiIDOk {
-				fhirEntry.NPIIDs = []string{npiID}
+				fhirEntry.NPIID = npiID
 			}
+			zipCode, zipCodeOk := lanternList[entry]["OrganizationZipCode"].(string)
+			if zipCodeOk {
+				fhirEntry.OrganizationZipCode = zipCode
+			}
+
 			innerList = append(innerList, fhirEntry)
 		} else {
 			log.Warnf("No URL field in Lantern list. Returning an empty list of entries.")
