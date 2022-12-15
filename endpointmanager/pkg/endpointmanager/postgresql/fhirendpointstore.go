@@ -71,7 +71,7 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 
 // GetFHIREndpointOrganizations returns a list of all of the FHIR organizations for the FHIR endpoint
 func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int) ([]*endpointmanager.FHIREndpointOrganization, error) {
-	var organizationsList []endpointmanager.FHIREndpointOrganization
+	var organizationsList []*endpointmanager.FHIREndpointOrganization
 
 	orgRow, err := getFHIREndpointOrganizationsByMapID.QueryContext(ctx, org_map_id)
 	if err != nil {
@@ -328,10 +328,13 @@ func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanage
 					e.OrgDatabaseMapID = databaseMapID
 				}
 			} else {
-				for _, NPIID := range e.NPIIDs {
-					for _, org := range existingEndpt.OrganizationList {
-						if org.OrganizationNPIID == NPIID {
-							s.DeleteFHIREndpointOrganization(ctx, org)
+				for _, org := range e.OrganizationList {
+					for _, existingOrg := range existingEndpt.OrganizationList {
+						if existingOrg.OrganizationNPIID == org.OrganizationNPIID {
+							err = s.DeleteFHIREndpointOrganization(ctx, org)
+							if err != nil {
+								return err
+							}
 						}
 					}
 				}
@@ -409,8 +412,11 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 		org.OrganizationZipCode)
 
 	err = row.Scan(&org.ID)
+	if err != nil {
+		return 0, err
+	}
 
-	orgMapID, err := s.AddFHIREndpointOrganizationMap(org.ID, databaseMapID)
+	orgMapID, err := s.AddFHIREndpointOrganizationMap(ctx, org.ID, databaseMapID)
 	if err != nil {
 		return 0, err
 	}
