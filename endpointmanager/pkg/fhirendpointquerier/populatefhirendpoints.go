@@ -26,6 +26,21 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 			// ok
 		}
 
+		// Add trailing "/" to URIs that do not have it for consistency
+		uri := endpoint.FHIRPatientFacingURI
+		if len(uri) > 0 && uri[len(uri)-1:] != "/" {
+			uri = uri + "/"
+		}
+
+		splitEndpoint := strings.Split(uri, "://")
+		header := "http://"
+
+		if len(splitEndpoint) > 1 {
+			header = strings.ToLower(splitEndpoint[0]) + "://"
+		}
+		uri = header + splitEndpoint[len(splitEndpoint)-1]
+		endpoint.FHIRPatientFacingURI = uri
+
 		err := saveEndpointData(ctx, store, &endpoint)
 		if err != nil {
 			log.Warn(err)
@@ -70,23 +85,9 @@ func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fe
 
 // formatToFHIREndpt takes an entry in the list of endpoints and formats it for the fhir_endpoints table in the database
 func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREndpoint, error) {
-	// Add trailing "/" to URIs that do not have it for consistency
-	uri := endpoint.FHIRPatientFacingURI
-	if len(uri) > 0 && uri[len(uri)-1:] != "/" {
-		uri = uri + "/"
-	}
-
-	splitEndpoint := strings.Split(uri, "://")
-	header := "http://"
-
-	if len(splitEndpoint) > 1 {
-		header = strings.ToLower(splitEndpoint[0]) + "://"
-	}
-	uri = header + splitEndpoint[len(splitEndpoint)-1]
-
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
-		URL:               uri,
+		URL:               endpoint.FHIRPatientFacingURI,
 		OrganizationNames: endpoint.OrganizationNames,
 		ListSource:        endpoint.ListSource,
 		NPIIDs:            endpoint.NPIIDs,

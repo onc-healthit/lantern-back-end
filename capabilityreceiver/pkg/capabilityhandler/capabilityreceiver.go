@@ -297,7 +297,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		if err != nil {
 			return fmt.Errorf("does exist, match endpoint to product failed, %s", err)
 		}
-
+		
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement

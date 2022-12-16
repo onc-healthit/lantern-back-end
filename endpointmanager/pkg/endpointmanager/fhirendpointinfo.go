@@ -7,6 +7,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
+	log "github.com/sirupsen/logrus"
 )
 
 // FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
@@ -77,6 +78,9 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 		return false
 	}
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
+		return false
+	}
+	if e.ValidationID == 0 || e2.ValidationID == 0 {
 		return false
 	}
 	if e.ValidationID != e2.ValidationID {
