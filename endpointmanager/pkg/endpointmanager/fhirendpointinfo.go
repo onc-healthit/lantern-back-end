@@ -7,7 +7,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
-	log "github.com/sirupsen/logrus"
 )
 
 // FHIREndpointInfo represents a fielded FHIR API endpoint hosted by a
