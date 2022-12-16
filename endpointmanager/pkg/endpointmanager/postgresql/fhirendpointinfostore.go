@@ -17,6 +17,7 @@ import (
 var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
 var deleteFHIREndpointInfoStatement *sql.Stmt
+var deleteFHIREndpointInfoOldEntriesStatement *sql.Stmt
 var updateFHIREndpointInfoMetadataStatement *sql.Stmt
 var getFHIREndpointsByURLAndDifferentRequestedVersion *sql.Stmt
 
@@ -492,11 +493,19 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int
 	return err
 }
 
+
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
 	return err
 }
+
+// deleteFHIREndpointInfoOldEntries deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
+func (s *Store) DeleteFHIREndpointInfoOldEntries(ctx context.Context) error {
+	_, err := deleteFHIREndpointInfoOldEntriesStatement.ExecContext(ctx)
+	return err
+}
+
 
 // GetFHIREndpointInfosByURLWithDifferentRequestedVersion gets all FHIREndpointInfo rows for the given url whose RequestedFhirVersion does not exist in the versions list
 func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error) {
@@ -645,6 +654,12 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
         WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	deleteFHIREndpointInfoOldEntriesStatement, err = s.DB.Prepare(`
+		DELETE FROM fhir_endpoints_info 
+		WHERE url NOT IN (SELECT url FROM fhir_endpoints)`)
 	if err != nil {
 		return err
 	}
