@@ -493,7 +493,6 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int
 	return err
 }
 
-
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
 	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
@@ -505,7 +504,6 @@ func (s *Store) DeleteFHIREndpointInfoOldEntries(ctx context.Context) error {
 	_, err := deleteFHIREndpointInfoOldEntriesStatement.ExecContext(ctx)
 	return err
 }
-
 
 // GetFHIREndpointInfosByURLWithDifferentRequestedVersion gets all FHIREndpointInfo rows for the given url whose RequestedFhirVersion does not exist in the versions list
 func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx context.Context, url string, versions []string) ([]*endpointmanager.FHIREndpointInfo, error) {

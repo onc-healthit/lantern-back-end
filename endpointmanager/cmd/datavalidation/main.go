@@ -1,9 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math"
-	"context"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"

@@ -242,7 +242,7 @@ var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
 	SMARTResponseBytes:    []byte("null"),
 	IncludedFields:        testIncludedFields,
 	OperationResource:     testOperations,
-	ValidationID:		   1,
+	ValidationID:          1,
 }
 
 // Convert the test Queue Message into []byte format for testing purposes
@@ -291,7 +291,7 @@ func Test_formatMessage(t *testing.T) {
 	endpt.Metadata.Availability = 1.0
 	// Set the validation ID since the equals function checks if validation ID is null
 	endpt.ValidationID = 1
-	
+
 	th.Assert(t, expectedEndpt.Equal(endpt), fmt.Sprintf("An error was thrown because the endpoints are not equal, \n endpoint 1 %+v, \n endpoint 2 %+v", expectedEndpt, endpt))
 
 	// should not throw error if metadata is not in the URL
