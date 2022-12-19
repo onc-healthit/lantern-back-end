@@ -1,13 +1,13 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
-			"OrganizationName": "Milestone Pediatrics S.C.",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
+			"OrganizationName": "FHIR R4 Production Sandbox EMR",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
-			"OrganizationName": "FHIR R4 Production Sandbox EMR",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
+			"OrganizationName": "Milestone Pediatrics S.C.",
 			"NPIID": ""
 		}
 	]

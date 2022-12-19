@@ -16,6 +16,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
+			"OrganizationName": "AHG",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
 			"NPIID": ""
@@ -33,6 +38,11 @@
 		{
 			"URL": "https://jbosstrnpapp02.vhpads.com:9443/ahgtraining_mmAPIServer/fhir/r4",
 			"OrganizationName": "Self",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://berks.vowaz.com:9443/berksliveAPIServer/fhir/r4",
+			"OrganizationName": "Berks Community Health Center",
 			"NPIID": ""
 		},
 		{

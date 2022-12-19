@@ -1,3 +1,9 @@
 {
-	"Endpoints": null
+	"Endpoints": [
+		{
+			"URL": "https://fhir.qsmartcare.com:2025/v/r4/sim/eyJrIjoiMSIsImoiOiIxIiwiYiI6IjE0ODY4MiJ9/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
 }

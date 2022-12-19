@@ -76,6 +76,11 @@
 			"NPIID": "1811213994"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/30c21525-1706-43eb-b5c9-781ae6fa609f",
+			"OrganizationName": "Clinton Memorial Hospital Regional",
+			"NPIID": "1063713659"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/12661f92-3d2b-4841-a5d9-af30dd2d12f9",
 			"OrganizationName": "Colorado Plains Medical Center",
 			"NPIID": "1477638971"
@@ -124,6 +129,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/011a4a74-dd3f-4ea4-ba83-ca6efe6b6b57",
 			"OrganizationName": "Freestone Medical Center",
 			"NPIID": "1235685892"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/564d0694-b957-4501-bb38-af75e5c6a1f1",
+			"OrganizationName": "Gateway Regional Medical Center",
+			"NPIID": "1083685986"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/076f2d84-f49c-4917-b4e7-787ac8749ee2",
@@ -176,6 +186,11 @@
 			"NPIID": "1992893416"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/5835d96f-3dd1-4c86-9628-965c32b89fbb",
+			"OrganizationName": "Los Alamos Medical Center",
+			"NPIID": "1285701623"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/beaed8fb-4290-470e-a916-04bc154b59cb",
 			"OrganizationName": "Martin General Hospital",
 			"NPIID": "1851362669"
@@ -203,7 +218,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5346a140-60a9-4f8b-a6dd-53496b0e935f",
 			"OrganizationName": "Mercy Regional Medical Center",
-			"NPIID": ""
+			"NPIID": "1407947336"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/449dbf47-4d2e-4092-a418-0c8abd9a8dc1",
@@ -224,6 +239,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d3d9c822-069e-427b-9c55-d626a7a5dd1d",
 			"OrganizationName": "Mountain West Medical Center",
 			"NPIID": "1124090659"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0353e790-399b-4a34-b26a-aaf88db37978",
+			"OrganizationName": "Northeastern Nevada Regional Hospital",
+			"NPIID": "1770674350"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d191002b-0c8e-4cf4-9961-812ba9c00557",
@@ -258,7 +278,12 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b5428f65-d51d-466e-858b-7157212cbca8",
 			"OrganizationName": "Sabine Medical Center",
-			"NPIID": ""
+			"NPIID": "1568626273"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/400c346b-db8c-4fe4-81d3-fc94d7e9bf90",
+			"OrganizationName": "SageWest Health Care",
+			"NPIID": "1245337286"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d255b42f-6d24-4c06-b9cb-4bec724563ac",

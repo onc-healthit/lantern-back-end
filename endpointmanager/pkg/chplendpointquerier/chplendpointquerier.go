@@ -140,11 +140,11 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == zhhealthcareURL {
 		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == qualifactsURL {
-		QualifactsWebscraper("https://qualifacts.com/API-Page/_downloads/insync-fhir-org-list.json", fileToWriteTo)
+		QualifactsWebscraper("https://qualifacts.com/api-page/_downloads/insync-fhir-org-list.json", fileToWriteTo)
 	} else if chplURL == medinfoengineeringURL {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == emedpracticeURL {
-		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+		eMedPracticeWebscraper(emedpracticeURL, fileToWriteTo)
 	} else if chplURL == relimedsolutionsURL {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3)
 	} else if chplURL == eclinicalworksURL{
