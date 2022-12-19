@@ -3,8 +3,7 @@
 		{
 			"URL": "https://demo.interopx.com/InteropXFHIR/fhir",
 			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
+			"NPIID": ""
 		}
 	]
 }

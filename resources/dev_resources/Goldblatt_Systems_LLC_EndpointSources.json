@@ -3,14 +3,12 @@
 		{
 			"URL": "https://fhir.csn.health/gs-fhir-domain-server/fhir-api/r4",
 			"OrganizationName": "CSN FHIR Server",
-			"NPIID": "",
-			"OrganizationZipCode": ""
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir-test.csn.health/gs-fhir-domain-server/fhir-api/r4",
 			"OrganizationName": "CSN FHIR Test Server",
-			"NPIID": "",
-			"OrganizationZipCode": ""
+			"NPIID": ""
 		}
 	]
 }
