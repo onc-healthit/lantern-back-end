@@ -25,7 +25,7 @@ func ZHHealthcareWebscraper(chplURL string, fileToWriteTo string) {
 					tableEntries := trElem.Find("td")
 					if tableEntries.Length() > 0 {
 						fhirURL := strings.TrimSpace(tableEntries.Eq(1).Text())
-						
+
 						entry.URL = fhirURL
 
 						lanternEntryList = append(lanternEntryList, entry)

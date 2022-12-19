@@ -25,7 +25,7 @@ func IntegraConnectWebscraper(CHPLURL string, fileToWriteTo string) {
 				tableEntries := rowbodyhtml.Find("td")
 				if tableEntries.Length() > 0 {
 					organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
-					
+
 					aElemURL := tableEntries.Eq(1).Find("a")
 					hrefText, exists := aElemURL.Eq(0).Attr("href")
 					if exists {

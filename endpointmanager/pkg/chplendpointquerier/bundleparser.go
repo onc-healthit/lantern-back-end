@@ -15,11 +15,11 @@ type BundleEntry struct {
 }
 
 type BundleResource struct {
-	URL         interface{}               `json:"address"`
-	Name        string               `json:"name"`
-	ManagingOrg ManagingOrgReference `json:"managingOrganization"`
-	Orgs        []Organization       `json:"contained"`
-	ResourceType string				`json:"resourceType"`
+	URL          interface{}          `json:"address"`
+	Name         string               `json:"name"`
+	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
+	Orgs         []Organization       `json:"contained"`
+	ResourceType string               `json:"resourceType"`
 }
 
 type ManagingOrgReference struct {

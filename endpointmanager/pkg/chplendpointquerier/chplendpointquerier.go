@@ -147,26 +147,26 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		eMedPracticeWebscraper(emedpracticeURL, fileToWriteTo)
 	} else if chplURL == relimedsolutionsURL {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3)
-	} else if chplURL == eclinicalworksURL{
+	} else if chplURL == eclinicalworksURL {
 		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
-	} else if chplURL == integraconnectURL{
+	} else if chplURL == integraconnectURL {
 		IntegraConnectWebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == streamlinemdURL{
+	} else if chplURL == streamlinemdURL {
 		StreamlineMDCSVParser(chplURL, fileToWriteTo)
-	} else if chplURL == bridgepatientportalURL{
+	} else if chplURL == bridgepatientportalURL {
 		BridgePatientPortalWebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == medicalmineURL{
+	} else if chplURL == medicalmineURL {
 		MedicalMineWebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == modernizingmedicineURL{
+	} else if chplURL == modernizingmedicineURL {
 		ModernizingMedicineQuerier("qa.fhir.ema-api.com/fhir/r4/Endpoint?connection-type=hl7-fhir-rest", fileToWriteTo)
-	} else if chplURL == doc_torURL{
-		BundleQuerierParser(chplURL + "/r4", fileToWriteTo)
-	} else if chplURL == microfourURL{
+	} else if chplURL == doc_torURL {
+		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
+	} else if chplURL == microfourURL {
 		MicroFourWebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == magilenenterprisesURL{
+	} else if chplURL == magilenenterprisesURL {
 		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
-	} 
-	
+	}
+
 }
 
 // WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory

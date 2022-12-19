@@ -6,7 +6,7 @@ import (
 )
 
 func AlteraQuerier(chplURL string, fileToWriteTo string) {
-	DSTU2URL :=  chplURL + "/download/DSTU2"
+	DSTU2URL := chplURL + "/download/DSTU2"
 	R4URL := chplURL + "/download/R4"
 
 	var endpointEntryList EndpointList

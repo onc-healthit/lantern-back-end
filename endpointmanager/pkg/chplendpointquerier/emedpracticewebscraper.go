@@ -3,9 +3,9 @@ package chplendpointquerier
 import (
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"github.com/PuerkitoBio/goquery"
 )
 
 func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
@@ -17,7 +17,6 @@ func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	doc.Find("#OverView").Each(func(index int, overviewElems *goquery.Selection) {
 		overviewElems.Find("pre").Each(func(preIndex int, preElems *goquery.Selection) {
