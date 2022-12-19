@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "AVENUES CANCER CARE INSTITUTE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ADVANCED CARDIOVASCULAR INSTITUTE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ADVANCED COMPREHENSIVE PAIN MGT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "RISI EHR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ANESTHESIA PAIN CARE CONSULTANTS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ANNETTE P MEADOR, MD P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "Advanced Pain Management Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "AKRON RADIOLOGY INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ARMSTRONG NEUROLOGY PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
+			"OrganizationName": "ADVANCED VASCULAR CENTERS EUGENE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

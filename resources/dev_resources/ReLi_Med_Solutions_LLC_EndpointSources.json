@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.relimedsolutions.com.com:9443/fhir-server/api/v4/",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

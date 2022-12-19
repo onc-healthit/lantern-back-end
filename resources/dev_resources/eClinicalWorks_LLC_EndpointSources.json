@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
+			"OrganizationName": "Milestone Pediatrics S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "53226"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
+			"OrganizationName": "FHIR R4 Production Sandbox EMR",
+			"NPIID": "",
+			"OrganizationZipCode": "01581"
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://api-datamanager.development.carecloud.com:8081/api/fhir/R4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

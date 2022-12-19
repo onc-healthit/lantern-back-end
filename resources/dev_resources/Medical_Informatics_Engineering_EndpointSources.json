@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://maui.webchartnow.com/webchart.cgi/fhir/",
+			"OrganizationName": "Maui Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fax2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Fax Test2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://uro.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Urology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://laser.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Laser",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fax3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Fax Test 3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://zzy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "zzy",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://zyy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "ZYY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://zopth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "zophth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://maverick.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Mavericks EMAzing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://m2qatest01.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "ema 01 test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://zyx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "zyx",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
