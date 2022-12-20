@@ -73,6 +73,9 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 // GetFHIREndpointOrganizations returns a list of all of the FHIR organizations for the FHIR endpoint
 func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int) ([]*endpointmanager.FHIREndpointOrganization, error) {
 	var organizationsList []*endpointmanager.FHIREndpointOrganization
+	var organizationName sql.NullString
+	var organizationNPIID sql.NullString
+	var organizationZipCode sql.NullString
 
 	orgRow, err := getFHIREndpointOrganizationsByMapID.QueryContext(ctx, org_map_id)
 	if err != nil {
@@ -83,12 +86,31 @@ func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int
 		var organization endpointmanager.FHIREndpointOrganization
 		err = orgRow.Scan(
 			&organization.ID,
-			&organization.OrganizationName,
-			&organization.OrganizationZipCode,
-			&organization.OrganizationNPIID)
+			&organizationName,
+			&organizationZipCode,
+			&organizationNPIID)
 		if err != nil {
 			return nil, err
 		}
+
+		if !organizationName.Valid {
+			organization.OrganizationName = ""
+		} else {
+			organization.OrganizationName = organizationName.String
+		}
+
+		if !organizationZipCode.Valid {
+			organization.OrganizationZipCode = ""
+		} else {
+			organization.OrganizationZipCode = organizationZipCode.String
+		}
+
+		if !organizationNPIID.Valid {
+			organization.OrganizationNPIID = ""
+		} else {
+			organization.OrganizationNPIID = organizationNPIID.String
+		}
+		
 		organizationsList = append(organizationsList, &organization)
 	}
 	return organizationsList, nil
