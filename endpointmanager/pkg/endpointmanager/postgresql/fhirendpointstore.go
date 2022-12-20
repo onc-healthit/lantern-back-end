@@ -562,7 +562,7 @@ func prepareFHIREndpointStatements(s *Store) error {
 			org_database_map_id = $2,
 			list_source = $3,
 			versions_response = $4
-		WHERE id = $6`)
+		WHERE id = $5`)
 	if err != nil {
 		return err
 	}

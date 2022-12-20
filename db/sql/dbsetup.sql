@@ -340,7 +340,7 @@ FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
 CREATE or REPLACE VIEW endpoint_export AS
-SELECT endpts.url, endpts.list_source, endpts.organization_names AS endpoint_names,
+SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
@@ -359,10 +359,14 @@ FROM fhir_endpoints AS endpts
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
+LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
+FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
+WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
+GROUP BY fom.id) as endpt_orgnames ON endpts.org_database_map_id = endpt_orgnames.id
 LEFT JOIN list_source_info ON endpts.list_source = list_source_info.list_source;
 
 CREATE or REPLACE VIEW organization_location AS
-    SELECT endpts.url, endpts.organization_names AS endpoint_names, endpts_info.capability_fhir_version AS FHIR_VERSION, 
+    SELECT endpts.url, endpt_orgnames.organization_names AS endpoint_names, endpts_info.capability_fhir_version AS FHIR_VERSION, 
     endpts_info.requested_fhir_version, vendors.name as vendor_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
     orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, orgs.npi_id as NPI_ID,
     links.confidence AS MATCH_SCORE
@@ -371,6 +375,10 @@ RIGHT JOIN fhir_endpoints AS endpts ON links.url = endpts.url
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url   
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id
+LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
+FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
+WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
+GROUP BY fom.id) as endpt_orgnames ON endpts.org_database_map_id = endpt_orgnames.id
 WHERE links.confidence > .97 AND orgs.Location->>'zipcode' IS NOT null;
 
 CREATE INDEX fhir_endpoints_url_idx ON fhir_endpoints (url);
