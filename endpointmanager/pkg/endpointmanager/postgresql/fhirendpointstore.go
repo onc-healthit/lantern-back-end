@@ -442,13 +442,13 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 }
 
 // AddFHIREndpointOrganizationMap creates a new ID for all the FHIR endpoint organizations for a particular endpoint and returns it
-func (s *Store) AddFHIREndpointOrganizationMap(ctx context.Context, id int, OrgDatabaseMapID int) (int, error) {
+func (s *Store) AddFHIREndpointOrganizationMap(ctx context.Context, orgID int, OrgDatabaseMapID int) (int, error) {
 	var err error
 	var organizationMapRow *sql.Row
-	if id == 0 {
-		organizationMapRow = addFHIREndpointOrganizationMapStatementNoId.QueryRowContext(ctx, OrgDatabaseMapID)
+	if orgID == 0 {
+		organizationMapRow = addFHIREndpointOrganizationMapStatementNoId.QueryRowContext(ctx, orgID)
 	} else {
-		organizationMapRow = addFHIREndpointOrganizationMapStatement.QueryRowContext(ctx, id, OrgDatabaseMapID)
+		organizationMapRow = addFHIREndpointOrganizationMapStatement.QueryRowContext(ctx, OrgDatabaseMapID, orgID)
 	}
 	orgMapID := 0
 	err = organizationMapRow.Scan(&orgMapID)
