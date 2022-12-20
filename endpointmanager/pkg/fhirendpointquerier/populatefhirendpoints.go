@@ -117,7 +117,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
 		URL:              uri,
-		OrganizationList: []endpointmanager.FHIREndpointOrganization{dbOrgEntry},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{&dbOrgEntry},
 		ListSource:       endpoint.ListSource,
 	}
 

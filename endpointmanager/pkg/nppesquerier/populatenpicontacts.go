@@ -236,15 +236,18 @@ func ParseAndStoreNPIContactsFile(ctx context.Context, fname string, store *post
 			}
 			// If contact has a valid URL, add to our fhir endpoints table, source list is NPPES
 			if npiContact.ValidURL {
+				var fhirEndpointOrganization endpointmanager.FHIREndpointOrganization
+				
 				var fhirEndpoint = &endpointmanager.FHIREndpoint{
 					URL:        npiContact.Endpoint,
 					ListSource: "NPPES"}
 				if npiContact.AffiliationLegalBusinessName != "" {
-					fhirEndpoint.OrganizationNames = []string{npiContact.AffiliationLegalBusinessName}
+					fhirEndpointOrganization.OrganizationName = npiContact.AffiliationLegalBusinessName
 				}
 				if npiContact.NPI_ID != "" {
-					fhirEndpoint.NPIIDs = []string{npiContact.NPI_ID}
+					fhirEndpointOrganization.OrganizationNPIID = npiContact.NPI_ID
 				}
+				fhirEndpoint.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&fhirEndpointOrganization}
 				err = store.AddOrUpdateFHIREndpoint(ctx, fhirEndpoint)
 				if err != nil {
 					log.Error(err)

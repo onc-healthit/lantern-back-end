@@ -158,17 +158,17 @@ CREATE TABLE fhir_endpoints (
     CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
 );
 
-CREATE TABLE fhir_endpoint_organizations_map (
-    id SERIAL,
-    org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
-);
-
 CREATE TABLE fhir_endpoint_organizations (
     id                      SERIAL PRIMARY KEY,
     organization_name       VARCHAR(500),
     organization_zipcode    VARCHAR(500),
     organization_npi_id    VARCHAR(500),
     npi_id                  VARCHAR(500)
+);
+
+CREATE TABLE fhir_endpoint_organizations_map (
+    id SERIAL,
+    org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
 );
 
 CREATE TABLE fhir_endpoints_metadata (

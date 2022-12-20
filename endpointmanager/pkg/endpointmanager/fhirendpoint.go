@@ -64,12 +64,8 @@ func organizationListEquals(orgList1 []*FHIREndpointOrganization, orgList2 []*FH
 		return false
 	}
 
-	sort.Slice(orgList1, func(i, j int) bool {
-		return orgList1[i].OrganizationName < orgList1[j].OrganizationName
-	})
-	sort.Slice(orgList2, func(i, j int) bool {
-		return orgList2[i].OrganizationName < orgList2[j].OrganizationName
-	})
+	sortOrganizationList(orgList1)
+	sortOrganizationList(orgList2)
 
 	for i := 0; i < len(orgList1); i++ {
 		equals := orgList1[i].Equal(orgList2[i])
@@ -130,12 +126,18 @@ func NormalizeEndpointURL(url string) string {
 	return normalized
 }
 
-// AddOrganization adds the Organizations to the endpoint's Organization list if they are not present already, and returns all the organizations that need to be added to the db.
+// OrganizationsToAdd adds the Organizations to the endpoint's Organization list if they are not present already, and returns all the organizations that need to be added to the db.
 func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
 
+	newOrgList := orgList
+	existingOrgList := e.OrganizationList
+	
+	sortOrganizationList(newOrgList)
+	sortOrganizationList(existingOrgList)
+
 	var newOrganizations []*FHIREndpointOrganization
-	for _, o := range orgList {
-		for _, org := range e.OrganizationList {
+	for _, o := range newOrgList {
+		for _, org := range existingOrgList {
 			if org.OrganizationName != o.OrganizationName || org.OrganizationNPIID != o.OrganizationNPIID || org.OrganizationZipCode != o.OrganizationZipCode {
 				organizationEntry := FHIREndpointOrganization{
 					OrganizationName:    o.OrganizationName,
@@ -149,6 +151,33 @@ func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) [
 		}
 	}
 	return newOrganizations
+}
+
+// OrganizationsToRemove removes the Organizations to the endpoint's Organization list if they are not present in the new list, and returns all the organizations that need to be removed from the db.
+func (e *FHIREndpoint) OrganizationsToRemove(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
+	newOrgList := orgList
+	existingOrgList := e.OrganizationList
+	
+	sortOrganizationList(newOrgList)
+	sortOrganizationList(existingOrgList)
+
+	var oldOrganizations []*FHIREndpointOrganization
+	for _, org := range existingOrgList {
+		for index, o := range newOrgList {
+			if org.OrganizationName != o.OrganizationName || org.OrganizationNPIID != o.OrganizationNPIID || org.OrganizationZipCode != o.OrganizationZipCode {
+				e.OrganizationList = append(e.OrganizationList[:index], e.OrganizationList[index+1:]...)
+				oldOrganizations = append(oldOrganizations, org)
+			}
+		}
+	}
+	return oldOrganizations
+}
+
+// Function that sorts an endpoint's list of Organizations
+func sortOrganizationList(orgList []*FHIREndpointOrganization) {
+	sort.Slice(orgList, func(i, j int) bool {
+		return orgList[i].OrganizationName < orgList[j].OrganizationName
+	})
 }
 
 // Prepends url with https:// and appends with .well-know/smart-configuration/ if needed

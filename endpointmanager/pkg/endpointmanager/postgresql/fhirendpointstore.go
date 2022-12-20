@@ -21,6 +21,7 @@ var deleteFHIREndpointOrganizationStatement *sql.Stmt
 var addFHIREndpointOrganizationMapStatementNoId *sql.Stmt
 var addFHIREndpointOrganizationMapStatement *sql.Stmt
 var getFHIREndpointOrganizationsByMapID *sql.Stmt
+var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -371,6 +372,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 		// Merge new data with old data
 		// Org names NPI IDs Org Zipcodes and VersionsResponse only possible new data
 		newOrgs := existingEndpt.OrganizationsToAdd(e.OrganizationList)
+		oldOrgs := existingEndpt.OrganizationsToRemove(e.OrganizationList)
 
 		for _, org := range newOrgs {
 			databaseMapID, err := s.AddFHIREndpointOrganization(ctx, org, e.OrgDatabaseMapID)
@@ -378,6 +380,13 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 				return errors.Wrap(err, "adding fhir endpoint organizations to store failed")
 			}
 			e.OrgDatabaseMapID = databaseMapID
+		}
+
+		for _, org := range oldOrgs {
+			err := s.DeleteFHIREndpointOrganization(ctx, org)
+			if err != nil {
+				return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
+			}
 		}
 
 		existingEndpt.VersionsResponse = e.VersionsResponse
@@ -392,6 +401,14 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 // AddFHIREndpoint adds the FHIREndpoint to the database.
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
+
+	for _, org := range e.OrganizationList {
+		databaseMapID, err := s.AddFHIREndpointOrganization(ctx, org, e.OrgDatabaseMapID)
+		if err != nil {
+			return errors.Wrap(err, "adding fhir endpoint to store failed")
+		}
+		e.OrgDatabaseMapID = databaseMapID
+	}
 
 	row := addFHIREndpointStatement.QueryRowContext(ctx,
 		e.URL,
@@ -444,6 +461,8 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	var err error
 	var versionsResponseJSON []byte
 
+	existingEndpt, err := s.GetFHIREndpointUsingURLAndListSource(ctx, e.URL, e.ListSource)
+
 	if e.VersionsResponse.Response != nil {
 		versionsResponseJSON, err = e.VersionsResponse.GetJSON()
 		if err != nil {
@@ -451,6 +470,24 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		}
 	} else {
 		versionsResponseJSON = []byte("null")
+	}
+
+	newOrgs := existingEndpt.OrganizationsToAdd(e.OrganizationList)
+	oldOrgs := existingEndpt.OrganizationsToRemove(e.OrganizationList)
+
+	for _, org := range newOrgs {
+		databaseMapID, err := s.AddFHIREndpointOrganization(ctx, org, e.OrgDatabaseMapID)
+		if err != nil {
+			return errors.Wrap(err, "adding fhir endpoint organizations to store failed")
+		}
+		e.OrgDatabaseMapID = databaseMapID
+	}
+
+	for _, org := range oldOrgs {
+		err := s.DeleteFHIREndpointOrganization(ctx, org)
+		if err != nil {
+			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
+		}
 	}
 
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
@@ -465,14 +502,36 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpoint deletes the FHIREndpoint from the database using the FHIREndpoint's database id  as the key.
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+
 	_, err := deleteFHIREndpointStatement.ExecContext(ctx, e.ID)
 
+	err = s.DeleteFHIREndpointOrganizationMap(ctx, e)
 	return err
 }
 
 // DeleteFHIREndpointOrganization deletes the FHIREndpoint Organization from the database using the Organization's database id  as the key.
 func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointmanager.FHIREndpointOrganization) error {
 	_, err := deleteFHIREndpointOrganizationStatement.ExecContext(ctx, o.ID)
+
+	return err
+}
+
+// DeleteFHIREndpointOrganization deletes the FHIREndpoint Organization from the database using the Organization's database id  as the key.
+func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+	
+	organizationsList, err := s.GetFHIREndpointOrganizations(ctx, e.OrgDatabaseMapID)
+	if err != nil {
+		return err
+	}
+
+	for _, org := range organizationsList {
+		err := s.DeleteFHIREndpointOrganization(ctx, org)
+		if err != nil {
+			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
+		}
+	}
+
+	_, err = deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.OrgDatabaseMapID)
 
 	return err
 }
@@ -523,6 +582,12 @@ func prepareFHIREndpointStatements(s *Store) error {
 	}
 	deleteFHIREndpointOrganizationStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organizations
+	WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	deleteFHIREndpointOrganizationMapStatement, err = s.DB.Prepare(`
+	DELETE FROM fhir_endpoint_organizations_map
 	WHERE id = $1`)
 	if err != nil {
 		return err

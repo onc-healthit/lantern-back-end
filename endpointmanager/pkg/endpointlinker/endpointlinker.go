@@ -134,8 +134,8 @@ func mergeMatches(allMatches []string, allConfidences map[string]float64, matche
 func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, store *postgresql.Store, verbose bool) ([]string, map[string]float64, error) {
 	matches := make([]string, 0)
 	confidences := make(map[string]float64)
-	for _, npiID := range endpoint.NPIIDs {
-		npiOrg, err := store.GetNPIOrganizationByNPIID(ctx, npiID)
+	for _, org := range endpoint.OrganizationList {
+		npiOrg, err := store.GetNPIOrganizationByNPIID(ctx, org.OrganizationNPIID)
 		if err == sql.ErrNoRows {
 			// do nothing
 		} else if err != nil {
@@ -151,8 +151,8 @@ func matchByID(ctx context.Context, endpoint *endpointmanager.FHIREndpoint, stor
 func matchByName(endpoint *endpointmanager.FHIREndpoint, npiOrgNames []*endpointmanager.NPIOrganization, verbose bool, tokenVal map[string]float64, jaccardThreshold float64) ([]string, map[string]float64, error) {
 	allMatches := make([]string, 0)
 	allConfidences := make(map[string]float64)
-	for _, name := range endpoint.OrganizationNames {
-		normalizedEndpointName, err := NormalizeOrgName(name)
+	for _, org := range endpoint.OrganizationList {
+		normalizedEndpointName, err := NormalizeOrgName(org.OrganizationName)
 		if err != nil {
 			return allMatches, allConfidences, errors.Wrap(err, "Error getting normalizing endpoint organizaton name")
 		}
@@ -201,8 +201,8 @@ func countTokens(npiOrg []*endpointmanager.NPIOrganization, FHIREndpoints []*end
 
 	// Counts all tokens in the FHIR endpoint names
 	for _, endpoint := range FHIREndpoints {
-		for _, name := range endpoint.OrganizationNames {
-			endpointName, _ := NormalizeOrgName(name)
+		for _, org := range endpoint.OrganizationList {
+			endpointName, _ := NormalizeOrgName(org.OrganizationName)
 			endpointNameTokens := strings.Fields(endpointName)
 			tokenCounterAll, tokenCounterEndpoints, firstKey = counter(endpointNameTokens, tokenCounterAll, tokenCounterEndpoints, firstKey)
 		}
@@ -353,7 +353,9 @@ func LinkAllOrgsAndEndpoints(ctx context.Context, store *postgresql.Store, allow
 			}
 		} else {
 			if verbose {
-				unmatchable = append(unmatchable, endpoint.OrganizationNames...)
+				for _, org := range endpoint.OrganizationList {
+					unmatchable = append(unmatchable, org.OrganizationName)
+				}
 			}
 		}
 	}
@@ -432,10 +434,14 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 				npiOrganizationName = npiOrganization.Name
 			}
 
+			var fhirEndpointOrganization = endpointmanager.FHIREndpointOrganization{
+				OrganizationName: npiOrganizationName,
+				OrganizationNPIID: orgID,
+			}
+
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
 				URL:               endpointURL,
-				OrganizationNames: []string{npiOrganizationName},
-				NPIIDs:            []string{orgID},
+				OrganizationList: []*endpointmanager.FHIREndpointOrganization{&fhirEndpointOrganization},
 			}
 
 			_, _, _, err = store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
@@ -486,10 +492,14 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 				npiOrganizationName = npiOrganization.Name
 			}
 
+			var fhirEndpointOrganization = endpointmanager.FHIREndpointOrganization{
+				OrganizationName: npiOrganizationName,
+				OrganizationNPIID: orgID,
+			}
+
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
 				URL:               endpointURL,
-				OrganizationNames: []string{npiOrganizationName},
-				NPIIDs:            []string{orgID},
+				OrganizationList: []*endpointmanager.FHIREndpointOrganization{&fhirEndpointOrganization},
 			}
 
 			err = store.UpdateFHIREndpointsNPIOrg(ctx, &fhirEndpoint, false)
