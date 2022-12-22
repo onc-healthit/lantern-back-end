@@ -131,49 +131,61 @@ func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) [
 
 	newOrgList := orgList
 	existingOrgList := e.OrganizationList
-	
-	sortOrganizationList(newOrgList)
-	sortOrganizationList(existingOrgList)
 
 	var newOrganizations []*FHIREndpointOrganization
-	for _, o := range newOrgList {
-		for _, org := range existingOrgList {
-			if org.OrganizationName != o.OrganizationName || org.OrganizationNPIID != o.OrganizationNPIID || org.OrganizationZipCode != o.OrganizationZipCode {
-				organizationEntry := FHIREndpointOrganization{
-					OrganizationName:    o.OrganizationName,
-					OrganizationZipCode: o.OrganizationNPIID,
-					OrganizationNPIID:   o.OrganizationZipCode,
-				}
+	for _, org := range newOrgList {
+		found := containsOrganization(existingOrgList, org)
+		if !found {
 
-				e.OrganizationList = append(e.OrganizationList, &organizationEntry)
-				newOrganizations = append(newOrganizations, &organizationEntry)
+			organizationEntry := FHIREndpointOrganization{
+				OrganizationName:    org.OrganizationName,
+				OrganizationNPIID:   org.OrganizationNPIID,
+				OrganizationZipCode: org.OrganizationZipCode,
 			}
+
+			e.OrganizationList = append(e.OrganizationList, &organizationEntry)
+			newOrganizations = append(newOrganizations, &organizationEntry)
 		}
 	}
 	return newOrganizations
 }
 
 // OrganizationsToRemove removes the Organizations to the endpoint's Organization list if they are not present in the new list, and returns all the organizations that need to be removed from the db.
-func (e *FHIREndpoint) OrganizationsToRemove(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
+func (e *FHIREndpoint) OrganizationsToRemove(orgList[]*FHIREndpointOrganization) []*FHIREndpointOrganization {
 	newOrgList := orgList
 	existingOrgList := e.OrganizationList
 	
-	sortOrganizationList(newOrgList)
-	sortOrganizationList(existingOrgList)
 
 	var oldOrganizations []*FHIREndpointOrganization
-	for _, org := range existingOrgList {
-		for index, o := range newOrgList {
-			if org.OrganizationName != o.OrganizationName || org.OrganizationNPIID != o.OrganizationNPIID || org.OrganizationZipCode != o.OrganizationZipCode {
+	for index, org := range existingOrgList {
+		found := containsOrganization(newOrgList, org)
+		if !found {
+			organizationListLength := len(e.OrganizationList)
+			if index < organizationListLength - 1 {
 				e.OrganizationList = append(e.OrganizationList[:index], e.OrganizationList[index+1:]...)
-				oldOrganizations = append(oldOrganizations, org)
+			} else {
+				e.OrganizationList = append(e.OrganizationList[:organizationListLength-1])
 			}
+			oldOrganizations = append(oldOrganizations, org)
 		}
 	}
 	return oldOrganizations
 }
 
-// Function that sorts an endpoint's list of Organizations
+// containsOrganization checks if organization list contains the specified organization
+func containsOrganization(orgList []*FHIREndpointOrganization, org *FHIREndpointOrganization) bool {
+	found := false
+	
+	for _, o := range orgList {
+		if org.OrganizationName == o.OrganizationName && org.OrganizationNPIID == o.OrganizationNPIID && org.OrganizationZipCode == o.OrganizationZipCode {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
+// sortOrganizationList sorts an endpoint's list of Organizations
 func sortOrganizationList(orgList []*FHIREndpointOrganization) {
 	sort.Slice(orgList, func(i, j int) bool {
 		return orgList[i].OrganizationName < orgList[j].OrganizationName
