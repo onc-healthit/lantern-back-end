@@ -162,8 +162,7 @@ CREATE TABLE fhir_endpoint_organizations (
     id                      SERIAL PRIMARY KEY,
     organization_name       VARCHAR(500),
     organization_zipcode    VARCHAR(500),
-    organization_npi_id    VARCHAR(500),
-    npi_id                  VARCHAR(500)
+    organization_npi_id    VARCHAR(500)
 );
 
 CREATE TABLE fhir_endpoint_organizations_map (
