@@ -44,7 +44,22 @@ func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) 
 // PruningDeleteValidationResultEntry deletes an entry from the validation_results table based
 // on the given ID
 func (s *Store) PruningDeleteValidationResultEntry(ctx context.Context, valResID int) error {
-	_, err := pruningDeleteValResStatement.ExecContext(ctx, valResID)
+	var count int
+
+	// Ensure the current entry in fhir_endpoints_info table does not this validation result id
+	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE validation_result_id=$1;", valResID)
+
+	err := row.Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	// If there is an entry in the fhir endpoints info table that has this id, do nothing
+	if count > 0 {
+		return nil
+	}
+
+	_, err = pruningDeleteValResStatement.ExecContext(ctx, valResID)
 	return err
 }
 
