@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS fhir_endpoint_organizations;
 DROP TABLE IF EXISTS fhir_endpoint_organizations_map;
 DROP VIEW IF EXISTS endpoint_export;
 DROP VIEW IF EXISTS organization_location;
+DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoint_organizations;
 
 ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS org_database_map_id CASCADE;
 ALTER TABLE fhir_endpoints ADD COLUMN IF NOT EXISTS organization_names VARCHAR(500)[]; 

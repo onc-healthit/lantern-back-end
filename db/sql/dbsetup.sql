@@ -162,7 +162,8 @@ CREATE TABLE fhir_endpoint_organizations (
     id                      SERIAL PRIMARY KEY,
     organization_name       VARCHAR(500),
     organization_zipcode    VARCHAR(500),
-    organization_npi_id    VARCHAR(500)
+    organization_npi_id    VARCHAR(500),
+    updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE fhir_endpoint_organizations_map (
@@ -277,6 +278,11 @@ CREATE TABLE validations (
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_timestamp_fhir_endpoint_organizations
+BEFORE UPDATE ON fhir_endpoint_organizations
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 

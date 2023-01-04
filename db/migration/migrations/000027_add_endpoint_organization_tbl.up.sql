@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS fhir_endpoint_organizations;
 DROP TABLE IF EXISTS fhir_endpoint_organizations_map;
 DROP VIEW IF EXISTS endpoint_export;
 DROP VIEW IF EXISTS organization_location;
+DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoint_organizations;
 
 ALTER TABLE fhir_endpoints ADD COLUMN IF NOT EXISTS org_database_map_id INT;
 ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS organization_names CASCADE; 
@@ -13,7 +14,8 @@ CREATE TABLE fhir_endpoint_organizations (
     id                      SERIAL PRIMARY KEY,
     organization_name       VARCHAR(500),
     organization_zipcode    VARCHAR(500),
-    organization_npi_id    VARCHAR(500)
+    organization_npi_id    VARCHAR(500),
+    updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE fhir_endpoint_organizations_map (
@@ -63,5 +65,9 @@ WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
 GROUP BY fom.id) as endpt_orgnames ON endpts.org_database_map_id = endpt_orgnames.id
 WHERE links.confidence > .97 AND orgs.Location->>'zipcode' IS NOT null;
 
+CREATE TRIGGER set_timestamp_fhir_endpoint_organizations
+BEFORE UPDATE ON fhir_endpoint_organizations
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
 
 COMMIT;
