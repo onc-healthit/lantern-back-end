@@ -124,13 +124,10 @@ func (s *Store) GetFHIREndpointOrganizationsByInfo(ctx context.Context, org_map_
 	var organizationNPIID sql.NullString
 	var organizationZipCode sql.NullString
 
-	orgRow, err := getFHIREndpointOrganizationsByInfoStatement.QueryRowContext(ctx, org_map_id, org.OrganizationName, org.OrganizationZipCode, org.OrganizationNPIID)
-	if err != nil {
-		return nil, err
-	}
+	orgRow := getFHIREndpointOrganizationsByInfoStatement.QueryRowContext(ctx, org_map_id, org.OrganizationName, org.OrganizationZipCode, org.OrganizationNPIID)
 
 	var organization endpointmanager.FHIREndpointOrganization
-	err = orgRow.Scan(
+	err := orgRow.Scan(
 		&organization.ID,
 		&organizationName,
 		&organizationZipCode,
@@ -158,31 +155,6 @@ func (s *Store) GetFHIREndpointOrganizationsByInfo(ctx context.Context, org_map_
 	}
 
 	return &organization, nil
-}
-
-// GetAllDistinctFHIREndpoints returns a list of all of the fhir endpoints with distinct URLs
-func (s *Store) GetAllDistinctFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
-	sqlStatement := `
-	SELECT
-		DISTINCT url
-	FROM fhir_endpoints`
-	rows, err := s.DB.QueryContext(ctx, sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-
-	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
-	for rows.Next() {
-		var endpoint endpointmanager.FHIREndpoint
-		err = rows.Scan(
-			&endpoint.URL)
-		if err != nil {
-			return nil, err
-		}
-		endpoints = append(endpoints, &endpoint)
-	}
-	return endpoints, nil
 }
 
 // GetAllDistinctFHIREndpoints returns a list of all of the fhir endpoints with distinct URLs
@@ -379,7 +351,6 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 		var organization endpointmanager.FHIREndpointOrganization
 		var endpoint endpointmanager.FHIREndpoint
 		
-		var organizationMapID int
 		err = orgRow.Scan(
 			&endpoint.OrgDatabaseMapID,
 			&organization.ID,
@@ -408,7 +379,7 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 			organization.OrganizationNPIID = organizationNPIID.String
 		}
 
-		endpoint.OrganizationList = []*endpointmanager.FHIREndpointOrganization{organization}
+		endpoint.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&organization}
 		endpointList = append(endpointList, &endpoint)
 	}
 	return endpointList, nil
@@ -520,7 +491,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	
 	for _, org := range e.OrganizationList {
-		organization, err := GetFHIREndpointOrganizationsByInfo(ctx, e.OrgDatabaseMapID, org)
+		organization, err := s.GetFHIREndpointOrganizationsByInfo(ctx, e.OrgDatabaseMapID, org)
 
 		// If the organization does not exist, add it to the database, otherwise update the updated time
 		if err == sql.ErrNoRows {
@@ -646,7 +617,7 @@ func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointm
 		return err
 	}
 	
-	_, err := deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
+	_, err = deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
 
 
 	return err
