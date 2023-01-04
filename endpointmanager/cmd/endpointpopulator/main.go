@@ -96,6 +96,10 @@ func main() {
 		}
 		dbErr := endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listSource)
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
+
+		dbErr := endptQuerier.RemoveOldEndpointOrganizations(ctx, store, time.Now().Add(time.Hour*24), listSource)
+		helpers.FailOnError("Deleting old endpoint organizations in fhir_endpoint_organizations database error: ", dbErr)
+
 	}
 
 	addListSourceStatement := `

@@ -76,6 +76,11 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		log.Warn(err)
 	}
 
+	err := RemoveOldEndpointOrganizations(ctx, store, firstUpdate, listsource)
+	if err != nil {
+		log.Warn(err)
+	}
+
 	return nil
 }
 
@@ -169,6 +174,30 @@ func RemoveOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime
 	}
 
 	log.Infof("Removed %d endpoints from list source %s", len(fhirEndpoints), listSource)
+
+	return nil
+}
+
+// RemoveOldEndpointOrganizations removes fhir endpoint organizations from fhir_endpoint_organizations
+// that are no longer in the given endpoint's list of organizations
+func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
+	// get endpoint organizations that are from this listsource and have an update time before this time
+	fhirEndpoints, err := store.GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx, updateTime, listSource)
+	if err != nil {
+		return err
+	}
+
+	for _, endpoint := range fhirEndpoints {
+		for _, org := range endpoint.OrganizationList {
+			err = store.DeleteFHIREndpointOrganization(ctx, org, endpoint.OrgDatabaseMapID)
+			if err != nil {
+				log.Warn(err)
+				continue
+			}
+		}
+	}
+
+	log.Infof("Removed %d endpoints organizations from list source %s", len(fhirEndpoints), listSource)
 
 	return nil
 }

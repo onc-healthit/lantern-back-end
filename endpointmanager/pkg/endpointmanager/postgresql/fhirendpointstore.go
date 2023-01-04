@@ -352,6 +352,68 @@ func (s *Store) GetFHIREndpointUsingURLAndListSource(ctx context.Context, url st
 	return &endpoint, err
 }
 
+// GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime returns a list of all of the FHIR endpoints organizations for the given list source that have an update time before the given update time.
+func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx context.Context, updateTime time.Time, listSource string) ([]*endpointmanager.FHIREndpoint, error) {
+	var endpointList []*endpointmanager.FHIREndpoint
+	var organizationName sql.NullString
+	var organizationNPIID sql.NullString
+	var organizationZipCode sql.NullString
+
+	sqlStatement := `
+	SELECT
+		e.org_database_map_id,
+		o.id,
+		o.organization_name,
+		o.organization_zipcode,
+		o.organization_npi_id,
+	FROM fhir_endpoints e, fhir_endpoint_organizations_map m, fhir_endpoint_organizations o 
+	WHERE e.org_database_map_id = m.id AND m.org_database_id = o.id 
+	AND e.list_source=$1 AND o.updated_at<$2`
+
+	orgRow, err := s.DB.QueryContext(ctx, sqlStatement, listSource, updateTime)
+	if err != nil {
+		return nil, err
+	}
+	defer orgRow.Close()
+	for orgRow.Next() {
+		var organization endpointmanager.FHIREndpointOrganization
+		var endpoint endpointmanager.FHIREndpoint
+		
+		var organizationMapID int
+		err = orgRow.Scan(
+			&endpoint.OrgDatabaseMapID,
+			&organization.ID,
+			&organizationName,
+			&organizationZipCode,
+			&organizationNPIID)
+		if err != nil {
+			return nil, err
+		}
+
+		if !organizationName.Valid {
+			organization.OrganizationName = ""
+		} else {
+			organization.OrganizationName = organizationName.String
+		}
+
+		if !organizationZipCode.Valid {
+			organization.OrganizationZipCode = ""
+		} else {
+			organization.OrganizationZipCode = organizationZipCode.String
+		}
+
+		if !organizationNPIID.Valid {
+			organization.OrganizationNPIID = ""
+		} else {
+			organization.OrganizationNPIID = organizationNPIID.String
+		}
+
+		endpoint.OrganizationList = []*endpointmanager.FHIREndpointOrganization{organization}
+		endpointList = append(endpointList, &endpoint)
+	}
+	return endpointList, nil
+}
+
 // GetFHIREndpointsUsingListSourceAndUpdateTime retrieves all fhir endpoints from the database from the given
 // listsource that update time is before the given update time.
 func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context, updateTime time.Time, listSource string) ([]*endpointmanager.FHIREndpoint, error) {
