@@ -17,6 +17,7 @@ import (
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
 func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fetcher.ListOfEndpoints) error {
 	var firstUpdate time.Time
+	var firstUpdateOrg time.Time
 	var listsource = endpoints.Entries[0].ListSource
 	for i, endpoint := range endpoints.Entries {
 		select {
@@ -69,6 +70,23 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 				firstUpdate = existingEndpt.UpdatedAt
 			}
 		}
+		if firstUpdateOrg.IsZero() {
+			// get time of update for first endpoint organization
+			fhirURL := endpoint.FHIRPatientFacingURI
+			if fhirURL[len(fhirURL)-1:] != "/" {
+				fhirURL = fhirURL + "/"
+			}
+
+			existingOrg, err := store.GetFHIREndpointOrganizationByURLandListSource(ctx, fhirURL, endpoint.ListSource)
+			if err == sql.ErrNoRows {
+				continue
+			} else if err != nil {
+				log.Warn(err)
+				continue
+			} else {
+				firstUpdateOrg = existingOrg.UpdatedAt
+			}
+		}
 	}
 
 	err := RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
@@ -76,7 +94,7 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		log.Warn(err)
 	}
 
-	err := RemoveOldEndpointOrganizations(ctx, store, firstUpdate, listsource)
+	err = RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
 	if err != nil {
 		log.Warn(err)
 	}

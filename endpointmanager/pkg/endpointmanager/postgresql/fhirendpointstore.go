@@ -20,7 +20,7 @@ var deleteFHIREndpointOrganizationStatement *sql.Stmt
 var addFHIREndpointOrganizationMapStatementNoId *sql.Stmt
 var addFHIREndpointOrganizationMapStatement *sql.Stmt
 var getFHIREndpointOrganizationsByMapID *sql.Stmt
-var getFHIREndpointOrganizationsByInfoStatement *sql.Stmt
+var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
@@ -90,7 +90,8 @@ func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int
 			&organization.ID,
 			&organizationName,
 			&organizationZipCode,
-			&organizationNPIID)
+			&organizationNPIID,
+			&organization.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -118,20 +119,68 @@ func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int
 	return organizationsList, nil
 }
 
-// GetFHIREndpointOrganizationsByInfo returns an organization for the FHIR endpoint matching the specific organization information
-func (s *Store) GetFHIREndpointOrganizationsByInfo(ctx context.Context, org_map_id int, org *endpointmanager.FHIREndpointOrganization) (*endpointmanager.FHIREndpointOrganization, error) {
+// GetFHIREndpointOrganizationByInfo returns an organization for the FHIR endpoint matching the specific organization information
+func (s *Store) GetFHIREndpointOrganizationByInfo(ctx context.Context, org_map_id int, org *endpointmanager.FHIREndpointOrganization) (*endpointmanager.FHIREndpointOrganization, error) {
 	var organizationName sql.NullString
 	var organizationNPIID sql.NullString
 	var organizationZipCode sql.NullString
 
-	orgRow := getFHIREndpointOrganizationsByInfoStatement.QueryRowContext(ctx, org_map_id, org.OrganizationName, org.OrganizationZipCode, org.OrganizationNPIID)
+	orgRow := getFHIREndpointOrganizationByInfoStatement.QueryRowContext(ctx, org_map_id, org.OrganizationName, org.OrganizationZipCode, org.OrganizationNPIID)
 
 	var organization endpointmanager.FHIREndpointOrganization
 	err := orgRow.Scan(
 		&organization.ID,
 		&organizationName,
 		&organizationZipCode,
-		&organizationNPIID)
+		&organizationNPIID,
+		&organization.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if !organizationName.Valid {
+		organization.OrganizationName = ""
+	} else {
+		organization.OrganizationName = organizationName.String
+	}
+
+	if !organizationZipCode.Valid {
+		organization.OrganizationZipCode = ""
+	} else {
+		organization.OrganizationZipCode = organizationZipCode.String
+	}
+
+	if !organizationNPIID.Valid {
+		organization.OrganizationNPIID = ""
+	} else {
+		organization.OrganizationNPIID = organizationNPIID.String
+	}
+
+	return &organization, nil
+}
+
+// GetFHIREndpointOrganizationByURLandListSource returns an organization for the FHIR endpoint with the given list source and url
+func (s *Store) GetFHIREndpointOrganizationByURLandListSource(ctx context.Context, url string, listSource string) (*endpointmanager.FHIREndpointOrganization, error) {
+	var organizationName sql.NullString
+	var organizationNPIID sql.NullString
+	var organizationZipCode sql.NullString
+
+	sqlStatement := `
+	SELECT o.id, o.organization_name, o.organization_zipcode, 
+	o.organization_npi_id, o.updated_at
+	FROM fhir_endpoints e, fhir_endpoint_organizations_map m, fhir_endpoint_organizations o
+	WHERE e.org_database_map_id = m.id AND m.org_database_id = o.id 
+	AND e.list_source=$1 AND e.url=$2 ORDER BY updated_at;`
+
+	orgRow := s.DB.QueryRowContext(ctx, sqlStatement, listSource, url)
+
+	var organization endpointmanager.FHIREndpointOrganization
+	err := orgRow.Scan(
+		&organization.ID,
+		&organizationName,
+		&organizationZipCode,
+		&organizationNPIID,
+		&organization.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -338,6 +387,7 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 		o.organization_name,
 		o.organization_zipcode,
 		o.organization_npi_id,
+		o.updated_at
 	FROM fhir_endpoints e, fhir_endpoint_organizations_map m, fhir_endpoint_organizations o 
 	WHERE e.org_database_map_id = m.id AND m.org_database_id = o.id 
 	AND e.list_source=$1 AND o.updated_at<$2`
@@ -356,7 +406,8 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 			&organization.ID,
 			&organizationName,
 			&organizationZipCode,
-			&organizationNPIID)
+			&organizationNPIID,
+			&organization.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -491,7 +542,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	
 	for _, org := range e.OrganizationList {
-		organization, err := s.GetFHIREndpointOrganizationsByInfo(ctx, e.OrgDatabaseMapID, org)
+		organization, err := s.GetFHIREndpointOrganizationByInfo(ctx, e.OrgDatabaseMapID, org)
 
 		// If the organization does not exist, add it to the database, otherwise update the updated time
 		if err == sql.ErrNoRows {
@@ -713,14 +764,14 @@ func prepareFHIREndpointStatements(s *Store) error {
 		return err
 	}
 	getFHIREndpointOrganizationsByMapID, err = s.DB.Prepare(`
-	SELECT org.id, org.organization_name, org.organization_zipcode, org.organization_npi_id
+	SELECT org.id, org.organization_name, org.organization_zipcode, org.organization_npi_id, org.updated_at
 		FROM fhir_endpoint_organizations_map map, fhir_endpoint_organizations org
 	WHERE map.id=$1 AND map.org_database_id = org.id;`)
 	if err != nil {
 		return err
 	}
-	getFHIREndpointOrganizationsByInfoStatement, err = s.DB.Prepare(`
-	SELECT org.id, org.organization_name, org.organization_zipcode, org.organization_npi_id
+	getFHIREndpointOrganizationByInfoStatement, err = s.DB.Prepare(`
+	SELECT org.id, org.organization_name, org.organization_zipcode, org.organization_npi_id, org.updated_at
 		FROM fhir_endpoint_organizations_map map, fhir_endpoint_organizations org
 	WHERE map.id=$1 AND map.org_database_id = org.id 
 	AND organization_name = $2 AND organization_zipcode = $3 AND organization_npi_id = $4;`)
