@@ -80,21 +80,21 @@ func organizationListEquals(orgList1 []*FHIREndpointOrganization, orgList2 []*FH
 
 // Equal checks each field of the two FHIREndpointOrganizations except for the database ID to see if they are equal.
 func (o *FHIREndpointOrganization) Equal(o2 *FHIREndpointOrganization) bool {
-	if o == nil && o == nil {
+	if o == nil && o2 == nil {
 		return true
 	} else if o == nil {
 		return false
-	} else if o == nil {
+	} else if o2 == nil {
 		return false
 	}
 
-	if o.OrganizationName != o.OrganizationName {
+	if o.OrganizationName != o2.OrganizationName {
 		return false
 	}
-	if o.OrganizationZipCode != o.OrganizationZipCode {
+	if o.OrganizationZipCode != o2.OrganizationZipCode {
 		return false
 	}
-	if o.OrganizationNPIID != o.OrganizationNPIID {
+	if o.OrganizationNPIID != o2.OrganizationNPIID {
 		return false
 	}
 
@@ -174,15 +174,12 @@ func (e *FHIREndpoint) OrganizationsToRemove(orgList[]*FHIREndpointOrganization)
 
 // containsOrganization checks if organization list contains the specified organization
 func containsOrganization(orgList []*FHIREndpointOrganization, org *FHIREndpointOrganization) bool {
-	found := false
-	
 	for _, o := range orgList {
 		if org.OrganizationName == o.OrganizationName && org.OrganizationNPIID == o.OrganizationNPIID && org.OrganizationZipCode == o.OrganizationZipCode {
-			found = true
-			break
+			return true
 		}
 	}
-	return found
+	return false
 }
 
 // sortOrganizationList sorts an endpoint's list of Organizations
@@ -191,6 +188,39 @@ func sortOrganizationList(orgList []*FHIREndpointOrganization) {
 		return orgList[i].OrganizationName < orgList[j].OrganizationName
 	})
 }
+
+func (e *FHIREndpoint) GetNPIIDs() []string {
+	var NPIIDs []string
+	for _, org := range e.OrganizationList {
+		NPIIDs = append(NPIIDs, org.OrganizationNPIID)
+	}
+
+	return NPIIDs
+}
+
+func (e *FHIREndpoint) GetOrganizationNames() []string {
+	var OrganizationNames []string
+	for _, org := range e.OrganizationList {
+		OrganizationNames = append(OrganizationNames, org.OrganizationName)
+	}
+
+	return OrganizationNames
+}
+
+// NOT SURE IF NEEDED
+// // AddOrganization adds the organization to the endpoint's Organization list if it's not present already. If it is, it does nothing.
+// func (e *FHIREndpoint) AddOrganization(org *FHIREndpointOrganization) {
+// 	if !containsOrganization(e.OrganizationList, org) {
+		
+// 		organizationEntry := FHIREndpointOrganization{
+// 			OrganizationName:    org.OrganizationName,
+// 			OrganizationNPIID:   org.OrganizationNPIID,
+// 			OrganizationZipCode: org.OrganizationZipCode,
+// 		}
+
+// 		e.OrganizationList = append(e.OrganizationList, &organizationEntry)
+// 	}
+// }
 
 // Prepends url with https:// and appends with .well-know/smart-configuration/ if needed
 func NormalizeWellKnownURL(url string) string {

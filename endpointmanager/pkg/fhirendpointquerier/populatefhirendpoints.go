@@ -114,7 +114,7 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 		ListSource:       endpoint.ListSource,
 	}
 
-	if endpoint.OrganizationName != "" || endpoint.OrganizationName != "" || endpoint.OrganizationName != "" {
+	if endpoint.OrganizationName != "" || endpoint.NPIID != "" || endpoint.OrganizationZipCode != "" {
 		dbOrgEntry := endpointmanager.FHIREndpointOrganization{
 			OrganizationName:    endpoint.OrganizationName,
 			OrganizationNPIID:   endpoint.NPIID,
