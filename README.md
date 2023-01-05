@@ -57,7 +57,8 @@ This removes all docker images, networks, and local volumes.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
 
-2. **If you have a clean database or want to update the data in your database**, run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
+2. **If you have a clean database or want to update the data in your database**
+    1. Run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
      ```bash
       make update_source_data_prod
       ```
@@ -65,7 +66,7 @@ This removes all docker images, networks, and local volumes.
       
     **Note**: Google chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
     
-3. Run the following command to add data to the database.
+    2. Run the following command to add data to the database, using the data found in `lantern-back-end/resources/prod_resources`.
 
     ```bash
     make populatedb_prod
@@ -78,12 +79,11 @@ This removes all docker images, networks, and local volumes.
     * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
     * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
 
-4. **If you want to re-query and re-receive capability statements outside the refresh interval**, run the following:
+3. **If you want to re-query and re-receive capability statements outside the refresh interval**, run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1
     ```
-
 
 ### Development Environment
 
@@ -100,46 +100,41 @@ This removes all docker images, networks, and local volumes.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
 
-2. **If you have a clean database or want to update the data in your database**, run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
-     ```bash
-      make update_source_data
-      ```
-      This command will automatically query all the endpoint sources listed in `EndpointResourceList.json` for their endpoints. It will also query CHPL for its list of endpoint list sources, which is saved to `CHPLEndpointResourcesList.json`, and then query the endpoint lists (that have parsers written for them) for their endpoints. It then saves the first 10 endpoints from each list into their own files in the development resources directory, lantern-back-end/resources/dev_resources. It then queries NPPES for its endpoint and NPI data files, cut out all the entries in the NPI data file that are not organization entries, and then creates a copy of each file and reduce them to 1000 lines for development purposes.
-      
-     **Note**: Resources can be moved from lantern-back-end/resources/prod_resources to lantern-back-end/resources/dev_resources to be used in the development environment.
+2. **If you have a clean database or want to update the data in your database**
+   1. run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
+        ```bash
+         make update_source_data
+         ```
+         This command will automatically query all the endpoint sources listed in `EndpointResourceList.json` for their endpoints. It will also query CHPL for its list of endpoint list sources, which is saved to `CHPLEndpointResourcesList.json`, and then query the endpoint lists (that have parsers written for them) for their endpoints. It then saves the first 10 endpoints from each list into their own files in the development resources directory, lantern-back-end/resources/dev_resources. It then queries NPPES for its endpoint and NPI data files, cut out all the entries in the NPI data file that are not organization entries, and then creates a copy of each file and reduce them to 1000 lines for development purposes.
 
-     **Note**: Google Chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
+        **Note**: Resources can be moved from lantern-back-end/resources/prod_resources to lantern-back-end/resources/dev_resources to be used in the development environment.
 
-     **Note**: If you only want to query the endpoint sources without also querying NPPES, you can run `make update_source_data_prod` (see **Production Environment** section).
+        **Note**: Google Chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
 
-    2. Run the following command to begin populating the database using the data found in `lantern-back-end/resources/dev_resources`. You must be running Lantern with a development environment by using the command `make run` to start up Lantern.
-    -Note: Since you are doing development, use the `dev_resources` directory as it contains less endpoints which reduces unnecessary load on the servers hosting the endpoints we are querying.
+        **Note**: If you only want to query the endpoint sources without also querying NPPES, you can run `make update_source_data_prod` (see **Production Environment** section).
 
-    The populate db script expects the resources directory to contain the following files:
-      * **CernerEndpointSources.json** - JSON file containing endpoint information from Cerner
-      * **EpicEndpointSourcesDSTU2.json** - JSON file containing DSTU2 endpoint information from Epic
-      * **EpicEndpointSourcesR4.json** - JSON file containing R4 endpoint information from Epic
-      * **1UpEndpointSources.json** - JSON file containing endpoint information from 1upHealth
-      * **CareEvolutionEndpointSources.json** - JSON file containing endpoint information from CareEvolution
-      * **LanternEndpointSources.json** - JSON file containing endpoint information reported directly to Lantern
-      * **endpoint_pfile.csv** - enpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
-      * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
-        * NOTE: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
-      * **linkerMatchesAllowlist and linkerMatchesBlocklist** - allowlist and blocklist files used in manually correcting the endpoint to npi organization linker. To manually add/remove endpoint to npi organization links in the database, see endpointmanager README on format for adding links to allowlist and blocklist files
+    2. Run the following command to add data to the database, using the data found in `lantern-back-end/resources/dev_resources`.
+   
+         ```bash
+         make populatedb
+         ```
+ 
+        **Note**: The `dev_resources` directory contains fewer endpoints, to reduce unnecessary load on the servers hosting the endpoints we are querying while developing locally.
+        
+       This runs the following tasks inside the endpoint manager container:
+         * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
+        * the **CHPL querier**, which requests Health IT product, vendor, and certification information from CHPL and adds these to the database
+        * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
+        * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
+        * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
 
-      ```bash
-      make populatedb
-      ```
-
-      This runs the following tasks inside the endpoint manager container:
-      * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
-      * the **CHPL querier**, which requests health IT product information from CHPL and adds these to the database
-      * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-      * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
-      * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval. 
+       The `populate_db.sh` script expects the `dev_resources` directory to contain the following files:
+         * **endpoint_pfile.csv** - endpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
+         * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
+         **Note**: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
 
 
-3. **If you want to requery and rereceive capability statements outside the refresh interval** run the following:
+3. **If you want to re-query and re-receive Capability Statements outside the refresh interval** run the following:
 
     ```bash
     docker restart lantern-back-end_endpoint_manager_1
