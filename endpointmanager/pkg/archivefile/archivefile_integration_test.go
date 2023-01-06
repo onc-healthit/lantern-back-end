@@ -46,9 +46,13 @@ var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion: "None",
 }
 
+var testFhirEndpointOrganization = &endpointmanager.FHIREndpointOrganization{
+	OrganizationName: "Org 1",
+}
+
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
 	URL:               "http://example.com/DTSU2/",
-	OrganizationNames: []string{"Org 1"},
+	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFhirEndpointOrganization},
 	ListSource:        "http://cerner.com/dstu2",
 }
 

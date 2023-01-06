@@ -530,6 +530,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 		// Merge new data with old data
 		// Org names NPI IDs Org Zipcodes and VersionsResponse only possible new data
 		existingEndpt.VersionsResponse = e.VersionsResponse
+		existingEndpt.OrganizationList = e.OrganizationList
 		err = s.UpdateFHIREndpoint(ctx, existingEndpt)
 		if err != nil {
 			return err
@@ -546,12 +547,12 @@ func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpoint
 
 		// If the organization does not exist, add it to the database, otherwise update the updated time
 		if err == sql.ErrNoRows {
-			databaseMapID, err := s.AddFHIREndpointOrganization(ctx, org, 0)
+			databaseMapID, err := s.AddFHIREndpointOrganization(ctx, org, e.OrgDatabaseMapID)
 			if err != nil {
 				return errors.Wrap(err, "adding fhir endpoint to store failed")
 			}
 			e.OrgDatabaseMapID = databaseMapID
-			e.OrganizationList = append(e.OrganizationList, )
+			e.OrganizationList = append(e.OrganizationList, org)
 		} else if err != nil {
 			return errors.Wrap(err, "getting fhir endpoint organization from store failed")
 		} else {

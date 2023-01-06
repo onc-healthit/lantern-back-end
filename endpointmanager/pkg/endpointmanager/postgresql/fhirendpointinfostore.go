@@ -10,7 +10,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
-	log "github.com/sirupsen/logrus"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -478,23 +477,10 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int) error {
-	log.Info("GETTING TO THE UPDATE METADATA ID FUNCTION NOW")
-
 	_, err := s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'TRUE', 'FALSE');")
 	if err != nil {
 		return err
 	}
-
-	var info string
-	row := s.DB.QueryRowContext(ctx, "SELECT current_setting('metadata.setting', 't');")
-	err = row.Scan(&info)
-	if err != nil {
-		return err
-	}
-
-	log.Info(info)
-
-
 	_, err = updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, id)
 	if err != nil {
 		return err

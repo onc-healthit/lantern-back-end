@@ -151,14 +151,15 @@ func Test_calculateWeightedJaccardIndex(t *testing.T) {
 
 func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	var orgs []*endpointmanager.NPIOrganization
+	zipcode := ""
 
-	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues, .85)
+	matches, confidences, err := getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from empty list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
 
 	orgs = append(orgs, nonMatchingOrg)
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", false, tokenValues, .85)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO BAR", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 0), "There should not have been any matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 0), "There should not have been any confidences returned"+strconv.Itoa(len(matches)))
@@ -170,7 +171,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	orgs = append(orgs, nonExactPrimaryNameOrgName)
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", false, tokenValues, .85)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 5), "There should have been 5 matches returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 5), "There should have been 5 confidences returned "+strconv.Itoa(len(confidences)))
@@ -191,7 +192,7 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	th.Assert(t, (confidence == "0.866250"), "Exact match confidence should have been 0.866250 confidence got "+confidence)
 
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
-	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", false, tokenValues, .85)
+	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
 	th.Assert(t, (len(matches) == 1), "There should have been 1 matchs returned got: "+strconv.Itoa(len(matches)))
 	th.Assert(t, (len(confidences) == 1), "There should have been 1 confidences returned "+strconv.Itoa(len(confidences)))
@@ -295,11 +296,22 @@ func Test_mergeMatches(t *testing.T) {
 func Test_matchByName(t *testing.T) {
 	var orgs []*endpointmanager.NPIOrganization
 
+	var org1 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "1"}
+
+	var org2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "2"}
+
+	var org3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "3"}
+
 	var ep = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{org1, org2, org3},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	// test with no orgs
@@ -333,22 +345,28 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org := exactPrimaryNameOrg
 	expectedConf := 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = .875 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = .875 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM"}
+	
+	var newOrg = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM",
+		OrganizationNPIID: "1"}
+
+	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg}
+	
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
@@ -356,23 +374,30 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = .875 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 
 	// check that highest confidence value is used
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
+
+	var newOrg2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "2"}
+
+	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg, newOrg2}
+	organizationNameList:= []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
+
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
@@ -380,23 +405,30 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 
 	// checking non-existent org name causes no issues
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM" and "BLAH"
-	ep.OrganizationNames = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM", "BLAH"}
+
+	var newOrg3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BLAH",
+		OrganizationNPIID: "3"}
+
+	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg, newOrg2, newOrg3}
+	organizationNameList = []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM", "BLAH"}
+
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
@@ -404,19 +436,19 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, len(confidences) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrgNoPrimaryName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactPrimaryNameOrgName
 	expectedConf = 1.0 * .99
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationNames, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, organizationNameList, expectedConf, confidences[org.NPI_ID]))
 }
 
 func Test_countTokens(t *testing.T) {
@@ -430,25 +462,65 @@ func Test_countTokens(t *testing.T) {
 
 	var FHIREndpoints []*endpointmanager.FHIREndpoint
 
+	var epOrg1 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "1"}
+
+	var epOrg2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BLAH",
+		OrganizationNPIID: "2"}
+
+	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "ONE TWO THREE FOUR FIVE",
+		OrganizationNPIID: "3"}
+
 	var ep1 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM", "BLAH", "ONE TWO THREE FOUR FIVE"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg1, epOrg2, epOrg3},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+
+	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO",
+		OrganizationNPIID: "1"}
+
+	var epOrg5 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BAM BLAH",
+		OrganizationNPIID: "2"}
+
+	var epOrg6 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
+		OrganizationNPIID: "3"}
+
+	var epOrg7 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "SYSTEM SYSTEM SERVICES"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO", "BAM BLAH", "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM", "SYSTEM SYSTEM SERVICES"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4, epOrg5, epOrg6, epOrg7},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+
+
+	var epOrg8 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BLAH EIGHT",
+		OrganizationNPIID: "1"}
+
+	var epOrg9 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "EIGHT NINE TEN",
+		OrganizationNPIID: "2"}
+
+	var epOrg10 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO NOTHING BAM BAM",
+		OrganizationNPIID: "3"}
+
+	var epOrg11 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "SYSTEM SERVICES BLAH SERVICES"}
 
 	var ep3 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"BLAH EIGHT", "EIGHT NINE TEN", "FOO NOTHING BAM BAM", "SYSTEM SERVICES BLAH SERVICES"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg8, epOrg9, epOrg10, epOrg11},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
@@ -602,18 +674,44 @@ func Test_getTokenVals(t *testing.T) {
 
 	var FHIREndpoints []*endpointmanager.FHIREndpoint
 
+	var epOrg1 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationNPIID: "1"}
+
+	var epOrg2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BLAH",
+		OrganizationNPIID: "2"}
+
+	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "ONE TWO THREE FOUR FIVE",
+		OrganizationNPIID: "3"}
+
 	var ep1 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR BAR BAZ BAZ BAM", "BLAH", "ONE TWO THREE FOUR FIVE"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg1, epOrg2, epOrg3},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+
+	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO",
+		OrganizationNPIID: "1"}
+
+	var epOrg5 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BAM BLAH",
+		OrganizationNPIID: "2"}
+
+	var epOrg6 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
+		OrganizationNPIID: "3"}
+
+	var epOrg7 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "SYSTEM SYSTEM SERVICES",
+		OrganizationNPIID: "4"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO", "BAM BLAH", "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM", "SYSTEM SYSTEM SERVICES"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4, epOrg5, epOrg6, epOrg7},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
