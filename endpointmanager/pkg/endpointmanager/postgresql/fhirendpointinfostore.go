@@ -478,7 +478,7 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 // UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int) error {
-	log.Info("GETTING TO THE UPDATE METADATA ID FUNCTION")
+	log.Info("GETTING TO THE UPDATE METADATA ID FUNCTION NOW")
 
 	_, err := s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'TRUE', 'FALSE');")
 	if err != nil {
@@ -486,7 +486,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int
 	}
 
 	var info string
-	row := s.DB.QueryRow("SELECT current_setting('metadata.setting', 't');")
+	row := s.DB.QueryRowContext(ctx, "SELECT current_setting('metadata.setting', 't');")
 	err = row.Scan(&info)
 	if err != nil {
 		return err
