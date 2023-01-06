@@ -8,7 +8,6 @@ import (
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
-
 var testEndpointEntry fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationName:     "AdvantageCare Physicians",
 	FHIRPatientFacingURI: "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
@@ -19,9 +18,9 @@ var epOrg = &endpointmanager.FHIREndpointOrganization{
 	OrganizationName: "AdvantageCare Physicians"}
 
 var testFHIREndpoint endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
-	OrganizationList:  []*endpointmanager.FHIREndpointOrganization{epOrg},
-	URL:               "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
-	ListSource:        "epicList",
+	OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg},
+	URL:              "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/",
+	ListSource:       "epicList",
 }
 
 func Test_formatToFHIREndpt(t *testing.T) {

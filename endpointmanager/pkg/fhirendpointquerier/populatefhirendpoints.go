@@ -133,8 +133,8 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
-		URL:              uri,
-		ListSource:       endpoint.ListSource,
+		URL:        uri,
+		ListSource: endpoint.ListSource,
 	}
 
 	if endpoint.OrganizationName != "" || endpoint.NPIID != "" || endpoint.OrganizationZipCode != "" {
@@ -144,9 +144,9 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 			OrganizationZipCode: endpoint.OrganizationZipCode,
 		}
 
-		dbEntry.OrganizationList =[]*endpointmanager.FHIREndpointOrganization{&dbOrgEntry}
+		dbEntry.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&dbOrgEntry}
 	} else {
-		dbEntry.OrganizationList =[]*endpointmanager.FHIREndpointOrganization{}
+		dbEntry.OrganizationList = []*endpointmanager.FHIREndpointOrganization{}
 	}
 
 	// @TODO Get Location

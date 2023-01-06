@@ -297,22 +297,22 @@ func Test_matchByName(t *testing.T) {
 	var orgs []*endpointmanager.NPIOrganization
 
 	var org1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "1"}
 
 	var org2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "2"}
 
 	var org3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "3"}
 
 	var ep = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{org1, org2, org3},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	// test with no orgs
 	matches, confidences, err := matchByName(ep, orgs, false, tokenValues, .85)
@@ -360,13 +360,13 @@ func Test_matchByName(t *testing.T) {
 	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s/%s to match %v with confidence %f. got %f", org.NormalizedName, org.NormalizedSecondaryName, ep.OrganizationList[0].OrganizationName, expectedConf, confidences[org.NPI_ID]))
 
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM"
-	
+
 	var newOrg = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM BAM",
 		OrganizationNPIID: "1"}
 
 	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg}
-	
+
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
 	th.Assert(t, err == nil, err)
@@ -392,11 +392,11 @@ func Test_matchByName(t *testing.T) {
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM"
 
 	var newOrg2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "2"}
 
 	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg, newOrg2}
-	organizationNameList:= []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
+	organizationNameList := []string{"FOO FOO BAR BAR BAZ BAZ BAM BAM", "FOO FOO BAR BAR BAZ BAZ BAM"}
 
 	matches, confidences, err = matchByName(ep, orgs, false, tokenValues, .85)
 	expected = 5
@@ -423,7 +423,7 @@ func Test_matchByName(t *testing.T) {
 	// expect some matches with varying confidences to "FOO FOO BAR BAR BAZ BAZ BAM BAM" and "FOO FOO BAR BAR BAZ BAZ BAM" and "BLAH"
 
 	var newOrg3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BLAH",
+		OrganizationName:  "BLAH",
 		OrganizationNPIID: "3"}
 
 	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{newOrg, newOrg2, newOrg3}
@@ -463,65 +463,64 @@ func Test_countTokens(t *testing.T) {
 	var FHIREndpoints []*endpointmanager.FHIREndpoint
 
 	var epOrg1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "1"}
 
 	var epOrg2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BLAH",
+		OrganizationName:  "BLAH",
 		OrganizationNPIID: "2"}
 
 	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "ONE TWO THREE FOUR FIVE",
+		OrganizationName:  "ONE TWO THREE FOUR FIVE",
 		OrganizationNPIID: "3"}
 
 	var ep1 = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg1, epOrg2, epOrg3},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO",
+		OrganizationName:  "FOO FOO",
 		OrganizationNPIID: "1"}
 
 	var epOrg5 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BAM BLAH",
+		OrganizationName:  "BAM BLAH",
 		OrganizationNPIID: "2"}
 
 	var epOrg6 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
 		OrganizationNPIID: "3"}
 
 	var epOrg7 = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "SYSTEM SYSTEM SERVICES"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4, epOrg5, epOrg6, epOrg7},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
-
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	var epOrg8 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BLAH EIGHT",
+		OrganizationName:  "BLAH EIGHT",
 		OrganizationNPIID: "1"}
 
 	var epOrg9 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "EIGHT NINE TEN",
+		OrganizationName:  "EIGHT NINE TEN",
 		OrganizationNPIID: "2"}
 
 	var epOrg10 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO NOTHING BAM BAM",
+		OrganizationName:  "FOO NOTHING BAM BAM",
 		OrganizationNPIID: "3"}
 
 	var epOrg11 = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "SYSTEM SERVICES BLAH SERVICES"}
 
 	var ep3 = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg8, epOrg9, epOrg10, epOrg11},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)
@@ -675,44 +674,44 @@ func Test_getTokenVals(t *testing.T) {
 	var FHIREndpoints []*endpointmanager.FHIREndpoint
 
 	var epOrg1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM",
 		OrganizationNPIID: "1"}
 
 	var epOrg2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BLAH",
+		OrganizationName:  "BLAH",
 		OrganizationNPIID: "2"}
 
 	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "ONE TWO THREE FOUR FIVE",
+		OrganizationName:  "ONE TWO THREE FOUR FIVE",
 		OrganizationNPIID: "3"}
 
 	var ep1 = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg1, epOrg2, epOrg3},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO",
+		OrganizationName:  "FOO FOO",
 		OrganizationNPIID: "1"}
 
 	var epOrg5 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BAM BLAH",
+		OrganizationName:  "BAM BLAH",
 		OrganizationNPIID: "2"}
 
 	var epOrg6 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
+		OrganizationName:  "FOO FOO BAR BAR BAZ BAZ BAM BAM BAM",
 		OrganizationNPIID: "3"}
 
 	var epOrg7 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "SYSTEM SYSTEM SERVICES",
+		OrganizationName:  "SYSTEM SYSTEM SERVICES",
 		OrganizationNPIID: "4"}
 
 	var ep2 = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4, epOrg5, epOrg6, epOrg7},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	FHIREndpoints = append(FHIREndpoints, ep1)
 	FHIREndpoints = append(FHIREndpoints, ep2)

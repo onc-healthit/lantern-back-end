@@ -84,13 +84,13 @@ func getIdsOfMatchingNPIOrgs(npiOrgNames []*endpointmanager.NPIOrganization, nor
 	for _, npiOrg := range npiOrgNames {
 		consideredMatch := false
 		confidence := 0.0
-		
+
 		jaccard1 := calculateWeightedJaccardIndex(normalizedEndpointName, npiOrg.NormalizedName, tokenVal)
 		jaccard2 := calculateWeightedJaccardIndex(normalizedEndpointName, npiOrg.NormalizedSecondaryName, tokenVal)
 		zipCodeMatch := false
 		if npiOrg.Location.ZipCode != "" && zipcode != "" && npiOrg.Location.ZipCode == zipcode {
 			zipCodeMatch = true
-		} 
+		}
 
 		if jaccard1 == 1.0 {
 			confidence = jaccard1
@@ -449,12 +449,12 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			}
 
 			var fhirEndpointOrganization = endpointmanager.FHIREndpointOrganization{
-				OrganizationName: npiOrganizationName,
+				OrganizationName:  npiOrganizationName,
 				OrganizationNPIID: orgID,
 			}
 
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
-				URL:               endpointURL,
+				URL:              endpointURL,
 				OrganizationList: []*endpointmanager.FHIREndpointOrganization{&fhirEndpointOrganization},
 			}
 
@@ -507,12 +507,12 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			}
 
 			var fhirEndpointOrganization = endpointmanager.FHIREndpointOrganization{
-				OrganizationName: npiOrganizationName,
+				OrganizationName:  npiOrganizationName,
 				OrganizationNPIID: orgID,
 			}
 
 			var fhirEndpoint = endpointmanager.FHIREndpoint{
-				URL:               endpointURL,
+				URL:              endpointURL,
 				OrganizationList: []*endpointmanager.FHIREndpointOrganization{&fhirEndpointOrganization},
 			}
 

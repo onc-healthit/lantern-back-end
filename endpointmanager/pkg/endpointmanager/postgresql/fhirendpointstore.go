@@ -400,7 +400,7 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 	for orgRow.Next() {
 		var organization endpointmanager.FHIREndpointOrganization
 		var endpoint endpointmanager.FHIREndpoint
-		
+
 		err = orgRow.Scan(
 			&endpoint.OrgDatabaseMapID,
 			&organization.ID,
@@ -541,7 +541,7 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 
 // UpdateFHIREndpointOrganizations updates the FHIREndpoint's list of organizations
 func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	
+
 	for _, org := range e.OrganizationList {
 		organization, err := s.GetFHIREndpointOrganizationByInfo(ctx, e.OrgDatabaseMapID, org)
 
@@ -564,6 +564,7 @@ func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpoint
 	}
 	return nil
 }
+
 // AddFHIREndpoint adds the FHIREndpoint to the database.
 func (s *Store) AddFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
@@ -657,6 +658,9 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 
 	_, err := deleteFHIREndpointStatement.ExecContext(ctx, e.ID)
+	if err != nil {
+		return err
+	}
 
 	err = s.DeleteFHIREndpointOrganizationMap(ctx, e)
 	return err
@@ -668,16 +672,15 @@ func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointm
 	if err != nil {
 		return err
 	}
-	
-	_, err = deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
 
+	_, err = deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
 
 	return err
 }
 
 // DeleteFHIREndpointOrganization deletes the FHIREndpoint Organization from the database using the Organization's database id  as the key.
 func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	
+
 	organizationsList, err := s.GetFHIREndpointOrganizations(ctx, e.OrgDatabaseMapID)
 	if err != nil {
 		return err

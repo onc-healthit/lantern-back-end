@@ -18,13 +18,13 @@ func CorrecTekWebscraper(chplURL string, fileToWriteTo string) {
 	count := 0
 
 	fileToWriteTo = strings.TrimSuffix(fileToWriteTo, "EndpointSources.json")
-	
+
 	for count <= 1 {
 		endpointListURL := stu3EndpointList
 		if count == 1 {
 			endpointListURL = r4EndpointList
 		}
-		
+
 		doc, err := helpers.ChromedpQueryEndpointList(endpointListURL, "article")
 		if err != nil {
 			log.Fatal(err)
@@ -33,7 +33,7 @@ func CorrecTekWebscraper(chplURL string, fileToWriteTo string) {
 		doc.Find("article").Each(func(index int, articleElem *goquery.Selection) {
 			articleElem.Find("h4").Each(func(index int, h4Elem *goquery.Selection) {
 				if strings.Contains(h4Elem.Text(), "General Concepts") {
-					pElemURL:= h4Elem.Next().Next()
+					pElemURL := h4Elem.Next().Next()
 					aElems := pElemURL.Find("a")
 					if aElems.Length() > 0 {
 						hrefText, exists := aElems.Eq(0).Attr("href")
@@ -50,7 +50,7 @@ func CorrecTekWebscraper(chplURL string, fileToWriteTo string) {
 		})
 
 		endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, lanternEntryList...)
-		
+
 		count++
 	}
 

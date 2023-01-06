@@ -29,7 +29,7 @@ type FHIREndpointOrganization struct {
 	OrganizationName    string
 	OrganizationZipCode string
 	OrganizationNPIID   string
-	UpdatedAt        time.Time
+	UpdatedAt           time.Time
 }
 
 // Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
@@ -152,20 +152,19 @@ func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) [
 }
 
 // OrganizationsToRemove removes the Organizations to the endpoint's Organization list if they are not present in the new list, and returns all the organizations that need to be removed from the db.
-func (e *FHIREndpoint) OrganizationsToRemove(orgList[]*FHIREndpointOrganization) []*FHIREndpointOrganization {
+func (e *FHIREndpoint) OrganizationsToRemove(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
 	newOrgList := orgList
 	existingOrgList := e.OrganizationList
-	
 
 	var oldOrganizations []*FHIREndpointOrganization
 	for index, org := range existingOrgList {
 		found := containsOrganization(newOrgList, org)
 		if !found {
 			organizationListLength := len(e.OrganizationList)
-			if index < organizationListLength - 1 {
+			if index < organizationListLength-1 {
 				e.OrganizationList = append(e.OrganizationList[:index], e.OrganizationList[index+1:]...)
 			} else {
-				e.OrganizationList = append(e.OrganizationList[:organizationListLength-1])
+				e.OrganizationList = e.OrganizationList[:organizationListLength-1]
 			}
 			oldOrganizations = append(oldOrganizations, org)
 		}
@@ -212,7 +211,7 @@ func (e *FHIREndpoint) GetOrganizationNames() []string {
 // // AddOrganization adds the organization to the endpoint's Organization list if it's not present already. If it is, it does nothing.
 // func (e *FHIREndpoint) AddOrganization(org *FHIREndpointOrganization) {
 // 	if !containsOrganization(e.OrganizationList, org) {
-		
+
 // 		organizationEntry := FHIREndpointOrganization{
 // 			OrganizationName:    org.OrganizationName,
 // 			OrganizationNPIID:   org.OrganizationNPIID,

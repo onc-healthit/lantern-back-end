@@ -10,10 +10,10 @@ type EndpointList struct {
 }
 
 type LanternEntry struct {
-	URL              string `json:"URL"`
-	OrganizationName string `json:"OrganizationName"`
-	NPIID            string `json:"NPIID"`
-	OrganizationZipCode string `json:OrganizationZipCode`
+	URL                 string `json:"URL"`
+	OrganizationName    string `json:"OrganizationName"`
+	NPIID               string `json:"NPIID"`
+	OrganizationZipCode string `json:"OrganizationZipCode"`
 }
 
 var oneUpURL = "https://1up.health/fhir-endpoint-directory"

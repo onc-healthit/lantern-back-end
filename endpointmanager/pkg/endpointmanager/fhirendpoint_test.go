@@ -114,31 +114,31 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	// endpoints
 
 	var epOrg1 = &FHIREndpointOrganization{
-		OrganizationName: "Example Org 1",
+		OrganizationName:  "Example Org 1",
 		OrganizationNPIID: "1"}
 
 	var epOrg2 = &FHIREndpointOrganization{
-		OrganizationName: "Example Org 2",
+		OrganizationName:  "Example Org 2",
 		OrganizationNPIID: "2"}
 
 	var epOrg3 = &FHIREndpointOrganization{
-		OrganizationName: "Example Org 1",
+		OrganizationName:  "Example Org 1",
 		OrganizationNPIID: "1"}
 
 	var epOrg4 = &FHIREndpointOrganization{
-		OrganizationName: "Example Org 2",
+		OrganizationName:  "Example Org 2",
 		OrganizationNPIID: "2"}
 
 	var endpoint1 = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*FHIREndpointOrganization{epOrg1, epOrg2},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	var endpoint2 = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*FHIREndpointOrganization{epOrg3, epOrg4},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")

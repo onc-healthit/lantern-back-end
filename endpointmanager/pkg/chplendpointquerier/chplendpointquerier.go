@@ -14,7 +14,7 @@ type LanternEntry struct {
 	URL                 string `json:"URL"`
 	OrganizationName    string `json:"OrganizationName"`
 	NPIID               string `json:"NPIID"`
-	OrganizationZipCode string `json:OrganizationZipCode`
+	OrganizationZipCode string `json:"OrganizationZipCode"`
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
