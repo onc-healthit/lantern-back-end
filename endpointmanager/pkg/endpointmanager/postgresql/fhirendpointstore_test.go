@@ -69,6 +69,15 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("retrieved endpoint is not equal to saved endpoint.")
 	}
 
+	orgList, err := store.GetFHIREndpointOrganizations(ctx, endpoint1.OrgDatabaseMapID)
+	if err != nil {
+		t.Errorf("could not retrieve endpoint1's organizations")
+	}
+
+	if !endpointmanager.OrganizationListEquals(orgList, endpoint1.OrganizationList) {
+		t.Errorf("retrieved endpoint organizations is not equal to saved endpoint organizations.")
+	}
+
 	// update endpoint
 	e1.ListSource = "Unknown"
 
@@ -288,6 +297,14 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	_, err = store.GetFHIREndpoint(ctx, endpoint1.ID) // ensure we deleted the entry
 	if err == nil {
 		t.Errorf("endpoint1 was not deleted")
+	}
+
+	orgList, err = store.GetFHIREndpointOrganizations(ctx, endpoint1.OrgDatabaseMapID) // ensure we deleted the entry's organizations
+	if err != nil {
+		t.Errorf("error retrieving endpoint1's organizatoions")
+	}
+	if len(orgList) != 0 {
+		t.Errorf("endpoint1's organizations were not deleted")
 	}
 
 	_, err = store.GetFHIREndpoint(ctx, endpoint2.ID) // ensure we haven't deleted all entries

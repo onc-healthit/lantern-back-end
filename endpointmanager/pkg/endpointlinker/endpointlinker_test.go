@@ -37,6 +37,20 @@ var nonExactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 		State:    "AK",
 		ZipCode:  "00000"},
 	Taxonomy: "208D00000X"}
+var nonExactSecondaryNameOrgZipcode = &endpointmanager.NPIOrganization{
+	ID:                      3,
+	NPI_ID:                  "3",
+	Name:                    "Foo Bar",
+	SecondaryName:           "foo bar baz",
+	NormalizedName:          "NOTHING SHOULD MATCH THIS",
+	NormalizedSecondaryName: "FOO FOO BAR BAR BAZ BAZ BAM BAM",
+	Location: &endpointmanager.Location{
+		Address1: "somerandomstring",
+		Address2: "Foo Bar",
+		City:     "A City",
+		State:    "AK",
+		ZipCode:  "12345"},
+	Taxonomy: "208D00000X"}
 var exactSecondaryNameOrg = &endpointmanager.NPIOrganization{
 	ID:                      4,
 	NPI_ID:                  "4",
@@ -166,15 +180,18 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 
 	orgs = append(orgs, exactPrimaryNameOrg)
 	orgs = append(orgs, nonExactSecondaryNameOrg)
+	orgs = append(orgs, nonExactSecondaryNameOrgZipcode)
 	orgs = append(orgs, exactSecondaryNameOrg)
 	orgs = append(orgs, exactSecondaryNameOrgNoPrimaryName)
 	orgs = append(orgs, nonExactPrimaryNameOrgName)
 	orgs = append(orgs, nonExactPrimaryAndSecondaryOrgName)
 
+	zipcode = "12345"
+
 	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "FOO FOO BAR BAR BAZ BAZ BAM", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")
-	th.Assert(t, (len(matches) == 5), "There should have been 5 matches returned got: "+strconv.Itoa(len(matches)))
-	th.Assert(t, (len(confidences) == 5), "There should have been 5 confidences returned "+strconv.Itoa(len(confidences)))
+	th.Assert(t, (len(matches) == 6), "There should have been 6 matches returned got: "+strconv.Itoa(len(matches)))
+	th.Assert(t, (len(confidences) == 6), "There should have been 6 confidences returned "+strconv.Itoa(len(confidences)))
 	confidence := fmt.Sprintf("%f", confidences[matches[0]])
 	// FOO FOO BAR BAR BAZ BAZ BAM and primary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1 * .99
 	th.Assert(t, (confidence == "0.990000"), "Exact match confidence should have been 0.990000 confidence got "+confidence)
@@ -182,15 +199,19 @@ func Test_getIdsOfMatchingNPIOrgs(t *testing.T) {
 	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM BAM have confidence of .875 * .99
 	th.Assert(t, (confidence == "0.866250"), "Exact match confidence should have been 0.866250 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[2]])
-	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1.000000 * .99
-	th.Assert(t, (confidence == "0.990000"), "Exact match confidence should have been 0.990000 confidence got "+confidence)
+	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM BAM have confidence of .875 * .99, but because zip codes match it should have confidence of .99 * .99
+	th.Assert(t, (confidence == "0.980100"), "Exact match confidence should have been 0.980100 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[3]])
 	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1.000000 * .99
 	th.Assert(t, (confidence == "0.990000"), "Exact match confidence should have been 0.990000 confidence got "+confidence)
 	confidence = fmt.Sprintf("%f", confidences[matches[4]])
+	// FOO FOO BAR BAR BAZ BAZ BAM and secondary name FOO FOO BAR BAR BAZ BAZ BAM have confidence of 1.000000 * .99
+	th.Assert(t, (confidence == "0.990000"), "Exact match confidence should have been 0.990000 confidence got "+confidence)
+	confidence = fmt.Sprintf("%f", confidences[matches[5]])
 	// FOO FOO BAR BAR BAZ BAZ BAM and primary name FOO FOO BAR BAR BAZ BAZ BAM BAM have confidence of .875 * .99
 	th.Assert(t, (confidence == "0.866250"), "Exact match confidence should have been 0.866250 confidence got "+confidence)
 
+	zipcode = ""
 	// Test the case where the primary name and secondary name both pass threshold but one is greater than the other
 	matches, confidences, err = getIdsOfMatchingNPIOrgs(orgs, "ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT", zipcode, false, tokenValues, .85)
 	th.Assert(t, (err == nil), "Error getting matches from list")

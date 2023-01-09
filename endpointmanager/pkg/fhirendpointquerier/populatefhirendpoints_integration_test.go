@@ -35,6 +35,7 @@ var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	FHIRPatientFacingURI: "http://example.com/DTSU2/",
 	ListSource:           "Lantern",
 	NPIID:                "1",
+	OrganizationZipCode: "12345",
 }
 var testEndpointEntry4 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationName:     "fakeOrganization2",
@@ -48,7 +49,8 @@ var testFHIREndpoint2Org = &endpointmanager.FHIREndpointOrganization{
 
 var testFHIREndpoint3Org = &endpointmanager.FHIREndpointOrganization{
 	OrganizationName: "fakeOrganization",
-	OrganizationNPIID: "1"}
+	OrganizationNPIID: "1",
+	OrganizationZipCode: "12345"}
 
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFHIREndpoint2Org},

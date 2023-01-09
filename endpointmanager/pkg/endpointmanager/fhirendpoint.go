@@ -52,14 +52,15 @@ func (e *FHIREndpoint) Equal(e2 *FHIREndpoint) bool {
 		return false
 	}
 
-	if !organizationListEquals(e.OrganizationList, e2.OrganizationList) {
+	if !OrganizationListEquals(e.OrganizationList, e2.OrganizationList) {
 		return false
 	}
 
 	return true
 }
 
-func organizationListEquals(orgList1 []*FHIREndpointOrganization, orgList2 []*FHIREndpointOrganization) bool {
+// Checks if the two lists of organizations are equal
+func OrganizationListEquals(orgList1 []*FHIREndpointOrganization, orgList2 []*FHIREndpointOrganization) bool {
 
 	if len(orgList1) != len(orgList2) {
 		return false
@@ -127,51 +128,6 @@ func NormalizeEndpointURL(url string) string {
 	return normalized
 }
 
-// OrganizationsToAdd adds the Organizations to the endpoint's Organization list if they are not present already, and returns all the organizations that need to be added to the db.
-func (e *FHIREndpoint) OrganizationsToAdd(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
-
-	newOrgList := orgList
-	existingOrgList := e.OrganizationList
-
-	var newOrganizations []*FHIREndpointOrganization
-	for _, org := range newOrgList {
-		found := containsOrganization(existingOrgList, org)
-		if !found {
-
-			organizationEntry := FHIREndpointOrganization{
-				OrganizationName:    org.OrganizationName,
-				OrganizationNPIID:   org.OrganizationNPIID,
-				OrganizationZipCode: org.OrganizationZipCode,
-			}
-
-			e.OrganizationList = append(e.OrganizationList, &organizationEntry)
-			newOrganizations = append(newOrganizations, &organizationEntry)
-		}
-	}
-	return newOrganizations
-}
-
-// OrganizationsToRemove removes the Organizations to the endpoint's Organization list if they are not present in the new list, and returns all the organizations that need to be removed from the db.
-func (e *FHIREndpoint) OrganizationsToRemove(orgList []*FHIREndpointOrganization) []*FHIREndpointOrganization {
-	newOrgList := orgList
-	existingOrgList := e.OrganizationList
-
-	var oldOrganizations []*FHIREndpointOrganization
-	for index, org := range existingOrgList {
-		found := containsOrganization(newOrgList, org)
-		if !found {
-			organizationListLength := len(e.OrganizationList)
-			if index < organizationListLength-1 {
-				e.OrganizationList = append(e.OrganizationList[:index], e.OrganizationList[index+1:]...)
-			} else {
-				e.OrganizationList = e.OrganizationList[:organizationListLength-1]
-			}
-			oldOrganizations = append(oldOrganizations, org)
-		}
-	}
-	return oldOrganizations
-}
-
 // containsOrganization checks if organization list contains the specified organization
 func containsOrganization(orgList []*FHIREndpointOrganization, org *FHIREndpointOrganization) bool {
 	for _, o := range orgList {
@@ -189,6 +145,7 @@ func sortOrganizationList(orgList []*FHIREndpointOrganization) {
 	})
 }
 
+// Gets all the NPI IDs for an endpoint
 func (e *FHIREndpoint) GetNPIIDs() []string {
 	var NPIIDs []string
 	for _, org := range e.OrganizationList {
@@ -198,6 +155,7 @@ func (e *FHIREndpoint) GetNPIIDs() []string {
 	return NPIIDs
 }
 
+// Gets all the organization names for an endpoint
 func (e *FHIREndpoint) GetOrganizationNames() []string {
 	var OrganizationNames []string
 	for _, org := range e.OrganizationList {
