@@ -51,11 +51,14 @@ This removes all docker images, networks, and local volumes.
     ```
 
     This starts all of the following services:
-    * **PostgreSQL** - application database
+    * **PostgreSQL** - application database (port 5432)
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
     * **Capability Querier** - queries the endpoints for their Capability Statements every 23 hours. Starting the service the first time will also query the endpoints.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
+    *	**Shinydashboard** – the website (localhost:8090)
+
+    **Note**: While running with the production environment, you will not be able to externally connect to the database or the message queue. Only the services can access those ports.
 
 2. **If you have a clean database or want to update the data in your database**
     1. Run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
@@ -94,11 +97,14 @@ This removes all docker images, networks, and local volumes.
     ```
 
     This starts all of the following services:
-    * **PostgreSQL** - application database
+    * **PostgreSQL** - application database (localhost:5432)
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
     * **Capability Querier** - queries the endpoints for their FHIR Capability Statements every 23 hours. Starting the service the first time will also query the endpoints.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
+    *	**Shinydashboard** – the website (localhost:3838)
+
+    **Note**: If you are interested in viewing the queue data and interacting with the queue directly, you can go to localhost:15672 while the system is running (only works while running as development). Use lanternadmin as both the username and password on the login page.
 
 2. **If you have a clean database or want to update the data in your database**
    1. run the following command to update the endpoint lists found in the production resources directory, `lantern-back-end/resources/prod_resources`.
@@ -489,6 +495,13 @@ Or you may run the lintr.sh script in the ./scripts directory which will install
 
 More information about the R lintr can be found [here](https://github.com/jimhester/lintr)
 
+### Make Commands
+To make it easier, there are make commands that run the lintrs. The Go and R lintrs can be run on the Lantern code at any time using
+`make lint`
+There are also separate make commands to run the Go lintr and R lintr, which are
+`make lint_go`
+and
+`make lint_R`.
 
 ## Running Shiny Load Test
 To run a load test, install shiny load test and shiny cannon [here](https://rstudio.github.io/shinyloadtest/)
