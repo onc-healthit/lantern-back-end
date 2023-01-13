@@ -145,7 +145,6 @@ func main() {
 			if len(urlString) > 0 && urlString[len(urlString)-1:] != "/" {
 				urlString = urlString + "/"
 			}
-		
 
 			var productEntry chplCertifiedProductEntry
 
