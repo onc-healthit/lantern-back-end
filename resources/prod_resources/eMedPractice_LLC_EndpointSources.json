@@ -1,9 +1,0 @@
-{
-	"Endpoints": [
-		{
-			"URL": "https://stage.emedpractice.com/emedapi/fhir",
-			"OrganizationName": "",
-			"NPIID": ""
-		}
-	]
-}
