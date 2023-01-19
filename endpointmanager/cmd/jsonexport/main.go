@@ -15,11 +15,18 @@ import (
 func main() {
 	var exportFile string
 	exportType := "30days"
+	start := ""
+	end := ""
 	var err error
 
 	if len(os.Args) == 2 {
 		exportFile = os.Args[1]
-	} else if len(os.Args) > 2 {
+	} else if len(os.Args) == 5 {
+		exportFile = os.Args[1]
+		exportType = os.Args[2]
+		start = os.Args[3]
+		end = os.Args[4]
+	} else if len(os.Args) == 3 {
 		exportFile = os.Args[1]
 		exportType = os.Args[2]
 	} else {
@@ -34,6 +41,6 @@ func main() {
 	ctx := context.Background()
 	log.Info("Successfully connected to DB!")
 
-	err = jsonexport.CreateJSONExport(ctx, store, exportFile, exportType)
+	err = jsonexport.CreateJSONExport(ctx, store, exportFile, exportType, start, end)
 	helpers.FailOnError("", err)
 }

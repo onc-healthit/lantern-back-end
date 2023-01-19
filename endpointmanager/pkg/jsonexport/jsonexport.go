@@ -50,12 +50,14 @@ type historyArgs struct {
 	store      *postgresql.Store
 	result     chan Result
 	exportType string
+	start      string
+	end        string
 }
 
 // CreateJSONExport formats the data from the fhir_endpoints_info and fhir_endpoints_info_history
 // tables into a given specification
-func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string, exportType string) error {
-	finalFormatJSON, err := createJSON(ctx, store, exportType)
+func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteTo string, exportType string, start string, end string) error {
+	finalFormatJSON, err := createJSON(ctx, store, exportType, start, end)
 	if err != nil {
 		return err
 	}
@@ -64,12 +66,16 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 	return err
 }
 
-func createJSON(ctx context.Context, store *postgresql.Store, exportType string) ([]byte, error) {
+func createJSON(ctx context.Context, store *postgresql.Store, exportType string, start string, end string) ([]byte, error) {
 	// Get everything from the fhir_endpoints_info table
 	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
+	// If the export type is range, only include URLs from endpoints that were created before the given end date
+	if exportType == "range" || exportType == "month" {
+		sqlQuery = "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export WHERE info_created < '" + end + "';"
+	}
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
+		return nil, fmt.Errorf("make sure that the database is not empty. Error: %s", err)
 	}
 
 	// Put into an object
@@ -87,7 +93,7 @@ func createJSON(ctx context.Context, store *postgresql.Store, exportType string)
 			&listSource,
 			&vendorNameNullable)
 		if err != nil {
-			return nil, fmt.Errorf("Error scanning the row. Error: %s", err)
+			return nil, fmt.Errorf("error scanning the row. Error: %s", err)
 		}
 		if !vendorNameNullable.Valid {
 			entry.VendorName = ""
@@ -120,11 +126,11 @@ func createJSON(ctx context.Context, store *postgresql.Store, exportType string)
 	// Start workers
 	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
-		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
+		return nil, fmt.Errorf("error from starting workers. Error: %s", err)
 	}
 
 	resultCh := make(chan Result)
-	go createJobs(ctx, resultCh, urls, store, allWorkers, exportType)
+	go createJobs(ctx, resultCh, urls, store, allWorkers, exportType, start, end)
 
 	// Add the results from createJobs to mapURLHistory
 	count := 0
@@ -197,7 +203,9 @@ func createJobs(ctx context.Context,
 	urls []string,
 	store *postgresql.Store,
 	allWorkers *workers.Workers,
-	exportType string) {
+	exportType string,
+	start string,
+	end string) {
 	for index := range urls {
 		jobArgs := make(map[string]interface{})
 		jobArgs["historyArgs"] = historyArgs{
@@ -205,6 +213,8 @@ func createJobs(ctx context.Context,
 			store:      store,
 			result:     ch,
 			exportType: exportType,
+			start:      start,
+			end:        end,
 		}
 		workerDur := viper.GetInt("export_duration")
 		// If duration not set, default to 120 seconds
@@ -236,6 +246,8 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	exportType := ha.exportType
+	start := ha.start
+	end := ha.end
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 
@@ -263,6 +275,14 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1
+		ORDER BY fhir_endpoints_info_history.updated_at DESC;`
+	} else if exportType == "range" {
+		selectHistory = `
+		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
+		capability_statement, tls_version, mime_types, operation_resource,
+		fhir_endpoints_metadata.smart_http_response, smart_response, fhir_endpoints_info_history.updated_at, capability_fhir_version
+		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
+		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND fhir_endpoints_info_history.updated_at between '` + start + `' AND '` + end + `'
 		ORDER BY fhir_endpoints_info_history.updated_at DESC;`
 	}
 
