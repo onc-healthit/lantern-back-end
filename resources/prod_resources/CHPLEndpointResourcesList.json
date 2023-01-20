@@ -110,8 +110,8 @@
 	{
 		"FormatType": "Lantern",
 		"URL": "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints/",
-		"EndpointName": "Bridge Patient Portal LLC",
-		"FileName": "Bridge_Patient_Portal_LLC_EndpointSources.json"
+		"EndpointName": "Bridge Patient Portal Inc.",
+		"FileName": "Bridge_Patient_Portal_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -799,6 +799,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://pureehr.com/images/pureehr-base-urls.csv/",
+		"EndpointName": "Pure EHR LLC",
+		"FileName": "Pure_EHR_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.qsmartcare.com/api-documentation.html/",
 		"EndpointName": "Magilen Enterprises Inc",
 		"FileName": "Magilen_Enterprises_Inc_EndpointSources.json"
@@ -1099,7 +1105,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://ehr.test.escribe.com/ehr/api/fhir/",
+		"URL": "https://ehr.escribe.com/ehr/api/fhir/",
 		"EndpointName": "Lille Group, Inc.",
 		"FileName": "Lille_Group_Inc_EndpointSources.json"
 	},
