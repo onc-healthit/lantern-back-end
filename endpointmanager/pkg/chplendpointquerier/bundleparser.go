@@ -46,32 +46,35 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 		var entry LanternEntry
 
 		if bundleEntry.Resource.ResourceType == "Endpoint" {
+			entryURL := bundleEntry.Resource.URL.(string)
+			// Do not add entries that do not have URLs
+			if entryURL != "" {
+				entry.URL = entryURL
+				if bundleEntry.Resource.Name == "" {
+					if bundleEntry.Resource.ManagingOrg.Display == "" {
 
-			entry.URL = bundleEntry.Resource.URL.(string)
-			if bundleEntry.Resource.Name == "" {
-				if bundleEntry.Resource.ManagingOrg.Display == "" {
+						orgId := bundleEntry.Resource.ManagingOrg.Reference
 
-					orgId := bundleEntry.Resource.ManagingOrg.Reference
-
-					if orgId == "" {
-						orgId = bundleEntry.Resource.ManagingOrg.Id
-					}
-
-					orgId = strings.TrimPrefix(orgId, "#")
-
-					for _, org := range bundleEntry.Resource.Orgs {
-						if org.Id == orgId {
-							entry.OrganizationName = org.Name
+						if orgId == "" {
+							orgId = bundleEntry.Resource.ManagingOrg.Id
 						}
+
+						orgId = strings.TrimPrefix(orgId, "#")
+
+						for _, org := range bundleEntry.Resource.Orgs {
+							if org.Id == orgId {
+								entry.OrganizationName = org.Name
+							}
+						}
+					} else {
+						entry.OrganizationName = bundleEntry.Resource.ManagingOrg.Display
 					}
 				} else {
-					entry.OrganizationName = bundleEntry.Resource.ManagingOrg.Display
+					entry.OrganizationName = bundleEntry.Resource.Name
 				}
-			} else {
-				entry.OrganizationName = bundleEntry.Resource.Name
-			}
 
-			lanternEntryList = append(lanternEntryList, entry)
+				lanternEntryList = append(lanternEntryList, entry)
+			}
 		}
 	}
 
