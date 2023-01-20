@@ -37,10 +37,14 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 			if fhirURL[len(fhirURL)-1:] != "/" {
 				fhirURL = fhirURL + "/"
 			}
-			
-			if !strings.HasPrefix(fhirURL, "https://") && !strings.HasPrefix(fhirURL, "http://") {
-				fhirURL = "https://" + fhirURL
+
+			splitEndpoint := strings.Split(fhirURL, "://")
+			header := "http://"
+		
+			if len(splitEndpoint) > 1 {
+				header = strings.ToLower(splitEndpoint[0]) + "://"
 			}
+			fhirURL = header + splitEndpoint[len(splitEndpoint)-1]
 
 			existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
 			if err != nil {
