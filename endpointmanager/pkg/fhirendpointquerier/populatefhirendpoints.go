@@ -40,7 +40,7 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 
 			splitEndpoint := strings.Split(fhirURL, "://")
 			header := "http://"
-		
+
 			if len(splitEndpoint) > 1 {
 				header = strings.ToLower(splitEndpoint[0]) + "://"
 			}
