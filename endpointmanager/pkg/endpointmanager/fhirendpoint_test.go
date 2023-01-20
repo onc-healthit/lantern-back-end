@@ -1,13 +1,9 @@
 package endpointmanager
 
 import (
-	// "fmt"
 	"testing"
 
-	// "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
 	_ "github.com/lib/pq"
-	// th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_FHIREndpoinNormalizeEndpointURL(t *testing.T) {
@@ -156,17 +152,44 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.URL = endpoint1.URL
 
+	orgName := endpoint2.OrganizationList[0].OrganizationName
+
 	endpoint2.OrganizationList[0].OrganizationName = "Other 1"
 	if endpoint1.Equal(endpoint2) {
 		t.Error("Did not expect endpoint1 to equal endpoint 2. OrganizationNames should be different.")
 	}
-	endpoint2.OrganizationList[0].OrganizationName = endpoint1.OrganizationList[0].OrganizationName
+	// Since organization list is sorted by Organization name alphabetically in Equals function, the organization whose name was changed to "Other 1" has now been moved to index 1. Change back to "Example Org 1"
+	endpoint2.OrganizationList[1].OrganizationName = orgName
 
-	endpoint2.OrganizationList[0].OrganizationNPIID = "Other 1"
+	// "Example Org 1" organization is now at index 1 from above
+	orgNPIID := endpoint2.OrganizationList[1].OrganizationNPIID
+	endpoint2.OrganizationList[1].OrganizationNPIID = "Other 1"
 	if endpoint1.Equal(endpoint2) {
 		t.Error("Did not expect endpoint1 to equal endpoint 2. NPIIDs should be different.")
 	}
-	endpoint2.OrganizationList[0].OrganizationNPIID = endpoint1.OrganizationList[0].OrganizationNPIID
+
+	// Since organization list is sorted by Organization name alphabetically in Equals function, the organization whose name was changed back to to "Example Org 1" has now been moved back to index 0
+	endpoint2.OrganizationList[0].OrganizationNPIID = orgNPIID
+
+	organization2 := endpoint2.OrganizationList[1]
+	endpoint2.OrganizationList[1] = endpoint2.OrganizationList[0]
+	endpoint2.OrganizationList[0] = organization2
+	if !endpoint1.Equal(endpoint2) {
+		t.Error("Expect endpoint 1 to equal endpoint 2. Order of organizations list should not matter.")
+	}
+	organization2 = endpoint2.OrganizationList[1]
+	endpoint2.OrganizationList[1] = endpoint2.OrganizationList[0]
+	endpoint2.OrganizationList[0] = organization2
+
+	var epOrgExtra = &FHIREndpointOrganization{
+		OrganizationName:  "Extra Org",
+		OrganizationNPIID: "5"}
+
+	endpoint2.OrganizationList = append(endpoint2.OrganizationList, epOrgExtra)
+	if endpoint1.Equal(endpoint2) {
+		t.Error("Did not expect endpoint1 to equal endpoint 2. Endpoint 2 has an extra organization in it's list")
+	}
+	endpoint2.OrganizationList = endpoint2.OrganizationList[:len(endpoint2.OrganizationList)-1]
 
 	endpoint2.ListSource = "other"
 	if endpoint1.Equal(endpoint2) {
