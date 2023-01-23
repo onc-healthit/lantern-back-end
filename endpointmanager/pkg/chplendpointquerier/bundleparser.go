@@ -15,10 +15,11 @@ type BundleEntry struct {
 }
 
 type BundleResource struct {
-	URL         string               `json:"address"`
-	Name        string               `json:"name"`
-	ManagingOrg ManagingOrgReference `json:"managingOrganization"`
-	Orgs        []Organization       `json:"contained"`
+	URL          interface{}          `json:"address"`
+	Name         string               `json:"name"`
+	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
+	Orgs         []Organization       `json:"contained"`
+	ResourceType string               `json:"resourceType"`
 }
 
 type ManagingOrgReference struct {
@@ -44,31 +45,37 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	for _, bundleEntry := range structBundle.Entries {
 		var entry LanternEntry
 
-		entry.URL = bundleEntry.Resource.URL
-		if bundleEntry.Resource.Name == "" {
-			if bundleEntry.Resource.ManagingOrg.Display == "" {
+		if bundleEntry.Resource.ResourceType == "Endpoint" {
+			entryURL := bundleEntry.Resource.URL.(string)
+			// Do not add entries that do not have URLs
+			if entryURL != "" {
+				entry.URL = entryURL
+				if bundleEntry.Resource.Name == "" {
+					if bundleEntry.Resource.ManagingOrg.Display == "" {
 
-				orgId := bundleEntry.Resource.ManagingOrg.Reference
+						orgId := bundleEntry.Resource.ManagingOrg.Reference
 
-				if orgId == "" {
-					orgId = bundleEntry.Resource.ManagingOrg.Id
-				}
+						if orgId == "" {
+							orgId = bundleEntry.Resource.ManagingOrg.Id
+						}
 
-				orgId = strings.TrimPrefix(orgId, "#")
+						orgId = strings.TrimPrefix(orgId, "#")
 
-				for _, org := range bundleEntry.Resource.Orgs {
-					if org.Id == orgId {
-						entry.OrganizationName = org.Name
+						for _, org := range bundleEntry.Resource.Orgs {
+							if org.Id == orgId {
+								entry.OrganizationName = org.Name
+							}
+						}
+					} else {
+						entry.OrganizationName = bundleEntry.Resource.ManagingOrg.Display
 					}
+				} else {
+					entry.OrganizationName = bundleEntry.Resource.Name
 				}
-			} else {
-				entry.OrganizationName = bundleEntry.Resource.ManagingOrg.Display
-			}
-		} else {
-			entry.OrganizationName = bundleEntry.Resource.Name
-		}
 
-		lanternEntryList = append(lanternEntryList, entry)
+				lanternEntryList = append(lanternEntryList, entry)
+			}
+		}
 	}
 
 	return lanternEntryList

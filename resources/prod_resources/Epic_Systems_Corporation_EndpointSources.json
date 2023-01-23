@@ -512,7 +512,7 @@
 		},
 		{
 			"URL": "https://sclprdproxy.sclhs.net/FHIRPRD-2017/api/FHIR/DSTU2/",
-			"OrganizationName": "SCL Health",
+			"OrganizationName": "Intermountain Healthcare",
 			"NPIID": ""
 		},
 		{
@@ -581,7 +581,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mepic.hackensackumc.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://mepic.hmhn.org/fhir/api/FHIR/DSTU2/",
 			"OrganizationName": "Hackensack Meridian Health",
 			"NPIID": ""
 		},
@@ -2186,17 +2186,32 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Shriners Children's",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRMCT/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI Memorial",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRKY/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI Saint Joseph Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rp.chihealth.com/fhir/api/FHIR/DSTU2/",
+			"URL": "https://api.valleyhealth.org/fhirproxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Valley Health Systems -  PRD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1270.epichosted.com/apiproxyprd/api/FHIR/DSTU2/",
+			"OrganizationName": "EvergreenHealth",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/FHIRSTA/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI St. Alexius Health",
 			"NPIID": ""
 		},
@@ -2787,7 +2802,7 @@
 		},
 		{
 			"URL": "https://sclprdproxy.sclhs.net/FHIRPRD-2017/api/FHIR/R4/",
-			"OrganizationName": "SCL Health",
+			"OrganizationName": "Intermountain Healthcare",
 			"NPIID": ""
 		},
 		{
@@ -2796,13 +2811,18 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
-			"OrganizationName": "Lakeland Health",
+			"URL": "https://nmepicproxy.nm.org/FHIR-PRD/api/FHIR/R4/",
+			"OrganizationName": "Northwestern Medicine",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
 			"OrganizationName": "Spectrum Health Lakeland",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Lakeland Health",
 			"NPIID": ""
 		},
 		{
@@ -3301,6 +3321,16 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRMCT/api/FHIR/R4/",
+			"OrganizationName": "CHI Memorial",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRKY/api/FHIR/R4/",
+			"OrganizationName": "CHI Saint Joseph Health",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.samhealth.org/fhir-arr/api/FHIR/R4/",
 			"OrganizationName": "Samaritan Health Services",
 			"NPIID": ""
@@ -3348,6 +3378,11 @@
 		{
 			"URL": "https://epicproxy.et0857.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Stanford Children's Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/FHIRSTA/api/FHIR/R4",
+			"OrganizationName": "CHI St. Alexius Health",
 			"NPIID": ""
 		},
 		{
@@ -4251,8 +4286,18 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://api.valleyhealth.org/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Valley Health Systems - PRD",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.et1296.epichosted.com/APIProxyPRD/api/FHIR/R4/",
 			"OrganizationName": "Duly Health and Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Shriners Children’s",
 			"NPIID": ""
 		}
 	]

@@ -7,7 +7,7 @@
 		},
 		{
 			"URL": "https://mtrestapis.achosp.org:443/v2/argonaut/v1",
-			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by NTTDATA)",
+			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by Cerecore)",
 			"NPIID": ""
 		},
 		{
@@ -88,6 +88,11 @@
 		{
 			"URL": "https://mtrestapis-live01.broadlawns.org:443/v2/argonaut/v1",
 			"OrganizationName": "Broadlawns Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.brookshealth.org:443/v2/argonaut/v1",
+			"OrganizationName": "Brooks Rehab Hosp-Expanse (Hosted by OpSus)",
 			"NPIID": ""
 		},
 		{
@@ -492,7 +497,7 @@
 		},
 		{
 			"URL": "https://mtrestapis-live02.nahospital.org:443/v2/argonaut/v1",
-			"OrganizationName": "Humboldt Park Health MAGIC to Expanse Small",
+			"OrganizationName": "Humboldt Park Health Expanse",
 			"NPIID": ""
 		},
 		{
@@ -1122,7 +1127,7 @@
 		},
 		{
 			"URL": "https://mtrestapis.achosp.org:443/v1/uscore/R4",
-			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by NTTDATA)",
+			"OrganizationName": "Alliance Community Hosp 6.1 (hosted by Cerecore)",
 			"NPIID": ""
 		},
 		{
@@ -1203,6 +1208,11 @@
 		{
 			"URL": "https://mtrestapis-live01.broadlawns.org:443/v1/uscore/R4",
 			"OrganizationName": "Broadlawns Medical Center Expanse",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://mtrestapis-live01.brookshealth.org:443/v1/uscore/R4",
+			"OrganizationName": "Brooks Rehab Hosp-Expanse (Hosted by OpSus)",
 			"NPIID": ""
 		},
 		{
@@ -1607,7 +1617,7 @@
 		},
 		{
 			"URL": "https://mtrestapis-live02.nahospital.org:443/v1/uscore/R4",
-			"OrganizationName": "Humboldt Park Health MAGIC to Expanse Small",
+			"OrganizationName": "Humboldt Park Health Expanse",
 			"NPIID": ""
 		},
 		{

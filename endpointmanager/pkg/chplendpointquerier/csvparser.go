@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int) {
+func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
@@ -30,19 +30,22 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 		if err != nil {
 			log.Fatal(err)
 		}
-		if records >= numrecords {
+		if records >= numrecords+startrecord {
 			break
 		}
 
-		var entry LanternEntry
+		if records >= startrecord {
+			var entry LanternEntry
 
-		organizationName := ""
-		URL := strings.TrimSpace(rec[1])
+			organizationName := ""
+			URL := strings.TrimSpace(rec[1])
 
-		entry.OrganizationName = organizationName
-		entry.URL = URL
+			entry.OrganizationName = organizationName
+			entry.URL = URL
 
-		lanternEntryList = append(lanternEntryList, entry)
+			lanternEntryList = append(lanternEntryList, entry)
+		}
+
 		records++
 	}
 
