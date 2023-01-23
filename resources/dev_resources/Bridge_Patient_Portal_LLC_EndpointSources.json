@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://appcert.api.playground.bridgepatientportal.com/fhir/r4/",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}
