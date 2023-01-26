@@ -96,23 +96,10 @@ func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, org_map_id int
 			return nil, err
 		}
 
-		if !organizationName.Valid {
-			organization.OrganizationName = ""
-		} else {
-			organization.OrganizationName = organizationName.String
-		}
-
-		if !organizationZipCode.Valid {
-			organization.OrganizationZipCode = ""
-		} else {
-			organization.OrganizationZipCode = organizationZipCode.String
-		}
-
-		if !organizationNPIID.Valid {
-			organization.OrganizationNPIID = ""
-		} else {
-			organization.OrganizationNPIID = organizationNPIID.String
-		}
+		orgName, orgZipCode, orgNPIID := organizationInformationValid(organizationName, organizationZipCode, organizationNPIID)
+		organization.OrganizationName = orgName
+		organization.OrganizationZipCode = orgZipCode
+		organization.OrganizationNPIID = orgNPIID
 
 		organizationsList = append(organizationsList, &organization)
 	}
@@ -138,23 +125,10 @@ func (s *Store) GetFHIREndpointOrganizationByInfo(ctx context.Context, org_map_i
 		return nil, err
 	}
 
-	if !organizationName.Valid {
-		organization.OrganizationName = ""
-	} else {
-		organization.OrganizationName = organizationName.String
-	}
-
-	if !organizationZipCode.Valid {
-		organization.OrganizationZipCode = ""
-	} else {
-		organization.OrganizationZipCode = organizationZipCode.String
-	}
-
-	if !organizationNPIID.Valid {
-		organization.OrganizationNPIID = ""
-	} else {
-		organization.OrganizationNPIID = organizationNPIID.String
-	}
+	orgName, orgZipCode, orgNPIID := organizationInformationValid(organizationName, organizationZipCode, organizationNPIID)
+	organization.OrganizationName = orgName
+	organization.OrganizationZipCode = orgZipCode
+	organization.OrganizationNPIID = orgNPIID
 
 	return &organization, nil
 }
@@ -185,23 +159,10 @@ func (s *Store) GetFHIREndpointOrganizationByURLandListSource(ctx context.Contex
 		return nil, err
 	}
 
-	if !organizationName.Valid {
-		organization.OrganizationName = ""
-	} else {
-		organization.OrganizationName = organizationName.String
-	}
-
-	if !organizationZipCode.Valid {
-		organization.OrganizationZipCode = ""
-	} else {
-		organization.OrganizationZipCode = organizationZipCode.String
-	}
-
-	if !organizationNPIID.Valid {
-		organization.OrganizationNPIID = ""
-	} else {
-		organization.OrganizationNPIID = organizationNPIID.String
-	}
+	orgName, orgZipCode, orgNPIID := organizationInformationValid(organizationName, organizationZipCode, organizationNPIID)
+	organization.OrganizationName = orgName
+	organization.OrganizationZipCode = orgZipCode
+	organization.OrganizationNPIID = orgNPIID
 
 	return &organization, nil
 }
@@ -412,23 +373,10 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 			return nil, err
 		}
 
-		if !organizationName.Valid {
-			organization.OrganizationName = ""
-		} else {
-			organization.OrganizationName = organizationName.String
-		}
-
-		if !organizationZipCode.Valid {
-			organization.OrganizationZipCode = ""
-		} else {
-			organization.OrganizationZipCode = organizationZipCode.String
-		}
-
-		if !organizationNPIID.Valid {
-			organization.OrganizationNPIID = ""
-		} else {
-			organization.OrganizationNPIID = organizationNPIID.String
-		}
+		orgName, orgZipCode, orgNPIID := organizationInformationValid(organizationName, organizationZipCode, organizationNPIID)
+		organization.OrganizationName = orgName
+		organization.OrganizationZipCode = orgZipCode
+		organization.OrganizationNPIID = orgNPIID
 
 		endpoint.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&organization}
 		endpointList = append(endpointList, &endpoint)
@@ -696,6 +644,32 @@ func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpoi
 	_, err = deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.OrgDatabaseMapID)
 
 	return err
+}
+
+func organizationInformationValid(organizationName sql.NullString, organizationZipCode sql.NullString, organizationNPIID sql.NullString) (string, string, string) {
+	var organizationNameString string
+	var organizationZipCodeString string
+	var organizationNPIIDString string
+	
+	if !organizationName.Valid {
+		organizationNameString = ""
+	} else {
+		organizationNameString = organizationName.String
+	}
+
+	if !organizationZipCode.Valid {
+		organizationZipCodeString = ""
+	} else {
+		organizationZipCodeString = organizationZipCode.String
+	}
+
+	if !organizationNPIID.Valid {
+		organizationNPIIDString = ""
+	} else {
+		organizationNPIIDString = organizationNPIID.String
+	}
+
+	return organizationNameString, organizationZipCodeString, organizationNPIIDString
 }
 
 func prepareFHIREndpointStatements(s *Store) error {

@@ -33,6 +33,9 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 			}
 			zipCode, zipCodeOk := lanternList[entry]["OrganizationZipCode"].(string)
 			if zipCodeOk {
+				if len(zipCode) > 5 {
+					zipCode = zipCode[:5]
+				}
 				fhirEntry.OrganizationZipCode = zipCode
 			}
 

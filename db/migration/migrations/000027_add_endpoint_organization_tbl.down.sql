@@ -44,4 +44,9 @@ LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id
 WHERE links.confidence > .97 AND orgs.Location->>'zipcode' IS NOT null;
 
+DROP INDEX IF EXISTS fhir_endpoint_organizations_id;
+DROP INDEX IF EXISTS fhir_endpoint_organizations_name;
+DROP INDEX IF EXISTS fhir_endpoint_organizations_zipcode;
+DROP INDEX IF EXISTS fhir_endpoint_organizations_npi_id;
+
 COMMIT;

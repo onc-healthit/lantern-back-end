@@ -165,20 +165,6 @@ func (e *FHIREndpoint) GetOrganizationNames() []string {
 	return OrganizationNames
 }
 
-// AddOrganization adds the organization to the endpoint's Organization list if it's not present already. If it is, it does nothing.
-func (e *FHIREndpoint) AddOrganization(org *FHIREndpointOrganization) {
-	if !containsOrganization(e.OrganizationList, org) {
-
-		organizationEntry := FHIREndpointOrganization{
-			OrganizationName:    org.OrganizationName,
-			OrganizationNPIID:   org.OrganizationNPIID,
-			OrganizationZipCode: org.OrganizationZipCode,
-		}
-
-		e.OrganizationList = append(e.OrganizationList, &organizationEntry)
-	}
-}
-
 // Prepends url with https:// and appends with .well-know/smart-configuration/ if needed
 func NormalizeWellKnownURL(url string) string {
 	normalized := NormalizeURL(url)

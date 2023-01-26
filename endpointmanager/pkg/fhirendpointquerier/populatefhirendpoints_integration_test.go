@@ -335,7 +335,7 @@ func Test_AddEndpointData(t *testing.T) {
 		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndptOrganizationList, endpt2.OrganizationName))
 }
 
-func Test_RemoveOldEndpoints(t *testing.T) {
+func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -348,7 +348,10 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	ctx := context.Background()
 
 	query_str := "SELECT COUNT(*) FROM fhir_endpoints;"
+	org_query_str := "SELECT COUNT(*) FROM fhir_endpoint_organizations;"
 	var ct int
+	var ctOrg int
+	
 	// Add first endpoint
 	err = store.AddFHIREndpoint(ctx, &endpt1)
 	th.Assert(t, err == nil, err)
@@ -398,7 +401,14 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, endpt3.Equal(savedEndpt), "stored data does not equal expected store data")
 
+	// Check that each endpoint's organization was added to the fhir_endpoint_organizations table
+	err = store.DB.QueryRow(org_query_str).Scan(&ctOrg)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ctOrg == 3, "did not persist endpoint organizations as expected")
+
 	err = RemoveOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt3.ListSource)
+	err = RemoveOldEndpointOrganizations(ctx, store, savedEndpt.OrganizationList[0].UpdatedAt, endpt3.ListSource)
+
 	th.Assert(t, err == nil, err)
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
@@ -406,9 +416,23 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Check that first endpoint is removed based on update time
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
+	
+	// Check that first endpoint's organization is removed based on update time
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt1.OrgDatabaseMapID, endpt1.OrganizationList[0])
+	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint 1's organization to removed")
+	
 	// Check that second endpoint still exist
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
 	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")
+
+	// Check that second endpoint's organization still exists
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt2.OrgDatabaseMapID, endpt2.OrganizationList[0])
+	th.Assert(t, err == nil, "Endpoint 2's organization should still exist")
+
+	// Check that third endpoint's organization still exists
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt3.OrgDatabaseMapID, endpt3.OrganizationList[0])
+	th.Assert(t, err == nil, "Endpoint 3's organization should still exist")
+
 	// Test that endpoint is not removed from fhir_endpoints_info because it still exist in
 	// fhir_endpoints but from different listsource
 	FHIREndpointInfo, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpt2.URL, "None")
@@ -424,6 +448,8 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	_, err = store.DB.Exec("DELETE FROM fhir_endpoints;")
 	th.Assert(t, err == nil, err)
 	_, err = store.DB.Exec("DELETE FROM fhir_endpoints_metadata;")
+	th.Assert(t, err == nil, err)
+	_, err = store.DB.Exec("DELETE FROM fhir_endpoint_organizations;")
 	th.Assert(t, err == nil, err)
 
 	endptInfo2 := endpointmanager.FHIREndpointInfo{
