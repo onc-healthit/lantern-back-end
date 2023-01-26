@@ -128,16 +128,6 @@ func NormalizeEndpointURL(url string) string {
 	return normalized
 }
 
-// containsOrganization checks if organization list contains the specified organization
-func containsOrganization(orgList []*FHIREndpointOrganization, org *FHIREndpointOrganization) bool {
-	for _, o := range orgList {
-		if org.OrganizationName == o.OrganizationName && org.OrganizationNPIID == o.OrganizationNPIID && org.OrganizationZipCode == o.OrganizationZipCode {
-			return true
-		}
-	}
-	return false
-}
-
 // sortOrganizationList sorts an endpoint's list of Organizations
 func sortOrganizationList(orgList []*FHIREndpointOrganization) {
 	sort.Slice(orgList, func(i, j int) bool {

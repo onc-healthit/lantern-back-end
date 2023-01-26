@@ -650,7 +650,7 @@ func organizationInformationValid(organizationName sql.NullString, organizationZ
 	var organizationNameString string
 	var organizationZipCodeString string
 	var organizationNPIIDString string
-	
+
 	if !organizationName.Valid {
 		organizationNameString = ""
 	} else {
