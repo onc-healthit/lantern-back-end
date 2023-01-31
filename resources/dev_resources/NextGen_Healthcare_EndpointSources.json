@@ -1,52 +1,52 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0011",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
 			"OrganizationName": "360care Of Alabama",
 			"NPIID": ""
 		},
 		{
-			"URL": "",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
 			"OrganizationName": "360care Of Alabama",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0020",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
 			"OrganizationName": "360care Of Delaware",
 			"NPIID": ""
 		},
 		{
-			"URL": "",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
 			"OrganizationName": "360care Of Delaware",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0003",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
 			"OrganizationName": "360care Of Georgia",
 			"NPIID": ""
 		},
 		{
-			"URL": "",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
 			"OrganizationName": "360care Of Georgia",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0004",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
 			"OrganizationName": "360care Of Indiana",
 			"NPIID": ""
 		},
 		{
-			"URL": "",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
 			"OrganizationName": "360care Of Indiana",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/nge-oauth/authorize/866c2eef-baef-11ec-96d4-02e2fa427d87/0007",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
 			"OrganizationName": "360care Of Kansas",
 			"NPIID": ""
 		},
 		{
-			"URL": "",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
 			"OrganizationName": "360care Of Kansas",
 			"NPIID": ""
 		}

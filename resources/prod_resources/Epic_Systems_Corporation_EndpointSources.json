@@ -177,7 +177,7 @@
 		},
 		{
 			"URL": "https://stofo.providence-waco.org/FHIRProxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Ascension - Providence Healthcare Network",
+			"OrganizationName": "Ascension Providence",
 			"NPIID": ""
 		},
 		{
@@ -221,7 +221,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicweb.challiance.org/Interconnect-FHIR/api/FHIR/DSTU2/",
+			"URL": "https://epicmobile.challiance.org/Interconnect-oauth2/api/FHIR/DSTU2/",
 			"OrganizationName": "Cambridge Health Alliance",
 			"NPIID": ""
 		},
@@ -777,7 +777,7 @@
 		},
 		{
 			"URL": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/DSTU2/",
-			"OrganizationName": "Presence Health",
+			"OrganizationName": "Ascension Illinois",
 			"NPIID": ""
 		},
 		{
@@ -907,7 +907,7 @@
 		},
 		{
 			"URL": "https://eprescribe.wfhc.org/FHIRproxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Ascension WI",
+			"OrganizationName": "Ascension Wisconsin",
 			"NPIID": ""
 		},
 		{
@@ -921,7 +921,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://proxy.christushealth.org/FHIRproxy/api/FHIR/DSTU2/",
+			"URL": "https://proxy.christushealth.org/FHIRPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "CHRISTUS Health",
 			"NPIID": ""
 		},
@@ -1142,7 +1142,7 @@
 		},
 		{
 			"URL": "https://fhir.laheyhealth.org/proxy-prd-fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "Lahey Health System",
+			"OrganizationName": "Beth Israel Lahey Health",
 			"NPIID": ""
 		},
 		{
@@ -1172,7 +1172,7 @@
 		},
 		{
 			"URL": "https://rp.catholichealth.net/fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "CHI Franciscan Health",
+			"OrganizationName": "Virginia Mason Franciscan Health",
 			"NPIID": ""
 		},
 		{
@@ -2431,6 +2431,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://stofo.providence-waco.org/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Ascension Providence",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.institute.org/fhir/api/FHIR/R4/",
 			"OrganizationName": "Institute for Family Health",
 			"NPIID": ""
@@ -2473,6 +2478,11 @@
 		{
 			"URL": "https://mobileprod.arcmd.com/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Austin Regional Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicmobile.challiance.org/Interconnect-oauth2/api/FHIR/R4/",
+			"OrganizationName": "Cambridge Health Alliance",
 			"NPIID": ""
 		},
 		{
@@ -3081,6 +3091,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/R4/",
+			"OrganizationName": "Ascension Illinois",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://psacesoap.whhs.com/interconnect-fhir-prd/api/FHIR/R4/",
 			"OrganizationName": "Washington Hospital Healthcare System",
 			"NPIID": ""
@@ -3251,6 +3266,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://eprescribe.wfhc.org/FHIRproxy/api/FHIR/R4/",
+			"OrganizationName": "Ascension Wisconsin",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.bhsala.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Brookwood Baptist Health",
 			"NPIID": ""
@@ -3331,6 +3351,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/R4/",
+			"OrganizationName": "CHI St. Luke's Health",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.samhealth.org/fhir-arr/api/FHIR/R4/",
 			"OrganizationName": "Samaritan Health Services",
 			"NPIID": ""
@@ -3378,6 +3403,16 @@
 		{
 			"URL": "https://epicproxy.et0857.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Stanford Children's Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.catholichealth.net/fhir/api/FHIR/R4/",
+			"OrganizationName": "Virginia Mason Franciscan Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/api/FHIR/R4/",
+			"OrganizationName": "CHI Health",
 			"NPIID": ""
 		},
 		{
@@ -3447,7 +3482,7 @@
 		},
 		{
 			"URL": "https://fhir.laheyhealth.org/proxy-prd-fhir/api/FHIR/R4/",
-			"OrganizationName": "Lahey Health System",
+			"OrganizationName": "Beth Israel Lahey Health",
 			"NPIID": ""
 		},
 		{
@@ -3573,6 +3608,11 @@
 		{
 			"URL": "https://phsfhir.primehealthcare.com/PHS-PRD-FHIR/api/FHIR/R4/",
 			"OrganizationName": "Prime Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://retailepicfhir.cvshealth.com/FhirProxy/api/fhir/R4/",
+			"OrganizationName": "CVS Health \u0026 Minute Clinic",
 			"NPIID": ""
 		},
 		{

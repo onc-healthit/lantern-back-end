@@ -33,7 +33,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(endpointType, "Production Organizations") {
+		if strings.Contains(endpointType, "Production") {
 			URL, ok := endpointEntry["baseurl"]
 			if !ok {
 				log.Fatal(err)
@@ -49,7 +49,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 	}
 
 	endpointEntryList.Endpoints = lanternEntryList
-
+	
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
