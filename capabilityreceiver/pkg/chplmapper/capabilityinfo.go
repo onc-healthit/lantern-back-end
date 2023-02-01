@@ -193,9 +193,10 @@ func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStat
 		vendorID = 0
 	} else {
 		vendor, err := store.GetVendorUsingName(ctx, match)
-		vendorID = vendor.ID
 		if err != nil {
 			return 0, errors.Wrapf(err, "error retrieving vendor using name %s", match)
+		} else {
+			vendorID = vendor.ID
 		}
 	}
 
