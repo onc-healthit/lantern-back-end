@@ -279,14 +279,14 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 }
 
 func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
-	
+
 	newURL := url
 	if len(newURL) > 0 && newURL[len(newURL)-1:] != "/" {
 		newURL = newURL + "/"
 	}
-	
+
 	for _, e := range endpointEntryList {
-		
+
 		existingURL := e.URL
 		if len(existingURL) > 0 && existingURL[len(existingURL)-1:] != "/" {
 			existingURL = existingURL + "/"
