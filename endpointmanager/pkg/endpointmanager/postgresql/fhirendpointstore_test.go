@@ -74,7 +74,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 		t.Errorf("could not retrieve endpoint1's organizations")
 	}
 
-	if !endpointmanager.OrganizationListEquals(orgList, endpoint1.ID) {
+	if !endpointmanager.OrganizationListEquals(orgList, endpoint1.OrganizationList) {
 		t.Errorf("retrieved endpoint organizations is not equal to saved endpoint organizations.")
 	}
 
