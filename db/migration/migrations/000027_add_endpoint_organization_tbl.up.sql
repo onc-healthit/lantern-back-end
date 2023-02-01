@@ -7,7 +7,6 @@ DROP VIEW IF EXISTS organization_location;
 DROP VIEW IF EXISTS joined_export_tables;
 DROP TRIGGER IF EXISTS set_timestamp_fhir_endpoint_organizations;
 
-ALTER TABLE fhir_endpoints ADD COLUMN IF NOT EXISTS org_database_map_id INT;
 ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS organization_names CASCADE; 
 ALTER TABLE fhir_endpoints DROP COLUMN IF EXISTS npi_ids CASCADE; 
 
@@ -20,7 +19,7 @@ CREATE TABLE fhir_endpoint_organizations (
 );
 
 CREATE TABLE fhir_endpoint_organizations_map (
-    id SERIAL,
+    id INT REFERENCES fhir_endpoints(id) ON DELETE SET NULL,
     org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
 );
 
@@ -45,8 +44,8 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
-WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
-GROUP BY fom.id) as endpt_orgnames ON endpts.org_database_map_id = endpt_orgnames.id;
+WHERE fe.id = fom.id AND fom.org_database_id = fo.id
+GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_names,

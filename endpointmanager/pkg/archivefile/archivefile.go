@@ -113,8 +113,8 @@ func CreateArchive(ctx context.Context,
 	SELECT DISTINCT e.url, h.requested_fhir_version, endpt_orgnames.organization_names, e.created_at, e.list_source FROM fhir_endpoints e 
 	LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
 		FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
-		WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
-		GROUP BY fom.id) as endpt_orgnames ON e.org_database_map_id = endpt_orgnames.id 
+		WHERE fe.id = fom.id AND fom.org_database_id = fo.id
+		GROUP BY fom.id) as endpt_orgnames ON e.id = endpt_orgnames.id 
 	LEFT JOIN fhir_endpoints_info_history h ON e.url = h.url;`
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {

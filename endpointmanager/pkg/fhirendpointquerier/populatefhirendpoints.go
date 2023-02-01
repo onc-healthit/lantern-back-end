@@ -207,7 +207,7 @@ func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store
 
 	for _, endpoint := range fhirEndpoints {
 		for _, org := range endpoint.OrganizationList {
-			err = store.DeleteFHIREndpointOrganization(ctx, org, endpoint.OrgDatabaseMapID)
+			err = store.DeleteFHIREndpointOrganization(ctx, org, endpoint.ID)
 			if err != nil {
 				log.Warn(err)
 				continue

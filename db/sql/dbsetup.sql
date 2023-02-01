@@ -150,7 +150,6 @@ CREATE TABLE certification_criteria (
 CREATE TABLE fhir_endpoints (
     id                      SERIAL PRIMARY KEY,
     url                     VARCHAR(500),
-    org_database_map_id     INT, -- should link to fhir_endpoint_organizations_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key
     list_source             VARCHAR(500),
     versions_response       JSONB,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -167,7 +166,7 @@ CREATE TABLE fhir_endpoint_organizations (
 );
 
 CREATE TABLE fhir_endpoint_organizations_map (
-    id SERIAL,
+    id INT REFERENCES fhir_endpoints(id) ON DELETE SET NULL,
     org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
 );
 
@@ -365,8 +364,8 @@ LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id 
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
-WHERE fe.org_database_map_id = fom.id AND fom.org_database_id = fo.id
-GROUP BY fom.id) as endpt_orgnames ON endpts.org_database_map_id = endpt_orgnames.id;
+WHERE fe.id = fom.id AND fom.org_database_id = fo.id
+GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_names,

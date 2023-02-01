@@ -418,7 +418,7 @@ func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
 	
 	// Check that first endpoint's organization is removed based on update time
-	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt1.OrgDatabaseMapID, endpt1.OrganizationList[0])
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt1.ID, endpt1.OrganizationList[0])
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint 1's organization to removed")
 	
 	// Check that second endpoint still exist
@@ -426,11 +426,11 @@ func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")
 
 	// Check that second endpoint's organization still exists
-	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt2.OrgDatabaseMapID, endpt2.OrganizationList[0])
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt2.ID, endpt2.OrganizationList[0])
 	th.Assert(t, err == nil, "Endpoint 2's organization should still exist")
 
 	// Check that third endpoint's organization still exists
-	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt3.OrgDatabaseMapID, endpt3.OrganizationList[0])
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt3.ID, endpt3.OrganizationList[0])
 	th.Assert(t, err == nil, "Endpoint 3's organization should still exist")
 
 	// Test that endpoint is not removed from fhir_endpoints_info because it still exist in

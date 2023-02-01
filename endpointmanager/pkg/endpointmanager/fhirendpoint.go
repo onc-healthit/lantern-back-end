@@ -16,7 +16,6 @@ import (
 type FHIREndpoint struct {
 	ID               int
 	URL              string
-	OrgDatabaseMapID int
 	OrganizationList []*FHIREndpointOrganization
 	ListSource       string
 	VersionsResponse versionsoperatorparser.VersionsResponse
