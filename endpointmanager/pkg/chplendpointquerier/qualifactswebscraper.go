@@ -49,7 +49,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 	}
 
 	endpointEntryList.Endpoints = lanternEntryList
-	
+
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
