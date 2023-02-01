@@ -311,10 +311,11 @@ To configure this script to run using cron, do:
 
  # Configure Monthly JSON Export System
 
-You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails.
+You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails. It then moves the JSON monthly file to the directory as defined below, which zips the file and pushes it to the git repo at that directory.
 
 To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the save_monthly_json_export script.
   * Set the EMAIL variable to the email you want to send json export failure alerts to
+  * Set the DIRECTORY variable to the git repo where the monthly file is pushed to.
 
 To configure this script to run using cron, do:
  * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
