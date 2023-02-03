@@ -3,52 +3,62 @@
 		{
 			"URL": "https://northsuburbanvisionconsultantsltdil.ficintegrations.com/API/2NlLFQ/R4",
 			"OrganizationName": "North Suburban Vision Consultants, Ltd.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://familyoptometriccarepcct.ficintegrations.com:614/API/YPvLg3/R4",
 			"OrganizationName": "Family Optometric Care, P.C.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://eyecareontheridgeva.ficintegrations.com:6814/API/vwNYju/R4",
 			"OrganizationName": "Eye Care on the Ridge, LLC.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://chestereyecenterincch.ficintegrations.com:9014/API/Sw2bVt/R4",
 			"OrganizationName": "Chester Eye Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://holdregefamilyvisionclinicpcne.ficintegrations.com/API/1ejsjU/R4",
 			"OrganizationName": "Holdrege Family Vision Clinic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://richardjkuekerodpaks.ficintegrations.com:441/API/BhKl7p/R4",
 			"OrganizationName": "Richard J. Kueker, O.D. , PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://weberoptiksil.ficintegrations.com:441/API/h3nyf4/R4",
 			"OrganizationName": "Weber Optiks Inc.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://progressivevisioncenteril.ficintegrations.com:2020/API/jJyabP/R4",
 			"OrganizationName": "Progressive Vision Center, Ltd.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://helenavisioncentermt.ficintegrations.com:441/API/54mah2/R4",
 			"OrganizationName": "Helena Vision Center, P.C.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://eyemdofalamedaca.ficintegrations.com:448/API/Wez8bJ/R4",
 			"OrganizationName": "EyeMD of Alameda",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }
