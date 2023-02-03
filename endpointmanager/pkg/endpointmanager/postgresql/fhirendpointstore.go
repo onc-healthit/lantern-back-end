@@ -545,7 +545,7 @@ func (s *Store) AddFHIREndpointOrganizationMap(ctx context.Context, orgID int, e
 
 	_, err = addFHIREndpointOrganizationMapStatement.ExecContext(ctx, endpointID, orgID)
 
-	return  err
+	return err
 }
 
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
@@ -567,6 +567,10 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		e.ListSource,
 		versionsResponseJSON,
 		e.ID)
+
+	if err != nil {
+		return err
+	}
 
 	err = s.UpdateFHIREndpointOrganizations(ctx, e)
 	if err != nil {
