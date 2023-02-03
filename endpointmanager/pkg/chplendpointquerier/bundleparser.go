@@ -16,7 +16,7 @@ type BundleEntry struct {
 }
 
 type BundleResource struct {
-	URL          interface{}          `json:"address"`
+	Address      interface{}          `json:"address"`
 	Name         string               `json:"name"`
 	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
 	Orgs         []Organization       `json:"contained"`
@@ -68,7 +68,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 		var entry LanternEntry
 
 		if bundleEntry.Resource.ResourceType == "Endpoint" {
-			entryURL := bundleEntry.Resource.URL.(string)
+			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
 				entry.URL = strings.TrimSpace(entryURL)
