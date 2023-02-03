@@ -17,8 +17,6 @@ func CorrecTekWebscraper(chplURL string, fileToWriteTo string) {
 	r4EndpointList := "https://www.interopengine.com/2021/open-api-documentation.html"
 	count := 0
 
-	fileToWriteTo = strings.TrimSuffix(fileToWriteTo, "EndpointSources.json")
-
 	for count <= 1 {
 		endpointListURL := stu3EndpointList
 		if count == 1 {
