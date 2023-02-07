@@ -7,6 +7,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
@@ -40,12 +41,12 @@ func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
 		if !ok {
 			log.Fatal("Error converting resource_url to type string")
 		} else {
-			entry.URL = serviceBaseURL
+			entry.URL = strings.TrimSpace(serviceBaseURL)
 		}
 
 		developerName, ok := oneUpEntry["name"].(string)
 		if ok {
-			entry.OrganizationName = developerName
+			entry.OrganizationName = strings.TrimSpace(developerName)
 		}
 
 		lanternEntryList = append(lanternEntryList, entry)

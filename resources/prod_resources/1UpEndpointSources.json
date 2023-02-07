@@ -12,7 +12,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/FIFEAA",
-			"OrganizationName": "139 Medical Group ",
+			"OrganizationName": "139 Medical Group",
 			"NPIID": ""
 		},
 		{
@@ -1192,7 +1192,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/GEDFBD",
-			"OrganizationName": "Alan Bulotsky, MD \u0026 Associates, PC ",
+			"OrganizationName": "Alan Bulotsky, MD \u0026 Associates, PC",
 			"NPIID": ""
 		},
 		{
@@ -3211,7 +3211,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": " https://fhir-myrecord.cerner.com/dstu2/eqfAJKRmsUhFnr8gvMoFTGKRt8zH6OgO",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/eqfAJKRmsUhFnr8gvMoFTGKRt8zH6OgO",
 			"OrganizationName": "Atlanta Heart Group PC",
 			"NPIID": ""
 		},
@@ -4227,7 +4227,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGIGBD",
-			"OrganizationName": "Billi  ",
+			"OrganizationName": "Billi",
 			"NPIID": ""
 		},
 		{
@@ -5237,7 +5237,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIDGAD",
-			"OrganizationName": "Cardiac Arrhythmia Specialist ",
+			"OrganizationName": "Cardiac Arrhythmia Specialist",
 			"NPIID": ""
 		},
 		{
@@ -5277,7 +5277,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/EDIJAD",
-			"OrganizationName": "Cardiac \u0026 Veinworx ",
+			"OrganizationName": "Cardiac \u0026 Veinworx",
 			"NPIID": ""
 		},
 		{
@@ -5892,7 +5892,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/EECCBD",
-			"OrganizationName": "Cattail River Hematology and Oncology ",
+			"OrganizationName": "Cattail River Hematology and Oncology",
 			"NPIID": ""
 		},
 		{
@@ -6607,7 +6607,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/FJDEAD",
-			"OrganizationName": "Chattanooga Surgical Oncology \u0026 Associates ",
+			"OrganizationName": "Chattanooga Surgical Oncology \u0026 Associates",
 			"NPIID": ""
 		},
 		{
@@ -6731,12 +6731,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDJDCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AHGDCA",
 			"OrganizationName": "Chicago Anesthesia Pain Specialists Pain Management Center",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AHGDCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDJDCA",
 			"OrganizationName": "Chicago Anesthesia Pain Specialists Pain Management Center",
 			"NPIID": ""
 		},
@@ -6967,7 +6967,7 @@
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/cla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Coushatta Health Care Center ",
+			"OrganizationName": "CHRISTUS Coushatta Health Care Center",
 			"NPIID": ""
 		},
 		{
@@ -6982,12 +6982,12 @@
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/nla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Highland Medical Center ",
+			"OrganizationName": "CHRISTUS Highland Medical Center",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/swla/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Lake Area Hospital ",
+			"OrganizationName": "CHRISTUS Lake Area Hospital",
 			"NPIID": ""
 		},
 		{
@@ -7027,22 +7027,22 @@
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital – Alice ",
+			"OrganizationName": "CHRISTUS Spohn Hospital – Alice",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital – Beeville ",
+			"OrganizationName": "CHRISTUS Spohn Hospital – Beeville",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Memorial  ",
+			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Memorial",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://apiservices.christushealth.org:444/interop/ext-prod/fhir/spn/v1/argonaut/v1",
-			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Shoreline  ",
+			"OrganizationName": "CHRISTUS Spohn Hospital Corpus Christi – Shoreline",
 			"NPIID": ""
 		},
 		{
@@ -9617,7 +9617,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/CDFFAA",
-			"OrganizationName": "Digestive Health Associates of Texas ",
+			"OrganizationName": "Digestive Health Associates of Texas",
 			"NPIID": ""
 		},
 		{
@@ -14302,7 +14302,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/CIGJCA",
-			"OrganizationName": "Hand and Wrist of Louisville ",
+			"OrganizationName": "Hand and Wrist of Louisville",
 			"NPIID": ""
 		},
 		{
@@ -15252,7 +15252,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHHHAA",
-			"OrganizationName": "Hines Family Medicine Patient Portal ",
+			"OrganizationName": "Hines Family Medicine Patient Portal",
 			"NPIID": ""
 		},
 		{
@@ -15337,7 +15337,7 @@
 		},
 		{
 			"URL": "https://interconnect.honorhealth.com/Interconnect-FHIR-PRD/api/FHIR/DSTU2",
-			"OrganizationName": "HonorHealth ",
+			"OrganizationName": "HonorHealth",
 			"NPIID": ""
 		},
 		{
@@ -15876,12 +15876,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/ACIEBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FFJEAD",
 			"OrganizationName": "Imtiaz Ahmed, MD",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FFJEAD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/ACIEBA",
 			"OrganizationName": "Imtiaz Ahmed, MD",
 			"NPIID": ""
 		},
@@ -17792,7 +17792,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/FEBCBD",
-			"OrganizationName": "KDS Cardiovascular Surgery ",
+			"OrganizationName": "KDS Cardiovascular Surgery",
 			"NPIID": ""
 		},
 		{
@@ -18097,7 +18097,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/HCJIAD",
-			"OrganizationName": "Kindred Palliative Care ",
+			"OrganizationName": "Kindred Palliative Care",
 			"NPIID": ""
 		},
 		{
@@ -19477,7 +19477,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/GIEIAD",
-			"OrganizationName": "Madaiah Revana MD  ",
+			"OrganizationName": "Madaiah Revana MD",
 			"NPIID": ""
 		},
 		{
@@ -20142,7 +20142,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/ACEDBD",
-			"OrganizationName": "Maximed Associates ",
+			"OrganizationName": "Maximed Associates",
 			"NPIID": ""
 		},
 		{
@@ -20656,12 +20656,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FDCIBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBBIBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBBIBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FDCIBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20671,12 +20671,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHCBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDJJAD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FBBGBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHCBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20686,7 +20686,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDJJAD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FBBGBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20696,17 +20696,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/BDEHBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHDIBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/DJDIBD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHBHBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20726,12 +20721,17 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GFBFBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BDEHBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHDIBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHBHBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GFBFBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -23077,7 +23077,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/BFFHAD",
-			"OrganizationName": "Neurology Clinic of South Arkansas P.A. ",
+			"OrganizationName": "Neurology Clinic of South Arkansas P.A.",
 			"NPIID": ""
 		},
 		{
@@ -27116,12 +27116,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AAJEBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJJCAA",
 			"OrganizationName": "Primary Care Associates",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJJCAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AAJEBA",
 			"OrganizationName": "Primary Care Associates",
 			"NPIID": ""
 		},
@@ -28712,7 +28712,7 @@
 		},
 		{
 			"URL": "https://rpprod.riversidehealthcare.net/FHIRPRD/api/FHIR/DSTU2",
-			"OrganizationName": "Riverside Medical Center  ",
+			"OrganizationName": "Riverside Medical Center",
 			"NPIID": ""
 		},
 		{
@@ -28722,7 +28722,7 @@
 		},
 		{
 			"URL": "https://sf1.rmcps.com/FHIRProxy/api/FHIR/DSTU2",
-			"OrganizationName": "Riverside Medical Clinic ",
+			"OrganizationName": "Riverside Medical Clinic",
 			"NPIID": ""
 		},
 		{
@@ -30301,12 +30301,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/f40a042a-c568-432e-8aa0-b12d37d2d383",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/d7c7003a-96ae-4246-aaaa-19b18f13056e",
 			"OrganizationName": "Sheridan Memorial Hospital",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/d7c7003a-96ae-4246-aaaa-19b18f13056e",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/f40a042a-c568-432e-8aa0-b12d37d2d383",
 			"OrganizationName": "Sheridan Memorial Hospital",
 			"NPIID": ""
 		},
@@ -31912,7 +31912,7 @@
 		},
 		{
 			"URL": "https://mtrestapis-live01.ehs.org/v1/argonaut/v1",
-			"OrganizationName": "St. John's Episcopal Health Services ",
+			"OrganizationName": "St. John's Episcopal Health Services",
 			"NPIID": ""
 		},
 		{
@@ -32057,7 +32057,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/JHCGBD",
-			"OrganizationName": "Stuart Family Practice ",
+			"OrganizationName": "Stuart Family Practice",
 			"NPIID": ""
 		},
 		{
@@ -32217,7 +32217,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/GHHGBD",
-			"OrganizationName": "Sullivan County Internal Medicine ",
+			"OrganizationName": "Sullivan County Internal Medicine",
 			"NPIID": ""
 		},
 		{
@@ -33416,12 +33416,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicsoapprod.osumc.edu/fhir/api/FHIR/DSTU2",
+			"URL": "https://ihismufhir.osumc.edu/fhir-prd/api/FHIR/DSTU2",
 			"OrganizationName": "The Ohio State University Wexner Medical Center",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://ihismufhir.osumc.edu/fhir-prd/api/FHIR/DSTU2",
+			"URL": "https://epicsoapprod.osumc.edu/fhir/api/FHIR/DSTU2",
 			"OrganizationName": "The Ohio State University Wexner Medical Center",
 			"NPIID": ""
 		},
@@ -33516,7 +33516,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": " https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JJGJCA",
 			"OrganizationName": "The Toledo Clinic",
 			"NPIID": ""
 		},
@@ -34332,7 +34332,7 @@
 		},
 		{
 			"URL": "https://test.udap.org/fhir/r4/stage",
-			"OrganizationName": "UDAP testing ",
+			"OrganizationName": "UDAP testing",
 			"NPIID": ""
 		},
 		{
@@ -35702,7 +35702,7 @@
 		},
 		{
 			"URL": "https://epicmobile.med.cornell.edu/FHIR/api/FHIR/DSTU2",
-			"OrganizationName": "Weill Cornell Medicine ",
+			"OrganizationName": "Weill Cornell Medicine",
 			"NPIID": ""
 		},
 		{
@@ -35826,21 +35826,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/ADBFBD",
-			"OrganizationName": "Westborough Medical Associates Westborough MA",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JFAIBD",
-			"OrganizationName": "Westborough Medical Associates Westborough MA",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CJEFBD",
-			"OrganizationName": "Westborough Medical Associates Westborough MA",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIEGBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
@@ -35851,12 +35836,27 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CAECBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JFAIBD",
+			"OrganizationName": "Westborough Medical Associates Westborough MA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/ADBFBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/BICDBD",
+			"OrganizationName": "Westborough Medical Associates Westborough MA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CJEFBD",
+			"OrganizationName": "Westborough Medical Associates Westborough MA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CAECBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
@@ -36877,7 +36877,7 @@
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGIDBA",
-			"OrganizationName": " Star Urology Of Texas PA",
+			"OrganizationName": "Star Urology Of Texas PA",
 			"NPIID": ""
 		}
 	]

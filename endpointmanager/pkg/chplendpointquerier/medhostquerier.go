@@ -5,6 +5,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func MedHostQuerier(medhostURL string, fileToWriteTo string) {
@@ -30,17 +31,17 @@ func MedHostQuerier(medhostURL string, fileToWriteTo string) {
 		if !ok {
 			log.Fatal("Error converting serviceBaseUrl to type string")
 		} else {
-			entry.URL = serviceBaseURL
+			entry.URL = strings.TrimSpace(serviceBaseURL)
 		}
 
 		developerName, ok := medhostEntry["facilityName"].(string)
 		if ok {
-			entry.OrganizationName = developerName
+			entry.OrganizationName = strings.TrimSpace(developerName)
 		}
 
 		npiID, ok := medhostEntry["npi"].(string)
 		if ok {
-			entry.NPIID = npiID
+			entry.NPIID = strings.TrimSpace(npiID)
 		}
 
 		lanternEntryList = append(lanternEntryList, entry)
