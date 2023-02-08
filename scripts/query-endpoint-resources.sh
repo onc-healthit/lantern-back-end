@@ -20,13 +20,6 @@ jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
          cd ../../../resources/prod_resources
       else
          curl -s -o $FILENAME $URL
-         
-         if [ "$NAME" = "Cerner" ]
-         then
-            jq 'del(.endpoints[10:])' $FILENAME > ../dev_resources/$FILENAME
-         else
-            jq 'del(.Endpoints.[10:])' $FILENAME > ../dev_resources/$FILENAME
-         fi
       fi
       echo "done"
    fi

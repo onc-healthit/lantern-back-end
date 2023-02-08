@@ -2186,6 +2186,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicproxy.et1267.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "McLeod Health",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Shriners Children's",
 			"NPIID": ""
@@ -4318,6 +4323,11 @@
 		{
 			"URL": "https://epicinterconnect.walmarthealth.com/Interconnect-OAuth2-PRD/api/FHIR/R4/",
 			"OrganizationName": "Walmart",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1267.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "McLeod Health",
 			"NPIID": ""
 		},
 		{

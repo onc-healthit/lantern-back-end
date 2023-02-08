@@ -28,7 +28,8 @@ var OneMedicalURL = "https://apidocs.onemedical.io/fhir/overview/"
 var unifyURL = "https://unify-developer.chbase.com/?page=FHIRAPI"
 var trimedtechURL = "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html"
 var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html"
-var cernerR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
+var cernerGitHubURL = "https://github.com/cerner/ignite-endpoints"
+var cernerSoarianR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
 var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
 var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
 var abeoSolutionsURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
@@ -84,10 +85,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		TriMedTechWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, trimedtechv8URL) {
 		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, cernerR4URL) {
+	} else if URLsEqual(chplURL, cernerSoarianR4URL) {
 		chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
 		chplURL = strings.Replace(chplURL, "/blob", "", 1)
 		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, cernerGitHubURL){
+		CernerBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, techCareURL) {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, carefluenceURL) {

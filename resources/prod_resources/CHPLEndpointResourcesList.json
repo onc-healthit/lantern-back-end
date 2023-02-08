@@ -601,6 +601,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://documenter.getpostman.com/view/15917486/UyxojQMd#a24aa40c-fe15-478e-a555-3c2cb10d56c9",
+		"EndpointName": "Moyae, Inc.",
+		"FileName": "Moyae_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://api-portal.navigatingcare.com/service-base-urls",
 		"EndpointName": "Navigating Cancer, Inc.",
 		"FileName": "Navigating_Cancer_Inc_EndpointSources.json"
@@ -1033,6 +1039,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/r4/endpoints",
+		"EndpointName": "drchrono Inc.",
+		"FileName": "drchrono_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html",
 		"EndpointName": "TriMed Technologies",
 		"FileName": "TriMed_Technologies_1_EndpointSources.json"
@@ -1156,6 +1168,12 @@
 		"URL": "https://careconnect-uat.netsmartcloud.com/",
 		"EndpointName": "Netsmart Technologies",
 		"FileName": "Netsmart_Technologies_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.myhelo.com/api/",
+		"EndpointName": "myhELO, Inc.",
+		"FileName": "myhELO_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

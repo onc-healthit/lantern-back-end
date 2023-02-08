@@ -13266,12 +13266,22 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/open",
 			"OrganizationName": "rng",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R2/open",
 			"OrganizationName": "rng",
 			"NPIID": ""
 		},
@@ -16376,7 +16386,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/R4/fhir-R4TWStandalone",
+			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
@@ -17661,6 +17671,16 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "ns0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "ns0",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/PARAGONSUPPORTCDH",
 			"OrganizationName": "Paragon Support",
 			"NPIID": ""
@@ -17866,6 +17886,16 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir221weba2.rd.allscripts.com/R4/fhir-SCMSTANDR4",
+			"OrganizationName": "SCMSTANDR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir221weba2.rd.allscripts.com/R4/open-SCMSTANDR4",
+			"OrganizationName": "SCMSTANDR4",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Open",
 			"OrganizationName": "Sheppard Pratt Health System",
 			"NPIID": ""
@@ -18007,6 +18037,11 @@
 		},
 		{
 			"URL": "https://twr10devweb2.rd.allscripts.com/open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},

@@ -1,53 +1,53 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/725ea83c-53c1-458f-a3a4-190e038b73c9/",
-			"OrganizationName": "Albany Medical Center",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-KzIoYV6gk-ILcHOWbsH2m9KsSdDgi12/",
+			"OrganizationName": "Oscar Matthews, MD",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/a5f4ce6b-ab0a-413b-affc-47ff1650194e/",
-			"OrganizationName": "Archbold Medical Center",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-MIuTZfWACgngV9YTgKmhcl1PVL8iu53/",
+			"OrganizationName": "Vishen, R K MD",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/5cec35cb-ca56-453f-a1d3-fc5e20bab214/",
-			"OrganizationName": "Arkansas Heart Hospital",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-OZ6w8MCeQFycM1MwlWQ0yaxWv8UTkHm/",
+			"OrganizationName": "Cleveland Head \u0026 Neck",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/710eea77-1a9e-42cf-bdab-ee56306083f4/",
-			"OrganizationName": "Bay Area Hospital",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-_YkIsNEMVntfXGwmctxxUqaWU95Xx7D/",
+			"OrganizationName": "Palm Beach Spine \u0026 Diagnostic Institute",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e19f3f05-57a5-4b12-a164-8453dfcc6a5e/",
-			"OrganizationName": "Bethesda Health Baptist Health South Florida",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-c6Xwd-UlrvkHnaNj_A8a39Pa03efHEX/",
+			"OrganizationName": "Treasure Coast Podiatry",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/59753f4d-fc7f-4929-b587-a7a7ff7bde03/",
-			"OrganizationName": "Cape Cod Healthcare",
+			"URL": "https://fhir-myrecord.cerner.com/r4/-yJKGL5-49LdGDJaxmfdb85K2Njr-hkB/",
+			"OrganizationName": "Alaska Native Medical Center",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e71212a1-08a3-40bc-88aa-974471e03d3e/",
-			"OrganizationName": "Cape Regional Medical Center",
+			"URL": "https://fhir-myrecord.cerner.com/r4/00224df3-b096-4cdb-852c-cbc83c0d3b06/",
+			"OrganizationName": "Leidos Partnership for Defense Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/9bf27703-dcb7-4f20-a363-35a28d8bbf38/",
-			"OrganizationName": "Catholic Health",
+			"URL": "https://fhir-myrecord.cerner.com/r4/00a074df-768e-479f-9c8c-52c5c5bbe010/",
+			"OrganizationName": "Encompass Health Corporation",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/b9b77dc1-8db8-486e-b0ce-6b2a89edb7e5/",
-			"OrganizationName": "CentraState Healthcare System",
+			"URL": "https://fhir-myrecord.cerner.com/r4/00a934e0-7e93-4023-8ce4-79bbebc496ce/",
+			"OrganizationName": "Earl Jacobson, DPM",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord-sc.cerner.com/r4/3f25c0e5-282c-4d6e-ade5-aa2b86ec03e9/",
-			"OrganizationName": "Crouse Hospital",
+			"URL": "https://fhir-myrecord.cerner.com/r4/00bf2f08-38fe-4c4c-8207-96dbe42a9302/",
+			"OrganizationName": "CarolinaEast Health System",
 			"NPIID": ""
 		}
 	]
