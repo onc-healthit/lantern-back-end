@@ -87,7 +87,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
 		chplURL = strings.Replace(chplURL, "/blob", "", 1)
 		BundleQuerierParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, cernerGitHubURL){
+	} else if URLsEqual(chplURL, cernerGitHubURL) {
 		CernerBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, techCareURL) {
 		Techcarewebscraper(chplURL, fileToWriteTo)

@@ -9,7 +9,7 @@ func CernerBundleParser(CHPLURL string, fileToWriteTo string) {
 
 	milleniumR4URL := "https://raw.githubusercontent.com/cerner/ignite-endpoints/main/millennium_patient_r4_endpoints.json"
 	milleniumDSTU2URL := "https://raw.githubusercontent.com/cerner/ignite-endpoints/main/millennium_patient_dstu2_endpoints.json"
-	
+
 	var endpointEntryList EndpointList
 
 	respBody, err := helpers.QueryEndpointList(milleniumR4URL)
