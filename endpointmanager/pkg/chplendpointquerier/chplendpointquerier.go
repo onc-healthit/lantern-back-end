@@ -32,7 +32,6 @@ var cernerGitHubURL = "https://github.com/cerner/ignite-endpoints"
 var cernerSoarianR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
 var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
 var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
-var abeoSolutionsURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
 var practiceSuiteURL = "https://academy.practicesuite.com/fhir-server-links/"
 var bizmaticsURL = "https://prognocis.com/fhir/index.html"
 var indianHealthServiceURL = "https://www.ihs.gov/cis/"
@@ -43,7 +42,6 @@ var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
 var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
 var triarqURL = "https://fhir.myqone.com/Endpoints"
-var napchareURL = "https://devportal.techcareehr.com/Serviceurls"
 var goldblattURL = "https://www.goldblattsystems.com/apis"
 var cyfluentURL = "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
 var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
@@ -95,8 +93,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, carefluenceURL) {
 		CarefluenceWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, abeoSolutionsURL) {
-		CSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", 1, 0)
 	} else if URLsEqual(chplURL, bizmaticsURL) {
 		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo)
 	} else if URLsEqual(chplURL, assureCareURL) {
@@ -117,8 +113,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		HealthSamuraiWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, triarqURL) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, napchareURL) {
-		NaphCareWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, goldblattURL) {
 		BundleQuerierParser("https://fhir-test.csn.health/gs-fhir-domain-server/public-base-service-endpoints.json", fileToWriteTo)
 	} else if URLsEqual(chplURL, cyfluentURL) {

@@ -1,9 +1,0 @@
-{
-	"Endpoints": [
-		{
-			"URL": "https://fhir.crystalpm.net:9443/fhir-server/api/v4/metadata",
-			"OrganizationName": "",
-			"NPIID": ""
-		}
-	]
-}

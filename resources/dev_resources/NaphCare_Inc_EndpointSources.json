@@ -1,9 +1,0 @@
-{
-	"Endpoints": [
-		{
-			"URL": "https://fhirserver.justtest.in:9443/fhir-server/api/v4/",
-			"OrganizationName": "",
-			"NPIID": ""
-		}
-	]
-}
