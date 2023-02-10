@@ -16,13 +16,28 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://10.218.32.142/demoAPIServer/fhir/r4",
+			"OrganizationName": "Gary2",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
 			"OrganizationName": "AHG",
 			"NPIID": ""
 		},
 		{
+			"URL": "https://cphs.cphsads.com:9443/cphsAPIServer/fhir/r4",
+			"OrganizationName": "ChesPenn Health Services",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://cssecure.xlcon.com:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "Cardiac Solutions",
 			"NPIID": ""
 		},
 		{
@@ -33,21 +48,6 @@
 		{
 			"URL": "https://bustleton.vowaz.com:9443/bustletonAPIServer/fhir/r4",
 			"OrganizationName": "Bustleton Gastroenterology",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://jbosstrnpapp02.vhpads.com:9443/ahgtraining_mmAPIServer/fhir/r4",
-			"OrganizationName": "Self",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://berks.vowaz.com:9443/berksliveAPIServer/fhir/r4",
-			"OrganizationName": "Berks Community Health Center",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-mlAPIServer/fhir/r4",
-			"OrganizationName": "athenahealth",
 			"NPIID": ""
 		}
 	]

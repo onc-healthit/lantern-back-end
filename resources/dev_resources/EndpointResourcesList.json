@@ -1,11 +1,5 @@
 [
     {
-        "FormatType": "Cerner",
-        "EndpointName":"Cerner",
-        "FileName":"CernerEndpointSources.json",
-        "URL":"https://raw.githubusercontent.com/cerner/ignite-endpoints/main/dstu2-patient-endpoints.json"
-    },
-    {
         "FormatType": "Lantern",
         "EndpointName":"Lantern",
         "FileName":"LanternEndpointSources.json",

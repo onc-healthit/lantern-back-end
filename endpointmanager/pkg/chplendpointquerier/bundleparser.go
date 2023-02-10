@@ -2,8 +2,9 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type FHIRBundle struct {
@@ -49,7 +50,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 			entryURL := bundleEntry.Resource.URL.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
-				entry.URL = entryURL
+				entry.URL = strings.TrimSpace(entryURL)
 				if bundleEntry.Resource.Name == "" {
 					if bundleEntry.Resource.ManagingOrg.Display == "" {
 
@@ -63,14 +64,14 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 
 						for _, org := range bundleEntry.Resource.Orgs {
 							if org.Id == orgId {
-								entry.OrganizationName = org.Name
+								entry.OrganizationName = strings.TrimSpace(org.Name)
 							}
 						}
 					} else {
-						entry.OrganizationName = bundleEntry.Resource.ManagingOrg.Display
+						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.ManagingOrg.Display)
 					}
 				} else {
-					entry.OrganizationName = bundleEntry.Resource.Name
+					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
 				}
 
 				lanternEntryList = append(lanternEntryList, entry)

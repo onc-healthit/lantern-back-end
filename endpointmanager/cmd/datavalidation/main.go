@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math"
 
@@ -22,6 +23,12 @@ func main() {
 	log.Info("Running data validation check")
 
 	queryInterval := viper.GetInt("capquery_qryintvl")
+
+	ctx := context.Background()
+
+	// Remove all endpoints from fhir_endpoints_info table that are not in the fhir_endpoints table
+	err = store.DeleteFHIREndpointInfoOldEntries(ctx)
+	helpers.FailOnError("", err)
 
 	// Divide query interval (in seconds) by an average of 1.5 seconds per request to get the maximum number of endpoints that can be queried within query interval
 	maxEndpoints := int(math.Floor(float64(queryInterval*60) / float64(1.5)))

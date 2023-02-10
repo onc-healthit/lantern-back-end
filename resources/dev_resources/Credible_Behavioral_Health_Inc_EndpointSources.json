@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.cbh4.crediblebh.com",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

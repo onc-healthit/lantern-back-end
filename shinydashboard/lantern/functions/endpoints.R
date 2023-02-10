@@ -619,7 +619,7 @@ get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersi
     sql(paste0("SELECT
         f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition,
         h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h, healthit_products_map hm WHERE f.healthit_mapping_id = hm.id AND
-        hm.id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+        hm.healthit_product_id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res

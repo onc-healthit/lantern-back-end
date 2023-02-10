@@ -142,9 +142,6 @@ func main() {
 
 			urlString := chplEntry.ServiceBaseUrlList.Value
 			urlString = strings.TrimSpace(urlString)
-			if len(urlString) > 0 && urlString[len(urlString)-1:] != "/" {
-				urlString = urlString + "/"
-			}
 
 			var productEntry chplCertifiedProductEntry
 
@@ -282,8 +279,20 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 }
 
 func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
+
+	newURL := url
+	if len(newURL) > 0 && newURL[len(newURL)-1:] != "/" {
+		newURL = newURL + "/"
+	}
+
 	for _, e := range endpointEntryList {
-		if e.URL == url {
+
+		existingURL := e.URL
+		if len(existingURL) > 0 && existingURL[len(existingURL)-1:] != "/" {
+			existingURL = existingURL + "/"
+		}
+
+		if existingURL == newURL {
 			return true
 		}
 	}

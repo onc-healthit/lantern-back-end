@@ -79,6 +79,9 @@ func (e *FHIREndpointInfo) EqualExcludeMetadata(e2 *FHIREndpointInfo) bool {
 	if e.CapabilityStatement == nil && e2.CapabilityStatement != nil {
 		return false
 	}
+	if e.ValidationID == 0 || e2.ValidationID == 0 {
+		return false
+	}
 	if e.ValidationID != e2.ValidationID {
 		return false
 	}

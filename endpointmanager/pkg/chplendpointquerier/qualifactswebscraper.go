@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"encoding/json"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
@@ -33,7 +34,7 @@ func QualifactsWebscraper(chplURL string, fileToWriteTo string) {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(endpointType, "Production Organizations") {
+		if strings.Contains(endpointType, "Production") {
 			URL, ok := endpointEntry["baseurl"]
 			if !ok {
 				log.Fatal(err)
