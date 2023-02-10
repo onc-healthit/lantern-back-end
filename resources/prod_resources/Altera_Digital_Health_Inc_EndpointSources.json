@@ -401,11 +401,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049336",
-			"OrganizationName": "Academic Urology and Urogynecology of Arizona",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/1700131A",
 			"OrganizationName": "Accent Family Healthcare",
 			"NPIID": ""
@@ -672,7 +667,7 @@
 		},
 		{
 			"URL": "https://ahsfhirprod.amc.edu/FHIR",
-			"OrganizationName": "Albany Medical Center",
+			"OrganizationName": "Albany Medical Center - PROD",
 			"NPIID": ""
 		},
 		{
@@ -1976,6 +1971,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10029141",
+			"OrganizationName": "Bone \u0026 Joint Center",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10012951",
 			"OrganizationName": "Bonita Community Health Center",
 			"NPIID": ""
@@ -2001,13 +2001,13 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10029141",
-			"OrganizationName": "Branden Rasmussen",
+			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/1700057E",
+			"OrganizationName": "Branislav D Behan Md",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/1700057E",
-			"OrganizationName": "Branislav D Behan Md",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
+			"OrganizationName": "Branko Banar",
 			"NPIID": ""
 		},
 		{
@@ -2311,8 +2311,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10026918",
-			"OrganizationName": "Cardiology \u0026 Internal Medicine, P. A.",
+			"URL": "https://fhireastus-2.allscripts.pro/fhirroute/fhir/0008994",
+			"OrganizationName": "Cardiology and Internal Medicine",
 			"NPIID": ""
 		},
 		{
@@ -3346,7 +3346,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://TESTFHIR.colaneph.com/FHIR",
+			"URL": "https://FHIR.colaneph.com/FHIR",
 			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": ""
 		},
@@ -3612,7 +3612,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10042857",
-			"OrganizationName": "Cornerstone Medical Care Brandon",
+			"OrganizationName": "Cornerstone Medical Care",
 			"NPIID": ""
 		},
 		{
@@ -3907,7 +3907,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10034313",
-			"OrganizationName": "David W. Calton, MD PC",
+			"OrganizationName": "David W Calton MD PC",
 			"NPIID": ""
 		},
 		{
@@ -4036,7 +4036,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10028551",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/75616",
 			"OrganizationName": "Delmar Family Medicine",
 			"NPIID": ""
 		},
@@ -7001,6 +7001,31 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.jtdmh.org/R2/open",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/R2/fhir",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/open",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/fhir",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/R4/fhir-Prod",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10031429",
 			"OrganizationName": "Glasgow Internal Medicine Asso",
 			"NPIID": ""
@@ -7053,11 +7078,6 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10040810",
 			"OrganizationName": "Grand Junction Family Medicine",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhirprod.jtdmh.org/FHIR",
-			"OrganizationName": "Grand Lakes",
 			"NPIID": ""
 		},
 		{
@@ -7621,6 +7641,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10085457",
+			"OrganizationName": "HH Health System - Marshall LLC dba Marshall Rheumatology",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/57880",
 			"OrganizationName": "Hickory Adult Medicine Kidney Specialist",
 			"NPIID": ""
@@ -8116,7 +8141,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://TICFHIR.iowaclinic.com/FHIR",
+			"URL": "https://AHSFHIR02.iowaclinic.com/FHIR",
 			"OrganizationName": "IOWA Clinic Prod",
 			"NPIID": ""
 		},
@@ -8593,11 +8618,6 @@
 		{
 			"URL": "https://fhirprod.matherhospital.org/FHIR",
 			"OrganizationName": "JT Mather Hospital",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://10.0.0.53/fhir",
-			"OrganizationName": "JT TW System redo 432",
 			"NPIID": ""
 		},
 		{
@@ -9201,6 +9221,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10010297",
+			"OrganizationName": "Lori Spoor",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10051563",
 			"OrganizationName": "Los Angeles LGBT Center",
 			"NPIID": ""
@@ -9268,6 +9293,31 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/70372",
 			"OrganizationName": "Lung Center Of Neveda",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/open",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "lv0",
 			"NPIID": ""
 		},
 		{
@@ -9498,11 +9548,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10006091",
 			"OrganizationName": "Marshall Clinic Effingham SC",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10085457",
-			"OrganizationName": "Marshall Rheumatology Clinic",
 			"NPIID": ""
 		},
 		{
@@ -9758,6 +9803,11 @@
 		{
 			"URL": "https://fhir.nbmchealth.com/FHIR",
 			"OrganizationName": "Medisync Midwest LLC - PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049336",
+			"OrganizationName": "Megham Reed",
 			"NPIID": ""
 		},
 		{
@@ -10501,11 +10551,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
-			"OrganizationName": "Neighborhood Health Association",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10063709",
 			"OrganizationName": "Neighborhood Urgent Care",
 			"NPIID": ""
@@ -11222,17 +11267,12 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10029964",
-			"OrganizationName": "Oakland-Macomb Obstetrics And Gynecology",
+			"OrganizationName": "Oakland-Macomb Obstetrics And GynecologyOakland-Macomb Obstetrics And Gynecology",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://fhirsouthcentus.allscripts.pro/fhirroute/fhir/0007093",
 			"OrganizationName": "Ob/Gyn Assoc, P.A.",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035911",
-			"OrganizationName": "OB/Gyn Associates of Southern Indiana",
 			"NPIID": ""
 		},
 		{
@@ -11243,6 +11283,11 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10037866",
 			"OrganizationName": "OBGYN Associates of Holland PC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035911",
+			"OrganizationName": "OBGyn Associates of Southern Indiana",
 			"NPIID": ""
 		},
 		{
@@ -12541,6 +12586,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/ProdR2CDH",
+			"OrganizationName": "ProdR2",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10067025",
 			"OrganizationName": "Professional Orthopedic Medical Associat",
 			"NPIID": ""
@@ -12621,13 +12671,13 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10030769",
-			"OrganizationName": "Pulmonary Allergy and Sleep",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043653",
+			"OrganizationName": "Pulmonary \u0026 Sleep Associates of Marshall County",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043653",
-			"OrganizationName": "Pulmonary and Sleep Associates of Marshall County",
+			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10030769",
+			"OrganizationName": "Pulmonary Allergy and Sleep",
 			"NPIID": ""
 		},
 		{
@@ -12708,6 +12758,31 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10034454",
 			"OrganizationName": "Puyallup Clinic, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/open",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "PV0",
 			"NPIID": ""
 		},
 		{
@@ -13112,7 +13187,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049531",
-			"OrganizationName": "Richards And Richardson",
+			"OrganizationName": "Richards And Richardson Pc",
 			"NPIID": ""
 		},
 		{
@@ -13168,6 +13243,51 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/0700345",
 			"OrganizationName": "Riverwalk Ob GYN PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "rng",
 			"NPIID": ""
 		},
 		{
@@ -13531,7 +13651,27 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://sangmobile.sunrisecommunitycare.com/FHIR",
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/open",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/FHIR",
 			"OrganizationName": "San Gorgonio Memorial Hospital",
 			"NPIID": ""
 		},
@@ -13866,6 +14006,26 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Open",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R2/Open",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Fhir",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R2/Fhir",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhirprod184.sheppardpratt.org/FHIR",
 			"OrganizationName": "Sheppard Pratt Health System",
 			"NPIID": ""
@@ -13898,6 +14058,11 @@
 		{
 			"URL": "https://fhir.signature-healthcare.org//FHIR",
 			"OrganizationName": "Signature health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031459",
+			"OrganizationName": "Silver Pine Family Practice",
 			"NPIID": ""
 		},
 		{
@@ -14162,7 +14327,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10012164",
-			"OrganizationName": "Southern OB/GYN Associates",
+			"OrganizationName": "Southern ObGyn Assoc",
 			"NPIID": ""
 		},
 		{
@@ -14217,7 +14382,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10045969",
-			"OrganizationName": "SOUTHVIEW MEDICAL GROUP P.C.",
+			"OrganizationName": "Southview Medical Group",
 			"NPIID": ""
 		},
 		{
@@ -14343,11 +14508,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74082",
 			"OrganizationName": "Spine Works Physical Therapy",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031459",
-			"OrganizationName": "SPMG Sterling Heights",
 			"NPIID": ""
 		},
 		{
@@ -15056,8 +15216,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10857851",
-			"OrganizationName": "Tallahassee Medical Group",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10041264",
+			"OrganizationName": "Tallahassee Primary Care Associates",
 			"NPIID": ""
 		},
 		{
@@ -15122,7 +15282,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10177742",
-			"OrganizationName": "Tennessee Urology Assoc",
+			"OrganizationName": "Tennessee Urology Associates",
 			"NPIID": ""
 		},
 		{
@@ -15582,7 +15742,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10020578",
-			"OrganizationName": "The ChildHealth Center, P.A.",
+			"OrganizationName": "The Childhealth Center, PA",
 			"NPIID": ""
 		},
 		{
@@ -15598,11 +15758,6 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/0009833",
 			"OrganizationName": "The Endocrine Clinic",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10010297",
-			"OrganizationName": "The Family Doctors",
 			"NPIID": ""
 		},
 		{
@@ -16198,6 +16353,41 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10046784",
 			"OrganizationName": "Twin Lakes Medical Foundation",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R2/open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW-Prod-R2",
 			"NPIID": ""
 		},
 		{
@@ -17116,12 +17306,37 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/open",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74292",
 			"OrganizationName": "Woman  Adolescent Gynecology",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/10041587",
+			"URL": "https://fhircentus.allscripts.pro/fhirroute/fhir/10041587",
 			"OrganizationName": "Woman Care",
 			"NPIID": ""
 		},
@@ -17308,6 +17523,581 @@
 		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/77777",
 			"OrganizationName": "Zubritzky  Christy ObGyn AssocPA",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/fhir-Production",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/open-Production",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhirint.rd.allscripts.com/R4/open-Production",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhirint.rd.allscripts.com/R4/fhir-Production",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web1.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "alt",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com//fhir-dbm-dev1",
+			"OrganizationName": "DBM DEV",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhirtest01.rd.allscripts.com/R4/fhir-FHIR-PROD",
+			"OrganizationName": "FHIR-TEST18",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhirtest01.rd.allscripts.com/R4/open-FHIR-PROD",
+			"OrganizationName": "FHIR-TEST18",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/open",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/fhir",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/R4/fhir-Prod",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.jtdmh.org/R4/open-Prod",
+			"OrganizationName": "GL0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/HCAPROD_36",
+			"OrganizationName": "HCA Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/HCAPROD_36",
+			"OrganizationName": "HCA Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/open",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "ns0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "ns0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/PARAGONSUPPORTCDH",
+			"OrganizationName": "Paragon Support",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/PARAGONSUPPORTCDH",
+			"OrganizationName": "Paragon Support",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/ProdR2CDH",
+			"OrganizationName": "ProdR2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/ProdR2CDH",
+			"OrganizationName": "ProdR2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/fhir-ProdR4SCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/fhir-ProdR4SCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/PRSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/open-PRODSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/fhir-PRODSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/PRSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/open-ProdR4SCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/fhir-PRODSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/open-ProdR4SCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/open-PRODSCM",
+			"OrganizationName": "ProdR4SCM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qatst2.rd.allscripts.com/fhir-ProdSCMR4",
+			"OrganizationName": "ProdSCMR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qatst2.rd.allscripts.com/R4/open-ProdSCMR4",
+			"OrganizationName": "ProdSCMR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qatst2.rd.allscripts.com/R4/fhir-ProdSCMR4",
+			"OrganizationName": "ProdSCMR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qatst2.rd.allscripts.com/open-ProdSCMR4",
+			"OrganizationName": "ProdSCMR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/open",
+			"OrganizationName": "PV0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.rng.hos.allscriptscloud.com/open",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://RNG1ASCMSHVP.RNG.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "rng",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/open",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/open--SCM",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/open-SCMPROD",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/fhir-SCMPROD",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/fhir-fhirreleaseall",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/open-SCMPROD",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-qa-21.rd.allscripts.com/R4/fhir-SCMPROD",
+			"OrganizationName": "SCMPROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir221weba2.rd.allscripts.com/R4/fhir-SCMSTANDR4",
+			"OrganizationName": "SCMSTANDR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir221weba2.rd.allscripts.com/R4/open-SCMSTANDR4",
+			"OrganizationName": "SCMSTANDR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Open",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R4/fhir-EP01_PROD",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R4/open-EP01_PROD",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Fhir",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhirprod184.sheppardpratt.org/FHIR",
+			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw21fhir.services.local/R4/open-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw21fhir.services.local/open-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw22fhir.services.local/R4/fhir-FHIRr4",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw21fhir.services.local/fhir-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://services.local/R4/open-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw22fhir.services.local/R4/open-FHIRr4",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw22fhir.services.local/open-FHIRr4",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://services.local/R4/fhir-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw21fhir.services.local/R4/fhir-FHIRR",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://tw22fhir.services.local/fhir-FHIRr4",
+			"OrganizationName": "TechOps2",
+			"NPIID": ""
+		},
+		{
+			"URL": "http://test.fhir.api.com/fhir",
+			"OrganizationName": "Test c1a0 FHIR Instance From CloudApiTester",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/fhir-Fhir",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/https://twr3devweb2.rd.allscripts.com/R2/Open",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/https://twr3devweb2.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/https://twr3devweb2.rd.allscripts.com/R2/FHIR",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/R4/open-Fhir",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/R4/fhir-Fhir",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/https://twr3devweb2.rd.allscripts.com/Open",
+			"OrganizationName": "TW",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/\\fhir",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R4/open-R4TWStandalone",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/R4/fhir-R4TWStandalone",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/open",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW-Prod-R2",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/PEHRsandDEV",
+			"OrganizationName": "Veradigm Connect",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/PEHRsandDEV",
+			"OrganizationName": "Veradigm Connect",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/open-PROD",
+			"OrganizationName": "Wise Health System-PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/Fhir",
+			"OrganizationName": "Wise Health System-PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-PROD",
+			"OrganizationName": "Wise Health System-PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/Open",
+			"OrganizationName": "Wise Health System-PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/open",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.wnj.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "wnj",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com/fhir-dbm-dev8",
+			"OrganizationName": "yan",
 			"NPIID": ""
 		}
 	]

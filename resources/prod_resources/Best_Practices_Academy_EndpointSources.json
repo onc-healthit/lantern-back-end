@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://ipc-fhir.ipatientcare.net:9443/fhir-server/api/v4/",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

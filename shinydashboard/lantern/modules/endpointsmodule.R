@@ -11,7 +11,8 @@ endpointsmodule_UI <- function(id) {
       column(width = 12, style = "padding-bottom:20px",
              h2(style = "margin-top:0", textOutput(ns("endpoint_count"))),
              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
-             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+             htmlOutput(ns("anchorlink"))
       ),
     ),
     tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
@@ -27,9 +28,14 @@ endpointsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_availability
+  sel_availability,
+  sel_is_chpl
 ) {
   ns <- session$ns
+
+  output$anchorlink <- renderUI({
+    HTML("<p>You may also download endpoint data over time in the JSON format by visiting the <a tabindex=\"0\" id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
+  })
 
   output$endpoint_count <- renderText({
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
@@ -44,6 +50,11 @@ endpointsmodule <- function(
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == sel_vendor())
     }
+
+    if (sel_is_chpl() != "All") {
+      res <- res %>% filter(is_chpl == toupper(sel_is_chpl()))
+    }
+
     if (sel_availability() != "0-100") {
       if (sel_availability() == "0" || sel_availability() == "100") {
         availability_filter_num <- as.numeric(sel_availability()) / 100
@@ -60,8 +71,9 @@ endpointsmodule <- function(
     }
 
     res <- res %>%
+    mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',\'", url, "\',{priority: \'event\'});\"> Click For More... </a>")), endpoint_names)) %>%
+    mutate(condensed_endpoint_names = ifelse(length(endpoint_names) > 0, ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',\'", url, "\',{priority: \'event\'});\"> Click For More... </a>")), endpoint_names), endpoint_names)) %>%
     mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res <- res %>% mutate(availability = availability * 100)

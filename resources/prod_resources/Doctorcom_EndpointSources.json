@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://pc-fhir-stg.amazingcharts.com/fhir/r4",
+			"OrganizationName": "HAG Sandbox",
+			"NPIID": ""
+		}
+	]
+}

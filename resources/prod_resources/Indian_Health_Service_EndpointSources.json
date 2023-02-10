@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhirserver.justtest.in:9443/fhir-server/api/v4/",
+			"URL": "https://ihs4dhapim.ihs.gov/FHIR/r4",
 			"OrganizationName": "",
 			"NPIID": ""
 		}

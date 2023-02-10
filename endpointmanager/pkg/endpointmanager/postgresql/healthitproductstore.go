@@ -29,6 +29,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
 	var practiceTypeString sql.NullString
+	var ACBString sql.NullString
 
 	sqlStatement := `
 	SELECT
@@ -47,6 +48,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE id=$1`
@@ -68,6 +70,7 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
+		&ACBString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -81,6 +84,12 @@ func (s *Store) GetHealthITProduct(ctx context.Context, id int) (*endpointmanage
 		hitp.PracticeType = ""
 	} else {
 		hitp.PracticeType = practiceTypeString.String
+	}
+
+	if !ACBString.Valid {
+		hitp.ACB = ""
+	} else {
+		hitp.ACB = ACBString.String
 	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
@@ -101,6 +110,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 	var certificationCriteriaJSON []byte
 	var vendorIDNullable sql.NullInt64
 	var practiceTypeString sql.NullString
+	var ACBString sql.NullString
 
 	row := getHealthITProductUsingNameAndVersion.QueryRowContext(ctx, name, version)
 
@@ -120,6 +130,7 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		&hitp.LastModifiedInCHPL,
 		&hitp.CHPLID,
 		&practiceTypeString,
+		&ACBString,
 		&hitp.CreatedAt,
 		&hitp.UpdatedAt)
 	if err != nil {
@@ -133,6 +144,12 @@ func (s *Store) GetHealthITProductUsingNameAndVersion(ctx context.Context, name 
 		hitp.PracticeType = ""
 	} else {
 		hitp.PracticeType = practiceTypeString.String
+	}
+
+	if !ACBString.Valid {
+		hitp.ACB = ""
+	} else {
+		hitp.ACB = ACBString.String
 	}
 
 	err = json.Unmarshal(locationJSON, &hitp.Location)
@@ -166,6 +183,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE regexp_replace(LOWER(name), '\W+', '', 'g')=regexp_replace(LOWER($1), '\W+', '', 'g') and certification_status = 'Active'`
@@ -181,6 +199,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 		var certificationCriteriaJSON []byte
 		var vendorIDNullable sql.NullInt64
 		var practiceTypeString sql.NullString
+		var ACBString sql.NullString
 
 		err = rows.Scan(
 			&hitp.ID,
@@ -198,6 +217,7 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 			&hitp.LastModifiedInCHPL,
 			&hitp.CHPLID,
 			&practiceTypeString,
+			&ACBString,
 			&hitp.CreatedAt,
 			&hitp.UpdatedAt)
 		if err != nil {
@@ -211,6 +231,12 @@ func (s *Store) GetActiveHealthITProductsUsingName(ctx context.Context, name str
 			hitp.PracticeType = ""
 		} else {
 			hitp.PracticeType = practiceTypeString.String
+		}
+
+		if !ACBString.Valid {
+			hitp.ACB = ""
+		} else {
+			hitp.ACB = ACBString.String
 		}
 
 		err = json.Unmarshal(locationJSON, &hitp.Location)
@@ -305,7 +331,8 @@ func (s *Store) AddHealthITProduct(ctx context.Context, hitp *endpointmanager.He
 		hitp.CertificationEdition,
 		hitp.LastModifiedInCHPL,
 		hitp.CHPLID,
-		hitp.PracticeType)
+		hitp.PracticeType,
+		hitp.ACB)
 
 	err = row.Scan(&hitp.ID)
 
@@ -341,6 +368,7 @@ func (s *Store) UpdateHealthITProduct(ctx context.Context, hitp *endpointmanager
 		hitp.PracticeType,
 		locationJSON,
 		certificationCriteriaJSON,
+		hitp.ACB,
 		hitp.ID)
 
 	return err
@@ -427,8 +455,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			certification_edition,
 			last_modified_in_chpl,
 			chpl_id,
-			practice_type)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			practice_type,
+			acb)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING id`)
 	if err != nil {
 		return err
@@ -448,8 +477,9 @@ func prepareHealthITProductStatements(s *Store) error {
 			chpl_id = $11,
 			practice_type = $12,
 			location = $13,
-			certification_criteria = $14
-		WHERE id=$15`)
+			certification_criteria = $14,
+			acb = $15
+		WHERE id=$16`)
 	if err != nil {
 		return err
 	}
@@ -504,6 +534,7 @@ func prepareHealthITProductStatements(s *Store) error {
 		last_modified_in_chpl,
 		chpl_id,
 		practice_type,
+		acb,
 		created_at,
 		updated_at
 	FROM healthit_products WHERE name=$1 AND version=$2`)

@@ -18,7 +18,7 @@ PASTNPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMON
 
 rm -f endpoint_pfile*.csv
 rm -f npidata_pfile*.csv
-rm -f *FileHeader.csv
+rm -f *fileheader.csv
 rm -f temp.zip
 rm -f npidata_pfile2.csv
 
@@ -27,7 +27,7 @@ curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not availa
 echo "Extracting endpoint and npidata files from NPPES zip file..."
 unzip -q temp.zip endpoint_pfile\*.csv
 unzip -q temp.zip npidata_pfile\*.csv
-rm -f *FileHeader.csv
+rm -f *fileheader.csv
 mv -f endpoint_pfile*.csv endpoint_pfile.csv
 mv -f npidata_pfile*.csv npidata_pfile.csv
 rm -f temp.zip

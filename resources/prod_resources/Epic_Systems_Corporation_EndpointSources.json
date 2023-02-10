@@ -177,7 +177,7 @@
 		},
 		{
 			"URL": "https://stofo.providence-waco.org/FHIRProxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Ascension - Providence Healthcare Network",
+			"OrganizationName": "Ascension Providence",
 			"NPIID": ""
 		},
 		{
@@ -221,7 +221,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicweb.challiance.org/Interconnect-FHIR/api/FHIR/DSTU2/",
+			"URL": "https://epicmobile.challiance.org/Interconnect-oauth2/api/FHIR/DSTU2/",
 			"OrganizationName": "Cambridge Health Alliance",
 			"NPIID": ""
 		},
@@ -512,7 +512,7 @@
 		},
 		{
 			"URL": "https://sclprdproxy.sclhs.net/FHIRPRD-2017/api/FHIR/DSTU2/",
-			"OrganizationName": "SCL Health",
+			"OrganizationName": "Intermountain Healthcare",
 			"NPIID": ""
 		},
 		{
@@ -581,7 +581,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mepic.hackensackumc.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://mepic.hmhn.org/fhir/api/FHIR/DSTU2/",
 			"OrganizationName": "Hackensack Meridian Health",
 			"NPIID": ""
 		},
@@ -777,7 +777,7 @@
 		},
 		{
 			"URL": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/DSTU2/",
-			"OrganizationName": "Presence Health",
+			"OrganizationName": "Ascension Illinois",
 			"NPIID": ""
 		},
 		{
@@ -802,7 +802,7 @@
 		},
 		{
 			"URL": "https://soap.phci.org/Interconnect-FHIR/api/FHIR/DSTU2/",
-			"OrganizationName": "Prohealth Care",
+			"OrganizationName": "ProHealth Care",
 			"NPIID": ""
 		},
 		{
@@ -907,7 +907,7 @@
 		},
 		{
 			"URL": "https://eprescribe.wfhc.org/FHIRproxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Ascension WI",
+			"OrganizationName": "Ascension Wisconsin",
 			"NPIID": ""
 		},
 		{
@@ -921,7 +921,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://proxy.christushealth.org/FHIRproxy/api/FHIR/DSTU2/",
+			"URL": "https://proxy.christushealth.org/FHIRPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "CHRISTUS Health",
 			"NPIID": ""
 		},
@@ -1142,7 +1142,7 @@
 		},
 		{
 			"URL": "https://fhir.laheyhealth.org/proxy-prd-fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "Lahey Health System",
+			"OrganizationName": "Beth Israel Lahey Health",
 			"NPIID": ""
 		},
 		{
@@ -1172,11 +1172,11 @@
 		},
 		{
 			"URL": "https://rp.catholichealth.net/fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "CHI Franciscan Health",
+			"OrganizationName": "Virginia Mason Franciscan Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/DSTU2/",
+			"URL": "https://epicprisfd.ahn.org/PRD-FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Allegheny Health Network",
 			"NPIID": ""
 		},
@@ -2146,6 +2146,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicrp-prd.eushc.org/OAUTH2-PRD/api/FHIR/DSTU2/",
+			"OrganizationName": "Emory Healthcare",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://hkc.nationwidechildrens.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Nationwide Children's Hospital",
 			"NPIID": ""
@@ -2181,28 +2186,43 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://epicproxy.et1267.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "McLeod Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Shriners Children's",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRMCT/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI Memorial",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/DSTU2/",
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRKY/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI Saint Joseph Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://rp.chihealth.com/fhir/api/FHIR/DSTU2/",
+			"URL": "https://api.valleyhealth.org/fhirproxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Valley Health Systems -  PRD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1270.epichosted.com/apiproxyprd/api/FHIR/DSTU2/",
+			"OrganizationName": "EvergreenHealth",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/FHIRSTA/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI St. Alexius Health",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.kp.org/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/200/api/FHIR/R4/",
-			"OrganizationName": "Kaiser Permanente – Georgia",
 			"NPIID": ""
 		},
 		{
@@ -2258,6 +2278,11 @@
 		{
 			"URL": "https://proxy.healthpartners.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "HealthPartners",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.kp.org/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/200/api/FHIR/R4/",
+			"OrganizationName": "Kaiser Permanente – Georgia",
 			"NPIID": ""
 		},
 		{
@@ -2411,6 +2436,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://stofo.providence-waco.org/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Ascension Providence",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.institute.org/fhir/api/FHIR/R4/",
 			"OrganizationName": "Institute for Family Health",
 			"NPIID": ""
@@ -2453,6 +2483,11 @@
 		{
 			"URL": "https://mobileprod.arcmd.com/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Austin Regional Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicmobile.challiance.org/Interconnect-oauth2/api/FHIR/R4/",
+			"OrganizationName": "Cambridge Health Alliance",
 			"NPIID": ""
 		},
 		{
@@ -2782,7 +2817,7 @@
 		},
 		{
 			"URL": "https://sclprdproxy.sclhs.net/FHIRPRD-2017/api/FHIR/R4/",
-			"OrganizationName": "SCL Health",
+			"OrganizationName": "Intermountain Healthcare",
 			"NPIID": ""
 		},
 		{
@@ -2791,13 +2826,18 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
-			"OrganizationName": "Lakeland Health",
+			"URL": "https://nmepicproxy.nm.org/FHIR-PRD/api/FHIR/R4/",
+			"OrganizationName": "Northwestern Medicine",
 			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
 			"OrganizationName": "Spectrum Health Lakeland",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.lakelandregional.org/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Lakeland Health",
 			"NPIID": ""
 		},
 		{
@@ -3056,6 +3096,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/R4/",
+			"OrganizationName": "Ascension Illinois",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://psacesoap.whhs.com/interconnect-fhir-prd/api/FHIR/R4/",
 			"OrganizationName": "Washington Hospital Healthcare System",
 			"NPIID": ""
@@ -3073,6 +3118,11 @@
 		{
 			"URL": "https://mcproxyprd.med.umich.edu/FHIR-PRD/api/FHIR/R4/",
 			"OrganizationName": "Michigan Medicine",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://soap.phci.org/Interconnect-FHIR/api/FHIR/R4/",
+			"OrganizationName": "ProHealth Care",
 			"NPIID": ""
 		},
 		{
@@ -3221,6 +3271,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://eprescribe.wfhc.org/FHIRproxy/api/FHIR/R4/",
+			"OrganizationName": "Ascension Wisconsin",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.bhsala.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Brookwood Baptist Health",
 			"NPIID": ""
@@ -3291,6 +3346,21 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRMCT/api/FHIR/R4/",
+			"OrganizationName": "CHI Memorial",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/FHIRKY/api/FHIR/R4/",
+			"OrganizationName": "CHI Saint Joseph Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rpsouth.catholichealth.net/fhir/api/FHIR/R4/",
+			"OrganizationName": "CHI St. Luke's Health",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.samhealth.org/fhir-arr/api/FHIR/R4/",
 			"OrganizationName": "Samaritan Health Services",
 			"NPIID": ""
@@ -3338,6 +3408,21 @@
 		{
 			"URL": "https://epicproxy.et0857.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Stanford Children's Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.catholichealth.net/fhir/api/FHIR/R4/",
+			"OrganizationName": "Virginia Mason Franciscan Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/api/FHIR/R4/",
+			"OrganizationName": "CHI Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://rp.chihealth.com/fhir/FHIRSTA/api/FHIR/R4",
+			"OrganizationName": "CHI St. Alexius Health",
 			"NPIID": ""
 		},
 		{
@@ -3402,7 +3487,7 @@
 		},
 		{
 			"URL": "https://fhir.laheyhealth.org/proxy-prd-fhir/api/FHIR/R4/",
-			"OrganizationName": "Lahey Health System",
+			"OrganizationName": "Beth Israel Lahey Health",
 			"NPIID": ""
 		},
 		{
@@ -3481,7 +3566,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicprisfd01.wpahs.org/PRD-FHIR/api/FHIR/R4/",
+			"URL": "https://epicprisfd.ahn.org/PRD-FHIR/api/FHIR/R4/",
 			"OrganizationName": "Allegheny Health Network",
 			"NPIID": ""
 		},
@@ -3528,6 +3613,11 @@
 		{
 			"URL": "https://phsfhir.primehealthcare.com/PHS-PRD-FHIR/api/FHIR/R4/",
 			"OrganizationName": "Prime Healthcare",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://retailepicfhir.cvshealth.com/FhirProxy/api/fhir/R4/",
+			"OrganizationName": "CVS Health \u0026 Minute Clinic",
 			"NPIID": ""
 		},
 		{
@@ -4186,6 +4276,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicrp-prd.eushc.org/OAUTH2-PRD/api/FHIR/R4/",
+			"OrganizationName": "Emory Healthcare",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://intconfg-p.well-net.org/PRD-OAUTH2/api/FHIR/R4/",
 			"OrganizationName": "Tufts Medicine",
 			"NPIID": ""
@@ -4231,13 +4326,28 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicproxy.et1267.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "McLeod Health",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.et1254.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Aspen Valley Hospital",
 			"NPIID": ""
 		},
 		{
+			"URL": "https://api.valleyhealth.org/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Valley Health Systems - PRD",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://epicproxy.et1296.epichosted.com/APIProxyPRD/api/FHIR/R4/",
 			"OrganizationName": "Duly Health and Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Shriners Children’s",
 			"NPIID": ""
 		}
 	]

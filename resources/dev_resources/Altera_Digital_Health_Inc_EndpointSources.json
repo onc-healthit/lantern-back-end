@@ -1,0 +1,54 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://TWweb17.twops.local/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://TWweb.twops.local/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://10.160.126.33/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74150",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://172.19.5.119/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scm16testps1.nmhs.net/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

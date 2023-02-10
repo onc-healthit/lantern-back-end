@@ -61,6 +61,7 @@ type chplCertifiedProduct struct {
 	CertificationStatus details            `json:"certificationStatus"`
 	CriteriaMet         []criteriaMet      `json:"criteriaMet"`
 	APIDocumentation    []apiDocumentation `json:"apiDocumentation"`
+	ACB                 string             `json:"acb"`
 }
 
 // GetCHPLProducts queries CHPL for its HealthIT products using 'cli' and stores the products in 'store'
@@ -102,13 +103,13 @@ func GetCHPLProducts(ctx context.Context, store *postgresql.Store, cli *http.Cli
 	return nil
 }
 
-// GetCHPLEndpointListProducts grabs software inforation from the CHPLProductsInfo.json file and stores the products in 'store'
+// GetCHPLEndpointListProducts grabs software information from the CHPLProductsInfo.json file and stores the products in 'store'
 // within the given context 'ctx'.
 func GetCHPLEndpointListProducts(ctx context.Context, store *postgresql.Store) error {
 
 	var CHPLEndpointListProducts []chplEndpointListProductInfo
 
-	log.Debug("Getting chpl product information from CHPLProductsInfo.json file")
+	log.Info("Getting chpl product information from CHPLProductsInfo.json file")
 	// Get CHPL Endpoint list stored in Lantern resources folder
 	CHPLFile, err := ioutil.ReadFile("/etc/lantern/resources/CHPLProductsInfo.json")
 	if err != nil {
@@ -208,6 +209,7 @@ func parseHITProd(ctx context.Context, prod *chplCertifiedProduct, store *postgr
 		CHPLID:                prod.ChplProductNumber,
 		CertificationCriteria: criteriaMetArr,
 		PracticeType:          strings.TrimSpace(prod.PracticeType.Name),
+		ACB:                   strings.TrimSpace(prod.ACB),
 	}
 
 	certificationDateTime, err := time.Parse("2006-01-02", prod.CertificationDate)
@@ -291,6 +293,7 @@ func persistProduct(ctx context.Context,
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
+
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
@@ -346,18 +349,30 @@ func persistProduct(ctx context.Context,
 // else if the new product has a more recent certification edition than the exisitng product, update.
 // else if the new product has a more recent certification date than the exisitng product, update.
 // else if the new product has more certification criteria than the existing product, update.
+// else if the new product has a populated acb, update.
 //
 // throws errors if
 // - the certification edition is not a year
 // - the certification criteria list is the same length but not equal
 // - the two products are not equal but their differences don't fall into the categories noted above.
 func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd *endpointmanager.HealthITProduct) (bool, error) {
+
 	// check if the two are equal.
 	if existingDbProd.Equal(newDbProd) {
 		return false, nil
 	}
 
-	// begin by comparing certification editions.
+	// If the new product has a new ACB field, update it unless the field is not populated
+	if existingDbProd.ACB != newDbProd.ACB {
+
+		if newDbProd.ACB == "" {
+			return false, nil
+		} else {
+			return true, nil
+		}
+	}
+
+	// Compare certification editions
 	// Assumes certification editions are years, which is the case as of 11/20/19.
 	existingCertEdition, err := strconv.Atoi(existingDbProd.CertificationEdition)
 	if err != nil {

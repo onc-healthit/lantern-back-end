@@ -61,6 +61,7 @@ type CHPLEndpointEntry struct {
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	ServiceBaseUrlList  serviceBaseURL   `json:"serviceBaseUrlList"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
+	ACB                 details          `json:"certificationBody"`
 }
 
 type chplCertifiedProductEntry struct {
@@ -75,6 +76,7 @@ type chplCertifiedProductEntry struct {
 	CertificationStatus details          `json:"certificationStatus"`
 	CriteriaMet         []certCriteria   `json:"criteriaMet"`
 	APIDocumentation    []serviceBaseURL `json:"apiDocumentation"`
+	ACB                 string           `json:"acb"`
 }
 
 func main() {
@@ -153,6 +155,7 @@ func main() {
 			productEntry.CriteriaMet = criteriaMetArr
 			productEntry.APIDocumentation = apiDocURLArr
 			productEntry.Developer = chplEntry.Developer
+			productEntry.ACB = chplEntry.ACB.Name
 
 			softwareContained, softwareIndex := containsSoftware(softwareInfoList, urlString)
 			if !softwareContained {
@@ -215,12 +218,34 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Save a copy of CHPL Endpoint Lists file in the dev resources folder
+	devfinalFormatJSONEndpoints, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToCHPLList, devfinalFormatJSONEndpoints, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	finalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToSoftwareInfo, finalFormatJSONSoftware, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Save a copy of software products info file in the dev resources folder
+	devfinalFormatJSONSoftware, err := json.MarshalIndent(softwareInfoList, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToSoftwareInfo, devfinalFormatJSONSoftware, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -254,8 +279,20 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 }
 
 func containsEndpoint(endpointEntryList []endpointEntry, url string) bool {
+
+	newURL := url
+	if len(newURL) > 0 && newURL[len(newURL)-1:] != "/" {
+		newURL = newURL + "/"
+	}
+
 	for _, e := range endpointEntryList {
-		if e.URL == url {
+
+		existingURL := e.URL
+		if len(existingURL) > 0 && existingURL[len(existingURL)-1:] != "/" {
+			existingURL = existingURL + "/"
+		}
+
+		if existingURL == newURL {
 			return true
 		}
 	}

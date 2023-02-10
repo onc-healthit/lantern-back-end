@@ -4,12 +4,12 @@ Lantern is an open source tool developed by the Office of the National Coordinat
 
 # Index
 * [Running Lantern - Basic Flow](#running-lantern---basic-flow)
+* [Using Docker Compose](#using-docker-compose)
 * [Testing Lantern - Basic Flow](#testing-lantern---basic-flow)
 * [Make Commands](#make-commands)
 * [Configure Data Collection Failure System](#configure-data-collection-failure-system)
 * [Configure Backup System](#configure-backup-system)
 * [Running Lantern Services Individually](#running-lantern-services-individually)
-* [Using Docker Compose](#using-docker-compose)
 * [Testing - Details](#testing---details)
 * [Contributing](#contributing)
 * [License](#license)
@@ -172,6 +172,14 @@ If you are operating behind a proxy that does SSL-Inspection you will have to co
   * `e2e/certs`
   * `db/migration/certs`
 
+# Using Docker Compose
+
+Lantern is a multi-container application that runs using Docker, and therefore Docker must be downloaded in order to set up the project. You can download Docker Desktop [here](https://docs.docker.com/get-docker/), which includes Docker Compose. You can find more information about Docker compose [here](https://docs.docker.com/compose/). Using Docker compose is a three-step process:
+  1. Define app environment with a Dockerfile so it can be reproduced anywhere
+  2. Define services that make up app in docker-compose.yml so they can be run together in an isolated environment
+  3. Run docker compose up and the Docker compose command starts and runs the entire app. Lantern's Makefile command `make run` and `make run prod` can be used to run the docker compose command to start the application
+
+
 # Testing Lantern - Basic Flow
 
 There are three types of tests for Lantern and three corresponding commands:
@@ -201,7 +209,7 @@ There are three types of tests for Lantern and three corresponding commands:
 |`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory, and queries NPPES for its latest information and automatically stores it in the database before deleting the files.| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
-|`make migrate_database force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional force_version parameter can be included to force the database to a specific migration version before running the next migration. If this parameter is omitted, it runs the next migration that has not yet been run. |
+|`make migrate_database direction=<up/down> force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional direction parameter can be included to specify whether you want to run an up or down migration, and the force_version parameter can be included to force the database to a specific migration version before running the next migration. If the direction parameter is omitted, it will run an up migration by default, and if the force_version parameter is omitted, it runs the next migration that has not yet been run. The order of these two paramaters is important, and so if you want to include the force_version parameter, you must also include the direction parameter before it. |
 |`make update_source_data` | Automatically queries the endpoint lists listed in the `EndpointResourcesList.json` file found in the `resources/prod_resources` directory, queries CHPL for its list of endpoint lists and stores the data in a file in the same directory, queries the NPPES NPI and endpoint data, and stores truncated versions of the files in the `resources/dev_resources` directory. |
 |`make update_source_data_prod` | Automatically queries the endpoint lists listed in the `EndpointResourcesList.json` file found in the `resources/prod_resources` directory and queries CHPL for its list of endpoint lists and stores the data in a file in the same directory. |
 |  `make lint` | Runs the R and golang linters |
@@ -285,12 +293,29 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
+ # Configure Automatic Production Database Population
+
+You can configure an automatic production database population system using cron and the `automatic_populatedb_prod.sh` script located in the scripts directory to save all the endpoint information from the endpoint resource lists found in the `resources/prod_resources` directory into the database. The script also downloads the most recent NPPES file, stores all the information from that file into the database, and then deletes the NPPES file in order to save storage space. The task will send an email notification if the endpoint list information or NPPES information fails to be saved in the database. 
+
+To set up the script for this automatic production database population system, you must insert the correct information into the following variables located at the beginning of the automatic production database populator script.
+  * Set the EMAIL variable to the email you want the automatic production database populator to send failure alerts to in the `automatic_populatedb_prod.sh` script
+
+To configure this script to run using cron, do:
+ * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full path to scripts directory> && ./automatic_populatedb_prod.sh` to the crontab file
+  * A `*` can be added to any field in the crontab expression to mean always
+  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
+  * Example: Add `1 * 1 */1 * cd <Full path to scripts directory> && ./automatic_populatedb_prod.sh` to run the script at minute 1 on day 1 in every month
+ * To display all scheduled cron jobs for the current user, you can use `crontab -l`
+ * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
+
  # Configure Monthly JSON Export System
 
-You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails.
+You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails. It then moves the JSON monthly file to the directory as defined below, which zips the file and pushes it to the git repo at that directory.
 
 To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the save_monthly_json_export script.
   * Set the EMAIL variable to the email you want to send json export failure alerts to
+  * Set the DIRECTORY variable to the git repo where the monthly file is pushed to.
 
 To configure this script to run using cron, do:
  * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file

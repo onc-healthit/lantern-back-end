@@ -1,4 +1,4 @@
-package endpointwebscraper
+package chplendpointquerier
 
 import (
 	"strings"
@@ -8,12 +8,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
+func Techcarewebscraper(techcareURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, ".WordSection1")
+	doc, err := helpers.ChromedpQueryEndpointList(techcareURL, ".WordSection1")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func Techcarewebscraper(vendorURL string, fileToWriteTo string) {
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	err = WriteEndpointListFile(endpointEntryList, fileToWriteTo)
+	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}

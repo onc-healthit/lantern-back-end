@@ -1,0 +1,54 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-KzIoYV6gk-ILcHOWbsH2m9KsSdDgi12/",
+			"OrganizationName": "Oscar Matthews, MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-MIuTZfWACgngV9YTgKmhcl1PVL8iu53/",
+			"OrganizationName": "Vishen, R K MD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-OZ6w8MCeQFycM1MwlWQ0yaxWv8UTkHm/",
+			"OrganizationName": "Cleveland Head \u0026 Neck",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-_YkIsNEMVntfXGwmctxxUqaWU95Xx7D/",
+			"OrganizationName": "Palm Beach Spine \u0026 Diagnostic Institute",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-c6Xwd-UlrvkHnaNj_A8a39Pa03efHEX/",
+			"OrganizationName": "Treasure Coast Podiatry",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/-yJKGL5-49LdGDJaxmfdb85K2Njr-hkB/",
+			"OrganizationName": "Alaska Native Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/00224df3-b096-4cdb-852c-cbc83c0d3b06/",
+			"OrganizationName": "Leidos Partnership for Defense Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/00a074df-768e-479f-9c8c-52c5c5bbe010/",
+			"OrganizationName": "Encompass Health Corporation",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/00a934e0-7e93-4023-8ce4-79bbebc496ce/",
+			"OrganizationName": "Earl Jacobson, DPM",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/00bf2f08-38fe-4c4c-8207-96dbe42a9302/",
+			"OrganizationName": "CarolinaEast Health System",
+			"NPIID": ""
+		}
+	]
+}

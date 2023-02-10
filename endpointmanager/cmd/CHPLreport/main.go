@@ -40,12 +40,13 @@ func main() {
 			CASE WHEN metadata.http_response != 200
 				THEN 'Unreachable'
 			    ELSE 'Doesn''t service Capability Statement request'
-			END AS reason
+			END AS reason,
+			HIT.acb AS ACB
 		FROM fhir_endpoints f
 		LEFT JOIN list_source_info ON f.list_source = list_source_info.list_source
 		LEFT JOIN (
     		SELECT
-    			url, requested_fhir_version, metadata_id, capability_statement::jsonb, updated_at, vendor_id
+    			url, requested_fhir_version, metadata_id, capability_statement::jsonb, updated_at, vendor_id, healthit_mapping_id
     		FROM
     		fhir_endpoints_info_history 
 		) AS hist ON f.url = hist.url
@@ -54,6 +55,8 @@ func main() {
 		LEFT JOIN (SELECT f.url, COUNT(f.capability_statement) as cap_stat_total, COUNT(m.http_response) as metadata_total 
 				   FROM fhir_endpoints_info_history f, fhir_endpoints_metadata m WHERE f.metadata_id = m.id AND age(f.updated_at) < '30 days'
 				   GROUP BY f.url) as totals ON totals.url = hist.url
+		LEFT JOIN healthit_products_map AS HITmap ON hist.healthit_mapping_id  = HITmap.id
+		LEFT JOIN healthit_products AS HIT ON HITmap.healthit_product_id = HIT.id
 		WHERE list_source_info.is_chpl = true AND age(hist.updated_at) < '30 days'
 		GROUP BY
 			f.list_source,
@@ -62,7 +65,8 @@ func main() {
 			metadata.http_response,
 			vendors.name,
 			totals.metadata_total,
-			totals.cap_stat_total
+			totals.cap_stat_total,
+			hit.ACB
 		HAVING hist.capability_statement = 'null' OR metadata.http_response != 200
 	)
 	TO '/tmp/export.csv'

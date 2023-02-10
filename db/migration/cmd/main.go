@@ -27,14 +27,20 @@ func main() {
 	sslmode := viper.GetString("dbsslmode")
 
 	var forceVersion int
+	var direction string
 	var err error
-	if len(os.Args) > 1 {
-		forceVersion, err = strconv.Atoi(os.Args[1])
+	if len(os.Args) > 2 {
+		direction = os.Args[1]
+		forceVersion, err = strconv.Atoi(os.Args[2])
 		if err != nil {
 			log.Fatalf("ERROR: Could not convert force version from string to int")
 		}
+	} else if len(os.Args) > 1 {
+		direction = os.Args[1]
+		forceVersion = -1
 	} else {
 		forceVersion = -1
+		direction = "up"
 	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -63,7 +69,12 @@ func main() {
 		m.Force(forceVersion)
 	}
 
-	if err := m.Steps(1); err != nil {
+	stepDirection := 1
+	if direction == "down" {
+		stepDirection = -1
+	}
+
+	if err := m.Steps(stepDirection); err != nil {
 		version, dirty, retError := m.Version()
 		fmt.Printf("Version %+v with Dirty Flag %+v threw Error \n %+v", version, dirty, retError)
 		log.Fatal(err)

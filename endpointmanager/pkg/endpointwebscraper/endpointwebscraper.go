@@ -17,17 +17,13 @@ type LanternEntry struct {
 
 var oneUpURL = "https://1up.health/fhir-endpoint-directory"
 var careEvolutionURL = "https://fhir.docs.careevolution.com/overview/public_endpoints.html"
-var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
-var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
 
 func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo string) {
 
-	if vendorURL == oneUpURL || vendorURL == careEvolutionURL {
+	if vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
-	} else if vendorURL == techCareURL {
-		Techcarewebscraper(vendorURL, fileToWriteTo)
-	} else if vendorURL == carefluenceURL {
-		Carefluenceebscraper(vendorURL, fileToWriteTo)
+	} else if vendorURL == oneUpURL {
+		OneUpQuerier("https://api.1up.health/connect/system/clinical", fileToWriteTo)
 	}
 }
 
@@ -39,6 +35,20 @@ func WriteEndpointListFile(endpointEntryList EndpointList, fileToWriteTo string)
 	}
 
 	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	if err != nil {
+		return err
+	}
+
+	if len(endpointEntryList.Endpoints) > 10 {
+		endpointEntryList.Endpoints = endpointEntryList.Endpoints[0:10]
+	}
+
+	reducedFinalFormatJSON, err := json.MarshalIndent(endpointEntryList, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}
