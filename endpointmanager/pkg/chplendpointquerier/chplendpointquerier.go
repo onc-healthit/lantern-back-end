@@ -63,7 +63,6 @@ var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-us
 var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
 var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
-var qualifactsURL = "https://qualifacts.com/API-Page/platform/insync/insync-fhir-org-list.html"
 var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
 var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/"
 var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
