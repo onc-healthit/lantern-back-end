@@ -142,9 +142,6 @@ func main() {
 
 			urlString := chplEntry.ServiceBaseUrlList.Value
 			urlString = strings.TrimSpace(urlString)
-			if len(urlString) > 0 && urlString[len(urlString)-1:] != "/" {
-				urlString = urlString + "/"
-			}
 
 			var productEntry chplCertifiedProductEntry
 

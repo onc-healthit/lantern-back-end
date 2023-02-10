@@ -9,6 +9,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
