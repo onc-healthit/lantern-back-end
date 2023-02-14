@@ -1,54 +1,64 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FFBGBA",
-			"OrganizationName": "Family Medical Clinic of Harrogate, PC",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CGEFAD",
 			"OrganizationName": "FPIM of New Haven County LLC",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
-			"OrganizationName": "FHIR R4 Production Sandbox EMR",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ACEBCD",
-			"OrganizationName": "Test-Siddharth Pandya MySQL V11",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/AHEADA",
-			"OrganizationName": "Diabetes And Metabolism Specialists of San Antonio",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CDGFBD",
-			"OrganizationName": "John Hoover, MD",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EDJICD",
-			"OrganizationName": "Summers Healthcare Inc",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "06512"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DCFDCD",
 			"OrganizationName": "I   B MEDICAL ASSOCIATES, PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "33150"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IGIFAD",
-			"OrganizationName": "Adventist HealthCare - Enterprise",
-			"NPIID": ""
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FFBGBA",
+			"OrganizationName": "Family Medical Clinic of Harrogate, PC",
+			"NPIID": "",
+			"OrganizationZipCode": "37752"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEBECD",
+			"OrganizationName": "RWLC Consulting LLC",
+			"NPIID": "",
+			"OrganizationZipCode": "08527"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
 			"OrganizationName": "Milestone Pediatrics S.C.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "53226"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
+			"OrganizationName": "FHIR R4 Production Sandbox EMR",
+			"NPIID": "",
+			"OrganizationZipCode": "01581"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CFIACD",
+			"OrganizationName": "Live Oak Family Medicine, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": "76028"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IGIFAD",
+			"OrganizationName": "Adventist HealthCare - Enterprise",
+			"NPIID": "",
+			"OrganizationZipCode": "20878"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDJHCD",
+			"OrganizationName": "Test_kelvin_local",
+			"NPIID": "",
+			"OrganizationZipCode": "01582"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JFEJCD",
+			"OrganizationName": "Empowered arthritis and Rheumatology Center PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": "27518"
 		}
 	]
 }

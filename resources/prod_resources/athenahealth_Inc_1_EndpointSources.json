@@ -19,25 +19,22 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://108.218.32.142/demoAPIServer/fhir/r4a",
+			"OrganizationName": "testing-dont use",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
 			"OrganizationName": "AHG",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://10.218.32.142/demoAPIServer/fhir/r4",
-			"OrganizationName": "Gary2",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
-			"OrganizationName": "AHG",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://cphs.cphsads.com:9443/cphsAPIServer/fhir/r4",
 			"OrganizationName": "ChesPenn Health Services",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
@@ -48,11 +45,18 @@
 		{
 			"URL": "https://cssecure.xlcon.com:9443/centricitypsAPIServer/fhir/r4",
 			"OrganizationName": "Cardiac Solutions",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://nfsmserver.nflortho.com:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "North Florida Sports Medicine \u0026 Orthopedic Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -71,7 +75,8 @@
 		{
 			"URL": "https://berks.vowaz.com:9443/berksliveAPIServer/fhir/r4",
 			"OrganizationName": "Berks Community Health Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-mlAPIServer/fhir/r4",

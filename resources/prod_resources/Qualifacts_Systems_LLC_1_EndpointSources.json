@@ -3,7 +3,8 @@
 		{
 			"URL": "https://cms.smilecdr.com/fhir-request",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

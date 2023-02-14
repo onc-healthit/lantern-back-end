@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://ehr2.charmtracker.com/api/ehr/v2/fhir",
+			"URL": "https://demo.interopx.com/InteropXFHIR/fhir",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

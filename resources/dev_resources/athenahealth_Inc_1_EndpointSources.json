@@ -3,52 +3,62 @@
 		{
 			"URL": "https://agpmiasrv.genesismedical.org:9443/gmaAPIServer/fhir/r4",
 			"OrganizationName": "Genesis",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://guthrie.vowaz.com:9443/guthrieAPIServer/fhir/r4",
 			"OrganizationName": "Debra Guthrie, MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ciocca.vowaz.com:9443/cioccaAPIServer/fhir/r4",
 			"OrganizationName": "Joseph J. Ciocca, MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://10.218.32.142/demoAPIServer/fhir/r4",
-			"OrganizationName": "Gary2",
-			"NPIID": ""
+			"URL": "https://108.218.32.142/demoAPIServer/fhir/r4a",
+			"OrganizationName": "testing-dont use",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
 			"OrganizationName": "AHG",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://cphs.cphsads.com:9443/cphsAPIServer/fhir/r4",
 			"OrganizationName": "ChesPenn Health Services",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://cssecure.xlcon.com:9443/centricitypsAPIServer/fhir/r4",
 			"OrganizationName": "Cardiac Solutions",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://bustleton.vowaz.com:9443/bustletonAPIServer/fhir/r4",
-			"OrganizationName": "Bustleton Gastroenterology",
-			"NPIID": ""
+			"URL": "https://nfsmserver.nflortho.com:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "North Florida Sports Medicine \u0026 Orthopedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }
