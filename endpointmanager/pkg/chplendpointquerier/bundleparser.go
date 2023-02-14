@@ -101,7 +101,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 					if len(org.Address) > 0 {
 						address := org.Address[0]
 						if address.PostalCode != "" {
-							entry.OrganizationZipCode = address.PostalCode
+							entry.OrganizationZipCode = strings.TrimSpace(address.PostalCode)
 							orgZipAdded = true
 						}
 					}
@@ -109,7 +109,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 					if !orgZipAdded && len(organizationZip) > 0 {
 						postalCode, ok := organizationZip[org.Id]
 						if ok {
-							entry.OrganizationZipCode = postalCode
+							entry.OrganizationZipCode = strings.TrimSpace(postalCode)
 						}
 					}
 				}

@@ -57,7 +57,7 @@ func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
 				if ok {
 					postalCode, ok := addressObj["postalCode"].(string)
 					if ok {
-						entry.OrganizationZipCode = postalCode
+						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
 					}
 				}
 			}
