@@ -372,7 +372,7 @@ SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_name
     export_tables.vendor_name,
     export_tables.tls_version, export_tables.mime_types, export_tables.http_response,
     export_tables.response_time_seconds, export_tables.smart_http_response, export_tables.errors,
-    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement::jsonb != 'null' AND export_tables.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
+    export_tables.cap_stat_exists,
     export_tables.fhir_version,
     export_tables.publisher,
     export_tables.software_name,

@@ -555,22 +555,20 @@ get_security_endpoints <- function(db_connection) {
 get_security_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT a.url,
-            a.organization_names,
-            b.vendor_name,
+            a.endpoint_names as organization_names,
+            a.vendor_name,
             a.capability_fhir_version,
             a.tls_version,
             a.code
         FROM
           (SELECT e.url,
-            e.organization_names,
-            capability_fhir_version as capability_fhir_version,
-            f.tls_version,
-            f.vendor_id,
-            json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
-          FROM fhir_endpoints_info f,fhir_endpoints e
-          WHERE e.url = f.url AND requested_fhir_version = 'None') a
-        LEFT JOIN (SELECT v.name as vendor_name, v.id FROM vendors v) b
-        ON a.vendor_id = b.id")) %>%
+            e.endpoint_names,
+            e.fhir_version as capability_fhir_version,
+            e.tls_version,
+            e.vendor_name,
+            json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
+          FROM endpoint_export e,fhir_endpoints_info f
+          WHERE e.url = f.url AND f.requested_fhir_version = 'None') a")) %>%
     collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
@@ -640,13 +638,13 @@ get_smart_response_capability_count <- function(endpoints_tbl) {
 #
 get_well_known_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection,
-    sql("SELECT e.url, e.organization_names, v.name as vendor_name,
-      f.capability_fhir_version as capability_fhir_version
-    FROM fhir_endpoints_info f
+    sql("SELECT e.url, e.endpoint_names as organization_names, e.vendor_name,
+      e.fhir_version as capability_fhir_version
+    FROM endpoint_export e
+    LEFT JOIN fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
-    LEFT JOIN fhir_endpoints e
-    ON f.url = e.url
+    ON e.url = f.url
     WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
     AND jsonb_typeof(f.smart_response::jsonb) = 'object'")) %>%
     collect() %>%
@@ -664,15 +662,14 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 # but did NOT return a valid JSON document when queried
 get_well_known_endpoints_no_doc <- function(db_connection) {
   res <- tbl(db_connection,
-    sql("SELECT f.id, e.url, f.vendor_id, e.organization_names, v.name as vendor_name,
-      f.capability_fhir_version as fhir_version,
+    sql("SELECT f.id, e.url, f.vendor_id, e.endpoint_names as organization_names, e.vendor_name,
+      e.fhir_version,
       m.smart_http_response,
       f.smart_response
-    FROM fhir_endpoints_info f
+    FROM endpoint_export e
+    LEFT JOIN fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    LEFT JOIN vendors v on f.vendor_id = v.id
-    LEFT JOIN fhir_endpoints e
-    ON f.url = e.url
+    ON e.url = f.url
     WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
     AND jsonb_typeof(f.smart_response::jsonb) <> 'object'")) %>%
     collect() %>%
