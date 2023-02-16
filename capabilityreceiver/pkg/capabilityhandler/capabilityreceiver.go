@@ -75,8 +75,6 @@ func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpoint
 		return nil, nil, fmt.Errorf("%s: unable to cast Default Fhir Version to string", url)
 	}
 
-	// TODO: for some reason casting to []string doesn't work... need to do roundabout way
-	// Could be investigated further
 	var mimeTypes []string
 	if msgJSON["mimeTypes"] != nil {
 		mimeTypesInt, ok := msgJSON["mimeTypes"].([]interface{})

@@ -248,7 +248,6 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		databaseTable = "fhir_endpoints_info_history"
 	}
 
-	// @TODO Update based on Emily's PR, can't rely on just url & updated_at
 	updateValidationStatement := `
 		UPDATE ` + databaseTable + `
 		SET

@@ -80,8 +80,6 @@ func Test_Integration_GetAndSendCapabilityStatement(t *testing.T) {
 
 	var err error
 
-	// TODO 1/7/2020: rewriting test to use real data. next step: have iterate over subset of
-	// endpoints and make call using real client, context, etc.
 	client := &http.Client{
 		Timeout: time.Second * 35,
 	}
@@ -285,7 +283,6 @@ func setup() error {
 	}
 
 	// grab endpoints
-	// TODO: eventually this method of getting endpoints will change
 	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/")
 
 	return err
