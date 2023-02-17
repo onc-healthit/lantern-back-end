@@ -2,61 +2,61 @@
 	"Endpoints": [
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Patient Access",
+			"OrganizationName": "Phenomenal Tester",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Provider / System Access",
+			"OrganizationName": "Phenomenal Tester",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/b1693bbf-d321-4342-816d-cac836d51583",
-			"OrganizationName": "Patient Access",
+			"OrganizationName": "Keith E. Sadel, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/b1693bbf-d321-4342-816d-cac836d51583",
-			"OrganizationName": "Provider / System Access",
+			"OrganizationName": "Keith E. Sadel, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
-			"OrganizationName": "Patient Access",
+			"OrganizationName": "BCS Abundant Life Family Practice, P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
-			"OrganizationName": "Provider / System Access",
+			"OrganizationName": "BCS Abundant Life Family Practice, P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
-			"OrganizationName": "Patient Access",
+			"OrganizationName": "Jafet E. Gonzalez-Zakarchenco, M.D.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
-			"OrganizationName": "Provider / System Access",
+			"OrganizationName": "Jafet E. Gonzalez-Zakarchenco, M.D.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c47d68c-67f4-4b51-ba3a-8f97ba4d1e46",
-			"OrganizationName": "Patient Access",
+			"OrganizationName": "Derderian Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c47d68c-67f4-4b51-ba3a-8f97ba4d1e46",
-			"OrganizationName": "Provider / System Access",
+			"OrganizationName": "Derderian Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -1,22 +1,16 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CAHFCA",
-			"OrganizationName": "JULIAN F. NARANJO, MD, PA",
-			"NPIID": "",
-			"OrganizationZipCode": "33022"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CGEFAD",
-			"OrganizationName": "FPIM of New Haven County LLC",
-			"NPIID": "",
-			"OrganizationZipCode": "06512"
-		},
-		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DCFDCD",
 			"OrganizationName": "I   B MEDICAL ASSOCIATES, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": "33150"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEHFAD",
+			"OrganizationName": "Ideal Option----TEST",
+			"NPIID": "",
+			"OrganizationZipCode": "99336"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/HHHGAA",
@@ -25,10 +19,16 @@
 			"OrganizationZipCode": "27604"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FFBGBA",
-			"OrganizationName": "Family Medical Clinic of Harrogate, PC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CFIACD",
+			"OrganizationName": "Live Oak Family Medicine, LLC",
 			"NPIID": "",
-			"OrganizationZipCode": "37752"
+			"OrganizationZipCode": "76028"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CGEFAD",
+			"OrganizationName": "FPIM of New Haven County LLC",
+			"NPIID": "",
+			"OrganizationZipCode": "06512"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IGIFAD",
@@ -37,10 +37,46 @@
 			"OrganizationZipCode": "20878"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JFEJCD",
-			"OrganizationName": "Empowered arthritis and Rheumatology Center PLLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FFBGBA",
+			"OrganizationName": "Family Medical Clinic of Harrogate, PC",
 			"NPIID": "",
-			"OrganizationZipCode": "27518"
+			"OrganizationZipCode": "37752"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DHGJCD",
+			"OrganizationName": "Test Facility-Akinsola Okunsokan",
+			"NPIID": "",
+			"OrganizationZipCode": "01581"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EDJICD",
+			"OrganizationName": "Summers Healthcare Inc",
+			"NPIID": "",
+			"OrganizationZipCode": "63109"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ACEBCD",
+			"OrganizationName": "Test-Siddharth Pandya MySQL V11",
+			"NPIID": "",
+			"OrganizationZipCode": "01581"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
+			"OrganizationName": "Milestone Pediatrics S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "53226"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CAHFCA",
+			"OrganizationName": "JULIAN F. NARANJO, MD, PA",
+			"NPIID": "",
+			"OrganizationZipCode": "33022"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEBECD",
+			"OrganizationName": "RWLC Consulting LLC",
+			"NPIID": "",
+			"OrganizationZipCode": "08527"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/AHEADA",
@@ -49,8 +85,8 @@
 			"OrganizationZipCode": "78258"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DHGJCD",
-			"OrganizationName": "Test Facility-Akinsola Okunsokan",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
+			"OrganizationName": "FHIR R4 Production Sandbox EMR",
 			"NPIID": "",
 			"OrganizationZipCode": "01581"
 		},
@@ -61,16 +97,10 @@
 			"OrganizationZipCode": "33155"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEBECD",
-			"OrganizationName": "RWLC Consulting LLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDJHCD",
+			"OrganizationName": "Test_kelvin_local",
 			"NPIID": "",
-			"OrganizationZipCode": "08527"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
-			"OrganizationName": "FHIR R4 Production Sandbox EMR",
-			"NPIID": "",
-			"OrganizationZipCode": "01581"
+			"OrganizationZipCode": "01582"
 		},
 		{
 			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/HDBHBA",
@@ -79,40 +109,10 @@
 			"OrganizationZipCode": "28304"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FEIGCD",
-			"OrganizationName": "Milestone Pediatrics S.C.",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JFEJCD",
+			"OrganizationName": "Empowered arthritis and Rheumatology Center PLLC",
 			"NPIID": "",
-			"OrganizationZipCode": "53226"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDJHCD",
-			"OrganizationName": "Test_kelvin_local",
-			"NPIID": "",
-			"OrganizationZipCode": "01582"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CFIACD",
-			"OrganizationName": "Live Oak Family Medicine, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": "76028"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEHFAD",
-			"OrganizationName": "Ideal Option----TEST",
-			"NPIID": "",
-			"OrganizationZipCode": "99336"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ACEBCD",
-			"OrganizationName": "Test-Siddharth Pandya MySQL V11",
-			"NPIID": "",
-			"OrganizationZipCode": "01581"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EDJICD",
-			"OrganizationName": "Summers Healthcare Inc",
-			"NPIID": "",
-			"OrganizationZipCode": "63109"
+			"OrganizationZipCode": "27518"
 		}
 	]
 }

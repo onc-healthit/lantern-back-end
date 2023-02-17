@@ -71,10 +71,11 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
-				entry.URL = strings.TrimSpace(entryURL)
-				if bundleEntry.Resource.Name == "" {
-					if bundleEntry.Resource.ManagingOrg.Display == "" {
-
+				entry.URL = strings.TrimSpace(entryURL)				
+				if bundleEntry.Resource.ManagingOrg.Display == "" {
+					if bundleEntry.Resource.Name != "" {
+						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
+					} else {
 						orgId := bundleEntry.Resource.ManagingOrg.Reference
 
 						if orgId == "" {
@@ -88,11 +89,9 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 								entry.OrganizationName = strings.TrimSpace(org.Name)
 							}
 						}
-					} else {
-						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.ManagingOrg.Display)
 					}
 				} else {
-					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
+					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.ManagingOrg.Display)
 				}
 
 				orgZipAdded := false
