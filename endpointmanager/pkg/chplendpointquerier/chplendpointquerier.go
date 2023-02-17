@@ -188,7 +188,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == doc_torURL {
 		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
-		BundleQuerierParser(chplURL + "?_format=application/json", fileToWriteTo)
+		BundleQuerierParser(chplURL+"?_format=application/json", fileToWriteTo)
 	} else if URLsEqual(chplURL, cloudcraftURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, darenasolutionsURL) {
@@ -219,7 +219,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./ezdocs_fhir_base_urls.csv", 1, 0, true, 3, 1)
 	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
-	} 
+	}
 
 }
 
