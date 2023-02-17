@@ -3,52 +3,62 @@
 		{
 			"URL": "https://epicproxy.et1043.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "The Brooklyn Hospital Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://epicproxy.et1058.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Montage Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://FHIR.KP.ORG/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/190/api/FHIR/DSTU2/",
 			"OrganizationName": "Kaiser Permanente – Oregon – SW Washington",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://iatrius.atriushealth.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Atrius Health",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://interconapps.uchospitals.edu/PRD-FHIR-Proxy/api/FHIR/DSTU2/",
 			"OrganizationName": "UChicago Medicine",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://geisapi.geisinger.edu/FHIR_PROD/api/FHIR/DSTU2/",
 			"OrganizationName": "Geisinger",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://proxy.healthpartners.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "HealthPartners",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.epic.medical.washington.edu/FHIR-Proxy/api/FHIR/DSTU2/",
 			"OrganizationName": "UW Medicine (Washington)",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://epic-fhir-prd.upmc.com/FHIR-PRD/api/FHIR/DSTU2/",
 			"OrganizationName": "University of Pittsburgh Medical Center (UPMC)",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

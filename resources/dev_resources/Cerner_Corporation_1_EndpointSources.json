@@ -3,52 +3,62 @@
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/725ea83c-53c1-458f-a3a4-190e038b73c9/",
 			"OrganizationName": "Albany Medical Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "12208-3412"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/a5f4ce6b-ab0a-413b-affc-47ff1650194e/",
 			"OrganizationName": "Archbold Medical Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "31792"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/5cec35cb-ca56-453f-a1d3-fc5e20bab214/",
 			"OrganizationName": "Arkansas Heart Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "72211-4335"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e19f3f05-57a5-4b12-a164-8453dfcc6a5e/",
 			"OrganizationName": "Bethesda Health Baptist Health South Florida",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "33435-7934"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/e71212a1-08a3-40bc-88aa-974471e03d3e/",
 			"OrganizationName": "Cape Regional Medical Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "08210-2138"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/3f25c0e5-282c-4d6e-ade5-aa2b86ec03e9/",
 			"OrganizationName": "Crouse Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "13210-1687"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/610e8cdb-2c3e-496a-b07b-c914f86e14f3/",
 			"OrganizationName": "Greenwood Leflore Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "38930-4030"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/b8387c42-2bb1-4fa9-94a8-9fe03ababf1c/",
 			"OrganizationName": "Hawaii Health System Corp",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "96816-2333"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/20eda2fa-ebed-437e-8b30-7ddd2a35effa/",
 			"OrganizationName": "Holy Redeemer Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "19006-6309"
 		},
 		{
 			"URL": "https://fhir-myrecord-sc.cerner.com/r4/29d5e7f6-9579-4aa3-8893-01210e29a651/",
 			"OrganizationName": "Howard University Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "20060-0001"
 		}
 	]
 }

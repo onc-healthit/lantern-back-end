@@ -19,11 +19,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/dfc490e3-ba4d-46f6-a3af-71c1dcca8d5c",
-			"OrganizationName": "Andalusia Regional Hospital",
-			"NPIID": "1821078494"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/a76cac61-fad7-4028-ba7c-a63254e58a99",
 			"OrganizationName": "Ashley Regional Medical Center",
 			"NPIID": "1447296249",
@@ -48,11 +43,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/a8c1e524-7a98-4b94-ac39-c13550cd1af2",
-			"OrganizationName": "Barstow Community Hospital",
-			"NPIID": "1780655670"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/f99020e4-761e-4e5c-b573-bdc5817a5110",
 			"OrganizationName": "Bienville Medical Center",
 			"NPIID": "1285835561",
@@ -63,11 +53,6 @@
 			"OrganizationName": "Big Bend Regional Medical Center",
 			"NPIID": "1356312243",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/335fe9bc-b535-4176-acab-c24323a763fc",
-			"OrganizationName": "Big Bend Regional Medical Center",
-			"NPIID": "1356312243"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/6b5ca572-e891-4104-8fb9-743bf456966e",
@@ -112,26 +97,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/9eeb3b45-26b0-484d-bf94-d1f3da8b2d94",
-			"OrganizationName": "Bolivar Medical Center",
-			"NPIID": "1457321036"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/15231e17-a929-4686-8682-c295eb5a5360",
-			"OrganizationName": "Bourbon Community Hospital",
-			"NPIID": "1427132158"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/dc0862da-f14a-45e9-ae73-c3a5d8188890",
-			"OrganizationName": "Byrd Regional Hospital",
-			"NPIID": "1881665164"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/ac628e84-2617-49d6-9bed-241da87864f9",
-			"OrganizationName": "Castleview Hospital",
-			"NPIID": "1417064205"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5b55bbf3-16df-4568-b6d2-21144fc38584",
 			"OrganizationName": "Clark Regional Medical Center",
 			"NPIID": "1811213994",
@@ -168,26 +133,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/30c21525-1706-43eb-b5c9-781ae6fa609f",
-			"OrganizationName": "Clinton Memorial Hospital Regional",
-			"NPIID": "1063713659"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/12661f92-3d2b-4841-a5d9-af30dd2d12f9",
-			"OrganizationName": "Colorado Plains Medical Center",
-			"NPIID": "1477638971"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/2f3a00a3-bdca-4bb7-8bc6-ed2257acbf27",
-			"OrganizationName": "Crossroads Community Hospital",
-			"NPIID": "1750353041"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/b2ceb817-f38a-4d8f-a4b1-3750c6cf8d6c",
-			"OrganizationName": "DeKalb Regional Medical Center",
-			"NPIID": "1710901178"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/91b13a29-b056-4991-9971-ec11bdf30501",
 			"OrganizationName": "DeQuincy Memorial Hospital",
 			"NPIID": "1902469653",
@@ -210,11 +155,6 @@
 			"OrganizationName": "Evanston Regional Hospital",
 			"NPIID": "1639140015",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/8e23cb3a-f9cc-48e8-b3d7-1fbb669a3133",
-			"OrganizationName": "Evanston Regional Hospital",
-			"NPIID": "1639140015"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/34788ed7-a88d-487a-bcc2-32b1ec67835d",
@@ -259,16 +199,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/564d0694-b957-4501-bb38-af75e5c6a1f1",
-			"OrganizationName": "Gateway Regional Medical Center",
-			"NPIID": "1083685986"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/69114901-e43f-4431-a3bc-cd43adc906f6",
-			"OrganizationName": "Georgetown Community Hospital",
-			"NPIID": "1326107319"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/076f2d84-f49c-4917-b4e7-787ac8749ee2",
 			"OrganizationName": "Grant Memorial Hospital",
 			"NPIID": "1598763666",
@@ -303,26 +233,6 @@
 			"OrganizationName": "Huntsville Memorial Hospital",
 			"NPIID": "1245878990",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/803f2fd9-30f2-4e94-ba87-e0754f0e0fba",
-			"OrganizationName": "Havasu Regional Medical Center",
-			"NPIID": "1780761866"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/d9b92e51-904e-4f0f-8c48-a8b11c36c6fc",
-			"OrganizationName": "Heartland Regional Medical Center",
-			"NPIID": "1437259694"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/6dfcc510-ec10-4e48-b212-92db24d64256",
-			"OrganizationName": "Helena Regional Medical Center",
-			"NPIID": "1154392090"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/e0b457d5-5daf-45ba-a625-42dcc3ce397b",
-			"OrganizationName": "Huntsville Memorial Hospital",
-			"NPIID": "1245878990"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/479a0965-68cb-4474-868a-5efbbbeb2895",
@@ -391,16 +301,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/c17b3924-94c6-4f43-bf8f-6ead99b00f12",
-			"OrganizationName": "Logan Memorial Hospital",
-			"NPIID": "1992893416"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/5835d96f-3dd1-4c86-9628-965c32b89fbb",
-			"OrganizationName": "Los Alamos Medical Center",
-			"NPIID": "1285701623"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/beaed8fb-4290-470e-a916-04bc154b59cb",
 			"OrganizationName": "Martin General Hospital",
 			"NPIID": "1851362669",
@@ -423,11 +323,6 @@
 			"OrganizationName": "McKenzie-Willamette Medical Center",
 			"NPIID": "1568413573",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/42ccdd6b-a0e5-46c8-8a37-71ed6cb79014",
-			"OrganizationName": "McKenzie-Willamette Medical Center",
-			"NPIID": "1568413573"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/c91e7cb8-16f6-43af-aa73-f42df176474c",
@@ -472,11 +367,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/5346a140-60a9-4f8b-a6dd-53496b0e935f",
-			"OrganizationName": "Mercy Regional Medical Center",
-			"NPIID": "1407947336"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/449dbf47-4d2e-4092-a418-0c8abd9a8dc1",
 			"OrganizationName": "Mesa View Regional Hospital",
 			"NPIID": "1275588782",
@@ -493,11 +383,6 @@
 			"OrganizationName": "Mimbres Memorial Hospital",
 			"NPIID": "1891075446",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/ff2ee133-bd54-4d01-98c9-fa5b441b7e13",
-			"OrganizationName": "Mimbres Memorial Hospital",
-			"NPIID": "1891075446"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/51c6b6d1-0692-4788-ba2b-65a21c495bcb",
@@ -560,21 +445,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/d3d9c822-069e-427b-9c55-d626a7a5dd1d",
-			"OrganizationName": "Mountain West Medical Center",
-			"NPIID": "1124090659"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/fde55fa4-eb9d-490e-a851-e7183289b044",
-			"OrganizationName": "North Texas Medical Center",
-			"NPIID": "1972071991"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/0353e790-399b-4a34-b26a-aaf88db37978",
-			"OrganizationName": "Northeastern Nevada Regional Hospital",
-			"NPIID": "1770674350"
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d191002b-0c8e-4cf4-9961-812ba9c00557",
 			"OrganizationName": "Northern Louisiana Medical Center",
 			"NPIID": "1962024026",
@@ -615,16 +485,6 @@
 			"OrganizationName": "Plateau Medical Center",
 			"NPIID": "1598736159",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/ef2e9044-7072-4ed9-8349-1fdfbfe40718",
-			"OrganizationName": "Palestine Regional Medical Center",
-			"NPIID": "1164510673"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/b0e97807-b27f-4bdb-a798-ff4882ff0587",
-			"OrganizationName": "Parkview Regional Hospital",
-			"NPIID": "1497708929"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d6c5eabb-0579-4a2a-b6b0-15f60c825cf4",
@@ -675,26 +535,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/48fe4867-4cfd-4f53-9407-40f5c226cf49",
-			"OrganizationName": "STRHS Pulaski",
-			"NPIID": "1841388519"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/b5428f65-d51d-466e-858b-7157212cbca8",
-			"OrganizationName": "Sabine Medical Center",
-			"NPIID": "1568626273"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/400c346b-db8c-4fe4-81d3-fc94d7e9bf90",
-			"OrganizationName": "SageWest Health Care",
-			"NPIID": "1245337286"
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/777a252c-0352-4dcc-a5ee-d58003af48a1",
-			"OrganizationName": "St. Marks Medical Center",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d255b42f-6d24-4c06-b9cb-4bec724563ac",
 			"OrganizationName": "Starr Regional",
 			"NPIID": "1669567319",
@@ -741,11 +581,6 @@
 			"OrganizationName": "Western Arizona Regional Medical Center",
 			"NPIID": "1255302766",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/ed6a665c-b100-4cee-b23d-6197c0e9c9ee",
-			"OrganizationName": "Vista Health System - East",
-			"NPIID": "1992856819"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/de0b28e5-5f18-46fc-b42e-e599a0198d5a",

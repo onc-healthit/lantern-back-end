@@ -29,12 +29,27 @@ The fhir_ endpoints table is the master list of FHIR service-base URLs that will
 | ------------- |:-------------:| -----:|
 | id     | INTEGER | Database ID of endpoint |
 | url     | VARCHAR(500)      |   Service base URL of endpoint |
-| organization_names | VARCHAR(500)[]      |    Organization names this endpoint is reported as |
-| npi_ids | VARCHAR(500)[]      |    NPI IDs of matching organizations |
 | list_source | VARCHAR(500)      |   Name/URL of list source that the endpoint came from |
 | versions_response | JSONB      |    The response returned from querying the endpoint's versions operation |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## fhir_endpoint_organizations table
+The fhir_endpoint_organizations table contains all the organizations that each FHIR endpoint services.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | Database ID of organization |
+| organization_name | VARCHAR(500)    | Name of the organization |
+| organization_zipcode | VARCHAR(500) | Zip Code of the organization |
+| organization_npi_id | VARCHAR(500)  | NPI ID of the organization |
+| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
+
+## fhir_endpoint_organizations table
+The fhir_endpoint_organizations table contains all the organizations that each FHIR endpoint services.
+| Field        | Type           | Description  |
+| ------------- |:-------------:| -----:|
+| id     | INTEGER | fhir endpoint organization mapping database ID that is used to connect a single endpoint to one or many organizations |
+| org_database_id  | INTEGER    | fhir endpoint organization ID referencing a fhir endpoint's organization in the fhir_endpoint_organizations table. |
 
 ## list_source_info table
 The list_source_info table stores information about whether each list source came from CHPL or not.

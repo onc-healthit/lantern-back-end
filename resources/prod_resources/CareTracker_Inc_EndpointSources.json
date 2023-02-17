@@ -3,7 +3,8 @@
 		{
 			"URL": "https://ac-fhir-stg.amazingcharts.com/fhir/r4",
 			"OrganizationName": "HAG Sandbox",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

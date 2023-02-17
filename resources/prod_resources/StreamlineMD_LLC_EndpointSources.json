@@ -3,887 +3,1064 @@
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "AVENUES CANCER CARE INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ADVANCED CARDIOVASCULAR INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ADVANCED COMPREHENSIVE PAIN MGT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "RISI EHR",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ANESTHESIA PAIN CARE CONSULTANTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ANNETTE P MEADOR, MD P.A.",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Advanced Pain Management Institute",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "AKRON RADIOLOGY INC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ARMSTRONG NEUROLOGY PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ADVANCED VASCULAR CENTERS EUGENE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Avicenna Vascular Institute",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ATHENS VEIN AND THORACIC SPECIALIST",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ADVANCED VASCULAR VEIN CARE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "BAY VASCULAR SURGERY",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ANESTHESIA AND PAIN PHYSICIANS FL",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Bay Surgical Specialists Vascular C",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "BUCKNER VEIN AND AESTHETICS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "BELLAMAH VEIN AND SURGERY PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "BLOOMFIELD VEIN AND VASCULAR PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTER FOR ADVANCED VEIN THERAPY PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTRAL COAST WOUND CARE CENTER PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "COASTAL GEORGIA VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MIAMI VEIN AND LASER INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DR C'S ATLANTA VASCULAR CENTER LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CONSULTANTS IN PAIN MANAGEMENT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CATCHING POINT PHYSICIANS CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Carolina Vein Associates, PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CAROLINA VEIN CARE AND AESTHETICS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "COMPREHENSIVE CARDIOVASCULAR CONSUL",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "COSMETIC VEIN CENTERS OF TEXAS PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NORTH VALLEY VEIN SPECIALISTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTER FOR VENOUS DISEASE-EL PASO",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTER FOR VENOUS DISEASE-SANTA FE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DR THOMAS R ELLIOTT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTER FOR VENOUS DISEASE WESTGATE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ADVANCED LIMB SALVAGE CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CARDIOVASCULAR EXPERTS LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CARDIAC AND VASCULAR INTERVENTIONS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CYRIL PAIN CLINIC LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DETROIT CARDIOVASCULAR INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DEFINITIVE INTERVENTIONAL SPINE CEN",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CARDIO CARE CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "2G MEDICAL/NEUROSPINE FLORIDA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DMAC VASCULAR LAB LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DAYTON INTERVENTIONAL RADIOLOGY",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "DALLAS VEIN INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ATLASVEIN PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN \u0026 LASER CTR ELGIN CARDIAC SURG",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "EUCLID INTERVENTIONAL PAIN MGMT INC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ROBERT G ELLISON JR MD PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ELMORE MEDICAL VEIN \u0026 LASER TREATME",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ELIZABETH A TURNER MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ESPINOZA VEIN INSTITUTE LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THOMAS V. FACTORA MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "FRANCISCAN REJUVENATE MEDICAL SPA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "FLORIDA INSTITUTE OF PAIN MEDICINE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Fox Valley Vein Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Family Physiatry PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "FOOT ENVY LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "FORT WORTH VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GEORGIA VASCULAR INSTITUTE LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GLOBAL PAIN SOLUTIONS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "US CARDIO OF GREENSBURG LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GREATER PITTSBURGH SURGERY LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GITTER VEIN INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ROBERT A HANDLEY MD PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MARYLAND WOUND AND AMPUTATION PREVE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PAIN MANAGEMENT EXPERTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "HERITAGE WOUND CARE LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INTERVENTIONAL DIABETES CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INSTITUTE FOR VEIN HEALTH LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INVASIVE PAIN MANAGEMENT CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INTERVENTIONAL PAIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INTEGRATED PAIN SERVICES",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ISLAND CARDIOVASCULAR AND VEIN",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INTERVENTIONAL SPINE OF TEXAS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INFINITY VASCULAR INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INDIANA VEIN AND LASER CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "INDIANA VEIN SPECIALISTS LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "KEVIN MCMULLEN MD PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GILMAN P PETERSON JR MD PSC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "GLEN W SIMONS MD PSC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LOS ALAMOS FAMILY PRACTICE PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LA BELLA VITA LASER AND VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LEGACY VEIN CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LAKESHORE VEINS SC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LONE STAR HEART AND VASCULAR CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LAS VEGAS VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "LIVING WATER VEIN INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MIGUEL A  MACHADO MD",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "EDWARD G MACKAY, MD AND ASSOC, LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "FRANKLIN PAIN ASSOCIATES LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MONTEREY BAY VASCULAR",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ST MINA INTERVENTIONAL PAIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MINIMALLY INVASIVE PROCEDURE SPEC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "RENEW LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THE MOCEK SPINE CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PAIN MANAGEMENT SPECIALISTS OF N FL",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MICHAEL RABORN MD,PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MTV IR PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "METRO VEIN CLINIC PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MVCP",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MEDICAL VEIN CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Mid-Atlantic Institute of Venous",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MIDWEST VEIN TREATMENT CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "North Carolina Vascular Center",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NEW ENGLAND ENDOVASCULAR CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NJ VEIN CARE, LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NORTHERN MICHIGAN VEIN SPECIALISTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NORTH PITTSBURGH PAIN PHYSICIANS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NUVENA VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NATIONAL VASCULAR PHYSICIANS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "NORTHWEST VASCULAR AND VEIN SPEC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "OCEANA VEIN SPECIALISTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "OHIO CHEST PHYSICIANS LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Oro Valley Pain Management",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THE PHYSICIANS PAIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PREMIER MEDICAL ASSOCIATES",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PAIN MANAGEMENT CENTER OF ROANOKE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PAIN MANAGEMENT INSTITUTE, LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PRC ASSOCIATES LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PAIN SPECIALTIES",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PALM VEIN CENTER LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PHYSICIANS VEIN CLINICS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PACIFIC VEIN CARE LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PONTE VEDRA VEIN INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PUTNAM WESTCHESTER VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "QUAVE CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VASCULAR AND INTERVENTIONAL SPEC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "RICHARD D KIMMEL DO FCCP PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ReVascMedProfessionals",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "RICHMOND VASCULAR CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "REGION VEIN PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Varicose Vein and Vascular Clinic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SANTOS INTERVENTIONAL PAIN MEDICINE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SANTA ROSA VEIN ASSOCIATES",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SURGICAL SPECIALISTS OF WAYNE CNTY",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Sturdy Memorial Hospital",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SOUTH TEXAS VASCULAR INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SURGICAL PAIN SOLUTIONS LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SUN VEIN AND VASCULAR",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SHAPIRO VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SE Spine Care \u0026 Pain Management",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "SUSQUEHANNA VALLEY VEIN CENTER LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "CENTRAL COAST VEIN AND VASCULAR",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "TOLEDO INTERNAL MEDICAL SPECIALISTS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "TOTAL VEIN CARE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THREE RIVERS VEIN CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Texas Vein and Vascular",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THE VEIN CENTER OF CINCINNATI LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THE VEIN CENTER PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "TRIANGLE SURGICAL ASSOCIATES PA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "TRIDENT VEIN CENTER PLLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ROCHESTER RADIOLOGY ASSOCIATES PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "UNIVERSITY PAIN MANAGEMENT CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "UTAH VASCULAR CLINIC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "O'DONNELL VEIN AND LASER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VASCULAR ASSOCIATES SOUTH ALABAMA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VASCULAR ASSOCIATES LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEINATLANTA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN CARE CENTER",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN CARE INSTITUTE",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "PREMIER VEIN AND BODY BY SCHWARTZ",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "THE VEIN CLINIC LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN CLINICS OF HAWAII LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN ENVY LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VENA HEALTH AND WELLNESS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VASCULAR HEALTH INSTITUTE INC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "KEYHOLE SURGERY CENTER LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "Vascular and Interventional Prof",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "MICHIGAN HEALTHCARE PROFESSIONALS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN SPECIALTIES LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "VEIN SPECIALISTS OF THE CAROLINAS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "WELL AND YOU",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "WINCHESTER RADIOLOGISTS PC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "WARWICK PAIN CENTER LLC",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://patientportal.streamlinemd.com/FHIRServer/FHIR",
 			"OrganizationName": "ZENITH HEALTH AND AESTHETICS",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

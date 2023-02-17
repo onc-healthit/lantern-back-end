@@ -321,14 +321,20 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 		NormalizedSecondaryName: "A SECONDARY NAME"}
 
 	// endpoints
+	var endpoint1Org = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc.",
+		OrganizationNPIID: "1"}
+	
+	var endpoint2Org = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Other Example Inc."}
+
 	var endpoint1 = &endpointmanager.FHIREndpoint{
 		URL:               "example.com/FHIR/DSTU2/",
-		OrganizationNames: []string{"Example Inc."},
-		NPIIDs:            []string{"1"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpoint1Org},
 		ListSource:        "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
 		URL:               "other.example.com/FHIR/DSTU2/",
-		OrganizationNames: []string{"Other Example Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpoint2Org}}
 
 	err = store.AddNPIOrganization(ctx, npio1)
 	if err != nil {

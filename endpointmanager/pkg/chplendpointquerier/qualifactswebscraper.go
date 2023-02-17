@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"encoding/json"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )

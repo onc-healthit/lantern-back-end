@@ -195,10 +195,14 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		t.Errorf("Error adding health it product: %s", err.Error())
 	}
 
+	var epOrg = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc."}
+
 	// populate fhir endpoint
 	ep := &endpointmanager.FHIREndpoint{
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg}}
+	
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement
@@ -231,23 +235,35 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 
+	var epOrg2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example2 Inc."}
+
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
 		URL:               "example2.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example2 Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg2}}
+	
 	store.AddFHIREndpoint(ctx, ep)
+
+	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example2 Inc."}
 
 	// populate fhir endpoint with list source found in CHPL products info file
 	ep2 := &endpointmanager.FHIREndpoint{
 		URL:               "example3.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example2 Inc."},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg3},
 		ListSource:        "https://api.bluebuttonpro.com/swagger/index.html"}
+	
 	store.AddFHIREndpoint(ctx, ep2)
+
+	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example2 Inc."}
 
 	ep3 := &endpointmanager.FHIREndpoint{
 		URL:               "example4.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example2 Inc."},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4},
 		ListSource:        "https://nextgen.com/api/practice-search"}
+	
 	store.AddFHIREndpoint(ctx, ep3)
 
 	// endpoint info
@@ -342,10 +358,14 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// Test matching to product by name and version
 
+	var epOrg5 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc."}
+
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
 		URL:               "example5.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg5}}
+	
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement with product HIEBus
@@ -372,9 +392,12 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 	// Test matching to product by name and no version
 
 	// populate fhir endpoint
+	var epOrg6 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc."}
+
 	ep = &endpointmanager.FHIREndpoint{
 		URL:               "example6.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg6}}
 	store.AddFHIREndpoint(ctx, ep)
 
 	// remove the version field from the software element of the care evolution capability statement
@@ -423,10 +446,14 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 	for _, vendor := range vendors {
 		err = store.AddVendor(ctx, vendor)
 	}
+
 	// populate fhir endpoint
+	var epOrg7 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc."}
+
 	ep := &endpointmanager.FHIREndpoint{
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Inc."}}
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg7}}
 	store.AddFHIREndpoint(ctx, ep)
 
 	// basic test
@@ -504,9 +531,13 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 
 	// add endpoint with list source in CHPL products info file
 	// populate fhir endpoint
+
+	var epOrg8 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "Example Inc."}
+
 	ep2 := &endpointmanager.FHIREndpoint{
 		URL:               "example2.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Inc."},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg8},
 		ListSource:        "https://nextgen.com/api/practice-search"}
 	store.AddFHIREndpoint(ctx, ep2)
 

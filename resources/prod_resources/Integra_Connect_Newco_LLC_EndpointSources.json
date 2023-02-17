@@ -3,7 +3,8 @@
 		{
 			"URL": "https://uat.minerva.integracloud.com/webconnect/#/auth",
 			"OrganizationName": "Integra – UAT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

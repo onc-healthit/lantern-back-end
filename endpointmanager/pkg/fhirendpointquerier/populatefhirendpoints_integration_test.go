@@ -26,32 +26,41 @@ import (
 
 var store *postgresql.Store
 var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationNames:    []string{"Access Community Health Network"},
+	OrganizationName:     "Access Community Health Network",
 	FHIRPatientFacingURI: "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
 	ListSource:           "epicList",
 }
 var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationNames:    []string{"fakeOrganization"},
+	OrganizationName:    "fakeOrganization",
 	FHIRPatientFacingURI: "http://example.com/DTSU2/",
 	ListSource:           "Lantern",
-	NPIIDs:               []string{"1"},
+	NPIID:                "1",
+	OrganizationZipCode: "12345",
 }
 var testEndpointEntry4 fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationNames:    []string{"fakeOrganization2"},
+	OrganizationName:     "fakeOrganization2",
 	FHIRPatientFacingURI: "http://example.com/DTSU2/",
 	ListSource:           "Lantern",
-	NPIIDs:               []string{"2"},
+	NPIID:                "2",
 }
+
+var testFHIREndpoint2Org = &endpointmanager.FHIREndpointOrganization{
+	OrganizationName: "Access Community Health Network"}
+
+var testFHIREndpoint3Org = &endpointmanager.FHIREndpointOrganization{
+	OrganizationName: "fakeOrganization",
+	OrganizationNPIID: "1",
+	OrganizationZipCode: "12345"}
+
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
-	OrganizationNames: []string{"Access Community Health Network"},
+	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFHIREndpoint2Org},
 	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
 	ListSource:        "epicList",
 }
 var testFHIREndpoint3 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
-	OrganizationNames: []string{"fakeOrganization"},
+	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFHIREndpoint3Org},
 	URL:               "http://example.com/DTSU2/",
 	ListSource:        "Lantern",
-	NPIIDs:            []string{"1"},
 }
 
 func TestMain(m *testing.M) {
@@ -106,9 +115,10 @@ func Test_Integration_AddEndpointData(t *testing.T) {
 	// 	"FHIRPatientFacingURI":"https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/"
 	// }
 	fhirEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "https://open.epic.com/Endpoints/DSTU2")
+	fhirEndptOrganizationList := fhirEndpt.GetOrganizationNames()
 	th.Assert(t, err == nil, err)
 	th.Assert(t, fhirEndpt.URL == "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "URL is not what was expected")
-	th.Assert(t, helpers.StringArraysEqual(fhirEndpt.OrganizationNames, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
+	th.Assert(t, helpers.StringArraysEqual(fhirEndptOrganizationList, []string{"AdvantageCare Physicians"}), "Organization Name is not what was expected.")
 
 	// Test that when updating endpoints from same listsource, old endpoints are removed based on update time
 	// This endpoint list has 30 endpoints removed from it
@@ -172,7 +182,8 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, fhirEndpt.Equal(savedEndpt), "stored data does not equal expected store data")
 
 	// check that an item with the same URL replaces item and merges the organization names lists
-	endpt.OrganizationNames = []string{"AdvantageCare Physicians 2"}
+	
+	endpt.OrganizationName = "AdvantageCare Physicians 2"
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, err == nil, err)
 
@@ -184,9 +195,10 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
 	th.Assert(t, err == nil, err)
-
-	th.Assert(t, helpers.StringArraysEqual(savedEndpt.OrganizationNames, []string{"AdvantageCare Physicians", "AdvantageCare Physicians 2"}),
-		fmt.Sprintf("stored data %v does not equal expected store data [AdvantageCare Physicians, AdvantageCare Physicians 2]", savedEndpt.OrganizationNames))
+	
+	savedEndptOrganizationList := savedEndpt.GetOrganizationNames()
+	th.Assert(t, helpers.StringArraysEqual(savedEndptOrganizationList, []string{"AdvantageCare Physicians", "AdvantageCare Physicians 2"}),
+		fmt.Sprintf("stored data %v does not equal expected store data [AdvantageCare Physicians, AdvantageCare Physicians 2]", savedEndptOrganizationList))
 
 	// reset context
 	ctx = context.Background()
@@ -222,11 +234,13 @@ func Test_saveEndpointData(t *testing.T) {
 	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
 	th.Assert(t, err == nil, err)
 
-	th.Assert(t, helpers.StringArraysEqual(savedEndpt.OrganizationNames, []string{"fakeOrganization", "fakeOrganization2"}),
-		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndpt.OrganizationNames))
+	savedEndptOrganizationList = savedEndpt.GetOrganizationNames()
+	savedEndptNPIIDsList := savedEndpt.GetNPIIDs()
+	th.Assert(t, helpers.StringArraysEqual(savedEndptOrganizationList, []string{"fakeOrganization", "fakeOrganization2"}),
+		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndptOrganizationList))
 
-	th.Assert(t, helpers.StringArraysEqual(savedEndpt.NPIIDs, []string{"1", "2"}),
-		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndpt.OrganizationNames))
+	th.Assert(t, helpers.StringArraysEqual(savedEndptNPIIDsList, []string{"1", "2"}),
+		fmt.Sprintf("stored data %v does not equal expected store data [fakeOrganization, fakeOrganization2]", savedEndptOrganizationList))
 
 	// check that error adding to store throws error
 	endpt = testEndpointEntry
@@ -287,7 +301,9 @@ func Test_AddEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	endpt2 = testEndpointEntry
-	endpt2.OrganizationNames = []string{"New Name"}
+
+	endpt2.OrganizationName = "New Name"
+	
 	// endpt1 and endpt2 identical other than organization name.
 	// endpt1 has organization name "AdvantageCare Physicians"
 	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
@@ -299,9 +315,10 @@ func Test_AddEndpointData(t *testing.T) {
 	th.Assert(t, ct == 1, "did not persist one product as expected")
 
 	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.FHIRPatientFacingURI, endpt1.ListSource)
+	storedEndptOrganizationList := storedEndpt.GetOrganizationNames()
 	th.Assert(t, err == nil, err)
-	th.Assert(t, helpers.StringArraysEqual(storedEndpt.OrganizationNames, []string{"AdvantageCare Physicians", "New Name"}),
-		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndpt.OrganizationNames, endpt2.OrganizationNames))
+	th.Assert(t, helpers.StringArraysEqual(storedEndptOrganizationList, []string{"AdvantageCare Physicians", "New Name"}),
+		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndptOrganizationList, endpt2.OrganizationName))
 
 	endpt2 = testEndpointEntry2
 	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt2}}
@@ -313,11 +330,12 @@ func Test_AddEndpointData(t *testing.T) {
 	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.FHIRPatientFacingURI, endpt1.ListSource)
 	th.Assert(t, err == sql.ErrNoRows, "Endpoint should be deleted")
 	storedEndpt, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.FHIRPatientFacingURI, endpt2.ListSource)
-	th.Assert(t, helpers.StringArraysEqual(storedEndpt.OrganizationNames, []string{"Access Community Health Network"}),
-		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndpt.OrganizationNames, endpt2.OrganizationNames))
+	storedEndptOrganizationList = storedEndpt.GetOrganizationNames()
+	th.Assert(t, helpers.StringArraysEqual(storedEndptOrganizationList, []string{"Access Community Health Network"}),
+		fmt.Sprintf("stored data '%v' does not equal expected store data '%v'", storedEndptOrganizationList, endpt2.OrganizationName))
 }
 
-func Test_RemoveOldEndpoints(t *testing.T) {
+func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
@@ -330,10 +348,14 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	ctx := context.Background()
 
 	query_str := "SELECT COUNT(*) FROM fhir_endpoints;"
+	org_query_str := "SELECT COUNT(*) FROM fhir_endpoint_organizations;"
 	var ct int
+	var ctOrg int
+	
 	// Add first endpoint
 	err = store.AddFHIREndpoint(ctx, &endpt1)
 	th.Assert(t, err == nil, err)
+
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not persist endpoint as expected")
@@ -347,6 +369,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Add endpoint with same url but different listsource
 	endpt2.ListSource = "test"
 	err = store.AddFHIREndpoint(ctx, &endpt2)
+
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 2, "did not persist second endpoint as expected")
@@ -370,6 +393,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Add third endpoint
 	err = store.AddFHIREndpoint(ctx, &endpt3)
 	th.Assert(t, err == nil, err)
+
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 3, "did not persist third endpoint as expected")
@@ -377,7 +401,14 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, endpt3.Equal(savedEndpt), "stored data does not equal expected store data")
 
+	// Check that each endpoint's organization was added to the fhir_endpoint_organizations table
+	err = store.DB.QueryRow(org_query_str).Scan(&ctOrg)
+	th.Assert(t, err == nil, err)
+	th.Assert(t, ctOrg == 3, "did not persist endpoint organizations as expected")
+
 	err = RemoveOldEndpoints(ctx, store, savedEndpt.UpdatedAt, endpt3.ListSource)
+	err = RemoveOldEndpointOrganizations(ctx, store, savedEndpt.OrganizationList[0].UpdatedAt, endpt3.ListSource)
+
 	th.Assert(t, err == nil, err)
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
@@ -385,9 +416,23 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Check that first endpoint is removed based on update time
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
+	
+	// Check that first endpoint's organization is removed based on update time
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt1.ID, endpt1.OrganizationList[0])
+	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint 1's organization to removed")
+	
 	// Check that second endpoint still exist
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
 	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")
+
+	// Check that second endpoint's organization still exists
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt2.ID, endpt2.OrganizationList[0])
+	th.Assert(t, err == nil, "Endpoint 2's organization should still exist")
+
+	// Check that third endpoint's organization still exists
+	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt3.ID, endpt3.OrganizationList[0])
+	th.Assert(t, err == nil, "Endpoint 3's organization should still exist")
+
 	// Test that endpoint is not removed from fhir_endpoints_info because it still exist in
 	// fhir_endpoints but from different listsource
 	FHIREndpointInfo, err := store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, endpt2.URL, "None")
@@ -404,6 +449,8 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	_, err = store.DB.Exec("DELETE FROM fhir_endpoints_metadata;")
 	th.Assert(t, err == nil, err)
+	_, err = store.DB.Exec("DELETE FROM fhir_endpoint_organizations;")
+	th.Assert(t, err == nil, err)
 
 	endptInfo2 := endpointmanager.FHIREndpointInfo{
 		URL:                  endpt1.URL,
@@ -418,6 +465,7 @@ func Test_RemoveOldEndpoints(t *testing.T) {
 	// Add one endpoint
 	err = store.AddFHIREndpoint(ctx, &endpt1)
 	th.Assert(t, err == nil, err)
+
 	err = store.DB.QueryRow(query_str).Scan(&ct)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, ct == 1, "did not persist first endpoint as expected")

@@ -189,7 +189,7 @@ func (s *Store) DeleteNPIOrganization(ctx context.Context, org *endpointmanager.
 // GetAllNPIOrganizationNormalizedNames gets list of all primary and secondary names
 func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*endpointmanager.NPIOrganization, error) {
 	sqlStatement := `
-	SELECT id, normalized_name, normalized_secondary_name, npi_id FROM npi_organizations`
+	SELECT id, normalized_name, normalized_secondary_name, npi_id, location->>'zipcode' as zipcode FROM npi_organizations`
 	rows, err := s.DB.QueryContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
@@ -198,10 +198,12 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 	defer rows.Close()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
-		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName, &org.NPI_ID)
+		var location endpointmanager.Location
+		err = rows.Scan(&org.ID, &org.NormalizedName, &org.NormalizedSecondaryName, &org.NPI_ID, &location.ZipCode)
 		if err != nil {
 			return nil, err
 		}
+		org.Location = &location
 		orgs = append(orgs, &org)
 	}
 	return orgs, nil
