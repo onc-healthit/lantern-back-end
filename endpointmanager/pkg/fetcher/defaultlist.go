@@ -13,7 +13,7 @@ func getDefaultEndpoints(defaultList []map[string]interface{}, source string, li
 		}
 		orgName, orgOk := defaultList[entry]["OrganizationName"].(string)
 		if orgOk {
-			fhirEntry.OrganizationNames = []string{orgName}
+			fhirEntry.OrganizationName = orgName
 		}
 		uri, uriOk := defaultList[entry]["FHIRPatientFacingURI"].(string)
 		if uriOk {

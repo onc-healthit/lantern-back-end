@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhirapi.intelichart.com",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

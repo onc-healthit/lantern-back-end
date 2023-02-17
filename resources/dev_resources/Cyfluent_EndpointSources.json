@@ -3,7 +3,8 @@
 		{
 			"URL": "beta.cyfluentchart.com/FHIRapi/",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

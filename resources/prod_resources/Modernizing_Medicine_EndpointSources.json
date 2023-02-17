@@ -3,507 +3,608 @@
 		{
 			"URL": "https://fax2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Fax Test2",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://uro.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Urology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://laser.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Laser",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fax3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Fax Test 3",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zzy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zzy",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zyy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ZYY",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zopth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zophth",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://maverick.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Mavericks EMAzing",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://m2qatest01.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ema 01 test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zyx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zyx",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://amy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "amy",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zxx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zxx",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://pbd.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Test Palm Beach Derm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://admcorp.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ADMCorp Test Account",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://olga.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "olga's test firm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://eftest.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Eyefinity Test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://reddy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "reddy",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://legal.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "EMA",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zxy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zxy",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://emoryeye.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Emory Eye Test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zxz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zxz",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://multi.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Multispecialty",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://cosmetic.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Cosmetic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ortho.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Orthopedics",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://derm.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Dermatology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://opto.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Optometry",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://demo.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "demo",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://urology.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Urology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ent.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo ENT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://rheum.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Rheumatology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ophth.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Ophthalmology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://gi.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo GI",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://plastics.m2perf.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Plastics",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://derm.test.com.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "derm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://sirisha.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "derm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ortho1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ortho1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://derm22.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Derm Letter Test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ophth-olga.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ophth-olga",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://phoenix.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "pathology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test.sy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "testsy",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://derm411.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "derm411",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zyz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zyz",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zzzz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "a",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zent.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "zent",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://dermplas.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "dermplas",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://m2qatest02.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "m2qatest02",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://m2qatest03.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "m2qatest03",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://regression412.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "regression412",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://zzx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test \"'\u003e",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://neil.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "neil",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test8.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test8",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test.com.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "testfirm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test7.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test7",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://nyu.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "NYU",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://nyuderm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "nyuderm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://koontz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Koontz",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://regression413.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "regression413",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://regression4132.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "regression4132",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://atlas.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://telehealth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Telehealth",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://thisisalargeprefixforthefirmwearetesting.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Thisisalargenameforthefirmthatwearetestingrightnow",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://giorders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "gi-orders-test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://dermorders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "dermorders",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ophth-orders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ophth-orders",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://regression50.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "regression50",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://regression50-1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "regression50-1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newderm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "New Derm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://reg50.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "reg50",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://reg501.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "reg501",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://m2a.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "testderm",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://bugtesting.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "BugTesting",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://bugtesting1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "BugTesting1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mult.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "mult",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://bugtesting2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "BugTesting1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://dermatest.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "dermo test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ophthandres.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "ophthandres",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newfirm1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "New Test Firm1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://pqrs.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "PQRS FIRM",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://optoandres.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "optoandres",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newfirm2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "New Test Firm2",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://reg51.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Regression 5.1",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newfirm3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "New Test Firm3",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newderm51.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "newderm51",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://gi-results-test.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "gi-results-test",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://newfirmagain.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "New Firm Again",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://knowledge.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Training Enviroment",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://learning.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Training Environment",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://test915.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "test915",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://urology.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Urology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://gi.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo GI",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://opto.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Optometry",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://demo.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "demo",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ent.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo ENT",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ophth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Ophthalmology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://multi.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Multispecialty",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://derm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Dermatology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://cosmetic.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Cosmetic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://rheum.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Rheumatology",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://ortho.m2qa.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Orthopedics",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://4de7e156-71fe-471b-84a5-ba7f4a5b04e9.gastro.qa.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "gGastro",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

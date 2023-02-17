@@ -21,21 +21,19 @@ func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
 		tablehtml.Find("tbody").Each(func(indextr int, rowhtml *goquery.Selection) {
 			rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
-				var entryDSTU2 LanternEntry
-				var entryR4 LanternEntry
+				var entry LanternEntry
+
 				tableEntries := rowbodyhtml.Find("td")
 				if tableEntries.Length() > 0 {
 					organizationName := strings.TrimSpace(tableEntries.Eq(1).Text())
-					DSTU2URL := strings.TrimSpace(tableEntries.Eq(6).Text())
-					R4URL := strings.TrimSpace(tableEntries.Eq(7).Text())
+					zipCode := strings.TrimSpace(tableEntries.Eq(5).Text())
+					URL := strings.TrimSpace(tableEntries.Eq(6).Text())
 
-					entryDSTU2.OrganizationName = organizationName
-					entryDSTU2.URL = DSTU2URL
+					entry.OrganizationName = organizationName
+					entry.URL = URL
+					entry.OrganizationZipCode = zipCode
 
-					entryR4.OrganizationName = organizationName
-					entryR4.URL = R4URL
-
-					lanternEntryList = append(lanternEntryList, entryDSTU2, entryR4)
+					lanternEntryList = append(lanternEntryList, entry)
 				}
 			})
 		})

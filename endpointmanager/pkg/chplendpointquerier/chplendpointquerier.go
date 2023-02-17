@@ -11,9 +11,10 @@ type EndpointList struct {
 }
 
 type LanternEntry struct {
-	URL              string `json:"URL"`
-	OrganizationName string `json:"OrganizationName"`
-	NPIID            string `json:"NPIID"`
+	URL                 string `json:"URL"`
+	OrganizationName    string `json:"OrganizationName"`
+	NPIID               string `json:"NPIID"`
+	OrganizationZipCode string `json:"OrganizationZipCode"`
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
@@ -56,6 +57,15 @@ var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/intro
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
 var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
 var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
+var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
+var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
+var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
+var varianmedicalURL = "https://variandev.dynamicfhir.com/"
+var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
+var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
+var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
+var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/"
+var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -70,7 +80,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, EpicURL) {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, MeditechURL) {
-		MeditechWebscraper(MeditechURL, fileToWriteTo)
+		MeditechWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, DocsAthenaURL) {
 		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, MyDataAthenaURL) {
@@ -141,6 +151,26 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MicroFourWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, magilenenterprisesURL) {
 		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == interopxURL {
+		InteropxWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == mphrxURL {
+		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
+	} else if chplURL == correctekURL {
+		CorrecTekWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == varianmedicalURL {
+		VarianMedicalWebscraper("https://variandev.dynamicfhir.com/dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
+	} else if chplURL == caretrackerURL {
+		BundleQuerierParser("https://hag-fhir.amazingcharts.com/ac/endpoints/r4", fileToWriteTo)
+	} else if chplURL == zhhealthcareURL {
+		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == medinfoengineeringURL {
+		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
+	} else if chplURL == emedpracticeURL {
+		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+	} else if chplURL == modernizingmedicineURL {
+		ModernizingMedicineQuerier("qa.fhir.ema-api.com/fhir/r4/Endpoint?connection-type=hl7-fhir-rest", fileToWriteTo)
+	} else if chplURL == doc_torURL {
+		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	}
 
 }

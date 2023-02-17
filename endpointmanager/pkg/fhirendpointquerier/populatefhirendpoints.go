@@ -17,6 +17,7 @@ import (
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
 func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fetcher.ListOfEndpoints) error {
 	var firstUpdate time.Time
+	var firstUpdateOrg time.Time
 	var listsource = endpoints.Entries[0].ListSource
 	for i, endpoint := range endpoints.Entries {
 		select {
@@ -69,9 +70,31 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 				firstUpdate = existingEndpt.UpdatedAt
 			}
 		}
+		if firstUpdateOrg.IsZero() {
+			// get time of update for first endpoint organization
+			fhirURL := endpoint.FHIRPatientFacingURI
+			if fhirURL[len(fhirURL)-1:] != "/" {
+				fhirURL = fhirURL + "/"
+			}
+
+			existingOrg, err := store.GetFHIREndpointOrganizationByURLandListSource(ctx, fhirURL, endpoint.ListSource)
+			if err == sql.ErrNoRows {
+				continue
+			} else if err != nil {
+				log.Warn(err)
+				continue
+			} else {
+				firstUpdateOrg = existingOrg.UpdatedAt
+			}
+		}
 	}
 
 	err := RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
+	if err != nil {
+		log.Warn(err)
+	}
+
+	err = RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
@@ -94,12 +117,36 @@ func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fe
 
 // formatToFHIREndpt takes an entry in the list of endpoints and formats it for the fhir_endpoints table in the database
 func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREndpoint, error) {
+	// Add trailing "/" to URIs that do not have it for consistency
+	uri := endpoint.FHIRPatientFacingURI
+	if len(uri) > 0 && uri[len(uri)-1:] != "/" {
+		uri = uri + "/"
+	}
+
+	splitEndpoint := strings.Split(uri, "://")
+	header := "http://"
+
+	if len(splitEndpoint) > 1 {
+		header = strings.ToLower(splitEndpoint[0]) + "://"
+	}
+	uri = header + splitEndpoint[len(splitEndpoint)-1]
+
 	// convert the endpoint entry to the fhirDatabase format
 	dbEntry := endpointmanager.FHIREndpoint{
-		URL:               endpoint.FHIRPatientFacingURI,
-		OrganizationNames: endpoint.OrganizationNames,
-		ListSource:        endpoint.ListSource,
-		NPIIDs:            endpoint.NPIIDs,
+		URL:        uri,
+		ListSource: endpoint.ListSource,
+	}
+
+	if endpoint.OrganizationName != "" || endpoint.NPIID != "" || endpoint.OrganizationZipCode != "" {
+		dbOrgEntry := endpointmanager.FHIREndpointOrganization{
+			OrganizationName:    endpoint.OrganizationName,
+			OrganizationNPIID:   endpoint.NPIID,
+			OrganizationZipCode: endpoint.OrganizationZipCode,
+		}
+
+		dbEntry.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&dbOrgEntry}
+	} else {
+		dbEntry.OrganizationList = []*endpointmanager.FHIREndpointOrganization{}
 	}
 
 	// @TODO Get Location
@@ -145,6 +192,30 @@ func RemoveOldEndpoints(ctx context.Context, store *postgresql.Store, updateTime
 	}
 
 	log.Infof("Removed %d endpoints from list source %s", len(fhirEndpoints), listSource)
+
+	return nil
+}
+
+// RemoveOldEndpointOrganizations removes fhir endpoint organizations from fhir_endpoint_organizations
+// that are no longer in the given endpoint's list of organizations
+func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store, updateTime time.Time, listSource string) error {
+	// get endpoint organizations that are from this listsource and have an update time before this time
+	fhirEndpoints, err := store.GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx, updateTime, listSource)
+	if err != nil {
+		return err
+	}
+
+	for _, endpoint := range fhirEndpoints {
+		for _, org := range endpoint.OrganizationList {
+			err = store.DeleteFHIREndpointOrganization(ctx, org, endpoint.ID)
+			if err != nil {
+				log.Warn(err)
+				continue
+			}
+		}
+	}
+
+	log.Infof("Removed %d endpoints organizations from list source %s", len(fhirEndpoints), listSource)
 
 	return nil
 }

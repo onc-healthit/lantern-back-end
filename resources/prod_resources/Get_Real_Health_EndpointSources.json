@@ -3,7 +3,8 @@
 		{
 			"URL": "https://unify-fhir.sbx.chbase.com/",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

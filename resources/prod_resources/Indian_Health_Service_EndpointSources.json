@@ -3,7 +3,8 @@
 		{
 			"URL": "https://ihs4dhapim.ihs.gov/FHIR/r4",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

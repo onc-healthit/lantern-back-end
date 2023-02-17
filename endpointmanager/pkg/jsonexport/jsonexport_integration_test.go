@@ -21,9 +21,12 @@ import (
 
 var store *postgresql.Store
 
+var testEndpointOrganization = &endpointmanager.FHIREndpointOrganization{
+	OrganizationName: "Test Org"}
+
 var testEndpoint = endpointmanager.FHIREndpoint{
 	URL:               "www.testURL.com",
-	OrganizationNames: []string{"Test Org"},
+	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testEndpointOrganization},
 	ListSource:        "Test List Source",
 }
 
