@@ -211,6 +211,7 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make test` | runs unit tests | 
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
+|`make test_all` | runs all tests and ends if any of the tests fail| 
 |`make populatedb` | Should be used with development environment by running `make run` first. Populates the database with the endpoint resource list information and NPPES information found in the `resources/dev_resources` directory.| 
 |`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory, and queries NPPES for its latest information and automatically stores it in the database before deleting the files.| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
