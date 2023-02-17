@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://sfp-proxy7042.azurewebsites.net/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

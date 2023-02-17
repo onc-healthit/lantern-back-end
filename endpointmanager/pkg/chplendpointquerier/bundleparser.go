@@ -52,7 +52,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	}
 
 	for _, bundleEntry := range structBundle.Entries {
-		if bundleEntry.Resource.ResourceType == "Organization" {
+		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
 			addressMapArr := bundleEntry.Resource.Address.([]interface{})
 			for _, address := range addressMapArr {
 				addressMap := address.(map[string]interface{})
@@ -67,7 +67,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	for _, bundleEntry := range structBundle.Entries {
 		var entry LanternEntry
 
-		if bundleEntry.Resource.ResourceType == "Endpoint" {
+		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Endpoint") {
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {

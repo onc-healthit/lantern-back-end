@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.glaceemr.com/fhir/r4/primecare",
+			"OrganizationName": "Primecare Medical, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "06705"
+		},
+		{
+			"URL": "https://fhir.glaceemr.com/fhir/r4/primecare",
+			"OrganizationName": "FHIR R4 Production Sandbox EMR",
+			"NPIID": "",
+			"OrganizationZipCode": "06708"
+		}
+	]
+}

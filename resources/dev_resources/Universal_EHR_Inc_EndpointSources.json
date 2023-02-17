@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/universalehr.bdd",
+			"OrganizationName": "Ban Duc Doan, M.D., Inc., A Professional Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": "92844"
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/universalehr.dmg",
+			"OrganizationName": "Dao Medical Group Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": "92844"
+		}
+	]
+}

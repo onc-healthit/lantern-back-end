@@ -11,11 +11,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int) {
+func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int, header bool, urlIndex int, organizationIndex int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, header)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 		if err != nil {
 			log.Fatal(err)
 		}
-		if records >= numrecords+startrecord {
+		if numrecords >= 0 && records >= numrecords+startrecord {
 			break
 		}
 
@@ -38,7 +38,11 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 			var entry LanternEntry
 
 			organizationName := ""
-			URL := strings.TrimSpace(rec[1])
+			if organizationIndex >= 0 {
+				organizationName = strings.TrimSpace(rec[organizationIndex])
+			}
+
+			URL := strings.TrimSpace(rec[urlIndex])
 
 			entry.OrganizationName = organizationName
 			entry.URL = URL

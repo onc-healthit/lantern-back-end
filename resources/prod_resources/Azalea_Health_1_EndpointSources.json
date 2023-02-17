@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/bastrop",
+			"OrganizationName": "Bastrop Rehabilitation Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/ladmc",
+			"OrganizationName": "L.A. Downtown Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/southernplains",
+			"OrganizationName": "Valley Community Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/girard",
+			"OrganizationName": "Girard Medical Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/sales-demo-network",
+			"OrganizationName": "Sales Demo Network",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/reeves-memorial-medical-center",
+			"OrganizationName": "Reeves Memorial Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/testing-client-network",
+			"OrganizationName": "Testing Client Network",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/sedgwick",
+			"OrganizationName": "Sedgwick County Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/healthmark",
+			"OrganizationName": "Healthmark Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/ness",
+			"OrganizationName": "Ness County Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

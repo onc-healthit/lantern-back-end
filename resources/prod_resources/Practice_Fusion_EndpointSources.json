@@ -1,0 +1,2272 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b1693bbf-d321-4342-816d-cac836d51583",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b1693bbf-d321-4342-816d-cac836d51583",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c47d68c-67f4-4b51-ba3a-8f97ba4d1e46",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c47d68c-67f4-4b51-ba3a-8f97ba4d1e46",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/579c44a5-ceff-4e33-a561-ffe3ec694fa1",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/579c44a5-ceff-4e33-a561-ffe3ec694fa1",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/10e51540-1013-45cd-9580-df44dc1cd33a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/10e51540-1013-45cd-9580-df44dc1cd33a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8b0b666a-0d56-46ba-aa32-9be57cd3dc9b",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8b0b666a-0d56-46ba-aa32-9be57cd3dc9b",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dce94d47-4313-4823-93f7-6101eaae4e7a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dce94d47-4313-4823-93f7-6101eaae4e7a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5a25f227-42d6-41dd-8a2b-36c5f11041eb",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5a25f227-42d6-41dd-8a2b-36c5f11041eb",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2f00bcb-aa00-4899-abdb-e9fb7250cd3b",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2f00bcb-aa00-4899-abdb-e9fb7250cd3b",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/65263fed-b7f6-4db2-8328-cd9b23aa50e8",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/65263fed-b7f6-4db2-8328-cd9b23aa50e8",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/746b60d0-6f8a-4bef-818b-7bf9eae8bb85",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/746b60d0-6f8a-4bef-818b-7bf9eae8bb85",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2811b49-beb2-4131-8176-35c71e79e1e3",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2811b49-beb2-4131-8176-35c71e79e1e3",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0a4e269b-ec21-4f21-a935-3066c329012d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0a4e269b-ec21-4f21-a935-3066c329012d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/96fa3089-9955-43e6-b214-10b366d4bd74",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/96fa3089-9955-43e6-b214-10b366d4bd74",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e91f90cc-02ce-441e-afc9-d18215488b55",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e91f90cc-02ce-441e-afc9-d18215488b55",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/89300239-0590-4df1-8273-25269c183cb6",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/89300239-0590-4df1-8273-25269c183cb6",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/79e5f822-fa81-4d88-960d-0ce9e16e40f0",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/79e5f822-fa81-4d88-960d-0ce9e16e40f0",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f36bd5a2-4e5b-49a8-a277-304abf288aed",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f36bd5a2-4e5b-49a8-a277-304abf288aed",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/db0be6ec-3914-458e-bb41-d9338535061a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/db0be6ec-3914-458e-bb41-d9338535061a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5243ea13-02b3-4388-82f1-e76e819b154a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5243ea13-02b3-4388-82f1-e76e819b154a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3b103021-ee35-43f1-b035-5d8467d47528",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3b103021-ee35-43f1-b035-5d8467d47528",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5c5b8f01-6e74-4126-8d9b-e690b4cf0f26",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5c5b8f01-6e74-4126-8d9b-e690b4cf0f26",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a3f10c8f-775b-4f0b-9cde-d7b47c2adabe",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a3f10c8f-775b-4f0b-9cde-d7b47c2adabe",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/196ee816-e9cb-426d-ba42-eec40beaac0d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/196ee816-e9cb-426d-ba42-eec40beaac0d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6deea85b-3937-4234-878f-1d15a1e303d4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6deea85b-3937-4234-878f-1d15a1e303d4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/42f2d97d-5efa-4450-8fc6-84afbf48759d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/42f2d97d-5efa-4450-8fc6-84afbf48759d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/05056b00-ebe5-465c-a6c0-35d8bc4da935",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/05056b00-ebe5-465c-a6c0-35d8bc4da935",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5191c08d-46c5-4f22-a3a5-ef41f95c9ae5",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5191c08d-46c5-4f22-a3a5-ef41f95c9ae5",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/84a81162-1f42-4e65-a203-367df38ca9fb",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/84a81162-1f42-4e65-a203-367df38ca9fb",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f6007ed2-3560-443f-9794-19f6f97a5fdc",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f6007ed2-3560-443f-9794-19f6f97a5fdc",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/643b0e3d-c7af-4bd1-a8a5-0496804ebb45",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/643b0e3d-c7af-4bd1-a8a5-0496804ebb45",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c64c2d5e-7359-4d4a-9afc-1a1283407ed5",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c64c2d5e-7359-4d4a-9afc-1a1283407ed5",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fbc4e559-73c2-457f-8d22-79ce52555662",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fbc4e559-73c2-457f-8d22-79ce52555662",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f1c4ef3b-1762-41c2-8492-490a6e148615",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f1c4ef3b-1762-41c2-8492-490a6e148615",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a33424e7-cec4-43f5-add4-782344174848",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a33424e7-cec4-43f5-add4-782344174848",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c64c442e-2f02-4290-afd6-16756300a20d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c64c442e-2f02-4290-afd6-16756300a20d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/10f86204-b0a2-4b0f-96e5-545bcb5316c8",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/10f86204-b0a2-4b0f-96e5-545bcb5316c8",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b396984f-4867-4d64-8f49-68bec77d949a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b396984f-4867-4d64-8f49-68bec77d949a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ab0e83e0-f005-46ba-8b47-007cf5a4830d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ab0e83e0-f005-46ba-8b47-007cf5a4830d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/af682a62-644a-4322-8de9-f4e8399ff7bd",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/af682a62-644a-4322-8de9-f4e8399ff7bd",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d4f85c90-6793-46f4-a8b3-6f52593ec3a8",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d4f85c90-6793-46f4-a8b3-6f52593ec3a8",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/97767d52-decb-4250-9ea9-2872e8c0242c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/97767d52-decb-4250-9ea9-2872e8c0242c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fbe99774-1c6c-44bb-a0c4-b21f8aa08f87",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fbe99774-1c6c-44bb-a0c4-b21f8aa08f87",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/35401fc4-1db8-45de-a189-5dcbbc38cfaf",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/35401fc4-1db8-45de-a189-5dcbbc38cfaf",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/63a465f4-af16-4997-972f-b960f4eaf035",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/63a465f4-af16-4997-972f-b960f4eaf035",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0d2440dc-0879-485a-b6e3-1379002253f4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0d2440dc-0879-485a-b6e3-1379002253f4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b1da7dbf-9bb3-4d0f-8faf-807003f531a8",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b1da7dbf-9bb3-4d0f-8faf-807003f531a8",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/61999c44-97af-4009-aa0d-1cfeb7bb2792",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/61999c44-97af-4009-aa0d-1cfeb7bb2792",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/094aa12a-c67a-42ac-81ef-a780de9aac80",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/094aa12a-c67a-42ac-81ef-a780de9aac80",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c031d8d5-bac6-4dbb-8c92-e373c827e960",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c031d8d5-bac6-4dbb-8c92-e373c827e960",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3fc4915a-fd85-4987-b1d3-36aea5ab4615",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fc4915a-fd85-4987-b1d3-36aea5ab4615",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b9d1ee73-ff34-4aa8-8562-c6a060530341",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b9d1ee73-ff34-4aa8-8562-c6a060530341",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e5c689b5-4d2f-4b1b-80db-3c080e806337",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e5c689b5-4d2f-4b1b-80db-3c080e806337",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/814ab3c2-ad36-4d86-aecd-61cafc846ab2",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/814ab3c2-ad36-4d86-aecd-61cafc846ab2",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a4a53e71-7891-400f-af98-0fdf6c33e637",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a4a53e71-7891-400f-af98-0fdf6c33e637",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/982ce8b9-f49f-4b56-82b0-7656061e52f2",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/982ce8b9-f49f-4b56-82b0-7656061e52f2",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c472ca6-d5c3-454b-9888-443e7596215e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c472ca6-d5c3-454b-9888-443e7596215e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/653f5e49-fe4d-4dc1-a1fc-2993c868ce43",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/653f5e49-fe4d-4dc1-a1fc-2993c868ce43",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ea69425e-6283-4221-8cf4-342c7b9b66d0",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ea69425e-6283-4221-8cf4-342c7b9b66d0",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/79f9cffc-c2bb-4598-9e21-6156819e6cd0",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/79f9cffc-c2bb-4598-9e21-6156819e6cd0",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/422859ff-e888-402a-b429-5b48a4fe61ff",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/422859ff-e888-402a-b429-5b48a4fe61ff",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/91dfd0b0-a7a0-40a4-a12d-e730434abec1",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/91dfd0b0-a7a0-40a4-a12d-e730434abec1",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1135685f-e4ba-474b-9f01-5771b435ce2d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1135685f-e4ba-474b-9f01-5771b435ce2d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0afab847-63a9-49a9-8c66-e97c8630b31a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0afab847-63a9-49a9-8c66-e97c8630b31a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1fb31d49-335b-4b6d-919b-d0635d3a4f5c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1fb31d49-335b-4b6d-919b-d0635d3a4f5c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1cd6078c-73da-4537-a8e8-43d6a4f41911",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1cd6078c-73da-4537-a8e8-43d6a4f41911",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9e29ed46-83f7-41e9-8f1c-e759d89848fb",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9e29ed46-83f7-41e9-8f1c-e759d89848fb",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7ffc45e0-0185-456b-a381-49e1da589412",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7ffc45e0-0185-456b-a381-49e1da589412",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d7e5c18e-19be-49ff-9860-de272ae47874",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d7e5c18e-19be-49ff-9860-de272ae47874",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9ae7016-6e06-4f6b-9c0f-68d83aa7784d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f9ae7016-6e06-4f6b-9c0f-68d83aa7784d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/588a05f3-a5c5-4526-aa00-b8f04b575fea",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/588a05f3-a5c5-4526-aa00-b8f04b575fea",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/59ebef1a-113f-41f3-b56e-4db6034a23da",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/59ebef1a-113f-41f3-b56e-4db6034a23da",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dd103f81-b15c-4ab2-9ac3-91e0709ace76",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dd103f81-b15c-4ab2-9ac3-91e0709ace76",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b4d5770f-339c-4a92-aa8d-b36dcd0deb76",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b4d5770f-339c-4a92-aa8d-b36dcd0deb76",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/775ca65c-bceb-4810-88e3-1c5ea42f1d7d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/775ca65c-bceb-4810-88e3-1c5ea42f1d7d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4b59887a-db86-4b05-ae14-ed58d6f2848e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4b59887a-db86-4b05-ae14-ed58d6f2848e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/73f8ea97-6d5a-4d3f-81ad-6f17084a9b3a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/73f8ea97-6d5a-4d3f-81ad-6f17084a9b3a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9fafa645-e2a7-430e-9320-b1ecc0fcf45a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9fafa645-e2a7-430e-9320-b1ecc0fcf45a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/53ef1c9d-6a8b-461f-a9cc-27287582e3a1",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/53ef1c9d-6a8b-461f-a9cc-27287582e3a1",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8a757e35-33e1-4aa3-a779-69670d2272ea",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8a757e35-33e1-4aa3-a779-69670d2272ea",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/905b60bc-bf4b-4418-bf2c-52797da08d38",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/905b60bc-bf4b-4418-bf2c-52797da08d38",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f64236db-6133-4540-ae51-7d4b9ed5ae6e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f64236db-6133-4540-ae51-7d4b9ed5ae6e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f3eb26c4-ddbc-47fd-a171-54db267ce4e5",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f3eb26c4-ddbc-47fd-a171-54db267ce4e5",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/87f73f5c-22f4-4e53-98ca-ff7f15f5f7d9",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/87f73f5c-22f4-4e53-98ca-ff7f15f5f7d9",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa9d7848-fa26-4cd0-acbc-0b0db48d1852",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fa9d7848-fa26-4cd0-acbc-0b0db48d1852",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5020ecb3-e97f-4280-8c7b-e97bcf8e2774",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5020ecb3-e97f-4280-8c7b-e97bcf8e2774",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c515d1dd-3142-4d37-8647-e832d2f3c65c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c515d1dd-3142-4d37-8647-e832d2f3c65c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e65e1731-eed3-4773-a187-78cc4d5d7c9d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e65e1731-eed3-4773-a187-78cc4d5d7c9d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d327e19a-f735-42b0-a793-b4ba4b10f42b",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d327e19a-f735-42b0-a793-b4ba4b10f42b",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/83afe83a-7dc0-48f8-a461-0dce3ecc555c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/83afe83a-7dc0-48f8-a461-0dce3ecc555c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/53968985-4c0a-4028-8f80-b82c87c1af69",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/53968985-4c0a-4028-8f80-b82c87c1af69",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c5a977a8-5fd7-4834-83f3-fc7d1632233d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c5a977a8-5fd7-4834-83f3-fc7d1632233d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dd3ecf68-53c8-41df-9dc1-4c2689abd665",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dd3ecf68-53c8-41df-9dc1-4c2689abd665",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9e517e08-2a24-4aa9-97ec-af1e8487f3ab",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9e517e08-2a24-4aa9-97ec-af1e8487f3ab",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/21fb662a-e840-4316-a6d6-11cd78357be7",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/21fb662a-e840-4316-a6d6-11cd78357be7",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7e6f2a2d-ed3b-4122-ac17-c7715d9ace86",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7e6f2a2d-ed3b-4122-ac17-c7715d9ace86",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/64de1ce1-a060-4859-9ae2-79a0c980c8e7",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/64de1ce1-a060-4859-9ae2-79a0c980c8e7",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a7be19ab-434e-48e4-827f-6dffc59aa603",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a7be19ab-434e-48e4-827f-6dffc59aa603",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f8a6772c-f4e4-4279-9baf-40f62a505495",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f8a6772c-f4e4-4279-9baf-40f62a505495",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/cabd29a0-ba29-4807-b166-1883b15999c2",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/cabd29a0-ba29-4807-b166-1883b15999c2",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/22a663dc-e699-4a9d-86c5-29c27bc4c08e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/22a663dc-e699-4a9d-86c5-29c27bc4c08e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d8408ff1-b8be-49b4-835b-738570b52ea3",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d8408ff1-b8be-49b4-835b-738570b52ea3",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/06a4ead4-d528-49ff-92c2-4e63b489601a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/06a4ead4-d528-49ff-92c2-4e63b489601a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/714db11d-fe02-4c8e-975e-a5b9665bfbd9",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/714db11d-fe02-4c8e-975e-a5b9665bfbd9",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/77c93698-f07c-48ac-9d7f-15d4fea01df5",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/77c93698-f07c-48ac-9d7f-15d4fea01df5",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e3c94667-b2f2-42dc-a765-a10e61f78d3e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e3c94667-b2f2-42dc-a765-a10e61f78d3e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/35f9f58f-c216-47a8-a432-ad4ae3485c60",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/35f9f58f-c216-47a8-a432-ad4ae3485c60",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/993dcdea-33de-47ae-837f-33a215407c6d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/993dcdea-33de-47ae-837f-33a215407c6d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/72457843-899b-4edf-b7e6-cc3b2c4ad111",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/72457843-899b-4edf-b7e6-cc3b2c4ad111",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/326ccf21-5d54-42a3-b0da-087d60b5e745",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/326ccf21-5d54-42a3-b0da-087d60b5e745",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6513359c-036a-4608-beb4-8db99ac41cc4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6513359c-036a-4608-beb4-8db99ac41cc4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2d0e9924-8d9a-49b9-90c3-32db9149d947",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2d0e9924-8d9a-49b9-90c3-32db9149d947",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fd3005d1-7560-46ef-8a2f-64527aac32b5",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fd3005d1-7560-46ef-8a2f-64527aac32b5",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5fc9f88a-7a87-438f-868f-17116e19fff7",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5fc9f88a-7a87-438f-868f-17116e19fff7",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4bc47114-a4c2-430b-95c9-3d95b99fb600",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4bc47114-a4c2-430b-95c9-3d95b99fb600",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6069e49c-8059-48ba-87b0-012370807c3e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6069e49c-8059-48ba-87b0-012370807c3e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/46932649-bd2f-428e-a0c4-a60ca6c2e7b8",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/46932649-bd2f-428e-a0c4-a60ca6c2e7b8",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/934ac946-8d4e-4fc8-acb4-8482c83958dc",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/934ac946-8d4e-4fc8-acb4-8482c83958dc",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9c89fe36-16eb-4177-9ac7-460109a0606c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9c89fe36-16eb-4177-9ac7-460109a0606c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/536eaf33-13bd-471a-a839-6b3cb897984c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/536eaf33-13bd-471a-a839-6b3cb897984c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1fe9a672-f933-48f9-aff4-cadaaf21aa85",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1fe9a672-f933-48f9-aff4-cadaaf21aa85",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/08502704-8421-46da-8657-98af61ea00e9",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/08502704-8421-46da-8657-98af61ea00e9",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6027d9cc-fc96-48b4-b484-b5c8ad9c9c7d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6027d9cc-fc96-48b4-b484-b5c8ad9c9c7d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/469180b7-7d99-407a-a5d1-d59eaae373f9",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/469180b7-7d99-407a-a5d1-d59eaae373f9",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d38f43d1-369e-46ee-a24a-2e40dd803cde",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d38f43d1-369e-46ee-a24a-2e40dd803cde",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/24fd3c1a-e5f6-4a83-a473-d375d5884a60",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/24fd3c1a-e5f6-4a83-a473-d375d5884a60",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dfe7c78a-e8c3-41b5-84f7-36807f428372",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dfe7c78a-e8c3-41b5-84f7-36807f428372",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a4d47a79-11e8-429d-a340-b516aa941a0c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a4d47a79-11e8-429d-a340-b516aa941a0c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/89d668ec-488b-4ba5-beb8-bed99a99693d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/89d668ec-488b-4ba5-beb8-bed99a99693d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/47b9536e-09b8-4d88-950d-00e39cb7529f",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/47b9536e-09b8-4d88-950d-00e39cb7529f",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/823f0c3a-1cbe-47ad-995b-b0e5f4c12e66",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/823f0c3a-1cbe-47ad-995b-b0e5f4c12e66",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/25f04730-3a5f-420c-a7ff-f68fc7c495d1",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/25f04730-3a5f-420c-a7ff-f68fc7c495d1",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b8a5b5f4-d621-401c-8b30-db133c9e8d54",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b8a5b5f4-d621-401c-8b30-db133c9e8d54",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b25709db-0ebc-49ea-b0e9-3a3dcf78c36a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b25709db-0ebc-49ea-b0e9-3a3dcf78c36a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e0f2d7b3-c33c-461d-a470-f21e44a72a1b",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e0f2d7b3-c33c-461d-a470-f21e44a72a1b",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/264b08bf-075f-4542-8590-e28381410741",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/264b08bf-075f-4542-8590-e28381410741",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/57acf35d-927f-4cdd-af04-8fa58a637c87",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/57acf35d-927f-4cdd-af04-8fa58a637c87",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/75eb09ab-a88c-49a3-81de-6df7d788d51f",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/75eb09ab-a88c-49a3-81de-6df7d788d51f",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/15347dad-004d-41ea-8764-a1fb11315c28",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/15347dad-004d-41ea-8764-a1fb11315c28",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6b330d59-a4e5-4e80-b2df-c412c2797c48",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6b330d59-a4e5-4e80-b2df-c412c2797c48",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e2dd06d7-92eb-44b7-9883-2182239bd01a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e2dd06d7-92eb-44b7-9883-2182239bd01a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0d3da27f-0338-487c-9a6c-62712c9a16fe",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0d3da27f-0338-487c-9a6c-62712c9a16fe",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6b38c3b5-7642-43c0-8696-f09de876a177",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6b38c3b5-7642-43c0-8696-f09de876a177",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c3fdbf9-bead-4c69-b928-545c0ea0ed88",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c3fdbf9-bead-4c69-b928-545c0ea0ed88",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/256fce53-1187-4b49-b20f-8798f7a26eaf",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/256fce53-1187-4b49-b20f-8798f7a26eaf",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a8aadbba-a03d-49e5-90f9-fa9d8cdcde4d",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a8aadbba-a03d-49e5-90f9-fa9d8cdcde4d",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7cbb2cbb-7441-4289-ad47-0ab22946e3fb",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7cbb2cbb-7441-4289-ad47-0ab22946e3fb",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b4caba38-bb81-401a-8481-28823d2e451c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b4caba38-bb81-401a-8481-28823d2e451c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa9b490f-1fb5-4a91-b3f2-8c5883784866",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fa9b490f-1fb5-4a91-b3f2-8c5883784866",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ed63604a-1391-4d0e-bb45-f0f11b8d3465",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ed63604a-1391-4d0e-bb45-f0f11b8d3465",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/07671dc2-eb1d-4ae2-83df-825dd6178f7a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/07671dc2-eb1d-4ae2-83df-825dd6178f7a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/482726aa-f7b5-4e93-999a-aeaec72f3c06",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/482726aa-f7b5-4e93-999a-aeaec72f3c06",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1753764f-1ac7-4a10-b105-459bdc915ef7",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1753764f-1ac7-4a10-b105-459bdc915ef7",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6ad99ee0-89db-4b8a-84f0-eee0bdbde00a",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6ad99ee0-89db-4b8a-84f0-eee0bdbde00a",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/692f029e-2833-4e5c-a6df-4032efe2a36c",
+			"OrganizationName": "Patient Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/692f029e-2833-4e5c-a6df-4032efe2a36c",
+			"OrganizationName": "Provider / System Access",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

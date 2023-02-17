@@ -79,6 +79,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/a1f2360f-8ab8-4f52-81e4-a887a8a5a86b",
+			"OrganizationName": "Carlsbad Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/ac628e84-2617-49d6-9bed-241da87864f9",
 			"OrganizationName": "Castleview Hospital",
 			"NPIID": "1417064205",
@@ -130,6 +136,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/91b13a29-b056-4991-9971-ec11bdf30501",
 			"OrganizationName": "DeQuincy Memorial Hospital",
 			"NPIID": "1902469653",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/2d1b74f6-5e0d-402b-993f-7f7d33147fff",
+			"OrganizationName": "DeTar Healthcare System",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -190,6 +202,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/076f2d84-f49c-4917-b4e7-787ac8749ee2",
 			"OrganizationName": "Grant Memorial Hospital",
 			"NPIID": "1598763666",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1d564132-c3ba-439d-8e8e-ace8842e7bde",
+			"OrganizationName": "Greenbrier Valley Medical Center",
+			"NPIID": "1679299408",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -265,6 +283,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/697ce05a-14fb-422b-8a1e-7988118c8f36",
+			"OrganizationName": "Longview Regional Medical Center",
+			"NPIID": "1528026267",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5835d96f-3dd1-4c86-9628-965c32b89fbb",
 			"OrganizationName": "Los Alamos Medical Center",
 			"NPIID": "1285701623",
@@ -337,6 +361,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/32b5092f-40b2-465b-a5fc-fb42387f5279",
+			"OrganizationName": "Merit Health Natchez",
+			"NPIID": "1164821559",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/449dbf47-4d2e-4092-a418-0c8abd9a8dc1",
 			"OrganizationName": "Mesa View Regional Hospital",
 			"NPIID": "1275588782",
@@ -361,6 +391,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7aa5c907-888a-4a26-a788-557866a3a6ba",
+			"OrganizationName": "Moberly Regional Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/75043803-bb7f-402e-836e-1af427dd8d38",
 			"OrganizationName": "Monroe County Medical Center",
 			"NPIID": "",
@@ -373,8 +409,20 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7ebf128e-74ea-47fd-b43e-48c09f6cfb4c",
+			"OrganizationName": "MountainView Regional Medical Center",
+			"NPIID": "1205882503",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b5d7e119-25f5-4549-b34f-423b307ce3d1",
 			"OrganizationName": "Navarro Regional Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/8c9be94d-3d31-4ca5-9051-cb0d2002c95e",
+			"OrganizationName": "North Okaloosa Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -382,6 +430,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/fde55fa4-eb9d-490e-a851-e7183289b044",
 			"OrganizationName": "North Texas Medical Center",
 			"NPIID": "1972071991",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/b531811c-9423-4f7d-a377-31c603372685",
+			"OrganizationName": "Northeast Regional Medical Center",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -427,6 +481,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0bd07c5d-651a-4595-af5c-d3126066539a",
+			"OrganizationName": "Plateau Medical Center",
+			"NPIID": "1598736159",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d6c5eabb-0579-4a2a-b6b0-15f60c825cf4",
 			"OrganizationName": "Red Bud Regional Hospital",
 			"NPIID": "1891766317",
@@ -457,6 +517,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/870cfbd8-0d45-4180-93e9-6d532ee5690e",
+			"OrganizationName": "Siloam Springs Regional Hospital",
+			"NPIID": "1902051816",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/44b22363-bfae-41e3-b442-7ab703616389",
 			"OrganizationName": "South Baldwin Regional Medical Center",
 			"NPIID": "1053382655",
@@ -465,7 +531,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/777a252c-0352-4dcc-a5ee-d58003af48a1",
 			"OrganizationName": "St. Marks Medical Center",
-			"NPIID": "",
+			"NPIID": "1659362630",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -511,9 +577,21 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1e652adb-d6d8-4094-bdfc-81d32d2a7070",
+			"OrganizationName": "Western Arizona Regional Medical Center",
+			"NPIID": "1255302766",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/de0b28e5-5f18-46fc-b42e-e599a0198d5a",
 			"OrganizationName": "Winn Parish Medical Center",
 			"NPIID": "1205833241",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/c70cb6ad-bf68-4054-bdd6-bbf6897f7480",
+			"OrganizationName": "Woodland Heights Medical Center",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{

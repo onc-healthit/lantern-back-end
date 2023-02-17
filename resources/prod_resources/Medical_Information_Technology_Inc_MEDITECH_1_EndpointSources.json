@@ -883,6 +883,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://hcchospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Harrison Cty Comm Hosp MaaS Pod 011 03",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.hmhosp.org:443/v2/argonaut/v1",
 			"OrganizationName": "Harrison Mem Hosp Expanse (Hosted by OpSus)",
 			"NPIID": "",
@@ -1297,6 +1303,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://medinahospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Medina Regional Hospital MaaS Pod 009 02",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.mhcs.us:443/v2/argonaut/v1",
 			"OrganizationName": "Memorial Health Care Systems Expanse",
 			"NPIID": "",
@@ -1407,6 +1419,12 @@
 		{
 			"URL": "https://mtrestapis-live02.montrosehospital.com:443/v2/argonaut/v1",
 			"OrganizationName": "Montrose Regional Health - C/S",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mcchapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Morrill County Community Hosp. MaaS Pod 007 09",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3325,6 +3343,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://hcchospitalapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Harrison Cty Comm Hosp MaaS Pod 011 03",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.hmhosp.org:443/v1/uscore/R4",
 			"OrganizationName": "Harrison Mem Hosp Expanse (Hosted by OpSus)",
 			"NPIID": "",
@@ -3739,6 +3763,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://medinahospitalapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Medina Regional Hospital MaaS Pod 009 02",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.mhcs.us:443/v1/uscore/R4",
 			"OrganizationName": "Memorial Health Care Systems Expanse",
 			"NPIID": "",
@@ -3849,6 +3879,12 @@
 		{
 			"URL": "https://mtrestapis-live02.montrosehospital.com:443/v1/uscore/R4",
 			"OrganizationName": "Montrose Regional Health - C/S",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mcchapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Morrill County Community Hosp. MaaS Pod 007 09",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

@@ -164,7 +164,7 @@ func QueryAndReadFile(URL string, filePath string) ([]byte, error) {
 	return content, nil
 }
 
-func QueryAndOpenCSV(csvURL string, csvFilePath string) (*csv.Reader, *os.File, error) {
+func QueryAndOpenCSV(csvURL string, csvFilePath string, header bool) (*csv.Reader, *os.File, error) {
 
 	err := downloadFile(csvFilePath, csvURL)
 	if err != nil {
@@ -180,10 +180,12 @@ func QueryAndOpenCSV(csvURL string, csvFilePath string) (*csv.Reader, *os.File, 
 	// read csv values using csv.Reader
 	csvReader := csv.NewReader(f)
 
-	// Read first line to skip over headers
-	_, err = csvReader.Read()
-	if err != nil {
-		return nil, f, err
+	if header {
+		// Read first line to skip over headers
+		_, err = csvReader.Read()
+		if err != nil {
+			return nil, f, err
+		}
 	}
 
 	return csvReader, f, nil

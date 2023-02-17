@@ -715,6 +715,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.maximeyes.com/api/familyeyecare/R4",
+			"OrganizationName": "Ryan J. Kueker, OD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.maximeyes.com/api/alleyesonrockville/R4",
 			"OrganizationName": "All Eyes on Rockville, LLC",
 			"NPIID": "",
@@ -931,8 +937,8 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/rosseyecare/R4",
-			"OrganizationName": "Ross Eyecare Group, P.C.",
+			"URL": "https://fhir.maximeyes.com/api/7lakeseyecare/R4",
+			"OrganizationName": "Seven Lakes Eye Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1011,6 +1017,12 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/nmkofos/R4",
 			"OrganizationName": "Kofos Family Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/jaykhonda/R4",
+			"OrganizationName": "Jay K. Honda, O.D.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
