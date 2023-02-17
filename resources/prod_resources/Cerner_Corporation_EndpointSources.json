@@ -4486,6 +4486,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/a7432ec6-a5a3-4b86-bd77-3f7b3b7d6177/",
+			"OrganizationName": "Green Hills Medical Clinic",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir-myrecord.cerner.com/r4/a74b5677-a506-4100-881e-d18e68399558/",
 			"OrganizationName": "Surgical Associates of Atlanta, P.C.",
 			"NPIID": ""
@@ -8233,6 +8238,21 @@
 		{
 			"URL": "https://fhir-myrecord.cerner.com/r4/71747401-1366-4bfa-a42b-aee2082f7da8/",
 			"OrganizationName": "Noxubee Medical Complex",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/91ce0f5a-eaec-4ac5-8575-4a3202e9921f/",
+			"OrganizationName": "Eastern Plumas Health Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/5688c8fc-5826-44b1-99d0-6246f74da8b2/",
+			"OrganizationName": "Drew Memorial Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/c11411f4-01ed-4048-962f-685091adad2f/",
+			"OrganizationName": "Madison Valley Medical Center",
 			"NPIID": ""
 		},
 		{
@@ -12721,6 +12741,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/a7432ec6-a5a3-4b86-bd77-3f7b3b7d6177/",
+			"OrganizationName": "Green Hills Medical Clinic",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir-myrecord.cerner.com/dstu2/a74b5677-a506-4100-881e-d18e68399558/",
 			"OrganizationName": "Surgical Associates of Atlanta, P.C.",
 			"NPIID": ""
@@ -16468,6 +16493,21 @@
 		{
 			"URL": "https://fhir-myrecord.cerner.com/dstu2/71747401-1366-4bfa-a42b-aee2082f7da8/",
 			"OrganizationName": "Noxubee Medical Complex",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/91ce0f5a-eaec-4ac5-8575-4a3202e9921f/",
+			"OrganizationName": "Eastern Plumas Health Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/5688c8fc-5826-44b1-99d0-6246f74da8b2/",
+			"OrganizationName": "Drew Memorial Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/c11411f4-01ed-4048-962f-685091adad2f/",
+			"OrganizationName": "Madison Valley Medical Center",
 			"NPIID": ""
 		}
 	]

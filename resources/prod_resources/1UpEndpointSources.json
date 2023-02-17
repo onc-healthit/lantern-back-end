@@ -561,12 +561,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FFGIBA",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/af04918c-be8d-44e9-9031-483679950391",
 			"OrganizationName": "Advanced Eyecare Professionals",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/af04918c-be8d-44e9-9031-483679950391",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FFGIBA",
 			"OrganizationName": "Advanced Eyecare Professionals",
 			"NPIID": ""
 		},
@@ -846,12 +846,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/BEEIAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JBHCCA",
 			"OrganizationName": "Advanced Surgical Associates",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JBHCCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BEEIAA",
 			"OrganizationName": "Advanced Surgical Associates",
 			"NPIID": ""
 		},
@@ -946,12 +946,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HAFABD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJFDBD",
 			"OrganizationName": "Advocate Rolling Meadows IL",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJFDBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HAFABD",
 			"OrganizationName": "Advocate Rolling Meadows IL",
 			"NPIID": ""
 		},
@@ -2216,12 +2216,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/6wNWLEKPS2uO0_nvMxh3PrA39BtxIAUT",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/SUWQKklMWN1rUZ1aBx8uyyusZJlfRBjJ",
 			"OrganizationName": "Ankle Foot Specialists",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/SUWQKklMWN1rUZ1aBx8uyyusZJlfRBjJ",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/6wNWLEKPS2uO0_nvMxh3PrA39BtxIAUT",
 			"OrganizationName": "Ankle Foot Specialists",
 			"NPIID": ""
 		},
@@ -5836,12 +5836,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CGCCAA",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/e93fafab-e41d-4524-a174-f3d84279afea",
 			"OrganizationName": "Cascade Internal Medicine",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/e93fafab-e41d-4524-a174-f3d84279afea",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CGCCAA",
 			"OrganizationName": "Cascade Internal Medicine",
 			"NPIID": ""
 		},
@@ -9266,12 +9266,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/LE53-9reSSl1ATIUbSTE0HLYhIbs7hug",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/c31c51ca-14d8-489c-808f-62486a81a735",
 			"OrganizationName": "Dermatology Consultants PA",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/c31c51ca-14d8-489c-808f-62486a81a735",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/LE53-9reSSl1ATIUbSTE0HLYhIbs7hug",
 			"OrganizationName": "Dermatology Consultants PA",
 			"NPIID": ""
 		},
@@ -11701,12 +11701,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIHBAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBCBBA",
 			"OrganizationName": "Family First Medical Center",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBCBBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIHBAA",
 			"OrganizationName": "Family First Medical Center",
 			"NPIID": ""
 		},
@@ -11821,12 +11821,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/EIICCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JEEBAA",
 			"OrganizationName": "Family Medical Center",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JEEBAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/EIICCA",
 			"OrganizationName": "Family Medical Center",
 			"NPIID": ""
 		},
@@ -11836,12 +11836,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/ECGGCA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/IEEFAA",
 			"OrganizationName": "Family Medical Clinic",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/IEEFAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/ECGGCA",
 			"OrganizationName": "Family Medical Clinic",
 			"NPIID": ""
 		},
@@ -15961,12 +15961,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBBIBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CCFFAA",
 			"OrganizationName": "Infectious Disease Consultants",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CCFFAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBBIBA",
 			"OrganizationName": "Infectious Disease Consultants",
 			"NPIID": ""
 		},
@@ -16286,12 +16286,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GGDDBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GBGFAA",
 			"OrganizationName": "Internal Medicine Specialists",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GBGFAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GGDDBA",
 			"OrganizationName": "Internal Medicine Specialists",
 			"NPIID": ""
 		},
@@ -16811,12 +16811,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGDHBA",
+			"URL": "https://fhir.jefferson.edu/FHIRProxy/api/FHIR/DSTU2",
 			"OrganizationName": "Jefferson Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.jefferson.edu/FHIRProxy/api/FHIR/DSTU2",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGDHBA",
 			"OrganizationName": "Jefferson Health",
 			"NPIID": ""
 		},
@@ -19066,12 +19066,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHIBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBJEAA",
 			"OrganizationName": "Livingston Clinic",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBJEAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHIBA",
 			"OrganizationName": "Livingston Clinic",
 			"NPIID": ""
 		},
@@ -20656,17 +20656,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBBIBD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FDCIBD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/BHCFBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BJGGBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20676,12 +20666,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHCBD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/BJGGBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HEEGAD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20691,12 +20676,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJFIBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBHDBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHDIBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GFBFBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20706,22 +20691,17 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HEEGAD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBHDBD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBGHAD",
-			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/BDEHBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FDCIBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AIHCBD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -20731,7 +20711,27 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GFBFBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HBBIBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CHDIBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BHCFBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJFIBD",
+			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/DBGHAD",
 			"OrganizationName": "MEMORIAL HERMANN NE Humble TX",
 			"NPIID": ""
 		},
@@ -24216,12 +24216,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GEEHBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGCCAA",
 			"OrganizationName": "Northwest Houston Gastroenterology",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/HGCCAA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GEEHBA",
 			"OrganizationName": "Northwest Houston Gastroenterology",
 			"NPIID": ""
 		},
@@ -25326,12 +25326,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/EGBFAD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FGDGBA",
 			"OrganizationName": "Pain Management",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FGDGBA",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/EGBFAD",
 			"OrganizationName": "Pain Management",
 			"NPIID": ""
 		},
@@ -26671,12 +26671,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/89eb3e3a-72ad-4166-b9d4-91005de7fa29",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JFHIAA",
 			"OrganizationName": "Podiatry Associates",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JFHIAA",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/89eb3e3a-72ad-4166-b9d4-91005de7fa29",
 			"OrganizationName": "Podiatry Associates",
 			"NPIID": ""
 		},
@@ -30301,12 +30301,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/d7c7003a-96ae-4246-aaaa-19b18f13056e",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/f40a042a-c568-432e-8aa0-b12d37d2d383",
 			"OrganizationName": "Sheridan Memorial Hospital",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/f40a042a-c568-432e-8aa0-b12d37d2d383",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/d7c7003a-96ae-4246-aaaa-19b18f13056e",
 			"OrganizationName": "Sheridan Memorial Hospital",
 			"NPIID": ""
 		},
@@ -31751,12 +31751,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mtrestapis-live01.sbrmc.org/v1/argonaut/v1",
+			"URL": "https://mtrestapis-exptest01.sbrmc.org/v1/argonaut/v1",
 			"OrganizationName": "St. Bernards Healthcare",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mtrestapis-exptest01.sbrmc.org/v1/argonaut/v1",
+			"URL": "https://mtrestapis-live01.sbrmc.org/v1/argonaut/v1",
 			"OrganizationName": "St. Bernards Healthcare",
 			"NPIID": ""
 		},
@@ -34051,12 +34051,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/e3ce8ac3-da4b-46ec-93b3-a98903d3ba4d",
+			"URL": "https://epic-ext.trinity-health.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Trinity Health",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epic-ext.trinity-health.org/FHIR/api/FHIR/DSTU2/",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/e3ce8ac3-da4b-46ec-93b3-a98903d3ba4d",
 			"OrganizationName": "Trinity Health",
 			"NPIID": ""
 		},
@@ -35826,12 +35826,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIEGBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/CAECBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJJEBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/JIEGBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
@@ -35846,7 +35846,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/BICDBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/AJJEBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
@@ -35856,17 +35856,17 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/CAECBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/BICDBD",
 			"OrganizationName": "Westborough Medical Associates Westborough MA",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/FHEBBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/DEHDBD",
 			"OrganizationName": "Westborough Medical Associates WESTBOROUGH MA",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/DEHDBD",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/FHEBBD",
 			"OrganizationName": "Westborough Medical Associates WESTBOROUGH MA",
 			"NPIID": ""
 		},
@@ -36221,12 +36221,12 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.healow.com/FHIRServer/fhir/GBIJAA",
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/d44bdd69-9956-4e8d-b45e-156aeb22a63e",
 			"OrganizationName": "Whiting Medical Associates",
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/dstu2/d44bdd69-9956-4e8d-b45e-156aeb22a63e",
+			"URL": "https://fhir.healow.com/FHIRServer/fhir/GBIJAA",
 			"OrganizationName": "Whiting Medical Associates",
 			"NPIID": ""
 		},

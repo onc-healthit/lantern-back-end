@@ -16,8 +16,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://10.218.32.142/demoAPIServer/fhir/r4",
-			"OrganizationName": "Gary2",
+			"URL": "https://108.218.32.142/demoAPIServer/fhir/r4a",
+			"OrganizationName": "testing-dont use",
 			"NPIID": ""
 		},
 		{
@@ -43,6 +43,11 @@
 		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://nfsmserver.nflortho.com:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "North Florida Sports Medicine \u0026 Orthopedic Center",
 			"NPIID": ""
 		},
 		{

@@ -355,6 +355,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://docs.fire.ly/projects/Firely-Server/en/latest/_static/g10/EndpointBundleFirely.json",
+		"EndpointName": "Firely B.V.",
+		"FileName": "Firely_BV_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://academy.practicesuite.com/fhir-server-links/",
 		"EndpointName": "PracticeSuite, Inc.",
 		"FileName": "PracticeSuite_Inc_EndpointSources.json"
@@ -538,6 +544,12 @@
 		"URL": "https://api.medconnecthealth.com/fhir/r4/endpoints",
 		"EndpointName": "MedConnect, Inc.",
 		"FileName": "MedConnect_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://portal.viewmymed.com/fhir/Endpoint",
+		"EndpointName": "Health Systems Technology, Inc.",
+		"FileName": "Health_Systems_Technology_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -1136,8 +1148,8 @@
 	{
 		"FormatType": "Lantern",
 		"URL": "https://pcbapps.com/wp-content/uploads/2022/11/fhir-base-urls.csv",
-		"EndpointName": "Perk Medical Systems Inc.",
-		"FileName": "Perk_Medical_Systems_Inc_EndpointSources.json"
+		"EndpointName": "PCB APPS",
+		"FileName": "PCB_APPS_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
