@@ -71,7 +71,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
-				entry.URL = strings.TrimSpace(entryURL)				
+				entry.URL = strings.TrimSpace(entryURL)
 				if bundleEntry.Resource.ManagingOrg.Display == "" {
 					if bundleEntry.Resource.Name != "" {
 						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
