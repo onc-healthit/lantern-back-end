@@ -12,7 +12,6 @@ import (
 )
 
 // prepared statements are left open to be used throughout the execution of the application
-// TODO: figure out if there's a better way to manage this for bulk calls
 var addFHIREndpointStatement *sql.Stmt
 var updateFHIREndpointStatement *sql.Stmt
 var deleteFHIREndpointStatement *sql.Stmt

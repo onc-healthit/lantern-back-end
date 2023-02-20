@@ -179,6 +179,14 @@ Lantern is a multi-container application that runs using Docker, and therefore D
   2. Define services that make up app in docker-compose.yml so they can be run together in an isolated environment
   3. Run docker compose up and the Docker compose command starts and runs the entire app. Lantern's Makefile command `make run` and `make run prod` can be used to run the docker compose command to start the application
 
+# Windows Instructions
+The Lantern system was developed on Mac computers and the production and staging servers run Linux. The code in GitHub will run as-is while running on either of these operating systems. If running the system on a Windows machine, however, a few changes will have to be made to the code directly. 
+  * In all script files, change end of line sequence from CRLF to LF   
+    * If using Visual Studio Code for development, it can easily be changed by clicking an option in the bottom right-hand corner to change the end of line sequence 
+  * In the wait-for-it.sh file in the scripts directory, change #!/usr/bin/env bash to #!/bin/bash 
+  * The environmental variable for the CHPL API key may not work. If so, the key can be entered manually into endpointmanager/pkg/chplquerier/chplquerier.go file, where originally viper.GetString("chplapikey") 
+  * The make populatedb command in the Makefile may not work due to the machine generating the name of the container as lantern-back-end-endpoint_manager-1 rather than lantern-back-end_endpoint_manager_1. The fix is to change the make command to: docker exec -it lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh  
+    * This may also have to be done for any other make commands that specifically reference Docker containers 
 
 # Testing Lantern - Basic Flow
 
@@ -189,7 +197,6 @@ There are three types of tests for Lantern and three corresponding commands:
 | unit | `make test` |
 | integration | `make test_int` |
 | end-to-end |  `make test_e2e` |
-| all tests | `make test_all` |
 
 # Make Commands
 

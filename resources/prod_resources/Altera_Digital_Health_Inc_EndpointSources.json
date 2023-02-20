@@ -13891,6 +13891,31 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/76838B",
 			"OrganizationName": "Shady Grove Pediatrics",
 			"NPIID": ""
@@ -14516,8 +14541,8 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://portal.springhill.org/FHIR",
-			"OrganizationName": "Springhill Medical Center",
+			"URL": "https://test01portal.springhill.org/FHIR",
+			"OrganizationName": "Springhill Medical Center [TEST01]",
 			"NPIID": ""
 		},
 		{
@@ -17606,6 +17631,16 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/open-Prod",
+			"OrganizationName": "altera",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir223web4.rd.allscripts.com/R4/fhir-Prod",
+			"OrganizationName": "altera",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com//fhir-dbm-dev1",
 			"OrganizationName": "DBM DEV",
 			"NPIID": ""
@@ -17668,6 +17703,16 @@
 		{
 			"URL": "https://scmprodweb.lv0.hos.allscriptscloud.com/fhir",
 			"OrganizationName": "lv0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10022920",
+			"OrganizationName": "Memorial Healthcare Systems",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10022920",
+			"OrganizationName": "Memorial Healthcare Systems",
 			"NPIID": ""
 		},
 		{
@@ -17831,6 +17876,36 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049550",
+			"OrganizationName": "Rome Orthopaedic Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10049550",
+			"OrganizationName": "Rome Orthopaedic Clinic",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/fhir-Prod",
+			"OrganizationName": "rswp",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/R4/fhir-Prod",
+			"OrganizationName": "rswp",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/R4/open-Prod",
+			"OrganizationName": "rswp",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/open-Prod",
+			"OrganizationName": "rswp",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/fhir",
 			"OrganizationName": "San Gorgonio Memorial Hospital",
 			"NPIID": ""
@@ -17893,6 +17968,26 @@
 		{
 			"URL": "https://fhir221weba2.rd.allscripts.com/R4/open-SCMSTANDR4",
 			"OrganizationName": "SCMSTANDR4",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "SH0",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "SH0",
 			"NPIID": ""
 		},
 		{

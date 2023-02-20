@@ -58,8 +58,8 @@ func GetEnptsAndSend(
 			}
 		}
 		log.Infof("Waiting %d seconds to start history pruning and json export", len(listOfEndpoints))
-		// Wait half a second for every endpoint to ensure querier is done before starting history pruning and json export
-		time.Sleep(time.Duration(time.Duration(len(listOfEndpoints)/2) * time.Second))
+		// Wait 30 minutes to ensure querier is done before starting history pruning and json export
+		time.Sleep(time.Duration(30) * time.Minute)
 		log.Info("Starting history pruning")
 		historypruning.PruneInfoHistory(ctx, store, true)
 		log.Info("Starting json export")

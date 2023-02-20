@@ -596,6 +596,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.maximeyes.com/api/familyeyecare/R4",
+			"OrganizationName": "Ryan J. Kueker, OD PA",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.maximeyes.com/api/alleyesonrockville/R4",
 			"OrganizationName": "All Eyes on Rockville, LLC",
 			"NPIID": ""
@@ -746,11 +751,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/pec/R4",
-			"OrganizationName": "PACIFIC EYE CLINIC",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/rahimian/R4",
 			"OrganizationName": "Lunette Boston,PC",
 			"NPIID": ""
@@ -778,11 +778,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/cefo/R4",
 			"OrganizationName": "CustomEyes Family Optometry",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/rosseyecare/R4",
-			"OrganizationName": "Ross Eyecare Group, P.C.",
 			"NPIID": ""
 		},
 		{
@@ -838,6 +833,36 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/precisionoptical/R4",
 			"OrganizationName": "Precision Optical",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/columbiafamilyeyecare/R4",
+			"OrganizationName": "Columbia Family Eye Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/optometrygroup/R4",
+			"OrganizationName": "The Optometry Group PLLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/nmkofos/R4",
+			"OrganizationName": "Kofos Family Eye Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/jaykhonda/R4",
+			"OrganizationName": "Jay K. Honda, O.D.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/mec/R4",
+			"OrganizationName": "Thomas W. Meade, O.D. LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/ecavision/R4",
+			"OrganizationName": "Eyecare Associates",
 			"NPIID": ""
 		}
 	]

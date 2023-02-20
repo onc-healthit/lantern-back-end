@@ -116,11 +116,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicsoap.carle.com/FHIR/api/FHIR/DSTU2/",
-			"OrganizationName": "Carle Foundation Hospital \u0026 Physician Group",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.buffalomedicalgroup.com/fhir-arr/api/FHIR/DSTU2/",
 			"OrganizationName": "Buffalo Medical Group",
 			"NPIID": ""
@@ -1196,11 +1191,6 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicproxy.et0905.epichosted.com/FHIRproxy/SEH/api/FHIR/DSTU2/",
-			"OrganizationName": "Southeastern Health",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://stdavidsfhirprd.app.medcity.net/fhir-proxy/api/FHIR/DSTU2/",
 			"OrganizationName": "HCA Central and West Texas",
 			"NPIID": ""
@@ -2221,6 +2211,11 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://epicproxy.et0316.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Carle Foundation Hospital \u0026 Physician Group",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
 			"NPIID": ""
@@ -2371,7 +2366,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://epicsoap.carle.com/FHIR/api/FHIR/R4/",
+			"URL": "https://epicproxy.et0316.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Carle Foundation Hospital \u0026 Physician Group",
 			"NPIID": ""
 		},
@@ -2916,7 +2911,7 @@
 			"NPIID": ""
 		},
 		{
-			"URL": "https://mepic.hackensackumc.net/fhir/api/FHIR/R4/",
+			"URL": "https://mepic.hmhn.org/fhir/api/FHIR/R4/",
 			"OrganizationName": "Hackensack Meridian Health",
 			"NPIID": ""
 		},
@@ -3588,11 +3583,6 @@
 		{
 			"URL": "https://epicproxy.et0905.epichosted.com/FHIRproxy/SCOT/api/FHIR/R4/",
 			"OrganizationName": "Scotland Health Care System",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://epicproxy.et0905.epichosted.com/FHIRproxy/SEH/api/FHIR/R4/",
-			"OrganizationName": "Southeastern Health",
 			"NPIID": ""
 		},
 		{

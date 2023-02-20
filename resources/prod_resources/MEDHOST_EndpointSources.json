@@ -71,6 +71,11 @@
 			"NPIID": "1417064205"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/33867bd3-305b-4425-8350-0e3173266b56",
+			"OrganizationName": "Cedar Park Regional Medical Center",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5b55bbf3-16df-4568-b6d2-21144fc38584",
 			"OrganizationName": "Clark Regional Medical Center",
 			"NPIID": "1811213994"
@@ -84,6 +89,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/12661f92-3d2b-4841-a5d9-af30dd2d12f9",
 			"OrganizationName": "Colorado Plains Medical Center",
 			"NPIID": "1477638971"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/4d7cd9b5-426b-4f4e-8d33-11f74aeff7eb",
+			"OrganizationName": "Crestwood Medical Center",
+			"NPIID": "1023061496"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/2f3a00a3-bdca-4bb7-8bc6-ed2257acbf27",
@@ -101,6 +111,11 @@
 			"NPIID": "1902469653"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/2d1b74f6-5e0d-402b-993f-7f7d33147fff",
+			"OrganizationName": "DeTar Healthcare System",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/fdfc18d3-63a6-4ccd-9842-aaedb6983416",
 			"OrganizationName": "Ennis Regional Medical Center",
 			"NPIID": "1700805678"
@@ -114,6 +129,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/34788ed7-a88d-487a-bcc2-32b1ec67835d",
 			"OrganizationName": "Fannin Regional Hospital",
 			"NPIID": "1851362263"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/c33d2483-2c11-4f6d-a3a4-23b63c39fcfd",
+			"OrganizationName": "Five Rivers Medical Center",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/44739696-2fcf-48b4-a2bc-717f7dfdd774",
@@ -181,6 +201,11 @@
 			"NPIID": "1548284177"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/fa0b0788-745b-4dc9-acbf-26a954662190",
+			"OrganizationName": "Lake Granbury Medical Center",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/15ccfc48-8123-499c-be14-3dda9ff453c2",
 			"OrganizationName": "Larkin Community Hospital",
 			"NPIID": "1952311243"
@@ -201,14 +226,34 @@
 			"NPIID": "1992893416"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/697ce05a-14fb-422b-8a1e-7988118c8f36",
+			"OrganizationName": "Longview Regional Medical Center",
+			"NPIID": "1528026267"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5835d96f-3dd1-4c86-9628-965c32b89fbb",
 			"OrganizationName": "Los Alamos Medical Center",
 			"NPIID": "1285701623"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/31dcedc4-1f21-42f7-a549-c7c3e6431523",
+			"OrganizationName": "Lower Keys Medical Center Medhost",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/beaed8fb-4290-470e-a916-04bc154b59cb",
 			"OrganizationName": "Martin General Hospital",
 			"NPIID": "1851362669"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1865fb26-6d6c-46a2-abef-cf44a959b9bc",
+			"OrganizationName": "Mat-Su Regional Medical Center",
+			"NPIID": "1417975061"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/a2c01818-8974-4e45-b4a1-48f12a4908d2",
+			"OrganizationName": "McCamey Hospital",
+			"NPIID": "1023013935"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/42ccdd6b-a0e5-46c8-8a37-71ed6cb79014",
@@ -231,14 +276,34 @@
 			"NPIID": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1a320220-1d3b-4209-88a4-107b38b21f0a",
+			"OrganizationName": "Medical Center Enterprise",
+			"NPIID": "1720039712"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/facb3d8f-6852-409a-a1db-46cde625b434",
+			"OrganizationName": "Medical Center of South Arkansas",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5346a140-60a9-4f8b-a6dd-53496b0e935f",
 			"OrganizationName": "Mercy Regional Medical Center",
 			"NPIID": "1407947336"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/32b5092f-40b2-465b-a5fc-fb42387f5279",
+			"OrganizationName": "Merit Health Natchez",
+			"NPIID": "1164821559"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/449dbf47-4d2e-4092-a418-0c8abd9a8dc1",
 			"OrganizationName": "Mesa View Regional Hospital",
 			"NPIID": "1275588782"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/9372d935-a8ce-495b-bbed-e139e5c922cf",
+			"OrganizationName": "Mille Lacs Health System",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/ff2ee133-bd54-4d01-98c9-fa5b441b7e13",
@@ -251,14 +316,44 @@
 			"NPIID": "1891873337"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7aa5c907-888a-4a26-a788-557866a3a6ba",
+			"OrganizationName": "Moberly Regional Medical Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/75043803-bb7f-402e-836e-1af427dd8d38",
+			"OrganizationName": "Monroe County Medical Center",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d3d9c822-069e-427b-9c55-d626a7a5dd1d",
 			"OrganizationName": "Mountain West Medical Center",
 			"NPIID": "1124090659"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7ebf128e-74ea-47fd-b43e-48c09f6cfb4c",
+			"OrganizationName": "MountainView Regional Medical Center",
+			"NPIID": "1205882503"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/b5d7e119-25f5-4549-b34f-423b307ce3d1",
+			"OrganizationName": "Navarro Regional Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/8c9be94d-3d31-4ca5-9051-cb0d2002c95e",
+			"OrganizationName": "North Okaloosa Medical Center",
+			"NPIID": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/fde55fa4-eb9d-490e-a851-e7183289b044",
 			"OrganizationName": "North Texas Medical Center",
 			"NPIID": "1972071991"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/b531811c-9423-4f7d-a377-31c603372685",
+			"OrganizationName": "Northeast Regional Medical Center",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/0353e790-399b-4a34-b26a-aaf88db37978",
@@ -269,6 +364,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d191002b-0c8e-4cf4-9961-812ba9c00557",
 			"OrganizationName": "Northern Louisiana Medical Center",
 			"NPIID": "1962024026"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e108d9e2-8802-451c-b874-d1f2187c552f",
+			"OrganizationName": "Northwest Health- Physicians\u0026#39; Speciality Hospital",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/42bff086-54d1-4189-b088-510423a727ff",
@@ -289,6 +389,11 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b0e97807-b27f-4bdb-a798-ff4882ff0587",
 			"OrganizationName": "Parkview Regional Hospital",
 			"NPIID": "1497708929"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0bd07c5d-651a-4595-af5c-d3126066539a",
+			"OrganizationName": "Plateau Medical Center",
+			"NPIID": "1598736159"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d6c5eabb-0579-4a2a-b6b0-15f60c825cf4",
@@ -316,9 +421,19 @@
 			"NPIID": "1245337286"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/870cfbd8-0d45-4180-93e9-6d532ee5690e",
+			"OrganizationName": "Siloam Springs Regional Hospital",
+			"NPIID": "1902051816"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/44b22363-bfae-41e3-b442-7ab703616389",
+			"OrganizationName": "South Baldwin Regional Medical Center",
+			"NPIID": "1053382655"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/777a252c-0352-4dcc-a5ee-d58003af48a1",
 			"OrganizationName": "St. Marks Medical Center",
-			"NPIID": ""
+			"NPIID": "1659362630"
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d255b42f-6d24-4c06-b9cb-4bec724563ac",
@@ -351,9 +466,24 @@
 			"NPIID": "1992856819"
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/8a400a2e-2305-419f-8a58-1ab0f9e9c694",
+			"OrganizationName": "Wayne County Hospital",
+			"NPIID": "1871548016"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1e652adb-d6d8-4094-bdfc-81d32d2a7070",
+			"OrganizationName": "Western Arizona Regional Medical Center",
+			"NPIID": "1255302766"
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/de0b28e5-5f18-46fc-b42e-e599a0198d5a",
 			"OrganizationName": "Winn Parish Medical Center",
 			"NPIID": "1205833241"
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/c70cb6ad-bf68-4054-bdd6-bbf6897f7480",
+			"OrganizationName": "Woodland Heights Medical Center",
+			"NPIID": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/996b0304-e114-49c4-bd1f-4fc323d70cc8",

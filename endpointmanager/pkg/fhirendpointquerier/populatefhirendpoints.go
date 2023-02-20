@@ -102,8 +102,6 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 		NPIIDs:            endpoint.NPIIDs,
 	}
 
-	// @TODO Get Location
-
 	return &dbEntry, nil
 }
 

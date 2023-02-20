@@ -35,7 +35,6 @@ jobs:
           LANTERN_QPASSWORD: capabilityquerier
           LANTERN_QPORT: 5672
           LANTERN_QUERY_NUMWORKERS: 10
-          LANTERN_ENDPTQRY_NUMWORKERS: 10
           LANTERN_CAPQUERY_QRYINTVL: 1380
           LANTERN_TEST_QUSER: capabilityquerier
           LANTERN_TEST_QPASSWORD: capabilityquerier
@@ -73,7 +72,6 @@ jobs:
           LANTERN_QPASSWORD: capabilityquerier
           LANTERN_QPORT: 5672
           LANTERN_QUERY_NUMWORKERS: 10
-          LANTERN_ENDPTQRY_NUMWORKERS: 10
           LANTERN_CAPQUERY_QRYINTVL: 1380
           LANTERN_TEST_QUSER: capabilityquerier
           LANTERN_TEST_QPASSWORD: capabilityquerier
