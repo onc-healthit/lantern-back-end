@@ -885,7 +885,8 @@
 		{
 			"URL": "https://hcchospitalapi.meditech.cloud:443/v2/argonaut/v1",
 			"OrganizationName": "Harrison Cty Comm Hosp MaaS Pod 011 03",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.hmhosp.org:443/v2/argonaut/v1",
@@ -1304,7 +1305,8 @@
 		{
 			"URL": "https://medinahospitalapi.meditech.cloud:443/v2/argonaut/v1",
 			"OrganizationName": "Medina Regional Hospital MaaS Pod 009 02",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.mhcs.us:443/v2/argonaut/v1",
@@ -1423,7 +1425,8 @@
 		{
 			"URL": "https://mcchapi.meditech.cloud:443/v2/argonaut/v1",
 			"OrganizationName": "Morrill County Community Hosp. MaaS Pod 007 09",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.mtgraham.org:443/v2/argonaut/v1",
@@ -3347,7 +3350,8 @@
 		{
 			"URL": "https://hcchospitalapi.meditech.cloud:443/v1/uscore/R4",
 			"OrganizationName": "Harrison Cty Comm Hosp MaaS Pod 011 03",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.hmhosp.org:443/v1/uscore/R4",
@@ -3766,7 +3770,8 @@
 		{
 			"URL": "https://medinahospitalapi.meditech.cloud:443/v1/uscore/R4",
 			"OrganizationName": "Medina Regional Hospital MaaS Pod 009 02",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.mhcs.us:443/v1/uscore/R4",
@@ -3885,7 +3890,8 @@
 		{
 			"URL": "https://mcchapi.meditech.cloud:443/v1/uscore/R4",
 			"OrganizationName": "Morrill County Community Hosp. MaaS Pod 007 09",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.mtgraham.org:443/v1/uscore/R4",

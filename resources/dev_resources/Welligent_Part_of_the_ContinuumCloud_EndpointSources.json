@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://mu3test.welligent.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/dhit/109/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/sevenhillsrhodeislandinc/253/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/executiveofficeofhealth\u0026humanservice/254/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/safealliance/255/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/sevenhillsrhodeislandinc/253/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/executiveofficeofhealth\u0026humanservice/254/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/safealliance/255/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mu3test.welligent.com/fhir/totaleducationsolutions/259/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

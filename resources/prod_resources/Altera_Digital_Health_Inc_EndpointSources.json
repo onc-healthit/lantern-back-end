@@ -3337,7 +3337,7 @@
 		},
 		{
 			"URL": "https://FHIR.reverehealth.com/FHIR",
-			"OrganizationName": "Central Utah Clinic dba Revere Health",
+			"OrganizationName": "Central Utah Clinic dba Revere Health - Prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21189,12 +21189,14 @@
 		{
 			"URL": "https://fhir223web4.rd.allscripts.com/R4/open-Prod",
 			"OrganizationName": "altera",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir223web4.rd.allscripts.com/R4/fhir-Prod",
 			"OrganizationName": "altera",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com//fhir-dbm-dev1",
@@ -21277,12 +21279,14 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10022920",
 			"OrganizationName": "Memorial Healthcare Systems",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10022920",
 			"OrganizationName": "Memorial Healthcare Systems",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/fhir-Prod",
@@ -21479,32 +21483,38 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049550",
 			"OrganizationName": "Rome Orthopaedic Clinic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10049550",
 			"OrganizationName": "Rome Orthopaedic Clinic",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/fhir-Prod",
 			"OrganizationName": "rswp",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/R4/fhir-Prod",
 			"OrganizationName": "rswp",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/R4/open-Prod",
 			"OrganizationName": "rswp",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://SCM22PrdFHIRLB.roswellpark.org/open-Prod",
 			"OrganizationName": "rswp",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/fhir",

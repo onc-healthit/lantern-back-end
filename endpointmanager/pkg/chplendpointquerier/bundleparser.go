@@ -52,7 +52,7 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	}
 
 	for _, bundleEntry := range structBundle.Entries {
-		if bundleEntry.Resource.ResourceType == "Organization" {
+		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
 			addressMapArr := bundleEntry.Resource.Address.([]interface{})
 			for _, address := range addressMapArr {
 				addressMap := address.(map[string]interface{})
@@ -67,14 +67,15 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 	for _, bundleEntry := range structBundle.Entries {
 		var entry LanternEntry
 
-		if bundleEntry.Resource.ResourceType == "Endpoint" {
+		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Endpoint") {
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
 				entry.URL = strings.TrimSpace(entryURL)
-				if bundleEntry.Resource.Name == "" {
-					if bundleEntry.Resource.ManagingOrg.Display == "" {
-
+				if bundleEntry.Resource.ManagingOrg.Display == "" {
+					if bundleEntry.Resource.Name != "" {
+						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
+					} else {
 						orgId := bundleEntry.Resource.ManagingOrg.Reference
 
 						if orgId == "" {
@@ -88,11 +89,9 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 								entry.OrganizationName = strings.TrimSpace(org.Name)
 							}
 						}
-					} else {
-						entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.ManagingOrg.Display)
 					}
 				} else {
-					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.Name)
+					entry.OrganizationName = strings.TrimSpace(bundleEntry.Resource.ManagingOrg.Display)
 				}
 
 				orgZipAdded := false
