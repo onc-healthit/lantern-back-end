@@ -837,7 +837,8 @@ get_endpoint_list_matches <- function() {
           separate_rows(endpoint_names, sep = ";") %>%
           select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
           rename(organization_name = endpoint_names) %>%
-          tidyr::replace_na(list(organization_name = "Unknown"))
+          tidyr::replace_na(list(organization_name = "Unknown")) %>%
+          mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
     el
 }
 
