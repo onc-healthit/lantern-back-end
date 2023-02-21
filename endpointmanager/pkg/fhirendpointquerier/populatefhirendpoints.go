@@ -12,6 +12,7 @@ import (
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"regexp"
 )
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
@@ -42,49 +43,51 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		uri = header + splitEndpoint[len(splitEndpoint)-1]
 		endpoint.FHIRPatientFacingURI = uri
 
-		err := saveEndpointData(ctx, store, &endpoint)
-		if err != nil {
-			log.Warn(err)
-			continue
-		}
-		if firstUpdate.IsZero() {
-			// get time of update for first endpoint
-			fhirURL := endpoint.FHIRPatientFacingURI
-			if fhirURL[len(fhirURL)-1:] != "/" {
-				fhirURL = fhirURL + "/"
-			}
-
-			splitEndpoint := strings.Split(fhirURL, "://")
-			header := "http://"
-
-			if len(splitEndpoint) > 1 {
-				header = strings.ToLower(splitEndpoint[0]) + "://"
-			}
-			fhirURL = header + splitEndpoint[len(splitEndpoint)-1]
-
-			existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
+		if isValidURL(uri) {
+			err := saveEndpointData(ctx, store, &endpoint)
 			if err != nil {
 				log.Warn(err)
 				continue
-			} else {
-				firstUpdate = existingEndpt.UpdatedAt
 			}
-		}
-		if firstUpdateOrg.IsZero() {
-			// get time of update for first endpoint organization
-			fhirURL := endpoint.FHIRPatientFacingURI
-			if fhirURL[len(fhirURL)-1:] != "/" {
-				fhirURL = fhirURL + "/"
-			}
+			if firstUpdate.IsZero() {
+				// get time of update for first endpoint
+				fhirURL := endpoint.FHIRPatientFacingURI
+				if fhirURL[len(fhirURL)-1:] != "/" {
+					fhirURL = fhirURL + "/"
+				}
 
-			existingOrg, err := store.GetFHIREndpointOrganizationByURLandListSource(ctx, fhirURL, endpoint.ListSource)
-			if err == sql.ErrNoRows {
-				continue
-			} else if err != nil {
-				log.Warn(err)
-				continue
-			} else {
-				firstUpdateOrg = existingOrg.UpdatedAt
+				splitEndpoint := strings.Split(fhirURL, "://")
+				header := "http://"
+
+				if len(splitEndpoint) > 1 {
+					header = strings.ToLower(splitEndpoint[0]) + "://"
+				}
+				fhirURL = header + splitEndpoint[len(splitEndpoint)-1]
+
+				existingEndpt, err := store.GetFHIREndpointUsingURLAndListSource(ctx, fhirURL, endpoint.ListSource)
+				if err != nil {
+					log.Warn(err)
+					continue
+				} else {
+					firstUpdate = existingEndpt.UpdatedAt
+				}
+			}
+			if firstUpdateOrg.IsZero() {
+				// get time of update for first endpoint organization
+				fhirURL := endpoint.FHIRPatientFacingURI
+				if fhirURL[len(fhirURL)-1:] != "/" {
+					fhirURL = fhirURL + "/"
+				}
+
+				existingOrg, err := store.GetFHIREndpointOrganizationByURLandListSource(ctx, fhirURL, endpoint.ListSource)
+				if err == sql.ErrNoRows {
+					continue
+				} else if err != nil {
+					log.Warn(err)
+					continue
+				} else {
+					firstUpdateOrg = existingOrg.UpdatedAt
+				}
 			}
 		}
 	}
@@ -216,4 +219,11 @@ func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store
 	log.Infof("Removed %d endpoints organizations from list source %s", len(fhirEndpoints), listSource)
 
 	return nil
+}
+
+func isValidURL(url string) bool {
+	urlregex := regexp.MustCompile(`^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+	urlmatched := urlregex.MatchString(strings.ToLower(url))
+
+	return urlmatched
 }
