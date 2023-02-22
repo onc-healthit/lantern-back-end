@@ -6,7 +6,7 @@ YEAR=$(date +%Y)
 PASTMONTH=$(date -v-1m +%B 2> /dev/null) || PASTMONTH=$(date -d '1 months ago' +%B)
 MONTH=$(date +%B)
 
-if [[ "${PASTMONTH}" -eq "December" ]]
+if [[ "${PASTMONTH}" == "December" ]]
 then
   PASTYEAR=$(date -v-1y +%Y 2> /dev/null) || PASTYEAR=$(date -d '1 years ago' +%Y)
 else
@@ -17,6 +17,7 @@ NPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${MONTH}_${YE
 PASTNPPESFILE="https://download.cms.gov/nppes/NPPES_Data_Dissemination_${PASTMONTH}_${PASTYEAR}.zip"
 
 rm -f endpoint_pfile.csv
+rm -f endpoint_pfile
 rm -f npidata_pfile.csv
 
 echo "Downloading ${MONTH} NPPES Resources..."
@@ -36,11 +37,13 @@ mv npidata_pfile2.csv npidata_pfile.csv
 
 echo "Cutting down rows in npidata_pfile and endpoint_pfile for dev resources..."
 rm -f ../dev_resources/npidata_pfile.csv 
+rm -f ../dev_resources/endpoint_pfile
 rm -f ../dev_resources/endpoint_pfile.csv
 sed '1000,$d' npidata_pfile.csv > ../dev_resources/npidata_pfile.csv 
 sed '1000,$d' endpoint_pfile.csv > ../dev_resources/endpoint_pfile.csv
 
 rm -f endpoint_pfile.csv
+rm -f endpoint_pfile
 rm -f npidata_pfile.csv
 
 echo "done"

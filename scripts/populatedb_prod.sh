@@ -6,7 +6,7 @@ YEAR=$(date +%Y)
 PASTMONTH=$(date -v-1m +%B 2> /dev/null) || PASTMONTH=$(date -d '1 months ago' +%B)
 MONTH=$(date +%B)
 
-if [[ "${PASTMONTH}" -eq "December" ]]
+if [[ "${PASTMONTH}" == "December" ]]
 then
   PASTYEAR=$(date -v-1y +%Y 2> /dev/null) || PASTYEAR=$(date -d '1 years ago' +%Y)
 else
