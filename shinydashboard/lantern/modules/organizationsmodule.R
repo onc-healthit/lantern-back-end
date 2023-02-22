@@ -21,7 +21,8 @@ organizationsmodule_UI <- function(id) {
                             value for matches made using the organization name. In instances where a unique identifier to match an organization to an endpoint is not provided,
                             Lantern uses the organization name which each endpoint list provides, and the primary and
                             secondary organization names provided by the NPPES NPI data set to match npi organizations to endpoints
-                            based on their names and assign a match confidence score. This table shows matches with a match confidence of 97% and up."),
+                            based on their names and assign a match confidence score. If a zipcode is included in the endpoint's endpoint list, it will be used in the matching to
+                            try to increase the confidence of matches that have a confidence of 85% or higher. This table shows matches with a match confidence of 97% and up."),
                         htmlOutput(ns("map_anchor_link")),
                         reactable::reactableOutput(ns("npi_orgs_table")),
                         tagList(

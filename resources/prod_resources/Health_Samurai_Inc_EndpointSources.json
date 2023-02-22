@@ -3,7 +3,8 @@
 		{
 			"URL": "https://cmpl.aidbox.app/smart",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

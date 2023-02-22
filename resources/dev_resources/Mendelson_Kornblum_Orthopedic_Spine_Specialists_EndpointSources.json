@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://qa.mkoss.com/fhir",
+			"OrganizationName": "Mendelson Kornblum Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

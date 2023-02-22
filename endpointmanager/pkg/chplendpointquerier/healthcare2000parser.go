@@ -16,7 +16,7 @@ func HealthCare2000SVParser(CHPLURL string, fileToWriteTo string) {
 
 	csvFilePath := "./MDVitaFHIRUrls.csv"
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
 		log.Fatal(err)
 	}

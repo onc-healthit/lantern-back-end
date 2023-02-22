@@ -3,7 +3,8 @@
 		{
 			"URL": "https://gsehrwebapi.geniussolutions.com/api",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

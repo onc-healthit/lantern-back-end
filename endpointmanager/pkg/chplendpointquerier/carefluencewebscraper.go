@@ -18,13 +18,17 @@ func CarefluenceWebscraper(vendorURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	doc.Find(".page-content").Each(func(index int, mainContent *goquery.Selection) {
-		mainContent.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
-			var entry LanternEntry
+	doc.Find("main").Each(func(index int, mainContent *goquery.Selection) {
+		mainContent.Find("div").Each(func(index int, div1Content *goquery.Selection) {
+			div1Content.Find("div").Each(func(index int, div2Content *goquery.Selection) {
+				div2Content.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
+					var entry LanternEntry
 
-			fhirURL := strings.TrimSpace(phtml.Text())
-			entry.URL = fhirURL
-			lanternEntryList = append(lanternEntryList, entry)
+					fhirURL := strings.TrimSpace(phtml.Text())
+					entry.URL = fhirURL
+					lanternEntryList = append(lanternEntryList, entry)
+				})
+			})
 		})
 	})
 

@@ -293,7 +293,6 @@ func persistProduct(ctx context.Context,
 	existingDbProd, err := store.GetHealthITProductUsingNameAndVersion(ctx, newDbProd.Name, newDbProd.Version)
 
 	newElement := true
-
 	if err == sql.ErrNoRows { // need to add new entry
 		err = store.AddHealthITProduct(ctx, newDbProd)
 		if err != nil {
@@ -356,7 +355,6 @@ func persistProduct(ctx context.Context,
 // - the certification criteria list is the same length but not equal
 // - the two products are not equal but their differences don't fall into the categories noted above.
 func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd *endpointmanager.HealthITProduct) (bool, error) {
-
 	// check if the two are equal.
 	if existingDbProd.Equal(newDbProd) {
 		return false, nil

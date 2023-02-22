@@ -48,11 +48,26 @@ func Test_matchByID(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
+	var epOrganization1 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR",
+		OrganizationNPIID: "1"}
+
+	var epOrganization2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR",
+		OrganizationNPIID: "2"}
+
+	var epOrganization3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR",
+		OrganizationNPIID: "3"}
+
+	var epOrganization4 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR",
+		OrganizationNPIID: "4"}
+
 	var ep = &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR"},
-		NPIIDs:            []string{"1", "2", "3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization1, epOrganization2, epOrganization3},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 
 	ctx := context.Background()
@@ -83,30 +98,32 @@ func Test_matchByID(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// test with single match
-	ep.NPIIDs = []string{"1"}
+	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{epOrganization1}
 	matches, confidences, err = matchByID(ctx, ep, store, false)
 	expected = 1
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org := exactPrimaryNameOrg
 	expectedConf := 1.0
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
+	npiIDsArray := ep.GetNPIIDs()
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, npiIDsArray, expectedConf, confidences[org.NPI_ID]))
 
 	// test with multiple matches
-	ep.NPIIDs = []string{"1", "2", "3", "4"}
+	ep.OrganizationList = []*endpointmanager.FHIREndpointOrganization{epOrganization1, epOrganization2, epOrganization3, epOrganization4}
 	matches, confidences, err = matchByID(ctx, ep, store, false)
 	expected = 3 // no org w id "3"
 	th.Assert(t, err == nil, err)
 	th.Assert(t, len(matches) == expected, fmt.Sprintf("expected %d matches. got %d.", expected, len(matches)))
 	org = exactPrimaryNameOrg
+	npiIDsArray = ep.GetNPIIDs()
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, npiIDsArray, expectedConf, confidences[org.NPI_ID]))
 	org = nonExactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, npiIDsArray, expectedConf, confidences[org.NPI_ID]))
 	org = exactSecondaryNameOrg
 	expectedConf = 1.0
-	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, ep.NPIIDs, expectedConf, confidences[org.NPI_ID]))
+	th.Assert(t, confidences[org.NPI_ID] == expectedConf, fmt.Sprintf("Expected %s to match %v with confidence %f. got %f", org.NPI_ID, npiIDsArray, expectedConf, confidences[org.NPI_ID]))
 }
 
 func Test_addMatch(t *testing.T) {
@@ -114,11 +131,14 @@ func Test_addMatch(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	ctx := context.Background()
+	
+	var epOrganization = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR"}
+
 	ep := &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR"},
-		NPIIDs:            []string{},
+		OrganizationList:  []*endpointmanager.FHIREndpointOrganization{epOrganization},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID := "1"
 	confidence := .6
@@ -158,27 +178,35 @@ func Test_manualLinkerCorrections(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	ctx := context.Background()
+
+	var epOrganization1 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO FOO BAR"}
+
+	var epOrganization2 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "FOO BAR BAR"}
+
+	var epOrganization3 = &endpointmanager.FHIREndpointOrganization{
+		OrganizationName: "BAR BAR FOO",
+		OrganizationNPIID: "3"}
+	
 	ep1 := &endpointmanager.FHIREndpoint{
 		ID:                1,
 		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO FOO BAR"},
-		NPIIDs:            []string{},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization1},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID1 := "1"
 	confidence1 := .6
 	ep2 := &endpointmanager.FHIREndpoint{
 		ID:                2,
 		URL:               "example2.com/FHIR/DSTU2",
-		OrganizationNames: []string{"FOO BAR BAR"},
-		NPIIDs:            []string{},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization2},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID2 := "2"
 	confidence2 := .8
 	ep3 := &endpointmanager.FHIREndpoint{
 		ID:                3,
 		URL:               "example3.com/FHIR/DSTU2",
-		OrganizationNames: []string{"BAR BAR FOO"},
-		NPIIDs:            []string{"3"},
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization3},
 		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
 	npiID3 := "3"
 	confidence3 := .5
@@ -259,10 +287,12 @@ func Test_manualLinkerCorrections(t *testing.T) {
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep2.URL)
 	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blocklist file")
-
+	
 	endpoint3, err := store.GetFHIREndpoint(ctx, ep3.ID)
-	th.Assert(t, helpers.StringArraysEqual(endpoint3.OrganizationNames, []string{"FOO BAR FOO", "FOO BAZ BAR"}), "Expected endpoint 3 to have Organization Name FOO BAR FOO and FOO BAZ BAR")
-	th.Assert(t, helpers.StringArraysEqual(endpoint3.NPIIDs, []string{"1", "2"}), "Expected endpoint 3 to have NPI IDs 1 and 2")
+	npiIDsArray := endpoint3.GetNPIIDs()
+	organizationNamesArray := endpoint3.GetOrganizationNames()
+	th.Assert(t, helpers.StringArraysEqual(organizationNamesArray, []string{"FOO BAR FOO", "FOO BAZ BAR"}), fmt.Sprintf("Expected endpoint 3 to have Organization Name FOO BAR FOO and FOO BAZ BAR. Actual: %v", organizationNamesArray))
+	th.Assert(t, helpers.StringArraysEqual(npiIDsArray, []string{"1", "2"}), "Expected endpoint 3 to have NPI IDs 1 and 2")
 }
 
 func setup() error {

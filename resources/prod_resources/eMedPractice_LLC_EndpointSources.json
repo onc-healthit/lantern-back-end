@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://servicebackup.emedpractice.com:8443/",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

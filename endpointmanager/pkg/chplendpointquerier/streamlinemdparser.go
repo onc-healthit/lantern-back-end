@@ -17,7 +17,7 @@ func StreamlineMDCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	csvFilePath := "./Practice_Service_based_URL_List.csv"
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
 		log.Fatal(err)
 	}

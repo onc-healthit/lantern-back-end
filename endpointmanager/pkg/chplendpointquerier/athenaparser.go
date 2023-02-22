@@ -17,7 +17,7 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	csvFilePath := "./athenanet-fhir-base-urls.csv"
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
 		log.Fatal(err)
 	}

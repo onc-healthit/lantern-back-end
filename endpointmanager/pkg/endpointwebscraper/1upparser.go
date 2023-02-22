@@ -5,9 +5,10 @@ import (
 
 	"encoding/json"
 
+	"strings"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
@@ -47,6 +48,20 @@ func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
 		developerName, ok := oneUpEntry["name"].(string)
 		if ok {
 			entry.OrganizationName = strings.TrimSpace(developerName)
+		}
+
+		locationArr, ok := oneUpEntry["locations"].([]interface{})
+		if ok && len(locationArr) > 0 {
+			locationObj, ok := locationArr[0].(map[string]interface{})
+			if ok {
+				addressObj, ok := locationObj["address"].(map[string]interface{})
+				if ok {
+					postalCode, ok := addressObj["postalCode"].(string)
+					if ok {
+						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
+					}
+				}
+			}
 		}
 
 		lanternEntryList = append(lanternEntryList, entry)

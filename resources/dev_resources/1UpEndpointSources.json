@@ -3,52 +3,62 @@
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/EHEDBD",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "02114"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/BJFJAD",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "02114"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/FIFEAA",
 			"OrganizationName": "139 Medical Group",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "10031"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/FEIJCA",
 			"OrganizationName": "1Foot 2Foot Centre for Foot and Ankle Care",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "23434"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/JDFHBD",
 			"OrganizationName": "1 The Doctor Is At Your Door AUSTIN TX",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "78745"
 		},
 		{
 			"URL": "https://api.1updemohealthplans.com/r4",
 			"OrganizationName": "1up Demo Health Plan",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.1uphealthdemo.com/r4",
 			"OrganizationName": "1upHealth Demo",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/JACADA",
 			"OrganizationName": "20/20 Eye Specialists",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "46404"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/AGEGBD",
 			"OrganizationName": "21st Century Oncology Broward Urology MIRAMAR FL",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "33028"
 		},
 		{
 			"URL": "https://fhir.healow.com/FHIRServer/fhir/HCBBCA",
 			"OrganizationName": "24/7 Heart and Vascular Specialists",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": "08540"
 		}
 	]
 }

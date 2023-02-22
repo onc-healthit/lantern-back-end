@@ -1,13 +1,9 @@
 package endpointmanager
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-
 	_ "github.com/lib/pq"
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 )
 
 func Test_FHIREndpoinNormalizeEndpointURL(t *testing.T) {
@@ -112,18 +108,33 @@ func Test_NormalizeVersionsURLL(t *testing.T) {
 
 func Test_FHIREndpointEqual(t *testing.T) {
 	// endpoints
+
+	var epOrg1 = &FHIREndpointOrganization{
+		OrganizationName:  "Example Org 1",
+		OrganizationNPIID: "1"}
+
+	var epOrg2 = &FHIREndpointOrganization{
+		OrganizationName:  "Example Org 2",
+		OrganizationNPIID: "2"}
+
+	var epOrg3 = &FHIREndpointOrganization{
+		OrganizationName:  "Example Org 1",
+		OrganizationNPIID: "1"}
+
+	var epOrg4 = &FHIREndpointOrganization{
+		OrganizationName:  "Example Org 2",
+		OrganizationNPIID: "2"}
+
 	var endpoint1 = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
-		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
+		OrganizationList: []*FHIREndpointOrganization{epOrg1, epOrg2},
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	var endpoint2 = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Org 1", "Example Org 2"},
-		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
+		OrganizationList: []*FHIREndpointOrganization{epOrg3, epOrg4},
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Expected endpoint1 to equal endpoint2. They are not equal.")
@@ -141,17 +152,44 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	}
 	endpoint2.URL = endpoint1.URL
 
-	endpoint2.OrganizationNames = []string{"Other 1"}
+	orgName := endpoint2.OrganizationList[0].OrganizationName
+
+	endpoint2.OrganizationList[0].OrganizationName = "Other 1"
 	if endpoint1.Equal(endpoint2) {
 		t.Error("Did not expect endpoint1 to equal endpoint 2. OrganizationNames should be different.")
 	}
-	endpoint2.OrganizationNames = endpoint1.OrganizationNames
+	// Since organization list is sorted by Organization name alphabetically in Equals function, the organization whose name was changed to "Other 1" has now been moved to index 1. Change back to "Example Org 1"
+	endpoint2.OrganizationList[1].OrganizationName = orgName
 
-	endpoint2.NPIIDs = []string{"Other 1"}
+	// "Example Org 1" organization is now at index 1 from above
+	orgNPIID := endpoint2.OrganizationList[1].OrganizationNPIID
+	endpoint2.OrganizationList[1].OrganizationNPIID = "Other 1"
 	if endpoint1.Equal(endpoint2) {
 		t.Error("Did not expect endpoint1 to equal endpoint 2. NPIIDs should be different.")
 	}
-	endpoint2.NPIIDs = endpoint1.NPIIDs
+
+	// Since organization list is sorted by Organization name alphabetically in Equals function, the organization whose name was changed back to to "Example Org 1" has now been moved back to index 0
+	endpoint2.OrganizationList[0].OrganizationNPIID = orgNPIID
+
+	organization2 := endpoint2.OrganizationList[1]
+	endpoint2.OrganizationList[1] = endpoint2.OrganizationList[0]
+	endpoint2.OrganizationList[0] = organization2
+	if !endpoint1.Equal(endpoint2) {
+		t.Error("Expect endpoint 1 to equal endpoint 2. Order of organizations list should not matter.")
+	}
+	organization2 = endpoint2.OrganizationList[1]
+	endpoint2.OrganizationList[1] = endpoint2.OrganizationList[0]
+	endpoint2.OrganizationList[0] = organization2
+
+	var epOrgExtra = &FHIREndpointOrganization{
+		OrganizationName:  "Extra Org",
+		OrganizationNPIID: "5"}
+
+	endpoint2.OrganizationList = append(endpoint2.OrganizationList, epOrgExtra)
+	if endpoint1.Equal(endpoint2) {
+		t.Error("Did not expect endpoint1 to equal endpoint 2. Endpoint 2 has an extra organization in it's list")
+	}
+	endpoint2.OrganizationList = endpoint2.OrganizationList[:len(endpoint2.OrganizationList)-1]
 
 	endpoint2.ListSource = "other"
 	if endpoint1.Equal(endpoint2) {
@@ -174,64 +212,4 @@ func Test_FHIREndpointEqual(t *testing.T) {
 	if !endpoint1.Equal(endpoint2) {
 		t.Errorf("Nil endpoint 1 should equal nil endpoint 2.")
 	}
-}
-
-func Test_AddOrganizationName(t *testing.T) {
-	var endpoint = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{},
-		NPIIDs:            []string{"1", "2", "3"},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
-
-	var orgName string
-	var expected []string
-
-	// test with empty org names list
-	orgName = "Example Org Name 1"
-	expected = []string{"Example Org Name 1"}
-	endpoint.AddOrganizationName(orgName)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
-
-	// test with non-empty org names list
-	orgName = "Example Org Name 2"
-	expected = []string{"Example Org Name 2", "Example Org Name 1"}
-	endpoint.AddOrganizationName(orgName)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
-
-	// test with org name that's already in list
-	orgName = "Example Org Name 2"
-	expected = []string{"Example Org Name 2", "Example Org Name 1"}
-	endpoint.AddOrganizationName(orgName)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.OrganizationNames, expected), fmt.Sprintf("expected %v to equal %v", endpoint.OrganizationNames, expected))
-}
-
-func Test_AddNPIID(t *testing.T) {
-	var endpoint = &FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
-		OrganizationNames: []string{"Example Org Name 1", "Example Org Name 2"},
-		NPIIDs:            []string{},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
-
-	var npiID string
-	var expected []string
-
-	// test with empty npi ids list
-	npiID = "1"
-	expected = []string{"1"}
-	endpoint.AddNPIID(npiID)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
-
-	// test with non-empty npi ids list
-	npiID = "2"
-	expected = []string{"2", "1"}
-	endpoint.AddNPIID(npiID)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
-
-	// test with npi id that's already in list
-	npiID = "2"
-	expected = []string{"2", "1"}
-	endpoint.AddNPIID(npiID)
-	th.Assert(t, helpers.StringArraysEqual(endpoint.NPIIDs, expected), fmt.Sprintf("expected %v to equal %v", endpoint.NPIIDs, expected))
 }

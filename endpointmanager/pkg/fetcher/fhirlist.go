@@ -27,24 +27,16 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string
 	var innerList []EndpointEntry
 
 	for entry := range fhirList {
-		fhirEntry := EndpointEntry{}
-		if listURL != "" {
-			fhirEntry.ListSource = listURL
-		} else if source != "" {
-			fhirEntry.ListSource = source
-		} else {
-			fhirEntry.ListSource = "FHIR"
-		}
+		var organizationNames []string
 
 		resource, ok := fhirList[entry]["resource"].(map[string]interface{})
 		if ok {
 			uri, uriOk := resource["address"].(string)
 			if uriOk {
-				fhirEntry.FHIRPatientFacingURI = uri
 
 				nameEndpt, nameOk := resource["name"].(string)
 				if nameOk {
-					fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, nameEndpt)
+					organizationNames = append(organizationNames, nameEndpt)
 				}
 
 				// Save both name & managing organization in the array since both could be used
@@ -53,8 +45,8 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string
 				if orgOk {
 					orgName, orgOk := managingOrg["display"].(string)
 					if orgOk {
-						if !helpers.StringArrayContains(fhirEntry.OrganizationNames, orgName) {
-							fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, orgName)
+						if !helpers.StringArrayContains(organizationNames, orgName) {
+							organizationNames = append(organizationNames, orgName)
 						}
 					}
 					orgReference, orgOk := managingOrg["reference"].(string)
@@ -69,8 +61,8 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string
 									if orgOk && entryID == orgReference {
 										entryName, orgOk := resource["name"].(string)
 										if orgOk {
-											if !helpers.StringArrayContains(fhirEntry.OrganizationNames, entryName) {
-												fhirEntry.OrganizationNames = append(fhirEntry.OrganizationNames, entryName)
+											if !helpers.StringArrayContains(organizationNames, entryName) {
+												organizationNames = append(organizationNames, entryName)
 											}
 										}
 									}
@@ -79,10 +71,26 @@ func (fl FHIRList) GetEndpoints(fhirList []map[string]interface{}, source string
 						}
 					}
 				}
-				if fhirEntry.OrganizationNames == nil {
+				if len(organizationNames) == 0 {
 					log.Warnf("No associated organization name for the URL %s.", uri)
+				} else {
+					for _, orgName := range organizationNames {
+						fhirEntry := EndpointEntry{}
+
+						if listURL != "" {
+							fhirEntry.ListSource = listURL
+						} else if source != "" {
+							fhirEntry.ListSource = source
+						} else {
+							fhirEntry.ListSource = "FHIR"
+						}
+
+						fhirEntry.FHIRPatientFacingURI = uri
+						fhirEntry.OrganizationName = orgName
+
+						innerList = append(innerList, fhirEntry)
+					}
 				}
-				innerList = append(innerList, fhirEntry)
 			} else {
 				log.Warnf("No address field in the resource. Ignoring resource.")
 			}
