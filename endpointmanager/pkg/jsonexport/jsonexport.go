@@ -66,7 +66,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 
 func createJSON(ctx context.Context, store *postgresql.Store, exportType string) ([]byte, error) {
 	// Get everything from the fhir_endpoints_info table
-	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export;"
+	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export WHERE info_created IS NOT NULL;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)

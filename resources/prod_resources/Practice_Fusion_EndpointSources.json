@@ -1585,18 +1585,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
-			"OrganizationName": "Doctors Center Family and Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
-			"OrganizationName": "Doctors Center Family and Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
 			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
 			"NPIID": "",
@@ -1605,6 +1593,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
 			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
+			"OrganizationName": "Doctors Center Family and Urgent Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
+			"OrganizationName": "Doctors Center Family and Urgent Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

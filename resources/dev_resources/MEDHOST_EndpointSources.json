@@ -7,6 +7,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e0ca59d7-14ad-4f50-b84d-217ff7cce107",
+			"OrganizationName": "Alliance Health Woodward",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8e208ec0-3c40-457e-92b1-d5bc8bed18c3",
 			"OrganizationName": "Alta Vista Regional Hospital",
 			"NPIID": "1396716643",
@@ -52,12 +58,6 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/335fe9bc-b535-4176-acab-c24323a763fc",
 			"OrganizationName": "Big Bend Regional Medical Center",
 			"NPIID": "1356312243",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/6b5ca572-e891-4104-8fb9-743bf456966e",
-			"OrganizationName": "Bluegrass Community Hospital",
-			"NPIID": "1588745012",
 			"OrganizationZipCode": ""
 		}
 	]

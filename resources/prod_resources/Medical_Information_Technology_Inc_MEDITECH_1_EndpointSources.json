@@ -1681,11 +1681,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://pchneapi.meditech.cloud:443/v2/argonaut/v1",
-			"OrganizationName": "Pender Community Hospital MaaS Pod 011 04",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://mtrestapis-live01.jcblair.org:443/v2/argonaut/v1",
 			"OrganizationName": "Penn Highlands Huntingdon Hospital (Hosted by OpSus)",
 			"NPIID": "",
@@ -4144,11 +4139,6 @@
 			"OrganizationName": "Pender Community Hospital MaaS Pod 011 04",
 			"NPIID": "",
 			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://pchneapi.meditech.cloud:443/v1/uscore/R4",
-			"OrganizationName": "Pender Community Hospital MaaS Pod 011 04",
-			"NPIID": ""
 		},
 		{
 			"URL": "https://mtrestapis-live01.jcblair.org:443/v1/uscore/R4",

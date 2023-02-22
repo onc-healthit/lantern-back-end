@@ -25,12 +25,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://holdregefamilyvisionclinicpcne.ficintegrations.com/API/1ejsjU/R4",
-			"OrganizationName": "Holdrege Family Vision Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://richardjkuekerodpaks.ficintegrations.com:441/API/BhKl7p/R4",
 			"OrganizationName": "Richard J. Kueker, O.D. , PA",
 			"NPIID": "",
@@ -877,6 +871,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.maximeyes.com/api/brookingsvision/R4",
+			"OrganizationName": "Brookings Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.maximeyes.com/api/yanceyeyecenter/R4",
 			"OrganizationName": "Ronald B. Yancey PC",
 			"NPIID": "",
@@ -933,12 +933,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/cefo/R4",
 			"OrganizationName": "CustomEyes Family Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/7lakeseyecare/R4",
-			"OrganizationName": "Seven Lakes Eye Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1021,12 +1015,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/jaykhonda/R4",
-			"OrganizationName": "Jay K. Honda, O.D.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/mec/R4",
 			"OrganizationName": "Thomas W. Meade, O.D. LLC",
 			"NPIID": "",
@@ -1035,6 +1023,60 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/ecavision/R4",
 			"OrganizationName": "Eyecare Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eastgateoptical/R4",
+			"OrganizationName": "Eyecare Associates of Eastgate, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drscottsylvia/R4",
+			"OrganizationName": "Dr. Scott  W. Sylvia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/holdregevision/R4",
+			"OrganizationName": "Holdrege Family Vision Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/diamondkeye/R4",
+			"OrganizationName": "Diamond K Eyecare Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/kingseyecare/R4",
+			"OrganizationName": "Dr. Gary E. King Optometrist PSC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/sjohnson/R4",
+			"OrganizationName": "Scott Johnson, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/nora/R4",
+			"OrganizationName": "Family Eyecare \u0026 Contact Lens Center, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/arlingtonvisioncare/R4",
+			"OrganizationName": "Arlington Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/bodenhamereyeconsultants/R4",
+			"OrganizationName": "Bodenhamer Eye Consultants, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

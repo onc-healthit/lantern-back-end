@@ -7,6 +7,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e0ca59d7-14ad-4f50-b84d-217ff7cce107",
+			"OrganizationName": "Alliance Health Woodward",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8e208ec0-3c40-457e-92b1-d5bc8bed18c3",
 			"OrganizationName": "Alta Vista Regional Hospital",
 			"NPIID": "1396716643",

@@ -1148,8 +1148,8 @@
 	{
 		"FormatType": "Lantern",
 		"URL": "https://pcbapps.com/wp-content/uploads/2022/11/fhir-base-urls.csv",
-		"EndpointName": "PCB APPS",
-		"FileName": "PCB_APPS_EndpointSources.json"
+		"EndpointName": "Perk Medical Systems LLC (PCB Apps LLC)",
+		"FileName": "Perk_Medical_Systems_LLC_PCB_Apps_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

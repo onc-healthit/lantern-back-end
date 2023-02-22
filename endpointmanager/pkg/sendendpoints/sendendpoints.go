@@ -57,7 +57,7 @@ func GetEnptsAndSend(
 				errs <- err
 			}
 		}
-		log.Infof("Waiting %d seconds to start history pruning and json export", len(listOfEndpoints))
+		log.Info("Waiting 30 minutes to start history pruning and json export")
 		// Wait 30 minutes to ensure querier is done before starting history pruning and json export
 		time.Sleep(time.Duration(30) * time.Minute)
 		log.Info("Starting history pruning")

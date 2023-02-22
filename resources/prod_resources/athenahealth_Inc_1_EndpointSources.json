@@ -61,11 +61,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://nfsmserver.nflortho.com:9443/centricitypsAPIServer/fhir/r4",
-			"OrganizationName": "North Florida Sports Medicine \u0026 Orthopedic Center",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://bustleton.vowaz.com:9443/bustletonAPIServer/fhir/r4",
 			"OrganizationName": "Bustleton Gastroenterology",
 			"NPIID": "",

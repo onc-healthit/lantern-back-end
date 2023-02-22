@@ -4321,6 +4321,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.slhn.org/fhir/api/FHIR/R4/",
+			"OrganizationName": "St. Luke's University Health Network",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://phsfhir.primehealthcare.com/PHS-PRD-FHIR/api/FHIR/R4/",
 			"OrganizationName": "Prime Healthcare",
 			"NPIID": "",

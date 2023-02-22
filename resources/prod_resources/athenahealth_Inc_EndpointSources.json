@@ -6524,6 +6524,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "DALLAS ENDOVASCULAR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Texas Endovascular Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31454,7 +31460,19 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "North Hollywood PACE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Pacific PACE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Rosemead PACE",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51170,6 +51188,18 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Spine and Joint Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Sports, Pain, and Regenerative Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - Mountain Lakes Medical Center, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -57020,7 +57050,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - Integrated GI Health Partners, PLLC",
+			"OrganizationName": "NY - Integrated Digestive Partners, PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -69374,7 +69404,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NE - Joshua Medical Centers",
+			"OrganizationName": "Joshua Medical Centers",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -77414,6 +77444,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NY - HeartWell Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MedExpress Primary Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -77900,6 +77936,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "GA - Lanier Foot and Ankle, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - Dr. Lawrence E McGinness,DPM",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -78039,6 +78081,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Greenbrier Valley Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Oak Hill Corp",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

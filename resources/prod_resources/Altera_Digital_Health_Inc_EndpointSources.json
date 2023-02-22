@@ -2413,11 +2413,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033008",
-			"OrganizationName": "Branko Banar",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10008998",
 			"OrganizationName": "Breast Care Specialists, LLC",
 			"NPIID": "",
@@ -16704,31 +16699,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/fhir",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/open",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/fhir-Prod",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/76838B",
 			"OrganizationName": "Shady Grove Pediatrics",
 			"NPIID": "",
@@ -17750,7 +17720,7 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10006393",
-			"OrganizationName": "Steven C Thomas MD",
+			"OrganizationName": "Steven C. Thomas, M.D.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -19723,7 +19693,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
+			"URL": "https://twr10devweb2.rd.allscripts.com/R4/fhir-R4TWStandalone",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -21289,6 +21259,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10036564",
+			"OrganizationName": "Neuro-Science \u0026 Spine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10036564",
+			"OrganizationName": "Neuro-Science \u0026 Spine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/fhir-Prod",
 			"OrganizationName": "ns0",
 			"NPIID": "",
@@ -21429,6 +21411,18 @@
 		{
 			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/open",
 			"OrganizationName": "PV0",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/R4Prod",
+			"OrganizationName": "R4Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/R4Prod",
+			"OrganizationName": "R4Prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21619,26 +21613,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/fhir-Prod",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/open-Prod",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
-			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
-			"OrganizationName": "SH0",
-			"NPIID": ""
-		},
-		{
 			"URL": "https://fhir.ep0.hos.allscriptscloud.com/Open",
 			"OrganizationName": "Sheppard Pratt Health System",
 			"NPIID": "",
@@ -21665,6 +21639,18 @@
 		{
 			"URL": "https://fhirprod184.sheppardpratt.org/FHIR",
 			"OrganizationName": "Sheppard Pratt Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035990",
+			"OrganizationName": "Tandigm Physician Services LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10035990",
+			"OrganizationName": "Tandigm Physician Services LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21808,12 +21794,6 @@
 		},
 		{
 			"URL": "https://twr10devweb2.rd.allscripts.com/open",
-			"OrganizationName": "TW-Prod-R2",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://twr10devweb2.rd.allscripts.com/FHIR",
 			"OrganizationName": "TW-Prod-R2",
 			"NPIID": "",
 			"OrganizationZipCode": ""
