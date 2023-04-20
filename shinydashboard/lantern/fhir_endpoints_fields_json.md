@@ -20,7 +20,7 @@ The operation field is an array where an element is an instance of the informati
 * **http_response_time_second:** HTTP response time of the endpoint  
 * **errors:** Errors receieved from querying the endpoint  
 * **fhir_version:** FHIR version that is pulled from the endpoint's capability statement  
-* **tls_verison:** Transport Layer Security (TLS) version of the endpoint  
+* **tls_version:** Transport Layer Security (TLS) version of the endpoint  
 * **mime_types:** MIME types supported by this endpoint  
 * **updated:** Timestamp of when this endpoint record was updated  
 * **supported_resources:** All of the FHIR resources this endpoint supports  
