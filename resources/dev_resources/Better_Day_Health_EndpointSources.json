@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://prod.betterdayhealth.net/BetterDayFHIR",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}

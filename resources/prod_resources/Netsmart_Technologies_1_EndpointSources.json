@@ -1,0 +1,549 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Apache Behavioral Health Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Arcadia",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Bedford Somerset, DBHS",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Big Bend Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Blossom Ridge Home Health Agency, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "California Hospice Network",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Campbell County Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Capital Caring",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Care Dimensions",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Care Hospice Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "CATCH, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "CATHOLIC HOSPICE INC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Central Coast Visiting Nurse Association",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Columbus Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Comfort Bridge",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Cornerstone Hospice and Palliative Care, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Covenant Hospice Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Cumberland Riv Comprehensive Care Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Delaware Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Eastern Maine Healthcare system",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Embracing Hospice Care of NJ",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Empath Home Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Everystep",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Family and Children's Services of Central Maryland",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Franklin County Home Health Agency",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Good Samaritan Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Grand Traverse Pavilions",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Gulfside Hospice \u0026 Pasco Palliative Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Helio Health, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hinds Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "HOFTH_CA:PROD",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hope Health \u0026 Palliative Care RI",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hope Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "HopeHealth",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hopewest",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice \u0026 Palliative Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Brazos Valley",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Care In The Berkshires",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Baton Rouge",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Of Chesapeake",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Of Dayton Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Henderson d/b/a Four Seasons",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Huntington",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Lenawee",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Michigan INC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Of Northwest Ohio",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Santa Cruz County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "HOSPICE OF THE CAROLINA FOOTHILLS, INC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of the East Bay",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of the Piedmont",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of the West",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Volusia/Flagler",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice of Wake County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hospice Of Washington County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "HospiceServe, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Houston Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Hudson Valley Hospice, Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "HumanGood",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Indiana University Health, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Interim Healthcare Of Greenville",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Jefferson Center for Mental Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "JourneyCare, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Life Care Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Lower Cape Fear Hospice And Life Care Center",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Lutheran Homes of South Carolina",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Lutheran Social Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Mental Health Center of Denver",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "MHMR of Tarrant County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Midland Care Connection Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Montgomery Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Moorings Park Institute, Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "MorseLife Health System",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Mountain States Health Alliance",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Nathan Adelson Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "National Hospice Management",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Navajo Nation Department of Behavioral Health Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "North Central Florida Hospice, Inc. d/b/a Haven",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "North Country Home Health \u0026 Hospice Agency",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "North Dakota Veterans Home",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "NYFoundling",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Opus Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Personal Touch Homecare INC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Peterson Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Samaritan Health and Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Santa Clara County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "SCO Family of Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Senior Options, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Snowline Hospice/El Dorado County",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "State of the Heart Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Stella Maris, Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "SummitStone Health Partners",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Tennessee - Dept of Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "The Cleveland Clinic Foundation",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "The Elizabeth Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "The New Jewish Home",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "The Regents of the University of Colorado (Addiction Research",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Tidewell Hospice Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Treasure Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "United Healthcare Nevada",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "United Methodist Homes of New Jersey",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "VANTAGE HOSPICE",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Virginia Health Services, Inc.",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Visiting Nurse and Hospice Care",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Visiting Nurse Hope Health",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "VNA of Texas",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Volunteers of America Northern Rockies",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Wesley Community Care Center, Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Westbrook Health Services, Inc",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Wilshire Health and Community Services",
+			"NPIID": ""
+		}
+	]
+}

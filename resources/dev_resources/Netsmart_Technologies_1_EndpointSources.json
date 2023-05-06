@@ -1,0 +1,54 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Apache Behavioral Health Services",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Arcadia",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Bedford Somerset, DBHS",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Big Bend Hospice",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Blossom Ridge Home Health Agency, LLC",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "California Hospice Network",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Campbell County Memorial Hospital",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Capital Caring",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Care Dimensions",
+			"NPIID": ""
+		},
+		{
+			"URL": "https://fhir.netsmartcloud.com/uscore/v1",
+			"OrganizationName": "Care Hospice Inc",
+			"NPIID": ""
+		}
+	]
+}

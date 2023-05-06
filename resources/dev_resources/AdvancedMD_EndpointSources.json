@@ -1,0 +1,9 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://providerapi.advancedmd.com/v1/r4",
+			"OrganizationName": "",
+			"NPIID": ""
+		}
+	]
+}
