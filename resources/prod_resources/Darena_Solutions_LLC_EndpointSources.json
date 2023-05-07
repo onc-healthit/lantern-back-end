@@ -4075,12 +4075,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/paydc_5331",
-			"OrganizationName": "Forbes Family Chiropractic, PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.meldrx.com/fhir/paydc_5336",
 			"OrganizationName": "Ellis Health Center, Inc.",
 			"NPIID": "",
@@ -12123,6 +12117,504 @@
 		{
 			"URL": "https://api.meldrx.com/fhir/pimsy-testnew",
 			"OrganizationName": "PIMSY Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/advancedeye",
+			"OrganizationName": "AdvancedEye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/arizonaeye",
+			"OrganizationName": "ArizonaEye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/associatedeyecare",
+			"OrganizationName": "Associated Eye-care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/athwaleye",
+			"OrganizationName": "AthwalEye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/austineye",
+			"OrganizationName": "Austin Eye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/azareye",
+			"OrganizationName": "Azar",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/cartereyecenter",
+			"OrganizationName": "CarterEye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/californiaeyeprofessionals",
+			"OrganizationName": "California Eye Professionals (CEP)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/chesterroe",
+			"OrganizationName": "ChesterROE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/childrenseye",
+			"OrganizationName": "ChildrensEye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/creeksidevision",
+			"OrganizationName": "Creekside Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/hartmaneyegroup",
+			"OrganizationName": "Hartman Eye Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/regionaleyeassociates",
+			"OrganizationName": "Regional Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecnj",
+			"OrganizationName": "OPTOMETRIC PHYSICIANS OF MIDDLETOWN PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecga",
+			"OrganizationName": "CLARKSON OPTOMETRY GEORGIA INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_eca",
+			"OrganizationName": "EYECARE ASSOCIATES, INC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecva",
+			"OrganizationName": "MAY \u0026 HETTLER, O.D., PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecfl",
+			"OrganizationName": "SIGHT AND SUN EYEWORKS LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecoh",
+			"OrganizationName": "CLARKSON OPTOMETRY MIDWEST INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecmo",
+			"OrganizationName": "CLARKSON OPTOMETRY INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecmi",
+			"OrganizationName": "BENNETT OPTOMETRY LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecil",
+			"OrganizationName": "CLARKSON OPTOMETRY ILLINOIS, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecks",
+			"OrganizationName": "DRS PRICE YOUNG ODLE \u0026 HORSCH PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_ecc",
+			"OrganizationName": "EYECARECENTER OD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cectx",
+			"OrganizationName": "FRISCO EYE ASSOCIATES",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ecp_cecaz",
+			"OrganizationName": "ADVANCED EYECARE AND VISION THERAPY INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/patientfirst",
+			"OrganizationName": "PatientFirst",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_capitaleye",
+			"OrganizationName": "Capital Eye Consultants, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_maxvision",
+			"OrganizationName": "Max Vision PLLC dba Eye Physicians of Lakewood",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_arkansasoutpatient",
+			"OrganizationName": "Arkansas Outpatient-Eye-SurgeryCenter",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_cfe",
+			"OrganizationName": "Central Florida Eye Specialists and Laser Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_clariseye",
+			"OrganizationName": "Claris Eye Care \u0026 Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_dedhameye",
+			"OrganizationName": "Dedham Ophthalmic Consultants \u0026 Surgeons",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_eyephysicianslancaster",
+			"OrganizationName": "Eye Physicians of Lancaster",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_fairview",
+			"OrganizationName": "Fairview Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_familyeyemedical",
+			"OrganizationName": "Family Medical Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_samo",
+			"OrganizationName": "Santa Monica Eye Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_seaside",
+			"OrganizationName": "Seaside Ophthalmology, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_shabatian",
+			"OrganizationName": "Ventura Institute of Ophthalmology Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_theeyecenter",
+			"OrganizationName": "The Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_tylock",
+			"OrganizationName": "Tylock-George Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_vces",
+			"OrganizationName": "Virginia Center for Eye Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/experity-drx0115",
+			"OrganizationName": "AFC Hollywood, FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/uc05455_yakimaurologyassoc",
+			"OrganizationName": "Yakima Urology at Memorial Tr",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_silverman",
+			"OrganizationName": "Silverman Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_surgicalcarecenter",
+			"OrganizationName": "Surgical Care Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_vghwhitingclinic",
+			"OrganizationName": "Whiting Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_associatesinophthalmology",
+			"OrganizationName": "Associates In Ophthalmology - MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_fishman",
+			"OrganizationName": "Fishman \u0026 Sheridan Eyecare Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_henry",
+			"OrganizationName": "Henry Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_keystone",
+			"OrganizationName": "Keystone Eye Associates, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_kirkeye",
+			"OrganizationName": "Kirk Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_lifestyle",
+			"OrganizationName": "Lifestyle Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_dso",
+			"OrganizationName": "Heart of Texas Eye Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_lvivi",
+			"OrganizationName": "Laser Vision Institute of the Virgin Islands",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_manahan",
+			"OrganizationName": "Manahan Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_mcdonaldeye",
+			"OrganizationName": "Mcdonald Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_millmanderr",
+			"OrganizationName": "Millman-Derr Center for Eye Care, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_miramar",
+			"OrganizationName": "Miramar Eye Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_visionfirst",
+			"OrganizationName": "VisionFirst Eye Center - AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_hamiltoneye",
+			"OrganizationName": "Hamilton Eye Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_retinaassociates",
+			"OrganizationName": "Retina Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_mec",
+			"OrganizationName": "Milan Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_betz",
+			"OrganizationName": "Betz Ophthalmology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_cfei",
+			"OrganizationName": "Central Florida Eye Institute - CFEI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_centralvisioneyecare",
+			"OrganizationName": "Central Vision Eyecare, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_chamg",
+			"OrganizationName": "CHA Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_crandall",
+			"OrganizationName": "crandalleye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_cunningham",
+			"OrganizationName": "C\u0026M Medical Billing LLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_derbyeye",
+			"OrganizationName": "Derby Eye and Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_envisioneye",
+			"OrganizationName": "Envision Eye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_eyephysiciansofaustin",
+			"OrganizationName": "Eye Physicians of Austin",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_eyeassociates",
+			"OrganizationName": "Eye Associates (Vineland)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_feinermanvision",
+			"OrganizationName": "Feinerman Vision Ctr",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_friedbergeye",
+			"OrganizationName": "Friedberg Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_lehighvalley",
+			"OrganizationName": "Lehigh Valley (Center for Sight)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_pecsl",
+			"OrganizationName": "Premier Eye Care \u0026 Surgery LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/experity-drx0025",
+			"OrganizationName": "AFC Urgent Care Nanuet",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_ufg",
+			"OrganizationName": "University of Florida",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_phu",
+			"OrganizationName": "Rothman Institute Thomas Jefferson University",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_okc",
+			"OrganizationName": "Integris Southwest Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_oca",
+			"OrganizationName": "OrthoCarolina",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_uap",
+			"OrganizationName": "University of Arizona - Banner Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

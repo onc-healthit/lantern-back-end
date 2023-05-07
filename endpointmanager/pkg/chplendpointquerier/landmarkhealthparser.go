@@ -17,7 +17,7 @@ func LandmarkHealthCSVParser(CHPLURL string, fileToWriteTo string) {
 
 	csvFilePath := "./landmark-fhir-base-urls.csv"
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath)
+	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
 		log.Fatal(err)
 	}

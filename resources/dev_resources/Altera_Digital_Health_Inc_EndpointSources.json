@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031501",
+			"OrganizationName": "Atlanta Institute for ENT PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10031501",
+			"OrganizationName": "Atlanta Institute for ENT PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://TWweb17.twops.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10042915",
+			"OrganizationName": "Atlantic Orthopaedics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://TWweb.twops.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10042915",
+			"OrganizationName": "Atlantic Orthopaedics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10036904",
+			"OrganizationName": "Burgess Health Center Clinics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://10.160.126.33/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10036904",
+			"OrganizationName": "Burgess Health Center Clinics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74150",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043002",
+			"OrganizationName": "Cardiovascular Consultants PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://172.19.5.119/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10043002",
+			"OrganizationName": "Cardiovascular Consultants PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scm16testps1.nmhs.net/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10016718",
+			"OrganizationName": "Casper Orthopaedic Assoc PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://sears-15-1-app.services.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10016718",
+			"OrganizationName": "Casper Orthopaedic Assoc PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

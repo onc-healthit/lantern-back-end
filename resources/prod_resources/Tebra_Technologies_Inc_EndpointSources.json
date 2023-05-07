@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhir.prd.cloud.tebra.com/fhir-request",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

@@ -79,7 +79,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirapitest.naiacorp.net/fhir//ambulatorypracticeexample2/r4",
+			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/ambulatorypracticeexample2/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

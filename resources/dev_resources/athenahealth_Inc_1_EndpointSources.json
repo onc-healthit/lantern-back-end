@@ -37,6 +37,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://cpsdev-2022:9443/cpsdemoAPIServer/fhir/r4",
+			"OrganizationName": "CheckinAsyst",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
 			"NPIID": "",
@@ -51,12 +57,6 @@
 		{
 			"URL": "https://ap22sandbox.fhirapi.athenahealth.com/demoAPIServer/fhir/r4",
 			"OrganizationName": "athenahealth",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://nfsmserver.nflortho.com:9443/centricitypsAPIServer/fhir/r4",
-			"OrganizationName": "North Florida Sports Medicine \u0026 Orthopedic Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

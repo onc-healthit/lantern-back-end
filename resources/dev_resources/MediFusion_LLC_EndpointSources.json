@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhirapi.medifusion.com/api",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

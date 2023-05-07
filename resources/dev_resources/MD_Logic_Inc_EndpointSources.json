@@ -3,7 +3,8 @@
 		{
 			"URL": "https://www.mdlogiccloud.com/api/fhir",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

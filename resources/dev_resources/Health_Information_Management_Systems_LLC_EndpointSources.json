@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhir-api.hmsfirst.com/r4",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

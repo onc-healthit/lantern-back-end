@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhir.ethizo.com/api",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

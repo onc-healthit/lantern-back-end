@@ -275,7 +275,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, tebraURL) {
 		TebraWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, landmarkhealthURL) {
-		CSVParser(chplURL, fileToWriteTo, "./landmark-fhir-base-urls.csv", 1, 2)
+		CSVParser(chplURL, fileToWriteTo, "./landmark-fhir-base-urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, landmarkhealthURL) {
 		LandmarkHealthCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nthtechnologyURL) {

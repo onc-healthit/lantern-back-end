@@ -3,7 +3,8 @@
 		{
 			"URL": "https://prod.betterdayhealth.net/BetterDayFHIR",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

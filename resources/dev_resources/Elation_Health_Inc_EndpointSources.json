@@ -3,7 +3,8 @@
 		{
 			"URL": "https://fhir.elationemr.com/fhir",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

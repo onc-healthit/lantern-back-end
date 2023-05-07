@@ -3,7 +3,8 @@
 		{
 			"URL": "https://app.smartemr.com/fhir",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

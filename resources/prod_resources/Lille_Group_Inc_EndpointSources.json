@@ -3,7 +3,8 @@
 		{
 			"URL": "https://ehr.escribe.com/ehr/api/fhir",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }
