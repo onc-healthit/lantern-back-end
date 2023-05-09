@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://winfieldfamilyoptometryks.ficintegrations.com:2015/API/l6Vz5r/R4",
+			"OrganizationName": "Andover Family Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://hopkinsackermandrees.ficintegrations.com/API/2ia6Ja/R4",
+			"OrganizationName": "Hopkins, Ackerman, and Drees",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://WinterParkVision.ficintegrations.com/API/LVCY4g/R4",
+			"OrganizationName": "Winter Park Vision Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lifetimevisionsource.ficintegrations.com/API/JnHlCR/R4",
+			"OrganizationName": "Lifetime Vision Source L L C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeSiteByHowlinVisionSD.ficintegrations.com/API/phgbwk/R4",
+			"OrganizationName": "Eye-Site",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://amadoreyecareassociates.ficintegrations.com/API/QLU8qv/R4",
+			"OrganizationName": "Amador Eye Care Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://LanderVisionCenter.ficintegrations.com/API/Q3iA3T/R4",
+			"OrganizationName": "Lander Vision Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://northsuburbanvisionconsultantsltdil.ficintegrations.com/API/2NlLFQ/R4",
 			"OrganizationName": "North Suburban Vision Consultants, Ltd.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://familyoptometriccarepcct.ficintegrations.com:614/API/YPvLg3/R4",
-			"OrganizationName": "Family Optometric Care, P.C.",
+			"URL": "https://InnoVisionEyecareMN.ficintergrations.com/API/2DZzrm/R4",
+			"OrganizationName": "Innovision Eyecare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://eyecareontheridgeva.ficintegrations.com:6814/API/vwNYju/R4",
 			"OrganizationName": "Eye Care on the Ridge, LLC.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://chestereyecenterincch.ficintegrations.com:9014/API/Sw2bVt/R4",
-			"OrganizationName": "Chester Eye Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://richardjkuekerodpaks.ficintegrations.com:441/API/BhKl7p/R4",
-			"OrganizationName": "Richard J. Kueker, O.D. , PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://weberoptiksil.ficintegrations.com:441/API/h3nyf4/R4",
-			"OrganizationName": "Weber Optiks Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://progressivevisioncenteril.ficintegrations.com:2020/API/jJyabP/R4",
-			"OrganizationName": "Progressive Vision Center, Ltd.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://helenavisioncentermt.ficintegrations.com:441/API/54mah2/R4",
-			"OrganizationName": "Helena Vision Center, P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://eyemdofalamedaca.ficintegrations.com:448/API/Wez8bJ/R4",
-			"OrganizationName": "EyeMD of Alameda",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://florenceeyeclinicor.ficintegrations.com:441/API/TKv8Bp/R4",
-			"OrganizationName": "Florence Eye Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

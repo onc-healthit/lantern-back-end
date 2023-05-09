@@ -22,6 +22,8 @@ func OneUpQuerier(oneUpURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
+	clientSecret = strings.TrimSpace(clientSecret)
+	clientID = strings.TrimSpace(clientID)
 	oneUpURL = oneUpURL + "?client_id=" + clientID + "&client_secret=" + clientSecret + "&systemType=HealthSystem"
 
 	respBody, err := helpers.QueryEndpointList(oneUpURL)

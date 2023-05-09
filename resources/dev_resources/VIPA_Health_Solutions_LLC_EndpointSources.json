@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://app.smartemr.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

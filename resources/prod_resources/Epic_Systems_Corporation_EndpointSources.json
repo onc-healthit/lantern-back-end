@@ -529,12 +529,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.utmsa.com/fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "UT Health San Antonio",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.myeverettclinic.com/fhir/api/FHIR/DSTU2/",
 			"OrganizationName": "The Everett Clinic",
 			"NPIID": "",
@@ -1951,6 +1945,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1164.epichosted.com/FHIRproxy/api/FHIR/DSTU2/",
+			"OrganizationName": "CommUnityCare Health Centers",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://rproxy.novohtg.com/OAUTHPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "NOVO Health",
 			"NPIID": "",
@@ -2107,7 +2107,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRSTL/rvh/api/FHIR/DSTU2/",
+			"URL": "https://epic-fhir.mercy.net/prdfhirstl/RVH/api/FHIR/DSTU2/",
 			"OrganizationName": "Riverview Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -2234,7 +2234,7 @@
 		},
 		{
 			"URL": "https://epic-fhir.mercy.net/prdfhirstl/api/FHIR/DSTU2/",
-			"OrganizationName": "Mercy Health (MO)",
+			"OrganizationName": "Mercy Health (Arkansas, Louisiana, Mississippi and Texas)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2245,26 +2245,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRSGF/CHI/api/FHIR/DSTU2/",
+			"URL": "https://epic-fhir.mercy.net/PRDFHIRSGF/CHI/api/FHIR/DSTU2/",
 			"OrganizationName": "CHI St. Vincent",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRAOK2/OLOA/api/FHIR/DSTU2/",
-			"OrganizationName": "Our Lady of the Angels",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRAOK2/TAO/api/FHIR/DSTU2/",
+			"URL": "https://epic-fhir.mercy.net/PRDFHIRAOK2/TAO/api/FHIR/DSTU2/",
 			"OrganizationName": "Tahoe Forest Health System",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRAOK2/MTSM/api/FHIR/DSTU2/",
-			"OrganizationName": "Truckee Tahoe Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2378,7 +2366,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1138.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Brown \u0026 Toland Physicians",
+			"OrganizationName": "Altais",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2653,8 +2641,44 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://uhhsportal.uhhospitals.org/oauth2-prd/api/FHIR/DSTU2/",
+			"OrganizationName": "University Hospitals Cleveland",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://retailepicfhir.cvshealth.com/FhirProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "CVS Health \u0026 Minute Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et0316.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Carle Foundation Hospital \u0026 Physician Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et0582.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "UT Health San Antonio",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1274.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Mosaic Life Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1246.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Children's of Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1289.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Summa Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2907,6 +2931,12 @@
 		{
 			"URL": "https://epicFHIR.phs.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Presbyterian Healthcare Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.harrishealth.org/fhir/api/FHIR/R4/",
+			"OrganizationName": "Harris Health System",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3205,6 +3235,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epichaiku.chs-mi.com/FHIRPROXY/api/FHIR/R4/",
+			"OrganizationName": "Covenant HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.mhsjvl.org/FHIRproxy/api/FHIR/R4/",
 			"OrganizationName": "Mercy Health System - WI",
 			"NPIID": "",
@@ -3265,13 +3301,37 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epic-fhir.mercy.net/prdfhirstl/api/FHIR/R4/",
+			"OrganizationName": "Mercy Health (Arkansas, Louisiana, Mississippi and Texas)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epic-fhir.mercy.net/PRDFHIRAOK2/TAO/api/FHIR/R4/",
+			"OrganizationName": "Tahoe Forest Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epic-fhir.mercy.net/PRDFHIRSGF/CHI/api/FHIR/R4/",
+			"OrganizationName": "CHI St. Vincent",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epic-fhir.mercy.net/PRDFHIRSTL/RVH/api/FHIR/R4/",
+			"OrganizationName": "Riverview Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et0578.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Cooper University Health Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.utmsa.com/fhir/api/FHIR/R4/",
+			"URL": "https://epicproxy.et0582.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "UT Health San Antonio",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -3559,6 +3619,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://uhealthsoap.med.miami.edu/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "University of Miami (UHealth)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://surescripts.gmh.edu/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Grady Health System",
 			"NPIID": "",
@@ -3585,6 +3651,12 @@
 		{
 			"URL": "https://epicedge.upstate.edu/fhir/api/FHIR/R4/",
 			"OrganizationName": "SUNY Upstate Medical University",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ss.uch.edu/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "University of Colorado Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3937,6 +4009,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://proxy.christushealth.org/FHIRPRD/api/FHIR/R4/",
+			"OrganizationName": "CHRISTUS Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://esp.ecommunity.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Community Health Network",
 			"NPIID": "",
@@ -4035,6 +4113,12 @@
 		{
 			"URL": "https://sfd.overlakehospital.org/FHIRproxy/api/FHIR/R4/",
 			"OrganizationName": "Overlake Hospital Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lmcrcs.lexmed.com/FHIR/api/FHIR/R4/",
+			"OrganizationName": "Lexington Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4143,6 +4227,12 @@
 		{
 			"URL": "https://soap.wellmont.org/FHIRPRD/api/FHIR/R4/",
 			"OrganizationName": "Ballad Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicmobile.corp.saint-lukes.org/FHIRPROXY/api/FHIR/R4/",
+			"OrganizationName": "Saint Luke's Health System",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4916,19 +5006,25 @@
 		},
 		{
 			"URL": "https://epicarr.healthcare.cigna.com/FHIR-PRD/api/FHIR/R4/",
-			"OrganizationName": "Evernorth",
+			"OrganizationName": "Cigna Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://epicarr.healthcare.cigna.com/FHIR-PRD/api/FHIR/R4/",
-			"OrganizationName": "Cigna Medical Group",
+			"OrganizationName": "Evernorth",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://epicproxy.et1127.epichosted.com/FHIRproxy/api/FHIR/R4/",
 			"OrganizationName": "United Health Services New York (NYUHS)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1038.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "EPIC Management (Beaver Medical Group)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4940,7 +5036,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1138.epichosted.com/FHIRProxy/api/FHIR/R4/",
-			"OrganizationName": "Brown \u0026 Toland Physicians",
+			"OrganizationName": "Altais",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5035,6 +5131,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1164.epichosted.com/FHIRproxy/api/FHIR/R4/",
+			"OrganizationName": "CommUnityCare Health Centers",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1200.epichosted.com/OAuth2-PRD/api/FHIR/R4/",
 			"OrganizationName": "VCU Health",
 			"NPIID": "",
@@ -5083,14 +5185,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicarr.optum.com/FHIR/api/FHIR/R4/",
-			"OrganizationName": "OptumCare East",
+			"URL": "https://epicpnwarr.optum.com/FHIR/api/FHIR/R4/",
+			"OrganizationName": "OptumCare West",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicpnwarr.optum.com/FHIR/api/FHIR/R4/",
-			"OrganizationName": "OptumCare West",
+			"URL": "https://epicarr.optum.com/FHIR/api/FHIR/R4/",
+			"OrganizationName": "OptumCare East",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5179,6 +5281,24 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://uhhsportal.uhhospitals.org/oauth2-prd/api/FHIR/R4/",
+			"OrganizationName": "University Hospitals Cleveland",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1246.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Children's of Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revproxy.bh.bozemanhealth.org/Interconnect-Oauth2-PRD/api/FHIR/R4/",
+			"OrganizationName": "Bozeman Health - PRD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicinterconnect.walmarthealth.com/Interconnect-OAuth2-PRD/api/FHIR/R4/",
 			"OrganizationName": "Walmart",
 			"NPIID": "",
@@ -5191,8 +5311,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1270.epichosted.com/apiproxyprd/api/FHIR/R4",
+			"OrganizationName": "EvergreenHealth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1254.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Aspen Valley Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1274.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Mosaic Life Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1289.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Summa Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

@@ -5,6 +5,12 @@
 			"OrganizationName": "Integra – UAT",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://portal.minerva.integracloud.com/minerva/fhir/r4/us-core",
+			"OrganizationName": "Integra – PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

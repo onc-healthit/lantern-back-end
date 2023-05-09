@@ -1,0 +1,124 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dickerson.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Dickerson Pediatrics, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": "774793173"
+		},
+		{
+			"URL": "https://anderson.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Charles G. Anderson Jr., M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://soch.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Surgical Oncology Consultants of Houston",
+			"NPIID": "",
+			"OrganizationZipCode": "77002-8234"
+		},
+		{
+			"URL": "https://watoto.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Watoto Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": "20155"
+		},
+		{
+			"URL": "https://eldridge.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Eldridge MBS Wellness Center for Women",
+			"NPIID": "",
+			"OrganizationZipCode": "31901"
+		},
+		{
+			"URL": "https://tchabo.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Jean-Gilles Tchabo OB/GYN",
+			"NPIID": "",
+			"OrganizationZipCode": "22207-1619"
+		},
+		{
+			"URL": "https://roseman.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Roseman Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cfw.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Care For Women",
+			"NPIID": "",
+			"OrganizationZipCode": "77339-6405"
+		},
+		{
+			"URL": "https://galvon.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Dr. Dennis Galvon",
+			"NPIID": "",
+			"OrganizationZipCode": "98335"
+		},
+		{
+			"URL": "https://mccain.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Stefanie B McCain MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": "79606-5257"
+		},
+		{
+			"URL": "https://kfp.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Kingwood Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": "77339"
+		},
+		{
+			"URL": "https://mobgyn.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Memorial OB/GYN",
+			"NPIID": "",
+			"OrganizationZipCode": "77008"
+		},
+		{
+			"URL": "https://miamirheumatology.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Miami Rheumatology, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fpcc.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "First Person Care Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": "89104-1046"
+		},
+		{
+			"URL": "https://smc.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Southern Medical Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://neoga.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "NEOGA",
+			"NPIID": "",
+			"OrganizationZipCode": "773393773"
+		},
+		{
+			"URL": "https://summit.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Summit Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": "89509-5390"
+		},
+		{
+			"URL": "https://comc.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Community Outreach Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://shm.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Safe Harbor Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bernstein.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Bernstein Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

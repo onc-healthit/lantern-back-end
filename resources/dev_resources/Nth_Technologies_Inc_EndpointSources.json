@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dickerson.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Dickerson Pediatrics, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": "774793173"
+		},
+		{
+			"URL": "https://anderson.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Charles G. Anderson Jr., M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://soch.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Surgical Oncology Consultants of Houston",
+			"NPIID": "",
+			"OrganizationZipCode": "77002-8234"
+		},
+		{
+			"URL": "https://watoto.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Watoto Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": "20155"
+		},
+		{
+			"URL": "https://eldridge.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Eldridge MBS Wellness Center for Women",
+			"NPIID": "",
+			"OrganizationZipCode": "31901"
+		},
+		{
+			"URL": "https://tchabo.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Jean-Gilles Tchabo OB/GYN",
+			"NPIID": "",
+			"OrganizationZipCode": "22207-1619"
+		},
+		{
+			"URL": "https://roseman.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Roseman Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cfw.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Care For Women",
+			"NPIID": "",
+			"OrganizationZipCode": "77339-6405"
+		},
+		{
+			"URL": "https://galvon.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Dr. Dennis Galvon",
+			"NPIID": "",
+			"OrganizationZipCode": "98335"
+		},
+		{
+			"URL": "https://mccain.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Stefanie B McCain MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": "79606-5257"
+		}
+	]
+}

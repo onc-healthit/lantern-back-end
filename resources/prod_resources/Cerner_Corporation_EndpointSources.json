@@ -5012,7 +5012,7 @@
 		},
 		{
 			"URL": "https://fhir-myrecord.cerner.com/r4/UmST5Nz0TFWN1WTGDQw7-TwaxvLREKn_/",
-			"OrganizationName": "William Ofrichter, DPM",
+			"OrganizationName": "Edward D. Hutson Jr, DPM",
 			"NPIID": "",
 			"OrganizationZipCode": "18067-1321"
 		},
@@ -9905,6 +9905,18 @@
 			"OrganizationName": "Madison Valley Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": "59729-9012"
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/6045c542-91fb-42f0-88cd-540b035e6ca7/",
+			"OrganizationName": "The Resource Center",
+			"NPIID": "",
+			"OrganizationZipCode": "14701-2528"
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/r4/d4a56ff5-f6ae-4ca3-b326-1973b3579459/",
+			"OrganizationName": "Rock County Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": "68714"
 		},
 		{
 			"URL": "https://fhir-myrecord.cerner.com/dstu2/-KzIoYV6gk-ILcHOWbsH2m9KsSdDgi12/",
@@ -14918,7 +14930,7 @@
 		},
 		{
 			"URL": "https://fhir-myrecord.cerner.com/dstu2/UmST5Nz0TFWN1WTGDQw7-TwaxvLREKn_/",
-			"OrganizationName": "William Ofrichter, DPM",
+			"OrganizationName": "Edward D. Hutson Jr, DPM",
 			"NPIID": "",
 			"OrganizationZipCode": "18067-1321"
 		},
@@ -19811,6 +19823,18 @@
 			"OrganizationName": "Madison Valley Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": "59729-9012"
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/6045c542-91fb-42f0-88cd-540b035e6ca7/",
+			"OrganizationName": "The Resource Center",
+			"NPIID": "",
+			"OrganizationZipCode": "14701-2528"
+		},
+		{
+			"URL": "https://fhir-myrecord.cerner.com/dstu2/d4a56ff5-f6ae-4ca3-b326-1973b3579459/",
+			"OrganizationName": "Rock County Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": "68714"
 		}
 	]
 }

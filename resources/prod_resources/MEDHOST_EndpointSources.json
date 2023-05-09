@@ -7,9 +7,15 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/8504120b-a789-4394-b258-2f1d0cf4cda4",
+			"OrganizationName": "Adams County Regional Medical Center",
+			"NPIID": "1851946909",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/e0ca59d7-14ad-4f50-b84d-217ff7cce107",
 			"OrganizationName": "Alliance Health Woodward",
-			"NPIID": "",
+			"NPIID": "1558312553",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -22,6 +28,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/dfc490e3-ba4d-46f6-a3af-71c1dcca8d5c",
 			"OrganizationName": "Andalusia Regional Hospital",
 			"NPIID": "1821078494",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/ff47aa4f-88e4-4fe6-8463-5329cd594e98",
+			"OrganizationName": "Arkansas Surgical Hospital",
+			"NPIID": "1942260609",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -46,6 +58,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/a8c1e524-7a98-4b94-ac39-c13550cd1af2",
 			"OrganizationName": "Barstow Community Hospital",
 			"NPIID": "1780655670",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/a7b918c3-56d9-410c-bec6-e3d86fde3f92",
+			"OrganizationName": "Bertrand Chaffee Hospital",
+			"NPIID": "1275553521",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -87,7 +105,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/a1f2360f-8ab8-4f52-81e4-a887a8a5a86b",
 			"OrganizationName": "Carlsbad Medical Center",
-			"NPIID": "",
+			"NPIID": "1790722346",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -99,13 +117,31 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/33867bd3-305b-4425-8350-0e3173266b56",
 			"OrganizationName": "Cedar Park Regional Medical Center",
-			"NPIID": "",
+			"NPIID": "1376662296",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/ab055465-7179-491b-bb98-b210ff152aa7",
+			"OrganizationName": "Claiborne Medical Center",
+			"NPIID": "1942205166",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/1b76b953-2b0b-45ad-849c-3b844c4b4c1d",
+			"OrganizationName": "Claiborne Memorial Medical Center",
+			"NPIID": "1831183748",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5b55bbf3-16df-4568-b6d2-21144fc38584",
 			"OrganizationName": "Clark Regional Medical Center",
 			"NPIID": "1811213994",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/b07be3e0-7e4b-4413-bffc-5ee2c1e677f7",
+			"OrganizationName": "Clinch Memorial Hospital",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -147,6 +183,18 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/2d1b74f6-5e0d-402b-993f-7f7d33147fff",
 			"OrganizationName": "DeTar Healthcare System",
+			"NPIID": "1851343909",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0c0c63aa-c0e5-4256-b638-969087e4db15",
+			"OrganizationName": "Delta Health System - Northwest Regional",
+			"NPIID": "1740876382",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/479a0965-68cb-4474-868a-5efbbbeb2895",
+			"OrganizationName": "Demo Facility - IIP01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -163,6 +211,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/3ba36153-51e9-480f-b1bd-74aca12bf8b6",
+			"OrganizationName": "Fairfield Memorial Hospital",
+			"NPIID": "1255422416",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/34788ed7-a88d-487a-bcc2-32b1ec67835d",
 			"OrganizationName": "Fannin Regional Hospital",
 			"NPIID": "1851362263",
@@ -171,7 +225,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/c33d2483-2c11-4f6d-a3a4-23b63c39fcfd",
 			"OrganizationName": "Five Rivers Medical Center",
-			"NPIID": "",
+			"NPIID": "1528360989",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -184,6 +238,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5456aafa-f937-4c1a-bbe8-251621260178",
 			"OrganizationName": "Forrest City Medical Center",
 			"NPIID": "1811912009",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/c680de42-53d4-410c-a755-e5a226565d34",
+			"OrganizationName": "Franklin Hospital",
+			"NPIID": "1699778951",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -211,6 +271,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/3da9ca85-20c5-41a0-bdcd-1c72cbc6cce2",
+			"OrganizationName": "Great River Medical Center",
+			"NPIID": "1316180748",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/1d564132-c3ba-439d-8e8e-ace8842e7bde",
 			"OrganizationName": "Greenbrier Valley Medical Center",
 			"NPIID": "1679299408",
@@ -220,6 +286,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/803f2fd9-30f2-4e94-ba87-e0754f0e0fba",
 			"OrganizationName": "Havasu Regional Medical Center",
 			"NPIID": "1780761866",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7e683d5a-ea56-46ce-a5a1-9a0932bdecb3",
+			"OrganizationName": "Healdsburg District Hospital",
+			"NPIID": "1861009672",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -235,15 +307,21 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/f25a1e6a-ed78-4641-a1c6-fcebfa80bf1b",
+			"OrganizationName": "Holdenville General Hospital",
+			"NPIID": "1265851455",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/e0b457d5-5daf-45ba-a625-42dcc3ce397b",
 			"OrganizationName": "Huntsville Memorial Hospital",
 			"NPIID": "1245878990",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/479a0965-68cb-4474-868a-5efbbbeb2895",
-			"OrganizationName": "IIP01 - Test Facility",
-			"NPIID": "",
+			"URL": "https://fhir.yourcareuniverse.net/tenant/ff6682af-adf1-4342-9fa7-c0fc81a9e5c6",
+			"OrganizationName": "Jack Hughston Memorial Hospital",
+			"NPIID": "1023050101",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -265,6 +343,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/98653bdc-9a2b-4fae-a56c-78b209247c4f",
+			"OrganizationName": "Lakeland Community Hospital",
+			"NPIID": "1275600967",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/15ccfc48-8123-499c-be14-3dda9ff453c2",
 			"OrganizationName": "Larkin Community Hospital",
 			"NPIID": "1952311243",
@@ -274,6 +358,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/c9b51470-851c-4df8-9318-9ceb36fa9d81",
 			"OrganizationName": "Larkin Community Hospital Palm Springs Campus",
 			"NPIID": "1013382860",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/153bd9ca-53c7-4fb3-b3cd-23ab4fd925c4",
+			"OrganizationName": "Lawrence Medical Center Hospital",
+			"NPIID": "1568453389",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -303,7 +393,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/31dcedc4-1f21-42f7-a549-c7c3e6431523",
 			"OrganizationName": "Lower Keys Medical Center Medhost",
-			"NPIID": "",
+			"NPIID": "1619922077",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -332,20 +422,32 @@
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/c91e7cb8-16f6-43af-aa73-f42df176474c",
-			"OrganizationName": "Medhost Community Hospital (Demo02)",
+			"OrganizationName": "Medhost Community Hospital - Demo02",
 			"NPIID": "1295169910",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/47b7af45-a0f3-4509-b194-d0e646d655f9",
-			"OrganizationName": "Medhost General Hospital (Demo01)",
+			"OrganizationName": "Medhost General Hospital - Demo01",
 			"NPIID": "1295169910",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/174285d6-efb7-4560-a7ba-f3ae332b091f",
-			"OrganizationName": "Medhost Test Facility IIP02",
+			"OrganizationName": "Medhost Test Facility IIP02-36",
 			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/741f735f-d6cc-4802-8169-175329ceb889",
+			"OrganizationName": "Medical Arts Hospital",
+			"NPIID": "1134108053",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/2b8e6646-4db4-4d16-9c09-9c478929c392",
+			"OrganizationName": "Medical Center Barbour",
+			"NPIID": "1730692641",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -357,7 +459,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/facb3d8f-6852-409a-a1db-46cde625b434",
 			"OrganizationName": "Medical Center of South Arkansas",
-			"NPIID": "",
+			"NPIID": "1689625568",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -381,7 +483,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/9372d935-a8ce-495b-bbed-e139e5c922cf",
 			"OrganizationName": "Mille Lacs Health System",
-			"NPIID": "",
+			"NPIID": "1548212699",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -399,13 +501,19 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/7aa5c907-888a-4a26-a788-557866a3a6ba",
 			"OrganizationName": "Moberly Regional Medical Center",
-			"NPIID": "",
+			"NPIID": "1770554305",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/75043803-bb7f-402e-836e-1af427dd8d38",
 			"OrganizationName": "Monroe County Medical Center",
 			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/5c9c3d79-6b2c-4465-a5ab-001ebd43fba3",
+			"OrganizationName": "Morehouse General Hospital",
+			"NPIID": "1003898313",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -423,13 +531,13 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b5d7e119-25f5-4549-b34f-423b307ce3d1",
 			"OrganizationName": "Navarro Regional Hospital",
-			"NPIID": "",
+			"NPIID": "1144274226",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8c9be94d-3d31-4ca5-9051-cb0d2002c95e",
 			"OrganizationName": "North Okaloosa Medical Center",
-			"NPIID": "",
+			"NPIID": "1104897859",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -441,7 +549,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b531811c-9423-4f7d-a377-31c603372685",
 			"OrganizationName": "Northeast Regional Medical Center",
-			"NPIID": "",
+			"NPIID": "1104899442",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -459,7 +567,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/e108d9e2-8802-451c-b874-d1f2187c552f",
 			"OrganizationName": "Northwest Health- Physicians\u0026#39; Speciality Hospital",
-			"NPIID": "",
+			"NPIID": "1407215916",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -469,9 +577,21 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/829eb3e2-1c27-407b-88f0-bbe9462e3c9c",
+			"OrganizationName": "OCH Regional Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/04120e6f-af8f-460c-a7bc-f60aa4706e05",
 			"OrganizationName": "Oakdale Community Hospital",
 			"NPIID": "1104873710",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/f76605c4-3372-458f-b443-765cba65564a",
+			"OrganizationName": "Ouachita County Medical Center",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -481,9 +601,21 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/2fad22c3-5672-4324-a2c7-84df7a355f88",
+			"OrganizationName": "Panola Medical Center",
+			"NPIID": "1053873307",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b0e97807-b27f-4bdb-a798-ff4882ff0587",
 			"OrganizationName": "Parkview Regional Hospital",
 			"NPIID": "1497708929",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/24038e54-d9a2-4236-9081-ad3af29792c7",
+			"OrganizationName": "Perry County Memorial Hospital",
+			"NPIID": "1447206248",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -493,9 +625,33 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/8a5128d7-2d67-4c98-bf01-874e7ae0d5a9",
+			"OrganizationName": "Pocahontas Memorial Hospital",
+			"NPIID": "1609842251",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/f327cec7-4de5-4375-82d1-b7722f053133",
+			"OrganizationName": "Quitman Community Hospital",
+			"NPIID": "1386178721",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d6c5eabb-0579-4a2a-b6b0-15f60c825cf4",
 			"OrganizationName": "Red Bud Regional Hospital",
 			"NPIID": "1891766317",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/107dd77f-af81-404c-bacf-7f4e4992b3b3",
+			"OrganizationName": "Rockcastle Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/15210b52-659d-4e08-a38d-3a74b25af386",
+			"OrganizationName": "Russellville Hospital",
+			"NPIID": "1316015241",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -523,6 +679,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/f322b194-59b6-4e38-a910-061b45722575",
+			"OrganizationName": "Salem Medical Center",
+			"NPIID": "1700351947",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/870cfbd8-0d45-4180-93e9-6d532ee5690e",
 			"OrganizationName": "Siloam Springs Regional Hospital",
 			"NPIID": "1902051816",
@@ -532,6 +694,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/44b22363-bfae-41e3-b442-7ab703616389",
 			"OrganizationName": "South Baldwin Regional Medical Center",
 			"NPIID": "1053382655",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/340cba5b-23f2-476f-bd9f-b97e6c9f7afa",
+			"OrganizationName": "South Mississippi County Regional Medical Center",
+			"NPIID": "1366685992",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -547,9 +715,21 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/ed22d790-84fa-4384-96b8-4d7eb85e8469",
+			"OrganizationName": "Stony Brook Eastern Long Island Hospital",
+			"NPIID": "1881690691",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/966271d9-392f-4763-af53-b6f343c6e2f9",
 			"OrganizationName": "Summit Medical Center",
 			"NPIID": "1609297506",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/b75185fd-ca71-4dca-b27d-5594ca0b11dc",
+			"OrganizationName": "The Hospital at Westlake Medical Center",
+			"NPIID": "1043328198",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -565,6 +745,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/85ef055c-e6f4-4b87-9d73-a1f2cb924d5e",
+			"OrganizationName": "Union General Hospital",
+			"NPIID": "1063533933",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e8ee7c31-a93d-41f9-b0b7-1df54697d98f",
+			"OrganizationName": "Valley Regional Hospital",
+			"NPIID": "1306933619",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8b4264db-d3d6-476a-bd7d-a1ab7c437244",
 			"OrganizationName": "Valley View Medical Center",
 			"NPIID": "1780761866",
@@ -574,6 +766,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/ed6a665c-b100-4cee-b23d-6197c0e9c9ee",
 			"OrganizationName": "Vista Health System - East",
 			"NPIID": "1992856819",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e21d6544-b3b7-44c8-8df0-60cd8284ed13",
+			"OrganizationName": "Watsonville Community Hospital",
+			"NPIID": "1710958228",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -597,7 +795,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/c70cb6ad-bf68-4054-bdd6-bbf6897f7480",
 			"OrganizationName": "Woodland Heights Medical Center",
-			"NPIID": "",
+			"NPIID": "1487607792",
 			"OrganizationZipCode": ""
 		},
 		{

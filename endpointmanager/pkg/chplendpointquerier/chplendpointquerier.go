@@ -82,6 +82,27 @@ var mendelsonURL = "https://orthoplex.mkoss.com/Fhirdocs"
 var netsmarttechnologiesURL = "https://careconnect-uat.netsmartcloud.com/baseUrls/"
 var patagoniahealthURL = "https://patagoniahealth.com/wp-content/uploads/2022/12/fhir-base-urls.csv"
 var webedoctorURL = "https://www.webedoctor.com/docs/fhir-base-urls.csv"
+var medicscloudURL = "https://staging.medicscloud.com/MCExtAPI/FHIRMedicsCloud.htm"
+var advancedmdURL = "https://developer.advancedmd.com/fhir/base-urls"
+var agasthaURL = "http://agastha.com/production-links.html"
+var allegiancemdURL = "https://fhir.allegiancemd.io/R4/"
+var elationURL = "https://elationfhir.readme.io/reference/service-base-urls"
+var betterdayhealthURL = "https://betterdayhealth.net/fhir-docs"
+var carecloudURL = "https://api-datamanager.carecloud.com/"
+var ethizoURL = "https://fhir-api.ethizo.com/#55b1b3d2-fd9a-4afa-8d17-5bf78943702d"
+var hmsfirstURL = "https://fhir-api.hmsfirst.com/r4/EndPoints"
+var praxisemrURL = "https://www.praxisemr.com/applicationaccess/api/help/"
+var escribeHOSTURL = "https://ehr.escribe.com/ehr/api/fhir"
+var mdlogicEHRURL = "https://www.mdlogic.com/solutions/standard-api-documentation"
+var altheaURL = "https://altheafhir.mdsynergy.com"
+var webchartnowURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
+var medifusionURL = "https://docs.medifusion.com/"
+var smartemrURL = "https://smartemr.readme.io/reference/getting-started#base-url"
+var tebraURL = "https://fhir.prd.cloud.tebra.com/fhir-request/swagger-ui/"
+
+var landmarkhealthURL = "https://lmdmzprodws.landmarkhealth.org/docs/fhir-base-urls.csv"
+var nthtechnologyURL = "https://admin.nthtechnology.com/fhir_endpoints.php/json"
+var netsmartURL = "https://careconnect-uat.netsmartcloud.com/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -219,6 +240,48 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./ezdocs_fhir_base_urls.csv", 1, 0, true, 3, 1)
 	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
+	} else if URLsEqual(chplURL, medicscloudURL) {
+		MedicsCloudWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, advancedmdURL) {
+		AdvancedMdWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, agasthaURL) {
+		AgasthaWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, allegiancemdURL) {
+		AllegianceMDWebscraper("https://fhir.allegiancemd.io/R4/swagger-ui/", fileToWriteTo)
+	} else if URLsEqual(chplURL, elationURL) {
+		ElationWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, betterdayhealthURL) {
+		BetterdayHealthWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, carecloudURL) {
+		CareCloudWebscraper("https://api-datamanager.carecloud.com/fhirurl", fileToWriteTo)
+	} else if URLsEqual(chplURL, ethizoURL) {
+		EthizoWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, hmsfirstURL) {
+		HMSfirstWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, praxisemrURL) {
+		PraxisEMRWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, escribeHOSTURL) {
+		EscribeHOSTWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, mdlogicEHRURL) {
+		MDLogicEHRWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, altheaURL) {
+		AltheaWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, webchartnowURL) {
+		WebchartNowWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, medifusionURL) {
+		MedifusionWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, smartemrURL) {
+		SmarteMRWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, tebraURL) {
+		TebraWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, landmarkhealthURL) {
+		CSVParser(chplURL, fileToWriteTo, "./landmark-fhir-base-urls.csv", 1, 2, true, 1, -1)
+	} else if URLsEqual(chplURL, landmarkhealthURL) {
+		LandmarkHealthCSVParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, nthtechnologyURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, netsmartURL) {
+		NetsmartCSVParser("https://careconnect-uat.netsmartcloud.com/baseUrls", fileToWriteTo)
 	}
 
 }

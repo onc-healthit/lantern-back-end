@@ -37,6 +37,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://cpsdev-2022:9443/cpsdemoAPIServer/fhir/r4",
+			"OrganizationName": "CheckinAsyst",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
 			"NPIID": "",
@@ -87,6 +93,18 @@
 		{
 			"URL": "https://af22sandbox.fhirapi.athenahealth.com/demo22a-tutAPIServer/fhir/r4",
 			"OrganizationName": "athenaflow",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cpsint002362001.englab.athenahealth.com:9443/duncanAPIServer/fhir/r4",
+			"OrganizationName": "physiotherapist",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://192.168.102.4:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "Spartanburg Nephrology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
