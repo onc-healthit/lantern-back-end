@@ -32,7 +32,6 @@ func ImedemrWebscraper(CHPLURL string, fileToWriteTo string) {
 					lanternEntryList = append(lanternEntryList, entry)
 
 				}
-				trIndex++
 			})
 		})
 	}

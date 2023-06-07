@@ -65,7 +65,7 @@ func GetEnptsAndSend(
 		log.Info("Starting json export")
 		err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", "30days")
 		if err != nil {
-			log.Fatal("Failed to export JSON due to %s", err)
+			log.Infof("Failed to export JSON due to %d", err)
 			//If there is an error, wait for the duration to try it again, instead of overloading the memory with repeated tries
 			log.Infof("Waiting %d minutes", qInterval)
 			time.Sleep(time.Duration(qInterval) * time.Minute)
