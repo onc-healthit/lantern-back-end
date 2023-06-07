@@ -99,10 +99,26 @@ var webchartnowURL = "https://docs.webchartnow.com/resources/system-specificatio
 var medifusionURL = "https://docs.medifusion.com/"
 var smartemrURL = "https://smartemr.readme.io/reference/getting-started#base-url"
 var tebraURL = "https://fhir.prd.cloud.tebra.com/fhir-request/swagger-ui/"
-
 var landmarkhealthURL = "https://lmdmzprodws.landmarkhealth.org/docs/fhir-base-urls.csv"
 var nthtechnologyURL = "https://admin.nthtechnology.com/fhir_endpoints.php/json"
 var netsmartURL = "https://careconnect-uat.netsmartcloud.com/"
+
+var omnimdURL = "https://fhirregistration.omnimd.com/#/specification"
+var pcesystemsURL = "https://www.pcesystems.com/g10APIInfo.html"
+var medicsdaextURL = "https://staging.medicscloud.com/MedicsDAExtAPI/FHIRMedicsDocAssistant.htm"
+var azaleahealthr4URL = "https://app.azaleahealth.com/fhir/R4/Endpoint"
+var dssincURL = "https://dssjuno-dev-web.dssinc.com/dss/01ho/r4/Home/ApiDocumentation#Api_Urls"
+var kodjinURL = "https://docs.kodjin.com/service-base-urls"
+var firelyURL = "https://docs.fire.ly/projects/Firely-Server/en/latest/_static/g10/EndpointBundleFirely.json"
+var azurewebsitesURL = "https://sfp-proxy9794.azurewebsites.net/fhir/base-url"
+var viewmymedURL = "https://portal.viewmymed.com/fhir/Endpoint"
+var imedemrURL = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php?format=csv"
+var moyaeURL = "https://documenter.getpostman.com/view/15917486/UyxojQMd#a24aa40c-fe15-478e-a555-3c2cb10d56c9"
+var myheloURL = "https://www.myhelo.com/api/"
+var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
+var novomediciURL = "https://www.novomedici.com/api-documents/"
+var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
+var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -282,8 +298,39 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, netsmartURL) {
 		NetsmartCSVParser("https://careconnect-uat.netsmartcloud.com/baseUrls", fileToWriteTo)
+	} else if URLsEqual(chplURL, omnimdURL) {
+		OmniMDWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, pcesystemsURL) {
+		PCESystemsWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, medicsdaextURL) {
+		MedicsDAExtAPIWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, azaleahealthr4URL) {
+		BundleQuerierParser("https://app.azaleahealth.com/fhir/R4/Endpoint?_format=application/json", fileToWriteTo)
+	} else if URLsEqual(chplURL, dssincURL) {
+		DssIncWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, kodjinURL) {
+		KodjinWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, firelyURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, azurewebsitesURL) {
+		AzureWebsitesURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, viewmymedURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, imedemrURL) {
+		ImedemrWebscraper("https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php", fileToWriteTo)
+	} else if URLsEqual(chplURL, moyaeURL) {
+		MoyaeURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, myheloURL) {
+		MyheloURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, nextechURL) {
+		NextechURLCSVParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, novomediciURL) {
+		NovomediciURLWebscraper("https://www.novomedici.com/wp-content/uploads/2022/11/fhir-base-urls.csv", fileToWriteTo)
+	} else if URLsEqual(chplURL, patientpatternURL) {
+		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, pcisgoldURL) {
+		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
 	}
-
 }
 
 // WriteCHPLFile writes the given endpointEntryList to a json file and stores it in the prod resources directory

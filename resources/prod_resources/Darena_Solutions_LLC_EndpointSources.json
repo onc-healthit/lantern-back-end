@@ -10075,12 +10075,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/experity-nc006",
-			"OrganizationName": "Urgent Care Down East",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.meldrx.com/fhir/experity-nc025",
 			"OrganizationName": "Express Care of Yadkin",
 			"NPIID": "",
@@ -10465,12 +10459,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/experity-tx079",
-			"OrganizationName": "Affinity Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.meldrx.com/fhir/experity-tx107",
 			"OrganizationName": "MD Firstwatch",
 			"NPIID": "",
@@ -10503,12 +10491,6 @@
 		{
 			"URL": "https://api.meldrx.com/fhir/experity-tx121",
 			"OrganizationName": "Beaumont Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.meldrx.com/fhir/experity-tx124",
-			"OrganizationName": "Pediatric Urgent Care of Denton",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12615,6 +12597,252 @@
 		{
 			"URL": "https://api.meldrx.com/fhir/osteal_uap",
 			"OrganizationName": "University of Arizona - Banner Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/darena_health_pg",
+			"OrganizationName": "Darena Health PG",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/darena_care_ad",
+			"OrganizationName": "Darena Care AD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_cov",
+			"OrganizationName": "Covenant",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/cms_bluebutton_1",
+			"OrganizationName": "CMS Bluebutton 1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/cms_bluebutton_2",
+			"OrganizationName": "CMS Bluebutton 2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/commonhealth",
+			"OrganizationName": "CommonHealth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/t5x2d7ew",
+			"OrganizationName": "Eye Clinic, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/darenahealth",
+			"OrganizationName": "Darena Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_berkeleyeye",
+			"OrganizationName": "Berkeley Eye Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/k7d8z3ae",
+			"OrganizationName": "Bellingham Bay Ophthalmology PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_castellano_eyecare",
+			"OrganizationName": "Joseph P Castellano",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_tuscarawas_eye_centre_inc",
+			"OrganizationName": "Tuscarawas Eye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_martin_edwards_fletcher",
+			"OrganizationName": "Martin Edward Fletcher, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/paydc_5331",
+			"OrganizationName": "Forbes Family Chiropractic, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_edwin_schottenstein",
+			"OrganizationName": "Edwin M. Schottenstein, M.D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/aep98fr1",
+			"OrganizationName": "Auburn Eye Physicians, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/jrl43lk4",
+			"OrganizationName": "Jeffrey R. Lander, MD, LLC (Leader Heights Eye Center)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/tec32qz5",
+			"OrganizationName": "The Eye Clinic, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/wey56dv9",
+			"OrganizationName": "Wade E. Young, M.D., Inc dba Tiffin Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_chu",
+			"OrganizationName": "University of Virginia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_advanced_eye_care_nemeth",
+			"OrganizationName": "Advanced Eye Care - Nemeth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/osteal_clc",
+			"OrganizationName": "Cleveland Clinic, OH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/7p45tr57",
+			"OrganizationName": "Morganton Eye Physicians, P.A. \u0026 Surgery Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_bennett",
+			"OrganizationName": "Bennett \u0026 Bloom",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_campanella_eye",
+			"OrganizationName": "Campanella Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/p0k8n6v4",
+			"OrganizationName": "David S Hoffman MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_ardoin",
+			"OrganizationName": "Ardoin Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/9u2d3g5a",
+			"OrganizationName": "Highlands Eye Institute, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/8q0a4x6m",
+			"OrganizationName": "South Ocean Ophthalmology PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/1s2k7g8f",
+			"OrganizationName": "Brighton Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/5r4e9b1c",
+			"OrganizationName": "Mountain View Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/8y0p1j5v",
+			"OrganizationName": "Rayner Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/3n7m2x7h",
+			"OrganizationName": "OXFORD EYE SURGERY CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/4t6c9b0p",
+			"OrganizationName": "RAYNER OPTICAL, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_claris",
+			"OrganizationName": "ClarisVision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/imedicware_davisvisioncenter",
+			"OrganizationName": "Davis Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/t7g8d1e4",
+			"OrganizationName": "Jackson Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/memorial_day",
+			"OrganizationName": "Memorial Day Salute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/experity-tx079",
+			"OrganizationName": "Affinity Urgent Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/experity-tx124",
+			"OrganizationName": "Pediatric Urgent Care of Denton",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/experity-nc006",
+			"OrganizationName": "Urgent Care Down East",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -37,6 +37,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10035249",
+			"OrganizationName": "Cardinal Pediatrics PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035249",
+			"OrganizationName": "Cardinal Pediatrics PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043002",
 			"OrganizationName": "Cardiovascular Consultants PC",
 			"NPIID": "",
@@ -45,18 +57,6 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10043002",
 			"OrganizationName": "Cardiovascular Consultants PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10016718",
-			"OrganizationName": "Casper Orthopaedic Assoc PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10016718",
-			"OrganizationName": "Casper Orthopaedic Assoc PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

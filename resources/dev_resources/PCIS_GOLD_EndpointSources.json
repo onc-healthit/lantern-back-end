@@ -1,0 +1,34 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://portal.fhw.org/fhir",
+			"OrganizationName": "Family Health West",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://portal.midkansasent.com/fhir",
+			"OrganizationName": "Mid-Kansas Ear, Nose \u0026 Throat Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pcisgold.com/fhir",
+			"OrganizationName": "PCIS Gold FHIR Demo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://portal.premierfamily.net/fhir",
+			"OrganizationName": "Premier Family Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://portal.wsspa.com/fhir",
+			"OrganizationName": "Wichita Surgical Specialists, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

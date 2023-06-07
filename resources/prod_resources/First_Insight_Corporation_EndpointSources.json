@@ -367,18 +367,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://MountainViewEyeCarePAME.ficintegrations.com/API/lm1uug/R4",
-			"OrganizationName": "Mountain View EyeCare, PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://PinnacleEyeCenterFL.ficintegrations.com/API/sMYEAf/R4",
-			"OrganizationName": "PINNACLE EYE CENTER",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://UniversityEyeAssociates.ficintegrations.com/API/VUSr4D/R4",
 			"OrganizationName": "UNIVERSITY EYE ASSOCIATES, O.D., P.A.",
 			"NPIID": "",
@@ -517,7 +505,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://porthuronophthalmology.ficintegrations.com/API/IFtqUd/R4",
+			"URL": "https://porthuronophthalmology.ficintegrations.com/API/9BxGbi/R4",
 			"OrganizationName": "Port Huron Ophthalmology, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -1009,12 +997,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/focusfamilyeyecare/R4",
-			"OrganizationName": "Focus Family Eyecare PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/meyereyecare/R4",
 			"OrganizationName": "Meyer Eyecare, Inc.",
 			"NPIID": "",
@@ -1219,12 +1201,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/lexingtoneyecare/R4",
-			"OrganizationName": "Lexington Eye Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/theeyeman/R4",
 			"OrganizationName": "The Eye Man",
 			"NPIID": "",
@@ -1261,8 +1237,8 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/klibanoffeye/R4",
-			"OrganizationName": "Klibanoff Eye Associates, LTD",
+			"URL": "https://fhir.maximeyes.com/api/pinnacleeyecenter/R4",
+			"OrganizationName": "PINNACLE EYE CENTER",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1293,12 +1269,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/drsteveratty/R4",
 			"OrganizationName": "Dr. Steve Ratty Optometrist, Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/2020optometrysv/R4",
-			"OrganizationName": "20/20 Optometry of Silicon Valley",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1363,12 +1333,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/qa11/R4",
-			"OrganizationName": "test333",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/precisionoptical/R4",
 			"OrganizationName": "Precision Optical",
 			"NPIID": "",
@@ -1399,12 +1363,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/mec/R4",
-			"OrganizationName": "Thomas W. Meade, O.D. LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/ecavision/R4",
 			"OrganizationName": "Eyecare Associates",
 			"NPIID": "",
@@ -1419,12 +1377,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/drscottsylvia/R4",
 			"OrganizationName": "Dr. Scott  W. Sylvia",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/diamondkeye/R4",
-			"OrganizationName": "Diamond K Eyecare Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1479,6 +1431,12 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/invision/R4",
 			"OrganizationName": "InVision Eye Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/mtnvieweye/R4",
+			"OrganizationName": "Mountain View EyeCare, PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1735,12 +1693,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/rocklandfamilyeye/R4",
-			"OrganizationName": "Rockland Family Eye Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/hayleyeyeclinic/R4",
 			"OrganizationName": "Hayley Eye Clinic",
 			"NPIID": "",
@@ -1861,12 +1813,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/dreck/R4",
-			"OrganizationName": "Mary Eck , O.D.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/aardvarkeyewear/R4",
 			"OrganizationName": "Aardvark Eyewear Inc",
 			"NPIID": "",
@@ -1923,6 +1869,96 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/drzengoe/R4",
 			"OrganizationName": "Clare T. Zengoe O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/amplifyeyecarelongbeach/R4",
+			"OrganizationName": "Amplify Eyecare of Greater Long Beach",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/eyesite/R4",
+			"OrganizationName": "Howlin Vision Clinic, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/wyog/R4",
+			"OrganizationName": "WyoVision Associates of Gillette",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/dumasvision/R4",
+			"OrganizationName": "Dumas Vision Source, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lakewayvisionassociates/R4",
+			"OrganizationName": "Tristan L Wild OD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/fpec/R4",
+			"OrganizationName": "Five Points Optometrists, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/veo/R4",
+			"OrganizationName": "VisualEyes Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/feccbluffton/R4",
+			"OrganizationName": "Family Eye Care Clinic of Bluffton, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/winterparkvisionspecialits/R4",
+			"OrganizationName": "James A. Podschun",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lafayetteeyeassociates/R4",
+			"OrganizationName": "Lafayette Eye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/totalfamilyeyecare/R4",
+			"OrganizationName": "Wilkinson and Shaffer PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyeloveoptometry/R4",
+			"OrganizationName": "Park L. Hsieh, O.D., A Professional Optometric Cor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drrparks/R4",
+			"OrganizationName": "Robert J. Parks O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/fvc/R4",
+			"OrganizationName": "Paul Dunderland OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lexingtoneyecare/R4",
+			"OrganizationName": "Lexington Eye Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

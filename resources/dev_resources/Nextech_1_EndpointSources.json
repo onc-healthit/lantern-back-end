@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://select.nextech-api.com/api/r4",
+			"OrganizationName": "Example Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
