@@ -1,7 +1,6 @@
 package chplendpointquerier
 
 import (
-	"fmt"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"io"
 	"os"
@@ -15,7 +14,7 @@ func NextechURLCSVParser(CHPLURL string, fileToWriteTo string) {
 	var endpointEntryList EndpointList
 
 	csvFilePath := "./nextech-fhir-base-urls.csv"
-	fmt.Print(CHPLURL)
+
 	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
 		log.Fatal(err)

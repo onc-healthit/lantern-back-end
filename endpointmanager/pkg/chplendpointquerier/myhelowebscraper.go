@@ -1,7 +1,6 @@
 package chplendpointquerier
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +16,6 @@ func MyheloURLWebscraper(chplURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	fmt.Print(doc.Text())
 	doc.Find("pre").Each(func(index int, preElem *goquery.Selection) {
 		if strings.HasPrefix(preElem.Text(), "https:") {
 			var entry LanternEntry

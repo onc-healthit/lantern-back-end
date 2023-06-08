@@ -41,6 +41,7 @@ type Endpoints interface {
 
 // GetEndpointsFromFilepath parses a list of endpoints out of the file at the provided path
 func GetEndpointsFromFilepath(filePath string, format string, source string, listURL string) (ListOfEndpoints, error) {
+	fmt.Printf("Getting endpoints from file: %s", filePath)
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
 	if err != nil {
