@@ -1,64 +1,64 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EFGDBD",
-			"OrganizationName": "Westborough Podiatry",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DECFCD",
+			"OrganizationName": "THE NEUROLOGY INSTITUTE LLC",
 			"NPIID": "",
-			"OrganizationZipCode": "01581"
+			"OrganizationZipCode": "33067"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FGFFBD",
-			"OrganizationName": "Kidney Specialists of Paducah and PLLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IJDFBA",
+			"OrganizationName": "Voyage Healthcare",
 			"NPIID": "",
-			"OrganizationZipCode": "42003"
+			"OrganizationZipCode": "55445"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EEJEBA",
-			"OrganizationName": "HCA - Family Foot and Ankle Care",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IAHAAA",
+			"OrganizationName": "Opthalmic Plastic Surgeons of Texas",
 			"NPIID": "",
-			"OrganizationZipCode": "07871"
+			"OrganizationZipCode": "77063"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EGBCBA",
-			"OrganizationName": "Sandlot - William J. Van Wyk, MD, PA",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FJHCDA",
+			"OrganizationName": "Michigan Pain Management Consultants",
 			"NPIID": "",
-			"OrganizationZipCode": "76104"
+			"OrganizationZipCode": "48374"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ACFJAA",
-			"OrganizationName": "Princeton Brain and Spine Center",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CGJGBA",
+			"OrganizationName": "STJ - Digestive Health Associates PLC",
 			"NPIID": "",
-			"OrganizationZipCode": "19047"
+			"OrganizationZipCode": "48334"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/GAIGAD",
-			"OrganizationName": "Sacred Circle Health Care",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/BFEEBA",
+			"OrganizationName": "Pinnacle ENT Associates",
 			"NPIID": "",
-			"OrganizationZipCode": "84111"
+			"OrganizationZipCode": "19087"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IJJFBA",
-			"OrganizationName": "Kofi Nuako, MD",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IDJHAA",
+			"OrganizationName": "NYCDOHMH - Union Tpke Medical P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "11367"
+		},
+		{
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JCCDCD",
+			"OrganizationName": "Premier Primary Care, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": "38261"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IHACDA",
-			"OrganizationName": "Reed Ward DO",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDGFCA",
+			"OrganizationName": "Khair Family Practice",
 			"NPIID": "",
-			"OrganizationZipCode": "83404"
+			"OrganizationZipCode": "30253"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JFBADD",
-			"OrganizationName": "Test Facility-tomcat_MSSQL_ev3",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EACGBA",
+			"OrganizationName": "STJ - Drs Dubay, Jacobs, Orfanou, and Silapaswan",
 			"NPIID": "",
-			"OrganizationZipCode": "01581"
-		},
-		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JCIBCD",
-			"OrganizationName": "Legacy Medical LLC",
-			"NPIID": "",
-			"OrganizationZipCode": "58504"
+			"OrganizationZipCode": "48374"
 		}
 	]
 }

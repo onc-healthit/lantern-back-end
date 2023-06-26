@@ -12259,12 +12259,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/patientfirst",
-			"OrganizationName": "PatientFirst",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.meldrx.com/fhir/imedicware_capitaleye",
 			"OrganizationName": "Capital Eye Consultants, PA",
 			"NPIID": "",

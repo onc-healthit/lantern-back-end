@@ -1961,6 +1961,24 @@
 			"OrganizationName": "Lexington Eye Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyeworks/R4",
+			"OrganizationName": "DRCS Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/proeye/R4",
+			"OrganizationName": "Mary C. Beaulieu, OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/nvpi/R4",
+			"OrganizationName": "Children's Vision and Learning Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

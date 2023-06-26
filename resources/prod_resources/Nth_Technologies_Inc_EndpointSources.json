@@ -97,6 +97,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://masterob50.nthtechnology.com/api/fhir.php/",
+			"OrganizationName": "Master OBGYN 5.0",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://neoga.nthtechnology.com/api/fhir.php/",
 			"OrganizationName": "NEOGA",
 			"NPIID": "",

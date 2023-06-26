@@ -19274,12 +19274,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MS - Bolton Family Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Good Health Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -19532,12 +19526,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Integrated Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PA - Sotomayor Medical Practice, P.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -19760,12 +19748,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Seton Pain \u0026 Rehabilitation Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Dr. Middleton (Lifebridge)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -19929,12 +19911,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Allmed Clinic, PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Specialized Assessing Systems Insti",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -20966,12 +20942,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NC - Juanita C. Perkins FNP-BC Healthcar",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Ian Thompson Jr. MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -21003,12 +20973,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - Cherry Creek Foot Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Patrice Torrence DPM",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21165,12 +21129,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CT - Brookside GYN Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - Michael Nancollas",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21596,12 +21554,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "LA - Diabetes Assessment and Management",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - The Care Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -21735,12 +21687,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - LA PRIMARY CARE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "PA - Leonard J Marchinski, MD, PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -21975,12 +21921,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - KRL FOOT \u0026 ANKLE PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Sage Palliative",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -22268,12 +22208,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Internal Medicine Consultants of Co",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - AMERICAN MUSLIM COMMUNITY CLINICS (",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -22550,7 +22484,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MN - Spec. Medical Response D.B.A. LIVIO",
+			"OrganizationName": "MN - Lifespark",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -22749,12 +22683,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Milena Newhook, D.O., P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Irvington Family Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -23528,12 +23456,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Restored Health Family Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Debra Beth Solomon, OD PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -23624,12 +23546,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "ID - Park Center Foot \u0026 Ankle PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - Metro Pediatric Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -23685,12 +23601,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Amity Group Foundation",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "PA - Bucks County Health Improvement Par",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -23907,12 +23817,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Kidney Care Services of Humboldt",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Jeffrey L Moffat MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -24255,12 +24159,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Laura Gray Schoenberg DO PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VT - Benjamin Physical Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -24632,12 +24530,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Michael C Kushlan MD Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "UT - Advanced Practice Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -24932,12 +24824,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Moore Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Elite Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -25100,12 +24986,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - City Family Clinic \u0026 Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Carlton, Stacey B",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -25161,12 +25041,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Deckerville Healthcare Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "PA - Advanced Orthopedics of Reading, LL",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -25682,12 +25556,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - HILLSBOROUGH PEDIATRICS, P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Bernick, James J",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -25695,12 +25563,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "JACKSON LIVER AND GI SPECIALISTS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Wills Point Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -25821,12 +25683,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Westside Family Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - James E Prommersberger DPM",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -26504,18 +26360,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KENAI PENINSULA HEALTH SYSTEMS LLC DBA URGENT CARE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NOVA WELLNESS SOLUTIONS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MOGA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -26697,12 +26541,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Chesapeake Pain \u0026 Spine Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Brett A. Balocca, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -27026,18 +26864,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MO - Cherry Hill Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Kids Doc on Wheels",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Clifford, David",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -27332,12 +27158,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NC - Coastal Primary Health Specialists",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - James H Duncan Do Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -27482,12 +27302,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Dr. Scott Phillips",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Longhorn Eye Care, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -27573,18 +27387,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Manuel J Sanchez Md Pa D/B/A Family",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - OPES Health Channelside",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - OHC Urgent Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -27788,12 +27590,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - CNS CLINICIANS, P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Vadyala, Vikram",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -27849,12 +27645,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Southland Neurologic Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Goals of Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -28136,12 +27926,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - PEDIATRIC HEALTH SPECIALISTS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Local Care Midwifery, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -28269,12 +28053,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Sandra L Mccormack MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NM - Above and Beyond Medical Care, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -28574,12 +28352,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - INTEGRATIVE CARDIOLOGY PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - De Dan, Claudine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -28767,12 +28539,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Maryland Vascular Specialists 2",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Rock Orthopedic \u0026 Hand Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -29007,12 +28773,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Restore Wellness and Pain Managemen",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Foothills Internal Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -29348,12 +29108,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Centro de Salud Famisanar",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - First Choice Family Medicine, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -29613,12 +29367,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "ID - BEE HAPPY PEDIATRICS PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Medical Clinic at the Ranch",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -29918,19 +29666,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AL - Baldwin County Transitional Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NV - Gan-Lim, Leonardo",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MO - Martin D Rudloff MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -30920,6 +30656,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - Welbe Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Employee Data",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -30933,12 +30675,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Pacific PACE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Rosemead PACE",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -31208,12 +30944,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - PACE Mental Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "My Health Story",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31311,12 +31041,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OR - Charles B. Goldberg, MD, Family Med",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - LUA Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -31622,12 +31346,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CT - Dennis L Huebner MD-Sol Prop",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Osceola County Council On Aging",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31677,12 +31395,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Sweeny Community Hospital",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - The Heidi Group Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -31868,12 +31580,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Cornerstonemd, Pllc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "UT - Daniel Inouye, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31916,12 +31622,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Nexus Neurosurgery",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NM - East Mountain Medical, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31958,12 +31658,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KY - Advanced Center For Arthritis \u0026 Ost",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - Bennett Medical Clinic, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -31983,12 +31677,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - Sandhills Pain Specialists, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - Central Jersey Neurological Institu",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -32306,12 +31994,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - New Heart Medical Startup",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Ronald C Bacani Primary Urgent Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -32325,12 +32007,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Jellico Wellness \u0026 Convenient Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Dr. Melissa's Natural Solutions",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -32373,12 +32049,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - 2020 Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Robert Ashmore MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -32756,12 +32426,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - The Nurses Walk-in Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MO - The Neighborhood Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -32841,12 +32505,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - Kerner/Lerner",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Northside Bariatric Surgery Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -33188,12 +32846,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Clara Barnett",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Shields",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -33410,12 +33062,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - NP House Calls",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Get Up Project",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -33423,12 +33069,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - Neshi Bakshi MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Mission Functional Medicine, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -33548,12 +33188,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Michael Kane",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Elite Foot and Ankle Specialists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -33656,12 +33290,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "ME - Maine Health Equity",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Blue River Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -33669,12 +33297,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Amite Rural Health Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AR - Rainbow Pediatric Clinic PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -34094,12 +33716,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NV - Emmanuel Okechukwu M.D., P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Crescent Neurology and Sleep",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -34233,12 +33849,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Hands of Hope Clinic Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AL - Essential Healthcare, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -34634,12 +34244,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Heart and Rhythm Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Total Foot Care/Wellness Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -34802,12 +34406,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "HI - Hawai'i Pain and Spine, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Orange County Free Clinic, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -34893,12 +34491,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - EPIC Medical Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - Castle Rock Concierge Cardiology, P",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -35138,12 +34730,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - RAMAPO PAIN MANAGEMENT AND SPORTS M",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Sunrise Health Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -35216,12 +34802,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Quality Neurology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PA - Adams Endocrinology Associates, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -35289,12 +34869,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - Oasis Women's Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Compassionate Primary Care Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -35379,12 +34953,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - Direct2Recovery",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NE - Alicia Longoria Urgent Care + FP St",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -35498,12 +35066,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Urgent Care Of Farmington Hills",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - Walls Medicine Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -35553,12 +35115,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IN - Winfield Family Medicine,LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - Emily Hartzog MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -35889,12 +35445,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - RealOptions Medical Clinics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Clinch Memorial Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -36284,12 +35834,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "North County Pain Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "ME - MAINE COMPREHENSIVE PAIN MANAGEMENT",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -36321,12 +35865,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Solstice Health Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Westar Women's Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -36405,12 +35943,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - D'Arbonne Healthcare Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Urgent Care of Lagrange",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -36926,12 +36458,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KS - Runyan Family Practice, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Right Path Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -37011,12 +36537,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - PRIME ENDOCRINOLOGY, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - DR. MEGAN'S HEALTHCARE MINISTRIES,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -37238,12 +36758,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VT - Natural Family Health PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Kevin J Kessler MD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -37317,12 +36831,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Family Psychiatry of the Woodlands",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NM - Sierra Blanca Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -38234,12 +37742,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MN - Brij Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Rapha Integrative Family Clinic PLL",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -38408,12 +37910,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - The Link Spine and Sports Rehabilit",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - Im, Marvin",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -38522,12 +38018,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NC - Hamlet Podiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Rehoboth Medical Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -38565,12 +38055,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OR - Amy Bruner MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "ME - Kathleen Dishner",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -38691,12 +38175,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IN - GSG Pride Healthcare, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - MiniClinic LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -39345,12 +38823,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - RESULTS MEDICAL AESTHETICS, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Panel Health Care Technologies, Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -40658,12 +40130,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - Ferreras Counseling, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - Hankenhof, Robert",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -40748,12 +40214,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - CATES CARE PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Pittman, Beau",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -40832,12 +40292,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OR - Portland Foot And Ankle Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "First Choice Health Loretto",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -40911,12 +40365,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Ocala Infectious Disease and Wound",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - THREE RIVERS PM\u0026R PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41054,19 +40502,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Breakthru Anesthesiology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - WOMEN'S CENTER FOR PELVIC WELLNESS,",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IN - Compass Life Indiana,LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41132,12 +40568,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Patriot Housecall, INC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - Plaquemines Primary Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -41145,12 +40575,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Kazi Ophthalmology, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Breastfeed Atlanta LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41259,12 +40683,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - PINON EMERGENCY AND FAMILY SERVICES",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - PALM INTEGRATIVE MEDICINE NJ LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41582,12 +41000,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Philia Healthcare PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Center for Pulmonary \u0026 Sleep Medici",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -41792,19 +41204,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - EXCEL UROLOGY, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - BEE WELL EL PASO PEDIATRICS, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Tinney Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41817,12 +41217,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Partners for Healing, Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Olympia Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -41895,12 +41289,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - Vineyard Primary Care, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Nova Patient Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -42074,12 +41462,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Dr. Monique Farrington",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - ALIUM HEALTH LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -42165,12 +41547,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - ZACHARY INTERNAL MEDICINE CLINIC, L",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - EYE LINK TECHNOLOGIES, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -42362,18 +41738,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CT - PROEYE, INC.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Family Medicine Of Boca Raton",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CAPITAL ORTHOPAEDICS \u0026 SPORTS MEDICINE PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -42476,12 +41840,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Aristides Zacharoudis MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Betsy Lantner, MD, OBGYN PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -42531,12 +41889,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MS - Norris V. Crump, M.D., P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Rejuvenation Medical PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -42837,12 +42189,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - RICHMOND INTERVENTIONAL PAIN MGMT",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Vertical Turbine Specialists, INC.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -43298,12 +42644,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AK - Nova Wellness Solutions",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Ponce MediClub, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -43389,12 +42729,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "HI - Sunnyside Medical Clinic LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - UrgentPlus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -43509,12 +42843,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Marble City Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Elite Medical Associates, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -43737,12 +43065,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - In Kwon Park MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "DE - Delaware Breast Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -44168,12 +43490,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Senle Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - Grand River Rehabilitation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -44264,19 +43580,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Carolyn Goodman-Henn Dermatology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - Our Kids MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "SC - Sandhills Internal Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -44438,12 +43742,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Graves, Daniel",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Healthtopia",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -44493,12 +43791,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Pulmonary Associates of the Southea",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Ctr for Cardiovascular Excellence",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -44571,12 +43863,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Grimm, William MDVIP",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "LA - Beyond Words, INC.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -44757,12 +44043,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Vieve, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - WMS Hormone Optimization, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -44960,12 +44240,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OR - Natural Elements Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - PATEL ANESTHESIA AND PAIN SPECIALIS",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45051,12 +44325,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "First Choice Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NC - QOL Medical Integrators, INC.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -45236,12 +44504,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MO - Caring Wounds",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Northeastern Nevada Physician Practices",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45267,12 +44529,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Gwinnett Nephrology LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NE - HOUSE CALL HEALTHCARE OMAHA LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -45398,12 +44654,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - BODYWORX PHYSICAL THERAPY, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - CHARLES J KOLLER MD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45423,12 +44673,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - Grand Rapids OB/GYN",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - Health Care Direct",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -45560,12 +44804,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "PA - Breast-feeding Center Of Central PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Virginia Vein and Wellness Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45656,12 +44894,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - SoCO Primary Care Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Alliance Obstetrics \u0026 Gynecology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45710,12 +44942,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - PATIENT CENTERED HEALTH CARE, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Keven Tagdiri, MD, Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -45723,12 +44949,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Medical Office of Dr. Tefera",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - HUMBOLDT FOOT \u0026 ANKLE PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -46184,12 +45404,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - The SAFE Alliance",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NE - CONTEMPORARY OBSTETRICS \u0026 GYNECOLOG",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -46323,12 +45537,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Aria Health and Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NE - Beatrice V. Taylor, DO",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -46544,12 +45752,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - San Diego Pain Management",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Granite Wellness Centers",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -46605,12 +45807,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Quickcare NP",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Total Vascular Care Center, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -46683,12 +45879,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Dr. Ghandour and Dr. Soape",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - Next Level Primary Care, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -46838,12 +46028,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MA - Psychological Collaborative, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Miller, Jennifer",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -46929,12 +46113,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - A Woman's Perspective Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Oak Brook Foot and Ankle Specialist",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -47390,12 +46568,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Edwards Premier Healthcare, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Gregory A. Hamon, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -47486,12 +46658,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Leonard A. Rosen, M.D., P.C. DBA Wo",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Unity Maternal Fetal Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -47541,12 +46707,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IN - Primary Care Partners of South Bend",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Be Free Lifestyle Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -47708,18 +46868,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Sun Mobile Eye Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IN - MK Orthopedics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NM - Journey Pediatrics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -47775,12 +46923,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - UMEZ PODIATRY, PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - YOON J. CHO, D.O., LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -47948,12 +47090,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Dr. Amy L Varner, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - Springfield Health Care Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48092,12 +47228,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - FOOT \u0026 ANKLE HEALTH CARE CENTER, LT",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - CommunityCare Free Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48170,12 +47300,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - HT FAMILY CARE ASSOCIATES, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CC002_OAKDALE OBGYN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48213,12 +47337,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Amelia Ng, MD, PA and Tam V Ho, MD,",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Kiwi Therapy, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -48374,12 +47492,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Mohammed M. Chaudry, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Fair Oaks Women's Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48501,12 +47613,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Watertown Family Practice Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - GENESIS HEALTH PARTNERS, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -48674,12 +47780,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NM - Halcyon Health of the Southwest",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - Northern Arizona Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48704,12 +47804,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - Lawton Urology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Digestive Liver Disease Center of S",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48717,12 +47811,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - BROCKPORT VINE MEDICAL P.C",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - BUENO WELLNESS CENTER PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -48776,12 +47864,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - David P Russo MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - Thomas A. Morris MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48807,12 +47889,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - Green Mountain Pediatrics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - Rebecca Wright DO, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -48962,12 +48038,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - WELLCARE TCCM LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - PINE POINT MEDICAL, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -48993,12 +48063,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "LA - Hansbrough,Peters,Traxler \u0026 Scallan",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Source Surgical Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49095,12 +48159,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Women's OBGYN Center P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - Nest Medical - athenaOne",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49376,12 +48434,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - WONDER KIDS SPECIALTY PEDIATRICS, P",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - MEDICAL SURGICAL SPECIALISTS OF KER",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -49436,12 +48488,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - Physicians Center for Integrative M",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - Elite OB/GYN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -49478,12 +48524,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - Lisha Barre MD LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "DC - Manderson Orthopaedic Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -49514,24 +48554,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OK - Mental Health Vitality",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "EPIC HEALTH SYSTEM",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Exclusive Physicians, PLLC DBA Epic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NC - Haven Total Wellness",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -49551,12 +48573,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Garden State Specialty",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - areti Comprehensive Primary Care LL",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49617,12 +48633,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Collaborative Women's Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - MATTHEW J WAYNER MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49863,12 +48873,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CO - Lafayette Pediatrics/Internal Medic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Integrative Counseling Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -50216,12 +49220,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - AVALON ALLERGY AND ASTHMA LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - Best Physicians At Home, Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -50372,12 +49370,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Desire To Live Now",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Holon Inclusive Health System",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -50445,12 +49437,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MO - Woodlake Podiatry, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NM - Southwest Center for Osteopathic Me",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -50594,18 +49580,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL -  Live. Love. Wellness MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "LA - A \u0026 G PEDIATRICS, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - Vernick and Gopal LLC-BIDCO",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -50655,12 +49629,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - JUST KIDS DIAGNOSTIC AND TREATMENT",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Asha Patel Shah MD Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -50834,19 +49802,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - EASTSIDE PODIATRY, P.L.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "BONE AND JOINT INSTITUTE OF TENNESSEE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Brianne Brown, APRN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51003,12 +49959,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NV - CURRY, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - FIRST CARE INTEGRATED HEALTH LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51206,18 +50156,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - City Sleep Lab",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IN - PRIMARY TELECARE, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "DURA MEDICAL LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -51303,12 +50241,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Atlanta Midtown Nephrology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Health and Wellness Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51482,12 +50414,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - Elizabeth Durovich",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - JG NUTREND PROVIDERS",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -51554,12 +50480,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OR - Natural Pain Solutions",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - James W. Gough MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -51573,12 +50493,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - CustomCare MD, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - AEGLE REGENIX LLC dba Ohio Restorat",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51681,12 +50595,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - CLE Specialists",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "ME - BANGOR GASTROENTEROLOGY LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -51812,12 +50720,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "HI - MAHINAKEALO, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AR - Daniel D. Schrader, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -51915,12 +50817,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - AROGYA FAMILY MEDICINE, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KY - Deepak V. Patel MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -52059,12 +50955,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Virtu30 TeleHealth Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Dr. Scott Harrington",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -52340,12 +51230,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - Travel Medicine Consultations, PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Samraj Med Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -52449,12 +51333,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PARTNERMD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Complete Dimensions Behavioral Heal",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -53960,12 +52838,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - INVICTA HEALTHCARE PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MA - MADHAVI PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -54093,12 +52965,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - BloomHealthOnline",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IA - Surgical Specialty Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -54272,12 +53138,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CO - Marquez Family Medicine Ltd",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - MAT MEDICAL ASSOCIATES, P.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -54291,12 +53151,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "DE - Atlantic Adult/Pediatric Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - ARIZONA EPILEPSY ASSOCIATES LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -54345,12 +53199,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MO - St. Louis Foot and Ankle Institute,",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MS - Country Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -54489,12 +53337,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Mid-Atlantic Quickcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "SC - B-L Family Practice PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -54644,12 +53486,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Dominic E. DiPierro DPM LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - MY WAY BIRTH AND WOMEN'S SERVICES L",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -54674,19 +53510,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AZ - Troy Fulton, PMHNP-BC DBA Mesquite",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Biel Foot \u0026 Ankle Specialists, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - Michael Gibbs",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -54813,12 +53637,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - RONNIE PARKER, DO",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "DC - 1stCallHealth",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55046,18 +53864,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "LA - TIME TO GET WE LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AR - HAAS PSYCHIATRIC SERVICES PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - RUBIN SHARIEF BASHIR, M.D., P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -55191,12 +53997,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "UT - PUZZLE PEDIATRICS, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - PATEL OSTEOPATHIC MEDICAL CORP",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55358,12 +54158,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Apex Interventional Pain and Spine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "GA - Northlake OB/GYN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -55401,12 +54195,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - TENN VAX Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Mind Body Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55490,19 +54278,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Remson Care LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Integral Health \u0026 Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Journey to Health and Wellness",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55586,12 +54362,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OR - Harrington Health Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IA - Obria Medical Clinic of Ames --STAR",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -55634,12 +54404,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Sacred Heart Clinic of Lasalle Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - SCARLETT CUSTER, DO, P.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -55670,19 +54434,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Busy Bee Medical Health Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Impact Counseling Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Alanee MD PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55731,12 +54483,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - First Step Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "GA - Temak Telehealth",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -55875,12 +54621,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "True Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Monticello Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -56498,12 +55238,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Convenient Healthcare VA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - West Alabama Womens Center Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -56636,12 +55370,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "UT - ENLIVEN MEDICAL, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Dr. Jeannie Senior Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -56727,12 +55455,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CopilotIQ     www.CopilotIQ.com",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Midwest Counseling Centers of OHIO",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -56925,12 +55647,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NJ - InFocus Urgent Care - Cavi Cool Spa",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MS - Children's Health Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -57170,12 +55886,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OR - Quality Life Family Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - ASK ALLIANCE HEALTHCARE, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -57362,12 +56072,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Revive Hydration",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IL - EJ Health Solutions",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -57405,12 +56109,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - Community Urgent Care Plus",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Little Rock Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -58640,12 +57338,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MI - Restoration Health LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MT - Sound Diagnostics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -58862,12 +57554,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - MilkBodySoul",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AJRC_Arthritis \u0026 Joint Replacement Cntr of Reading",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -59031,12 +57717,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - Premier Medical Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - Dr. Humaira Quraishi ND, MS",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -59678,12 +58358,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "OH - Private Medical Review",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NY - BRUCE L. FELDMAN M.D. PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -59763,12 +58437,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - ARNP Services, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NV - Pebbles Psychiatry LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -60140,12 +58808,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - TRI-CITIES SEXUAL HEALTH, P.L.L.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Mashanda's Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -60512,12 +59174,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VA - Bryant Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PA - Central Bucks Rheumatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -60752,12 +59408,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - King Health Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "The Neighborhood Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -60765,12 +59415,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PATRICIA TAN, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "EnGedi Therapy Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -60974,12 +59618,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KY - Paula Cordova APRN",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Compassionate Family Health Care, L",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -61136,12 +59774,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NC - easyER Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PROACTIVE MD OCCUPATIONAL HEALTH",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -61281,12 +59913,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Wilson Psychology Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "KY - Cedar Lake Residences, Inc. (DO NOT",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -61466,12 +60092,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MS - Innovative Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - NOVASTAR FAMILY MEDICINE LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -61635,12 +60255,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - The Womens Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "UT - Brandy Marie Family \u0026 Aesthetic Car",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -61994,12 +60608,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - Benjamin Pease NP",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "IN - Advanced Neurology, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -62336,12 +60944,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Universal Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - Jireh Health Services, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -62474,12 +61076,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "LA - Purpose Counseling and Mental Healt",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Virginia Plastic Surgery, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -62511,12 +61107,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - COLLEEN D. BROWNE, DO",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Capstone Primary Care LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -62708,12 +61298,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Dr. Veerendra N. Kandru, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Grabel Spine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -62751,12 +61335,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AK - Troy Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Joe C. Lutka - DBA Choice Medical S",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -62871,18 +61449,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AL - Bay Street Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "MD - SALUS HEALTH INC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "IL - Grey Matters Counseling",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -63069,12 +61635,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Advanced Ob/Gyn",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NE - CARE",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -63332,12 +61892,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - SANCTUM INTEGRATED HEALTH SERVICES",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Charles A Lively MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -63441,12 +61995,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Peace of Mind Psychiatric Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Evolution Health Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -63848,6 +62396,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "KIDNEY AND HYPERTENSION ASSOCIATES OF DALLAS PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "NORTH TEXAS KIDNEY DISEASE ASSOCIATES",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -63951,12 +62505,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OR - APPLEGATE MEDICAL ASSOCIATES",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TN - Men's Health of Maryville",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -64178,12 +62726,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - A\u0026B Family Therapy",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Unaiza Hayat, M.D. Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -64335,12 +62877,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - dantplace, LTD. CO.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "UT - Vizitmd.com",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -65085,12 +63621,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - AccessMed",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Pineapple Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -65966,12 +64496,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - ROBERTO PRIETO HARRIS, MD P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - V Sutton Healthcare LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -66057,12 +64581,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Northern Cambria Medical Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "CA - Rosefinch Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -66939,12 +65457,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - Northern Kentucky Pediatric Grp",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NJ - Interventional Experts",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -68738,12 +67250,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - Meridian Health Partners",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - MANUEL YBARRA M.D., PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -69254,12 +67760,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "VT - CALLA NATURAL MEDICINE, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - FREEDOM COMMUNITY MEDICAL CLINIC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -69512,7 +68012,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Bautista Family Medical Group",
+			"OrganizationName": "FL - Bautista Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -69549,12 +68049,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - TULAKES CLINIC, INC.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "WA - Dr. Michelle M Ritola, ND, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -70520,12 +69014,6 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "AK - Trujillo Consulting LLC DBA Sync He",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MD - MIDDLE RIVER HEALTH CARE, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -70569,12 +69057,6 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TX - Sulphur Creek Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "TX - J Lyle Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -74924,6 +73406,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - Prestige Medical Clinic and Urgent",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - MODERN ALLERGY, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -75374,6 +73862,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "PA - Bucks Foot \u0026 Ankle Care LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "TN - First Choice Urgent Care, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -75567,6 +74061,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Southwest Georgia Healthcare Clinics, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Wiregrass Medical \u0026 Surgical",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -76172,6 +74672,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - BETTER HEALTH MEDICAL, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "KY - KIBBE ORTHOPEDICS, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -76191,6 +74697,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - Jasmine Infusion and Med Spa PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CO - West Metro Fire Rescue",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -76269,6 +74781,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OK - Triad Complete Womens Healthcare LL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "OK - EARLY SCRIPT",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -77558,6 +76076,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Apex Health Clinic - Startup",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Enabled Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -78230,6 +76754,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "PA - Maternal and Family Health Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CT - JOAN GIORDANO MD LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -78387,6 +76917,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OH - DENNISON RENAL CARE, INC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Amador Health Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -78831,6 +77367,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "PA - Burton Wellness Injury Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MT - Chronic Disease Management, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -79424,7 +77966,19 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "GA - Grayson Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - Zocalo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Cole Medical",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -79497,6 +78051,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "FL - Venice Pulmonology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - Kimberly Benton, MD PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -79676,6 +78236,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - DonMar Health Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "SC - K \u0026 M Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -79718,7 +78284,13 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "ID - Adam J Olscamp MD PC",
+			"OrganizationName": "MA - Boston Holistic Health Center PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "ID - Orthopedic Sports Institute",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -79934,6 +78506,18 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AR - Brighter Day Whole Family Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CA - DINTYALA MEDICAL CORPORATION",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Mat-Su Community Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -80121,6 +78705,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "WA - New You Medical Spa LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "FL - ACUMEN HEALTH LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

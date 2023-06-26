@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031501",
-			"OrganizationName": "Atlanta Institute for ENT PC",
+			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10031501",
-			"OrganizationName": "Atlanta Institute for ENT PC",
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10042915",
-			"OrganizationName": "Atlantic Orthopaedics",
+			"URL": "https://TWweb.twops.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10042915",
-			"OrganizationName": "Atlantic Orthopaedics",
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10036904",
-			"OrganizationName": "Burgess Health Center Clinics",
+			"URL": "https://10.160.126.33/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10036904",
-			"OrganizationName": "Burgess Health Center Clinics",
+			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74150",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10035249",
-			"OrganizationName": "Cardinal Pediatrics PLLC",
+			"URL": "https://172.19.5.119/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10035249",
-			"OrganizationName": "Cardinal Pediatrics PLLC",
+			"URL": "https://scm16testps1.nmhs.net/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043002",
-			"OrganizationName": "Cardiovascular Consultants PC",
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10043002",
-			"OrganizationName": "Cardiovascular Consultants PC",
+			"URL": "https://10.160.186.44/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
