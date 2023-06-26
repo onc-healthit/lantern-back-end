@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://classic.carefluence.com/r4",
+			"URL": "https://hapi.omnimd.com/fhir",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

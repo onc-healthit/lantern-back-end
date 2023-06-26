@@ -19,6 +19,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://bgaapi.blairgastro.com:9443/centricitypsAPIServer/fhir/r4",
+			"OrganizationName": "Blair Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://108.218.32.142/demoAPIServer/fhir/r4a",
 			"OrganizationName": "testing-dont use",
 			"NPIID": "",

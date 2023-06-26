@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://api-datamanager.development.carecloud.com:8081/api/fhir/R4",
+			"URL": "https://fhir.patientpattern.com:9443/fhir-server/api/v4/",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

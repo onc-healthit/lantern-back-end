@@ -1,6 +1,12 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0ddc7794-d4a3-4d17-a674-9187af28aea6",
+			"OrganizationName": "ANTELOPE MEMORIAL HOSPITAL",
+			"NPIID": "1083790893",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/d3fa4a41-8fe5-4a32-ab4d-8161e92df9f4",
 			"OrganizationName": "Acadian Medical Center",
 			"NPIID": "1396394961",
@@ -52,12 +58,6 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/4cfc13db-9a08-4e73-844d-13158a3fff7b",
 			"OrganizationName": "Baptist Beaumont Hospital",
 			"NPIID": "1093744187",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/a8c1e524-7a98-4b94-ac39-c13550cd1af2",
-			"OrganizationName": "Barstow Community Hospital",
-			"NPIID": "1780655670",
 			"OrganizationZipCode": ""
 		}
 	]

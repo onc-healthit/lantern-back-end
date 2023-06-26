@@ -2,13 +2,13 @@
 	"Endpoints": [
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Phenomenal Tester (919-867-5309)",
+			"OrganizationName": "Phenomenal Tester",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Phenomenal Tester (919-867-5309)",
+			"OrganizationName": "Phenomenal Tester",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -145,18 +145,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
-			"OrganizationName": "Story Family Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
-			"OrganizationName": "Story Family Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/746b60d0-6f8a-4bef-818b-7bf9eae8bb85",
 			"OrganizationName": "Maria Nida V Barino MD LTD",
 			"NPIID": "",
@@ -165,6 +153,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/746b60d0-6f8a-4bef-818b-7bf9eae8bb85",
 			"OrganizationName": "Maria Nida V Barino MD LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
+			"OrganizationName": "Story Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/786a0d66-6b90-4403-8eb5-660bce9c048d",
+			"OrganizationName": "Story Family Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -189,18 +189,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/0a4e269b-ec21-4f21-a935-3066c329012d",
 			"OrganizationName": "Payam Mehranpour MD FACC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
-			"OrganizationName": "Midwest Home Physicians",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
-			"OrganizationName": "Midwest Home Physicians",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -241,6 +229,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
+			"OrganizationName": "Midwest Home Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/49ec4ce9-4ee4-4d7b-b447-33ae12e85eb4",
+			"OrganizationName": "Midwest Home Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/79e5f822-fa81-4d88-960d-0ce9e16e40f0",
 			"OrganizationName": "Innovative Health Practice Center, LLC",
 			"NPIID": "",
@@ -265,18 +265,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
-			"OrganizationName": "Fariz Habib, M.D., P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
-			"OrganizationName": "Fariz Habib, M.D., P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/db0be6ec-3914-458e-bb41-d9338535061a",
 			"OrganizationName": "Prime Wellness Clinic",
 			"NPIID": "",
@@ -285,6 +273,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/db0be6ec-3914-458e-bb41-d9338535061a",
 			"OrganizationName": "Prime Wellness Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
+			"OrganizationName": "Fariz Habib, M.D., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/acbf206c-52c9-4447-9b54-5952296fd781",
+			"OrganizationName": "Fariz Habib, M.D., P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -565,18 +565,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
-			"OrganizationName": "Rafael Trinidad-Hernandez Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
-			"OrganizationName": "Rafael Trinidad-Hernandez Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/fbe99774-1c6c-44bb-a0c4-b21f8aa08f87",
 			"OrganizationName": "O'Keeffe Health Care LLC",
 			"NPIID": "",
@@ -597,6 +585,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/35401fc4-1db8-45de-a189-5dcbbc38cfaf",
 			"OrganizationName": "My Home Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
+			"OrganizationName": "Rafael Trinidad-Hernandez Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/646af1a9-bfbd-4515-967b-397a4ec2acb6",
+			"OrganizationName": "Rafael Trinidad-Hernandez Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -637,18 +637,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
-			"OrganizationName": "Hanh Hoang Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
-			"OrganizationName": "Hanh Hoang Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/094aa12a-c67a-42ac-81ef-a780de9aac80",
 			"OrganizationName": "Gregory G. Harris, MD, MPH",
 			"NPIID": "",
@@ -661,18 +649,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
-			"OrganizationName": "Patrick Muturi Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
-			"OrganizationName": "Patrick Muturi Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/c031d8d5-bac6-4dbb-8c92-e373c827e960",
 			"OrganizationName": "Rockwall Rapid Care",
 			"NPIID": "",
@@ -681,6 +657,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/c031d8d5-bac6-4dbb-8c92-e373c827e960",
 			"OrganizationName": "Rockwall Rapid Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
+			"OrganizationName": "Hanh Hoang Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a1cf237e-e0fe-4104-9e49-3812f60deaa6",
+			"OrganizationName": "Hanh Hoang Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
+			"OrganizationName": "Patrick Muturi Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2a40140a-5564-4d3e-98fb-28a6710d1406",
+			"OrganizationName": "Patrick Muturi Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -745,14 +745,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
-			"OrganizationName": "Premiere Pointe Podiatry",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
+			"OrganizationName": "ALL VALLEY PEDIATRICS",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
-			"OrganizationName": "Premiere Pointe Podiatry",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
+			"OrganizationName": "ALL VALLEY PEDIATRICS",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -769,30 +769,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c472ca6-d5c3-454b-9888-443e7596215e",
-			"OrganizationName": "Eastern Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c472ca6-d5c3-454b-9888-443e7596215e",
-			"OrganizationName": "Eastern Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
-			"OrganizationName": "ALL VALLEY PEDIATRICS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a110f410-1380-4a42-a2ec-0ebe0de7449d",
-			"OrganizationName": "ALL VALLEY PEDIATRICS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/653f5e49-fe4d-4dc1-a1fc-2993c868ce43",
 			"OrganizationName": "Bassem Elsawy, MD PA",
 			"NPIID": "",
@@ -805,6 +781,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
+			"OrganizationName": "Premiere Pointe Podiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e56f3b7b-a55d-42d6-9b06-a66b0f54ac6e",
+			"OrganizationName": "Premiere Pointe Podiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/ea69425e-6283-4221-8cf4-342c7b9b66d0",
 			"OrganizationName": "SHABBIR SHAKIR Practice",
 			"NPIID": "",
@@ -813,6 +801,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/ea69425e-6283-4221-8cf4-342c7b9b66d0",
 			"OrganizationName": "SHABBIR SHAKIR Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
+			"OrganizationName": "Comprehensive Psychological Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
+			"OrganizationName": "Comprehensive Psychological Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -837,18 +837,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/422859ff-e888-402a-b429-5b48a4fe61ff",
 			"OrganizationName": "Community Behavioral Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
-			"OrganizationName": "Comprehensive Psychological Services",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/f5f819ea-dad1-4248-b231-6cd17859fb3d",
-			"OrganizationName": "Comprehensive Psychological Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1105,18 +1093,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
-			"OrganizationName": "Kattan Podiatry P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
-			"OrganizationName": "Kattan Podiatry P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/f3eb26c4-ddbc-47fd-a171-54db267ce4e5",
 			"OrganizationName": "MILAGROS VILLALOBOS",
 			"NPIID": "",
@@ -1153,6 +1129,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
+			"OrganizationName": "Kattan Podiatry P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/00ada8bd-9c86-47d6-8c45-de6551169486",
+			"OrganizationName": "Kattan Podiatry P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/5020ecb3-e97f-4280-8c7b-e97bcf8e2774",
 			"OrganizationName": "Southern Practitioner",
 			"NPIID": "",
@@ -1173,6 +1161,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/c515d1dd-3142-4d37-8647-e832d2f3c65c",
 			"OrganizationName": "RST Medical Group INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
+			"OrganizationName": "Aungkhin Psychiatry Medical Group Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
+			"OrganizationName": "Aungkhin Psychiatry Medical Group Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1201,18 +1201,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
-			"OrganizationName": "Aungkhin Psychiatry Medical Group Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/efda0203-3b06-4b4d-b25e-a9a5d943d9af",
-			"OrganizationName": "Aungkhin Psychiatry Medical Group Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/53968985-4c0a-4028-8f80-b82c87c1af69",
 			"OrganizationName": "CONCIERCARE, INC.",
 			"NPIID": "",
@@ -1225,18 +1213,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
-			"OrganizationName": "Grace Home Primary Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
-			"OrganizationName": "Grace Home Primary Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/83afe83a-7dc0-48f8-a461-0dce3ecc555c",
 			"OrganizationName": "WILLIAM CHEN Practice",
 			"NPIID": "",
@@ -1245,6 +1221,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/83afe83a-7dc0-48f8-a461-0dce3ecc555c",
 			"OrganizationName": "WILLIAM CHEN Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
+			"OrganizationName": "Grace Home Primary Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fe463a7d-940d-4d87-9896-fec770f5a7b0",
+			"OrganizationName": "Grace Home Primary Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1333,14 +1321,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
-			"OrganizationName": "Dra  Vazquez Rivera",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
+			"OrganizationName": "VIRGINIA FAMILY CARE CENTER, INC.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
-			"OrganizationName": "Dra  Vazquez Rivera",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
+			"OrganizationName": "VIRGINIA FAMILY CARE CENTER, INC.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1357,14 +1345,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
-			"OrganizationName": "VIRGINIA FAMILY CARE CENTER, INC.",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
+			"OrganizationName": "Dra  Vazquez Rivera",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/0c474a7a-0b00-4f0f-a8fd-0d52a7ccdadd",
-			"OrganizationName": "VIRGINIA FAMILY CARE CENTER, INC.",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/10e77121-1e54-4229-a268-330a09659b02",
+			"OrganizationName": "Dra  Vazquez Rivera",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1377,6 +1365,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/cabd29a0-ba29-4807-b166-1883b15999c2",
 			"OrganizationName": "WNC Family Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
+			"OrganizationName": "Providers for Healthy Living",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
+			"OrganizationName": "Providers for Healthy Living",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1441,30 +1441,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e3c94667-b2f2-42dc-a765-a10e61f78d3e",
-			"OrganizationName": "Eastern Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e3c94667-b2f2-42dc-a765-a10e61f78d3e",
-			"OrganizationName": "Eastern Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
-			"OrganizationName": "Providers for Healthy Living",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/fefb8d1b-b2e4-4304-b796-cfc35791cb68",
-			"OrganizationName": "Providers for Healthy Living",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/35f9f58f-c216-47a8-a432-ad4ae3485c60",
 			"OrganizationName": "The Hill OB-GYN Associates, P.C.",
 			"NPIID": "",
@@ -1473,6 +1449,42 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/35f9f58f-c216-47a8-a432-ad4ae3485c60",
 			"OrganizationName": "The Hill OB-GYN Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
+			"OrganizationName": "Tanvi Kadakia Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
+			"OrganizationName": "Tanvi Kadakia Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
+			"OrganizationName": "Downman Urgent Healthcare Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
+			"OrganizationName": "Downman Urgent Healthcare Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
+			"OrganizationName": "Zulfiqar Ahmed  MD, MPH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
+			"OrganizationName": "Zulfiqar Ahmed  MD, MPH",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1525,18 +1537,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
-			"OrganizationName": "Downman Urgent Healthcare Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/31b1b3f5-1bc1-4be1-bd4c-a56747cb621c",
-			"OrganizationName": "Downman Urgent Healthcare Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/2d0e9924-8d9a-49b9-90c3-32db9149d947",
 			"OrganizationName": "MEDICS PC",
 			"NPIID": "",
@@ -1549,26 +1549,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
-			"OrganizationName": "Tanvi Kadakia Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
+			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/8882bbba-1557-46b7-ab82-6acc6dade71c",
-			"OrganizationName": "Tanvi Kadakia Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
-			"OrganizationName": "Zulfiqar Ahmed  MD, MPH",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5141c68-1957-4094-a5cd-01b1b92b247e",
-			"OrganizationName": "Zulfiqar Ahmed  MD, MPH",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
+			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1581,18 +1569,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fc41a3a-09bb-436e-8622-be12970faa18",
 			"OrganizationName": "Doctors Center Family and Urgent Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
-			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a58527ac-0ddb-455d-8650-38b44664f0d2",
-			"OrganizationName": "San Diego Allergy, Asthma \u0026 Immunology Consultants, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1629,6 +1605,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/4bc47114-a4c2-430b-95c9-3d95b99fb600",
 			"OrganizationName": "AZ FOOT \u0026 ANKLE MED \u0026 SURG",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
+			"OrganizationName": "Twilight Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
+			"OrganizationName": "Twilight Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1693,18 +1681,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
-			"OrganizationName": "Twilight Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3e10af1e-f7c2-4e0b-add6-7be7dd562008",
-			"OrganizationName": "Twilight Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/1fe9a672-f933-48f9-aff4-cadaaf21aa85",
 			"OrganizationName": "Desert Bolt® Behavioral LLC",
 			"NPIID": "",
@@ -1713,6 +1689,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/1fe9a672-f933-48f9-aff4-cadaaf21aa85",
 			"OrganizationName": "Desert Bolt® Behavioral LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
+			"OrganizationName": "Odin De los Reyes DPM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
+			"OrganizationName": "Odin De los Reyes DPM",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1801,14 +1789,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
-			"OrganizationName": "Odin De los Reyes DPM",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
+			"OrganizationName": "Kyle Shepard",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a13494c3-e537-4ff0-9d98-14dfabd413ac",
-			"OrganizationName": "Odin De los Reyes DPM",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
+			"OrganizationName": "Kyle Shepard",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1825,18 +1813,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
-			"OrganizationName": "Kyle Shepard",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/547bd7bd-f8e4-4127-a63c-5b02d6dbfe8f",
-			"OrganizationName": "Kyle Shepard",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/47b9536e-09b8-4d88-950d-00e39cb7529f",
 			"OrganizationName": "Boro Park Primary",
 			"NPIID": "",
@@ -1845,6 +1821,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/47b9536e-09b8-4d88-950d-00e39cb7529f",
 			"OrganizationName": "Boro Park Primary",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
+			"OrganizationName": "Carlos Diaz Velez, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
+			"OrganizationName": "Carlos Diaz Velez, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
+			"OrganizationName": "Pacific Rehabilitation \u0026 Pain",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
+			"OrganizationName": "Pacific Rehabilitation \u0026 Pain",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1885,26 +1885,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
-			"OrganizationName": "Carlos Diaz Velez, MD",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
+			"OrganizationName": "Colorado Primary Care Clinic, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b6b71309-f39f-474a-9a97-8d75093c5f9e",
-			"OrganizationName": "Carlos Diaz Velez, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
-			"OrganizationName": "Pacific Rehabilitation \u0026 Pain",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/23fd208d-c6a3-4835-8df7-974fd36e7c6e",
-			"OrganizationName": "Pacific Rehabilitation \u0026 Pain",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
+			"OrganizationName": "Colorado Primary Care Clinic, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1929,18 +1917,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/e0f2d7b3-c33c-461d-a470-f21e44a72a1b",
 			"OrganizationName": "Caringmindz",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
-			"OrganizationName": "Colorado Primary Care Clinic, Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/60a8c668-5df8-4607-b784-38fc887f7cb4",
-			"OrganizationName": "Colorado Primary Care Clinic, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2017,6 +1993,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
+			"OrganizationName": "Hankins \u0026 Assc. LLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
+			"OrganizationName": "Hankins \u0026 Assc. LLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/6b38c3b5-7642-43c0-8696-f09de876a177",
 			"OrganizationName": "ARC Counseling and Therapy Services, LLC.",
 			"NPIID": "",
@@ -2053,14 +2041,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
-			"OrganizationName": "Hankins \u0026 Assc. LLC.",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
+			"OrganizationName": "Tonya Hood PMHNP LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/fa890704-0852-48a1-8624-55fb15710a23",
-			"OrganizationName": "Hankins \u0026 Assc. LLC.",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
+			"OrganizationName": "Tonya Hood PMHNP LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2073,18 +2061,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/256fce53-1187-4b49-b20f-8798f7a26eaf",
 			"OrganizationName": "KAHALA CLINIC FOR CHILDREN \u0026 FAMILY",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
-			"OrganizationName": "Tonya Hood PMHNP LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/156957f0-ebde-4889-8194-249c21192c3d",
-			"OrganizationName": "Tonya Hood PMHNP LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2109,18 +2085,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/7cbb2cbb-7441-4289-ad47-0ab22946e3fb",
 			"OrganizationName": "Maria T. Batilo, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b4caba38-bb81-401a-8481-28823d2e451c",
-			"OrganizationName": "UrgentNP, LLC dba Complete Family Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b4caba38-bb81-401a-8481-28823d2e451c",
-			"OrganizationName": "UrgentNP, LLC dba Complete Family Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2161,14 +2125,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
-			"OrganizationName": "Prodigy Aesthetics and Primary Care",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
+			"OrganizationName": "Ortega Wellness",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
-			"OrganizationName": "Prodigy Aesthetics and Primary Care",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
+			"OrganizationName": "Ortega Wellness",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2185,14 +2149,38 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
-			"OrganizationName": "Ortega Wellness",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
+			"OrganizationName": "Prodigy Aesthetics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/417bf9be-13f7-4398-95ee-2a39d3fb7ef3",
-			"OrganizationName": "Ortega Wellness",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/77dd9999-c6b5-4db9-8f88-25c3e57152d4",
+			"OrganizationName": "Prodigy Aesthetics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
+			"OrganizationName": "Via Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
+			"OrganizationName": "Via Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
+			"OrganizationName": "iCare Medical Systems",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
+			"OrganizationName": "iCare Medical Systems",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2221,18 +2209,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
-			"OrganizationName": "Via Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/800d76a9-5929-4ac4-89df-9caceab62fe9",
-			"OrganizationName": "Via Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/6ad99ee0-89db-4b8a-84f0-eee0bdbde00a",
 			"OrganizationName": "Sandia View Family Medicine",
 			"NPIID": "",
@@ -2257,14 +2233,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
-			"OrganizationName": "iCare Medical Systems",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2821dc5-ea7f-441c-a440-9bf7d3e0b08a",
+			"OrganizationName": "Metropolitan Nephrologists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/f9397632-4905-45ca-a633-3551355f4b1e",
-			"OrganizationName": "iCare Medical Systems",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2821dc5-ea7f-441c-a440-9bf7d3e0b08a",
+			"OrganizationName": "Metropolitan Nephrologists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2281,30 +2257,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/f73728b7-698c-4e0c-80dc-f0116633a0b4",
-			"OrganizationName": "Kim Jones-Fearing Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/f73728b7-698c-4e0c-80dc-f0116633a0b4",
-			"OrganizationName": "Kim Jones-Fearing Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2821dc5-ea7f-441c-a440-9bf7d3e0b08a",
-			"OrganizationName": "Metropolitan Nephrologists",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2821dc5-ea7f-441c-a440-9bf7d3e0b08a",
-			"OrganizationName": "Metropolitan Nephrologists",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/58116b0d-a5a9-44ba-a01d-2b28d628a436",
 			"OrganizationName": "Family 1st Care",
 			"NPIID": "",
@@ -2317,26 +2269,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c12d911-6453-49cc-9e1c-b81903ab3c26",
-			"OrganizationName": "Family Medicine of Orlando, PLLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f73728b7-698c-4e0c-80dc-f0116633a0b4",
+			"OrganizationName": "Kim Jones-Fearing Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c12d911-6453-49cc-9e1c-b81903ab3c26",
-			"OrganizationName": "Family Medicine of Orlando, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c6fb71ae-7b89-440e-94b6-fe495c3ae1af",
-			"OrganizationName": "Apogee Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c6fb71ae-7b89-440e-94b6-fe495c3ae1af",
-			"OrganizationName": "Apogee Health",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f73728b7-698c-4e0c-80dc-f0116633a0b4",
+			"OrganizationName": "Kim Jones-Fearing Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2353,14 +2293,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a8e4f0e5-3648-45a4-b8aa-64a274b05ce9",
-			"OrganizationName": "Batool Imtiaz Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c6fb71ae-7b89-440e-94b6-fe495c3ae1af",
+			"OrganizationName": "Apogee Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a8e4f0e5-3648-45a4-b8aa-64a274b05ce9",
-			"OrganizationName": "Batool Imtiaz Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c6fb71ae-7b89-440e-94b6-fe495c3ae1af",
+			"OrganizationName": "Apogee Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2373,6 +2313,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/26e5c781-a0fb-4620-b901-5aac84f43a0f",
 			"OrganizationName": "Shafa Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c12d911-6453-49cc-9e1c-b81903ab3c26",
+			"OrganizationName": "Family Medicine of Orlando, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c12d911-6453-49cc-9e1c-b81903ab3c26",
+			"OrganizationName": "Family Medicine of Orlando, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2401,6 +2353,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a8e4f0e5-3648-45a4-b8aa-64a274b05ce9",
+			"OrganizationName": "Batool Imtiaz Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a8e4f0e5-3648-45a4-b8aa-64a274b05ce9",
+			"OrganizationName": "Batool Imtiaz Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3d79a942-5821-4984-ba33-ac226591ab95",
+			"OrganizationName": "MP Advanced Practice FAX 3058517515",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3d79a942-5821-4984-ba33-ac226591ab95",
+			"OrganizationName": "MP Advanced Practice FAX 3058517515",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/c6f3406f-be6a-45cf-9057-1c1bbcf06ae5",
 			"OrganizationName": "Dr. Frank M Shanley PA",
 			"NPIID": "",
@@ -2425,18 +2401,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3d79a942-5821-4984-ba33-ac226591ab95",
-			"OrganizationName": "MP Advanced Practice FAX 3058517515",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3d79a942-5821-4984-ba33-ac226591ab95",
-			"OrganizationName": "MP Advanced Practice FAX 3058517515",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/e860e3ad-8670-49e9-993e-1515e5ddba97",
 			"OrganizationName": "Southern Kidney Specialists, PLC",
 			"NPIID": "",
@@ -2449,18 +2413,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7b3236bf-df60-45f2-a070-6eddf505ffac",
-			"OrganizationName": "Concord Recovery Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7b3236bf-df60-45f2-a070-6eddf505ffac",
-			"OrganizationName": "Concord Recovery Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/f52b4473-16f7-4d0d-a352-dac2e7a1ed9c",
 			"OrganizationName": "New Era Mental Health PLLC",
 			"NPIID": "",
@@ -2469,6 +2421,42 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/f52b4473-16f7-4d0d-a352-dac2e7a1ed9c",
 			"OrganizationName": "New Era Mental Health PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9cc22c48-ac52-4287-b49a-a0f42b363edb",
+			"OrganizationName": "ORT Spine PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9cc22c48-ac52-4287-b49a-a0f42b363edb",
+			"OrganizationName": "ORT Spine PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3c4e2e82-3d95-4735-81f3-79d32310df36",
+			"OrganizationName": "Swenson Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3c4e2e82-3d95-4735-81f3-79d32310df36",
+			"OrganizationName": "Swenson Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7b3236bf-df60-45f2-a070-6eddf505ffac",
+			"OrganizationName": "Concord Recovery Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7b3236bf-df60-45f2-a070-6eddf505ffac",
+			"OrganizationName": "Concord Recovery Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2509,30 +2497,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/9cc22c48-ac52-4287-b49a-a0f42b363edb",
-			"OrganizationName": "ORT Spine PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/9cc22c48-ac52-4287-b49a-a0f42b363edb",
-			"OrganizationName": "ORT Spine PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3c4e2e82-3d95-4735-81f3-79d32310df36",
-			"OrganizationName": "Swenson Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3c4e2e82-3d95-4735-81f3-79d32310df36",
-			"OrganizationName": "Swenson Medical",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/01edd596-cf1d-4ed1-a9af-80415cb455b5",
 			"OrganizationName": "Gabrielle Cochran FNP",
 			"NPIID": "",
@@ -2557,42 +2521,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/eed305cc-61a0-46a0-a15d-4490ecb40e68",
-			"OrganizationName": "New Health Montana",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/eed305cc-61a0-46a0-a15d-4490ecb40e68",
-			"OrganizationName": "New Health Montana",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/86983421-763c-418e-a8bc-c38bb5afbac4",
-			"OrganizationName": "Infectious Disease Consultants (IDC)",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/86983421-763c-418e-a8bc-c38bb5afbac4",
-			"OrganizationName": "Infectious Disease Consultants (IDC)",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/4a711c55-7271-468d-991d-5fc5d22d1492",
-			"OrganizationName": "Lifestyle Neurology PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/4a711c55-7271-468d-991d-5fc5d22d1492",
-			"OrganizationName": "Lifestyle Neurology PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/93be8ae0-0c94-4840-b574-71df82ec9c6c",
 			"OrganizationName": "GREATER HEALTH CENTER PLC",
 			"NPIID": "",
@@ -2605,14 +2533,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2baf133c-9dc2-4859-9179-45794a475ea0",
-			"OrganizationName": "Act of beauty Family Practice with aesthetics",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/eed305cc-61a0-46a0-a15d-4490ecb40e68",
+			"OrganizationName": "New Health Montana",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2baf133c-9dc2-4859-9179-45794a475ea0",
-			"OrganizationName": "Act of beauty Family Practice with aesthetics",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/eed305cc-61a0-46a0-a15d-4490ecb40e68",
+			"OrganizationName": "New Health Montana",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2625,6 +2553,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5e96fc1-53e4-4085-8578-ad5f7e2a1de7",
 			"OrganizationName": "Newstep PLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4a711c55-7271-468d-991d-5fc5d22d1492",
+			"OrganizationName": "Lifestyle Neurology PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4a711c55-7271-468d-991d-5fc5d22d1492",
+			"OrganizationName": "Lifestyle Neurology PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2677,6 +2617,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/86983421-763c-418e-a8bc-c38bb5afbac4",
+			"OrganizationName": "Infectious Disease Consultants (IDC)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/86983421-763c-418e-a8bc-c38bb5afbac4",
+			"OrganizationName": "Infectious Disease Consultants (IDC)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2baf133c-9dc2-4859-9179-45794a475ea0",
+			"OrganizationName": "Act of beauty Family Practice with aesthetics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2baf133c-9dc2-4859-9179-45794a475ea0",
+			"OrganizationName": "Act of beauty Family Practice with aesthetics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/1d877af0-ed37-4c9c-8ed4-8f1afd543303",
 			"OrganizationName": "Bristol Health",
 			"NPIID": "",
@@ -2725,6 +2689,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6e172775-d2db-4597-9adc-1974ab69b5a7",
+			"OrganizationName": "Transitional Care Physicians of Georgia P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6e172775-d2db-4597-9adc-1974ab69b5a7",
+			"OrganizationName": "Transitional Care Physicians of Georgia P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/040dd464-1e78-45a9-a955-f6487aa0c4f3",
 			"OrganizationName": "Luxury Psychiatry and Telepsychiatry",
 			"NPIID": "",
@@ -2733,6 +2709,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/040dd464-1e78-45a9-a955-f6487aa0c4f3",
 			"OrganizationName": "Luxury Psychiatry and Telepsychiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f59af7d7-8671-4bd0-bd85-d09882bf7210",
+			"OrganizationName": "guillermo acevedo Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f59af7d7-8671-4bd0-bd85-d09882bf7210",
+			"OrganizationName": "guillermo acevedo Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2761,38 +2749,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/f59af7d7-8671-4bd0-bd85-d09882bf7210",
-			"OrganizationName": "guillermo acevedo Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/93f1631e-64f5-4f48-af8b-7b79d01b5e94",
+			"OrganizationName": "Amar Mohan Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/f59af7d7-8671-4bd0-bd85-d09882bf7210",
-			"OrganizationName": "guillermo acevedo Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6e172775-d2db-4597-9adc-1974ab69b5a7",
-			"OrganizationName": "Transitional Care Physicians of Georgia P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6e172775-d2db-4597-9adc-1974ab69b5a7",
-			"OrganizationName": "Transitional Care Physicians of Georgia P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7156e25e-c554-41ed-b598-4893db8625b9",
-			"OrganizationName": "Parkway Podiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7156e25e-c554-41ed-b598-4893db8625b9",
-			"OrganizationName": "Parkway Podiatry",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/93f1631e-64f5-4f48-af8b-7b79d01b5e94",
+			"OrganizationName": "Amar Mohan Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2809,26 +2773,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/93f1631e-64f5-4f48-af8b-7b79d01b5e94",
-			"OrganizationName": "Amar Mohan Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/07b3aa99-c05e-4db6-92c3-8d038ef3be1b",
+			"OrganizationName": "Jose B Benigno Medical Clinic PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/93f1631e-64f5-4f48-af8b-7b79d01b5e94",
-			"OrganizationName": "Amar Mohan Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/07b3aa99-c05e-4db6-92c3-8d038ef3be1b",
+			"OrganizationName": "Jose B Benigno Medical Clinic PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2fc72f42-aa6e-4f90-8d2d-faebfbc24a9b",
-			"OrganizationName": "Horizon Healthcare",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7156e25e-c554-41ed-b598-4893db8625b9",
+			"OrganizationName": "Parkway Podiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2fc72f42-aa6e-4f90-8d2d-faebfbc24a9b",
-			"OrganizationName": "Horizon Healthcare",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7156e25e-c554-41ed-b598-4893db8625b9",
+			"OrganizationName": "Parkway Podiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2869,30 +2833,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/597a8725-e2df-4a7c-8f02-b4eebcc2cd08",
-			"OrganizationName": "NV Health Solutions",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/597a8725-e2df-4a7c-8f02-b4eebcc2cd08",
-			"OrganizationName": "NV Health Solutions",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/07b3aa99-c05e-4db6-92c3-8d038ef3be1b",
-			"OrganizationName": "Jose B Benigno Medical Clinic PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/07b3aa99-c05e-4db6-92c3-8d038ef3be1b",
-			"OrganizationName": "Jose B Benigno Medical Clinic PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/f25e8eb4-20ed-480a-8da8-63352b9fa050",
 			"OrganizationName": "Acclaim Neurology",
 			"NPIID": "",
@@ -2917,26 +2857,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3b9ea754-a1b4-443c-b643-226ef89ac125",
-			"OrganizationName": "J.F.K. Pediatrics",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/597a8725-e2df-4a7c-8f02-b4eebcc2cd08",
+			"OrganizationName": "NV Health Solutions",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3b9ea754-a1b4-443c-b643-226ef89ac125",
-			"OrganizationName": "J.F.K. Pediatrics",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/597a8725-e2df-4a7c-8f02-b4eebcc2cd08",
+			"OrganizationName": "NV Health Solutions",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3663c97e-7e9c-477e-a110-6191dd3c1d0d",
-			"OrganizationName": "Pimienta MD Clinic",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2fc72f42-aa6e-4f90-8d2d-faebfbc24a9b",
+			"OrganizationName": "Horizon Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3663c97e-7e9c-477e-a110-6191dd3c1d0d",
-			"OrganizationName": "Pimienta MD Clinic",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2fc72f42-aa6e-4f90-8d2d-faebfbc24a9b",
+			"OrganizationName": "Horizon Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2961,6 +2901,54 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/8f408385-20b7-432f-9e16-84689076019f",
 			"OrganizationName": "FitScription M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3b9ea754-a1b4-443c-b643-226ef89ac125",
+			"OrganizationName": "J.F.K. Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3b9ea754-a1b4-443c-b643-226ef89ac125",
+			"OrganizationName": "J.F.K. Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e2858fc9-c41f-4034-ae85-579a991ed129",
+			"OrganizationName": "Arlia Rios LLuberas Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e2858fc9-c41f-4034-ae85-579a991ed129",
+			"OrganizationName": "Arlia Rios LLuberas Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3663c97e-7e9c-477e-a110-6191dd3c1d0d",
+			"OrganizationName": "Pimienta MD Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3663c97e-7e9c-477e-a110-6191dd3c1d0d",
+			"OrganizationName": "Pimienta MD Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/866e9d1b-f70e-45bd-8db5-62aa9bbd68d7",
+			"OrganizationName": "CYNTHIA CLOUTIER Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/866e9d1b-f70e-45bd-8db5-62aa9bbd68d7",
+			"OrganizationName": "CYNTHIA CLOUTIER Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3001,30 +2989,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e2858fc9-c41f-4034-ae85-579a991ed129",
-			"OrganizationName": "Arlia Rios LLuberas Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e2858fc9-c41f-4034-ae85-579a991ed129",
-			"OrganizationName": "Arlia Rios LLuberas Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/866e9d1b-f70e-45bd-8db5-62aa9bbd68d7",
-			"OrganizationName": "CYNTHIA CLOUTIER Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/866e9d1b-f70e-45bd-8db5-62aa9bbd68d7",
-			"OrganizationName": "CYNTHIA CLOUTIER Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/113e4bbb-b674-4ba4-98e2-d236e5c7f2ff",
 			"OrganizationName": "Porters Neck Counseling",
 			"NPIID": "",
@@ -3033,6 +2997,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/113e4bbb-b674-4ba4-98e2-d236e5c7f2ff",
 			"OrganizationName": "Porters Neck Counseling",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/82804c88-f5e6-41d9-828c-75b2317bb97a",
+			"OrganizationName": "Lakes Area Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/82804c88-f5e6-41d9-828c-75b2317bb97a",
+			"OrganizationName": "Lakes Area Health Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3049,18 +3025,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c90f4e27-2fca-4b5e-a032-03681b44c31c",
-			"OrganizationName": "Alliance Rehabilitation Richmond",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c90f4e27-2fca-4b5e-a032-03681b44c31c",
-			"OrganizationName": "Alliance Rehabilitation Richmond",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/7d6e1651-e8dd-464f-a964-e3801fe2aefd",
 			"OrganizationName": "Sierra Integrative Psychiatric Clinic",
 			"NPIID": "",
@@ -3073,14 +3037,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/82804c88-f5e6-41d9-828c-75b2317bb97a",
-			"OrganizationName": "Lakes Area Health Center",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c90f4e27-2fca-4b5e-a032-03681b44c31c",
+			"OrganizationName": "Alliance Rehabilitation Richmond",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/82804c88-f5e6-41d9-828c-75b2317bb97a",
-			"OrganizationName": "Lakes Area Health Center",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c90f4e27-2fca-4b5e-a032-03681b44c31c",
+			"OrganizationName": "Alliance Rehabilitation Richmond",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/35d90a79-d291-458f-a9ba-32d06b29ccbb",
+			"OrganizationName": "Heather Lin, M.D., A Medical Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/35d90a79-d291-458f-a9ba-32d06b29ccbb",
+			"OrganizationName": "Heather Lin, M.D., A Medical Corporation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3109,18 +3085,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/8548c5fc-4b11-497a-94f3-5f27e48b2f07",
-			"OrganizationName": "Nightingale Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/8548c5fc-4b11-497a-94f3-5f27e48b2f07",
-			"OrganizationName": "Nightingale Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9ff07b3-29dc-4807-b008-581b82b7ae45",
 			"OrganizationName": "Viking Health Systems",
 			"NPIID": "",
@@ -3133,26 +3097,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/35d90a79-d291-458f-a9ba-32d06b29ccbb",
-			"OrganizationName": "Heather Lin, M.D., A Medical Corporation",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8548c5fc-4b11-497a-94f3-5f27e48b2f07",
+			"OrganizationName": "Nightingale Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/35d90a79-d291-458f-a9ba-32d06b29ccbb",
-			"OrganizationName": "Heather Lin, M.D., A Medical Corporation",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/1f86400c-bc98-48db-bdd9-4b80f9afb623",
-			"OrganizationName": "Prime Cardiology of Nevada",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/1f86400c-bc98-48db-bdd9-4b80f9afb623",
-			"OrganizationName": "Prime Cardiology of Nevada",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8548c5fc-4b11-497a-94f3-5f27e48b2f07",
+			"OrganizationName": "Nightingale Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3165,6 +3117,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/2541a582-27cb-43dc-b70b-d99f204ffc87",
 			"OrganizationName": "Reliable Primary Care and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1f86400c-bc98-48db-bdd9-4b80f9afb623",
+			"OrganizationName": "Prime Cardiology of Nevada",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1f86400c-bc98-48db-bdd9-4b80f9afb623",
+			"OrganizationName": "Prime Cardiology of Nevada",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3189,6 +3153,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/83608064-7fef-4f8c-baf2-c078782ecb34",
 			"OrganizationName": "Simret Nanda, M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d072e3d3-69cf-4fea-ac09-d3ef78cfdc07",
+			"OrganizationName": "Diabetes and Lifestyle Management",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d072e3d3-69cf-4fea-ac09-d3ef78cfdc07",
+			"OrganizationName": "Diabetes and Lifestyle Management",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3229,30 +3205,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/d072e3d3-69cf-4fea-ac09-d3ef78cfdc07",
-			"OrganizationName": "Diabetes and Lifestyle Management",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/d072e3d3-69cf-4fea-ac09-d3ef78cfdc07",
-			"OrganizationName": "Diabetes and Lifestyle Management",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/613dc64a-737e-406c-a220-f29e5c08bffb",
-			"OrganizationName": "Stephanie Hendricks, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/613dc64a-737e-406c-a220-f29e5c08bffb",
-			"OrganizationName": "Stephanie Hendricks, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/d54e7484-7630-49a7-820e-157741ed8dcb",
 			"OrganizationName": "Cook Medical Associates, PLC",
 			"NPIID": "",
@@ -3277,6 +3229,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/613dc64a-737e-406c-a220-f29e5c08bffb",
+			"OrganizationName": "Stephanie Hendricks, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/613dc64a-737e-406c-a220-f29e5c08bffb",
+			"OrganizationName": "Stephanie Hendricks, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/5871c4d2-8ca6-4f19-99a6-6516966e22dc",
 			"OrganizationName": "New Life Medical Associates, Inc.",
 			"NPIID": "",
@@ -3285,6 +3249,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/5871c4d2-8ca6-4f19-99a6-6516966e22dc",
 			"OrganizationName": "New Life Medical Associates, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6390c8de-6878-44e1-a246-ae526a063f02",
+			"OrganizationName": "VOICE INSTITUTE OF BEVERLY HILLS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6390c8de-6878-44e1-a246-ae526a063f02",
+			"OrganizationName": "VOICE INSTITUTE OF BEVERLY HILLS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ade65055-ba88-41c3-9841-91b65d5e6be4",
+			"OrganizationName": "Sanctuary Treatment Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ade65055-ba88-41c3-9841-91b65d5e6be4",
+			"OrganizationName": "Sanctuary Treatment Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3325,30 +3313,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6390c8de-6878-44e1-a246-ae526a063f02",
-			"OrganizationName": "VOICE INSTITUTE OF BEVERLY HILLS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6390c8de-6878-44e1-a246-ae526a063f02",
-			"OrganizationName": "VOICE INSTITUTE OF BEVERLY HILLS",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ade65055-ba88-41c3-9841-91b65d5e6be4",
-			"OrganizationName": "Sanctuary Treatment Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ade65055-ba88-41c3-9841-91b65d5e6be4",
-			"OrganizationName": "Sanctuary Treatment Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/308b8e7d-2167-41cf-8503-05583b5b8cc5",
 			"OrganizationName": "NP IN FAMILY HEALTH AND PSYCHIATRY P.C.",
 			"NPIID": "",
@@ -3357,18 +3321,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/308b8e7d-2167-41cf-8503-05583b5b8cc5",
 			"OrganizationName": "NP IN FAMILY HEALTH AND PSYCHIATRY P.C.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b31d4993-45c3-4e25-b46a-9afc77d83747",
-			"OrganizationName": "Promed Healthcare Clinic LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b31d4993-45c3-4e25-b46a-9afc77d83747",
-			"OrganizationName": "Promed Healthcare Clinic LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3393,6 +3345,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/b40237e0-253b-4b24-810e-e6aa659b4935",
 			"OrganizationName": "Lilit Baltaian, MD, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b31d4993-45c3-4e25-b46a-9afc77d83747",
+			"OrganizationName": "Promed Healthcare Clinic LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b31d4993-45c3-4e25-b46a-9afc77d83747",
+			"OrganizationName": "Promed Healthcare Clinic LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3481,6 +3445,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c43fdd16-b0d5-439a-b545-eb0d7351d8d7",
+			"OrganizationName": "Internal Medicine Consultant of NW Indiana",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c43fdd16-b0d5-439a-b545-eb0d7351d8d7",
+			"OrganizationName": "Internal Medicine Consultant of NW Indiana",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/0072e502-8369-4539-a8d5-af0c7755ba33",
 			"OrganizationName": "Advanced Pain \u0026 Spine Management",
 			"NPIID": "",
@@ -3493,14 +3469,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c43fdd16-b0d5-439a-b545-eb0d7351d8d7",
-			"OrganizationName": "Internal Medicine Consultant of NW Indiana",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/833fb1c0-d37a-42be-bcc4-a6b5f786922f",
+			"OrganizationName": "VP in-house Primary health care services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c43fdd16-b0d5-439a-b545-eb0d7351d8d7",
-			"OrganizationName": "Internal Medicine Consultant of NW Indiana",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/833fb1c0-d37a-42be-bcc4-a6b5f786922f",
+			"OrganizationName": "VP in-house Primary health care services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3529,14 +3505,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/833fb1c0-d37a-42be-bcc4-a6b5f786922f",
-			"OrganizationName": "VP in-house Primary health care services",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a19db5cd-1238-43ca-b0e6-231bc3fa7f87",
+			"OrganizationName": "Colette D'Altilio",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/833fb1c0-d37a-42be-bcc4-a6b5f786922f",
-			"OrganizationName": "VP in-house Primary health care services",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a19db5cd-1238-43ca-b0e6-231bc3fa7f87",
+			"OrganizationName": "Colette D'Altilio",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3589,18 +3565,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/70f5f18a-4ede-4791-ab96-5e3690b40e51",
-			"OrganizationName": "Knew Mindset LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/70f5f18a-4ede-4791-ab96-5e3690b40e51",
-			"OrganizationName": "Knew Mindset LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/6261825c-2f7e-4162-8665-844104ca81ec",
 			"OrganizationName": "Portman Psych Services",
 			"NPIID": "",
@@ -3613,26 +3577,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a19db5cd-1238-43ca-b0e6-231bc3fa7f87",
-			"OrganizationName": "Colette D'Altilio",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/aac0dbfe-d302-422c-87ad-214f782508ff",
+			"OrganizationName": "Cynthia Horning Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a19db5cd-1238-43ca-b0e6-231bc3fa7f87",
-			"OrganizationName": "Colette D'Altilio",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/aac0dbfe-d302-422c-87ad-214f782508ff",
+			"OrganizationName": "Cynthia Horning Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6dbc738e-879a-41cb-9a5b-72f1e8f2a298",
-			"OrganizationName": "Preferred Provider Services",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/70f5f18a-4ede-4791-ab96-5e3690b40e51",
+			"OrganizationName": "Knew Mindset LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6dbc738e-879a-41cb-9a5b-72f1e8f2a298",
-			"OrganizationName": "Preferred Provider Services",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/70f5f18a-4ede-4791-ab96-5e3690b40e51",
+			"OrganizationName": "Knew Mindset LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3649,14 +3613,38 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/aac0dbfe-d302-422c-87ad-214f782508ff",
-			"OrganizationName": "Cynthia Horning Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6dbc738e-879a-41cb-9a5b-72f1e8f2a298",
+			"OrganizationName": "Preferred Provider Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/aac0dbfe-d302-422c-87ad-214f782508ff",
-			"OrganizationName": "Cynthia Horning Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6dbc738e-879a-41cb-9a5b-72f1e8f2a298",
+			"OrganizationName": "Preferred Provider Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4135c4ed-9cb5-4d1e-8a44-459f577509eb",
+			"OrganizationName": "Pain GPS Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4135c4ed-9cb5-4d1e-8a44-459f577509eb",
+			"OrganizationName": "Pain GPS Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e17fd8db-3ab4-42da-8e48-b0fdc8c5ff95",
+			"OrganizationName": "Family Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e17fd8db-3ab4-42da-8e48-b0fdc8c5ff95",
+			"OrganizationName": "Family Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3709,18 +3697,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/4135c4ed-9cb5-4d1e-8a44-459f577509eb",
-			"OrganizationName": "Pain GPS Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/4135c4ed-9cb5-4d1e-8a44-459f577509eb",
-			"OrganizationName": "Pain GPS Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/80379c5e-dece-4850-bbdb-40c76b4d53ef",
 			"OrganizationName": "Harmony \u0026 Focus",
 			"NPIID": "",
@@ -3753,18 +3729,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/83618652-f964-4d39-85ef-093363940fe8",
 			"OrganizationName": "Internal Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e17fd8db-3ab4-42da-8e48-b0fdc8c5ff95",
-			"OrganizationName": "Family Medical Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e17fd8db-3ab4-42da-8e48-b0fdc8c5ff95",
-			"OrganizationName": "Family Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3841,18 +3805,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3e2ec43d-4bfd-4646-adec-1c5d260096a6",
-			"OrganizationName": "SAMARA HOME DOCTOR SERVICES",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3e2ec43d-4bfd-4646-adec-1c5d260096a6",
-			"OrganizationName": "SAMARA HOME DOCTOR SERVICES",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/af697ec5-e3eb-4446-8c53-15e53ec723a9",
 			"OrganizationName": "MANZOOR QAZI, MD",
 			"NPIID": "",
@@ -3861,18 +3813,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/af697ec5-e3eb-4446-8c53-15e53ec723a9",
 			"OrganizationName": "MANZOOR QAZI, MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3bdf6cf5-a033-41d2-b3e5-e12dac1a3f04",
-			"OrganizationName": "Family Physicians Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3bdf6cf5-a033-41d2-b3e5-e12dac1a3f04",
-			"OrganizationName": "Family Physicians Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3889,6 +3829,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3e2ec43d-4bfd-4646-adec-1c5d260096a6",
+			"OrganizationName": "SAMARA HOME DOCTOR SERVICES",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3e2ec43d-4bfd-4646-adec-1c5d260096a6",
+			"OrganizationName": "SAMARA HOME DOCTOR SERVICES",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3bdf6cf5-a033-41d2-b3e5-e12dac1a3f04",
+			"OrganizationName": "Family Physicians Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3bdf6cf5-a033-41d2-b3e5-e12dac1a3f04",
+			"OrganizationName": "Family Physicians Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5aa123d-929d-4c96-80bd-5601793e2cd0",
 			"OrganizationName": "Schaumburg Endocrinology",
 			"NPIID": "",
@@ -3897,6 +3861,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5aa123d-929d-4c96-80bd-5601793e2cd0",
 			"OrganizationName": "Schaumburg Endocrinology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c519a15e-a2d0-4c83-ab3c-64b4445439f9",
+			"OrganizationName": "Stephany Hillman, Ph.D., LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c519a15e-a2d0-4c83-ab3c-64b4445439f9",
+			"OrganizationName": "Stephany Hillman, Ph.D., LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9fdb4f06-2275-4de9-8d53-53ca685936a1",
+			"OrganizationName": "Hunter Neurology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9fdb4f06-2275-4de9-8d53-53ca685936a1",
+			"OrganizationName": "Hunter Neurology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3913,14 +3901,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c519a15e-a2d0-4c83-ab3c-64b4445439f9",
-			"OrganizationName": "Stephany Hillman, Ph.D., LLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/230a0591-58ad-4575-91e4-913a56f089c8",
+			"OrganizationName": "Hillside Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c519a15e-a2d0-4c83-ab3c-64b4445439f9",
-			"OrganizationName": "Stephany Hillman, Ph.D., LLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/230a0591-58ad-4575-91e4-913a56f089c8",
+			"OrganizationName": "Hillside Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3949,18 +3937,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/9fdb4f06-2275-4de9-8d53-53ca685936a1",
-			"OrganizationName": "Hunter Neurology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/9fdb4f06-2275-4de9-8d53-53ca685936a1",
-			"OrganizationName": "Hunter Neurology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/0ff82376-9d46-451e-bb54-0cfe2e5c6fbe",
 			"OrganizationName": "BridgeCare Specialists of Michigan",
 			"NPIID": "",
@@ -3973,18 +3949,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/230a0591-58ad-4575-91e4-913a56f089c8",
-			"OrganizationName": "Hillside Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/230a0591-58ad-4575-91e4-913a56f089c8",
-			"OrganizationName": "Hillside Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/f9936be8-6ec9-4935-a89f-61f18de0925b",
 			"OrganizationName": "Shah Anuj MD PC",
 			"NPIID": "",
@@ -3993,30 +3957,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/f9936be8-6ec9-4935-a89f-61f18de0925b",
 			"OrganizationName": "Shah Anuj MD PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5d4c9aa3-eef0-4d88-977f-4b7febf860ce",
-			"OrganizationName": "Willow Fibromyalgia and Hypermobility Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5d4c9aa3-eef0-4d88-977f-4b7febf860ce",
-			"OrganizationName": "Willow Fibromyalgia and Hypermobility Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2f62a1ce-fa9e-4499-8b59-578a8f6f2915",
-			"OrganizationName": "Hicks Home-Based Primary Care, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2f62a1ce-fa9e-4499-8b59-578a8f6f2915",
-			"OrganizationName": "Hicks Home-Based Primary Care, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4045,18 +3985,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/997ebfee-1cf8-4d35-ae59-30c83a754a17",
-			"OrganizationName": "EKM Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/997ebfee-1cf8-4d35-ae59-30c83a754a17",
-			"OrganizationName": "EKM Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/d0d8504f-a214-4d07-8900-5ec98398a2e2",
 			"OrganizationName": "Medicina Interna",
 			"NPIID": "",
@@ -4069,26 +3997,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6dfc8dec-9b99-45c0-947b-b68460f1140f",
-			"OrganizationName": "Restoring Minds Center for Behavioral Health",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5d4c9aa3-eef0-4d88-977f-4b7febf860ce",
+			"OrganizationName": "Willow Fibromyalgia and Hypermobility Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6dfc8dec-9b99-45c0-947b-b68460f1140f",
-			"OrganizationName": "Restoring Minds Center for Behavioral Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/07fcf25b-90d0-429e-b447-93df24206c3e",
-			"OrganizationName": "SIMC PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/07fcf25b-90d0-429e-b447-93df24206c3e",
-			"OrganizationName": "SIMC PLLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5d4c9aa3-eef0-4d88-977f-4b7febf860ce",
+			"OrganizationName": "Willow Fibromyalgia and Hypermobility Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4105,14 +4021,38 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/809ed84a-8190-44ed-a501-f7a5b6ef4339",
-			"OrganizationName": "TOOMARI SURGERY",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2f62a1ce-fa9e-4499-8b59-578a8f6f2915",
+			"OrganizationName": "Hicks Home-Based Primary Care, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/809ed84a-8190-44ed-a501-f7a5b6ef4339",
-			"OrganizationName": "TOOMARI SURGERY",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2f62a1ce-fa9e-4499-8b59-578a8f6f2915",
+			"OrganizationName": "Hicks Home-Based Primary Care, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/07fcf25b-90d0-429e-b447-93df24206c3e",
+			"OrganizationName": "SIMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/07fcf25b-90d0-429e-b447-93df24206c3e",
+			"OrganizationName": "SIMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/997ebfee-1cf8-4d35-ae59-30c83a754a17",
+			"OrganizationName": "EKM Psychiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/997ebfee-1cf8-4d35-ae59-30c83a754a17",
+			"OrganizationName": "EKM Psychiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4125,6 +4065,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/e8e8174c-a030-4a39-b40f-d4b5627ceaad",
 			"OrganizationName": "Gables Medical LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6dfc8dec-9b99-45c0-947b-b68460f1140f",
+			"OrganizationName": "Restoring Minds Center for Behavioral Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6dfc8dec-9b99-45c0-947b-b68460f1140f",
+			"OrganizationName": "Restoring Minds Center for Behavioral Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/809ed84a-8190-44ed-a501-f7a5b6ef4339",
+			"OrganizationName": "TOOMARI SURGERY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/809ed84a-8190-44ed-a501-f7a5b6ef4339",
+			"OrganizationName": "TOOMARI SURGERY",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4201,18 +4165,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a77852f0-edac-426e-ba9f-068c09ba8fc5",
-			"OrganizationName": "My Omni Housecalls, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a77852f0-edac-426e-ba9f-068c09ba8fc5",
-			"OrganizationName": "My Omni Housecalls, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/87b5207f-e4ef-4a9a-9037-8b1a96f945c4",
 			"OrganizationName": "Ravi Badlani MDSC",
 			"NPIID": "",
@@ -4221,6 +4173,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/87b5207f-e4ef-4a9a-9037-8b1a96f945c4",
 			"OrganizationName": "Ravi Badlani MDSC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a77852f0-edac-426e-ba9f-068c09ba8fc5",
+			"OrganizationName": "My Omni Housecalls, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a77852f0-edac-426e-ba9f-068c09ba8fc5",
+			"OrganizationName": "My Omni Housecalls, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4245,6 +4209,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/b31c226e-60bb-4afe-a4ee-db1d05eee899",
 			"OrganizationName": "Taral Sharma, MD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/bdeff2ae-3b6d-4761-a2ac-1eb8a50527d0",
+			"OrganizationName": "La Milagrosa Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/bdeff2ae-3b6d-4761-a2ac-1eb8a50527d0",
+			"OrganizationName": "La Milagrosa Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4281,18 +4257,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/9fabbb77-1f19-4dd0-ab0e-5c3ed0a1588b",
 			"OrganizationName": "Comprehensive Primary Care, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/bdeff2ae-3b6d-4761-a2ac-1eb8a50527d0",
-			"OrganizationName": "La Milagrosa Medical Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/bdeff2ae-3b6d-4761-a2ac-1eb8a50527d0",
-			"OrganizationName": "La Milagrosa Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4358,13 +4322,13 @@
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/752c8b13-c90e-4cbf-9799-d866d6b7b68d",
-			"OrganizationName": "Premier Physical Therapy and Pulmonary Rehab",
+			"OrganizationName": "Premier Physical Therapy  Pulmonary Rehab",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/752c8b13-c90e-4cbf-9799-d866d6b7b68d",
-			"OrganizationName": "Premier Physical Therapy and Pulmonary Rehab",
+			"OrganizationName": "Premier Physical Therapy  Pulmonary Rehab",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4381,18 +4345,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5b63ca40-cd78-439f-97f9-bd10de1fff44",
-			"OrganizationName": "Chaparral Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5b63ca40-cd78-439f-97f9-bd10de1fff44",
-			"OrganizationName": "Chaparral Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/b76c6d4f-b4a0-45a9-b34d-c8d3f87f7c94",
 			"OrganizationName": "O2H Solutions LLC",
 			"NPIID": "",
@@ -4401,6 +4353,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/b76c6d4f-b4a0-45a9-b34d-c8d3f87f7c94",
 			"OrganizationName": "O2H Solutions LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5b63ca40-cd78-439f-97f9-bd10de1fff44",
+			"OrganizationName": "Chaparral Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5b63ca40-cd78-439f-97f9-bd10de1fff44",
+			"OrganizationName": "Chaparral Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4417,18 +4381,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/061ed4b6-45f3-4397-9d82-874efb7061bd",
-			"OrganizationName": "RAIQA MUNIS MD.PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/061ed4b6-45f3-4397-9d82-874efb7061bd",
-			"OrganizationName": "RAIQA MUNIS MD.PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/301d2bb5-6731-46f8-8eca-b757d10157ef",
 			"OrganizationName": "B\u0026B MEDICAL CENTER",
 			"NPIID": "",
@@ -4437,6 +4389,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/301d2bb5-6731-46f8-8eca-b757d10157ef",
 			"OrganizationName": "B\u0026B MEDICAL CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/061ed4b6-45f3-4397-9d82-874efb7061bd",
+			"OrganizationName": "RAIQA MUNIS MD.PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/061ed4b6-45f3-4397-9d82-874efb7061bd",
+			"OrganizationName": "RAIQA MUNIS MD.PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4453,18 +4417,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6de30929-48f2-4846-acaa-1332eed80ab6",
-			"OrganizationName": "CareFront Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6de30929-48f2-4846-acaa-1332eed80ab6",
-			"OrganizationName": "CareFront Medical Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/54ef6de9-2e00-4eaf-85c2-d6658e28cd36",
 			"OrganizationName": "Instic Health LLC",
 			"NPIID": "",
@@ -4477,14 +4429,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2b2a40cb-4609-42f7-b960-5c2390615270",
-			"OrganizationName": "nesheiwat medical practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6de30929-48f2-4846-acaa-1332eed80ab6",
+			"OrganizationName": "CareFront Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2b2a40cb-4609-42f7-b960-5c2390615270",
-			"OrganizationName": "nesheiwat medical practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6de30929-48f2-4846-acaa-1332eed80ab6",
+			"OrganizationName": "CareFront Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7aee0a11-f69a-423e-b757-a34bb9a29cc4",
+			"OrganizationName": "Uka Health Care Services, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7aee0a11-f69a-423e-b757-a34bb9a29cc4",
+			"OrganizationName": "Uka Health Care Services, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4501,14 +4465,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7aee0a11-f69a-423e-b757-a34bb9a29cc4",
-			"OrganizationName": "Uka Health Care Services, LLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2b2a40cb-4609-42f7-b960-5c2390615270",
+			"OrganizationName": "nesheiwat medical practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7aee0a11-f69a-423e-b757-a34bb9a29cc4",
-			"OrganizationName": "Uka Health Care Services, LLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2b2a40cb-4609-42f7-b960-5c2390615270",
+			"OrganizationName": "nesheiwat medical practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4561,18 +4525,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/66e2c33f-4eae-42f3-a676-0148cccbd374",
-			"OrganizationName": "SATNAM MEDICAL",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/66e2c33f-4eae-42f3-a676-0148cccbd374",
-			"OrganizationName": "SATNAM MEDICAL",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/58b16d08-dd13-45fb-8ddd-e49834549c61",
 			"OrganizationName": "Idaho Joint and Spine, PC",
 			"NPIID": "",
@@ -4581,6 +4533,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/58b16d08-dd13-45fb-8ddd-e49834549c61",
 			"OrganizationName": "Idaho Joint and Spine, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6e3c765e-32aa-460c-9894-b1c076ea0524",
+			"OrganizationName": "Total Access Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6e3c765e-32aa-460c-9894-b1c076ea0524",
+			"OrganizationName": "Total Access Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/66e2c33f-4eae-42f3-a676-0148cccbd374",
+			"OrganizationName": "SATNAM MEDICAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/66e2c33f-4eae-42f3-a676-0148cccbd374",
+			"OrganizationName": "SATNAM MEDICAL",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4609,14 +4585,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6e3c765e-32aa-460c-9894-b1c076ea0524",
-			"OrganizationName": "Total Access Health and Wellness",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b3bdb99c-b06b-4fad-b862-85070d35b9a4",
+			"OrganizationName": "Jeet Bhaidasna Medical Care PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6e3c765e-32aa-460c-9894-b1c076ea0524",
-			"OrganizationName": "Total Access Health and Wellness",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b3bdb99c-b06b-4fad-b862-85070d35b9a4",
+			"OrganizationName": "Jeet Bhaidasna Medical Care PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4645,6 +4621,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1941a4a5-50a1-45c9-b687-9a2e62b50487",
+			"OrganizationName": "Myriam Allende Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1941a4a5-50a1-45c9-b687-9a2e62b50487",
+			"OrganizationName": "Myriam Allende Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/e81d67dc-e415-4444-b1c9-88e8ff74458a",
 			"OrganizationName": "PRIMARY MEDICINE, LLC",
 			"NPIID": "",
@@ -4657,14 +4645,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b3bdb99c-b06b-4fad-b862-85070d35b9a4",
-			"OrganizationName": "Jeet Bhaidasna Medical Care PC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8e05416b-8f1b-4c54-a6f9-1fe979dd1f51",
+			"OrganizationName": "Primary Care For U Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b3bdb99c-b06b-4fad-b862-85070d35b9a4",
-			"OrganizationName": "Jeet Bhaidasna Medical Care PC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8e05416b-8f1b-4c54-a6f9-1fe979dd1f51",
+			"OrganizationName": "Primary Care For U Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4693,26 +4681,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/8e05416b-8f1b-4c54-a6f9-1fe979dd1f51",
-			"OrganizationName": "Primary Care For U Inc.",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7a6a4d94-ba7e-49eb-ad74-862dd76907b9",
+			"OrganizationName": "Radulovic family practice and weight loss center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/8e05416b-8f1b-4c54-a6f9-1fe979dd1f51",
-			"OrganizationName": "Primary Care For U Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/1941a4a5-50a1-45c9-b687-9a2e62b50487",
-			"OrganizationName": "Myriam Allende Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/1941a4a5-50a1-45c9-b687-9a2e62b50487",
-			"OrganizationName": "Myriam Allende Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7a6a4d94-ba7e-49eb-ad74-862dd76907b9",
+			"OrganizationName": "Radulovic family practice and weight loss center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4725,18 +4701,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/98e49326-e8a1-46c9-96e6-72b33e5f3f93",
 			"OrganizationName": "Nowata Family Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7a6a4d94-ba7e-49eb-ad74-862dd76907b9",
-			"OrganizationName": "Radulovic family practice and weight loss center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7a6a4d94-ba7e-49eb-ad74-862dd76907b9",
-			"OrganizationName": "Radulovic family practice and weight loss center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4801,14 +4765,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b112cac8-1076-4f6a-b0c8-a308489a11e5",
-			"OrganizationName": "Ponya Care LLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/8c362e64-eed5-41b5-81e6-28c914edd1e0",
+			"OrganizationName": "Firdos Sheikh Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b112cac8-1076-4f6a-b0c8-a308489a11e5",
-			"OrganizationName": "Ponya Care LLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/8c362e64-eed5-41b5-81e6-28c914edd1e0",
+			"OrganizationName": "Firdos Sheikh Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4825,14 +4789,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a74fa912-fdb2-4073-b3c2-736f65b7c376",
-			"OrganizationName": "Kirtida N. Ringwala MD",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b112cac8-1076-4f6a-b0c8-a308489a11e5",
+			"OrganizationName": "Ponya Care LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a74fa912-fdb2-4073-b3c2-736f65b7c376",
-			"OrganizationName": "Kirtida N. Ringwala MD",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b112cac8-1076-4f6a-b0c8-a308489a11e5",
+			"OrganizationName": "Ponya Care LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4861,14 +4825,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/8c362e64-eed5-41b5-81e6-28c914edd1e0",
-			"OrganizationName": "Firdos Sheikh Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a74fa912-fdb2-4073-b3c2-736f65b7c376",
+			"OrganizationName": "Kirtida N. Ringwala MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/8c362e64-eed5-41b5-81e6-28c914edd1e0",
-			"OrganizationName": "Firdos Sheikh Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a74fa912-fdb2-4073-b3c2-736f65b7c376",
+			"OrganizationName": "Kirtida N. Ringwala MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4881,6 +4845,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/1f2d7b30-47cd-4ea9-a521-35c27e405a1f",
 			"OrganizationName": "C GUROL ERBAY MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2cf17b2c-c3c7-4e1e-bb2e-cf7f4f969433",
+			"OrganizationName": "Western State Pain Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2cf17b2c-c3c7-4e1e-bb2e-cf7f4f969433",
+			"OrganizationName": "Western State Pain Institute",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4917,18 +4893,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/2ca01eec-89bb-44a5-b0d2-4fcc048d606f",
 			"OrganizationName": "B. Bryant Parson, NP Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2cf17b2c-c3c7-4e1e-bb2e-cf7f4f969433",
-			"OrganizationName": "Western State Pain Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2cf17b2c-c3c7-4e1e-bb2e-cf7f4f969433",
-			"OrganizationName": "Western State Pain Institute",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4981,18 +4945,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/f7c2ea9a-bb8f-44fa-b32a-b3479e2eefbb",
-			"OrganizationName": "Emerge Baltimore Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/f7c2ea9a-bb8f-44fa-b32a-b3479e2eefbb",
-			"OrganizationName": "Emerge Baltimore Inc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/366c9fbf-bf35-4944-93b6-9cddd5257aff",
 			"OrganizationName": "Frank Choe, D.O.",
 			"NPIID": "",
@@ -5029,6 +4981,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f7c2ea9a-bb8f-44fa-b32a-b3479e2eefbb",
+			"OrganizationName": "Emerge Baltimore Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f7c2ea9a-bb8f-44fa-b32a-b3479e2eefbb",
+			"OrganizationName": "Emerge Baltimore Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/becf47a1-b103-45b3-8590-a5c3772ddaa3",
 			"OrganizationName": "General Practice Partners PC",
 			"NPIID": "",
@@ -5053,18 +5017,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c42bc450-7223-425c-ba96-9c00b5cc6e7a",
-			"OrganizationName": "IDEAL Clinic Harwin",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c42bc450-7223-425c-ba96-9c00b5cc6e7a",
-			"OrganizationName": "IDEAL Clinic Harwin",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/041c81da-85c5-47d0-a11d-f3de926ef4c7",
 			"OrganizationName": "PEGGY M. BINTZ NP",
 			"NPIID": "",
@@ -5073,6 +5025,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/041c81da-85c5-47d0-a11d-f3de926ef4c7",
 			"OrganizationName": "PEGGY M. BINTZ NP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c42bc450-7223-425c-ba96-9c00b5cc6e7a",
+			"OrganizationName": "IDEAL Clinic Harwin",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c42bc450-7223-425c-ba96-9c00b5cc6e7a",
+			"OrganizationName": "IDEAL Clinic Harwin",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5149,6 +5113,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c934ca0-f71e-4539-9e08-578fbb19ac7e",
+			"OrganizationName": "Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c934ca0-f71e-4539-9e08-578fbb19ac7e",
+			"OrganizationName": "Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/120edcea-fb92-4e08-ade7-0e771417d3c0",
 			"OrganizationName": "Cendant Health Center",
 			"NPIID": "",
@@ -5157,6 +5133,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/120edcea-fb92-4e08-ade7-0e771417d3c0",
 			"OrganizationName": "Cendant Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5966c630-89ad-45bf-9a23-217fdf62562a",
+			"OrganizationName": "Liset Avalos Enriquez Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5966c630-89ad-45bf-9a23-217fdf62562a",
+			"OrganizationName": "Liset Avalos Enriquez Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5173,30 +5161,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7c934ca0-f71e-4539-9e08-578fbb19ac7e",
-			"OrganizationName": "Health and Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7c934ca0-f71e-4539-9e08-578fbb19ac7e",
-			"OrganizationName": "Health and Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/88eb168f-2b52-4aea-a12b-a1bc9174e3e3",
-			"OrganizationName": "Chad Brock- Shrink Savannah",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/88eb168f-2b52-4aea-a12b-a1bc9174e3e3",
-			"OrganizationName": "Chad Brock- Shrink Savannah",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/fa63ff45-8806-4901-a96b-81d338ee6bec",
 			"OrganizationName": "Vanity Aesthetics and Medical Spa, LLC",
 			"NPIID": "",
@@ -5209,14 +5173,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5966c630-89ad-45bf-9a23-217fdf62562a",
-			"OrganizationName": "Liset Avalos Enriquez Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/88eb168f-2b52-4aea-a12b-a1bc9174e3e3",
+			"OrganizationName": "Chad Brock- Shrink Savannah",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5966c630-89ad-45bf-9a23-217fdf62562a",
-			"OrganizationName": "Liset Avalos Enriquez Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/88eb168f-2b52-4aea-a12b-a1bc9174e3e3",
+			"OrganizationName": "Chad Brock- Shrink Savannah",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5293,18 +5257,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/63118c3c-a8af-4e20-88a0-3327a8be78ff",
-			"OrganizationName": "The Center of Balance Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/63118c3c-a8af-4e20-88a0-3327a8be78ff",
-			"OrganizationName": "The Center of Balance Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/5b6a30ce-adf7-461b-9b1f-884e99aa6ae3",
 			"OrganizationName": "East Florida Medical Clinic",
 			"NPIID": "",
@@ -5329,14 +5281,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/cc123801-6bbd-4235-8eae-26b396bd9c28",
-			"OrganizationName": "Shelley Ham MD",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/63118c3c-a8af-4e20-88a0-3327a8be78ff",
+			"OrganizationName": "The Center of Balance Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/cc123801-6bbd-4235-8eae-26b396bd9c28",
-			"OrganizationName": "Shelley Ham MD",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/63118c3c-a8af-4e20-88a0-3327a8be78ff",
+			"OrganizationName": "The Center of Balance Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5365,18 +5317,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ef11159d-d9ca-44c2-b3fb-d9a5758fb46c",
-			"OrganizationName": "Compassionate Concierge Physicians",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ef11159d-d9ca-44c2-b3fb-d9a5758fb46c",
-			"OrganizationName": "Compassionate Concierge Physicians",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/c59dd03d-1b05-43b1-bb39-2cb545a524f2",
 			"OrganizationName": "Elliece S. Smith MDPC",
 			"NPIID": "",
@@ -5389,14 +5329,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/71d1b318-ca9e-4814-b001-1c124a226798",
-			"OrganizationName": "Neyma Reyes Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/cc123801-6bbd-4235-8eae-26b396bd9c28",
+			"OrganizationName": "Shelley Ham MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/71d1b318-ca9e-4814-b001-1c124a226798",
-			"OrganizationName": "Neyma Reyes Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/cc123801-6bbd-4235-8eae-26b396bd9c28",
+			"OrganizationName": "Shelley Ham MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ef11159d-d9ca-44c2-b3fb-d9a5758fb46c",
+			"OrganizationName": "Compassionate Concierge Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ef11159d-d9ca-44c2-b3fb-d9a5758fb46c",
+			"OrganizationName": "Compassionate Concierge Physicians",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5409,6 +5361,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/eeff2186-45cc-4f75-a092-711b81ccbec1",
 			"OrganizationName": "Essence Health Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a6878932-7f73-4985-81ed-3a1487bf6e13",
+			"OrganizationName": "TOPHEALTH FAMILY CLINIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a6878932-7f73-4985-81ed-3a1487bf6e13",
+			"OrganizationName": "TOPHEALTH FAMILY CLINIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/71d1b318-ca9e-4814-b001-1c124a226798",
+			"OrganizationName": "Neyma Reyes Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/71d1b318-ca9e-4814-b001-1c124a226798",
+			"OrganizationName": "Neyma Reyes Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5433,18 +5409,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/2ab9314f-52a0-48a9-9d67-2285acf69da7",
 			"OrganizationName": "Harmony Medical Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a6878932-7f73-4985-81ed-3a1487bf6e13",
-			"OrganizationName": "TOPHEALTH FAMILY CLINIC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a6878932-7f73-4985-81ed-3a1487bf6e13",
-			"OrganizationName": "TOPHEALTH FAMILY CLINIC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5509,6 +5473,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ff5d1eda-5661-42c2-83fd-1dbc91ea891f",
+			"OrganizationName": "Family Choice Medical Clinic, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ff5d1eda-5661-42c2-83fd-1dbc91ea891f",
+			"OrganizationName": "Family Choice Medical Clinic, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2cc99488-e8b8-4628-9dad-d9fbd2154048",
+			"OrganizationName": "AAMDInc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2cc99488-e8b8-4628-9dad-d9fbd2154048",
+			"OrganizationName": "AAMDInc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/2da67135-aed2-4224-85e5-822a5c8fdf40",
 			"OrganizationName": "Northwest Endometriosis and Pelvic Surgery",
 			"NPIID": "",
@@ -5533,30 +5521,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2cc99488-e8b8-4628-9dad-d9fbd2154048",
-			"OrganizationName": "AAMDInc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2cc99488-e8b8-4628-9dad-d9fbd2154048",
-			"OrganizationName": "AAMDInc",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ff5d1eda-5661-42c2-83fd-1dbc91ea891f",
-			"OrganizationName": "Family Choice Medical Clinic, P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ff5d1eda-5661-42c2-83fd-1dbc91ea891f",
-			"OrganizationName": "Family Choice Medical Clinic, P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/fd429137-4edf-4e7a-9d7b-2cf95048f2eb",
 			"OrganizationName": "North Jersey Interventional Pain Center",
 			"NPIID": "",
@@ -5565,18 +5529,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/fd429137-4edf-4e7a-9d7b-2cf95048f2eb",
 			"OrganizationName": "North Jersey Interventional Pain Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b102527e-8759-4403-9d7c-daa0450f3542",
-			"OrganizationName": "Gorman Medical, P.C.-Dr. Charles Ripp",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b102527e-8759-4403-9d7c-daa0450f3542",
-			"OrganizationName": "Gorman Medical, P.C.-Dr. Charles Ripp",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5605,6 +5557,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b102527e-8759-4403-9d7c-daa0450f3542",
+			"OrganizationName": "Gorman Medical, P.C.-Dr. Charles Ripp",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b102527e-8759-4403-9d7c-daa0450f3542",
+			"OrganizationName": "Gorman Medical, P.C.-Dr. Charles Ripp",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/df60b09f-80db-41ed-b9d5-fdd21f408604",
+			"OrganizationName": "Grandview Primary Care \u0026 Performance Medicine Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/df60b09f-80db-41ed-b9d5-fdd21f408604",
+			"OrganizationName": "Grandview Primary Care \u0026 Performance Medicine Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/6586e541-a63c-45cb-b1ea-d94220848296",
 			"OrganizationName": "Transcend Company",
 			"NPIID": "",
@@ -5629,54 +5605,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ae7001a4-52eb-43ae-9b82-271403457810",
-			"OrganizationName": "Wah Psychiatry Clinic PLLC  Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ae7001a4-52eb-43ae-9b82-271403457810",
-			"OrganizationName": "Wah Psychiatry Clinic PLLC  Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/df60b09f-80db-41ed-b9d5-fdd21f408604",
-			"OrganizationName": "Grandview Primary Care \u0026 Performance Medicine Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/df60b09f-80db-41ed-b9d5-fdd21f408604",
-			"OrganizationName": "Grandview Primary Care \u0026 Performance Medicine Institute",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/edecc8a3-c5d6-4d89-9726-4e0015455223",
-			"OrganizationName": "HealthFirst",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/edecc8a3-c5d6-4d89-9726-4e0015455223",
-			"OrganizationName": "HealthFirst",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/6bb81c21-ffd0-4a16-879d-c5ec1a9dbe8a",
-			"OrganizationName": "Premier Cardiology and Vascular Institute, Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/6bb81c21-ffd0-4a16-879d-c5ec1a9dbe8a",
-			"OrganizationName": "Premier Cardiology and Vascular Institute, Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c89b058-362e-4853-89b2-74a3cd058a23",
 			"OrganizationName": "Altru Acute Neurosurgery",
 			"NPIID": "",
@@ -5697,6 +5625,42 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/d5b222fd-cf67-4be6-aabd-50716c05b9cc",
 			"OrganizationName": "Horizon View Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ae7001a4-52eb-43ae-9b82-271403457810",
+			"OrganizationName": "Wah Psychiatry Clinic PLLC  Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ae7001a4-52eb-43ae-9b82-271403457810",
+			"OrganizationName": "Wah Psychiatry Clinic PLLC  Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6bb81c21-ffd0-4a16-879d-c5ec1a9dbe8a",
+			"OrganizationName": "Premier Cardiology and Vascular Institute, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6bb81c21-ffd0-4a16-879d-c5ec1a9dbe8a",
+			"OrganizationName": "Premier Cardiology and Vascular Institute, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/edecc8a3-c5d6-4d89-9726-4e0015455223",
+			"OrganizationName": "HealthFirst",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/edecc8a3-c5d6-4d89-9726-4e0015455223",
+			"OrganizationName": "HealthFirst",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5749,6 +5713,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/37b9feda-6909-4cb1-99d5-9860ecb0ee2a",
+			"OrganizationName": "Richmond Family Clinic P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/37b9feda-6909-4cb1-99d5-9860ecb0ee2a",
+			"OrganizationName": "Richmond Family Clinic P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/44ea5077-55c7-4ab0-85d4-0d00eb6b9465",
 			"OrganizationName": "Pulaski County Health Center",
 			"NPIID": "",
@@ -5773,14 +5749,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/37b9feda-6909-4cb1-99d5-9860ecb0ee2a",
-			"OrganizationName": "Richmond Family Clinic P.C.",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/b42eb0eb-6682-4f2c-aa56-63b88a5132ac",
+			"OrganizationName": "Luxe Surgery Center of Encino",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/37b9feda-6909-4cb1-99d5-9860ecb0ee2a",
-			"OrganizationName": "Richmond Family Clinic P.C.",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/b42eb0eb-6682-4f2c-aa56-63b88a5132ac",
+			"OrganizationName": "Luxe Surgery Center of Encino",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5793,18 +5769,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/0e90ecee-97a9-48a3-a689-9c5f17f04327",
 			"OrganizationName": "Charles N. Rudolph, MD Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/b42eb0eb-6682-4f2c-aa56-63b88a5132ac",
-			"OrganizationName": "Luxe Surgery Center of Encino",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/b42eb0eb-6682-4f2c-aa56-63b88a5132ac",
-			"OrganizationName": "Luxe Surgery Center of Encino",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5833,6 +5797,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3f5aace2-d3e8-4013-9c02-a16e7f733d74",
+			"OrganizationName": "Avalin Health Medical Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3f5aace2-d3e8-4013-9c02-a16e7f733d74",
+			"OrganizationName": "Avalin Health Medical Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/5694529c-8b95-4590-9150-ee56146b1a50",
 			"OrganizationName": "Paradise Medical Center",
 			"NPIID": "",
@@ -5857,6 +5833,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9137a705-8d05-406a-8391-76ee819b2a5d",
+			"OrganizationName": "Nowobilska Medical Practice LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9137a705-8d05-406a-8391-76ee819b2a5d",
+			"OrganizationName": "Nowobilska Medical Practice LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/16e8123c-fd3f-4bee-9b48-4a3d05a65136",
 			"OrganizationName": "DUPONT FAMILY MEDICINE, PC",
 			"NPIID": "",
@@ -5865,30 +5853,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/16e8123c-fd3f-4bee-9b48-4a3d05a65136",
 			"OrganizationName": "DUPONT FAMILY MEDICINE, PC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3f5aace2-d3e8-4013-9c02-a16e7f733d74",
-			"OrganizationName": "Avalin Health Medical Corporation",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3f5aace2-d3e8-4013-9c02-a16e7f733d74",
-			"OrganizationName": "Avalin Health Medical Corporation",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/937b801c-de5f-4bd9-9a7a-4a710ddb89bf",
-			"OrganizationName": "Smart Health and Wellness, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/937b801c-de5f-4bd9-9a7a-4a710ddb89bf",
-			"OrganizationName": "Smart Health and Wellness, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5905,62 +5869,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/9137a705-8d05-406a-8391-76ee819b2a5d",
-			"OrganizationName": "Nowobilska Medical Practice LTD",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/937b801c-de5f-4bd9-9a7a-4a710ddb89bf",
+			"OrganizationName": "Smart Health and Wellness, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/9137a705-8d05-406a-8391-76ee819b2a5d",
-			"OrganizationName": "Nowobilska Medical Practice LTD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/54728d1b-4e46-47e2-b9fa-e6f73896da83",
-			"OrganizationName": "Brain and Body Health Institute PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/54728d1b-4e46-47e2-b9fa-e6f73896da83",
-			"OrganizationName": "Brain and Body Health Institute PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/49b9a16b-4a7f-4425-aaad-18096cff2bf9",
-			"OrganizationName": "Amelia Respiratory and Sleep Medicine LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/49b9a16b-4a7f-4425-aaad-18096cff2bf9",
-			"OrganizationName": "Amelia Respiratory and Sleep Medicine LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ed5c30ce-1352-4643-b891-8d29336315b8",
-			"OrganizationName": "KEM Physical INC.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ed5c30ce-1352-4643-b891-8d29336315b8",
-			"OrganizationName": "KEM Physical INC.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/594e9ee8-7f96-4eb9-8c7b-9baa0f83d50d",
-			"OrganizationName": "Francis Camillo MD PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/594e9ee8-7f96-4eb9-8c7b-9baa0f83d50d",
-			"OrganizationName": "Francis Camillo MD PLLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/937b801c-de5f-4bd9-9a7a-4a710ddb89bf",
+			"OrganizationName": "Smart Health and Wellness, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5977,6 +5893,54 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/594e9ee8-7f96-4eb9-8c7b-9baa0f83d50d",
+			"OrganizationName": "Francis Camillo MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/594e9ee8-7f96-4eb9-8c7b-9baa0f83d50d",
+			"OrganizationName": "Francis Camillo MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ed5c30ce-1352-4643-b891-8d29336315b8",
+			"OrganizationName": "KEM Physical INC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ed5c30ce-1352-4643-b891-8d29336315b8",
+			"OrganizationName": "KEM Physical INC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/54728d1b-4e46-47e2-b9fa-e6f73896da83",
+			"OrganizationName": "Brain and Body Health Institute PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/54728d1b-4e46-47e2-b9fa-e6f73896da83",
+			"OrganizationName": "Brain and Body Health Institute PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4be8dde3-2720-4255-a011-2f95569e2492",
+			"OrganizationName": "Dr. Richard Stewart  Chiropractor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4be8dde3-2720-4255-a011-2f95569e2492",
+			"OrganizationName": "Dr. Richard Stewart  Chiropractor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/51480557-0ede-4a0e-bde0-86570a275ba8",
 			"OrganizationName": "Asbury and Associates Healthcare",
 			"NPIID": "",
@@ -5985,6 +5949,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/51480557-0ede-4a0e-bde0-86570a275ba8",
 			"OrganizationName": "Asbury and Associates Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/49b9a16b-4a7f-4425-aaad-18096cff2bf9",
+			"OrganizationName": "Amelia Respiratory and Sleep Medicine LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/49b9a16b-4a7f-4425-aaad-18096cff2bf9",
+			"OrganizationName": "Amelia Respiratory and Sleep Medicine LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/aec71917-91cf-4ea7-bd47-b58cde57aa9f",
+			"OrganizationName": "Genesis Medical Diagnostics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/aec71917-91cf-4ea7-bd47-b58cde57aa9f",
+			"OrganizationName": "Genesis Medical Diagnostics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6013,42 +6001,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/4be8dde3-2720-4255-a011-2f95569e2492",
-			"OrganizationName": "Dr. Richard Stewart  Chiropractor",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/4be8dde3-2720-4255-a011-2f95569e2492",
-			"OrganizationName": "Dr. Richard Stewart  Chiropractor",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7de0b9c3-0ba4-42e7-a278-2027387274fd",
-			"OrganizationName": "Debdeep Nath PNP",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7de0b9c3-0ba4-42e7-a278-2027387274fd",
-			"OrganizationName": "Debdeep Nath PNP",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/aec71917-91cf-4ea7-bd47-b58cde57aa9f",
-			"OrganizationName": "Genesis Medical Diagnostics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/aec71917-91cf-4ea7-bd47-b58cde57aa9f",
-			"OrganizationName": "Genesis Medical Diagnostics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/7acea415-5338-44d4-86ce-739bc2c23b91",
 			"OrganizationName": "Houston Renal Group",
 			"NPIID": "",
@@ -6073,14 +6025,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/d018f25a-5571-4d2d-b7df-f3f344d1bf34",
-			"OrganizationName": "Symphony Healthcare Inc",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7de0b9c3-0ba4-42e7-a278-2027387274fd",
+			"OrganizationName": "Debdeep Nath PNP",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/d018f25a-5571-4d2d-b7df-f3f344d1bf34",
-			"OrganizationName": "Symphony Healthcare Inc",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7de0b9c3-0ba4-42e7-a278-2027387274fd",
+			"OrganizationName": "Debdeep Nath PNP",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6097,14 +6049,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/3d9b086f-b6cc-4b8a-b8de-134e5ae5a6dd",
-			"OrganizationName": "Sumer Inc.",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d018f25a-5571-4d2d-b7df-f3f344d1bf34",
+			"OrganizationName": "Symphony Healthcare Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/3d9b086f-b6cc-4b8a-b8de-134e5ae5a6dd",
-			"OrganizationName": "Sumer Inc.",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d018f25a-5571-4d2d-b7df-f3f344d1bf34",
+			"OrganizationName": "Symphony Healthcare Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6117,6 +6069,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c4eae3d-05fa-419e-a870-c8053c9fe898",
 			"OrganizationName": "Orthopedic Physical Therapy and Rehab",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3d9b086f-b6cc-4b8a-b8de-134e5ae5a6dd",
+			"OrganizationName": "Sumer Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3d9b086f-b6cc-4b8a-b8de-134e5ae5a6dd",
+			"OrganizationName": "Sumer Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/528e3dc9-6445-4f69-8490-6ddcdfd1cc31",
+			"OrganizationName": "Ayanna Carr-Brown Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/528e3dc9-6445-4f69-8490-6ddcdfd1cc31",
+			"OrganizationName": "Ayanna Carr-Brown Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6134,37 +6110,13 @@
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/7062907f-0eca-46bc-a7fd-cd2099cf9fdc",
-			"OrganizationName": "Rubildo Labanino",
+			"OrganizationName": "Rubymed",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/7062907f-0eca-46bc-a7fd-cd2099cf9fdc",
-			"OrganizationName": "Rubildo Labanino",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ec074a5a-2fa3-45a3-8c85-425b921cf696",
-			"OrganizationName": "Visiting Medical Group LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ec074a5a-2fa3-45a3-8c85-425b921cf696",
-			"OrganizationName": "Visiting Medical Group LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/528e3dc9-6445-4f69-8490-6ddcdfd1cc31",
-			"OrganizationName": "Ayanna Carr-Brown Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/528e3dc9-6445-4f69-8490-6ddcdfd1cc31",
-			"OrganizationName": "Ayanna Carr-Brown Practice",
+			"OrganizationName": "Rubymed",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6177,6 +6129,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/31c3639c-298e-4bad-b7d3-a1f4e8579fee",
 			"OrganizationName": "Grace Medical \u0026 Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ec074a5a-2fa3-45a3-8c85-425b921cf696",
+			"OrganizationName": "Visiting Medical Group LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ec074a5a-2fa3-45a3-8c85-425b921cf696",
+			"OrganizationName": "Visiting Medical Group LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6217,30 +6181,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/160cf964-e74c-4b95-b317-b20415321b5d",
-			"OrganizationName": "Giovanni Ortiz Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/160cf964-e74c-4b95-b317-b20415321b5d",
-			"OrganizationName": "Giovanni Ortiz Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/974c09dd-5e19-4830-bab3-8d6cf3d38622",
-			"OrganizationName": "ANGEL ERNESTO RICO MD PA II",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/974c09dd-5e19-4830-bab3-8d6cf3d38622",
-			"OrganizationName": "ANGEL ERNESTO RICO MD PA II",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/5edad73f-6c22-4ee5-9280-a8033b7c6648",
 			"OrganizationName": "Butzin, Matoshko and Assoc. Chiropractic Clinics P.L.L.C",
 			"NPIID": "",
@@ -6265,18 +6205,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5ddeb14b-a6b6-4918-90e6-ec59e5501905",
-			"OrganizationName": "Integrity Family Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5ddeb14b-a6b6-4918-90e6-ec59e5501905",
-			"OrganizationName": "Integrity Family Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/41036692-1455-4fce-84f0-ca94d89c9d8e",
 			"OrganizationName": "Zen Medi Spa of Trinity",
 			"NPIID": "",
@@ -6289,14 +6217,38 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7bfd4f39-dae9-4eba-baa8-91ec4c762f8d",
-			"OrganizationName": "Simone Van-Horne, MD",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/160cf964-e74c-4b95-b317-b20415321b5d",
+			"OrganizationName": "Giovanni Ortiz Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7bfd4f39-dae9-4eba-baa8-91ec4c762f8d",
-			"OrganizationName": "Simone Van-Horne, MD",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/160cf964-e74c-4b95-b317-b20415321b5d",
+			"OrganizationName": "Giovanni Ortiz Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/974c09dd-5e19-4830-bab3-8d6cf3d38622",
+			"OrganizationName": "ANGEL ERNESTO RICO MD PA II",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/974c09dd-5e19-4830-bab3-8d6cf3d38622",
+			"OrganizationName": "ANGEL ERNESTO RICO MD PA II",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5ddeb14b-a6b6-4918-90e6-ec59e5501905",
+			"OrganizationName": "Integrity Family Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5ddeb14b-a6b6-4918-90e6-ec59e5501905",
+			"OrganizationName": "Integrity Family Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6309,6 +6261,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/e5dfbac0-e250-4bb3-b37d-063dab342043",
 			"OrganizationName": "Carol Paras, M.D.P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5211aebb-025e-4a35-ae61-bc36fe192cb8",
+			"OrganizationName": "Bayfront Medical Associates LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5211aebb-025e-4a35-ae61-bc36fe192cb8",
+			"OrganizationName": "Bayfront Medical Associates LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7bfd4f39-dae9-4eba-baa8-91ec4c762f8d",
+			"OrganizationName": "Simone Van-Horne, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7bfd4f39-dae9-4eba-baa8-91ec4c762f8d",
+			"OrganizationName": "Simone Van-Horne, MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6361,14 +6337,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5211aebb-025e-4a35-ae61-bc36fe192cb8",
-			"OrganizationName": "Bayfront Medical Associates LLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/164bc67f-49b5-43ee-9834-f7a388fadcda",
+			"OrganizationName": "DAVID T LE MD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5211aebb-025e-4a35-ae61-bc36fe192cb8",
-			"OrganizationName": "Bayfront Medical Associates LLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/164bc67f-49b5-43ee-9834-f7a388fadcda",
+			"OrganizationName": "DAVID T LE MD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6385,18 +6361,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/164bc67f-49b5-43ee-9834-f7a388fadcda",
-			"OrganizationName": "DAVID T LE MD PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/164bc67f-49b5-43ee-9834-f7a388fadcda",
-			"OrganizationName": "DAVID T LE MD PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/efff1a12-fb15-4196-9873-04f45463eeec",
 			"OrganizationName": "Integrative Psychiatry",
 			"NPIID": "",
@@ -6409,30 +6373,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/db17f9a9-297a-4cce-9bf4-3538fb89a214",
-			"OrganizationName": "Smart Prime Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/db17f9a9-297a-4cce-9bf4-3538fb89a214",
-			"OrganizationName": "Smart Prime Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/d673651b-b6cd-42d7-9397-a85604a7a61b",
-			"OrganizationName": "Wilson Integrated Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/d673651b-b6cd-42d7-9397-a85604a7a61b",
-			"OrganizationName": "Wilson Integrated Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/10ae176d-aeba-47aa-8ae5-dc41e7ccff33",
 			"OrganizationName": "Your Heart Doc, LLC",
 			"NPIID": "",
@@ -6441,6 +6381,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/10ae176d-aeba-47aa-8ae5-dc41e7ccff33",
 			"OrganizationName": "Your Heart Doc, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/db17f9a9-297a-4cce-9bf4-3538fb89a214",
+			"OrganizationName": "Smart Prime Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/db17f9a9-297a-4cce-9bf4-3538fb89a214",
+			"OrganizationName": "Smart Prime Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6469,26 +6421,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/62a6ddf9-6620-4b07-aba9-d48aa9cdc3e7",
-			"OrganizationName": "Premier Alternative Medicine",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d673651b-b6cd-42d7-9397-a85604a7a61b",
+			"OrganizationName": "Wilson Integrated Psychiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/62a6ddf9-6620-4b07-aba9-d48aa9cdc3e7",
-			"OrganizationName": "Premier Alternative Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/0232c5d4-c409-4c0c-92e6-424e11f6e9d4",
-			"OrganizationName": "Feet First Institute of Beavercreek",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/0232c5d4-c409-4c0c-92e6-424e11f6e9d4",
-			"OrganizationName": "Feet First Institute of Beavercreek",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d673651b-b6cd-42d7-9397-a85604a7a61b",
+			"OrganizationName": "Wilson Integrated Psychiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6501,6 +6441,42 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/0b42e4c6-afd4-46fb-b937-6c85189dde1d",
 			"OrganizationName": "Ambulatory Foot \u0026 Ankle Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/62a6ddf9-6620-4b07-aba9-d48aa9cdc3e7",
+			"OrganizationName": "Premier Alternative Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/62a6ddf9-6620-4b07-aba9-d48aa9cdc3e7",
+			"OrganizationName": "Premier Alternative Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e90f51dc-ad9b-423f-9c80-3e6f6a371df3",
+			"OrganizationName": "Calata Medical Group, INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e90f51dc-ad9b-423f-9c80-3e6f6a371df3",
+			"OrganizationName": "Calata Medical Group, INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0232c5d4-c409-4c0c-92e6-424e11f6e9d4",
+			"OrganizationName": "Feet First Institute of Beavercreek",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0232c5d4-c409-4c0c-92e6-424e11f6e9d4",
+			"OrganizationName": "Feet First Institute of Beavercreek",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6566,25 +6542,13 @@
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/167ac2b8-6e36-470b-94a1-e0629d309ef0",
-			"OrganizationName": "La Plata Occupational Medicine",
+			"OrganizationName": "La Plata Medical Examiners",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/167ac2b8-6e36-470b-94a1-e0629d309ef0",
-			"OrganizationName": "La Plata Occupational Medicine",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e90f51dc-ad9b-423f-9c80-3e6f6a371df3",
-			"OrganizationName": "Calata Medical Group, INC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e90f51dc-ad9b-423f-9c80-3e6f6a371df3",
-			"OrganizationName": "Calata Medical Group, INC",
+			"OrganizationName": "La Plata Medical Examiners",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6609,18 +6573,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/22322c2b-6e49-4cee-8c2a-10f0ae560205",
 			"OrganizationName": "salvador plasencia Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2e4f2eda-b19b-4fb7-a9a1-10f7e9cd07e1",
-			"OrganizationName": "Dr. Morgenstern Medical PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2e4f2eda-b19b-4fb7-a9a1-10f7e9cd07e1",
-			"OrganizationName": "Dr. Morgenstern Medical PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6657,6 +6609,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/2845d2ed-c77c-42a0-9806-d6700ca76c07",
 			"OrganizationName": "Curify Urgent Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2e4f2eda-b19b-4fb7-a9a1-10f7e9cd07e1",
+			"OrganizationName": "Dr. Morgenstern Medical PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2e4f2eda-b19b-4fb7-a9a1-10f7e9cd07e1",
+			"OrganizationName": "Dr. Morgenstern Medical PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6721,6 +6685,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/10943d80-248c-4529-84f8-7bef053c1e43",
+			"OrganizationName": "Center for Colon and Digestive Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/10943d80-248c-4529-84f8-7bef053c1e43",
+			"OrganizationName": "Center for Colon and Digestive Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dd599f7c-e502-408d-902a-e52ce0978fb8",
+			"OrganizationName": "Radiant",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dd599f7c-e502-408d-902a-e52ce0978fb8",
+			"OrganizationName": "Radiant",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/bdcf8fb5-c91e-4570-be5e-d81684f1284b",
 			"OrganizationName": "Fleur Rouge Atrinity Point Health Center",
 			"NPIID": "",
@@ -6733,14 +6721,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/10943d80-248c-4529-84f8-7bef053c1e43",
-			"OrganizationName": "Center for Colon and Digestive Diseases",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c7fc3e6e-b908-40ac-9554-195390f68afa",
+			"OrganizationName": "BABAR A. QADRI, INTEGRATIVE MEDICINE",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/10943d80-248c-4529-84f8-7bef053c1e43",
-			"OrganizationName": "Center for Colon and Digestive Diseases",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c7fc3e6e-b908-40ac-9554-195390f68afa",
+			"OrganizationName": "BABAR A. QADRI, INTEGRATIVE MEDICINE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/90e870a1-0437-4df8-a9d9-e0606466b5f7",
+			"OrganizationName": "Julita Jastrzab Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/90e870a1-0437-4df8-a9d9-e0606466b5f7",
+			"OrganizationName": "Julita Jastrzab Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6769,54 +6769,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5639123-4fa3-48ac-9fbc-ec20a1bdf182",
-			"OrganizationName": "Haydee C. Brown MD, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5639123-4fa3-48ac-9fbc-ec20a1bdf182",
-			"OrganizationName": "Haydee C. Brown MD, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/dd599f7c-e502-408d-902a-e52ce0978fb8",
-			"OrganizationName": "Radiant",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/dd599f7c-e502-408d-902a-e52ce0978fb8",
-			"OrganizationName": "Radiant",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/90e870a1-0437-4df8-a9d9-e0606466b5f7",
-			"OrganizationName": "Julita Jastrzab Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/90e870a1-0437-4df8-a9d9-e0606466b5f7",
-			"OrganizationName": "Julita Jastrzab Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c7fc3e6e-b908-40ac-9554-195390f68afa",
-			"OrganizationName": "BABAR A. QADRI, INTEGRATIVE MEDICINE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c7fc3e6e-b908-40ac-9554-195390f68afa",
-			"OrganizationName": "BABAR A. QADRI, INTEGRATIVE MEDICINE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/4c1b112b-31bc-4caa-a4dc-131c77c23235",
 			"OrganizationName": "LONG ISLAND MEDICAL AND SPA",
 			"NPIID": "",
@@ -6825,6 +6777,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/4c1b112b-31bc-4caa-a4dc-131c77c23235",
 			"OrganizationName": "LONG ISLAND MEDICAL AND SPA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a5639123-4fa3-48ac-9fbc-ec20a1bdf182",
+			"OrganizationName": "Haydee C. Brown MD, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a5639123-4fa3-48ac-9fbc-ec20a1bdf182",
+			"OrganizationName": "Haydee C. Brown MD, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6865,6 +6829,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/62c36278-542e-4e37-8a73-2b382de0bdbe",
+			"OrganizationName": "Vital Life, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/62c36278-542e-4e37-8a73-2b382de0bdbe",
+			"OrganizationName": "Vital Life, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/a668d127-c085-458d-a04f-fcb337e5d879",
 			"OrganizationName": "Maspóns Pediatric Gastro",
 			"NPIID": "",
@@ -6873,18 +6849,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/a668d127-c085-458d-a04f-fcb337e5d879",
 			"OrganizationName": "Maspóns Pediatric Gastro",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/62c36278-542e-4e37-8a73-2b382de0bdbe",
-			"OrganizationName": "Mary Houseman Practice",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/62c36278-542e-4e37-8a73-2b382de0bdbe",
-			"OrganizationName": "Mary Houseman Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6913,18 +6877,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c1e37cb-bd98-4cdc-a6e6-17b238d663f0",
-			"OrganizationName": "The Third Opinion",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c1e37cb-bd98-4cdc-a6e6-17b238d663f0",
-			"OrganizationName": "The Third Opinion",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/543380d8-e58c-40c9-8a96-353f9b66655a",
 			"OrganizationName": "Lisa Swansen FNP",
 			"NPIID": "",
@@ -6933,6 +6885,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/543380d8-e58c-40c9-8a96-353f9b66655a",
 			"OrganizationName": "Lisa Swansen FNP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1c1e37cb-bd98-4cdc-a6e6-17b238d663f0",
+			"OrganizationName": "The Third Opinion",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1c1e37cb-bd98-4cdc-a6e6-17b238d663f0",
+			"OrganizationName": "The Third Opinion",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6949,14 +6913,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/2336dc90-992c-4fe6-8d3c-fa5945eb0c60",
-			"OrganizationName": "9-FIVE  Clinics, inc",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5d5bb2b7-8470-40a0-bb8f-29c5459af253",
+			"OrganizationName": "Valley Cardiology and Vascular Associates, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/2336dc90-992c-4fe6-8d3c-fa5945eb0c60",
-			"OrganizationName": "9-FIVE  Clinics, inc",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5d5bb2b7-8470-40a0-bb8f-29c5459af253",
+			"OrganizationName": "Valley Cardiology and Vascular Associates, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6973,26 +6937,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/27fd1f55-3ec3-4212-ae6a-655bc58532da",
-			"OrganizationName": "Meeting House Family Counsing",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2336dc90-992c-4fe6-8d3c-fa5945eb0c60",
+			"OrganizationName": "9-FIVE  Clinics, inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/27fd1f55-3ec3-4212-ae6a-655bc58532da",
-			"OrganizationName": "Meeting House Family Counsing",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/5d5bb2b7-8470-40a0-bb8f-29c5459af253",
-			"OrganizationName": "Valley Cardiology and Vascular Associates, Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/5d5bb2b7-8470-40a0-bb8f-29c5459af253",
-			"OrganizationName": "Valley Cardiology and Vascular Associates, Inc.",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2336dc90-992c-4fe6-8d3c-fa5945eb0c60",
+			"OrganizationName": "9-FIVE  Clinics, inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7005,6 +6957,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/9162d3a4-6941-41f9-ace3-108b50c15812",
 			"OrganizationName": "Vance Hale Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/27fd1f55-3ec3-4212-ae6a-655bc58532da",
+			"OrganizationName": "Meeting House Family Counsing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/27fd1f55-3ec3-4212-ae6a-655bc58532da",
+			"OrganizationName": "Meeting House Family Counsing",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7033,6 +6997,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/17de51a7-4cb2-4b72-a820-69ea152247e5",
+			"OrganizationName": "Saint Moscati Community Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/17de51a7-4cb2-4b72-a820-69ea152247e5",
+			"OrganizationName": "Saint Moscati Community Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/b7c2f524-874b-46db-9e57-d441150631c2",
 			"OrganizationName": "Vegas Medical Home Visit LLC",
 			"NPIID": "",
@@ -7041,6 +7017,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/b7c2f524-874b-46db-9e57-d441150631c2",
 			"OrganizationName": "Vegas Medical Home Visit LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9a5c5745-ec73-4c9d-bb6e-82bcd90e7f19",
+			"OrganizationName": "Wholly Wounds",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9a5c5745-ec73-4c9d-bb6e-82bcd90e7f19",
+			"OrganizationName": "Wholly Wounds",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7057,26 +7045,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/17de51a7-4cb2-4b72-a820-69ea152247e5",
-			"OrganizationName": "Saint Moscati Community Healthcare",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c4e14306-492d-452b-a42d-3fcc024711dc",
+			"OrganizationName": "ENRIQUE A ROBLES MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/17de51a7-4cb2-4b72-a820-69ea152247e5",
-			"OrganizationName": "Saint Moscati Community Healthcare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/9a5c5745-ec73-4c9d-bb6e-82bcd90e7f19",
-			"OrganizationName": "Wholly Wounds",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/9a5c5745-ec73-4c9d-bb6e-82bcd90e7f19",
-			"OrganizationName": "Wholly Wounds",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c4e14306-492d-452b-a42d-3fcc024711dc",
+			"OrganizationName": "ENRIQUE A ROBLES MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7105,30 +7081,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7e4d31ef-85b3-4ad1-b738-f6665b88ebf8",
-			"OrganizationName": "Capuano King Family Podiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7e4d31ef-85b3-4ad1-b738-f6665b88ebf8",
-			"OrganizationName": "Capuano King Family Podiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/c4e14306-492d-452b-a42d-3fcc024711dc",
-			"OrganizationName": "ENRIQUE A ROBLES MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/c4e14306-492d-452b-a42d-3fcc024711dc",
-			"OrganizationName": "ENRIQUE A ROBLES MD",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/a1ffb535-2d70-4c91-b51e-83ac1c2ff70c",
 			"OrganizationName": "Centro Medico Del Niño",
 			"NPIID": "",
@@ -7149,6 +7101,30 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/1bceba12-dcc7-4973-9d1a-ee429e332f09",
 			"OrganizationName": "Long Island Family NP, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7e4d31ef-85b3-4ad1-b738-f6665b88ebf8",
+			"OrganizationName": "Capuano King Family Podiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7e4d31ef-85b3-4ad1-b738-f6665b88ebf8",
+			"OrganizationName": "Capuano King Family Podiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1536742a-9d55-42e5-b3a0-a8977e39f307",
+			"OrganizationName": "Evolve Foot and Wound care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1536742a-9d55-42e5-b3a0-a8977e39f307",
+			"OrganizationName": "Evolve Foot and Wound care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7177,26 +7153,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/1536742a-9d55-42e5-b3a0-a8977e39f307",
-			"OrganizationName": "Evolve Foot and Wound care",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e37c8a0c-c3b9-4689-b114-71c7402b1526",
+			"OrganizationName": "Good Health Family Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/1536742a-9d55-42e5-b3a0-a8977e39f307",
-			"OrganizationName": "Evolve Foot and Wound care",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e37c8a0c-c3b9-4689-b114-71c7402b1526",
+			"OrganizationName": "Good Health Family Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/9dc0825a-125f-459d-96a0-16acc144cc9c",
-			"OrganizationName": "James Seward Practice",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ee2fb683-7350-4187-8f0e-24b6a6a6d1e0",
+			"OrganizationName": "Prairie State Rehab",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/9dc0825a-125f-459d-96a0-16acc144cc9c",
-			"OrganizationName": "James Seward Practice",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ee2fb683-7350-4187-8f0e-24b6a6a6d1e0",
+			"OrganizationName": "Prairie State Rehab",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7213,14 +7189,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/e37c8a0c-c3b9-4689-b114-71c7402b1526",
-			"OrganizationName": "Good Health Family Clinic",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9dc0825a-125f-459d-96a0-16acc144cc9c",
+			"OrganizationName": "Downtown Medical Clinic, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/e37c8a0c-c3b9-4689-b114-71c7402b1526",
-			"OrganizationName": "Good Health Family Clinic",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9dc0825a-125f-459d-96a0-16acc144cc9c",
+			"OrganizationName": "Downtown Medical Clinic, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7237,14 +7213,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/ee2fb683-7350-4187-8f0e-24b6a6a6d1e0",
-			"OrganizationName": "Prairie State Rehab",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/825dbabf-2072-4975-b00e-a893ded0da86",
+			"OrganizationName": "At Your Door Physician Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/ee2fb683-7350-4187-8f0e-24b6a6a6d1e0",
-			"OrganizationName": "Prairie State Rehab",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/825dbabf-2072-4975-b00e-a893ded0da86",
+			"OrganizationName": "At Your Door Physician Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7262,13 +7238,13 @@
 		},
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/c18ea4a4-31db-428b-84b8-6b6faf506e6d",
-			"OrganizationName": "Dr. James M. Bryan-Diaz, Internal Medicine",
+			"OrganizationName": "Bryan Internal Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/c18ea4a4-31db-428b-84b8-6b6faf506e6d",
-			"OrganizationName": "Dr. James M. Bryan-Diaz, Internal Medicine",
+			"OrganizationName": "Bryan Internal Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7285,18 +7261,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/825dbabf-2072-4975-b00e-a893ded0da86",
-			"OrganizationName": "At Your Door Physician Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/825dbabf-2072-4975-b00e-a893ded0da86",
-			"OrganizationName": "At Your Door Physician Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/300777b9-863b-49da-bbe8-0cd014bf49d6",
 			"OrganizationName": "Jessica Rosa Rodriguez",
 			"NPIID": "",
@@ -7305,42 +7269,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/300777b9-863b-49da-bbe8-0cd014bf49d6",
 			"OrganizationName": "Jessica Rosa Rodriguez",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/528126ab-6cd4-4d09-a968-85e90a8f6131",
-			"OrganizationName": "Freeway Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/528126ab-6cd4-4d09-a968-85e90a8f6131",
-			"OrganizationName": "Freeway Psychiatry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/913a27ff-ec15-412c-b16f-010f34d3c81a",
-			"OrganizationName": "Faith Healthcare and Healing, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/913a27ff-ec15-412c-b16f-010f34d3c81a",
-			"OrganizationName": "Faith Healthcare and Healing, LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/440105d2-f4c1-4565-b5a4-ca4d43b0aac1",
-			"OrganizationName": "Salsberry Health, PLLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/440105d2-f4c1-4565-b5a4-ca4d43b0aac1",
-			"OrganizationName": "Salsberry Health, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7357,14 +7285,38 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/59294e4e-3b6c-4915-8f97-6fa329496fec",
-			"OrganizationName": "JOHN HALBERDIER, MD PLLC",
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/440105d2-f4c1-4565-b5a4-ca4d43b0aac1",
+			"OrganizationName": "Salsberry Health, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/59294e4e-3b6c-4915-8f97-6fa329496fec",
-			"OrganizationName": "JOHN HALBERDIER, MD PLLC",
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/440105d2-f4c1-4565-b5a4-ca4d43b0aac1",
+			"OrganizationName": "Salsberry Health, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/913a27ff-ec15-412c-b16f-010f34d3c81a",
+			"OrganizationName": "Faith Healthcare and Healing, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/913a27ff-ec15-412c-b16f-010f34d3c81a",
+			"OrganizationName": "Faith Healthcare and Healing, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/528126ab-6cd4-4d09-a968-85e90a8f6131",
+			"OrganizationName": "Freeway Psychiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/528126ab-6cd4-4d09-a968-85e90a8f6131",
+			"OrganizationName": "Freeway Psychiatry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7377,6 +7329,18 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/6ab865a4-c675-4668-8810-bd21847bacf7",
 			"OrganizationName": "VQS Access Health LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/59294e4e-3b6c-4915-8f97-6fa329496fec",
+			"OrganizationName": "JOHN HALBERDIER, MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/59294e4e-3b6c-4915-8f97-6fa329496fec",
+			"OrganizationName": "JOHN HALBERDIER, MD PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7401,6 +7365,642 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/a64d8554-9507-405f-8d10-62c22ca60024",
 			"OrganizationName": "Central Florida Healthcare Group, LLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3fe616ef-7c4a-4419-a015-8c4c5d790aec",
+			"OrganizationName": "Rita Laracuente MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3fe616ef-7c4a-4419-a015-8c4c5d790aec",
+			"OrganizationName": "Rita Laracuente MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/faff7780-76c7-41f5-8575-61a37265bd8d",
+			"OrganizationName": "Milestone Psychotherapy, LCSW, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/faff7780-76c7-41f5-8575-61a37265bd8d",
+			"OrganizationName": "Milestone Psychotherapy, LCSW, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1cd26a20-4457-44b6-945d-4e7421a78afd",
+			"OrganizationName": "Ann LaPolla Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1cd26a20-4457-44b6-945d-4e7421a78afd",
+			"OrganizationName": "Ann LaPolla Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2d5dc4e4-4351-4775-82ba-d3afb61bc91d",
+			"OrganizationName": "Clark, Nelson and Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2d5dc4e4-4351-4775-82ba-d3afb61bc91d",
+			"OrganizationName": "Clark, Nelson and Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/f50bfa9c-8fc2-4adb-99a7-4475a22e773d",
+			"OrganizationName": "Jennifer Zemola Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/f50bfa9c-8fc2-4adb-99a7-4475a22e773d",
+			"OrganizationName": "Jennifer Zemola Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1e6ac7eb-4623-470e-9378-90bf00ca358a",
+			"OrganizationName": "YEP Clinic and Lasting Impressions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1e6ac7eb-4623-470e-9378-90bf00ca358a",
+			"OrganizationName": "YEP Clinic and Lasting Impressions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/34eeee7b-82f2-4f4c-bfc8-1a9095e53f64",
+			"OrganizationName": "NouVo Med",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/34eeee7b-82f2-4f4c-bfc8-1a9095e53f64",
+			"OrganizationName": "NouVo Med",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/48e77ce7-90ea-4e08-be12-0b7ef2c64701",
+			"OrganizationName": "Maria Rojas Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/48e77ce7-90ea-4e08-be12-0b7ef2c64701",
+			"OrganizationName": "Maria Rojas Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/6e176ced-20d6-4be7-abbf-e1c6a48e6eb9",
+			"OrganizationName": "Utah Eyelid and Facial Plastic Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/6e176ced-20d6-4be7-abbf-e1c6a48e6eb9",
+			"OrganizationName": "Utah Eyelid and Facial Plastic Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/7d543888-6a86-4252-9788-ba38694eabeb",
+			"OrganizationName": "Beacom Family Health Connection",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/7d543888-6a86-4252-9788-ba38694eabeb",
+			"OrganizationName": "Beacom Family Health Connection",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/da40847a-36cb-4f94-bd9b-1a568cf70915",
+			"OrganizationName": "James Shope Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/da40847a-36cb-4f94-bd9b-1a568cf70915",
+			"OrganizationName": "James Shope Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/1fdfe93e-5d15-4e1c-bc02-72d5d90d8d21",
+			"OrganizationName": "L Tan MD LC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/1fdfe93e-5d15-4e1c-bc02-72d5d90d8d21",
+			"OrganizationName": "L Tan MD LC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c0970533-b063-470e-8972-233697ee78b4",
+			"OrganizationName": "Lifted Clinical Practice PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c0970533-b063-470e-8972-233697ee78b4",
+			"OrganizationName": "Lifted Clinical Practice PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/bb1946ee-24b7-446e-ace7-7c7b10049e47",
+			"OrganizationName": "Arca Mental Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/bb1946ee-24b7-446e-ace7-7c7b10049e47",
+			"OrganizationName": "Arca Mental Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c274b3bc-243d-40e5-a50d-1fa59c00c7fe",
+			"OrganizationName": "Insiteflow Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c274b3bc-243d-40e5-a50d-1fa59c00c7fe",
+			"OrganizationName": "Insiteflow Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/e1373600-ffd0-42b7-b9d6-fa5362ee5301",
+			"OrganizationName": "West Boise Wellness Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/e1373600-ffd0-42b7-b9d6-fa5362ee5301",
+			"OrganizationName": "West Boise Wellness Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9d271208-851a-448b-846b-9735891705bf",
+			"OrganizationName": "Zullimary Rodriguez Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9d271208-851a-448b-846b-9735891705bf",
+			"OrganizationName": "Zullimary Rodriguez Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c2694e63-1f30-4f3c-bc02-4b2e6ea21e0b",
+			"OrganizationName": "Shahab Mokhtare Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c2694e63-1f30-4f3c-bc02-4b2e6ea21e0b",
+			"OrganizationName": "Shahab Mokhtare Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c450c94b-872e-49b8-a4f3-386ed3e26027",
+			"OrganizationName": "PLATINA LIFE - Dr. Daniel Galeli , DOM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c450c94b-872e-49b8-a4f3-386ed3e26027",
+			"OrganizationName": "PLATINA LIFE - Dr. Daniel Galeli , DOM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/904c06d7-1406-4d01-a805-6d2b9ba6bf33",
+			"OrganizationName": "Bertha Cabrera MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/904c06d7-1406-4d01-a805-6d2b9ba6bf33",
+			"OrganizationName": "Bertha Cabrera MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9bb1fd57-ba01-4449-9e00-cf08a95f4948",
+			"OrganizationName": "Primary Care NPS, INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9bb1fd57-ba01-4449-9e00-cf08a95f4948",
+			"OrganizationName": "Primary Care NPS, INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dc93ea47-1cbe-4b49-abbb-fafa376ae7c8",
+			"OrganizationName": "Wholistic Perspective",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dc93ea47-1cbe-4b49-abbb-fafa376ae7c8",
+			"OrganizationName": "Wholistic Perspective",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/dc453f77-094e-4eb7-87d7-eb6858a26351",
+			"OrganizationName": "Endocrinology \u0026 Osteoporosis Centers of Texas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/dc453f77-094e-4eb7-87d7-eb6858a26351",
+			"OrganizationName": "Endocrinology \u0026 Osteoporosis Centers of Texas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/adcf3a4e-9d70-49ac-b42e-41260b1d63e2",
+			"OrganizationName": "HERMANOS HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/adcf3a4e-9d70-49ac-b42e-41260b1d63e2",
+			"OrganizationName": "HERMANOS HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ee8f5a35-f2ad-4df4-9b3c-79c64ef91bbf",
+			"OrganizationName": "ACES HOME HEALTH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ee8f5a35-f2ad-4df4-9b3c-79c64ef91bbf",
+			"OrganizationName": "ACES HOME HEALTH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2118d33-90f4-4599-a793-52936e279b4b",
+			"OrganizationName": "Lynx Heatlhcare \u0026 Psychiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2118d33-90f4-4599-a793-52936e279b4b",
+			"OrganizationName": "Lynx Heatlhcare \u0026 Psychiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/2ed5d5e6-3f74-4071-8e0b-a19e65364ab4",
+			"OrganizationName": "Mohit Durve Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/2ed5d5e6-3f74-4071-8e0b-a19e65364ab4",
+			"OrganizationName": "Mohit Durve Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/385759d8-ab77-4f84-a86c-5290a3a418b3",
+			"OrganizationName": "Center for Nephrology \u0026 Hypertension",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/385759d8-ab77-4f84-a86c-5290a3a418b3",
+			"OrganizationName": "Center for Nephrology \u0026 Hypertension",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/052a9e82-db02-479d-aaae-f1623dc31770",
+			"OrganizationName": "Baechtel Creek Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/052a9e82-db02-479d-aaae-f1623dc31770",
+			"OrganizationName": "Baechtel Creek Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/802ce909-cf9e-4aa1-8139-998856c72308",
+			"OrganizationName": "UpBeat Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/802ce909-cf9e-4aa1-8139-998856c72308",
+			"OrganizationName": "UpBeat Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ebf75afd-0c68-41bc-b751-ba80e12ed66a",
+			"OrganizationName": "Vitality Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ebf75afd-0c68-41bc-b751-ba80e12ed66a",
+			"OrganizationName": "Vitality Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9a52ac80-c78e-4bf2-9497-db9bb8b93025",
+			"OrganizationName": "Jeannie Pasacreta, PhD, APRN, CEO, sole proprietor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9a52ac80-c78e-4bf2-9497-db9bb8b93025",
+			"OrganizationName": "Jeannie Pasacreta, PhD, APRN, CEO, sole proprietor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/54d0617c-caed-4f35-ae16-4a69ce111e6b",
+			"OrganizationName": "Joslyn Gumbs MD OBGYN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/54d0617c-caed-4f35-ae16-4a69ce111e6b",
+			"OrganizationName": "Joslyn Gumbs MD OBGYN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/64005c98-b2cd-41ae-86cf-6b16f82cbeb3",
+			"OrganizationName": "EMS PHYSICAL THERAPY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/64005c98-b2cd-41ae-86cf-6b16f82cbeb3",
+			"OrganizationName": "EMS PHYSICAL THERAPY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/db08dc50-42cc-491f-b9cc-5428f4072ed1",
+			"OrganizationName": "SCOTT A MOREY JR MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/db08dc50-42cc-491f-b9cc-5428f4072ed1",
+			"OrganizationName": "SCOTT A MOREY JR MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c8f8e198-8c7a-4bfc-81b8-330e9e9e1a63",
+			"OrganizationName": "CHAM CLINIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c8f8e198-8c7a-4bfc-81b8-330e9e9e1a63",
+			"OrganizationName": "CHAM CLINIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/fb202375-5be7-4456-9534-addb2b0c2054",
+			"OrganizationName": "Carlos Delgado MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/fb202375-5be7-4456-9534-addb2b0c2054",
+			"OrganizationName": "Carlos Delgado MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/06c2c45f-271e-4990-ab83-485ee718cc70",
+			"OrganizationName": "David Chen Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/06c2c45f-271e-4990-ab83-485ee718cc70",
+			"OrganizationName": "David Chen Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/3d587f25-ce51-439f-9753-3513652e1b97",
+			"OrganizationName": "IV Rejuvenation Therapy",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/3d587f25-ce51-439f-9753-3513652e1b97",
+			"OrganizationName": "IV Rejuvenation Therapy",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c295c442-f745-4122-91bf-b586666fb03f",
+			"OrganizationName": "St John Medical Group Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c295c442-f745-4122-91bf-b586666fb03f",
+			"OrganizationName": "St John Medical Group Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/508315e5-c366-4b04-847c-778e640eec1e",
+			"OrganizationName": "Khadija Ibeh MD MPH PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/508315e5-c366-4b04-847c-778e640eec1e",
+			"OrganizationName": "Khadija Ibeh MD MPH PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/a2bd51b8-2d69-4568-9535-4b4bff7781e7",
+			"OrganizationName": "Integrative Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/a2bd51b8-2d69-4568-9535-4b4bff7781e7",
+			"OrganizationName": "Integrative Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/0ace65d3-2ccc-4b20-905d-d1e95b5397e3",
+			"OrganizationName": "Damaris Acosta",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/0ace65d3-2ccc-4b20-905d-d1e95b5397e3",
+			"OrganizationName": "Damaris Acosta",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c18cab98-25f8-4a6f-866a-202969815ddf",
+			"OrganizationName": "Recovering Hope Treatment Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c18cab98-25f8-4a6f-866a-202969815ddf",
+			"OrganizationName": "Recovering Hope Treatment Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/99404555-6a88-44e7-8b7d-03e94e14636d",
+			"OrganizationName": "StatCare Urgent Care Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/99404555-6a88-44e7-8b7d-03e94e14636d",
+			"OrganizationName": "StatCare Urgent Care Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/ef96bec6-5f1c-4018-a6f8-6140b9d39968",
+			"OrganizationName": "EMILY WANYOIKE Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/ef96bec6-5f1c-4018-a6f8-6140b9d39968",
+			"OrganizationName": "EMILY WANYOIKE Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/5a9e430b-3638-4f3d-a298-6a35a56722f4",
+			"OrganizationName": "Medical Rehab Clinic of Broward",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/5a9e430b-3638-4f3d-a298-6a35a56722f4",
+			"OrganizationName": "Medical Rehab Clinic of Broward",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c399e974-c191-4a5a-bbf1-b2d1d53ff11f",
+			"OrganizationName": "Reliance Medical Associates of  Jax, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c399e974-c191-4a5a-bbf1-b2d1d53ff11f",
+			"OrganizationName": "Reliance Medical Associates of  Jax, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4bd562de-2951-4330-8ddb-313804a1d5af",
+			"OrganizationName": "Falcon HealthCare Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4bd562de-2951-4330-8ddb-313804a1d5af",
+			"OrganizationName": "Falcon HealthCare Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/9a52aa62-f300-45d0-bd1a-fc21f63961dd",
+			"OrganizationName": "Chester County Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/9a52aa62-f300-45d0-bd1a-fc21f63961dd",
+			"OrganizationName": "Chester County Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/c6146b82-c568-4b95-830c-fae720435bbf",
+			"OrganizationName": "Ixaira C. Colón Morales, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/c6146b82-c568-4b95-830c-fae720435bbf",
+			"OrganizationName": "Ixaira C. Colón Morales, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/290db8f2-daa6-4604-a82b-3f204eae4d08",
+			"OrganizationName": "Dr. Jose M. Ortega Velez",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/290db8f2-daa6-4604-a82b-3f204eae4d08",
+			"OrganizationName": "Dr. Jose M. Ortega Velez",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/4fc11075-9fe1-4644-89b9-f810d06c118d",
+			"OrganizationName": "Abundant Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/4fc11075-9fe1-4644-89b9-f810d06c118d",
+			"OrganizationName": "Abundant Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

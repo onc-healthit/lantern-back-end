@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://api-datamanager.development.carecloud.com:8081/api/fhir/R4",
+			"URL": "https://demo.kodjin.com/fhir",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

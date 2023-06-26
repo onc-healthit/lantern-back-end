@@ -1,0 +1,28 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/imed.efm",
+			"OrganizationName": "Edwards Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "",
+			"OrganizationName": "Louisiana Heart Center ** LHC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/imed.fammedpc",
+			"OrganizationName": "Plauche FMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/imed.degeyter",
+			"OrganizationName": "Roland J. Degeyter, M.D., APMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

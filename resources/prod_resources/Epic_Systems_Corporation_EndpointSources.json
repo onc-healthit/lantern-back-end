@@ -913,12 +913,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://prodrx919.martinhealth.org/FHIR-PRD/api/FHIR/DSTU2/",
-			"OrganizationName": "Martin Health System",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://epicmobile.presencehealth.org/fhirPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "Ascension Illinois",
 			"NPIID": "",
@@ -2557,6 +2551,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1256.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Health Choice Network",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://hkc.nationwidechildrens.org/FHIR/api/FHIR/DSTU2/",
 			"OrganizationName": "Nationwide Children's Hospital",
 			"NPIID": "",
@@ -2671,6 +2671,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://prdproxy.nomshealthcare.com/prd-oauth2/api/FHIR/DSTU2/",
+			"OrganizationName": "NOMS Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1181.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "OU Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1246.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Children's of Alabama",
 			"NPIID": "",
@@ -2679,6 +2691,12 @@
 		{
 			"URL": "https://epicproxy.et1289.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Summa Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.fcn.net/Fhir/api/FHIR/DSTU2/",
+			"OrganizationName": "Family Care Network",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3771,12 +3789,6 @@
 		{
 			"URL": "https://wavesurescripts.sansumclinic.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Sansum Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://prodrx919.martinhealth.org/FHIR-PRD/api/FHIR/R4/",
-			"OrganizationName": "Martin Health System",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5149,6 +5161,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1181.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "OU Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epwebapps.orthocarolina.com/fhir-prd/api/FHIR/R4/",
 			"OrganizationName": "OrthoCarolina",
 			"NPIID": "",
@@ -5299,6 +5317,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1256.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Health Choice Network",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicinterconnect.walmarthealth.com/Interconnect-OAuth2-PRD/api/FHIR/R4/",
 			"OrganizationName": "Walmart",
 			"NPIID": "",
@@ -5349,6 +5373,18 @@
 		{
 			"URL": "https://epicproxy.et1283.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Shriners Children’s",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://prdproxy.nomshealthcare.com/PRD-OAuth2/api/FHIR/R4/",
+			"OrganizationName": "NOMS Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.fcn.net/Fhir/api/FHIR/R4/",
+			"OrganizationName": "Family Care Network",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -1,64 +1,64 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CFIACD",
-			"OrganizationName": "Live Oak Family Medicine, LLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DECFCD",
+			"OrganizationName": "THE NEUROLOGY INSTITUTE LLC",
 			"NPIID": "",
-			"OrganizationZipCode": "76028"
+			"OrganizationZipCode": "33067"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DHGJCD",
-			"OrganizationName": "Test Facility-Akinsola Okunsokan",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IJDFBA",
+			"OrganizationName": "Voyage Healthcare",
 			"NPIID": "",
-			"OrganizationZipCode": "01581"
+			"OrganizationZipCode": "55445"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JAFJCD",
-			"OrganizationName": "FHIR R4 Production Sandbox EMR",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IAHAAA",
+			"OrganizationName": "Opthalmic Plastic Surgeons of Texas",
 			"NPIID": "",
-			"OrganizationZipCode": "01581"
+			"OrganizationZipCode": "77063"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IGIFAD",
-			"OrganizationName": "Adventist HealthCare - Enterprise",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FJHCDA",
+			"OrganizationName": "Michigan Pain Management Consultants",
 			"NPIID": "",
-			"OrganizationZipCode": "20878"
+			"OrganizationZipCode": "48374"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEHFAD",
-			"OrganizationName": "Ideal Option----TEST",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CGJGBA",
+			"OrganizationName": "STJ - Digestive Health Associates PLC",
 			"NPIID": "",
-			"OrganizationZipCode": "99336"
+			"OrganizationZipCode": "48334"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/BIDJCD",
-			"OrganizationName": "Cherokee Family Healthcare, LLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/BFEEBA",
+			"OrganizationName": "Pinnacle ENT Associates",
 			"NPIID": "",
-			"OrganizationZipCode": "35960"
+			"OrganizationZipCode": "19087"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IEBECD",
-			"OrganizationName": "RWLC Consulting LLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IDJHAA",
+			"OrganizationName": "NYCDOHMH - Union Tpke Medical P.C.",
 			"NPIID": "",
-			"OrganizationZipCode": "08527"
+			"OrganizationZipCode": "11367"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CDGFBD",
-			"OrganizationName": "John Hoover, MD",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/JCCDCD",
+			"OrganizationName": "Premier Primary Care, PLLC",
 			"NPIID": "",
-			"OrganizationZipCode": "33155"
+			"OrganizationZipCode": "38261"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EDJICD",
-			"OrganizationName": "Summers Healthcare Inc",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDGFCA",
+			"OrganizationName": "Khair Family Practice",
 			"NPIID": "",
-			"OrganizationZipCode": "63109"
+			"OrganizationZipCode": "30253"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/AHEADA",
-			"OrganizationName": "Diabetes And Metabolism Specialists of San Antonio",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EACGBA",
+			"OrganizationName": "STJ - Drs Dubay, Jacobs, Orfanou, and Silapaswan",
 			"NPIID": "",
-			"OrganizationZipCode": "78258"
+			"OrganizationZipCode": "48374"
 		}
 	]
 }
