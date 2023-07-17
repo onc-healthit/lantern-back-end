@@ -133,6 +133,7 @@ services:
       - jsonexport:/srv/shiny-server/exportfolder
     ports:
       - "8090:3838"
+      - "8091:8989"
 
 volumes:
   pgdata:

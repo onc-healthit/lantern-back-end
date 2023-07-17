@@ -4,9 +4,19 @@ library(shinyBS)
 library(listviewer)
 library(leaflet)
 library(dygraphs)
+library(plumber)
 
 # Define server function
 function(input, output, session) { #nolint
+
+  # Create and run the plumber API
+  api <- plumber::plumb("modules/restendpoints.R")
+  #shiny_port <- as.integer(session$clientData$url_port)
+  api$run(port = 8989, host = "0.0.0.0")
+  #api$run(port = 3839)  # Use port = 0 to automatically assign an available port
+  #assigned_port <- api$getState("port")  # Retrieve the assigned port
+  #cat(paste0("Plumber API running on port ", shiny_port, "\n"))
+
 
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
