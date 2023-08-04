@@ -133,7 +133,6 @@ services:
       - jsonexport:/srv/shiny-server/exportfolder
     ports:
       - "8090:3838"
-      - "8091:8989"
   plumber:
     image: lantern-back-end_api:current
     container_name: lantern-back-end_api
@@ -155,6 +154,8 @@ services:
     ports:
       - "8989:8989"
     command: /home/plumber/plumber.R
+    env_file:
+      - .env
 volumes:
   pgdata:
   rabbitmqdata:
