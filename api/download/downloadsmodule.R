@@ -13,7 +13,6 @@ get_endpoint_organizations <- function(db_connection) {
 get_endpoint_export_tbl <- function(db_tables) {
 
 endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
-print(endpoint_organization_tbl)
 endpoint_export_tbl <- db_tables$endpoint_export %>%
   collect() %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
@@ -28,8 +27,6 @@ endpoint_export_tbl <- db_tables$endpoint_export %>%
   mutate(endpoint_names = gsub("NULL", "", as.character(endpoint_names))) %>%
   mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
   mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))
-  print("endpoint_export_tbl")
-  print(endpoint_export_tbl)
   endpoint_export_tbl
 }
 
