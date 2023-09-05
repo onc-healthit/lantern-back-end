@@ -43,3 +43,6 @@ services:
     ports:
       - "3838:3838"
 
+  plumber:
+    ports:
+      - "8989:8989"

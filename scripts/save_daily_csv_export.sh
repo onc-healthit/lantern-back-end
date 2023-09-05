@@ -14,14 +14,15 @@ mkdir -p $FILE_DIR
 
 EXPORTFILE="/etc/lantern/dailyexport/$FILE_NAME"
 echo $EXPORTFILE
-URL="http://127.0.0.1:8989/api/download"
+#URL="http://127.0.0.1:8989/api/download"
+URL="https://lantern.healthit.gov/api/daily/download"
 curl -o "$EXPORTFILE" "$URL"
 mv "$EXPORTFILE" "$FILE_DIR/$FILE_NAME"
 
 cd $FILE_DIR
 
 git pull
-git checkout daily_export
+git checkout main
 git add $FILE_NAME
 git commit -m "Adding daily export file ${FILE_NAME}"
-git push --set-upstream origin daily_export
+git push --set-upstream origin main
