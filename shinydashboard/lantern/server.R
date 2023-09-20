@@ -7,7 +7,6 @@ library(dygraphs)
 
 # Define server function
 function(input, output, session) { #nolint
-
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     query <- parseQueryString(session$clientData$url_search)

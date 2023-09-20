@@ -133,7 +133,27 @@ services:
       - jsonexport:/srv/shiny-server/exportfolder
     ports:
       - "8090:3838"
-
+  plumber:
+    image: lantern-back-end_api:current
+    container_name: lantern-back-end_api
+    restart: on-failure
+    build: 
+      context: ./api
+      args:
+        cert_dir: ./certs
+        LANTERN_DBNAME: ${LANTERN_DBNAME}
+        LANTERN_DBUSER: ${LANTERN_DBUSER}
+        LANTERN_DBPASSWORD: ${LANTERN_DBPASSWORD}
+        LANTERN_DBHOST: ${LANTERN_DBHOST}
+        LANTERN_DBPORT: ${LANTERN_DBPORT}
+        LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}
+    depends_on:
+      - postgres    
+    volumes:
+      - ./api/:/srv/lantern-api      
+    ports:
+      - "8989:8989"
+    command: /home/plumber/plumber.R
 volumes:
   pgdata:
   rabbitmqdata:

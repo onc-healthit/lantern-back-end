@@ -1,15 +1,15 @@
 # Functions to compute metrics on endpoints
 library(purrr)
 
-# Package that makes it easier to work with dates and times for getting avg response times # nolint
+# Package that makes it easier to work with dates and times for getting avg response times
 library(lubridate)
 
 # Get the Endpoint export table and clean up for UI
 get_endpoint_export_tbl <- function(db_tables) {
 
-  endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
+endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
 
-  endpoint_export_tbl <- db_tables$endpoint_export %>%
+endpoint_export_tbl <- db_tables$endpoint_export %>%
   collect() %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
   tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -27,25 +27,25 @@ get_endpoint_export_tbl <- function(db_tables) {
 }
 
 get_endpoint_organizations <- function(db_connection) {
-  res <- tbl(db_connection,
-  sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
-  collect() %>%
-  group_by(url) %>%
-  summarise(endpoint_names_list = list(endpoint_names_list))
-  res
+    res <- tbl(db_connection,
+    sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
+    collect() %>%
+    group_by(url) %>%
+    summarise(endpoint_names_list = list(endpoint_names_list))
+    res
 }
 
 get_endpoint_organization_list <- function(endpoint) {
-  res <- tbl(db_connection,
-  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
-  collect() %>%
-  group_by(url) %>%
-  summarise(endpoint_names_list = list(endpoint_names_list)) %>%
-  mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
-  mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list))) %>%
-  mutate(endpoint_names_list = gsub("\"", "", endpoint_names_list))
+    res <- tbl(db_connection,
+    sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
+    collect() %>%
+    group_by(url) %>%
+    summarise(endpoint_names_list = list(endpoint_names_list)) %>%
+    mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
+    mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list))) %>%
+    mutate(endpoint_names_list = gsub("\"", "", endpoint_names_list))
 
-  res$endpoint_names_list
+    res$endpoint_names_list
 }
 
 # Will need scalable solution for creating short names from Vendor names for UI
@@ -71,17 +71,17 @@ get_endpoint_totals_list <- function(db_tables) {
 
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function() {
-  ret_tbl <- app$endpoint_export_tbl() %>%
+  ret_tbl <- endpoint_export_tbl() %>%
     distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
     select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl) %>%
     left_join(app$http_response_code_tbl() %>% select(code, label),
-    by = c("http_response" = "code")) %>%
-    mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
-    mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
-    mutate(cap_stat_exists = case_when(
-      kind != "instance" ~ "true*",
-      TRUE ~ cap_stat_exists
-    ))
+      by = c("http_response" = "code")) %>%
+      mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
+      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
+      mutate(cap_stat_exists = case_when(
+        kind != "instance" ~ "true*",
+        TRUE ~ cap_stat_exists
+      ))
 }
 
 # get the endpoint tally by http_response received
@@ -90,7 +90,7 @@ get_response_tally_list <- function(db_tables) {
     filter(requested_fhir_version == "None") %>%
     select(metadata_id) %>%
     left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
-    by = c("metadata_id" = "id")) %>%
+      by = c("metadata_id" = "id")) %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -115,18 +115,18 @@ get_http_response_summary_tbl <- function(db_tables) {
   db_tables$fhir_endpoints_info %>%
     collect() %>%
     filter(requested_fhir_version == "None") %>%
-    left_join(app$endpoint_export_tbl() %>%
-    select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
-    select(url, id, http_response, vendor_name, fhir_version) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+    left_join(endpoint_export_tbl() %>%
+      select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
+      select(url, id, http_response, vendor_name, fhir_version) %>%
+      mutate(code = as.character(http_response)) %>%
+      group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
+      summarise(Percentage = n()) %>%
+      ungroup() %>%
+      group_by(id) %>%
+      mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
+      ungroup() %>%
+      collect() %>%
+      tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 # Get the count of endpoints by vendor
@@ -144,10 +144,10 @@ get_fhir_version_vendor_count <- function(endpoint_tbl) {
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
-  mutate(endpoint_tbl,
-  vendor_f = as.factor(vendor_name),
-  fhir_f = as.factor(fhir_version)
-  )
+    mutate(endpoint_tbl,
+           vendor_f = as.factor(vendor_name),
+           fhir_f = as.factor(fhir_version)
+    )
 }
 
 get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
@@ -431,7 +431,7 @@ get_contact_information <- function(db_connection) {
     collect()
 
 
-    res <- app$endpoint_export_tbl() %>%
+    res <- endpoint_export_tbl() %>%
         distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
         select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
         filter(requested_fhir_version == "None") %>%
@@ -833,7 +833,7 @@ get_validation_results <- function(db_connection) {
 }
 
 get_endpoint_list_matches <- function() {
-    el <- app$endpoint_export_tbl() %>%
+    el <- endpoint_export_tbl() %>%
           separate_rows(endpoint_names, sep = ";") %>%
           select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
           rename(organization_name = endpoint_names) %>%
@@ -864,7 +864,7 @@ get_capability_and_smart_response <- function(db_connection, endpointURL, reques
 }
 
 get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
-  res <- app$endpoint_export_tbl() %>%
+  res <- endpoint_export_tbl() %>%
     filter(url == endpointURL) %>%
     filter(requested_fhir_version == requestedFhirVersion) %>%
     distinct(url, http_response, smart_http_response, errors, cap_stat_exists, availability) %>%
@@ -882,12 +882,12 @@ get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
 }
 
 get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connection) {
-    res <- app$endpoint_export_tbl() %>%
+    res <- endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(url, fhir_version, vendor_name, software_name, software_version, software_releasedate, format, info_created, info_updated)
 
-    resListSource <- app$endpoint_export_tbl() %>%
+    resListSource <- endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
           distinct(list_source)
@@ -925,74 +925,3 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
     res
 }
 
-database_fetcher <- reactive({
-
-  app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
-
-  app_data$response_tally(get_response_tally_list(db_tables))
-
-  app_data$http_pct(get_http_response_summary_tbl(db_tables))
-
-  app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl()))
-
-  app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
-
-  app_data$capstat_fields(get_capstat_fields(db_connection))
-
-  app_data$supported_profiles(get_supported_profiles(db_connection))
-
-  app_data$capstat_values(get_capstat_values(db_connection))
-
-  app_data$last_updated(now("UTC"))
-
-  app_data$security_endpoints(get_security_endpoints(db_connection))
-
-  app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection))
-
-  app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints())))
-
-  app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
-    distinct(code) %>%
-    pull(code))
-
-  app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection))
-
-  app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection))
-
-  app_data$contact_info_tbl(get_contact_information(db_connection))
-
-  app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection))
-
-  app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection))
-
-  app_data$implementation_guide(get_implementation_guide(db_connection))
-
-  app_data$endpoint_locations(get_endpoint_locations(db_connection))
-
-  app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection))
-
-  app_data$validation_tbl(get_validation_results(db_connection))
-
-})
-
-app_fetcher <- reactive({
-
-  app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables))
-
-  app$fhir_version_list_no_capstat(get_fhir_version_list(app$endpoint_export_tbl(), TRUE))
-
-  app$fhir_version_list(get_fhir_version_list(app$endpoint_export_tbl(), FALSE))
-
-  app$distinct_fhir_version_list_no_capstat(get_distinct_fhir_version_list_no_capstat(app$endpoint_export_tbl()))
-
-  app$distinct_fhir_version_list(get_distinct_fhir_version_list(app$endpoint_export_tbl()))
-
-  app$vendor_list(get_vendor_list(app$endpoint_export_tbl()))
-
-  app$http_response_code_tbl(
-    read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
-    mutate(code_chr = as.character(code))
-  )
-
-  app$zip_to_zcta(read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c")))
-})
