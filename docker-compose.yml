@@ -154,8 +154,6 @@ services:
     ports:
       - "8989:8989"
     command: /home/plumber/plumber.R
-    env_file:
-      - .env
 volumes:
   pgdata:
   rabbitmqdata:

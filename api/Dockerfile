@@ -37,7 +37,7 @@ ADD /common/endpoints.R /home/plumber/common/endpoints.R
 ADD /common/http_codes.csv /home/plumber/download/http_codes.csv
 
 # Environment variables are passed to R via .Renviron file the container
-# RUN env | grep LANTERN > /.Renviron && chown  /home/shiny/.Renviron
+RUN env | grep LANTERN > /home/plumber/.Renviron
 
 # to launch your docker container
 CMD ["/home/plumber/plumber.R"]
