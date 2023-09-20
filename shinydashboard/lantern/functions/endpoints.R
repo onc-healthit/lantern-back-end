@@ -1,15 +1,15 @@
 # Functions to compute metrics on endpoints
 library(purrr)
 
-# Package that makes it easier to work with dates and times for getting avg response times
+# Package that makes it easier to work with dates and times for getting avg response times # nolint
 library(lubridate)
 
 # Get the Endpoint export table and clean up for UI
 get_endpoint_export_tbl <- function(db_tables) {
 
-endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
+  endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
 
-endpoint_export_tbl <- db_tables$endpoint_export %>%
+  endpoint_export_tbl <- db_tables$endpoint_export %>%
   collect() %>%
   mutate(vendor_name = na_if(vendor_name, "")) %>%
   tidyr::replace_na(list(vendor_name = "Unknown")) %>%
@@ -27,25 +27,25 @@ endpoint_export_tbl <- db_tables$endpoint_export %>%
 }
 
 get_endpoint_organizations <- function(db_connection) {
-    res <- tbl(db_connection,
-    sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
-    collect() %>%
-    group_by(url) %>%
-    summarise(endpoint_names_list = list(endpoint_names_list))
-    res
+  res <- tbl(db_connection,
+  sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
+  collect() %>%
+  group_by(url) %>%
+  summarise(endpoint_names_list = list(endpoint_names_list))
+  res
 }
 
 get_endpoint_organization_list <- function(endpoint) {
-    res <- tbl(db_connection,
-    sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
-    collect() %>%
-    group_by(url) %>%
-    summarise(endpoint_names_list = list(endpoint_names_list)) %>%
-    mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
-    mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list))) %>%
-    mutate(endpoint_names_list = gsub("\"", "", endpoint_names_list))
+  res <- tbl(db_connection,
+  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
+  collect() %>%
+  group_by(url) %>%
+  summarise(endpoint_names_list = list(endpoint_names_list)) %>%
+  mutate(endpoint_names_list = gsub("^c\\(|\\)$", "", endpoint_names_list)) %>%
+  mutate(endpoint_names_list = gsub("(\", )", "\";", as.character(endpoint_names_list))) %>%
+  mutate(endpoint_names_list = gsub("\"", "", endpoint_names_list))
 
-    res$endpoint_names_list
+  res$endpoint_names_list
 }
 
 # Will need scalable solution for creating short names from Vendor names for UI
@@ -75,13 +75,13 @@ get_fhir_endpoints_tbl <- function() {
     distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
     select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl) %>%
     left_join(app$http_response_code_tbl() %>% select(code, label),
-      by = c("http_response" = "code")) %>%
-      mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
-      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
-      mutate(cap_stat_exists = case_when(
-        kind != "instance" ~ "true*",
-        TRUE ~ cap_stat_exists
-      ))
+    by = c("http_response" = "code")) %>%
+    mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
+    mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
+    mutate(cap_stat_exists = case_when(
+      kind != "instance" ~ "true*",
+      TRUE ~ cap_stat_exists
+    ))
 }
 
 # get the endpoint tally by http_response received
@@ -90,7 +90,7 @@ get_response_tally_list <- function(db_tables) {
     filter(requested_fhir_version == "None") %>%
     select(metadata_id) %>%
     left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
-      by = c("metadata_id" = "id")) %>%
+    by = c("metadata_id" = "id")) %>%
     select(http_response) %>%
     group_by(http_response) %>%
     tally()
@@ -116,17 +116,17 @@ get_http_response_summary_tbl <- function(db_tables) {
     collect() %>%
     filter(requested_fhir_version == "None") %>%
     left_join(app$endpoint_export_tbl() %>%
-      select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
-      select(url, id, http_response, vendor_name, fhir_version) %>%
-      mutate(code = as.character(http_response)) %>%
-      group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
-      summarise(Percentage = n()) %>%
-      ungroup() %>%
-      group_by(id) %>%
-      mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-      ungroup() %>%
-      collect() %>%
-      tidyr::replace_na(list(vendor_name = "Unknown"))
+    select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
+    select(url, id, http_response, vendor_name, fhir_version) %>%
+    mutate(code = as.character(http_response)) %>%
+    group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
+    summarise(Percentage = n()) %>%
+    ungroup() %>%
+    group_by(id) %>%
+    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
+    ungroup() %>%
+    collect() %>%
+    tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
 # Get the count of endpoints by vendor
@@ -144,10 +144,10 @@ get_fhir_version_vendor_count <- function(endpoint_tbl) {
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
-    mutate(endpoint_tbl,
-           vendor_f = as.factor(vendor_name),
-           fhir_f = as.factor(fhir_version)
-    )
+  mutate(endpoint_tbl,
+  vendor_f = as.factor(vendor_name),
+  fhir_f = as.factor(fhir_version)
+  )
 }
 
 get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
