@@ -32,6 +32,16 @@ downloadsmodule_UI <- function(id) {
       )
     ),
     fluidRow(
+      column(width = 12,
+             h2("REST API"),
+             style = "padding-bottom:10px;padding-top:10px",
+             p(HTML("This REST API [GET]<b> https://lantern.healthit.gov/api/daily/download </b> enables programmatic access
+              to download the daily Lantern data (available for download as a CSV above). The API will initiate
+              the download of the data in CSV format automatically. This can be used to program the
+              download for any purpose."))
+      )
+    ),
+    fluidRow(
       column(width = 12, style = "padding-top:50px",
              htmlOutput(ns("note_text"))
       )
