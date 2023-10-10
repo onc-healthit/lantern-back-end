@@ -134,7 +134,8 @@ var healthInnovationURL = "https://revolutionehrdev.dynamicfhir.com/fhir/r4/endp
 var mPNSoftwareURL = "https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv"
 var NexusURL = "https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv"
 var MEDENTURL = "https://www.medent.com/std_api/ServiceBaseURL.csv"
-var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
+
+//var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
