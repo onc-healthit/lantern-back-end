@@ -3,7 +3,6 @@ package chplendpointquerier
 import (
 	"strings"
 
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
