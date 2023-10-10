@@ -1,0 +1,46 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/vwnpp/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/devices/4akn/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/boardwalk/4ah5/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/vwnpp/4ap4/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhpresentation.youruprise.com/fhir/planoeye/4afj/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

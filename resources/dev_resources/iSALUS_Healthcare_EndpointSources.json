@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c1366/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c4837/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c4847/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c4966/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c4980/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c4968/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c5000/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

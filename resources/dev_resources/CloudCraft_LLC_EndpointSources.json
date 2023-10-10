@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhirapitest.naiacorp.net/fhir/cloudcraft/faison_medical/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -56,6 +44,18 @@
 		},
 		{
 			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/2/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/3/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirapitest.naiacorp.net/fhir/dhit/123/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

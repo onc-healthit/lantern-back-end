@@ -49,12 +49,6 @@
 			"OrganizationZipCode": "77339-6405"
 		},
 		{
-			"URL": "https://westbell.nthtechnology.com/api/fhir.php/",
-			"OrganizationName": "La Providence Pediatric Clinics Inc",
-			"NPIID": "",
-			"OrganizationZipCode": "77071"
-		},
-		{
 			"URL": "https://galvon.nthtechnology.com/api/fhir.php/",
 			"OrganizationName": "Dr. Dennis Galvon",
 			"NPIID": "",

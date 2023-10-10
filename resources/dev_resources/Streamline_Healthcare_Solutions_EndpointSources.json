@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/streamline/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/swmbh/1063944585/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/imperialcountybehavioralhealthservices/1225258841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/fresnocountydepartmentofbehavioralhealth/1770538001/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/fresnocountydepartmentofbehavioralhealth/t1770538001/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/imperialcountybehavioralhealthservices/t1225258841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/colusacountybehavioralhealth/1275938722/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/contracostabehavioralhealthservices/1427138726/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/glenncountybehavioralhealth/1427196617/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/humboldtcountybehavioralhealth/1033300306/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

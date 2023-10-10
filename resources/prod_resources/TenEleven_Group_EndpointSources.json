@@ -1,0 +1,34 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-dev.10e11.com/fhir/dhit/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-dev.10e11.com/fhir/dhit/filevdtpractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-dev.10e11.com/fhir/dhit/ecrcurestest/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-dev.10e11.com/fhir/dhit/ecrcurestest2/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-dev.10e11.com/fhir/dhit/tgicurrentsprint/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

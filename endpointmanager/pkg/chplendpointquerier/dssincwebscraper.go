@@ -20,7 +20,7 @@ func DssIncWebscraper(CHPLURL string, fileToWriteTo string) {
 	doc.Find("#Api_Urls").Each(func(index int, tableElems *goquery.Selection) {
 		tableElems.Find("div").Each(func(index1 int, divElems *goquery.Selection) {
 			divElems.Find("p").Each(func(indextr int, phtml *goquery.Selection) {
-				if strings.HasPrefix(phtml.Text(), "The FHIR API Base URL") {
+				if strings.Contains(phtml.Text(), "API Base URL") {
 					aElems := phtml.Find("a")
 					if aElems.Length() > 0 {
 						hrefText, exists := aElems.Eq(0).Attr("href")

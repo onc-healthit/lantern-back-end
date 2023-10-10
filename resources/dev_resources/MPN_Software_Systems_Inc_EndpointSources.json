@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://sfp-mpn-proxy-onc.azurewebsites.net/fhir/",
+			"OrganizationName": "MPN Org.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

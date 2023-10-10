@@ -1,12 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://api.meldrx.com/fhir/goodhealthinc",
-			"OrganizationName": "Good Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://api.meldrx.com/fhir/hmc-001",
 			"OrganizationName": "Harbor - UCLA Medical Center",
 			"NPIID": "",
@@ -57,6 +51,12 @@
 		{
 			"URL": "https://api.meldrx.com/fhir/aves",
 			"OrganizationName": "AVES - ANew Vision Eye Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.meldrx.com/fhir/ohioeye",
+			"OrganizationName": "Ohio Eye Alliance",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

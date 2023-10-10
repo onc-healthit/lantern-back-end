@@ -10,55 +10,55 @@
 			"URL": "https://app.azaleahealth.com/fhir/R4/139843",
 			"OrganizationName": "SELECTSHRED",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "34990"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/141194",
 			"OrganizationName": "\"GIFT OF LIFE\" PROGRAM",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "77706-2537"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/141329",
 			"OrganizationName": "*DO NOT USE* CENTRO DERMATOLOGICO",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "00918-1234"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/141289",
 			"OrganizationName": "*OLD AR* NEWBORN SPECIAL CARE ASSOCIATES",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "19001-3720"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/139657",
 			"OrganizationName": "1ST COAST FLOORING",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "32211"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/138189",
 			"OrganizationName": "2 KIDZ TRUCKING/ON SITE MEDICAL",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "32868"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/138714",
 			"OrganizationName": "21ST CENTURY AUTOMATION",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "34234"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/139017",
 			"OrganizationName": "360 BLUE LLC",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "32459"
 		},
 		{
 			"URL": "https://app.azaleahealth.com/fhir/R4/142076",
 			"OrganizationName": "3C HEALTHCARE LLC",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "75703-6464"
 		}
 	]
 }

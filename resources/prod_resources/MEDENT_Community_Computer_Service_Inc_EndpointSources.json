@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://www.medentfhir.com/fhir/R4/fhirR235",
+			"OrganizationName": "MEDENT PROD Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

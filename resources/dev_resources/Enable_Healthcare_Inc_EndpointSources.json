@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/oapi-test1/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/ambulatorypracticeexample1/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/oapi-test2/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2002/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2031/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2036/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2042/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
