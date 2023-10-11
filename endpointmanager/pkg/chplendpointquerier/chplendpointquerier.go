@@ -68,7 +68,7 @@ var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.c
 var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 var azaleahealthURL = "https://api.azaleahealth.com/fhir/R4/Endpoint"
 var cloudcraftURL = "https://fhirapitest.naiacorp.net/fhir/r4/endpoints/"
-var darenasolutionsURL = "https://hub.meldrx.com"
+var darenasolutionsURL = "https://api.meldrx.com/Directories/fhir/endpoints"
 var glenwoodsystemsURL = "https://static.glaceemr.com/endpoints/urls.json"
 var practicefusionURL = "https://www.practicefusion.com/assets/static_files/ServiceBaseURLs.json"
 var universalEHRURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-universalehr.json"
@@ -119,6 +119,23 @@ var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
 var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
+var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
+var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
+var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
+var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"
+var drchronoURL = "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/r4/endpoints"
+var visionWebURL = "https://dhpresentation.youruprise.com/fhir/r4/endpoints"
+var streamlineURL = "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints"
+var procentiveURL = "https://fhir-dev.procentive.com/fhir/r4/endpoints"
+var tenElevenURL = "https://fhir-dev.10e11.com/fhir/r4/endpoints"
+var henryScheinURL = "https://micromddev.dynamicfhir.com/fhir/r4/endpoints"
+var iSALUSURL = "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/r4/endpoints"
+var healthInnovationURL = "https://revolutionehrdev.dynamicfhir.com/fhir/r4/endpoints"
+var mPNSoftwareURL = "https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv"
+var NexusURL = "https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv"
+var MEDENTURL = "https://www.medent.com/std_api/ServiceBaseURL.csv"
+
+//var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -229,7 +246,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, cloudcraftURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, darenasolutionsURL) {
-		BundleQuerierParser("https://api.meldrx.com/Directories/fhir/endpoints", fileToWriteTo)
+		BundleQuerierParser(darenasolutionsURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, glenwoodsystemsURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, practicefusionURL) {
@@ -330,6 +347,38 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcisgoldURL) {
 		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, healthieURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, medConnectURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, citiusTechURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, enableHealthcareURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, drchronoURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, visionWebURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, streamlineURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, procentiveURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, tenElevenURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, henryScheinURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, iSALUSURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, healthInnovationURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, mPNSoftwareURL) {
+		CSVParser("https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv", fileToWriteTo, "./ServiceBaseURLs.csv", 1, 0, true, 3, 2)
+	} else if URLsEqual(chplURL, NexusURL) {
+		CSVParser("https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv", fileToWriteTo, "./nexusehr-fhirapi-base-urls.csv", 1, 0, true, 2, 1)
+	} else if URLsEqual(chplURL, MEDENTURL) {
+		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", 1, 0, true, 1, 0)
+		//	} else if URLsEqual(chplURL, tenzingURL) {
+		//		TenzingURLWebscraper("https://tenzing.docs.apiary.io/#introduction/terms-and-conditions/fhir-endpoints", fileToWriteTo)
 	}
 }
 

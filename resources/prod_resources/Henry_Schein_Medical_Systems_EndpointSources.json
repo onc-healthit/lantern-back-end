@@ -1,0 +1,40 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/micromdtest/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/practice_01/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://micromddev.dynamicfhir.com/fhir/dhit/micromdcert/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

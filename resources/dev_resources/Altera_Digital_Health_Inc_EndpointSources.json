@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "PV0",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
-			"OrganizationName": "",
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "PV0",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://TWweb.twops.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "PV0",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
-			"OrganizationName": "",
+			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/open",
+			"OrganizationName": "PV0",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://10.160.126.33/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhirprod.whs.org/R4/fhir-Prod",
+			"OrganizationName": "Washington Health System - WH01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.prosuite.allscriptscloud.com/fhirroute/fhir/74150",
-			"OrganizationName": "",
+			"URL": "https://fhirprod.whs.org/open",
+			"OrganizationName": "Washington Health System - WH01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://172.19.5.119/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhirprod.whs.org/R4/open-Prod",
+			"OrganizationName": "Washington Health System - WH01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scm16testps1.nmhs.net/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhirprod.whs.org/fhir",
+			"OrganizationName": "Washington Health System - WH01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://sears-15-1-app.services.local/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.summithealthcare.net/R4/open-Prod",
+			"OrganizationName": "Summit Healthcare Association - PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://10.160.186.44/fhir",
-			"OrganizationName": "",
+			"URL": "https://fhir.summithealthcare.net/R4/fhir-Prod",
+			"OrganizationName": "Summit Healthcare Association - PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

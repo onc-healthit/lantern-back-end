@@ -1,0 +1,40 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/patienta/paa/r4/",
+			"OrganizationName": "Organization2 - Patient API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/providera/pda/r4/",
+			"OrganizationName": "Organization2 - Provider API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/providera/pda/r4/",
+			"OrganizationName": "Organization1 - Provider API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/bulka/",
+			"OrganizationName": "Organization2 - Bulk API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/bulka/",
+			"OrganizationName": "Organization1 - Bulk API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fastplusdemo.citiustech.com:8280/patienta/paa/r4/",
+			"OrganizationName": "Organization1 - Patient API",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

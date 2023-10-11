@@ -1,0 +1,166 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/streamline/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/swmbh/1063944585/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/imperialcountybehavioralhealthservices/1225258841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/fresnocountydepartmentofbehavioralhealth/1770538001/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/fresnocountydepartmentofbehavioralhealth/t1770538001/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/imperialcountybehavioralhealthservices/t1225258841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/colusacountybehavioralhealth/1275938722/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/contracostabehavioralhealthservices/1427138726/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/glenncountybehavioralhealth/1427196617/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/humboldtcountybehavioralhealth/1033300306/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/kernbehavioralhealth\u0026recoveryservices/1568658841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/kingscountybehavioralhealth/1750715801/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/lakecountybehavioralhealthservices/1215140066/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/marincountybehavioralhealthandrecoveryservices(bhrs)/1568525699/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/monocountybehavioralhealth/1538266911/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/nevadacountybehavioralhealth/1982620399/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/placercountybehavioralhealthqualitymanagement/1750408514/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/sacramentocountydivisionofbehavioralhealthservices/1043386659/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/sanbenitocountybehavioralhealth/1255461471/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/sanjoaquincountybehavioralhealthservices/1215028931/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/countyofsanluisobispohealthagency/999999999/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/santabarbaracountydepartmentofbehavioralwellness/1487857405/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/countyofsiskiyouhealthandhumanservicesagency/1780803239/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/sonomacountydepartmentofhealthservices,behavioralhealthdivision/1871647115/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/stanislauscountybehavioralhealth\u0026recoveryservices/1831221974/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/tularecountyhealth\u0026humanservicesagencydirectorofmentalhealth/1528105558/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/venturacountybehavioralhealth/1508199258/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

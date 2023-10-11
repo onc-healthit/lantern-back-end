@@ -211,6 +211,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/7b394f9e-d9c2-4b0b-9109-00d32890267b",
+			"OrganizationName": "Eureka Springs Hospital",
+			"NPIID": "1609403690",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8e23cb3a-f9cc-48e8-b3d7-1fbb669a3133",
 			"OrganizationName": "Evanston Regional Hospital",
 			"NPIID": "1639140015",
@@ -322,6 +328,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/e0b457d5-5daf-45ba-a625-42dcc3ce397b",
 			"OrganizationName": "Huntsville Memorial Hospital",
 			"NPIID": "1245878990",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/48677b2b-5c2a-49f5-9750-c55785639ac4",
+			"OrganizationName": "IIP03 0048",
+			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -465,7 +477,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/facb3d8f-6852-409a-a1db-46cde625b434",
 			"OrganizationName": "Medical Center of South Arkansas",
-			"NPIID": "1689625568",
+			"NPIID": "1780375592",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -520,6 +532,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/5c9c3d79-6b2c-4465-a5ab-001ebd43fba3",
 			"OrganizationName": "Morehouse General Hospital",
 			"NPIID": "1003898313",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/d5494b73-f433-4af3-a95b-cb4fabe2c2f8",
+			"OrganizationName": "Mount San Rafael",
+			"NPIID": "1184616740",
 			"OrganizationZipCode": ""
 		},
 		{

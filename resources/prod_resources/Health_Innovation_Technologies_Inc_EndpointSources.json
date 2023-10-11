@@ -1,0 +1,76 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/practicezero/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/practiceone/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/basepractice/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/revolutionehr/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/ambulatorypracticeexample01/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/ambulatorypracticeexample02/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/1/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/123456/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/12345/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/revolutionehr/1234568/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/19/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/onboardpractice03/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

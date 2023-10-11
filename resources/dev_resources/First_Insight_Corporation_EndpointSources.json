@@ -1,12 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://winfieldfamilyoptometryks.ficintegrations.com:2015/API/l6Vz5r/R4",
-			"OrganizationName": "Andover Family Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://hopkinsackermandrees.ficintegrations.com/API/2ia6Ja/R4",
 			"OrganizationName": "Hopkins, Ackerman, and Drees",
 			"NPIID": "",
@@ -57,6 +51,12 @@
 		{
 			"URL": "https://eyecareontheridgeva.ficintegrations.com:6814/API/vwNYju/R4",
 			"OrganizationName": "Eye Care on the Ridge, LLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chestereyecenterincch.ficintegrations.com:9014/API/Sw2bVt/R4",
+			"OrganizationName": "Chester Eye Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
