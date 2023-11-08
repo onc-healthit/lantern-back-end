@@ -1,6 +1,30 @@
 [
 	{
 		"FormatType": "Lantern",
+		"URL": "https://docs.canvasmedical.com/api/service-base-urls/",
+		"EndpointName": "CanvasMedical",
+		"FileName": "CanvasMedical_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://docs.athenahealth.com/api/guides/base-fhir-urls",
+		"EndpointName": "AthenaClinicals",
+		"FileName": "AthenaClinicals_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://mmdpcf.modulemd.com/cf.fhir.r4",
+		"EndpointName": "ModuleMD WISE",
+		"FileName": "ModuleMD_Wise_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://carepaths.com/uploads/org_endpoint_bundle.json",
+		"EndpointName": "CarePaths EHR",
+		"FileName": "Carepaths_EHR_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints",
 		"EndpointName": "Tenzing Medical LLC",
 		"FileName": "Tenzing_Medical_LLC_EndpointSources.json"
