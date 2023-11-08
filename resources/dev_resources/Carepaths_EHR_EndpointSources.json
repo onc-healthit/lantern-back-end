@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "http://developer.carepaths.com/beauchene/api/",
+			"OrganizationName": "Beauchene Family Therapy LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/qcounseling/api/",
+			"OrganizationName": "Q Counseling Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/1390898-152525/api/",
+			"OrganizationName": "Kristen O'Shea, PhD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/salt/api/",
+			"OrganizationName": "Salt and Light Counseling",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/frcc/api/",
+			"OrganizationName": "Firmly Rooted Counseling \u0026 Consulting",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/rochford/api/",
+			"OrganizationName": "Lisa Rochford, PhD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/pacificsky/api/",
+			"OrganizationName": "Pacific Sky Counseling",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/yelk/api/",
+			"OrganizationName": "Dawn L. Yelk, LCSW",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/scl/api/",
+			"OrganizationName": "Sharon Chatkupt Lee, Psy.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://developer.carepaths.com/1385102-145752/api/",
+			"OrganizationName": "Embrace Life Counseling",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

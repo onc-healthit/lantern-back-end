@@ -134,8 +134,9 @@ var healthInnovationURL = "https://revolutionehrdev.dynamicfhir.com/fhir/r4/endp
 var mPNSoftwareURL = "https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv"
 var NexusURL = "https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv"
 var MEDENTURL = "https://www.medent.com/std_api/ServiceBaseURL.csv"
-
-//var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
+var CarepathsURL = "https://carepaths.com/uploads/org_endpoint_bundle.json"
+var athenaClinicalsURL = "https://docs.athenahealth.com/api/guides/base-fhir-urls"
+var canvasMedicalURL = "https://docs.canvasmedical.com/api/service-base-urls/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -273,6 +274,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./ezdocs_fhir_base_urls.csv", 1, 0, true, 3, 1)
 	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
+	} else if URLsEqual(chplURL, athenaClinicalsURL) {
+		CSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo, "./athenanet-fhir-base-urls.csv", 17136, 2, true, 3, 1)
 	} else if URLsEqual(chplURL, medicscloudURL) {
 		MedicsCloudWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, advancedmdURL) {
@@ -371,14 +374,16 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, healthInnovationURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, CarepathsURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, mPNSoftwareURL) {
 		CSVParser("https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv", fileToWriteTo, "./ServiceBaseURLs.csv", 1, 0, true, 3, 2)
 	} else if URLsEqual(chplURL, NexusURL) {
 		CSVParser("https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv", fileToWriteTo, "./nexusehr-fhirapi-base-urls.csv", 1, 0, true, 2, 1)
 	} else if URLsEqual(chplURL, MEDENTURL) {
 		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", 1, 0, true, 1, 0)
-		//	} else if URLsEqual(chplURL, tenzingURL) {
-		//		TenzingURLWebscraper("https://tenzing.docs.apiary.io/#introduction/terms-and-conditions/fhir-endpoints", fileToWriteTo)
+	} else if URLsEqual(chplURL, canvasMedicalURL) {
+		CanvasMedicalURLWebscraper(chplURL, fileToWriteTo)
 	}
 }
 

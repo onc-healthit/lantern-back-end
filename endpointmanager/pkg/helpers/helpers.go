@@ -179,6 +179,8 @@ func QueryAndOpenCSV(csvURL string, csvFilePath string, header bool) (*csv.Reade
 
 	// read csv values using csv.Reader
 	csvReader := csv.NewReader(f)
+	csvReader.Comma = ','       // Set the delimiter (default is ',')
+	csvReader.LazyQuotes = true // Enable handling of lazy quotes
 
 	if header {
 		// Read first line to skip over headers
