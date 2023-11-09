@@ -30,7 +30,7 @@ type Operation struct {
 	HTTPResponseTimeSecond float64                `json:"http_response_time_second"`
 	Errors                 string                 `json:"errors"`
 	FHIRVersion            string                 `json:"fhir_version"`
-	TLSVersion             string                 `json:"tls_verison"`
+	TLSVersion             string                 `json:"tls_version"`
 	MIMETypes              []string               `json:"mime_types"`
 	SupportedResources     []string               `json:"supported_resources"`
 	SMARTHTTPResponse      int                    `json:"smart_http_response"`
