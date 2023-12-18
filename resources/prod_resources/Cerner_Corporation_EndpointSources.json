@@ -271,12 +271,6 @@
 			"OrganizationZipCode": "34102-7217"
 		},
 		{
-			"URL": "https://fhir-myrecord.cerner.com/r4/094be162-7d96-49dc-86a2-73b309e5fa47/",
-			"OrganizationName": "Ascension Health",
-			"NPIID": "",
-			"OrganizationZipCode": "63134-3806"
-		},
-		{
 			"URL": "https://fhir-myrecord.cerner.com/r4/09c6832d-8ba2-41f5-8eee-a1da45053f6c/",
 			"OrganizationName": "St. Luke's Hospital",
 			"NPIID": "",

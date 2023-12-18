@@ -21,7 +21,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-var chplAPICertProdListPath string = "/search/v2"
+var chplAPICertProdListPath string = "/search/v3"
 
 type chplEndpointListProductInfo struct {
 	ListSourceURL    string                 `json:"listSourceURL"`

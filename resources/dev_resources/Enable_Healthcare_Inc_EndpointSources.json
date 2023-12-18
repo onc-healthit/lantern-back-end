@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ehifire.ehiconnect.com/fhir/dhit/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/basepractice/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -56,6 +44,18 @@
 		},
 		{
 			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2042/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2047/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehifire.ehiconnect.com/fhir/ehi/2074/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

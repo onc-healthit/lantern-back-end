@@ -1,6 +1,12 @@
 [
 	{
 		"FormatType": "Lantern",
+		"URL": "https://open.platform.veradigm.com/fhirendpoints",
+		"EndpointName": "Veradigm",
+		"FileName": "Veradigm_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://docs.canvasmedical.com/api/service-base-urls/",
 		"EndpointName": "CanvasMedical",
 		"FileName": "CanvasMedical_EndpointSources.json"

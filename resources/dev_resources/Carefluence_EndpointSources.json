@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://api.medconnecthealth.com/fhir/medconnect/basepractice/r4",
+			"URL": "https://classic.carefluence.com/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

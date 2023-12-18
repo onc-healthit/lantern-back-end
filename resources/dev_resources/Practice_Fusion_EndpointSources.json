@@ -2,13 +2,13 @@
 	"Endpoints": [
 		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Phenomenon",
+			"OrganizationName": "WompWompWomp",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/118b460b-8390-4754-8e4a-1dd5ee20f599",
-			"OrganizationName": "Phenomenon",
+			"OrganizationName": "WompWompWomp",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -25,6 +25,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://api.patientfusion.com/fhir/r4/v1/d2f00bcb-aa00-4899-abdb-e9fb7250cd3b",
+			"OrganizationName": "Endocrine Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.practicefusion.com/fhir/r4/v1/d2f00bcb-aa00-4899-abdb-e9fb7250cd3b",
+			"OrganizationName": "Endocrine Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.patientfusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
 			"OrganizationName": "BCS Abundant Life Family Practice, P.A.",
 			"NPIID": "",
@@ -33,18 +45,6 @@
 		{
 			"URL": "https://api.practicefusion.com/fhir/r4/v1/e30f4b92-0e42-44ed-96d4-ab98588d07dc",
 			"OrganizationName": "BCS Abundant Life Family Practice, P.A.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.patientfusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
-			"OrganizationName": "Jafet E. Gonzalez-Zakarchenco, M.D.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.practicefusion.com/fhir/r4/v1/7a45a52e-72ea-4746-8770-92cc062f4b40",
-			"OrganizationName": "Jafet E. Gonzalez-Zakarchenco, M.D.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

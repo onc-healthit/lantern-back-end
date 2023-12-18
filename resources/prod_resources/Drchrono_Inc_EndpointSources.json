@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/basepractice/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -872,6 +860,204 @@
 		},
 		{
 			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_249396/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_2866/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_211430/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_265784/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_119/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_209116/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_492383/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_397/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_233998/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_249386/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_317815/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_2634/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_492358/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_262083/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_207458/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_306076/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_377393/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_492816/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_315768/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_492264/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493096/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_366866/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_369049/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493085/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_261046/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493677/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493507/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493702/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_237536/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_361841/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_312895/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493285/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_290261/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_493889/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

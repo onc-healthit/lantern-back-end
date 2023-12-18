@@ -16,7 +16,13 @@
 			"URL": "https://api.azaleahealth.com/fhir/R4/southernplains",
 			"OrganizationName": "Valley Community Hospital",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "73075"
+		},
+		{
+			"URL": "https://api.azaleahealth.com/fhir/R4/brookhaven",
+			"OrganizationName": "Brookhaven Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": "74128"
 		},
 		{
 			"URL": "https://api.azaleahealth.com/fhir/R4/girard",
@@ -34,7 +40,7 @@
 			"URL": "https://api.azaleahealth.com/fhir/R4/reeves-memorial-medical-center",
 			"OrganizationName": "Reeves Memorial Medical Center",
 			"NPIID": "",
-			"OrganizationZipCode": ""
+			"OrganizationZipCode": "71222"
 		},
 		{
 			"URL": "https://api.azaleahealth.com/fhir/R4/testing-client-network",
@@ -51,12 +57,6 @@
 		{
 			"URL": "https://api.azaleahealth.com/fhir/R4/healthmark",
 			"OrganizationName": "Healthmark Hospital",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://api.azaleahealth.com/fhir/R4/ness",
-			"OrganizationName": "Ness County Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
