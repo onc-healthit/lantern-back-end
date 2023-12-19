@@ -130,7 +130,7 @@ func Test_makeCHPLProductURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expected := "https://chpl.healthit.gov/rest/search/v3?api_key=tmp_api_key&pageNumber=0&pageSize=100"
 	pageSize := 100
 	pageNumber := 0
 
@@ -619,7 +619,7 @@ func Test_getProductJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/search/v3?api_key=tmp_api_key&pageNumber=0&pageSize=100"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()

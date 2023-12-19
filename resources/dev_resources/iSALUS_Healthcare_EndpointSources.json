@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/dhit/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/dhit/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/basepractice/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -56,6 +44,18 @@
 		},
 		{
 			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c5000/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c5102/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/isalus/c5134/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

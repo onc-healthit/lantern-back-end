@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package chplquerier
@@ -407,7 +408,7 @@ func Test_GetCHPLProducts(t *testing.T) {
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/v2?api_key=tmp_api_key&pageNumber=0&pageSize=100\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/search/v3?api_key=tmp_api_key&pageNumber=0&pageSize=100\": context canceled"
 	tc, err = basicTestClient()
 	th.Assert(t, err == nil, err)
 	defer tc.Close()

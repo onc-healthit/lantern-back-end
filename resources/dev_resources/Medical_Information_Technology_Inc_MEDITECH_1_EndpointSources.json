@@ -49,14 +49,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://mtapi.alderhey.nhs.uk:443/v2/argonaut/v1",
-			"OrganizationName": "Alder Hey Children's Hospital Expanse",
+			"URL": "https://alhambrnetapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Alhambra Hospital Med Ctr MaaS Pod 010 05",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://alhambrnetapi.meditech.cloud:443/v2/argonaut/v1",
-			"OrganizationName": "Alhambra Hospital Med Ctr MaaS Pod 010 05",
+			"URL": "https://achospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Allendale County Hospital MaaS Pod 006 07",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

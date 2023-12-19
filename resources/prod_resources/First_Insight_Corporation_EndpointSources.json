@@ -1,12 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://winfieldfamilyoptometryks.ficintegrations.com:2015/API/l6Vz5r/R4",
-			"OrganizationName": "Andover Family Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://hopkinsackermandrees.ficintegrations.com/API/2ia6Ja/R4",
 			"OrganizationName": "Hopkins, Ackerman, and Drees",
 			"NPIID": "",
@@ -73,32 +67,8 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://bayfamilyeyecaremd.ficintegrations.com/API/SUHGCH/R4",
-			"OrganizationName": "Bay Family Eyecare LLC",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://whittakereyeassociatesks.ficintegrations.com/API/GlKga4/R4",
-			"OrganizationName": "Whittaker Eye Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://richardjkuekerodpaks.ficintegrations.com:441/API/BhKl7p/R4",
-			"OrganizationName": "Richard J. Kueker, O.D. , PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://weberoptiksil.ficintegrations.com:441/API/h3nyf4/R4",
 			"OrganizationName": "Weber Optiks Inc.",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://progressivevisioncenteril.ficintegrations.com:2020/API/jJyabP/R4",
-			"OrganizationName": "Progressive Vision Center, Ltd.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -111,12 +81,6 @@
 		{
 			"URL": "https://markjbenjaminmdil.ficintegrations.com/API/pAqPi6/R4",
 			"OrganizationName": "Benjamin Eye Care Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://StevenRichlinODInc.ficintegrations.com/API/c2TwFK/R4",
-			"OrganizationName": "Steven B. Richlin, O D, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -141,12 +105,6 @@
 		{
 			"URL": "https://novaeyecare.ficintegrations.com/API/dFGzlU/R4",
 			"OrganizationName": "Nova Eye Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://YakimaVisionCenter.ficintegrations.com/API/hlpbej/R4",
-			"OrganizationName": "Yakima Vision Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -271,6 +229,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://PortHadlockVisionClinic.ficintegrations.com/API/3UiAgE/R4",
+			"OrganizationName": "Port Hadlock Vision Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://lanninod.ficintegrations.com/API/XYSl2x/R4",
 			"OrganizationName": "J. K. Lannin, O.D.",
 			"NPIID": "",
@@ -295,13 +259,19 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://familyvisioncare.ficintegrations.com/API/ZDMFeW/R4",
+			"OrganizationName": "Family Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://EyeTechVisionCenter.ficintegrations.com/API/LYHQGA/R4",
 			"OrganizationName": "Eye Tech Eye Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://professionaleyecarecenterincil.ficintegrations.com/API/KHiJaI/R4",
+			"URL": "https://ProfessionalEyeCareCenterinc.ficintegrations.com/API/KHiJaI/R4",
 			"OrganizationName": "Professional Eye Care Center, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -363,12 +333,6 @@
 		{
 			"URL": "https://BrevardVisionCare.ficintegrations.com/API/CfTroT/R4",
 			"OrganizationName": "BREVARD VISION CARE",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://UniversityEyeAssociates.ficintegrations.com/API/VUSr4D/R4",
-			"OrganizationName": "UNIVERSITY EYE ASSOCIATES, O.D., P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -463,12 +427,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://millicaneyecenterga.ficintegrations.com/API/G2ILzm/R4",
-			"OrganizationName": "Millican Eye Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://cleareyecare.ficintegrations.com/API//R4",
 			"OrganizationName": "CLEAR EYECARE",
 			"NPIID": "",
@@ -505,8 +463,632 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://ElsaPao.ficintegrations.com/API/IVwrpY/R4",
+			"OrganizationName": "James E Threatt, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://porthuronophthalmology.ficintegrations.com/API/9BxGbi/R4",
 			"OrganizationName": "Port Huron Ophthalmology, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FamilyEyeCarepc.ficintegrations.com/API/bDzDAy/R4",
+			"OrganizationName": "Family Eye Care P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SCandaceCovey.ficintegrations.com/API/eco3gv/R4",
+			"OrganizationName": "S. Candace Covey, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EricIge.ficintegrations.com/API/nzB4z1/R4",
+			"OrganizationName": "Eric Ige O.D., Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SunsetOptometricCenter.ficintegrations.com:441/API/jgX7Hr/R4",
+			"OrganizationName": "Sunset Optometric Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EagleValleyVision.ficintegrations.com/API/OxNB8G/R4",
+			"OrganizationName": "Eagle Valley Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DimondVisionClinic.ficintegrations.com/API/6YURMm/R4",
+			"OrganizationName": "Dimond Vision Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://BasinEyeCarepc.ficintegrations.com/API/d5aWkv/R4",
+			"OrganizationName": "Robert W. Creed O.D., P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SullinsEyeCareCenter.ficintegrations.com/API/IfTjvR/R4",
+			"OrganizationName": "Sullins Eye Care Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MyEyeDr.ficintegrations.com/API/sPnyFL/R4",
+			"OrganizationName": "Cynthiana Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://GreenspanOptometricAssociates.ficintegrations.com/API/HI2bYq/R4",
+			"OrganizationName": "FIC Vision Corp.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://GreenspanOptometricAssociates.ficintegrations.com/API/HI2bYq/R4",
+			"OrganizationName": "Holmberg Optometric Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EnvisionEyecarePittsburgh.ficintegrations.com/API/pGnvbV/R4",
+			"OrganizationName": "Envision Eye Care - Pittsburgh",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeCountryFredericksburgpc.ficintegrations.com:441/API/1hjHzg/R4",
+			"OrganizationName": "Eye Country",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CenterofVisionDevelopment.ficintegrations.com/API/kQskH3/R4",
+			"OrganizationName": "Center of Vision Development, Pllc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ClevelandEyeCareOptical.ficintegrations.com/API/xFv2qq/R4",
+			"OrganizationName": "Dr S Saliba",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DrNancyLHerrold.ficintegrations.com/API/k4Dl2e/R4",
+			"OrganizationName": "Nancy L. Herrold, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ArtofOptikspc.ficintegrations.com/API/lVzIsq/R4",
+			"OrganizationName": "Art of Optiks",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CityEyeworksOptometry.ficintegrations.com/API/E5CavR/R4",
+			"OrganizationName": "J. Kuo OD, Optometric Corp.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SpringHouseEye.ficintegrations.com/API/z6cNFy/R4",
+			"OrganizationName": "Spring House Eye Associates LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FranklinLau.ficintegrations.com/API/Eaoxeu/R4",
+			"OrganizationName": "FRANKLIN Y.P. LAU, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeCareSpecialtiesCharleston.ficintegrations.com/API/At6SP5/R4",
+			"OrganizationName": "EyeCare Specialties of  Charleston",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CampEyeCareClinic.ficintegrations.com/API/AEkJwK/R4",
+			"OrganizationName": "Camp Eye Care Clinic, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MidAmericaVisionCenter.ficintegrations.com/API//R4",
+			"OrganizationName": "Mid America Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MidAmericaVisionCenter.ficintegrations.com/API//R4",
+			"OrganizationName": "Andrea N Steele-Baumann, O.D., LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DrThomasGBrelage.ficintegrations.com/API/vxDlMH/R4",
+			"OrganizationName": "Dr. Thomas G. Brelage, Optometrist",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SnowdenEyeCare.ficintegrations.com/API/X8fsvB/R4",
+			"OrganizationName": "Snowden Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SnowdenEyeCare.ficintegrations.com/API/X8fsvB/R4",
+			"OrganizationName": "Snowden EyeCare, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://RonaldMillman.ficintegrations.com/API/Y5CnRP/R4",
+			"OrganizationName": "Millman Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://RonaldMillman.ficintegrations.com/API/Y5CnRP/R4",
+			"OrganizationName": "Millman Eye Associates LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PhillipsEyeClinic.ficintegrations.com/API/YNbaY8/R4",
+			"OrganizationName": "Phillips Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MosesLakeVisionCenter.ficintegrations.com/API/kKbnRI/R4",
+			"OrganizationName": "Moses Lake Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PamelaSFraser.ficintegrations.com/API/cSjt8n/R4",
+			"OrganizationName": "Pamela S. Fraser, OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://JamesWCarpenter.ficintegrations.com/API/4jkDyh/R4",
+			"OrganizationName": "James W. Carpenter, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ComprehensiveEyeCare.ficintegrations.com/API/IXajsC/R4",
+			"OrganizationName": "Scott S. Emerson O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PlazavisionOptometry.ficintegrations.com/API/vXgHDx/R4",
+			"OrganizationName": "PlazaVision Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://KennethEHootonpc.ficintegrations.com/API/TRcVf5/R4",
+			"OrganizationName": "Clear View Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://GarlandVision.ficintegrations.com/API/fBQhiU/R4",
+			"OrganizationName": "Garland Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FourEyesOptical.ficintegrations.com/API/zfetGY/R4",
+			"OrganizationName": "Overland Park Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://JacksonvilleVisionDvlpmntCtrPA.ficintegrations.com/API//R4",
+			"OrganizationName": "Jacksonville Vision Development Center PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MasonEyeCenter.ficintegrations.com/API/pUulZQ/R4",
+			"OrganizationName": "For Eyes of Cincinnati, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MasonEyeCenter.ficintegrations.com/API/pUulZQ/R4",
+			"OrganizationName": "Mason Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://BeckerEyeCare.ficintegrations.com/API/xTbZHB/R4",
+			"OrganizationName": "Becker Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SunnyvaleOptometricCenter.ficintegrations.com/API/mECCbW/R4",
+			"OrganizationName": "Sunnyvale Vision and Eye Care Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://RipkinVisionandLaserCenter.ficintegrations.com/API/ATywHn/R4",
+			"OrganizationName": "Specs Eyecare | The EyeSource",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MedWestEyecare.ficintegrations.com/API/Vbd53A/R4",
+			"OrganizationName": "Med West Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://HyperopticsInc.ficintegrations.com/API/ObZwGU/R4",
+			"OrganizationName": "Hyperoptics, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TheOpticalShop.ficintegrations.com/API/xqRwNQ/R4",
+			"OrganizationName": "The Optical Shop",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FamilyEyeCareServicesKaplan.ficintegrations.com/API/aAmcrd/R4",
+			"OrganizationName": "Family Eye Care Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://RogersEyeCare.ficintegrations.com/API/WFdWrz/R4",
+			"OrganizationName": "Rogers Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SoutheastRetinaCenterpc.ficintegrations.com/API/uaizfN/R4",
+			"OrganizationName": "Southeast Retina Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://KeyVisionServicesPC.ficintegrations.com/API/uLUOSW/R4",
+			"OrganizationName": "Eagle Eye Vision Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://KeyVisionServicesPC.ficintegrations.com/API/uLUOSW/R4",
+			"OrganizationName": "Key Vision Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeCareofIllinoisLTDSieron.ficintegrations.com/API/icFrk4/R4",
+			"OrganizationName": "Eye Care of Illinois Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://Sedro-WoolleyVisionCenter.ficintegrations.com/API/IxpQUx/R4",
+			"OrganizationName": "Sedro Woolley Vision Center Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AkronOpticalShopInc.ficintegrations.com/API/X1JcbS/R4",
+			"OrganizationName": "Akron Optical Shop, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AdvancedLooksEyeCarePC.ficintegrations.com/API/cxVLdU/R4",
+			"OrganizationName": "Advanced Looks Eye Care, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DrBelisaABasile.ficintegrations.com/API/SNQLIi/R4",
+			"OrganizationName": "Dr. Belisa A. Basile",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PerkinsEyecareEyewear.ficintegrations.com/API/dA8Ad5/R4",
+			"OrganizationName": "Perkins Eyecare, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://JacobNachumODPC.ficintegrations.com/API/y2HFsd/R4",
+			"OrganizationName": "Jacob Nachum,OD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://VisionmaxOptometry.ficintegrations.com/API/NiBDrV/R4",
+			"OrganizationName": "Visionmax Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://20-20VisionInc.ficintegrations.com/API/72NhnR/R4",
+			"OrganizationName": "20-20 Vision, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DrRobertaHorwitzOptometristPA.ficintegrations.com/API/V4c8nK/R4",
+			"OrganizationName": "Dr. Roberta Horwitz, Optometrist",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://IndependentEyes.ficintegrations.com/API//R4",
+			"OrganizationName": "Independent Eyes",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://WolfeClinicEyeCentersLLC.ficintegrations.com/API//R4",
+			"OrganizationName": "Lifetime Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ParksideOptometry5675.ficintegrations.com/API//R4",
+			"OrganizationName": "Parkside Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeOptique4786.ficintegrations.com/API//R4",
+			"OrganizationName": "Leung Thach Optometry Partnership",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://winfieldfamilyoptometryks.ficintegrations.com:2015/API/9BxGbi/R4",
+			"OrganizationName": "Andover Family Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://HartselleEyecare.ficintegrations.com/API/Cf5LGO/R4",
+			"OrganizationName": "Hartselle Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://StevenRafalowskyOD.ficintegrations.com/API/eP3RYr/R4",
+			"OrganizationName": "Steven Rafalowsky, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://LeadinghamEyeCareAshland.ficintegrations.com/API/qDkTNT/R4",
+			"OrganizationName": "Leadingham Eye Care Center Ashland",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ClearImageVisionCarePC.ficintegrations.com/API/SkoqJi/R4",
+			"OrganizationName": "Clear Image Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FamilyOptometry.ficintegrations.com/API/fzXEWS/R4",
+			"OrganizationName": "Family Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ScottsdaleEyeCare.ficintegrations.com/API/RYjlkZ/R4",
+			"OrganizationName": "Catherine Hollenbach O.D. P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SalemEyeClinic.ficintegrations.com/API/AOGNsi/R4",
+			"OrganizationName": "Salem Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FamilyEyeAssociates-Mojaddidi.ficintegrations.com/API/QpZDkY/R4",
+			"OrganizationName": "Family Eye Associates Optometric Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://LisaStaffordODPC.ficintegrations.com/API/2BzJxz/R4",
+			"OrganizationName": "Lisa Stafford, O D, P C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ScottMSakiOD.ficintegrations.com/API/snUrOj/R4",
+			"OrganizationName": "Scott M. Saki, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://JonLMarbergerOD.ficintegrations.com/API/gNaDkc/R4",
+			"OrganizationName": "Jon L. Marberger, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AustinVisionAssociates.ficintegrations.com/API/2p4x5x/R4",
+			"OrganizationName": "Austin Vision Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FamilyEyeCareWestLLC1121.ficintegrations.com/API/h9jTle/R4",
+			"OrganizationName": "FAMILY EYE CARE WEST., LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://BlackstoneValleyEyeCarePC.ficintegrations.com/API/1viyLD/R4",
+			"OrganizationName": "Blackstone Valley Eye Care, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SiliconValleyEcareOptmtryCnctL.ficintegrations.com/API/TkNEKX/R4",
+			"OrganizationName": "Silicon Valley Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TheEyeContactInc.ficintegrations.com/API/i7sqh2/R4",
+			"OrganizationName": "The Eye Contact, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TheEyeContactInc.ficintegrations.com/API/i7sqh2/R4",
+			"OrganizationName": "Dr. William Jackson Jr., O.D., P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://BayViewEyeCareCenter.ficintegrations.com/API/KkgOxy/R4",
+			"OrganizationName": "Bay View Eye Care Center, an Optometric Corp.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ArdenParkOptometry.ficintegrations.com/API/ChrSqX/R4",
+			"OrganizationName": "Arden Park Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SinekVisonClinicPC-Manson.ficintegrations.com/API/wqjbOQ/R4",
+			"OrganizationName": "Sinek Vision Clinc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://WoodburnVisionSource.ficintegrations.com/API/KsR6EH/R4",
+			"OrganizationName": "Woodburn Vision Source",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://WoodburnVisionSource.ficintegrations.com/API/KsR6EH/R4",
+			"OrganizationName": "Woodburn Eye Center, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeQOptometry.ficintegrations.com/API/Qml8YL/R4",
+			"OrganizationName": "eye Q Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeAssociates.ficintegrations.com/API/Uyz6Q6/R4",
+			"OrganizationName": "Cass County Medical Clinic, Inc.  DBA Eye Associat",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeAssociates.ficintegrations.com/API/Uyz6Q6/R4",
+			"OrganizationName": "Cass County Memorial Hospital DBA Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SimplyVisionOptometry.ficintegrations.com/API/RIRehd/R4",
+			"OrganizationName": "Dr. Kalli Leung, O.D. PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://GilbertMMatsuokaOD.ficintegrations.com/API/2dtKor/R4",
+			"OrganizationName": "Gilbert M. Matsuoka, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SamuelSimmondsMemorialHospital.ficintegrations.com/API/QAcxfR/R4",
+			"OrganizationName": "Arctic Slope Native Association",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EyeStudio.ficintegrations.com/API//R4",
+			"OrganizationName": "The Eye Studio",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://VisionGalleryOptometricCenter.ficintegrations.com/API/iW8ARq/R4",
+			"OrganizationName": "Vision Gallery Optometric Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://BowenFamilyEyecarePA.ficintegrations.com/API/lnzUqc/R4",
+			"OrganizationName": "Bowen Family Eyecare, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://visiononeoptometryeyecareinc.ficintegrations.com/API/cymFIT/R4",
+			"OrganizationName": "VisionOne Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://WilliamsEyecareGroupLLC.ficintegrations.com/API/84UKqy/R4",
+			"OrganizationName": "Williams Eyecare Group, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://DrsPannerandWenPC.ficintegrations.com/API/UX5E9T/R4",
+			"OrganizationName": "Drs. Panner and Wen",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://StevenRichlinODInc.ficintegrations.com/API/9BxGbi/R4",
+			"OrganizationName": "Steven B. Richlin, O D, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://LanderVisionCenter.ficintegrations.com/API/Q3iA3T/R4",
+			"OrganizationName": "Lander Vision Source, PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1243,8 +1825,20 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.maximeyes.com/api/pvc/R4",
+			"OrganizationName": "Progressive Vision Center, Ltd.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.maximeyes.com/api/lcea/R4",
 			"OrganizationName": "Lapeer County Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/pec/R4",
+			"OrganizationName": "PACIFIC EYE CLINIC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1261,12 +1855,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/neovision/R4",
-			"OrganizationName": "NeoVision Eye Center",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.maximeyes.com/api/drsteveratty/R4",
 			"OrganizationName": "Dr. Steve Ratty Optometrist, Inc",
 			"NPIID": "",
@@ -1275,18 +1863,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/cefo/R4",
 			"OrganizationName": "CustomEyes Family Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/7lakeseyecare/R4",
-			"OrganizationName": "Seven Lakes Eye Care",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/cvc/R4",
-			"OrganizationName": "Complete Vision Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1921,7 +2497,19 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "api/winterparkvisionspecialits/R4",
+			"URL": "https://fhir.maximeyes.com/api/bayfamilyeyecare/R4",
+			"OrganizationName": "Bay Family Eyecare LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/millicaneye/R4",
+			"OrganizationName": "Millican Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/winterparkvisionspecialists/R4",
 			"OrganizationName": "James A. Podschun",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -1945,6 +2533,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.maximeyes.com/api/eotc/R4",
+			"OrganizationName": "Eyes on the City",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.maximeyes.com/api/drrparks/R4",
 			"OrganizationName": "Robert J. Parks O.D.",
 			"NPIID": "",
@@ -1963,12 +2557,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.maximeyes.com/api/eyeworks/R4",
-			"OrganizationName": "DRCS Group",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "api/proeye/R4",
 			"OrganizationName": "Mary C. Beaulieu, OD",
 			"NPIID": "",
@@ -1977,6 +2565,354 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/nvpi/R4",
 			"OrganizationName": "Children's Vision and Learning Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/wilsoneyecareprofesionals/R4",
+			"OrganizationName": "Wilson Eyecare Professionals PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/nmkofos/R4",
+			"OrganizationName": "Nicholas M. Kofos, OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/holisticeyecenter/R4",
+			"OrganizationName": "Holistic Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirqa.maximeyes.com/api/qa11/R4",
+			"OrganizationName": "Klamath Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/ecotr/R4",
+			"OrganizationName": "Eye Care on the Ridge, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/fvc/R4",
+			"OrganizationName": "Family Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/sieseleyecare/R4",
+			"OrganizationName": "Eric J. Siesel, O.D.P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/millereyecare/R4",
+			"OrganizationName": "Miller Eye Care, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/wvc/R4",
+			"OrganizationName": "Wise Vision Care, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/valueoptical/R4",
+			"OrganizationName": "Value Optical Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drtrio/R4",
+			"OrganizationName": "Dr. Thomas Trio \u0026 Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyecaremanhattan/R4",
+			"OrganizationName": "Eye Care Associates of Manhattan, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/truefocus/R4",
+			"OrganizationName": "True Focus Eye Care, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyesonchelsea/R4",
+			"OrganizationName": "Sylacauga Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/towandaeyedr/R4",
+			"OrganizationName": "Barbara Yanak, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/johnloucopoulos/R4",
+			"OrganizationName": "Loucopoulos Optometrists, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/pfe2020/R4",
+			"OrganizationName": "Perrysburg Family Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/universityeye/R4",
+			"OrganizationName": "UNIVERSITY EYE ASSOCIATES, O.D., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/nec/R4",
+			"OrganizationName": "Jones Eye Associates, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/mashurtz/R4",
+			"OrganizationName": "M. A. Shurtz, OD \u0026 Associates PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/urbaneye/R4",
+			"OrganizationName": "The Urban Eye, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/progvision/R4",
+			"OrganizationName": "Progressive Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/bec/R4",
+			"OrganizationName": "Brassell Eye Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/mfec/R4",
+			"OrganizationName": "THOMAS S. CRAWFORD, OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/mfec/R4",
+			"OrganizationName": "THOMAS S CRAWFORD, OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/springfieldeyes/R4",
+			"OrganizationName": "Springfield Eye Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/whittakereye/R4",
+			"OrganizationName": "Whittaker Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/drvrouvas/R4",
+			"OrganizationName": "Nicholas P. Vrouvas, O D, F A A O",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/sec/R4",
+			"OrganizationName": "Jessica Palmer O.D., LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://hoffmaniolocal.ficintegrations.com/api/mvvclocal/R4",
+			"OrganizationName": "Miami Valley Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/drolinger/R4",
+			"OrganizationName": "Timothy P. Olinger, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/kahalavs/R4",
+			"OrganizationName": "FRANKLIN Y. P. LAU, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lafayetteeyeassociates/R4",
+			"OrganizationName": "Lafayette Eye Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/shades-po/R4",
+			"OrganizationName": "Shades LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/mayvis/R4",
+			"OrganizationName": "Mayville Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eob/R4",
+			"OrganizationName": "Eyes on Broadway",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/vec/R4",
+			"OrganizationName": "Vista Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/polsonfamilyeyecare/R4",
+			"OrganizationName": "Jeffrey D. Heninger, O.D. PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/oregonoptometry/R4",
+			"OrganizationName": "Wayne L. Gerig, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/oregonoptometry/R4",
+			"OrganizationName": "Oregon Optometry and Contact Lenses",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/yakimavision/R4",
+			"OrganizationName": "Yakima Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/enhancedeyecare/R4",
+			"OrganizationName": "Richard Centar, O.D., Ryan Imler,O.D.P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/etec/R4",
+			"OrganizationName": "Justin Chang, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "api/metroeyedocs/R4",
+			"OrganizationName": "Second Vision Corp",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/hboptometry/R4",
+			"OrganizationName": "Huntington Beach Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/ivc/R4",
+			"OrganizationName": "SGR-Insight Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyemechanix/R4",
+			"OrganizationName": "Randall R Ricketts OD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/spriggle/R4",
+			"OrganizationName": "Dane Spriggle O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lakewayvisionassociates/R4",
+			"OrganizationName": "Lakeway Vision Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/vcpc/R4",
+			"OrganizationName": "Vision Consultants, PC dba Las Vegas Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/lawyer/R4",
+			"OrganizationName": "JOHN C. LAWYER O.D. , LTD.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/metroeyedocs/R4",
+			"OrganizationName": "Metro Eye Docs.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/metroeyedocs/R4",
+			"OrganizationName": "Metro Eye Docs",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/ecno/R4",
+			"OrganizationName": "Eye Centers of Northwest Ohio, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/ronaneyeclinic/R4",
+			"OrganizationName": "Arnt James Ofstad, P.C. DBA Ronan Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/cee/R4",
+			"OrganizationName": "Center for Eye-Care Excellence LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/concordiaeyecare/R4",
+			"OrganizationName": "Richard J. Kueker, O.D. , PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/sunset/R4",
+			"OrganizationName": "Sunset Optometric Center, APC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -61,7 +61,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/kernbehavioralhealth\u0026recoveryservices/1568658841/r4",
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/kernbehavioralhealthandrecoveryservices/1568658841/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -145,19 +145,25 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/stanislauscountybehavioralhealth\u0026recoveryservices/1831221974/r4",
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/stanislauscountybehavioralhealthandrecoveryservices/1831221974/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/tularecountyhealth\u0026humanservicesagencydirectorofmentalhealth/1528105558/r4",
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/tularecountyhealthandhumanservicesagencydirectorofmentalhealth/1528105558/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/venturacountybehavioralhealth/1508199258/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/countyofsanluisobispohealthagency/1073501870/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

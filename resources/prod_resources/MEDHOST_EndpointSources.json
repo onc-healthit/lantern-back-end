@@ -19,12 +19,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/e0ca59d7-14ad-4f50-b84d-217ff7cce107",
-			"OrganizationName": "Alliance Health Woodward",
-			"NPIID": "1558312553",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8e208ec0-3c40-457e-92b1-d5bc8bed18c3",
 			"OrganizationName": "Alta Vista Regional Hospital",
 			"NPIID": "1396716643",
@@ -82,6 +76,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/335fe9bc-b535-4176-acab-c24323a763fc",
 			"OrganizationName": "Big Bend Regional Medical Center",
 			"NPIID": "1356312243",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/34788ed7-a88d-487a-bcc2-32b1ec67835d",
+			"OrganizationName": "Blue Ridge Medical Center",
+			"NPIID": "1851362263",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -200,7 +200,7 @@
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/479a0965-68cb-4474-868a-5efbbbeb2895",
-			"OrganizationName": "Demo Facility - IIP01",
+			"OrganizationName": "Demo Facility 1 - IIP01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -226,12 +226,6 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/3ba36153-51e9-480f-b1bd-74aca12bf8b6",
 			"OrganizationName": "Fairfield Memorial Hospital",
 			"NPIID": "1255422416",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/34788ed7-a88d-487a-bcc2-32b1ec67835d",
-			"OrganizationName": "Fannin Regional Hospital",
-			"NPIID": "1851362263",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -334,6 +328,18 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/48677b2b-5c2a-49f5-9750-c55785639ac4",
 			"OrganizationName": "IIP03 0048",
 			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/e0ca59d7-14ad-4f50-b84d-217ff7cce107",
+			"OrganizationName": "INTEGRIS Health Woodward Hospital",
+			"NPIID": "1558148627",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/f322b194-59b6-4e38-a910-061b45722575",
+			"OrganizationName": "Inspira Medical Center Mannington",
+			"NPIID": "1437832201",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -709,12 +715,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/f322b194-59b6-4e38-a910-061b45722575",
-			"OrganizationName": "Salem Medical Center",
-			"NPIID": "1700351947",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/870cfbd8-0d45-4180-93e9-6d532ee5690e",
 			"OrganizationName": "Siloam Springs Regional Hospital",
 			"NPIID": "1902051816",
@@ -778,6 +778,12 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/85ef055c-e6f4-4b87-9d73-a1f2cb924d5e",
 			"OrganizationName": "Union General Hospital",
 			"NPIID": "1063533933",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/90ceb97f-ffd1-4b10-9cb1-f35a573c9a77",
+			"OrganizationName": "Unity Medical Center",
+			"NPIID": "1013969179",
 			"OrganizationZipCode": ""
 		},
 		{

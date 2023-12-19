@@ -137,6 +137,7 @@ var MEDENTURL = "https://www.medent.com/std_api/ServiceBaseURL.csv"
 var CarepathsURL = "https://carepaths.com/uploads/org_endpoint_bundle.json"
 var athenaClinicalsURL = "https://docs.athenahealth.com/api/guides/base-fhir-urls"
 var canvasMedicalURL = "https://docs.canvasmedical.com/api/service-base-urls/"
+var veradigmURL = "https://open.platform.veradigm.com/fhirendpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -384,6 +385,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", 1, 0, true, 1, 0)
 	} else if URLsEqual(chplURL, canvasMedicalURL) {
 		CanvasMedicalURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, veradigmURL) {
+		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
 	}
 }
 

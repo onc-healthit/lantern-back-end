@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10066006",
+			"OrganizationName": "10066006",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10066006",
+			"OrganizationName": "10066006",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/1421",
+			"OrganizationName": "A Kagan Orthopedics  Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/1421",
+			"OrganizationName": "A Kagan Orthopedics  Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10171749",
+			"OrganizationName": "A Squared Primary Care PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10171749",
+			"OrganizationName": "A Squared Primary Care PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/a03test",
+			"OrganizationName": "A03Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/a03test",
+			"OrganizationName": "A03Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/a04test",
+			"OrganizationName": "A04Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/a04test",
+			"OrganizationName": "A04Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

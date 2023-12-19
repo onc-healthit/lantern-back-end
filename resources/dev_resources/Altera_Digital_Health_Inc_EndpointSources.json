@@ -1,26 +1,26 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/fhir",
-			"OrganizationName": "PV0",
+			"URL": "https://fhir.colaneph.com/fhir",
+			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/open-Prod",
-			"OrganizationName": "PV0",
+			"URL": "https://fhir.colaneph.com/R4/fhir-R4",
+			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/R4/fhir-Prod",
-			"OrganizationName": "PV0",
+			"URL": "https://fhir.colaneph.com/open",
+			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://scmprodweb.pv0.hos.allscriptscloud.com/open",
-			"OrganizationName": "PV0",
+			"URL": "https://fhir.colaneph.com/R4/open-R4",
+			"OrganizationName": "Columbia Nephrology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49,14 +49,14 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.summithealthcare.net/R4/open-Prod",
-			"OrganizationName": "Summit Healthcare Association - PROD",
+			"URL": "https://sunexch.cmc-nh.org/R4/fhir-Prod",
+			"OrganizationName": "Catholic Medical Center - PRODUCTION",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.summithealthcare.net/R4/fhir-Prod",
-			"OrganizationName": "Summit Healthcare Association - PROD",
+			"URL": "https://sunexch.cmc-nh.org/R4/open-Prod",
+			"OrganizationName": "Catholic Medical Center - PRODUCTION",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

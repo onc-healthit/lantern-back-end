@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/basepractice/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -56,6 +44,18 @@
 		},
 		{
 			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_283444/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_290761/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_214260/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
