@@ -68,6 +68,9 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 		var entry LanternEntry
 
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Endpoint") {
+			if bundleEntry.Resource.Address == nil {
+				continue
+			}
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {

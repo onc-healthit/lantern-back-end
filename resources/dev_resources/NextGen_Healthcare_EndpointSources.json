@@ -2,63 +2,15 @@
 	"Endpoints": [
 		{
 			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Alabama",
+			"OrganizationName": "",
 			"NPIID": "",
-			"OrganizationZipCode": "402432404"
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Delaware",
+			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api-r4/fhir/r4/",
+			"OrganizationName": "",
 			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Georgia",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Indiana",
-			"NPIID": "",
-			"OrganizationZipCode": "436979614"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Kansas",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Kentucky",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Maryland",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Massachusetts",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360Care Of Michigan",
-			"NPIID": "",
-			"OrganizationZipCode": "436979360"
-		},
-		{
-			"URL": "https://fhir.nextgen.com/nge/prod/fhir-api/fhir/dstu2/",
-			"OrganizationName": "360care Of Mississippi",
-			"NPIID": "",
-			"OrganizationZipCode": "402432404"
+			"OrganizationZipCode": ""
 		}
 	]
 }

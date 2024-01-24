@@ -363,7 +363,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/fa0b0788-745b-4dc9-acbf-26a954662190",
 			"OrganizationName": "Lake Granbury Medical Center",
-			"NPIID": "",
+			"NPIID": "1114998911",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -596,7 +596,7 @@
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/e108d9e2-8802-451c-b874-d1f2187c552f",
-			"OrganizationName": "Northwest Health- Physicians\u0026#39; Speciality Hospital",
+			"OrganizationName": "Northwest Health- Physicians\u0026#39; Specialty Hospital",
 			"NPIID": "1407215916",
 			"OrganizationZipCode": ""
 		},

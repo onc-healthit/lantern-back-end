@@ -2408,7 +2408,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1057.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Molina Healthcare",
+			"OrganizationName": "Molina Care Connections",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4928,7 +4928,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1057.epichosted.com/FHIRProxy/api/FHIR/R4/",
-			"OrganizationName": "Molina Healthcare",
+			"OrganizationName": "Molina Care Connections",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

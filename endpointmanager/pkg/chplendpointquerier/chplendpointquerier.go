@@ -18,7 +18,7 @@ type LanternEntry struct {
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
-var NextGenURL = "https://nextgen.com/api/practice-search/"
+var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
 var AlteraURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
@@ -43,7 +43,6 @@ var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
 var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
 var triarqURL = "https://fhir.myqone.com/Endpoints"
-var goldblattURL = "https://www.goldblattsystems.com/apis"
 var cyfluentURL = "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
 var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
 var qualifactsInsyncURL = "https://qualifacts.com/api-page/platform/insync/insync-fhir-org-list.html"
@@ -192,11 +191,9 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, firstInsightURL) {
 		FirstInsightBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, healthSamuraiURL) {
-		HealthSamuraiWebscraper(chplURL, fileToWriteTo)
+		HealthSamuraiWebscraper("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
 	} else if URLsEqual(chplURL, triarqURL) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, goldblattURL) {
-		BundleQuerierParser("https://fhir-test.csn.health/gs-fhir-domain-server/public-base-service-endpoints.json", fileToWriteTo)
 	} else if URLsEqual(chplURL, cyfluentURL) {
 		SwaggerUIWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, meridianURL) {

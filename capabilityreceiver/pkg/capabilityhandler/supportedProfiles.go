@@ -72,16 +72,27 @@ func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProf
 		}
 
 		if resourceInt["supportedProfile"] != nil {
-			supportedProfileArr := resourceInt["supportedProfile"].([]interface{})
-			for _, profileEntry := range supportedProfileArr {
-				profileURL := profileEntry.(string)
-				var profileInfo endpointmanager.SupportedProfile
-				profileInfo.ProfileURL = profileURL
-				profileInfo.Resource = resourceType
-
-				supportedProfiles = append(supportedProfiles, profileInfo)
+			supportedProfileArr, ok := resourceInt["supportedProfile"].([]interface{})
+			if !ok {
+				// Handle the case where "supportedProfile" is not a []interface{}
+				//fmt.Println("Error: 'supportedProfile' is not a []interface{}")
+				// Add appropriate error handling or return from the function
 			}
 
+			for _, profileEntry := range supportedProfileArr {
+				// Check if profileEntry is a string
+				if profileURL, ok := profileEntry.(string); ok {
+					var profileInfo endpointmanager.SupportedProfile
+					profileInfo.ProfileURL = profileURL
+					profileInfo.Resource = resourceType
+
+					supportedProfiles = append(supportedProfiles, profileInfo)
+				} else {
+					// Handle the case where profileEntry is not a string
+					//fmt.Println("Error: 'supportedProfile' entry is not a string")
+					// Add appropriate error handling or return from the function
+				}
+			}
 		}
 	}
 

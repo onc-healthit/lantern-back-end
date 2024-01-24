@@ -1,64 +1,64 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FBFCCA",
-			"OrganizationName": "Mon-Vale Professional Services, Inc.",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DGIACA",
+			"OrganizationName": "Surgical Assoicates",
 			"NPIID": "",
-			"OrganizationZipCode": "15063"
+			"OrganizationZipCode": "59101"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ECHEAA",
-			"OrganizationName": "Valley Women s Health",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/DHECDA",
+			"OrganizationName": "Pinnacle Family Care",
 			"NPIID": "",
-			"OrganizationZipCode": "15063"
+			"OrganizationZipCode": "28304"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/AIEBDD",
-			"OrganizationName": "Park Place Healthcare LLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/HBIDAD",
+			"OrganizationName": "Carlos Aguilar MD",
 			"NPIID": "",
-			"OrganizationZipCode": "35242"
+			"OrganizationZipCode": "77504"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/GHCJBA",
-			"OrganizationName": "Tri-County Medical Practice",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FHIADA",
+			"OrganizationName": "Surgical Associates PA",
 			"NPIID": "",
-			"OrganizationZipCode": "15012"
+			"OrganizationZipCode": "66502"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IHDACA",
-			"OrganizationName": "Skin Care Now Pueblo PLLC",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/HGCCAA",
+			"OrganizationName": "GastroDoxs PLLC",
 			"NPIID": "",
-			"OrganizationZipCode": "81003"
+			"OrganizationZipCode": "77429"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FDEFBA",
-			"OrganizationName": "Pain and Spine Centers of Florida",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/HAAAAA",
+			"OrganizationName": "MEDPEDS, LLC",
 			"NPIID": "",
-			"OrganizationZipCode": "32778"
+			"OrganizationZipCode": "20707"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ECGFCA",
-			"OrganizationName": "George Nasser, MD",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/GIBCCD",
+			"OrganizationName": "Hillside Pain Management",
 			"NPIID": "",
-			"OrganizationZipCode": "77384"
+			"OrganizationZipCode": "17331"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CCICAA",
-			"OrganizationName": "Handelsman Family Practice",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/IFFBCD",
+			"OrganizationName": "Paragon Pain and Rehabilitation, LLP",
 			"NPIID": "",
-			"OrganizationZipCode": "15120"
+			"OrganizationZipCode": "75460-9331"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/FGDFCA",
-			"OrganizationName": "Bindusagar Reddy, MD Inc",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/EGBBCD",
+			"OrganizationName": "Summit Medical Center dba Summit Medical Clinic",
 			"NPIID": "",
-			"OrganizationZipCode": "93257"
+			"OrganizationZipCode": "82609"
 		},
 		{
-			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/ACHACA",
-			"OrganizationName": "Western Nephrology",
+			"URL": "https://fhir4.eclinicalworks.com/fhir/r4/CABIAD",
+			"OrganizationName": "Crescent City Internal Medicine",
 			"NPIID": "",
-			"OrganizationZipCode": "80033"
+			"OrganizationZipCode": "95531"
 		}
 	]
 }
