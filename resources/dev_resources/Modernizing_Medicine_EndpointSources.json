@@ -1,54 +1,64 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fax2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Fax Test2",
-			"NPIID": ""
+			"URL": "https://pbd.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Palm Beach Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://uro.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Urology",
-			"NPIID": ""
+			"URL": "https://pbdtest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Pbdtest3 Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://laser.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Laser",
-			"NPIID": ""
+			"URL": "https://blueridge.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Blue Ridge Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fax3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Fax Test 3",
-			"NPIID": ""
+			"URL": "https://brderm.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Boca Raton Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zzy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zzy",
-			"NPIID": ""
+			"URL": "https://clearly.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Clearly Derm Center for Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zyy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ZYY",
-			"NPIID": ""
+			"URL": "https://carloscohen.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Carlos Cohen MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zopth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zophth",
-			"NPIID": ""
+			"URL": "https://awstest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "awstest",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://maverick.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Mavericks EMAzing",
-			"NPIID": ""
+			"URL": "https://goldman.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "David A. Goldman MD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://m2qatest01.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ema 01 test",
-			"NPIID": ""
+			"URL": "https://eatest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Ea Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zyx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zyx",
-			"NPIID": ""
+			"URL": "https://drdrew.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "JBS Med PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

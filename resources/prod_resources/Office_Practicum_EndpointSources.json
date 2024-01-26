@@ -1,0 +1,1720 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://applications.op.healthcare/2198/api/FHIR/R4",
+			"OrganizationName": "A Machin MD dba Fairhaven Pediatrics PC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/451/api/FHIR/R4",
+			"OrganizationName": "Aldo F Bejarano MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1618/api/FHIR/R4",
+			"OrganizationName": "All About Children PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/538/api/FHIR/R4",
+			"OrganizationName": "All Star Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1849/api/FHIR/R4",
+			"OrganizationName": "Amboy Pediatrics PA NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/827/api/FHIR/R4",
+			"OrganizationName": "Anantha R Bhandari MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/298/api/FHIR/R4",
+			"OrganizationName": "Angel Kids Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3104/api/FHIR/R4",
+			"OrganizationName": "Anniston Pediatrics Inc AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/849/api/FHIR/R4",
+			"OrganizationName": "Apache Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3118/api/FHIR/R4",
+			"OrganizationName": "Arbor Pediatrics PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1144/api/FHIR/R4",
+			"OrganizationName": "Athens Pediatrics PLLC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1608/api/FHIR/R4",
+			"OrganizationName": "August Pediatrics PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1984/api/FHIR/R4",
+			"OrganizationName": "Austex Pediatrics PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/523/api/FHIR/R4",
+			"OrganizationName": "Austintown Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2162/api/FHIR/R4",
+			"OrganizationName": "Avery Mae Pediatrics TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1563/api/FHIR/R4",
+			"OrganizationName": "Avilio E Munoz MD Pediatrics PC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1976/api/FHIR/R4",
+			"OrganizationName": "Bayer and Associates DO PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1002/api/FHIR/R4",
+			"OrganizationName": "Beverly Gaines MD \u0026 Associates PSC KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1583/api/FHIR/R4",
+			"OrganizationName": "Bidabadi Pediatrics LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1885/api/FHIR/R4",
+			"OrganizationName": "Bloom And Grow Pediatrics LLC NM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1854/api/FHIR/R4",
+			"OrganizationName": "Brentwood Childrens Clinic PC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1823/api/FHIR/R4",
+			"OrganizationName": "Bright Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1264/api/FHIR/R4",
+			"OrganizationName": "Broken Arrow Pediatrics LLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/914/api/FHIR/R4",
+			"OrganizationName": "Burbank Pediatrics Medical Corp CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/561/api/FHIR/R4",
+			"OrganizationName": "Cactus Childrens Clinic PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1231/api/FHIR/R4",
+			"OrganizationName": "Camelback Pediatrics PC AZ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/603/api/FHIR/R4",
+			"OrganizationName": "Caring Hands Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/172/api/FHIR/R4",
+			"OrganizationName": "Carnegie Hill Peds",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/894/api/FHIR/R4",
+			"OrganizationName": "Carolina Kids Pediatric Associates PLLC NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/329/api/FHIR/R4",
+			"OrganizationName": "Carolina Pediatric Center PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/495/api/FHIR/R4",
+			"OrganizationName": "Carolina Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1010/api/FHIR/R4",
+			"OrganizationName": "Carteret Clinic For Adolescents and Children NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1769/api/FHIR/R4",
+			"OrganizationName": "Cedar Pediatrics PLLC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/860/api/FHIR/R4",
+			"OrganizationName": "Centennial Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/973/api/FHIR/R4",
+			"OrganizationName": "Center For Pediatric Medicine CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1839/api/FHIR/R4",
+			"OrganizationName": "Central Coast Pediatrics Inc CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1151/api/FHIR/R4",
+			"OrganizationName": "Central Pediatrics and Adolescent Medicine LLC CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/552/api/FHIR/R4",
+			"OrganizationName": "Champions Pediatric Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/306/api/FHIR/R4",
+			"OrganizationName": "Chattahoochee Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1011/api/FHIR/R4",
+			"OrganizationName": "Chester Pediatrics PC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1059/api/FHIR/R4",
+			"OrganizationName": "Child \u0026 Adolescent Center PC MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3117/api/FHIR/R4",
+			"OrganizationName": "Childhood Health Associates of Salem PC OR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/383/api/FHIR/R4",
+			"OrganizationName": "Children of Joy Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1850/api/FHIR/R4",
+			"OrganizationName": "Childrens Clinic of El Paso PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1986/api/FHIR/R4",
+			"OrganizationName": "Childrens Medical Group TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1745/api/FHIR/R4",
+			"OrganizationName": "Childrens Mercy-Pediatric Care North Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/375/api/FHIR/R4",
+			"OrganizationName": "Childrens Wellness Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1655/api/FHIR/R4",
+			"OrganizationName": "Christ Care Pediatrics KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/450/api/FHIR/R4",
+			"OrganizationName": "Clarksburg Pediatrics LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/949/api/FHIR/R4",
+			"OrganizationName": "Cobb Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1600/api/FHIR/R4",
+			"OrganizationName": "Cooper Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1218/api/FHIR/R4",
+			"OrganizationName": "Covenant Care Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1584/api/FHIR/R4",
+			"OrganizationName": "Covenant Multispecialty Group LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3101/api/FHIR/R4",
+			"OrganizationName": "Covenant Pediatrics LLC MO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1876/api/FHIR/R4",
+			"OrganizationName": "Crossroads Pediatrics PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1664/api/FHIR/R4",
+			"OrganizationName": "Cumberland Pediatric Associates PC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1576/api/FHIR/R4",
+			"OrganizationName": "Cumming Pediatric Group PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/897/api/FHIR/R4",
+			"OrganizationName": "Daniel J Levy MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/741/api/FHIR/R4",
+			"OrganizationName": "Dawson Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2038/api/FHIR/R4",
+			"OrganizationName": "Decatur Pediatric Group PA GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/117/api/FHIR/R4",
+			"OrganizationName": "Des Moines Pediatric and Adolescent Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1042/api/FHIR/R4",
+			"OrganizationName": "Desert Valley Pediatrics LLC NV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/390/api/FHIR/R4",
+			"OrganizationName": "Desert Willow Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/402/api/FHIR/R4",
+			"OrganizationName": "Dr Bs Childrens Office",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1658/api/FHIR/R4",
+			"OrganizationName": "Dunwoody Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/927/api/FHIR/R4",
+			"OrganizationName": "DV Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1588/api/FHIR/R4",
+			"OrganizationName": "Eastern Shore Childrens Clinic PC AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1923/api/FHIR/R4",
+			"OrganizationName": "Eastside Childrens Clinic PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1572/api/FHIR/R4",
+			"OrganizationName": "Einstein Pediatrics PLLC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2153/api/FHIR/R4",
+			"OrganizationName": "Ekta Khurana MD PLLC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/806/api/FHIR/R4",
+			"OrganizationName": "Elizabeth D Avaricio MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1719/api/FHIR/R4",
+			"OrganizationName": "Empower Pediatrics LLC DBA Riverside Pediatrics OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/756/api/FHIR/R4",
+			"OrganizationName": "Etowah Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/825/api/FHIR/R4",
+			"OrganizationName": "FairHope Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1770/api/FHIR/R4",
+			"OrganizationName": "Forest Hill Pediatrics LLC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2016/api/FHIR/R4",
+			"OrganizationName": "Fox Pediatrics PLC MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/540/api/FHIR/R4",
+			"OrganizationName": "Franklin Park Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1878/api/FHIR/R4",
+			"OrganizationName": "Fraser-Branche Medical PLLC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1644/api/FHIR/R4",
+			"OrganizationName": "Frontera Pediatrics PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2003/api/FHIR/R4",
+			"OrganizationName": "Gallagher Pediatrics PLLC UT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/723/api/FHIR/R4",
+			"OrganizationName": "Gaurang Patel MD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1651/api/FHIR/R4",
+			"OrganizationName": "GC Duluth Pediatrics GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1585/api/FHIR/R4",
+			"OrganizationName": "Gilbert Childrens Medical Group Inc AZ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1632/api/FHIR/R4",
+			"OrganizationName": "GoldStar Pediatrics LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1994/api/FHIR/R4",
+			"OrganizationName": "Gomez Yim and Rastogi MD PA MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/636/api/FHIR/R4",
+			"OrganizationName": "Grace Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1642/api/FHIR/R4",
+			"OrganizationName": "Graham Pediatrics of Woodstock LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1789/api/FHIR/R4",
+			"OrganizationName": "Grayson Pediatrics LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1971/api/FHIR/R4",
+			"OrganizationName": "Grow Pediatrics and Adolescent Medicine PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2164/api/FHIR/R4",
+			"OrganizationName": "Growing Kids Pediatrics LLC IN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1075/api/FHIR/R4",
+			"OrganizationName": "Guilford Pediatrics Inc CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/153/api/FHIR/R4",
+			"OrganizationName": "Hampton Pediatrics NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1715/api/FHIR/R4",
+			"OrganizationName": "Hanover Pediatrics LLC NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/554/api/FHIR/R4",
+			"OrganizationName": "Happy and Healthy Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1768/api/FHIR/R4",
+			"OrganizationName": "Hatboro Pediatrics PC PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1985/api/FHIR/R4",
+			"OrganizationName": "Hawthorne Pediatrics LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2195/api/FHIR/R4",
+			"OrganizationName": "HD Pediatrics PLLC MA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2229/api/FHIR/R4",
+			"OrganizationName": "Healthy Start Pediatrics LLC NM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/129/api/FHIR/R4",
+			"OrganizationName": "Heights Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1888/api/FHIR/R4",
+			"OrganizationName": "Hendersonville Pediatrics PA NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/870/api/FHIR/R4",
+			"OrganizationName": "Highland Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/650/api/FHIR/R4",
+			"OrganizationName": "Holly Springs Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1173/api/FHIR/R4",
+			"OrganizationName": "Hometown Pediatrics of Joplin LLC MO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2111/api/FHIR/R4",
+			"OrganizationName": "Hoos Pediatric and Adolescent Care PLLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2224/api/FHIR/R4",
+			"OrganizationName": "Horizon West Pediatric Center PLLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1187/api/FHIR/R4",
+			"OrganizationName": "Huma Y. Lodhi MD TX PA dba El Paso Kids Klinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1518/api/FHIR/R4",
+			"OrganizationName": "Huntington Plaza Pediatric Group CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3125/api/FHIR/R4",
+			"OrganizationName": "IncrediCare Pediatrics LLC NV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1612/api/FHIR/R4",
+			"OrganizationName": "Island Coast Pediatrics PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/982/api/FHIR/R4",
+			"OrganizationName": "Jacqueline K. Hoang MD DBA Pediatric Associates of Springfield VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/923/api/FHIR/R4",
+			"OrganizationName": "Jeffrey Kaplan MD Inc CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2199/api/FHIR/R4",
+			"OrganizationName": "Jose L Berlioz MD PA DBA Safari Pediatrics PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2150/api/FHIR/R4",
+			"OrganizationName": "Joyful Healthcare LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1775/api/FHIR/R4",
+			"OrganizationName": "Julia Barriga MD PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2121/api/FHIR/R4",
+			"OrganizationName": "Just Us Kids Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1085/api/FHIR/R4",
+			"OrganizationName": "Kaplan Barron Pediatrics PLLC KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1817/api/FHIR/R4",
+			"OrganizationName": "Karen Filler MD GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/368/api/FHIR/R4",
+			"OrganizationName": "Keysville Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3102/api/FHIR/R4",
+			"OrganizationName": "Kid Care Pediatric Urgent Care LLC SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1988/api/FHIR/R4",
+			"OrganizationName": "Kids Corner Pediatrics, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2034/api/FHIR/R4",
+			"OrganizationName": "Kids Doc on Wheels Inc GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/351/api/FHIR/R4",
+			"OrganizationName": "Kids First Pediatrics on 30",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/708/api/FHIR/R4",
+			"OrganizationName": "Kids First Pediatrics Raeford",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1606/api/FHIR/R4",
+			"OrganizationName": "Kids Kare Pediatrics PLLC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/406/api/FHIR/R4",
+			"OrganizationName": "KidsCorner Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1806/api/FHIR/R4",
+			"OrganizationName": "Kidz1st PLLC dba Kidz1st Pediatrics MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/972/api/FHIR/R4",
+			"OrganizationName": "KidzCare Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2089/api/FHIR/R4",
+			"OrganizationName": "Kinder Haus Pediatrics LLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1992/api/FHIR/R4",
+			"OrganizationName": "KION Pediatrics PLLC AR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1733/api/FHIR/R4",
+			"OrganizationName": "Lake Ray Hubbard Pediatrics PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/788/api/FHIR/R4",
+			"OrganizationName": "Laura Lieberman MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/792/api/FHIR/R4",
+			"OrganizationName": "Lawrence Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/203/api/FHIR/R4",
+			"OrganizationName": "Lighthouse Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1082/api/FHIR/R4",
+			"OrganizationName": "Litchfield County Pediatrics LLC CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1996/api/FHIR/R4",
+			"OrganizationName": "Little Big Pediatrics LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3109/api/FHIR/R4",
+			"OrganizationName": "Little Rock Pediatric Group PA AR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1209/api/FHIR/R4",
+			"OrganizationName": "M Popovic PC MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/341/api/FHIR/R4",
+			"OrganizationName": "Maria Ona MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/472/api/FHIR/R4",
+			"OrganizationName": "Maruthi Pediatrics PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1897/api/FHIR/R4",
+			"OrganizationName": "Maryland Pediatric Care LLC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/537/api/FHIR/R4",
+			"OrganizationName": "Maryland Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/785/api/FHIR/R4",
+			"OrganizationName": "McKinney ABC Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3074/api/FHIR/R4",
+			"OrganizationName": "Mercy Pediatrics LLC CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1529/api/FHIR/R4",
+			"OrganizationName": "Metro Pediatrics PC AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/460/api/FHIR/R4",
+			"OrganizationName": "Mia Bella Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/979/api/FHIR/R4",
+			"OrganizationName": "Michael C Tenby MD LTD dba Centennial Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/745/api/FHIR/R4",
+			"OrganizationName": "Midland Pediatrics Associates PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1071/api/FHIR/R4",
+			"OrganizationName": "Mount Sterling Pediatrics PSC KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1520/api/FHIR/R4",
+			"OrganizationName": "Mountain West Pediatrics PC UT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1792/api/FHIR/R4",
+			"OrganizationName": "My Kids Pediatric Partners PC PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1051/api/FHIR/R4",
+			"OrganizationName": "Nashville Pediatric Providers LLC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1921/api/FHIR/R4",
+			"OrganizationName": "New Heights Pediatrics LLC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/580/api/FHIR/R4",
+			"OrganizationName": "Nicolas Rich JR MD FAAP PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2218/api/FHIR/R4",
+			"OrganizationName": "NiteOwl Pediatric Urgent Care LLC SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1239/api/FHIR/R4",
+			"OrganizationName": "North Fulton Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1691/api/FHIR/R4",
+			"OrganizationName": "North Pinellas Childrens Medical Center Inc FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1966/api/FHIR/R4",
+			"OrganizationName": "North Point Pediatrics LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/539/api/FHIR/R4",
+			"OrganizationName": "North Shore Childrens Health Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1532/api/FHIR/R4",
+			"OrganizationName": "North Willow Grove Pediatrics PC PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1713/api/FHIR/R4",
+			"OrganizationName": "Northwest Pediatrics Inc NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1675/api/FHIR/R4",
+			"OrganizationName": "Northwest Spokane Pediatrics PLLC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2196/api/FHIR/R4",
+			"OrganizationName": "Norwood Pediatrics LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1791/api/FHIR/R4",
+			"OrganizationName": "NP Childrens Healthcare Clinic LLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/381/api/FHIR/R4",
+			"OrganizationName": "Nuby Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/467/api/FHIR/R4",
+			"OrganizationName": "Nurture Pediatrics PLLC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1237/api/FHIR/R4",
+			"OrganizationName": "NW Pediatric Center PSC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1260/api/FHIR/R4",
+			"OrganizationName": "OC Pediatrics Medical Group Inc. CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/551/api/FHIR/R4",
+			"OrganizationName": "Oceanside Pediatrics PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1581/api/FHIR/R4",
+			"OrganizationName": "Ocoee Pediatrics PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1070/api/FHIR/R4",
+			"OrganizationName": "Olympia Pediatrics PLLC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1776/api/FHIR/R4",
+			"OrganizationName": "Optimal Care Pediatrics LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1277/api/FHIR/R4",
+			"OrganizationName": "Orange Grove Pediatrics AZ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1818/api/FHIR/R4",
+			"OrganizationName": "Palmetto Pediatrics of Low Country LLC SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1099/api/FHIR/R4",
+			"OrganizationName": "Parker Cohen Deconcini Schooler Zang And Wang MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1181/api/FHIR/R4",
+			"OrganizationName": "Pathway Pediatrics Inc AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/703/api/FHIR/R4",
+			"OrganizationName": "Pecan Tree Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1803/api/FHIR/R4",
+			"OrganizationName": "Pediatric and Adolescent Medicine PA GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/890/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates Montgomery County",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3091/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates Of Alexander City PC AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1032/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Fairfield PC OH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2100/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Franklin PLLC TN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/692/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Lancaster",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1601/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Lawrenceville LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/680/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Topeka",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1060/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates of Western Connecticut LLC CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1089/api/FHIR/R4",
+			"OrganizationName": "Pediatric Associates PC AZ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/645/api/FHIR/R4",
+			"OrganizationName": "Pediatric Care Corner",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1265/api/FHIR/R4",
+			"OrganizationName": "Pediatric Care Specialist PA KS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1841/api/FHIR/R4",
+			"OrganizationName": "Pediatric Center for Wellness PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/899/api/FHIR/R4",
+			"OrganizationName": "Pediatric Center LLC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/787/api/FHIR/R4",
+			"OrganizationName": "Pediatric Center of Las Colinas PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1515/api/FHIR/R4",
+			"OrganizationName": "Pediatric Clinic PC MI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3080/api/FHIR/R4",
+			"OrganizationName": "Pediatric Consultants of Hampton Roads PLLC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3112/api/FHIR/R4",
+			"OrganizationName": "Pediatric Dream Care PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1195/api/FHIR/R4",
+			"OrganizationName": "Pediatric Medicine of Wallingford LLP CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1718/api/FHIR/R4",
+			"OrganizationName": "Pediatric MultiCare West LLC AZ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/682/api/FHIR/R4",
+			"OrganizationName": "Pediatric Partners of Nashville and Smyrna",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/352/api/FHIR/R4",
+			"OrganizationName": "Pediatric Partners of the Southwest",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1150/api/FHIR/R4",
+			"OrganizationName": "Pediatric Partners of Zephyrhills Inc FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1595/api/FHIR/R4",
+			"OrganizationName": "Pediatric Partners PA KS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1531/api/FHIR/R4",
+			"OrganizationName": "Pediatric Services PA MN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/950/api/FHIR/R4",
+			"OrganizationName": "Pediatric Specialists of Tulsa PLLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1054/api/FHIR/R4",
+			"OrganizationName": "Pediatrics of Bullitt County",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1798/api/FHIR/R4",
+			"OrganizationName": "PediPlace at Westover Hills LLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/729/api/FHIR/R4",
+			"OrganizationName": "Peds Care PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1537/api/FHIR/R4",
+			"OrganizationName": "Pensacola Pediatrics PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1836/api/FHIR/R4",
+			"OrganizationName": "Phillips Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3133/api/FHIR/R4",
+			"OrganizationName": "Pleasant Valley Pediatric Medicine PLLC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2127/api/FHIR/R4",
+			"OrganizationName": "Plum LLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/514/api/FHIR/R4",
+			"OrganizationName": "PM Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1200/api/FHIR/R4",
+			"OrganizationName": "Premier Pediatric Associates PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/643/api/FHIR/R4",
+			"OrganizationName": "Premier Pediatrics PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/778/api/FHIR/R4",
+			"OrganizationName": "Prime Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1970/api/FHIR/R4",
+			"OrganizationName": "Rachel Z Chatters MD Inc LA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1412/api/FHIR/R4",
+			"OrganizationName": "Rainbow Childrens Clinic PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1683/api/FHIR/R4",
+			"OrganizationName": "Raymond Kahn MD TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1582/api/FHIR/R4",
+			"OrganizationName": "RBK Pediatrics PC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2024/api/FHIR/R4",
+			"OrganizationName": "Rebecca DiMundo MD Inc CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2197/api/FHIR/R4",
+			"OrganizationName": "Red Maple Pediatrics LLC KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/793/api/FHIR/R4",
+			"OrganizationName": "Redbud Pediatrics LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1063/api/FHIR/R4",
+			"OrganizationName": "Renaissance Pediatrics PC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2222/api/FHIR/R4",
+			"OrganizationName": "Richmond Pediatrics PA NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1256/api/FHIR/R4",
+			"OrganizationName": "Right from the Start Pediatrics IL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/996/api/FHIR/R4",
+			"OrganizationName": "Rise \u0026 Shine Pediatrics PC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1614/api/FHIR/R4",
+			"OrganizationName": "Rivertown Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1890/api/FHIR/R4",
+			"OrganizationName": "Robert D Lehman MD PC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/783/api/FHIR/R4",
+			"OrganizationName": "Robert S Barry MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2018/api/FHIR/R4",
+			"OrganizationName": "Ruth N Agwuna MD PC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1593/api/FHIR/R4",
+			"OrganizationName": "Sabeen Rani MD PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1029/api/FHIR/R4",
+			"OrganizationName": "Sacoto Pediatrics PC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1928/api/FHIR/R4",
+			"OrganizationName": "Salisbury Pediatric Associates PA NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2051/api/FHIR/R4",
+			"OrganizationName": "Sam Kim Physician Services Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/818/api/FHIR/R4",
+			"OrganizationName": "San Diego Pediatric Primary Care Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1787/api/FHIR/R4",
+			"OrganizationName": "Sandhill Pediatrics PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/987/api/FHIR/R4",
+			"OrganizationName": "Segulah Pediatrics PLLC NY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2191/api/FHIR/R4",
+			"OrganizationName": "Shahzaib Mirza MD Medical Partners PA dba Starz Pediatrics FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2160/api/FHIR/R4",
+			"OrganizationName": "Shawnee Mission Pediatrics KS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/744/api/FHIR/R4",
+			"OrganizationName": "Sound Pediatrics PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/775/api/FHIR/R4",
+			"OrganizationName": "South Philadelphia Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/661/api/FHIR/R4",
+			"OrganizationName": "South Tulsa Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1893/api/FHIR/R4",
+			"OrganizationName": "Southern Nevada Pediatric Center PLLC NV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/772/api/FHIR/R4",
+			"OrganizationName": "Southwest Childrens Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1918/api/FHIR/R4",
+			"OrganizationName": "Spring Hill Pediatric Care PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/797/api/FHIR/R4",
+			"OrganizationName": "Sudarsan Kamisetty MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3086/api/FHIR/R4",
+			"OrganizationName": "Sunrise Pediatric Neurology LLC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1852/api/FHIR/R4",
+			"OrganizationName": "Susan Bacsik DO PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1226/api/FHIR/R4",
+			"OrganizationName": "Sveta Medical PLLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/535/api/FHIR/R4",
+			"OrganizationName": "Sweet Water Pediatrics LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1167/api/FHIR/R4",
+			"OrganizationName": "Sweetwater Pediatrics PC WY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1898/api/FHIR/R4",
+			"OrganizationName": "Tanasbourne Pediatrics LLC OR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/720/api/FHIR/R4",
+			"OrganizationName": "Tanque Verde",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/516/api/FHIR/R4",
+			"OrganizationName": "Taos Clinic for Children and Youth PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1699/api/FHIR/R4",
+			"OrganizationName": "Tarpon Springs Pediatrics LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/907/api/FHIR/R4",
+			"OrganizationName": "TenderCare Pediatrics Inc GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1030/api/FHIR/R4",
+			"OrganizationName": "Texoma Pediatrics PLLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/858/api/FHIR/R4",
+			"OrganizationName": "The Childrens Clinic of Wyomissing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/520/api/FHIR/R4",
+			"OrganizationName": "The Garden Pediatric Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/901/api/FHIR/R4",
+			"OrganizationName": "The Kidz Care Klinic MS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1621/api/FHIR/R4",
+			"OrganizationName": "The Pediatric Center of Frederick LLC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/837/api/FHIR/R4",
+			"OrganizationName": "Tomahawk Farm Pediatrics PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3107/api/FHIR/R4",
+			"OrganizationName": "Torres Pediatrics Corp CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/641/api/FHIR/R4",
+			"OrganizationName": "Torresdale Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1143/api/FHIR/R4",
+			"OrganizationName": "Tots Tweens \u0026 Teens Childrens Clinic LLC LA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/746/api/FHIR/R4",
+			"OrganizationName": "Traverse Area Pediatrics and Adolescent Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1611/api/FHIR/R4",
+			"OrganizationName": "Tri County Pediatrics PC GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2227/api/FHIR/R4",
+			"OrganizationName": "Triangle Kids Care Pediatrics PLLC NC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/508/api/FHIR/R4",
+			"OrganizationName": "Trinity Pediatrics Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2189/api/FHIR/R4",
+			"OrganizationName": "TruCare Pediatrics LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/557/api/FHIR/R4",
+			"OrganizationName": "Tulsa Pediatric Urgent Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/678/api/FHIR/R4",
+			"OrganizationName": "Urgent One Medical Care PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/903/api/FHIR/R4",
+			"OrganizationName": "Valeria Kozak Pediatrics CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2067/api/FHIR/R4",
+			"OrganizationName": "Valley Pediatric Group PLC VA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/732/api/FHIR/R4",
+			"OrganizationName": "Ventnor Pediatrics Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2185/api/FHIR/R4",
+			"OrganizationName": "Vero Beach Pediatrics LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2156/api/FHIR/R4",
+			"OrganizationName": "VV Pedi Consults PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1580/api/FHIR/R4",
+			"OrganizationName": "Walter Leon MD TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/992/api/FHIR/R4",
+			"OrganizationName": "Weiss Pediatric Care LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/694/api/FHIR/R4",
+			"OrganizationName": "West Sayville Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/524/api/FHIR/R4",
+			"OrganizationName": "Westfield Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1558/api/FHIR/R4",
+			"OrganizationName": "Westview Pediatric Care LLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1917/api/FHIR/R4",
+			"OrganizationName": "Wildwood Pediatrics and Adolescent",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1592/api/FHIR/R4",
+			"OrganizationName": "William Nisimblat MD PA TX dba Alice Pediatric Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1148/api/FHIR/R4",
+			"OrganizationName": "Wolff Center For Child \u0026 Adolescent Health PLLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2026/api/FHIR/R4",
+			"OrganizationName": "Wonder Kids Specialty Pediatrics PLLC OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/865/api/FHIR/R4",
+			"OrganizationName": "Woodhaven Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1991/api/FHIR/R4",
+			"OrganizationName": "Yazji Pediatric Care LLC FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

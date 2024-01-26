@@ -1,6 +1,7 @@
 package capabilityhandler
 
 import (
+	"fmt"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
@@ -75,7 +76,7 @@ func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProf
 			supportedProfileArr, ok := resourceInt["supportedProfile"].([]interface{})
 			if !ok {
 				// Handle the case where "supportedProfile" is not a []interface{}
-				//fmt.Println("Error: 'supportedProfile' is not a []interface{}")
+				fmt.Println("Error: 'supportedProfile' is not a []interface{}")
 				// Add appropriate error handling or return from the function
 			}
 
@@ -89,7 +90,7 @@ func getCapabilityStatementProfiles(capInt map[string]interface{}, supportedProf
 					supportedProfiles = append(supportedProfiles, profileInfo)
 				} else {
 					// Handle the case where profileEntry is not a string
-					//fmt.Println("Error: 'supportedProfile' entry is not a string")
+					fmt.Println("Error: 'supportedProfile' entry is not a string")
 					// Add appropriate error handling or return from the function
 				}
 			}

@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://broadstreet.arsanahealth.com/api/fhir/",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

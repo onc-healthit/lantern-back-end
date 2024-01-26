@@ -15506,7 +15506,19 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "RELYMD VIRTUAL HEALTH DC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "RELYMD VIRTUAL HEALTH GA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "RELYMD VIRTUAL HEATH TN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -38234,7 +38246,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "FL - Cardiovascular Medicine Associates",
+			"OrganizationName": "My Cardiologist",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -63752,7 +63764,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "NY - SIMPLIFED, INC.",
+			"OrganizationName": "SIMPLIFED",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -79766,6 +79778,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Choice Family Urgent Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MI - DERBALA INSTITUTE FOR REPRODUCTIVE",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -80091,6 +80109,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Alpha Psychiatric Sevices",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "AZ - Phoenix Health Practitioners LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -80516,6 +80540,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Aspen Internal Medicine Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "Grand Prairie Services",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -80811,6 +80841,18 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "OR - Willamette Foot and Ankle",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Pak Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Innovacare Texas",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -81536,6 +81578,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NY - Sharyn L Cass, Adult Nurse Practiti",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Cassandra Ohlsen MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -81908,6 +81956,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "CT - Joseph J Botta and Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "CA - Lew, Edmund",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -82070,6 +82124,12 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "MI - Serenity Obgyn PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "MS - VIP PEDIATRICS PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -82089,6 +82149,12 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "AZ - Arrow Surgical Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "NY - Simple Healthcare Network",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -82137,6 +82203,18 @@
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
 			"OrganizationName": "VA - Hand Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "Lightpath Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.platform.athenahealth.com/fhir/r4",
+			"OrganizationName": "TX - Lightpath Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -100274,7 +100352,7 @@
 		},
 		{
 			"URL": "https://api.platform.athenahealth.com/fhir/r4",
-			"OrganizationName": "Alliance",
+			"OrganizationName": "Alliance Clinics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

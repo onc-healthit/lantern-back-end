@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://applications.op.healthcare/2198/api/FHIR/R4",
+			"OrganizationName": "A Machin MD dba Fairhaven Pediatrics PC WA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/451/api/FHIR/R4",
+			"OrganizationName": "Aldo F Bejarano MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1618/api/FHIR/R4",
+			"OrganizationName": "All About Children PA TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/538/api/FHIR/R4",
+			"OrganizationName": "All Star Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1849/api/FHIR/R4",
+			"OrganizationName": "Amboy Pediatrics PA NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/827/api/FHIR/R4",
+			"OrganizationName": "Anantha R Bhandari MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/298/api/FHIR/R4",
+			"OrganizationName": "Angel Kids Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3104/api/FHIR/R4",
+			"OrganizationName": "Anniston Pediatrics Inc AL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/849/api/FHIR/R4",
+			"OrganizationName": "Apache Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/3118/api/FHIR/R4",
+			"OrganizationName": "Arbor Pediatrics PLLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

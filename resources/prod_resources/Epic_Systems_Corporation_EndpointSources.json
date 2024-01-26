@@ -4951,7 +4951,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://meritus-rev-prd.meritushealth.com/FHIRPRD/api/FHIR/R4/",
+			"URL": "https://epicproxy.et1062.epichosted.com/FHIRProxyPRD/api/FHIR/R4/",
 			"OrganizationName": "Meritus",
 			"NPIID": "",
 			"OrganizationZipCode": ""

@@ -1,608 +1,1976 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fax2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Fax Test2",
+			"URL": "https://pbd.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Palm Beach Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://uro.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Urology",
+			"URL": "https://pbdtest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Pbdtest3 Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://laser.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Laser",
+			"URL": "https://blueridge.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Blue Ridge Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fax3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Fax Test 3",
+			"URL": "https://brderm.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Boca Raton Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zzy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zzy",
+			"URL": "https://clearly.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Clearly Derm Center for Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zyy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ZYY",
+			"URL": "https://carloscohen.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Carlos Cohen MD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zopth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zophth",
+			"URL": "https://awstest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "awstest",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://maverick.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Mavericks EMAzing",
+			"URL": "https://goldman.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "David A. Goldman MD LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://m2qatest01.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ema 01 test",
+			"URL": "https://eatest.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Ea Test",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://zyx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zyx",
+			"URL": "https://drdrew.mmi.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "JBS Med PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://amy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "amy",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zxx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zxx",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://pbd.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Test Palm Beach Derm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://admcorp.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ADMCorp Test Account",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://olga.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "olga's test firm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://eftest.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Eyefinity Test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://reddy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "reddy",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://legal.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "EMA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zxy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zxy",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://emoryeye.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Emory Eye Test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zxz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zxz",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://multi.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Multispecialty",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://cosmetic.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Cosmetic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ortho.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Orthopedics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://derm.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Dermatology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://opto.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://demo.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "demo",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://urology.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Urology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ent.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo ENT",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://rheum.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Rheumatology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ophth.m2perf.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Ophthalmology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://gi.m2perf.qa.fhir.ema-api.com/fhir/r4/",
+			"URL": "https://gi.ef.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo GI",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://plastics.m2perf.qa.fhir.ema-api.com/fhir/r4/",
+			"URL": "https://cosmetic.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Demo Cosmetic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ent.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Demo ENT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://derm.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Demo Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ortho.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Demo Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://plastics.ef.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Plastics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://derm.test.com.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "derm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://sirisha.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "derm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ortho1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ortho1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://derm22.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Derm Letter Test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ophth-olga.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ophth-olga",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://phoenix.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "pathology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test.sy.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "testsy",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://derm411.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "derm411",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zyz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zyz",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zzzz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "a",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zent.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "zent",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://dermplas.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "dermplas",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://m2qatest02.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "m2qatest02",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://m2qatest03.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "m2qatest03",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://regression412.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "regression412",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://zzx.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test \"'\u003e",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://neil.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "neil",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test8.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test8",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test.com.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "testfirm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test7.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test7",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://nyu.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "NYU",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://nyuderm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "nyuderm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://koontz.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Koontz",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://regression413.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "regression413",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://regression4132.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "regression4132",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://atlas.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://telehealth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Telehealth",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://thisisalargeprefixforthefirmwearetesting.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Thisisalargenameforthefirmthatwearetestingrightnow",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://giorders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "gi-orders-test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://dermorders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "dermorders",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ophth-orders.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ophth-orders",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://regression50.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "regression50",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://regression50-1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "regression50-1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newderm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "New Derm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://reg50.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "reg50",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://reg501.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "reg501",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://m2a.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "testderm",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://bugtesting.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "BugTesting",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://bugtesting1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "BugTesting1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://mult.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "mult",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://bugtesting2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "BugTesting1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://dermatest.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "dermo test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ophthandres.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "ophthandres",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newfirm1.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "New Test Firm1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://pqrs.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "PQRS FIRM",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://optoandres.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "optoandres",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newfirm2.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "New Test Firm2",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://reg51.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Regression 5.1",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newfirm3.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "New Test Firm3",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newderm51.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "newderm51",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://gi-results-test.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "gi-results-test",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://newfirmagain.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "New Firm Again",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://knowledge.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Training Enviroment",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://learning.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Training Environment",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://test915.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "test915",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://urology.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Urology",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://gi.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo GI",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://opto.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Optometry",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://demo.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "demo",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ent.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo ENT",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://ophth.m2qa.qa.fhir.ema-api.com/fhir/r4/",
+			"URL": "https://ophth.ef.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "Demo Ophthalmology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://multi.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Multispecialty",
+			"URL": "https://demo.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "demo",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://derm.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Dermatology",
+			"URL": "https://rwineingerod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Roger C Wineinger OD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://cosmetic.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Cosmetic",
+			"URL": "https://ballardvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Ballard Vision Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://rheum.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Rheumatology",
+			"URL": "https://automatedtesting.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "AutomatedTesting",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://ortho.m2qa.qa.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Demo Orthopedics",
+			"URL": "https://frea.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Front Range Eye Associates PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://4de7e156-71fe-471b-84a5-ba7f4a5b04e9.gastro.qa.fhir.ema-api.com/fhir/r4/",
+			"URL": "https://amirananiod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "AMI C RANANI OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://optometricassocpc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Optometric Associates PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://masonfamilyvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "FAMILY VISION CARE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://northwestoptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "NORTHWEST OPTOMETRY ASSOC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://kandersenod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "KATHLEEN M ANDERSEN OD INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://celebrationeyecare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "CELEBRATION EYE CARE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://justusvisioncenter.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "JUSTUS VISION CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drlesshipley.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "LES A SHIPLEY OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mykvc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "KENNEWICK VISION CARE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://universityvisioncentre.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "UNIVERSITY VISION CENTRE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://7eeye.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "SEVIGNY \u0026 ASSOCIATES EYE CARE PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://rochestereyecare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "ROCHESTER EYE CARE PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://visionaryoptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "VISIONARY OPTOMETRY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://efpod01test.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "efpod01 test firm",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://davidjdexterodpc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "David J Dexter OD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyecarenetworkltd.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Eyecare Network LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://milehighcornealspecialistspc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Mile HiCorneal Specialists P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://optometrycare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "EASTGATE OPTOMETRY CARE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://familyeyes.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "FAMILY EYECARE SPECIALISTS PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyesonmainvisioncenter.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "VILLAGE VISION CENTER INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyetoeyewilsonville.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Innervision Optometric Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://buckeyevisioncare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Buck Eye Vision Care PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bearrivereye.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Bear River Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sandrahjeongod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Sandra Jeong OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://foxsoptical.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "FOXS OPTICAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mtbetheleyecarepc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Mt Bethel Eye Care PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://haddonfieldvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Haddonfield Vision PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://davidjscholten.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "DAVID SCHOLTEN OD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://greenhavenoptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Greenhaven Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://todaysvisionrichmond.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "TODAYS VISION RICHMOND AT GRAND PKWY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://barryhuseod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "BARRY HUSE OD \u0026 ASSOCIATES PS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://donaldturner.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "DONALD R TURNER OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://totalvisioncenters.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "TOTAL VISION CENTERS INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drsodomcoburnandrichardson.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Drs Odom Coburn and Richardson",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://davidjdexterodpcwatertown.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "David Dexter, OD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://libertylakeeyecarecenter.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "LIBERTY LAKE EYE CARE CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dryeager.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "M Dwayne Yeager OD FAAO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://completeeyecareassociates.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Complete Eyecare Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://optocenter.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Optometric Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://icareopticalofkent.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "LEWIS S LIM AND ASSOCIATES OD PS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pineconevisioncenter.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "PINECONE VISION CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehrqatest.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "ehrqatest",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://doctorbecky.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Rebecca Cabatbat, O.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://clarifeyeeyecare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "CLARIFEYE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://communityeyeassociates.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "COMMUNITY EYE ASSOCIATES",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://independenteyecareincdanvers.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Independent Eye Care Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://clarineyecare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "CLARIN EYE CARE AND OPTICAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sandbox.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Sandbox - Training",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sales.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "EEHR Sales",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyecareoptometric.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "DAVID L BROWNING OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://royrubinfeldmd.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Roy Rubinfeld, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bvweyes.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Beaverton Vision World",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyecarect.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Total Vision Eye Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sfeyedocs.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Fong \u0026 Wong ODS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://packandbianesvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "PACK \u0026 BIANES ODS INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://wernerod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Werner Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://2020sugarland.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Todays Vision Sugarland PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lumoptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "RANDALL T LUM OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://optometrybtb.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Optometry By The Bay",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://opticalcenterfortgordon.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Optical Center Fort Gordon",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lancastereyedoc.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Mark C Mewborne OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://opticaoptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "MICHAEL Y CHEW OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://antelopemalloptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "ANTELOPE MALL VISION CENTER OPTOMETRY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drjohnturley.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Dr John W Turley LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://visionquesteyeclinics.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "VISION QUEST EYE CLINIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://docmarkham.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "John R Markham OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://priceeyecare.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Price Eyecare \u0026 Optical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://familyeyecarecampbell.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "FAMILY EYE CARE CENTER OPC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://familyvisionctr.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Family Vision Center PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyesitecrestview.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "EYE SITE OF CRESTVIEW PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bcvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Bear Creek Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://gloptometry.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "GRAND LEDGE OPTOMETRY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://djoelod.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "DAVID W JOEL OD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eyecenteroptometric.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "EYE CENTER OPTOMETRIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://everythingeyes.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Alpert Vision Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://rothvision.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Roth Vision Care Doctor Of Optometry PLL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://myeyecareplus.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Eyecare Plus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://2020eyes.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "OPTOMETRIC CARE ASSOC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://a8580225-25d6-4812-a463-58e49a80f214.gastro.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3bf2dd7c-9325-4617-b88b-7053e186ed5b.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://f5f73dd6-507b-49fa-91fd-a2c1482eb946.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://4f01bcfb-fad8-459c-879d-6bacb8068fee.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d4e511bc-883e-4992-873f-b76ffb7ca8ba.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://9d56379c-d822-4f76-9dbb-68fc7af88687.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://45e2255e-6f18-4bcd-bd09-0def3adfca03.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://73a16b75-76ae-4370-af3f-78876c5948e6.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bd7d7b87-d489-4771-87fb-49e48d1b4ce9.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://662acb6b-2e6a-4a18-a64c-d0df200218d5.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://51252f2e-8a78-46ff-b455-e688f2e6b977.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://37c37674-d98a-4dce-97c1-165a0520d41f.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d4f6f003-937f-42bb-b631-506a99cb0260.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://854c360c-ccd0-490c-b032-f0f87442ff0a.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://73b89c1a-4ffd-4a8e-9f54-ab1d1a0f60ca.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5cde014c-0b57-454c-8e2c-9f9a348341f1.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3b23bfeb-f286-4d52-9343-6b732672e98b.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Palmetto Gastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://878239f2-0551-4df2-86aa-cd3bd0cc7e4f.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1e97bf46-5f98-4384-bf8d-cffaf9bb8f4c.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://915c31a9-c72e-45b9-87e6-b62da9b7e18b.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://97465a19-0dc7-4ef3-9aea-f72e472d3305.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fbcd2a0e-4110-4d68-b8cf-f166f9544cb4.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://a1c02ddf-9398-4db3-b17d-e4ed406c88f2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://177472a4-574c-4a73-8deb-a3663624cdb8.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://f15a24e2-8c5e-493b-b9d1-3fcaad4622d2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d425f144-77fd-4659-913d-b915be189a97.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5fed3212-5ef6-43be-956f-1d101a902fa9.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Bay Area Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3dcb1db9-ddbb-489e-9a0c-b7d4978268fc.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://4f81aa8f-46d9-489d-aca3-0319ef5c1a34.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://83cc95b3-c376-4f8f-84eb-5d8038551390.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://e3cab0c3-16d5-4dd5-8801-a6f098d587f5.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://937b3ea5-7a6e-4d4e-b0ed-672ee9436d43.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1acbd3ba-ed1b-40f5-8d90-1cc35c556f96.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://48881cdb-e929-4657-9867-fdde5cedcbce.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1ee543a4-bf37-40b5-9945-9cd59a1c3b3b.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5ea05e84-9956-4942-89c1-213eb31b46bb.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://f02c46cc-89f8-4f9a-8da8-99b073c55482.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bea28457-8a35-4836-81fa-a55473bafe7a.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d39a1e77-6826-49c4-8e34-4a80ff96206e.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3a980deb-3d8b-4d20-b65b-21241412d922.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bf8f51b1-eeb5-4b4a-af50-07d7ccbfbd2e.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5d205757-d7ad-4385-b85e-206fb2980872.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://587ae17e-9d61-401e-b518-24b3e317b561.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://c3916c65-0790-41c5-8eec-1f6c89e87716.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://e5acb156-d563-411c-adb4-9488d77feed2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1fbdfcda-3089-4e5e-8d47-212b75eaf22d.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gMed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://9d1d65b5-fc44-4c0c-a5cf-f2427e889474.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Atlantic Gastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1a572fe8-4158-42a5-98e1-1080209f25f6.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bfb0074d-717a-42a9-a17b-421abfd28efe.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fef9ae01-d276-4e26-aadf-c71f0d69daba.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://0621a941-5b32-48ea-8038-318fa4aa2198.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fa49470e-e549-442c-aaf1-d399d5b6d551.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://8d78b571-de39-4d7a-8bfc-932db410c87d.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://08e3beb7-0812-4e24-be3c-6ff3d7b8ca27.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://831cec68-9c02-4959-bb6a-13b70feb6f40.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3c8a5aee-3928-45be-8b16-a0f55c8eff58.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://86828155-b9fa-4a5a-a68c-d6e1115fa77f.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://6807e6b6-6f20-4343-97f3-36cdd5aa9c0e.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://87da10c8-4b9e-450a-a5e3-72c6451dfbee.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://293b4af0-46c8-4b3c-baa3-8c47c73a0bba.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://c89bf89a-a26e-42bb-840d-b51df01b9034.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://8264d6b8-81e2-424d-b9ba-b7935a661b0d.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://8b12fd4c-da15-4ead-a3a8-344ea9ac675d.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dc7314ad-d828-4d89-aae8-9119deed9843.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://0e6dce4e-6535-4b4d-84e3-0acd509ac5c2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dd764dd4-6389-4423-a398-2684ed788823.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://672d9ab7-deca-4dbf-8e11-00c1195f8ef8.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://47eaa515-c6d5-4fd5-b421-2afde9bc43da.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://98ad01d2-aad3-4c7c-96a6-0c1ac7c39ff6.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ddb5b0dd-fb88-4f1e-a5e1-a03b26022711.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cbf736b1-b683-4ab3-841e-0ec7a6f468d8.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://6577f092-93ca-4b3b-86e1-30a8e966e9f2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://279b5dd1-69b9-49e5-82cf-2e3782636ef2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://c35e610a-af8f-48b0-a946-d65fc24b4648.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://de022691-7de3-4508-805b-2d744784c0d0.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://b26ac60c-f318-4a4b-838f-585113152e5c.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d9047a66-f373-4309-97ef-06e586bfffbf.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://8f2a86ab-9fd4-44de-887a-d8cadbaf4e8b.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://9ddedd42-f8fc-44f9-8c47-4cb9d382d26f.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://3f6a685c-8b9d-4b62-a562-ded5b5684af3.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://da386ebf-88cc-4105-8be4-dd773cd7fd45.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5dbec2b7-03bd-4959-ac35-0d82c4f247d3.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://07f309e6-cfdb-45a2-97e8-67dec017804c.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://8aa9a239-fa4b-4721-883c-52b005699bf9.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://47a5c710-995b-4a62-a38c-d544643f8d46.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://c412c190-a97b-4397-86ca-b800976099d2.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://e26d6512-ff45-4162-b273-89a327ccce57.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://6d148171-7e2a-4a80-a8ec-988b6af3658d.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://890ad47e-26dd-4d6b-adf3-be67983c52e6.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://973bcab0-a992-4d4e-a6d6-f3fde5886982.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://19d1b124-767e-4583-abd0-d84125b4b96c.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://e89ba4e6-f561-4886-828b-c94a27125ee3.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "CA-098-C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://4d17465b-8973-44b0-bbfb-fedb844d00d5.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://1474d240-69e1-4419-a4e2-9d5495e538ab.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://5f834470-c60a-47d6-9b68-196670cd4601.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://359abad3-893e-4146-a73c-c64e3142f9b7.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://d2b81742-c799-4353-a516-d4734331a008.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://499b466c-31e0-481e-946e-ba8e804453eb.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://a8051dea-05a3-46f4-a61b-6fefc9291f11.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://da0059a8-415b-4d81-a3bc-36a07967166e.gastro.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "gGastro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/aosmi/r4",
+			"OrganizationName": "Advanced Orthopedic and Sports Medicine Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/abjc/r4",
+			"OrganizationName": "Alabama Bone and Joint Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/aossma/r4",
+			"OrganizationName": "Alabama Orthopedic Spine and Sports Medicine Association",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/leo/r4",
+			"OrganizationName": "Andrew Joseph Leo, MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/augustin/r4",
+			"OrganizationName": "Augustin Orthopedics (Augustin)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/badia/r4",
+			"OrganizationName": "Badia Hand and Shoulder Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/bbortho/r4",
+			"OrganizationName": "Baylis \u0026 Brown Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/bigrapids/r4",
+			"OrganizationName": "Big Rapids Orthopaedics, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/bhsu/r4",
+			"OrganizationName": "Bischoff Hand Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/boca/r4",
+			"OrganizationName": "Boca Raton Orthopaedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/bjs/r4",
+			"OrganizationName": "Bone and Joint Specialists of Winchester, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mbh/r4",
+			"OrganizationName": "Bowen Hefley Rhodes Stewart Orthopedics, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/bgo/r4",
+			"OrganizationName": "Bowling Green Orthopaedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/coi/r4",
+			"OrganizationName": "California Orthopaedic Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cosmc/r4",
+			"OrganizationName": "Capital Orthopaedic and Sports Medicine Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cro/r4",
+			"OrganizationName": "Capital Region Orthopedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/capstone/r4",
+			"OrganizationName": "Capstone Orthopedics \u0026 Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/lavernia/r4",
+			"OrganizationName": "Carlos Lavernia, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/carlsbad/r4",
+			"OrganizationName": "Carlsbad Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/chc/r4",
+			"OrganizationName": "Carolina Hand and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cosmfl/r4",
+			"OrganizationName": "Center for Orthopaedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cossm/r4",
+			"OrganizationName": "Center for Orthopedic Surgery and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/chitown/r4",
+			"OrganizationName": "Chitown Orthopaedics \u0026 Sports Medicine S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ckmd/r4",
+			"OrganizationName": "Cohen \u0026 Kramer, M.D., PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cfo/r4",
+			"OrganizationName": "Colorado Family Orthopaedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/csog/r4",
+			"OrganizationName": "Colorado Springs Orthopaedic Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/cog/r4",
+			"OrganizationName": "Columbia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/core/r4",
+			"OrganizationName": "CORE ORTHOPEDICS \u0026 SPORTS MEDICINE LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/dsms/r4",
+			"OrganizationName": "Denver Sports Medicine And Spine Llc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/dhalla/r4",
+			"OrganizationName": "Dhalla Orthopedic Center Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sheldon/r4",
+			"OrganizationName": "DR. DANIEL A SHELDON M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/nsmd/r4",
+			"OrganizationName": "DR. NEOFITOS STEFANIDES M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/eco/r4",
+			"OrganizationName": "East Coast Orthopaedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/edison/r4",
+			"OrganizationName": "Edison-Metuchen Orthopaedic Group PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/englewood/r4",
+			"OrganizationName": "Englewood Spine Associates LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/usability/r4",
+			"OrganizationName": "Exscribe, Inc Usability",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/fosm/r4",
+			"OrganizationName": "Fayetteville Orthopedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/floa/r4",
+			"OrganizationName": "Florida Orthopaedic Associates PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/flortho/r4",
+			"OrganizationName": "FLORIDA ORTHOPEDIC AND REHAB LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/g2/r4",
+			"OrganizationName": "G2 Orthopedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/girard/r4",
+			"OrganizationName": "Girard Orthopaedic Surgeons",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/goo/r4",
+			"OrganizationName": "Greater Orlando Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/hanortho/r4",
+			"OrganizationName": "Han Orthopaedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/hoa/r4",
+			"OrganizationName": "Homestead Orthopedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/hommen/r4",
+			"OrganizationName": "Hommen Orthopedic Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/gelb/r4",
+			"OrganizationName": "HOWARD J. GELB MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/hops/r4",
+			"OrganizationName": "Hudson Orthopedics Pain and Spine, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/huntington/r4",
+			"OrganizationName": "Huntington Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ihc/r4",
+			"OrganizationName": "Idaho Hand Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ihi/r4",
+			"OrganizationName": "Idaho Hand Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/rubinshteyn/r4",
+			"OrganizationName": "IGOR RUBINSHTEYN M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/international/r4",
+			"OrganizationName": "International Orthopaedic Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mcclurg/r4",
+			"OrganizationName": "James McClurg MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/lbji/r4",
+			"OrganizationName": "Lakeshore Bone and Joint Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/laos/r4",
+			"OrganizationName": "Louisiana Orthopaedic Specialists, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/miahand/r4",
+			"OrganizationName": "MIAMI HAND PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mijr/r4",
+			"OrganizationName": "Miami Institute for Joint Reconstruction",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/moc/r4",
+			"OrganizationName": "Miami Orthopaedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/msm/r4",
+			"OrganizationName": "Miami Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/miorthocenter/r4",
+			"OrganizationName": "Michigan Orthopedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mgo/r4",
+			"OrganizationName": "MIDDLE GA ORTHOPEADIC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mocil/r4",
+			"OrganizationName": "Midwest Orthopaedic Consultants SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/mah/r4",
+			"OrganizationName": "MIKI \u0026 ALFONSO HAND \u0026 UPPER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/msmoc/r4",
+			"OrganizationName": "MISSISSIPPI SPORTS MEDICINE \u0026 ORTHOPAEDIC CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/montana/r4",
+			"OrganizationName": "Montana Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/nsmi/r4",
+			"OrganizationName": "National Sports Medicine Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ncsra/r4",
+			"OrganizationName": "NCSRA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/exscribe/r4",
+			"OrganizationName": "Neighborhood Physicians Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/njosm/r4",
+			"OrganizationName": "New Jersey Orthopaedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/naspi/r4",
+			"OrganizationName": "North American Spine and Pain Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ooc/r4",
+			"OrganizationName": "Orlando Orthopaedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/elpaso/r4",
+			"OrganizationName": "Ortho El Paso, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orthoknox/r4",
+			"OrganizationName": "OrthoKnox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orthonowbis/r4",
+			"OrganizationName": "OrthoNOW Biscayne LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orthonowcw/r4",
+			"OrganizationName": "OrthoNOW Coral Way",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orthonow/r4",
+			"OrganizationName": "OrthoNOW Doral LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/miamilakes/r4",
+			"OrganizationName": "Orthopaedic Associates of Miami Lakes",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/oamkg/r4",
+			"OrganizationName": "Orthopaedic Associates of Muskegon",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sosc/r4",
+			"OrganizationName": "Orthopaedic Associates, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ocsf/r4",
+			"OrganizationName": "Orthopaedic Center of South Florida",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/oicj/r4",
+			"OrganizationName": "Orthopaedic Institute of Central Jersey",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/oinm/r4",
+			"OrganizationName": "Orthopaedic Institute of North Mississippi",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orca/r4",
+			"OrganizationName": "Orthopaedic Research Clinic of Alaska",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/osmrc/r4",
+			"OrganizationName": "Orthopaedic Sports Medicine and Rehab Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/osmc/r4",
+			"OrganizationName": "Orthopedic and Sports Medicine Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/oaph/r4",
+			"OrganizationName": "Orthopedic Associates of Port Huron PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/oawj/r4",
+			"OrganizationName": "Orthopedic Associates of West Jersey",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/occ/r4",
+			"OrganizationName": "Orthopedic Care Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/osikc/r4",
+			"OrganizationName": "Orthopedic Surgeons, Inc. (OSI)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/orthori/r4",
+			"OrganizationName": "Orthopedics Rhode Island",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/phoenix/r4",
+			"OrganizationName": "Phoenix Orthopaedics Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/plano/r4",
+			"OrganizationName": "Plano Orthopedic Sports Medicine and Spine Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/popb/r4",
+			"OrganizationName": "Preferred Orthopedics of the Palm Beaches",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/post/r4",
+			"OrganizationName": "PREMIER ORTHOPEDIC SPECIALISTS OF TULSA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/nashed/r4",
+			"OrganizationName": "Rafat Nashed, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/armstrong/r4",
+			"OrganizationName": "Randall Armstrong, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/regional/r4",
+			"OrganizationName": "Regional Orthopaedic Sports Medicine Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/rgvo/r4",
+			"OrganizationName": "Rio Grande Valley Orthopedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/rmrm/r4",
+			"OrganizationName": "Rocky Mountain Restorative Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/rogozinski/r4",
+			"OrganizationName": "Rogozinski Orthopedic Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/stone/r4",
+			"OrganizationName": "Ross Stone, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/santarosa/r4",
+			"OrganizationName": "Santa Rosa Orthopaedic Medical Group, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/shb/r4",
+			"OrganizationName": "Schofield, Hand, and Bright",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/saosm/r4",
+			"OrganizationName": "SOUTH ARKANSAS ORTHOPAEDICS AND SPORTS MEDICINE CENTER PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/scoa/r4",
+			"OrganizationName": "South Coast Orthopedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/shosa/r4",
+			"OrganizationName": "South Hills Orthopaedic Surgery Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/stb/r4",
+			"OrganizationName": "South Texas Back",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ssi/r4",
+			"OrganizationName": "Southeastern Spine Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/southern/r4",
+			"OrganizationName": "SOUTHERN ORTHOPAEDIC SURGEONS, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/spartan/r4",
+			"OrganizationName": "Spartan Orthopedic Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/ssomi/r4",
+			"OrganizationName": "Spine Specialists of Michigan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/spivey/r4",
+			"OrganizationName": "Spivey Orthopedic Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sossportsmed/r4",
+			"OrganizationName": "SPORTS \u0026 ORTHOPAEDIC SPECIALISTS OF ARIZONA LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/spoc/r4",
+			"OrganizationName": "Sports and Orthopedic Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sportsmed/r4",
+			"OrganizationName": "Sports Medicine Oregon",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sal/r4",
+			"OrganizationName": "Stephen Alex, M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sugar/r4",
+			"OrganizationName": "SUGAR ORTHOPAEDICS PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/suncoast/r4",
+			"OrganizationName": "Suncoast Orthopaedic Surgery and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/susortho/r4",
+			"OrganizationName": "Susquehanna Orthopaedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/swift/r4",
+			"OrganizationName": "Swift Urgent Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/sparks/r4",
+			"OrganizationName": "The Center for Orthopaedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/columbus/r4",
+			"OrganizationName": "THE COLUMBUS ORTHOPAEDIC CLINIC, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/tro/r4",
+			"OrganizationName": "Thornapple River Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/toji/r4",
+			"OrganizationName": "Tuscaloosa Orthopedic and Joint Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/uso/r4",
+			"OrganizationName": "Ultimate Sports and Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/uoct/r4",
+			"OrganizationName": "University Orthopedic Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/vbjc/r4",
+			"OrganizationName": "Valley Bone and Joint Clinic PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/weststate/r4",
+			"OrganizationName": "West State Orthopedics and Sports Medicine, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://exscribe-prod-fhir.ema-api.com/fhir/modmed/wsortho/r4",
+			"OrganizationName": "Western Slope Orthopaedics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
