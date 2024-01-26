@@ -12,30 +12,23 @@ func NextGenwebscraper(CHPLURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-
-	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, ".api-search-result")
+	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "#api-search-results")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
-		tablehtml.Find("tbody").Each(func(indextr int, rowhtml *goquery.Selection) {
-			rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
+	doc.Find("#api-search-results").Each(func(index int, div1html *goquery.Selection) {
+		div2html := div1html.Find("div").First()
+		ulhtml := div2html.Find("ul").First()
+		ulhtml.Find("li").Each(func(indextr int, lihtml *goquery.Selection) {
+			if strings.Contains(lihtml.Text(), "DSTU2") || strings.Contains(lihtml.Text(), "FHIR R4") {
+				var litext = lihtml.Text()
+				var URL = litext[strings.Index(litext, " https")+1 : len(litext)-1]
 				var entry LanternEntry
+				entry.URL = strings.TrimSpace(URL)
 
-				tableEntries := rowbodyhtml.Find("td")
-				if tableEntries.Length() > 0 {
-					organizationName := strings.TrimSpace(tableEntries.Eq(1).Text())
-					zipCode := strings.TrimSpace(tableEntries.Eq(5).Text())
-					URL := strings.TrimSpace(tableEntries.Eq(6).Text())
-
-					entry.OrganizationName = organizationName
-					entry.URL = URL
-					entry.OrganizationZipCode = zipCode
-
-					lanternEntryList = append(lanternEntryList, entry)
-				}
-			})
+				lanternEntryList = append(lanternEntryList, entry)
+			}
 		})
 	})
 

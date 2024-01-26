@@ -769,25 +769,13 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/11157843",
-			"OrganizationName": "Advance Care Health Systems",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10359846",
-			"OrganizationName": "Advance Care Health Systems",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10359846",
-			"OrganizationName": "Advance Care Health Systems",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/11157843",
+			"OrganizationName": "Advance Care Health Systems",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/11157843",
 			"OrganizationName": "Advance Care Health Systems",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -837,6 +825,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10090410",
 			"OrganizationName": "Advanced Pain and Spine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10044412",
+			"OrganizationName": "Advanced Pain Management Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10044412",
+			"OrganizationName": "Advanced Pain Management Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1754,13 +1754,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/76113",
-			"OrganizationName": "Atlantic Ob/Gyn Associates",
+			"OrganizationName": "Atlantic ObGyn Assoc Pc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/76113",
-			"OrganizationName": "Atlantic Ob/Gyn Associates",
+			"OrganizationName": "Atlantic ObGyn Assoc Pc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2413,6 +2413,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10041765",
+			"OrganizationName": "Blue Ridge Ent \u0026 Plastic Surgery Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10041765",
+			"OrganizationName": "Blue Ridge Ent \u0026 Plastic Surgery Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/1700211A",
 			"OrganizationName": "Blue Ridge Medical Group",
 			"NPIID": "",
@@ -2779,6 +2791,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/57404",
+			"OrganizationName": "Cadillac Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/9857",
 			"OrganizationName": "Caduceus Corporation",
 			"NPIID": "",
@@ -2828,25 +2846,25 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/77455DEF",
-			"OrganizationName": "Cancer And Blood Spec Defence",
+			"OrganizationName": "Cancer And Blood Spec Investigation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/77455DEF",
-			"OrganizationName": "Cancer And Blood Spec Defence",
+			"OrganizationName": "Cancer And Blood Spec Investigation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/77455INV",
-			"OrganizationName": "Cancer And Blood Spec Defence",
+			"OrganizationName": "Cancer And Blood Spec Investigation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/77455INV",
-			"OrganizationName": "Cancer And Blood Spec Defence",
+			"OrganizationName": "Cancer And Blood Spec Investigation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3447,6 +3465,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10603880",
 			"OrganizationName": "Celebrating Life Community Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049726",
+			"OrganizationName": "Center City Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10049726",
+			"OrganizationName": "Center City Pediatrics",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4813,6 +4843,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10039008",
+			"OrganizationName": "Corona Temecula Orthopaedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10039008",
+			"OrganizationName": "Corona Temecula Orthopaedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10079096",
 			"OrganizationName": "Craig B Henry Pllc",
 			"NPIID": "",
@@ -5293,6 +5335,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10030761",
+			"OrganizationName": "Derry Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10030761",
+			"OrganizationName": "Derry Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10044398",
 			"OrganizationName": "Desai Medical Center",
 			"NPIID": "",
@@ -5365,6 +5419,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10034096",
+			"OrganizationName": "Digestive Disease Associates, LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10034096",
+			"OrganizationName": "Digestive Disease Associates, LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10062222",
 			"OrganizationName": "Digestive Disease Specialists",
 			"NPIID": "",
@@ -5373,6 +5439,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10062222",
 			"OrganizationName": "Digestive Disease Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10034640",
+			"OrganizationName": "Digestive Health Assoc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10034640",
+			"OrganizationName": "Digestive Health Assoc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6518,25 +6596,25 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10012445",
-			"OrganizationName": "ENT Surgical Consultants",
+			"OrganizationName": "ENT Surgical Consultants Ltd",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10012445",
-			"OrganizationName": "ENT Surgical Consultants",
+			"OrganizationName": "ENT Surgical Consultants Ltd",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/0002371",
-			"OrganizationName": "ENT Surgical Consultants",
+			"OrganizationName": "ENT Surgical Consultants Ltd",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0002371",
-			"OrganizationName": "ENT Surgical Consultants",
+			"OrganizationName": "ENT Surgical Consultants Ltd",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7401,6 +7479,12 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/77521",
 			"OrganizationName": "Forest Hills Dermatology Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0002961",
+			"OrganizationName": "Fort Collins Youth Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -8600,13 +8684,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/0008338",
-			"OrganizationName": "Houston Interventional Cardiology P.A.",
+			"OrganizationName": "Houston Interventional Cardiology PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0008338",
-			"OrganizationName": "Houston Interventional Cardiology P.A.",
+			"OrganizationName": "Houston Interventional Cardiology PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -9026,13 +9110,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/70435",
-			"OrganizationName": "Interventional Cardiology Medical Group",
+			"OrganizationName": "Interventional Cardiology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/70435",
-			"OrganizationName": "Interventional Cardiology Medical Group",
+			"OrganizationName": "Interventional Cardiology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10489,6 +10573,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10049491",
+			"OrganizationName": "LATOUCHE PEDIATRICS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10049491",
+			"OrganizationName": "LATOUCHE PEDIATRICS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/74899",
 			"OrganizationName": "Laura Morgan Md Inc",
 			"NPIID": "",
@@ -10790,13 +10886,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/70372",
-			"OrganizationName": "Lung Center Of Nevada",
+			"OrganizationName": "Lung Center Of Neveda",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/70372",
-			"OrganizationName": "Lung Center Of Nevada",
+			"OrganizationName": "Lung Center Of Neveda",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11167,6 +11263,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10097638",
+			"OrganizationName": "Masonboro Family Medicine, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10097638",
+			"OrganizationName": "Masonboro Family Medicine, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/9274",
 			"OrganizationName": "Matthew Friedman Md",
 			"NPIID": "",
@@ -11283,18 +11391,6 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10062323",
 			"OrganizationName": "Meadow Pediatrics",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/59048",
-			"OrganizationName": "Med and Surg Of Corsicana",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/59048",
-			"OrganizationName": "Med and Surg Of Corsicana",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11863,6 +11959,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10028476",
+			"OrganizationName": "Milltown Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10028476",
+			"OrganizationName": "Milltown Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/75761",
 			"OrganizationName": "Mir Neurology Center",
 			"NPIID": "",
@@ -11967,6 +12075,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/77374",
 			"OrganizationName": "Morgan Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10045835",
+			"OrganizationName": "MORRIS AVENUE MEDICAL CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10045835",
+			"OrganizationName": "MORRIS AVENUE MEDICAL CENTER",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12175,6 +12295,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10018231",
+			"OrganizationName": "Mycare Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10018231",
+			"OrganizationName": "Mycare Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/56545N",
 			"OrganizationName": "Myers and Miller Podiatry Inc",
 			"NPIID": "",
@@ -12243,6 +12375,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10062407",
 			"OrganizationName": "Nasreen R Dar Md",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/0011245",
+			"OrganizationName": "Naugatuck Valley Gastroenterology Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0011245",
+			"OrganizationName": "Naugatuck Valley Gastroenterology Consultants",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12447,6 +12591,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10039269",
 			"OrganizationName": "Neurology Consultants Of Dallas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10029988",
+			"OrganizationName": "Neurology Specialists, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10029988",
+			"OrganizationName": "Neurology Specialists, P.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12907,6 +13063,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10045838",
+			"OrganizationName": "Northside Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10045838",
+			"OrganizationName": "Northside Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10023127",
 			"OrganizationName": "Northside Hospital dba Medical Assoc Of North Georgia",
 			"NPIID": "",
@@ -13207,6 +13375,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10046172",
+			"OrganizationName": "Optimal Health Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10046172",
+			"OrganizationName": "Optimal Health Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/56334",
 			"OrganizationName": "Orange County Ear Nose And Throat",
 			"NPIID": "",
@@ -13303,6 +13483,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10050584",
+			"OrganizationName": "Orthopaedic \u0026 Fracture Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10050584",
+			"OrganizationName": "Orthopaedic \u0026 Fracture Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10063219",
 			"OrganizationName": "Orthopaedic Solutions PC",
 			"NPIID": "",
@@ -13395,6 +13587,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/57945",
 			"OrganizationName": "Osteopathic Physicians Of Tulsa",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10030532",
+			"OrganizationName": "Our Family Doctor",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10030532",
+			"OrganizationName": "Our Family Doctor",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -14264,13 +14468,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/76109",
-			"OrganizationName": "Premier Medical Group",
+			"OrganizationName": "Premier Healthcare Assoc Pc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/76109",
-			"OrganizationName": "Premier Medical Group",
+			"OrganizationName": "Premier Healthcare Assoc Pc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -15253,6 +15457,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10359846",
+			"OrganizationName": "Rogue Valley Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10359846",
+			"OrganizationName": "Rogue Valley Health and Wellness",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10034072",
 			"OrganizationName": "Rome Gastroenterology Associates",
 			"NPIID": "",
@@ -15931,6 +16147,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10091597",
+			"OrganizationName": "Solid Rock Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10091597",
+			"OrganizationName": "Solid Rock Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/77825",
 			"OrganizationName": "Somerset Family Medicine",
 			"NPIID": "",
@@ -16243,6 +16471,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10033441",
+			"OrganizationName": "Southwest Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10033441",
+			"OrganizationName": "Southwest Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/56735",
 			"OrganizationName": "Southwest General Health Center",
 			"NPIID": "",
@@ -16467,6 +16707,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/56101",
 			"OrganizationName": "St Clair Vascular",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10031613",
+			"OrganizationName": "St George Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10031613",
+			"OrganizationName": "St George Medical Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -17599,14 +17851,26 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10043119",
+			"OrganizationName": "Thomas \u0026 Thomas Medical Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10043119",
+			"OrganizationName": "Thomas \u0026 Thomas Medical Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/0011453",
-			"OrganizationName": "Thomas E Jackson Md",
+			"OrganizationName": "Thomas E Jackson MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0011453",
-			"OrganizationName": "Thomas E Jackson Md",
+			"OrganizationName": "Thomas E Jackson MD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -18163,6 +18427,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10477849",
+			"OrganizationName": "Urology Centers of Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/69204",
 			"OrganizationName": "Urology Clinic Of Utah Valley",
 			"NPIID": "",
@@ -18327,6 +18597,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10051613",
 			"OrganizationName": "Valley Surgical Clinics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10855851",
+			"OrganizationName": "Van Wert Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10855851",
+			"OrganizationName": "Van Wert Family Physicians",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -18541,7 +18823,19 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/0011777",
+			"OrganizationName": "Wasatch Peak Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10057270",
+			"OrganizationName": "Wasatch Peak Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/0011777",
 			"OrganizationName": "Wasatch Peak Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -18615,6 +18909,30 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/11138843",
 			"OrganizationName": "Weiss Medical Allergy, Asthma \u0026 Immunology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/11167843",
+			"OrganizationName": "WellMed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/59048",
+			"OrganizationName": "WellMed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/11167843",
+			"OrganizationName": "WellMed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/59048",
+			"OrganizationName": "WellMed",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -18783,6 +19101,18 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/74380",
 			"OrganizationName": "Whiting Bay Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10012380",
+			"OrganizationName": "Wikler Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10012380",
+			"OrganizationName": "Wikler Family Practice",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

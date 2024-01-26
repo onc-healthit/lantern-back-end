@@ -223,6 +223,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://binghamhealthcareapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Bingham Memorial Hosp MaaS Pod 005 05",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.blythedale.org:443/v2/argonaut/v1",
 			"OrganizationName": "Blythedale Childrens Hosp Expanse",
 			"NPIID": "",
@@ -2167,6 +2173,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://seviercountymedicalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Sevier County Medical Center MaaS Pod 007 11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.shinepartners.ca:443/v2/argonaut/v1",
 			"OrganizationName": "Shared Health Inform Network Exche - Exp(Hosted by Teknicor)",
 			"NPIID": "",
@@ -2611,6 +2623,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://mtrestapis-explive01.wgh.org:443/v2/argonaut/v1",
+			"OrganizationName": "Warren General Hosp Expanse READY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live.wgh.org:443/v2/argonaut/v1",
 			"OrganizationName": "Warren General Hospital - C/S",
 			"NPIID": "",
@@ -2943,6 +2961,12 @@
 		{
 			"URL": "https://mtrestapis-live01.bidh.org:443/v1/uscore/R4",
 			"OrganizationName": "Beth Israel Deaconess Expanse (Hosted by MEDITECH)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://binghamhealthcareapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Bingham Memorial Hosp MaaS Pod 005 05",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4891,6 +4915,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://seviercountymedicalapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Sevier County Medical Center MaaS Pod 007 11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.shinepartners.ca:443/v1/uscore/R4",
 			"OrganizationName": "Shared Health Inform Network Exche - Exp(Hosted by Teknicor)",
 			"NPIID": "",
@@ -5331,6 +5361,12 @@
 		{
 			"URL": "https://mtrestapis-live01.warnerhospital.org:443/v1/uscore/R4",
 			"OrganizationName": "Warner Hospital and Health Services (CS)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mtrestapis-explive01.wgh.org:443/v1/uscore/R4",
+			"OrganizationName": "Warren General Hosp Expanse READY",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

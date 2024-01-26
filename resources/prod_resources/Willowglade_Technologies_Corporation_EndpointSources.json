@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://ccdoc.phn.care/tenant/my-clinic/patient/smart-api",
+			"OrganizationName": "My Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ccdoc.phn.care/tenant/NCS/patient/smart-api",
+			"OrganizationName": "NCS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

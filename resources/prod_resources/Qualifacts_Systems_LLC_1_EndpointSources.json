@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://cms.smilecdr.com/fhir-request",
+			"URL": "https://fhir.cbh4.crediblebh.com",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

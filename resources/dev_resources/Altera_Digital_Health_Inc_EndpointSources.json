@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhir.colaneph.com/fhir",
-			"OrganizationName": "Columbia Nephrology Associates",
+			"URL": "https://AH1SCM2FHIR.altahospitals.com/fhir",
+			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.colaneph.com/R4/fhir-R4",
-			"OrganizationName": "Columbia Nephrology Associates",
+			"URL": "https://AH1SCM2FHIR.altahospitals.com/R2/fhir",
+			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.colaneph.com/open",
-			"OrganizationName": "Columbia Nephrology Associates",
+			"URL": "https://AH1SCM2FHIR.altahospitals.com/R2/open",
+			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.colaneph.com/R4/open-R4",
-			"OrganizationName": "Columbia Nephrology Associates",
+			"URL": "https://AH1SCM2FHIR.altahospitals.com/open",
+			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.whs.org/R4/fhir-Prod",
-			"OrganizationName": "Washington Health System - WH01",
+			"URL": "https://fhirprod.atlanticgeneral.org/open",
+			"OrganizationName": "Atlantic General Hospital - AG01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.whs.org/open",
-			"OrganizationName": "Washington Health System - WH01",
+			"URL": "https://fhirprod.atlanticgeneral.org/R2/fhir",
+			"OrganizationName": "Atlantic General Hospital - AG01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.whs.org/R4/open-Prod",
-			"OrganizationName": "Washington Health System - WH01",
+			"URL": "https://fhirprod.atlanticgeneral.org/R2/open",
+			"OrganizationName": "Atlantic General Hospital - AG01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.whs.org/fhir",
-			"OrganizationName": "Washington Health System - WH01",
+			"URL": "https://fhirprod.atlanticgeneral.org/fhir",
+			"OrganizationName": "Atlantic General Hospital - AG01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://sunexch.cmc-nh.org/R4/fhir-Prod",
-			"OrganizationName": "Catholic Medical Center - PRODUCTION",
+			"URL": "https://fhir.blessinghospital.com/R2/fhir",
+			"OrganizationName": "Blessing Hospital - PROD1",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://sunexch.cmc-nh.org/R4/open-Prod",
-			"OrganizationName": "Catholic Medical Center - PRODUCTION",
+			"URL": "https://fhir.blessinghospital.com/R2/open",
+			"OrganizationName": "Blessing Hospital - PROD1",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -18,7 +18,7 @@ type LanternEntry struct {
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
-var NextGenURL = "https://nextgen.com/api/practice-search/"
+var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
 var AlteraURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
@@ -43,7 +43,6 @@ var healthCare2000URL = "https://www.provider.care/FHIR/MDVitaFHIRUrls.csv"
 var firstInsightURL = "https://www.first-insight.com/maximeyes_fhir_base_url_endpoints/"
 var healthSamuraiURL = "https://cmpl.aidbox.app/smart"
 var triarqURL = "https://fhir.myqone.com/Endpoints"
-var goldblattURL = "https://www.goldblattsystems.com/apis"
 var cyfluentURL = "https://app.swaggerhub.com/apis-docs/Cyfluent/ProviderPortalApi/3.3#/FHIR/fhir"
 var meridianURL = "https://api-datamanager.carecloud.com:8081/fhirurl"
 var qualifactsInsyncURL = "https://qualifacts.com/api-page/platform/insync/insync-fhir-org-list.html"
@@ -64,7 +63,6 @@ var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
 var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
 var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
-var modernizingmedicineURL = "https://mm-fhir-endpoint-display.qa.fhir.ema-api.com/"
 var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 var azaleahealthURL = "https://api.azaleahealth.com/fhir/R4/Endpoint"
 var cloudcraftURL = "https://fhirapitest.naiacorp.net/fhir/r4/endpoints/"
@@ -72,7 +70,6 @@ var darenasolutionsURL = "https://api.meldrx.com/Directories/fhir/endpoints"
 var glenwoodsystemsURL = "https://static.glaceemr.com/endpoints/urls.json"
 var practicefusionURL = "https://www.practicefusion.com/assets/static_files/ServiceBaseURLs.json"
 var universalEHRURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-universalehr.json"
-var welligentURL = "https://mu3test.welligent.com/fhir/r4/endpoints/"
 var astronautURL = "https://astronautehr.com/index.php/fhir-base-urls/"
 var bestpracticesacademyURL = "https://ipatientcare.com/onc-acb-certified-2015-edition"
 var californiamedicalsystemsURL = "https://cal-med.com/fhir/Fhir-base-urls.csv"
@@ -138,6 +135,11 @@ var CarepathsURL = "https://carepaths.com/uploads/org_endpoint_bundle.json"
 var athenaClinicalsURL = "https://docs.athenahealth.com/api/guides/base-fhir-urls"
 var canvasMedicalURL = "https://docs.canvasmedical.com/api/service-base-urls/"
 var veradigmURL = "https://open.platform.veradigm.com/fhirendpoints"
+var broadStreetURL = "https://broadstreetcare.com/docs"
+var officePracticumURL = "https://fhir-documentation.patientmedrecords.com/endpoints"
+var modernizingMedicineURL = "https://mm-fhir-endpoint-display.prod.fhir.ema-api.com/"
+var welligentURL = "https://fhir.qa.welligent.com/"
+var willowURL = "https://www.willowgladetechnologies.com/requirements"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -149,6 +151,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		Canvaswebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, AlteraURL) {
 		AlteraQuerier(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, modernizingMedicineURL) {
+		ModernizingMedicineQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, EpicURL) {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, MeditechURL) {
@@ -192,11 +196,9 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, firstInsightURL) {
 		FirstInsightBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, healthSamuraiURL) {
-		HealthSamuraiWebscraper(chplURL, fileToWriteTo)
+		HealthSamuraiWebscraper("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
 	} else if URLsEqual(chplURL, triarqURL) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, goldblattURL) {
-		BundleQuerierParser("https://fhir-test.csn.health/gs-fhir-domain-server/public-base-service-endpoints.json", fileToWriteTo)
 	} else if URLsEqual(chplURL, cyfluentURL) {
 		SwaggerUIWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, meridianURL) {
@@ -239,8 +241,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == emedpracticeURL {
 		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
-	} else if chplURL == modernizingmedicineURL {
-		ModernizingMedicineQuerier("qa.fhir.ema-api.com/fhir/r4/Endpoint?connection-type=hl7-fhir-rest", fileToWriteTo)
 	} else if chplURL == doc_torURL {
 		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
@@ -256,7 +256,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, universalEHRURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, welligentURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo)
+		BundleQuerierParser("https://fhir.qa.welligent.com/fhir/r4/endpoints", fileToWriteTo)
 	} else if URLsEqual(chplURL, astronautURL) {
 		CSVParser("https://astronautehr.com/wp-content/uploads/2022/12/Astronaut-fhir-base-urls.csv", fileToWriteTo, "./astronaut_fhir_base_urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, bestpracticesacademyURL) {
@@ -385,6 +385,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", 1, 0, true, 1, 0)
 	} else if URLsEqual(chplURL, canvasMedicalURL) {
 		CanvasMedicalURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, broadStreetURL) {
+		BroadStreetURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, officePracticumURL) {
+		OfficePracticumURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, willowURL) {
+		WillowQuerierParser("https://ccdoc.phn.care/service-base-urls", fileToWriteTo)
 	} else if URLsEqual(chplURL, veradigmURL) {
 		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
 	}

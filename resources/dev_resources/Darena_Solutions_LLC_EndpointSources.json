@@ -1,61 +1,61 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://api.meldrx.com/fhir/hmc-001",
+			"URL": "https://app.meldrx.com/api/fhir/hmc-001",
 			"OrganizationName": "Harbor - UCLA Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/bridgeview_medical_systems",
+			"URL": "https://app.meldrx.com/api/fhir/bridgeview_medical_systems",
 			"OrganizationName": "Professional Imaging, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/asheville",
+			"URL": "https://app.meldrx.com/api/fhir/asheville",
 			"OrganizationName": "Asheville Eye Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/readeyecenter",
+			"URL": "https://app.meldrx.com/api/fhir/readeyecenter",
 			"OrganizationName": "Read Eye",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/eyeandface",
+			"URL": "https://app.meldrx.com/api/fhir/eyeandface",
 			"OrganizationName": "EYE AND FACE LLC - David Leventer",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/fhs",
+			"URL": "https://app.meldrx.com/api/fhir/fhs",
 			"OrganizationName": "Fagadau, Hawk \u0026 Swanson, MD LLP",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/gcny",
+			"URL": "https://app.meldrx.com/api/fhir/gcny",
 			"OrganizationName": "Glaucoma Consultants of NY",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/moran",
+			"URL": "https://app.meldrx.com/api/fhir/moran",
 			"OrganizationName": "Moran",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/aves",
+			"URL": "https://app.meldrx.com/api/fhir/aves",
 			"OrganizationName": "AVES - ANew Vision Eye Specialists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://api.meldrx.com/fhir/ohioeye",
+			"URL": "https://app.meldrx.com/api/fhir/ohioeye",
 			"OrganizationName": "Ohio Eye Alliance",
 			"NPIID": "",
 			"OrganizationZipCode": ""

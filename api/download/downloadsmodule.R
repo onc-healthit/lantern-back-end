@@ -53,5 +53,5 @@ download_data <- function(db_tables) {
     rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
     rename(created_at = info_created, updated = info_updated) %>%
     rename(http_response_time_second = response_time_seconds)
-  write.csv(csvdata, file, row.names = FALSE)
+  #write.csv(csvdata, file, row.names = FALSE)
 }

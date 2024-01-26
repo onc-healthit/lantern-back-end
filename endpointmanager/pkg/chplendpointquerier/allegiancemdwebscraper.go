@@ -1,11 +1,10 @@
 package chplendpointquerier
 
 import (
-	"strings"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func AllegianceMDWebscraper(chplURL string, fileToWriteTo string) {
@@ -18,7 +17,6 @@ func AllegianceMDWebscraper(chplURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	doc.Each(func(index int, pElem *goquery.Selection) {
 		aElem := pElem.Find("a").First()
 		hrefText, exists := aElem.Attr("href")

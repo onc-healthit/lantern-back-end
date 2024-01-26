@@ -112,7 +112,8 @@ func main() {
 		var chplJSON CHPLEndpointList
 		err = json.Unmarshal(respBody, &chplJSON)
 		if err != nil {
-			log.Fatal(err)
+			//log.Fatal(err)
+			continue
 		}
 
 		if savedEntries >= chplJSON.RecordCount {

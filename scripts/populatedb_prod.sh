@@ -22,20 +22,20 @@ rm -f *fileheader.csv
 rm -f temp.zip
 rm -f npidata_pfile2.csv
 
-echo "Downloading ${MONTH} NPPES Resources..."
-curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE}
-echo "Extracting endpoint and npidata files from NPPES zip file..."
-unzip -q temp.zip endpoint_pfile\*.csv
-unzip -q temp.zip npidata_pfile\*.csv
-rm -f *fileheader.csv
-mv -f endpoint_pfile*.csv endpoint_pfile.csv
-mv -f npidata_pfile*.csv npidata_pfile.csv
-rm -f temp.zip
+#echo "Downloading ${MONTH} NPPES Resources..."
+#curl -s -f -o temp.zip ${NPPESFILE} || echo "${MONTH} NPPES Resources not available, downloading ${PASTMONTH} NPPES Resources..." && curl -s -o temp.zip ${PASTNPPESFILE}
+#echo "Extracting endpoint and npidata files from NPPES zip file..."
+#unzip -q temp.zip endpoint_pfile\*.csv
+#unzip -q temp.zip npidata_pfile\*.csv
+#rm -f *fileheader.csv
+#mv -f endpoint_pfile*.csv endpoint_pfile.csv
+#mv -f npidata_pfile*.csv npidata_pfile.csv
+#rm -f temp.zip
 
-echo "Removing all entries from npidata_pfile that are not Entity Type 2 (Organization)..."
-sed -E '/^[^,]*,[^,]*(\"1\"|\"\")/d' npidata_pfile.csv > npidata_pfile2.csv
-rm -f npidata_pfile.csv
-mv -f npidata_pfile2.csv npidata_pfile.csv
+#echo "Removing all entries from npidata_pfile that are not Entity Type 2 (Organization)..."
+#sed -E '/^[^,]*,[^,]*(\"1\"|\"\")/d' npidata_pfile.csv > npidata_pfile2.csv
+#rm -f npidata_pfile.csv
+#mv -f npidata_pfile2.csv npidata_pfile.csv
 
 echo "Populating db with endpoint and NPPES information..."
 cd ../../scripts

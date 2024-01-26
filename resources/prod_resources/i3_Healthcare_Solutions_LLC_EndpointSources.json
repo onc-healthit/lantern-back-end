@@ -1,0 +1,58 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.assa",
+			"OrganizationName": "Advanced Southern Surgical ASSA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.bourque",
+			"OrganizationName": "Daniel R. Bourque, M.D., APMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.efm",
+			"OrganizationName": "Edwards Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.fammedpc",
+			"OrganizationName": "Family Medicine, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.lhc",
+			"OrganizationName": "Louisiana Heart Center ** LHC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.noim",
+			"OrganizationName": "North Oaks Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.degeyter",
+			"OrganizationName": "Roland J. Degeyter, M.D., APMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.welshfamily",
+			"OrganizationName": "The Clinic of Welsh",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/oauth/imed.vsc",
+			"OrganizationName": "Vascular Specialty C VSC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
