@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.cozeva.com/4_0_0",
+			"OrganizationName": "Cozeva",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

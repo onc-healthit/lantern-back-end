@@ -33,7 +33,6 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 		if numrecords >= 0 && records >= numrecords+startrecord {
 			break
 		}
-
 		if records >= startrecord {
 			var entry LanternEntry
 

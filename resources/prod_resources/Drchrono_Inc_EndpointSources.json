@@ -1115,6 +1115,24 @@
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_244692/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_496046/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/drchrono/drchrono_495929/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

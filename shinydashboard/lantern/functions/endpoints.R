@@ -4,6 +4,8 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times # nolint
 library(lubridate)
 
+timer <- reactiveTimer(1440 * 60 * 1000)
+
 # Get the Endpoint export table and clean up for UI
 get_endpoint_export_tbl <- function(db_tables) {
 
@@ -926,73 +928,54 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 }
 
 database_fetcher <- reactive({
-
+  timer()
+  start_time <- Sys.time()
+  message("database_fetcher ***************************************")
   app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables))
-
-  app_data$response_tally(get_response_tally_list(db_tables))
-
-  app_data$http_pct(get_http_response_summary_tbl(db_tables))
-
   app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl()))
-
+  app_data$response_tally(get_response_tally_list(db_tables))
+  app_data$http_pct(get_http_response_summary_tbl(db_tables))
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
-
   app_data$capstat_fields(get_capstat_fields(db_connection))
-
   app_data$supported_profiles(get_supported_profiles(db_connection))
-
-  app_data$capstat_values(get_capstat_values(db_connection))
-
   app_data$last_updated(now("UTC"))
-
   app_data$security_endpoints(get_security_endpoints(db_connection))
-
   app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection))
-
   app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints())))
-
   app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code))
-
   app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection))
-
   app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection))
-
   app_data$contact_info_tbl(get_contact_information(db_connection))
-
   app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection))
-
   app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection))
-
   app_data$implementation_guide(get_implementation_guide(db_connection))
-
   app_data$endpoint_locations(get_endpoint_locations(db_connection))
-
   app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection))
-
   app_data$validation_tbl(get_validation_results(db_connection))
-
+  end_time <- Sys.time()
+  time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
+  message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")
+  database_fetch(0)
 })
 
 app_fetcher <- reactive({
-
+  timer()
+  message("app_fetcher ***************************************")
+  start_time <- Sys.time()
   app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables))
-
   app$fhir_version_list_no_capstat(get_fhir_version_list(app$endpoint_export_tbl(), TRUE))
-
   app$fhir_version_list(get_fhir_version_list(app$endpoint_export_tbl(), FALSE))
-
   app$distinct_fhir_version_list_no_capstat(get_distinct_fhir_version_list_no_capstat(app$endpoint_export_tbl()))
-
   app$distinct_fhir_version_list(get_distinct_fhir_version_list(app$endpoint_export_tbl()))
-
   app$vendor_list(get_vendor_list(app$endpoint_export_tbl()))
-
   app$http_response_code_tbl(
     read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
     mutate(code_chr = as.character(code))
   )
-
   app$zip_to_zcta(read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c")))
+  end_time <- Sys.time()
+  time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
+  message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")
 })

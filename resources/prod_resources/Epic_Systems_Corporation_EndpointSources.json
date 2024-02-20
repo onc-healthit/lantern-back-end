@@ -97,13 +97,13 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://EpicFHIR.aurora.org/FHIR/LiveWell/api/FHIR/DSTU2/",
+			"URL": "https://EpicFHIR.aurora.org/fhirproxy/LiveWell/api/FHIR/DSTU2/",
 			"OrganizationName": "Aurora Health Care - LiveWell",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://EpicFHIR.aurora.org/FHIR/MYBAYCARE/api/FHIR/DSTU2/",
+			"URL": "https://EpicFHIR.aurora.org/fhirproxy/MYBAYCARE/api/FHIR/DSTU2/",
 			"OrganizationName": "BayCare Clinic - myBayCare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -955,7 +955,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://webproxy.mynovant.org/fhir-prd/api/FHIR/DSTU2/",
+			"URL": "https://epicproxy.et0798.epichosted.com/APIProxyPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "Novant Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -1771,12 +1771,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://meritus-rev-prd.meritushealth.com/FHIRPRD/api/FHIR/DSTU2/",
-			"OrganizationName": "Meritus",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://epicproxy.et1073.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Englewood Hospital and Medical Center",
 			"NPIID": "",
@@ -1923,12 +1917,6 @@
 		{
 			"URL": "https://epicproxy.et1164.epichosted.com/FHIRproxy/api/FHIR/DSTU2/",
 			"OrganizationName": "CommUnityCare Health Centers",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://rproxy.novohtg.com/OAUTHPRD/api/FHIR/DSTU2/",
-			"OrganizationName": "NOVO Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2138,7 +2126,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1034.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
-			"OrganizationName": "Enloe Medical Center",
+			"OrganizationName": "Enloe Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2791,8 +2779,86 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1339.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Woman's",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1062.epichosted.com/FHIRProxyPRD/api/FHIR/DSTU2/",
+			"OrganizationName": "Meritus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicscripts.trihealth.com/fhirproxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Highland District Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "West Bend Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Cascade Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Caldera Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Dr. Burket's Office",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "East Cascades Women's Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Fall Creek Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Pine Springs Health Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Ritual Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1275.epichosted.com/fhirproxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Sharp HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/R4/",
 			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Ritual Medical",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2935,7 +3001,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://EpicFHIR.aurora.org/FHIR/MYBAYCARE/api/FHIR/R4/",
+			"URL": "https://EpicFHIR.aurora.org/fhirproxy/MYBAYCARE/api/FHIR/R4/",
 			"OrganizationName": "BayCare Clinic - myBayCare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -2979,6 +3045,12 @@
 		{
 			"URL": "https://epicscripts.trihealth.com/fhirproxy/api/FHIR/R4/",
 			"OrganizationName": "TriHealth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicscripts.trihealth.com/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Highland District Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3925,7 +3997,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://webproxy.mynovant.org/fhir-prd/api/FHIR/R4/",
+			"URL": "https://epicproxy.et0798.epichosted.com/APIProxyPRD/api/FHIR/R4/",
 			"OrganizationName": "Novant Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -4904,7 +4976,7 @@
 		},
 		{
 			"URL": "https://epicproxy.et1034.epichosted.com/FHIRProxy/api/FHIR/R4/",
-			"OrganizationName": "Enloe Medical Center",
+			"OrganizationName": "Enloe Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5311,6 +5383,48 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "West Bend Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Cascade Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Caldera Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Dr. Burket's Office",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "East Cascades Women's Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Fall Creek Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Pine Springs Health Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1221.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Muscogee - Creek Nation Department of Health",
 			"NPIID": "",
@@ -5443,6 +5557,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1275.epichosted.com/fhirproxy/api/FHIR/R4/",
+			"OrganizationName": "Sharp HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api.valleyhealth.org/fhirproxy/api/FHIR/R4/",
 			"OrganizationName": "Valley Health Systems",
 			"NPIID": "",
@@ -5523,6 +5643,12 @@
 		{
 			"URL": "https://epicproxy.et1336.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Hamilton Health Care System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1339.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Woman's",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

@@ -1,0 +1,58 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhithealth/practicetwo/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/tenant01/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/tenant02/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/tenant03/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/ifiit/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/crossfhirtt1/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/crossfhirtt2/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/practice001/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/dhit/kno2/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

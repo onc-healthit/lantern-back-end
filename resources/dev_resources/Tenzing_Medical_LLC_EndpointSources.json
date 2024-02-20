@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/01ho/r4",
+			"URL": "https://orovillehospital.api.dev.bridgepatientportal.com/fhir/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

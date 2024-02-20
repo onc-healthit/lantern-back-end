@@ -9,6 +9,7 @@ library(dygraphs)
 function(input, output, session) { #nolint
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
+    message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
     if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
@@ -19,7 +20,9 @@ function(input, output, session) { #nolint
   }, priority = 100)
 
   observeEvent(database_fetch, {
+    message(sprintf("I am in observe event *********************************** %s", database_fetch()))
     if (database_fetch() == 1) {
+      message("I am inside observe event ***********************************")
       show_modal_spinner(
         spin = "double-bounce",
         color = "#112446",

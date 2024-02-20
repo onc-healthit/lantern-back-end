@@ -1,7 +1,7 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://fhirjuno-prod-web.dssinc.com/fhir/communityhealthhospitals/01ho/r4",
+			"URL": "https://dssjuno-dev-web.dssinc.com/fhir/dss/01ho/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

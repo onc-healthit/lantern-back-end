@@ -1,11 +1,11 @@
 package chplendpointquerier
 
 import (
-	"fmt"
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 func BridgePatientPortalWebscraper(chplURL string, fileToWriteTo string) {
@@ -17,7 +17,6 @@ func BridgePatientPortalWebscraper(chplURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(doc.Html())
 	fhirEndpointsHeaderElem := doc.Find("#introduction/fhir-bridge-patient-portal/fhir-endpoints")
 	if fhirEndpointsHeaderElem.Length() > 0 {
 		spanElem := fhirEndpointsHeaderElem.Eq(0).Next()

@@ -1525,6 +1525,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://mrhmeapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Millinocket Reg Hosp POD 006 10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mrtx-mapilive.primehealthcare.com:443/v2/argonaut/v1",
 			"OrganizationName": "Mission Regional Medical Center-C/S",
 			"NPIID": "",
@@ -1563,6 +1569,12 @@
 		{
 			"URL": "https://mtrestapis-live02.montrosehospital.com:443/v2/argonaut/v1",
 			"OrganizationName": "Montrose Regional Health - C/S",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mchdapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Moore Cnty Hosp District MaaS Pod 011 10",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2589,6 +2601,12 @@
 		{
 			"URL": "https://mtrestapis-live01.urmc.org:443/v2/argonaut/v1",
 			"OrganizationName": "Upson Reg Med Ctr Expanse (Hosted by OpSus)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mtrestapis-live-uvm.teknicorhosting.com:443/v2/argonaut/v1",
+			"OrganizationName": "Uvalde Memorial Hosp 6.x Migration (Hosted by Teknicor)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4267,6 +4285,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://mrhmeapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Millinocket Reg Hosp POD 006 10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mrtx-mapilive.primehealthcare.com:443/v1/uscore/R4",
 			"OrganizationName": "Mission Regional Medical Center-C/S",
 			"NPIID": "",
@@ -4305,6 +4329,12 @@
 		{
 			"URL": "https://mtrestapis-live02.montrosehospital.com:443/v1/uscore/R4",
 			"OrganizationName": "Montrose Regional Health - C/S",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mchdapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Moore Cnty Hosp District MaaS Pod 011 10",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5331,6 +5361,12 @@
 		{
 			"URL": "https://mtrestapis-live01.urmc.org:443/v1/uscore/R4",
 			"OrganizationName": "Upson Reg Med Ctr Expanse (Hosted by OpSus)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mtrestapis-live-uvm.teknicorhosting.com:443/v1/uscore/R4",
+			"OrganizationName": "Uvalde Memorial Hosp 6.x Migration (Hosted by Teknicor)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

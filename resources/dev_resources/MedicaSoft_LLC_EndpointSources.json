@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://r4cert.medicasoft.us/api/fhir",
+			"OrganizationName": "MedicaSoft Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
