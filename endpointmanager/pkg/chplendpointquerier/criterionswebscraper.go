@@ -23,10 +23,6 @@ func CriterionsWebscraper(CHPLURL string, fileToWriteTo string) {
 			organization := parts[0]
 			url := "https://" + parts[1]
 
-			if strings.HasSuffix(organization, "-") {
-				organization = strings.TrimSuffix(organization, "-")
-			}
-
 			var entry LanternEntry
 
 			entry.URL = strings.TrimSpace(url)
