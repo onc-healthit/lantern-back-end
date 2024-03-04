@@ -12,15 +12,15 @@ func TenzingURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-	doc, err := helpers.ChromedpQueryEndpointList(chplURL, "main")
+
+	doc, err := helpers.ChromedpQueryEndpointList(chplURL, ".humanColumnApiDescription.markdown.formalTheme")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fhirEndpointsHeaderElem := doc.Find("#introduction/terms-and-conditions/fhir-endpoints")
+	fhirEndpointsHeaderElem := doc.Find(".humanColumnApiDescription.markdown.formalTheme")
 	if fhirEndpointsHeaderElem.Length() > 0 {
-		spanElem := fhirEndpointsHeaderElem.Eq(0).Next()
-		spanElem.Find("ul").Each(func(index int, ulElems *goquery.Selection) {
+		fhirEndpointsHeaderElem.Find("ul").Each(func(index int, ulElems *goquery.Selection) {
 			ulElems.Find("li").Each(func(index int, liElems *goquery.Selection) {
 				liElems.Find("p").Each(func(index int, pElems *goquery.Selection) {
 					if strings.HasPrefix(pElems.Text(), "FHIR ") {

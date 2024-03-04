@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api",
+			"OrganizationName": "Demo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

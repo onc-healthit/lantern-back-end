@@ -1,6 +1,12 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/ed6a665c-b100-4cee-b23d-6197c0e9c9ee",
+			"OrganizationName": "AHS Vista Health System - East",
+			"NPIID": "1992856819",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/0ddc7794-d4a3-4d17-a674-9187af28aea6",
 			"OrganizationName": "ANTELOPE MEMORIAL HOSPITAL",
 			"NPIID": "1083790893",
@@ -307,12 +313,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/6dfcc510-ec10-4e48-b212-92db24d64256",
-			"OrganizationName": "Helena Regional Medical Center",
-			"NPIID": "1154392090",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/f25a1e6a-ed78-4641-a1c6-fcebfa80bf1b",
 			"OrganizationName": "Holdenville General Hospital",
 			"NPIID": "1265851455",
@@ -326,7 +326,7 @@
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/48677b2b-5c2a-49f5-9750-c55785639ac4",
-			"OrganizationName": "IIP03 0048",
+			"OrganizationName": "IIP03 0048 - HealthHub Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -661,6 +661,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/6dfcc510-ec10-4e48-b212-92db24d64256",
+			"OrganizationName": "Progressive Health of Helena",
+			"NPIID": "1154392090",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/f327cec7-4de5-4375-82d1-b7722f053133",
 			"OrganizationName": "Quitman Community Hospital",
 			"NPIID": "1386178721",
@@ -796,12 +802,6 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/8b4264db-d3d6-476a-bd7d-a1ab7c437244",
 			"OrganizationName": "Valley View Medical Center",
 			"NPIID": "1780761866",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/ed6a665c-b100-4cee-b23d-6197c0e9c9ee",
-			"OrganizationName": "Vista Health System - East",
-			"NPIID": "1992856819",
 			"OrganizationZipCode": ""
 		},
 		{

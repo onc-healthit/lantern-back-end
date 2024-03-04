@@ -1459,6 +1459,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Open",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/open",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Fhir",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhirprod.wyckoffhospital.org/R2/open",
 			"OrganizationName": "Wyckoff Heights Medical Center - WO01",
 			"NPIID": "",
@@ -2119,6 +2143,24 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/HCAPROD_36",
+			"OrganizationName": "HCAPROD_36",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/HCAPROD_36",
+			"OrganizationName": "HCAPROD_36",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.fhirpoint.open.allscripts.comfhir/HCAPROD_36",
+			"OrganizationName": "HCAPROD_36",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10155929",
 			"OrganizationName": "Health Alliance of the Hudson Valley",
 			"NPIID": "",
@@ -2247,18 +2289,6 @@
 		{
 			"URL": "https://fhir.hvhs.org/fhir",
 			"OrganizationName": "Heritage Valley Health System - HV01",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/HCAPROD_36",
-			"OrganizationName": "Hospital Corporation Of America",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/HCAPROD_36",
-			"OrganizationName": "Hospital Corporation Of America",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4057,6 +4087,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.we0.hos.allscriptscloud.com/open",
+			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-Prod",
 			"OrganizationName": "Wise - WE01",
 			"NPIID": "",
@@ -4065,36 +4119,6 @@
 		{
 			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/open-Prod",
 			"OrganizationName": "Wise - WE01",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/open-PROD",
-			"OrganizationName": "Wise Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/Fhir",
-			"OrganizationName": "Wise Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/R4/fhir-PROD",
-			"OrganizationName": "Wise Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/Open",
-			"OrganizationName": "Wise Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.we0.hos.allscriptscloud.com/FHIR",
-			"OrganizationName": "Wise Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

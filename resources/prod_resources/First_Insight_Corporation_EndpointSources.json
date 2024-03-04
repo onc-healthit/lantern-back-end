@@ -109,12 +109,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://visionhealthspecialties.ficintegrations.com/API/jXW7ST/R4",
-			"OrganizationName": "Vision Health Specialties",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://easternsierraoptometryca.ficintegrations.com/API/5k3sUI/R4",
 			"OrganizationName": "Drs Carter and Richman",
 			"NPIID": "",
@@ -2413,7 +2407,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "api/accuvision/R4",
+			"URL": "https://fhir.maximeyes.com/api/accuvision/R4",
 			"OrganizationName": "AccuVision Optometry",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -2661,12 +2655,6 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/pfe2020/R4",
 			"OrganizationName": "Perrysburg Family Eyecare",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.maximeyes.com/api/universityeye/R4",
-			"OrganizationName": "UNIVERSITY EYE ASSOCIATES, O.D., P.A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2985,6 +2973,102 @@
 		{
 			"URL": "https://fhir.maximeyes.com/api/siteforsoreeyesoakland/R4",
 			"OrganizationName": "Site For Sore Eyes Oakland",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drluu/R4",
+			"OrganizationName": "Pediatric Ophthalmology And Adult Strabismus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/familyeyecarecentre/R4",
+			"OrganizationName": "Family Eye Care Centre",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/cfvc/R4",
+			"OrganizationName": "Child and Family Vision Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/strattoneyes/R4",
+			"OrganizationName": "Dawn Stratton, O. D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/forsight/R4",
+			"OrganizationName": "Barker \u0026 Truong O.D., P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/judischvision/R4",
+			"OrganizationName": "Rock Vision Clinic PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drdawnluvaas/R4",
+			"OrganizationName": "Dr. Luvaas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/vhs/R4",
+			"OrganizationName": "Vision Health Specialties",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/murrietaoptometry/R4",
+			"OrganizationName": "Murrieta Optometry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/condev/R4",
+			"OrganizationName": "City Eyecare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/mfvc/R4",
+			"OrganizationName": "Montana Family Vision Care, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/eyemechanix/R4",
+			"OrganizationName": "Randall Ricketts OD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/drjonanders/R4",
+			"OrganizationName": "Dr. Jon Anders",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/hheye/R4",
+			"OrganizationName": "Hermann \u0026 Henry Eyecare, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/peninsulaeyecare/R4",
+			"OrganizationName": "Salinas Optometric Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.maximeyes.com/api/haqeye/R4",
+			"OrganizationName": "N.Haq M. D., P. A.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

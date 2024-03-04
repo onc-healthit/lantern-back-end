@@ -157,6 +157,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/3143/api/FHIR/R4",
+			"OrganizationName": "Care Pediatrics LLC NJ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/603/api/FHIR/R4",
 			"OrganizationName": "Caring Hands Pediatrics",
 			"NPIID": "",
@@ -1291,6 +1297,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/1272/api/FHIR/R4",
+			"OrganizationName": "Rainbow Pediatrics Inc WV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/1683/api/FHIR/R4",
 			"OrganizationName": "Raymond Kahn MD TX",
 			"NPIID": "",
@@ -1455,6 +1467,12 @@
 		{
 			"URL": "https://applications.op.healthcare/1918/api/FHIR/R4",
 			"OrganizationName": "Spring Hill Pediatric Care PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1978/api/FHIR/R4",
+			"OrganizationName": "Steel City Pediatrics PC CO",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

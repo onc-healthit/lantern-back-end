@@ -1,0 +1,70 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.lispinerehab",
+			"OrganizationName": "Long Island Spine Rehabilitation Medicine -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.simonson",
+			"OrganizationName": "Peter Simonson M.D. -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.futurepodiatrist",
+			"OrganizationName": "Future Podiatrist, PC -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.djaliman",
+			"OrganizationName": "Debra Jaliman M.D. -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.amb",
+			"OrganizationName": "AMB Medical Services -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.tribecaderm",
+			"OrganizationName": "Tribeca Park Dermatology -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.zambitohc",
+			"OrganizationName": "Zambito Heart -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.acc",
+			"OrganizationName": "Advanced Cardio Care  -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.englard",
+			"OrganizationName": "Arthur Englard M.D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.phyanesthesia",
+			"OrganizationName": "Physicians Anesthesia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.southbay",
+			"OrganizationName": "South Bay Medical Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

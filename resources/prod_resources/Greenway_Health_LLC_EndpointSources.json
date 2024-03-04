@@ -1,0 +1,3790 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1110",
+			"OrganizationName": "Alaska Urology, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.198",
+			"OrganizationName": "Complete Women's Care of Alabama,P.C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.146",
+			"OrganizationName": "Southern Head and Neck Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70784",
+			"OrganizationName": "Cheaha Area Regional Emergency Specialist, L.L.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1445",
+			"OrganizationName": "Anniston Orthopaedic Associates. PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.332764",
+			"OrganizationName": "Ernest L Hendrix MD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73790",
+			"OrganizationName": "Daily Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70200",
+			"OrganizationName": "Brookwood Internists PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1572",
+			"OrganizationName": "Southlake Orthopaedics Sports Medicine \u0026 Spine Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.433",
+			"OrganizationName": "Henderson \u0026 Walton Women's Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71381",
+			"OrganizationName": "Physician Business Solutions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1540",
+			"OrganizationName": "Alabama Urology \u0026 Robotic Center, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1720",
+			"OrganizationName": "Southern Clinic, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.37",
+			"OrganizationName": "Dothan Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.258",
+			"OrganizationName": "Retina Associates Of Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400211",
+			"OrganizationName": "Dr. Jeff Bush",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61325",
+			"OrganizationName": "Doctors' Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73326",
+			"OrganizationName": "Shah Clinic of NE Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73028",
+			"OrganizationName": "Iqbal Saeed MD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.113",
+			"OrganizationName": "Advanced Obstetrics \u0026 Gynecology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73288",
+			"OrganizationName": "Jackson Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60882",
+			"OrganizationName": "Frank H Rudeseal MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73098",
+			"OrganizationName": "Springhill Physician Practices",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1157",
+			"OrganizationName": "Pulmonary Associates of Mobile",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1262",
+			"OrganizationName": "Premier Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72922",
+			"OrganizationName": "Primary Care Internists of Montgomery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1390",
+			"OrganizationName": "Capital City Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.95002",
+			"OrganizationName": "Don Beach PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73220",
+			"OrganizationName": "PRIMARY CARE SRVC-BLOUNT LLC\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1696",
+			"OrganizationName": "Surgical Clinic, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.181001",
+			"OrganizationName": "East Alabama Orthopedics and Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.181011",
+			"OrganizationName": "East Alabama Psychiatric Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1842",
+			"OrganizationName": "Internal Medicine Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73310",
+			"OrganizationName": "James R Carpenter MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71711",
+			"OrganizationName": "Northeast Alabama Health Services, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73132",
+			"OrganizationName": "Huey R Kidd DO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.317",
+			"OrganizationName": "West Alabama Family Practice and Sports Medicine PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400329",
+			"OrganizationName": "Tuscaloosa Lung Sleep and Critical Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73349",
+			"OrganizationName": "William L. McColgan III, MD, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1426",
+			"OrganizationName": "Conway OB GYN Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1251",
+			"OrganizationName": "CONWAY WOMEN'S HEALTH CENTER, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.160002",
+			"OrganizationName": "Conway Outpatient Surgery Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.928",
+			"OrganizationName": "Pain Management \u0026 Rehabilitation Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73318",
+			"OrganizationName": "SUDESH BANAJI MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.243188",
+			"OrganizationName": "Advanced Spine and Pain Centers",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.459",
+			"OrganizationName": "J Harley Barrow Jr MD PLLC dba The Center for Women",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.532",
+			"OrganizationName": "North Central Arkansas Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73351",
+			"OrganizationName": "River Valley Primary Care, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1242",
+			"OrganizationName": "River Valley ENT Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71308",
+			"OrganizationName": "Family Medicine of White Hall, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.160004",
+			"OrganizationName": "White Hall Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60309",
+			"OrganizationName": "East Valley Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70190",
+			"OrganizationName": "Dr Lieber and Cloonan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72450",
+			"OrganizationName": "Foot and Ankle Clinics of Arizona",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61275",
+			"OrganizationName": "The Eye Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73156",
+			"OrganizationName": "East Flagstaff Family Medicine, Ltd.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60978",
+			"OrganizationName": "Arizona Asthma \u0026 Allergy Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71750",
+			"OrganizationName": "Arizona Pulmonary Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72850",
+			"OrganizationName": "ClearPath Family Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71921",
+			"OrganizationName": "Arizona Center for Chest Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71487",
+			"OrganizationName": "Paradise Valley Medical Clinic, Dr. Lakin",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70534",
+			"OrganizationName": "East Scottsdale Medical Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71692",
+			"OrganizationName": "Gibson Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1231",
+			"OrganizationName": "Scottsdale OBGYN Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72783",
+			"OrganizationName": "Pain Institute of Southern Arizona",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61209",
+			"OrganizationName": "Arizona Endovascular Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60342",
+			"OrganizationName": "Tucson Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.738",
+			"OrganizationName": "Copperstate obgyn Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70531",
+			"OrganizationName": "Chest \u0026 Critical Care Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73736",
+			"OrganizationName": "Bakersfield American Indian Health Project",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73477",
+			"OrganizationName": "MOUNTAIN VALLEYS HEALTH CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73178",
+			"OrganizationName": "Borrego Community Health Foundation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73523",
+			"OrganizationName": "The Achievable Foundation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61163",
+			"OrganizationName": "Spruce Multispecialty Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70839",
+			"OrganizationName": "Cardiovascular Consultants Heart Center, A Medical Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72096",
+			"OrganizationName": "Pam K Janda, M.D., Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70009",
+			"OrganizationName": "Valley Urology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.196850",
+			"OrganizationName": "Michael W. Gromis MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70734",
+			"OrganizationName": "Apex Cardiology Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60425",
+			"OrganizationName": "CHRISHARD MEDICAL GROUP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70041",
+			"OrganizationName": "Arthritis and Osteoporosis Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70102",
+			"OrganizationName": "Long Beach Gastroenterology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73195",
+			"OrganizationName": "Long Beach Internal Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73769",
+			"OrganizationName": "SoCal Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1022",
+			"OrganizationName": "Stanislaus Cardiology Nuclear, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61419",
+			"OrganizationName": "Temecula Valley Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72471",
+			"OrganizationName": "Napa Valley Family Medical Group, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72874",
+			"OrganizationName": "REGIONAL HEART CENTER CARDIOLOGY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.129401",
+			"OrganizationName": "Hayashi Medical Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1294",
+			"OrganizationName": "Associated Surgeons of San Luis Obispo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72800",
+			"OrganizationName": "RNC Medical Group, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.831804",
+			"OrganizationName": "Marvin Masada MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.164001",
+			"OrganizationName": "Jeffrey R Polito MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.164021",
+			"OrganizationName": "Santa Barbara Orthopaedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72816",
+			"OrganizationName": "Michael Komin, M.D., Medical Corportion",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73659",
+			"OrganizationName": "Lassen Indian Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70194",
+			"OrganizationName": "LOS ANGELES HEART SPECIALISTS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60370",
+			"OrganizationName": "Michael N. Rutman, DO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72283",
+			"OrganizationName": "Wilmington Community Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.200020",
+			"OrganizationName": "Basra Narinder",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.645",
+			"OrganizationName": "Colorado Springs Urological Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60012",
+			"OrganizationName": "Metro State University of Denver",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61114",
+			"OrganizationName": "Mountainland Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.150003",
+			"OrganizationName": "Dr. Gregory A. Hogle, D.O.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72219",
+			"OrganizationName": "Southwest Colorado Mental Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72586",
+			"OrganizationName": "SurgOne, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73776",
+			"OrganizationName": "Veros Clinical Services LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.508027",
+			"OrganizationName": "Pediatric Pathways",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1239",
+			"OrganizationName": "Colorado Arthritis Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71730",
+			"OrganizationName": "Glenwood Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70961",
+			"OrganizationName": "Parker Pediatrics and Adolescents",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1844",
+			"OrganizationName": "Connecticut Orthopaedic Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73317",
+			"OrganizationName": "Eastern Connecticut Foot Specialists PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72231",
+			"OrganizationName": "Orthopedic Surgical Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73000",
+			"OrganizationName": "US Vascular Management Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73735",
+			"OrganizationName": "New York Vascular Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73752",
+			"OrganizationName": "Aqeel M Siddiqui MD LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73751",
+			"OrganizationName": "Rhode Island Vascular Center LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70818",
+			"OrganizationName": "Valley Orthopaedic Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71598",
+			"OrganizationName": "Mansfield Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73129",
+			"OrganizationName": "Balanced Wellness Primary Care LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70969",
+			"OrganizationName": "StayWell Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70543",
+			"OrganizationName": "Pediatric Associates of CT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71115",
+			"OrganizationName": "Shoreline Allergy \u0026 Asthma",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72454",
+			"OrganizationName": "Foxhall Medicine, P.L.L.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1669",
+			"OrganizationName": "Fox Hall ObGyn Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73031",
+			"OrganizationName": "Eranga Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70725",
+			"OrganizationName": "D'Souza \u0026 Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73816",
+			"OrganizationName": "POINTE PRIMARY CARE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72127",
+			"OrganizationName": "Delaware Neurosurgical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61456",
+			"OrganizationName": "Associated Family Physicians of Boca Raton, P.L.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73774",
+			"OrganizationName": "Boca Raton Physicians PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.169006",
+			"OrganizationName": "Nicholas R. Breuer, M.D., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.747353",
+			"OrganizationName": "HeartCare Consultants, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1685",
+			"OrganizationName": "Manatee Cardiology Associates, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61104",
+			"OrganizationName": "Bay Area Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1528",
+			"OrganizationName": "West Coast Ear, Nose \u0026 Throat, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1109",
+			"OrganizationName": "Daytona Heart Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71765",
+			"OrganizationName": "Custom Medical Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72727",
+			"OrganizationName": "South Palm Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.860664",
+			"OrganizationName": "Gulf Urology of Englewood P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72535",
+			"OrganizationName": "Florida Center for Allergy \u0026 Asthma Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400286",
+			"OrganizationName": "Evergreen Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71588",
+			"OrganizationName": "Genesiscare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73262",
+			"OrganizationName": "The McGregor Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72324",
+			"OrganizationName": "Charles V. Klucka, DO, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.194011",
+			"OrganizationName": "Advanced Care Emergi-Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60552",
+			"OrganizationName": "Magnolia Medical Clinic, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72075",
+			"OrganizationName": "Roberta Giudice-Teller DPM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61408",
+			"OrganizationName": "RMA Properties",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71243",
+			"OrganizationName": "Internal Medicine of Miami Gardens, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71441",
+			"OrganizationName": "Center For Bone and Joint Disease",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72321",
+			"OrganizationName": "CTVSA Management LLC DBA Surgical Specialists of Ocala PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61191",
+			"OrganizationName": "Anderson, Robert MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72941",
+			"OrganizationName": "Spine Intervention Specialists LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72246",
+			"OrganizationName": "Lakeland Volunteers in Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72643",
+			"OrganizationName": "BREVARD NEPHROLOGY GROUP, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61137",
+			"OrganizationName": "Physicians Group of South Florida",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.736",
+			"OrganizationName": "Rub Pediatrics MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72373",
+			"OrganizationName": "Cardiology Associates Of Miami Beach",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71377",
+			"OrganizationName": "Wing Cardiology and Health, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72538",
+			"OrganizationName": "IDC OF VOLUSIA LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71631",
+			"OrganizationName": "PCCC of Volusia LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70590",
+			"OrganizationName": "Ocala Family Medical Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73244",
+			"OrganizationName": "Allergy and Asthma Care of Florida",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61565",
+			"OrganizationName": "MARION HEART CENTER PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1460",
+			"OrganizationName": "Ocala Kidney Group, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73554",
+			"OrganizationName": "West Orange Endocrinology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60143",
+			"OrganizationName": "Surgical Specialists of Central Florida Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.683093",
+			"OrganizationName": "CLAY INTERNAL MEDICINE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72241",
+			"OrganizationName": "The Surgical Group of Orlando",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61604",
+			"OrganizationName": "Michael M Gutierrez",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72742",
+			"OrganizationName": "zulma cintron, md",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60913",
+			"OrganizationName": "East Lake Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73339",
+			"OrganizationName": "Castillo \u0026 Torres MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73281",
+			"OrganizationName": "Emerald Coast Center for Neurological Disorders",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1357",
+			"OrganizationName": "Woodlands Medical Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71788",
+			"OrganizationName": "Specialist Doctor's Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73081",
+			"OrganizationName": "Aneley Hundae Port Charlotte Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72796",
+			"OrganizationName": "Charlotte Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72526",
+			"OrganizationName": "MIDISC, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70340",
+			"OrganizationName": "DR Medical Care, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70176",
+			"OrganizationName": "Suntree Medical Associates, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.133",
+			"OrganizationName": "Brevard Ear, Nose and Throat Center PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73052",
+			"OrganizationName": "Flagler Hospital, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73764",
+			"OrganizationName": "Harbour Island Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.694",
+			"OrganizationName": "Bay Surgical Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71276",
+			"OrganizationName": "SMH Physician Services Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70573",
+			"OrganizationName": "Aesculapian Mgmt dba Intercoastal Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71889",
+			"OrganizationName": "Negroski, Stein, Sutherland \u0026 Hanes",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73573",
+			"OrganizationName": "Heart and Vascular Center of Sarasota, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71720",
+			"OrganizationName": "Neurosurgery and Spine Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400385",
+			"OrganizationName": "Meyer Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71998",
+			"OrganizationName": "FLORIDA JOINT AND SPINE INSTITUTE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60407",
+			"OrganizationName": "Fabio Oliveros",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72257",
+			"OrganizationName": "North Florida Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70662",
+			"OrganizationName": "Drs. Rosario and Crespo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70677",
+			"OrganizationName": "AAIA Tampa Bay, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61399",
+			"OrganizationName": "Pediatric Pulmonary Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73258",
+			"OrganizationName": "landmark primary care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60862",
+			"OrganizationName": "Orthopaedic Center of Venice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72264",
+			"OrganizationName": "Ear, Nose, Throat and Sinus Center, P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1485",
+			"OrganizationName": "Surgical Associates of Venice \u0026 Englewood",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71320",
+			"OrganizationName": "Treasure Coast Community Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71182",
+			"OrganizationName": "Primed Billing LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71213",
+			"OrganizationName": "Winter Park Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70901",
+			"OrganizationName": "Intellisight",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61345",
+			"OrganizationName": "Florida Medical Clinic LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60371",
+			"OrganizationName": "Atlanta Cardiology Consultants, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.794",
+			"OrganizationName": "Urology Group of Athens, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73179",
+			"OrganizationName": "Georgia Infectious Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1269",
+			"OrganizationName": "Atlanta Clinical Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1107",
+			"OrganizationName": "Primary Care Physicians of Atlanta, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1858",
+			"OrganizationName": "Cardiology of Atlanta",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1749",
+			"OrganizationName": "Sandy Springs Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.396886",
+			"OrganizationName": "North Atlanta Kidney Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.756378",
+			"OrganizationName": "Augusta Pain Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1168",
+			"OrganizationName": "NORTH GEORGIA PAIN CLINIC, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1603",
+			"OrganizationName": "Carrollton Orthopaedic Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60964",
+			"OrganizationName": "Southeast Regional Pain Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.103",
+			"OrganizationName": "Wellness First PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61265",
+			"OrganizationName": "New Beginnings Comprehensive Women's Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70760",
+			"OrganizationName": "Southeastern Lung Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.422",
+			"OrganizationName": "CARDIOLOGY CENTER OF DALTON",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.401",
+			"OrganizationName": "Cornerstone Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71016",
+			"OrganizationName": "Atlanta Gyn and OB",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.525008",
+			"OrganizationName": "Diabetes and Endocrinology Associates P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400261",
+			"OrganizationName": "North Atlanta Endocrinology and Diabetes",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61054",
+			"OrganizationName": "George S. Stefanis, M.D.,P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70001",
+			"OrganizationName": "Smith-Lambert Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71675",
+			"OrganizationName": "Milledgeville OBGYN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1501",
+			"OrganizationName": "Lily Obgyn, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.153",
+			"OrganizationName": "Urological Associates of Savannah PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1047",
+			"OrganizationName": "Savannah Neurology Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.774191",
+			"OrganizationName": "Genesis Healthcare Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72215",
+			"OrganizationName": "Snellville Pediatrics P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71439",
+			"OrganizationName": "McDuffie Surgical Clinic, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73507",
+			"OrganizationName": "Centers for Pain Management of Georgia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71732",
+			"OrganizationName": "Guam SDA Clinic\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.511001",
+			"OrganizationName": "Hawaii Ear Clinic Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1469",
+			"OrganizationName": "Maui Cardiology Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.236",
+			"OrganizationName": "Wellendorf ENT, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72613",
+			"OrganizationName": "Advanced Spine and Rehab Center PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.756",
+			"OrganizationName": "OB-Gyn Associates PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1700",
+			"OrganizationName": "Dubuque Obstetrics and Gynecology, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72434",
+			"OrganizationName": "Medical Associates of Maquoketa PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1521",
+			"OrganizationName": "Ringgold County Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72558",
+			"OrganizationName": "Jordan Creek Family Medicine Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71113",
+			"OrganizationName": "Des Moines Orthopaedic Surgeons",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1701",
+			"OrganizationName": "West Des Moines Ob-Gyn Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72467",
+			"OrganizationName": "Coeur Obstetrics and Gynecology, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72489",
+			"OrganizationName": "Sandpoint Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61059",
+			"OrganizationName": "AMERICAS FAMILY MEDICAL CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60352",
+			"OrganizationName": "Michael J Cerny MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1576",
+			"OrganizationName": "Lake Shore Obstetrics \u0026 Gynecology LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.656256",
+			"OrganizationName": "Cardiothoracic Vascular Surgeons",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71577",
+			"OrganizationName": "Rheumatic Disease Center Physicians, S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400209",
+			"OrganizationName": "North Shore Consultants in OB GYN, SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71952",
+			"OrganizationName": "Neurology of Southern Illinois",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1454",
+			"OrganizationName": "Southern Illinois Ob-Gyn Associates, S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72775",
+			"OrganizationName": "Medical Arts Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61286",
+			"OrganizationName": "IMA/JCH Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72646",
+			"OrganizationName": "Gastroenterology Consultants of the north shore",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70987",
+			"OrganizationName": "Regency Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61178",
+			"OrganizationName": "Lake Barrington Womens Health Ctr",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1147",
+			"OrganizationName": "Obgyne Associates of libertyville",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.70301",
+			"OrganizationName": "Providea Health Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72044",
+			"OrganizationName": "Orthopedics of Illinois",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73789",
+			"OrganizationName": "Pramern Sriratana MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.693",
+			"OrganizationName": "Dr. Thornton and Haas MD SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70600",
+			"OrganizationName": "Roseann Brady, D.O., S.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73667",
+			"OrganizationName": "Illinois Surgical Specialists, LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1570",
+			"OrganizationName": "Suburban Ear Nose \u0026 Throat Assoc., Ltd.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73063",
+			"OrganizationName": "Johnson Dermatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72551",
+			"OrganizationName": "Fox Valley Ent Assoc\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71086",
+			"OrganizationName": "LAKE COUNTY NEUROLOGICAL ASSOCIATES, LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71526",
+			"OrganizationName": "Central Indiana Neurology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400335",
+			"OrganizationName": "Midwest Colon and Rectal Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70317",
+			"OrganizationName": "Southern Indiana Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72103",
+			"OrganizationName": "Elwood Family Medicine, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71249",
+			"OrganizationName": "Evansville Surgical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72187",
+			"OrganizationName": "Allen County Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.576",
+			"OrganizationName": "Associated Surgeons and Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72532",
+			"OrganizationName": "Gerig Surgical Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400139",
+			"OrganizationName": "Weng Peng, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71563",
+			"OrganizationName": "Midwest Ear Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400212",
+			"OrganizationName": "David B. Ensley, MD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1753",
+			"OrganizationName": "Josephson-Wallack-Munshower Neurology, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72402",
+			"OrganizationName": "Esguerra Medical Practice, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.475963",
+			"OrganizationName": "Centers for Neurological Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70617",
+			"OrganizationName": "Misawaka Orthopedics and Sports Medicine, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71316",
+			"OrganizationName": "Dianna L Andrews MD LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.930",
+			"OrganizationName": "Labette Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70793",
+			"OrganizationName": "Advanced Pain Medicine Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72412",
+			"OrganizationName": "Bellefonte Medical Center, Inc.\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61385",
+			"OrganizationName": "Leitchfield Pediatric Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61440",
+			"OrganizationName": "Bluegrass Orthopaedics, PSC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.523",
+			"OrganizationName": "Kentucky Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72407",
+			"OrganizationName": "Ellis \u0026 Badenhausen",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61141",
+			"OrganizationName": "Pain Management Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73379",
+			"OrganizationName": "LDH/OPH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1473",
+			"OrganizationName": "ENT LA MSO, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.145002",
+			"OrganizationName": "Schultis, Landry, and Guillory, L.L.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73089",
+			"OrganizationName": "Houma Orthopedic Clinic (A Medical Corporation)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71135",
+			"OrganizationName": "North La Orthopaedic \u0026 Sports Medicine Clinic, AMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71800",
+			"OrganizationName": "Allen's Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71614",
+			"OrganizationName": "Green Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73006",
+			"OrganizationName": "St Gabriel Health Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1594",
+			"OrganizationName": "Ear, Nose \u0026 Throat Center, AMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1077",
+			"OrganizationName": "OBG-1 of West Calcasieu Cameron Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73230",
+			"OrganizationName": "Franklin Foot Care, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61387",
+			"OrganizationName": "Cape Cod Surgical Associates Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60885",
+			"OrganizationName": "Pioneer Valley Urology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72197",
+			"OrganizationName": "Rheumatology associates PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.782690",
+			"OrganizationName": "Sorrell Neurology Services INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1020",
+			"OrganizationName": "Valley Women's Health Group, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.302",
+			"OrganizationName": "ENT for Children",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72272",
+			"OrganizationName": "M. Slutsky \u0026 Assoc., Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.931",
+			"OrganizationName": "The Heart Center of Northern Anne Arundel County, P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61371",
+			"OrganizationName": "Joann Urquhart, M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.608025",
+			"OrganizationName": "Maryland Medical Group, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.519005",
+			"OrganizationName": "Montgomery Medical Associates, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1830",
+			"OrganizationName": "Great Lakes Surgical Associates, Jeffrey Smith MD, PC DBA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60845",
+			"OrganizationName": "Generations OBGYN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1697",
+			"OrganizationName": "Glendale Neurological Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.947185",
+			"OrganizationName": "Flint OB/GYN",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.730",
+			"OrganizationName": "Michigan Healthcare Professionals dba Preferred Women's Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70282",
+			"OrganizationName": "Internal Medicine of West Michigan,PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1003",
+			"OrganizationName": "Urology Associates of Grand Rapids PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1672",
+			"OrganizationName": "Pediatric Ophthalmology PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71454",
+			"OrganizationName": "Hillsdale Medical Associates, PLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400051",
+			"OrganizationName": "BlueWater Medical Management",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72936",
+			"OrganizationName": "Saginaw Chippewa Indian Tribe",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.521003",
+			"OrganizationName": "Anchor Bay Clinic Family Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.821531",
+			"OrganizationName": "Great Lakes Ear Nose \u0026 Throat Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71580",
+			"OrganizationName": "John Mullally MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73173",
+			"OrganizationName": "Trestlewood Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73294",
+			"OrganizationName": "Contemporary Obstetrics \u0026 Gynecology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1281",
+			"OrganizationName": "Colon Rectal Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.521004",
+			"OrganizationName": "Advanced Cardiology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1621",
+			"OrganizationName": "St Clair Orthopaedics \u0026 Sports Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61308",
+			"OrganizationName": "Munson Healthcare OMH Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.20604",
+			"OrganizationName": "Michigan Adult \u0026 Child Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72615",
+			"OrganizationName": "Lac Vieux Desert Band of Lake Superior Chippewa Indians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71078",
+			"OrganizationName": "Labonte Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.523001",
+			"OrganizationName": "Lintecum \u0026 Nickell PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73660",
+			"OrganizationName": "AT Still University Clinics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73033",
+			"OrganizationName": "St. Peters Bone \u0026 Joint Surgery, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400393",
+			"OrganizationName": "Platte County Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71486",
+			"OrganizationName": "Feet For Life Centers Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73319",
+			"OrganizationName": "Brookhaven Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.853",
+			"OrganizationName": "Brookhaven Surgery Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.907",
+			"OrganizationName": "Brookhaven OBGYN Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71829",
+			"OrganizationName": "Columbus UROLOGY GROUP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71723",
+			"OrganizationName": "Jackson Healthcare for Women PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72806",
+			"OrganizationName": "NewSouth NeuroSpine LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72861",
+			"OrganizationName": "Greenwood Comprehensive Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.323",
+			"OrganizationName": "Jackson Pulmonary Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.187",
+			"OrganizationName": "The Womans Clinic of Mississippi PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.782",
+			"OrganizationName": "Comprehensive Pain Center of Mississippi",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73623",
+			"OrganizationName": "Internal Medicine Clinic PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.95004",
+			"OrganizationName": "Oxford Clinc for Women",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72336",
+			"OrganizationName": "MRMC, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1628",
+			"OrganizationName": "Bienville Orthopaedic Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71897",
+			"OrganizationName": "Carolina Nuclear Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70549",
+			"OrganizationName": "alliance medical associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73144",
+			"OrganizationName": "David P Adams MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109001",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109002",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109003",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109004",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109005",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109006",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.10900601",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109007",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109009",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109010",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.109011",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.172",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.585",
+			"OrganizationName": "Hugh Chatham Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61582",
+			"OrganizationName": "Gastonia Medical Specialty Clinic PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72973",
+			"OrganizationName": "Urgent Care of Mountain View",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73177",
+			"OrganizationName": "Burke Primary Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400300",
+			"OrganizationName": "Walters Surgical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.123401",
+			"OrganizationName": "HORMOZE A GOUDARZI MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73377",
+			"OrganizationName": "Columbus Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.511182",
+			"OrganizationName": "Columbus Women's Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.105015",
+			"OrganizationName": "Columbus Community Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70999",
+			"OrganizationName": "MD West One",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73374",
+			"OrganizationName": "Foot Care Center PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400353",
+			"OrganizationName": "Fremont Neurology LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71731",
+			"OrganizationName": "Family Practice of Grand Island P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73360",
+			"OrganizationName": "Family Medical Center of Hastings",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71068",
+			"OrganizationName": "Alivation Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71581",
+			"OrganizationName": "Nebraska Spine Center LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400455",
+			"OrganizationName": "Arbor Heights Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.528002",
+			"OrganizationName": "Prairie Creek Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72809",
+			"OrganizationName": "Atlantic Digestive Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.135003",
+			"OrganizationName": "Dominick Condo, MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400180",
+			"OrganizationName": "Patrick F. Saulino, MD, LLC\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71163",
+			"OrganizationName": "Internal Medicine Associates, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72983",
+			"OrganizationName": "OSBORN FAMILY HEALTH CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1039",
+			"OrganizationName": "Medemerge Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71493",
+			"OrganizationName": "Eatontown Medical Associates PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61626",
+			"OrganizationName": "The Neuroscience Center of Northern NJ, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60912",
+			"OrganizationName": "Tri-County Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71422",
+			"OrganizationName": "shore heart group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.351",
+			"OrganizationName": "shore pulmonary",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400381",
+			"OrganizationName": "C DICOVSKY MEDICAL GROUP LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61566",
+			"OrganizationName": "MAZZUCA EYE AND LASER CENTERS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.917139",
+			"OrganizationName": "DR Mascarenhas Cardiology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72190",
+			"OrganizationName": "Randolph Medical \u0026 Renal Associates P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71872",
+			"OrganizationName": "Integrated Medicine Alliance",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1190",
+			"OrganizationName": "Jersey Urology Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70885",
+			"OrganizationName": "Ocean Pulmonary Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61585",
+			"OrganizationName": "CG Healthcare Sollutions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400435",
+			"OrganizationName": "Atlantic ENT Associates P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.762",
+			"OrganizationName": "Hamilton Cardiology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.135001",
+			"OrganizationName": "Firstcare Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.7102002",
+			"OrganizationName": "Cumberland Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70698",
+			"OrganizationName": "Comprehensive Cancer and Hematology Specialist, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70795",
+			"OrganizationName": "El Pueblo Health Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72546",
+			"OrganizationName": "Four Corners Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400453",
+			"OrganizationName": "Family Medicine Partners of Santa Fe, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70244",
+			"OrganizationName": "CLINICAL NEUROLOGY SPECIALISTS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71601",
+			"OrganizationName": "Box Canyon Primary Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72761",
+			"OrganizationName": "Kittusamy LLP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70084",
+			"OrganizationName": "Luis L Diaz MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72343",
+			"OrganizationName": "HEART CENTER OF NEVADA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71924",
+			"OrganizationName": "Reno Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71246",
+			"OrganizationName": "Sierra Nevada Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61246",
+			"OrganizationName": "Albany Gastroenterology Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71355",
+			"OrganizationName": "Mathew T Chengot MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71506",
+			"OrganizationName": "Sarita K. Dorschug D.O., P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400085",
+			"OrganizationName": "Klapper \u0026 Deluca Pulmonary Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70206",
+			"OrganizationName": "Family Medicine of Carthage, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70791",
+			"OrganizationName": "GI Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1542",
+			"OrganizationName": "Crossbay Medical Services PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61635",
+			"OrganizationName": "Orthopedic Spine Care of Long Island",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71482",
+			"OrganizationName": "Mt Vernon Neighborhood Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61756",
+			"OrganizationName": "Physicians Pain Treatment Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72769",
+			"OrganizationName": "Morgenstern-Bonheur Medical Group PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70653",
+			"OrganizationName": "Paul L Schulster MDPC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72152",
+			"OrganizationName": "Nathan W. Keever",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61780",
+			"OrganizationName": "ConnextCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72339",
+			"OrganizationName": "Maria Lourdes S. Alcasid-Escano MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71168",
+			"OrganizationName": "Decerina Uy MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400400",
+			"OrganizationName": "Brij Sharma Physician PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.722",
+			"OrganizationName": "Massapequa Heart Group,Ny",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.179004",
+			"OrganizationName": "Dr. Mark Zuckerman",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61669",
+			"OrganizationName": "Our Neighborhood Medical, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71515",
+			"OrganizationName": "Metropolitan New York Medicine \u0026 Infectious Disease, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.822",
+			"OrganizationName": "Riverhills Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400304",
+			"OrganizationName": "Rivers Edge Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1508",
+			"OrganizationName": "Pediatric Associates, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1866",
+			"OrganizationName": "Caro Pediatric Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60952",
+			"OrganizationName": "Robert G. Samaan, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.699",
+			"OrganizationName": "Obstetrics and Gynecology Associates, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1689",
+			"OrganizationName": "Blanchard Valley Medical Associates, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.535018",
+			"OrganizationName": "River Valley Orthopaedics \u0026 Sports Medicine, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72999",
+			"OrganizationName": "Health Partners of Western Ohio",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.870",
+			"OrganizationName": "OB GYN Specialists of Lima",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71745",
+			"OrganizationName": "Cardiovascular Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73146",
+			"OrganizationName": "Northern Ohio Family Practice\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.612",
+			"OrganizationName": "Southern Ohio Surgical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1332",
+			"OrganizationName": "Northside Family Physicians. LTD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71186",
+			"OrganizationName": "Oklahoma Allergy \u0026 Asthma Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60369",
+			"OrganizationName": "John E Stecklow MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.973232",
+			"OrganizationName": "Just Kids Peds",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1334",
+			"OrganizationName": "Digestive Disease Specialists, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71361",
+			"OrganizationName": "Stigler Health \u0026 Wellness Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73380",
+			"OrganizationName": "Family Health Center of Southern Oklahoma",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73165",
+			"OrganizationName": "Invictus Healthcare System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1601",
+			"OrganizationName": "Tulsa Bone and Joint",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73302",
+			"OrganizationName": "ECO Family Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60194",
+			"OrganizationName": "WILLIAM P MAIER MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61630",
+			"OrganizationName": "Oak Street Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400464",
+			"OrganizationName": "Willamette Foot Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60460",
+			"OrganizationName": "Pendleton Family Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61288",
+			"OrganizationName": "Pacific Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70855",
+			"OrganizationName": "Adaugeo Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1209",
+			"OrganizationName": "Pediatric Specialists of Pendleton, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61688",
+			"OrganizationName": "Cynthia Gulick PC DBA Southwest Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73586",
+			"OrganizationName": "Portland Diabetes \u0026 Endocrinology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.174",
+			"OrganizationName": "Allegheny Surgical Center, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70456",
+			"OrganizationName": "Bryn Mawr Medical Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71990",
+			"OrganizationName": "Bedford Regional Urology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61664",
+			"OrganizationName": "Centerville Clinics, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73431",
+			"OrganizationName": "Otolaryngology Physicians of Lancaster",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61681",
+			"OrganizationName": "Diamantoni and Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71616",
+			"OrganizationName": "Rheumatology Associates, Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71532",
+			"OrganizationName": "Healthcare Billing Consultants, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73304",
+			"OrganizationName": "Sayre Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72169",
+			"OrganizationName": "Vujevich Dermatology Associates, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70731",
+			"OrganizationName": "Pittsburgh Oculoplastic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71185",
+			"OrganizationName": "Grand View-Lehigh Valley Health Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71838",
+			"OrganizationName": "Pennridge Pediatric Associates, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73373",
+			"OrganizationName": "Steelton Family Practice and Welness Cener",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71938",
+			"OrganizationName": "Ophthalmology Associates of York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73353",
+			"OrganizationName": "CONCILIO DE SALUD INTEGRAL DE LOIZA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73306",
+			"OrganizationName": "Med Centro, Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73410",
+			"OrganizationName": "Autonomous Municipality of San Juan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70043",
+			"OrganizationName": "The Center for Orthopaedics Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70015",
+			"OrganizationName": "University Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72022",
+			"OrganizationName": "Comprehensive Practice Management Service",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73295",
+			"OrganizationName": "RI NEUROLOGY GROUP, INC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1781",
+			"OrganizationName": "Primary Care Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.427",
+			"OrganizationName": "Lowcountry Urology Clinics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.125004",
+			"OrganizationName": "Easley Head and Neck Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.654",
+			"OrganizationName": "james t martin, jr",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73267",
+			"OrganizationName": "Walterboro Adult \u0026 Pediatric Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72881",
+			"OrganizationName": "Mukeah M Gandhi M.D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71180",
+			"OrganizationName": "Black Hills Orthopedic \u0026 Spine Center, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72319",
+			"OrganizationName": "Mid-South Dermatology PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72916",
+			"OrganizationName": "Your Good Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71772",
+			"OrganizationName": "University Surgical Associates, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1116",
+			"OrganizationName": "Regional Obstetrical Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71686",
+			"OrganizationName": "Middle Tennessee Ear, Nose, and Throat specialists PLLC.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71851",
+			"OrganizationName": "HealthQuest PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71280",
+			"OrganizationName": "Medical Insurance Filing Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72652",
+			"OrganizationName": "Caballero Family Healthcare Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.105075",
+			"OrganizationName": "Gordonsville Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72094",
+			"OrganizationName": "Core Heart \u0026 Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1579",
+			"OrganizationName": "Associated Orthopaedics of Kingsport",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71045",
+			"OrganizationName": "Premier SUrgical Associates PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73784",
+			"OrganizationName": "University Spine/Sports Specialists, PLLC\ufffd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61117",
+			"OrganizationName": "University Physicians' Association",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72611",
+			"OrganizationName": "University Physicians' Association Knox County",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71521",
+			"OrganizationName": "Associated Pain Specialists PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72064",
+			"OrganizationName": "Rheumatology Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.408",
+			"OrganizationName": "KNOXVILLE KIDNEY CENTER, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.161012",
+			"OrganizationName": "Family Medical, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72938",
+			"OrganizationName": "Tristate Gastroenterology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72099",
+			"OrganizationName": "THE HEART CENTER OF MEMPHIS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61396",
+			"OrganizationName": "Perisco Wofford MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72952",
+			"OrganizationName": "East Memphis Neonatology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400379",
+			"OrganizationName": "Covington Internal Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71942",
+			"OrganizationName": "Henry County Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.240001",
+			"OrganizationName": "Henry County Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.240000",
+			"OrganizationName": "Henry County Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71831",
+			"OrganizationName": "CRIPPS, HOOPER \u0026 RHODY, PLLC DBA FAMILY MEDICAL CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71057",
+			"OrganizationName": "Amarillo Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72070",
+			"OrganizationName": "Texas Pulmonary \u0026 Critical Care Consultants, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60405",
+			"OrganizationName": "SHERRY NUSSBAUM MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1552",
+			"OrganizationName": "Arlington Orthopedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.565",
+			"OrganizationName": "Highlander Surgical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72334",
+			"OrganizationName": "Thomas S. Loftus, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.548008",
+			"OrganizationName": "Sammy Lerma, III, M.D., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60095",
+			"OrganizationName": "Metroplex Pain Management",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1638",
+			"OrganizationName": "Texas Orthopedic Specialists, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.976",
+			"OrganizationName": "Jennifer Meadows MD PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60285",
+			"OrganizationName": "Retina Institute of Texas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60208",
+			"OrganizationName": "North Texas Infectious Diseases",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.729",
+			"OrganizationName": "Northlake Obstetrics and Gynecology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400078",
+			"OrganizationName": "Emmar Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1260",
+			"OrganizationName": "Advanced Vein and Vascular Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61544",
+			"OrganizationName": "advanced foot and ankle",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71893",
+			"OrganizationName": "Allergy \u0026 Asthma Center of Georgetown",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73330",
+			"OrganizationName": "South Limestone Hospital District",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71288",
+			"OrganizationName": "Women's Health Center, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.400109",
+			"OrganizationName": "Medical Center Ear, Nose \u0026 Throat Associates of Houston, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71798",
+			"OrganizationName": "Healthcare Transformation Solutions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70242",
+			"OrganizationName": "Macarthur ObGyn Management, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70857",
+			"OrganizationName": "Medical Colleagues of Texas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61409",
+			"OrganizationName": "Katy Womens Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70724",
+			"OrganizationName": "Robert Morales M.D., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72576",
+			"OrganizationName": "Practice Champions",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73183",
+			"OrganizationName": "Satir and Satir, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61679",
+			"OrganizationName": "Donald D. Davenport Jr., D.O., P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70939",
+			"OrganizationName": "Faye G. Armstrong-Paap M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.991",
+			"OrganizationName": "C. L. Anderson Jr., MD, PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72596",
+			"OrganizationName": "Paris Family Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.582",
+			"OrganizationName": "Heart Clinic of Paris",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60368",
+			"OrganizationName": "Willow Bend Family Medicine, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.976819",
+			"OrganizationName": "Louis A. Torres Jr., M.D.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.307",
+			"OrganizationName": "Bruce L. Russell, MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1181",
+			"OrganizationName": "Endocrinology Nuclear Medicine Associates, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.347892",
+			"OrganizationName": "Craig Cardiovascular Center, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70505",
+			"OrganizationName": "Tomball Regional Internal Medicine Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70249",
+			"OrganizationName": "Tomball Healthcare for Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71907",
+			"OrganizationName": "Four Seasons Women's Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72296",
+			"OrganizationName": "Medical \u0026 Heart Center, P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70313",
+			"OrganizationName": "Allergy \u0026 Asthma Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.60943",
+			"OrganizationName": "Intermountain Medical Holdings Nevada",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73221",
+			"OrganizationName": "Neurosurgical Specialists Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71895",
+			"OrganizationName": "PAIN MANAGEMENT AND ORTHOPEDIC CENTER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.484907",
+			"OrganizationName": "Cardiology Consultants of Danville",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72447",
+			"OrganizationName": "Neurology Center of Fairfax, Ltd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61493",
+			"OrganizationName": "Veinguard Heart and Vascular Center (formerly Virginia Heart Inc)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1564",
+			"OrganizationName": "Shenandoah Valley Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1783",
+			"OrganizationName": "OBGYN Associates Womens Health Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71812",
+			"OrganizationName": "MEDICAL BILLING OF VIRGINIA, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1475",
+			"OrganizationName": "Martinsville Neurological Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.710",
+			"OrganizationName": "West Gynecology and Medical Spa, PLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70803",
+			"OrganizationName": "Associates In Primary Care, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70905",
+			"OrganizationName": "Neurology Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.405",
+			"OrganizationName": "Virginia Physicians for Women",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72142",
+			"OrganizationName": "Virginia South Psychiatric \u0026 Family Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61556",
+			"OrganizationName": "Patrick County Family Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71433",
+			"OrganizationName": "Neurology Associates of Suffolk PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1021",
+			"OrganizationName": "Wythe Women's Health, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73332",
+			"OrganizationName": "St Thomas East End Health Center Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73711",
+			"OrganizationName": "Pediatrics Associates dba Allegro Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73626",
+			"OrganizationName": "Kirkpatrick Family Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71885",
+			"OrganizationName": "Whidbey Medical Clinic PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73054",
+			"OrganizationName": "Nisqually Tribal Health and Wellness Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70639",
+			"OrganizationName": "Franciscan Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72522",
+			"OrganizationName": "Spokane Valley Ear Nose \u0026 Throat",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.72365",
+			"OrganizationName": "Gilman Family Practice, PS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.336",
+			"OrganizationName": "Hudson's Bay Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.560001",
+			"OrganizationName": "poser clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73753",
+			"OrganizationName": "Sokaogon Chippewa Community Health Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71975",
+			"OrganizationName": "Milwaukee Nephrologists, SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71671",
+			"OrganizationName": "Shoreview Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61718",
+			"OrganizationName": "Interventional Pain Specialists of WI",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1832",
+			"OrganizationName": "Alum Creek Medical Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71727",
+			"OrganizationName": "Harold E Harvey II MD PLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71927",
+			"OrganizationName": "Belington Community Medical Services Association",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71991",
+			"OrganizationName": "Camden On Gauley Medical Center, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71959",
+			"OrganizationName": "Spring Hill Primary Care Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.94002",
+			"OrganizationName": "Charleston Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.94031",
+			"OrganizationName": "Dunbar Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71457",
+			"OrganizationName": "Monongahela Valley Association of Health Centers, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73311",
+			"OrganizationName": "Ritchie Regional Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61599",
+			"OrganizationName": "St. Mary's HIMG",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71392",
+			"OrganizationName": "Bluestone Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73328",
+			"OrganizationName": "Roane County Family Health Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.71937",
+			"OrganizationName": "Monroe Health Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.61492",
+			"OrganizationName": "Edward K. Chiu, M.D., Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70750",
+			"OrganizationName": "Cheyenne Urological, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.526002",
+			"OrganizationName": "CHEYENNE ORTHOPAEDICS, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

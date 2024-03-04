@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1110",
+			"OrganizationName": "Alaska Urology, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.198",
+			"OrganizationName": "Complete Women's Care of Alabama,P.C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.146",
+			"OrganizationName": "Southern Head and Neck Surgery",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70784",
+			"OrganizationName": "Cheaha Area Regional Emergency Specialist, L.L.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1445",
+			"OrganizationName": "Anniston Orthopaedic Associates. PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.332764",
+			"OrganizationName": "Ernest L Hendrix MD, PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.73790",
+			"OrganizationName": "Daily Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.140.70200",
+			"OrganizationName": "Brookwood Internists PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1572",
+			"OrganizationName": "Southlake Orthopaedics Sports Medicine \u0026 Spine Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.433",
+			"OrganizationName": "Henderson \u0026 Walton Women's Center, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
