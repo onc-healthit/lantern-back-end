@@ -1,0 +1,154 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://api.alaskafhir.com/r4",
+			"OrganizationName": "Alaska",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.arkansasfhir.com/r4",
+			"OrganizationName": "Arkansas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api-cdss-prd.safhir.io/v1/api",
+			"OrganizationName": "Connecticut",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.delawarefhir.com/r4",
+			"OrganizationName": "Delaware",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.georgiafhir.com/r4",
+			"OrganizationName": "Georgia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api-idmedicaid.safhir.io/v1/api",
+			"OrganizationName": "Idaho",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.iowafhir.com/r4",
+			"OrganizationName": "Iowa",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.kansasfhir.com/r4",
+			"OrganizationName": "Kansas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.kentuckyfhir.com/r4",
+			"OrganizationName": "Kentucky",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.louisianafhir.com/r4",
+			"OrganizationName": "Louisiana",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.mainefhir.com/r4",
+			"OrganizationName": "Maine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api-crsp-prd.safhir.io/v1/api",
+			"OrganizationName": "Maryland",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.masshealthfhir.com/r4",
+			"OrganizationName": "Massachusetts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.interopstation.com/mdhhs/fhir",
+			"OrganizationName": "Michigan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://iox.mohealthnet.conduent.com/patientAccess/api/R4",
+			"OrganizationName": "Missouri",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhhs-api.ne.gov/dhhs/trading-partner/api/cmsi/patient-access-api/1.0.0/Patient",
+			"OrganizationName": "Nebraska",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.nevadafhir.com/r4",
+			"OrganizationName": "Nevada",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://iox.nhmmis.nh.gov/patientAccess/api/R4/",
+			"OrganizationName": "New Hampshire",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.interopstation.com/njios/fhir",
+			"OrganizationName": "New Jersey",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://us120.fhir.m3.edifecsfedcloud.com/nd_meta",
+			"OrganizationName": "North Dakota",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.rhodeislandfhir.com/r4",
+			"OrganizationName": "Rhode Island",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.vermontfhir.com/r4",
+			"OrganizationName": "Vermont",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://wa.fhir.mhbapp.com/pa/api/v1",
+			"OrganizationName": "Washington",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.westvirginiafhir.com/r4",
+			"OrganizationName": "West Virginia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.wisconsinfhir.com/r4",
+			"OrganizationName": "Wisconsin",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

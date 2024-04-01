@@ -37,14 +37,14 @@ rm -f npidata_pfile2.csv
 #rm -f npidata_pfile.csv
 #mv -f npidata_pfile2.csv npidata_pfile.csv
 
-echo "Populating db with endpoint and NPPES information..."
+#echo "Populating db with endpoint information..."
 cd ../../scripts
 docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
 
-cd ../resources/prod_resources
-rm -f endpoint_pfile.csv
-rm -f endpoint_pfile
-rm -f npidata_pfile.csv
-rm -f npidata_pfile
+#cd ../resources/prod_resources
+#rm -f endpoint_pfile.csv
+#rm -f endpoint_pfile
+#rm -f npidata_pfile.csv
+#rm -f npidata_pfile
 
 echo "done"

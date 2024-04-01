@@ -158,8 +158,8 @@
 	{
 		"FormatType": "Lantern",
 		"URL": "https://unify-developer.chbase.com/?page=FHIRAPI",
-		"EndpointName": "Get Real Health",
-		"FileName": "Get_Real_Health_EndpointSources.json"
+		"EndpointName": "TruBridge, Inc.",
+		"FileName": "TruBridge_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -415,7 +415,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhir.myeyecarerecords.com/fhir-endpoints",
+		"URL": "https://smartonfhir.myeyecarerecords.com/fhir/Endpoint?_format=application/fhir+json\u0026status=active",
 		"EndpointName": "EyeMD EMR Healthcare Systems, Inc.",
 		"FileName": "EyeMD_EMR_Healthcare_Systems_Inc_EndpointSources.json"
 	},
@@ -532,12 +532,6 @@
 		"URL": "https://fhirtest.intelichart.com/Help/BaseUrl",
 		"EndpointName": "InteliChart LLC",
 		"FileName": "InteliChart_LLC_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://www.nextech.com/developers-portal",
-		"EndpointName": "Nextech",
-		"FileName": "Nextech_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -760,6 +754,12 @@
 		"URL": "https://fhir.meditouchehr.com/api/fhir/r4",
 		"EndpointName": "NextGen Healthcare",
 		"FileName": "NextGen_Healthcare_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.nextech.com/developers-portal",
+		"EndpointName": "Nextech",
+		"FileName": "Nextech_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -1033,9 +1033,15 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints",
+		"URL": "https://dhfhirpresentation.smartcarenet.com/",
 		"EndpointName": "Streamline Healthcare Solutions",
 		"FileName": "Streamline_Healthcare_Solutions_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints",
+		"EndpointName": "Streamline Healthcare Solutions",
+		"FileName": "Streamline_Healthcare_Solutions_1_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",

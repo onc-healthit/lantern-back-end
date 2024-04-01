@@ -5,6 +5,18 @@ cd ..
 export $(cat .env)
 cd resources/prod_resources
 
+echo "Downloading Medicaid state Endpoint List..."
+file_path="MedicaidStateEndpointResourcesList.json"
+csv_file_path="medicaid-state-endpoints.csv"
+if [ -f "$csv_file_path" ]; then
+   cd ../../endpointmanager/cmd/medicaidendpointquerier
+   echo "Querying Medicaid state endpoints..."
+   go run main.go $file_path
+   cd ../../../resources/prod_resources
+   echo "done"
+fi
+
+
 jq -c '.[]' EndpointResourcesList.json | while read endpoint; do
    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
