@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package chplquerier
@@ -114,7 +115,7 @@ func Test_persistCriterias(t *testing.T) {
 	crit2 := testCHPLCrit
 	crit2.ID = 46
 
-	critList := chplCertifiedCriteriaList{Results: []chplCertCriteria{crit1, crit2}}
+	critList := []chplCertCriteria{crit1, crit2}
 
 	err = persistCriterias(ctx, store, &critList)
 	th.Assert(t, err == nil, err)
