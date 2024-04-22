@@ -16,9 +16,9 @@ import (
 
 var chplAPICertCriteriaPath string = "/certification-criteria"
 
-//type chplCertifiedCriteriaList struct {
-//	Results []chplCertCriteria `json:"criteria"`
-//}
+type chplCertifiedCriteriaList struct {
+	Results []chplCertCriteria `json:"criteria"`
+}
 
 // chplCertCriteria is the format of the individual criteria we get from the CHPL endpoint
 type chplCertCriteria struct {
@@ -80,6 +80,26 @@ func makeCHPLCriteriaURL() (*url.URL, error) {
 	}
 
 	return chplURL, nil
+}
+
+// takes the json byte string and converts it into the associated JSON model
+func convertCriteriaListJSONToObj(ctx context.Context, critJSON []byte) ([]chplCertCriteria, error) {
+	var critList chplCertifiedCriteriaList
+
+	// don't unmarshal the JSON if the context has ended
+	select {
+	case <-ctx.Done():
+		return nil, errors.Wrap(ctx.Err(), "Unable to convert certified criteria JSON to objects - context ended")
+	default:
+		// ok
+	}
+
+	err := json.Unmarshal(critJSON, &critList)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertifiedCriteriaList object failed.")
+	}
+
+	return critList.Results, nil
 }
 
 // takes the json byte string and converts it into the associated JSON model

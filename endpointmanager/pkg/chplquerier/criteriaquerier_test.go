@@ -71,8 +71,7 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 
 	// basic test
 
-	critListJSON := `{
-		"[
+	critListJSON := `[
 		{
 			"id": 44,
 			"number": "170.315 (f)(2)",
@@ -84,15 +83,15 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 		},
 		{
 			"id": 64,
-            "number": "170.314 (a)(4)",
-            "title": "Vital signs, body mass index, and growth Charts",
-            "certificationEditionId": 2,
-            "certificationEdition": "2014",
-            "description": "Vital signs",
-            "removed": false
-		}]}
-		`
-
+			"number": "170.314 (a)(4)",
+			"title": "Vital signs, body mass index, and growth Charts",
+			"certificationEditionId": 2,
+			"certificationEdition": "2014",
+			"description": "Vital signs",
+			"removed": false
+		}
+	]
+	`
 	expectedCrit1 := testCHPLCrit
 
 	expectedCrit2 := chplCertCriteria{
@@ -165,7 +164,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
-	criteria, err := convertCriteriaJSONToObj(ctx, critJSON)
+	criteria, err := convertCriteriaListJSONToObj(ctx, critJSON)
 	th.Assert(t, err == nil, err)
 	actualCriteriaReceived := len(criteria)
 	th.Assert(t, actualCriteriaReceived == expectedCriteriaReceived, fmt.Sprintf("Expected to receive %d criteria. Actually received %d criteria.", expectedCriteriaReceived, actualCriteriaReceived))
