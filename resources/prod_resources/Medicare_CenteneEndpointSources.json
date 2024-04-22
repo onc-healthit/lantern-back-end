@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://production.api.centene.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

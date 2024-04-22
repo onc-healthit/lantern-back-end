@@ -1,9 +1,10 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://cms.smilecdr.com/fhir-request",
+			"URL": "https://api.qualifacts.org/api/fhir/r4",
 			"OrganizationName": "",
-			"NPIID": ""
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

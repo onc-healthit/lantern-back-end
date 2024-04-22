@@ -1,0 +1,62 @@
+[
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developerportal.aetna.com/fhirapis",
+		"EndpointName": "Aetna",
+		"FileName": "Medicare_AetnaEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://partners.centene.com/apiDetail/2718669d-6e2e-42b5-8c90-0a82f13a30ba",
+		"EndpointName": "Centene",
+		"FileName": "Medicare_CenteneEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developer.cigna.com/docs/service-apis/patient-access/implementation-guide#Implementation-Guide-Base-URL",
+		"EndpointName": "Cigna",
+		"FileName": "Medicare_CignaEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://patient360.anthem.com/P360Member/fhir",
+		"EndpointName": "ElevanceHealth(Anthem)",
+		"FileName": "Medicare_ElevanceHealth(Anthem)EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developer.bcbsfl.com/interop/interop-developer-portal/product/469/api/466#/PatientAccessAPI_105/overview",
+		"EndpointName": "Guidewell",
+		"FileName": "Medicare_GuidewellEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://interoperability.hcsc.com/s/patient-access-api",
+		"EndpointName": "HCSC",
+		"FileName": "Medicare_HCSCEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developers.humana.com/patient-api/doc",
+		"EndpointName": "Humana",
+		"FileName": "Medicare_HumanaEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1",
+		"EndpointName": "KaiserPermanente",
+		"FileName": "Medicare_KaiserPermanenteEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developer.interop.molinahealthcare.com/api-details#api=patient-access\u0026operation=5f72ab665269f310ef58b361",
+		"EndpointName": "MolinaHealthcare",
+		"FileName": "Medicare_MolinaHealthcareEndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.uhc.com/legal/interoperability-apis",
+		"EndpointName": "UnitedHealthGroup",
+		"FileName": "Medicare_UnitedHealthGroupEndpointSources.json"
+	}
+]

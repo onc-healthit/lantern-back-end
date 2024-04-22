@@ -31,12 +31,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://carloscohen.mmi.prod.fhir.ema-api.com/fhir/r4/",
-			"OrganizationName": "Carlos Cohen MD PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://awstest.mmi.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "awstest",
 			"NPIID": "",
@@ -57,6 +51,12 @@
 		{
 			"URL": "https://drdrew.mmi.prod.fhir.ema-api.com/fhir/r4/",
 			"OrganizationName": "JBS Med PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://gi.ef.prod.fhir.ema-api.com/fhir/r4/",
+			"OrganizationName": "Demo GI",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

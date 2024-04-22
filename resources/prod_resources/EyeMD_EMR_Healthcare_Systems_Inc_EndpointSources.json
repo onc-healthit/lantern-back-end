@@ -1,0 +1,124 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/ALT227916",
+			"OrganizationName": "Altoona Ophthalmology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/CHA227610",
+			"OrganizationName": "Charlotte Ophthalmology Center for Sight",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE172597",
+			"OrganizationName": "EYEMDEMR-BMGR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227239",
+			"OrganizationName": "EYEMDEMR-DEMO04",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227254",
+			"OrganizationName": "EYEMDEMR-DEV SERVER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227392",
+			"OrganizationName": "EyeMD EMR Laptop - Blake",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227590",
+			"OrganizationName": "EYEMDEMR-SPRT09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227904",
+			"OrganizationName": "EYEMDEMR INTERNAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227931",
+			"OrganizationName": "EYEMDEMR-SPRT10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE289101",
+			"OrganizationName": "EYEMDEMR-DEV8",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE414105",
+			"OrganizationName": "EYEMDEMR-DEV8",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/HOU227765",
+			"OrganizationName": "Houston Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/HUG289117",
+			"OrganizationName": "Hugh M Cooper MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/MEL172432",
+			"OrganizationName": "Melvin Roat MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/MIA172243",
+			"OrganizationName": "Miami Lakes Eye Care Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/NAS227941",
+			"OrganizationName": "Nashua Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/OPH227456",
+			"OrganizationName": "Ophthalmic Consultants of the Capital Region",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/SOM227540",
+			"OrganizationName": "Somerset Ophthalmology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/TAD187564",
+			"OrganizationName": "Tad Baum MD PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/WAS227347",
+			"OrganizationName": "Washington Eye Physicians \u0026 Surgeons",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

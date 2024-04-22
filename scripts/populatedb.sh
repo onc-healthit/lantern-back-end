@@ -6,7 +6,18 @@ set -e
 cd cmd/endpointpopulator
 
 # Populates the database with State Medicaid endpoints
-go run main.go /etc/lantern/resources/MedicaidStateEndpointResourcesList.json Lantern StateMedicaid false StateMedicaid 
+go run main.go /etc/lantern/resources/MedicaidState_EndpointSources.json Lantern StateMedicaid false StateMedicaid 
+
+jq -c '.[]' /etc/lantern/resources/MedicareStateEndpointResourcesList.json | while read endpoint; do
+    NAME=$(echo $endpoint | jq -c -r '.EndpointName')
+    FORMAT=$(echo $endpoint | jq -c -r '.FormatType')
+    FILENAME=$(echo $endpoint | jq -c -r '.FileName')
+    LISTURL=$(echo $endpoint | jq -c -r '.URL')
+    
+    if [ -f "/etc/lantern/resources/$FILENAME" ]; then
+        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" true $LISTURL
+    fi
+done
 
 jq -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')

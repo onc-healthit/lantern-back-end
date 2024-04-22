@@ -153,7 +153,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b07be3e0-7e4b-4413-bffc-5ee2c1e677f7",
 			"OrganizationName": "Clinch Memorial Hospital",
-			"NPIID": "",
+			"NPIID": "1861478851",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -196,12 +196,6 @@
 			"URL": "https://fhir.yourcareuniverse.net/tenant/2d1b74f6-5e0d-402b-993f-7f7d33147fff",
 			"OrganizationName": "DeTar Healthcare System",
 			"NPIID": "1851343909",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/0c0c63aa-c0e5-4256-b638-969087e4db15",
-			"OrganizationName": "Delta Health System - Northwest Regional",
-			"NPIID": "1740876382",
 			"OrganizationZipCode": ""
 		},
 		{
@@ -326,7 +320,7 @@
 		},
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/48677b2b-5c2a-49f5-9750-c55785639ac4",
-			"OrganizationName": "IIP03 0048 - HealthHub Hospital",
+			"OrganizationName": "IIP03 - 0048 Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -457,12 +451,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.yourcareuniverse.net/tenant/174285d6-efb7-4560-a7ba-f3ae332b091f",
-			"OrganizationName": "Medhost Test Facility IIP02-36",
-			"NPIID": "1508513698",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/741f735f-d6cc-4802-8169-175329ceb889",
 			"OrganizationName": "Medical Arts Hospital",
 			"NPIID": "1134108053",
@@ -577,6 +565,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/4a1ff7f5-1f48-449c-9302-c475b501f12e",
+			"OrganizationName": "North Walton Doctors Hospital",
+			"NPIID": "1750142121",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/b531811c-9423-4f7d-a377-31c603372685",
 			"OrganizationName": "Northeast Regional Medical Center",
 			"NPIID": "1104899442",
@@ -607,6 +601,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.yourcareuniverse.net/tenant/0c0c63aa-c0e5-4256-b638-969087e4db15",
+			"OrganizationName": "Northwest Mississippi Regional Medical Center",
+			"NPIID": "1740876382",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/829eb3e2-1c27-407b-88f0-bbe9462e3c9c",
 			"OrganizationName": "OCH Regional Medical",
 			"NPIID": "1154310514",
@@ -621,7 +621,7 @@
 		{
 			"URL": "https://fhir.yourcareuniverse.net/tenant/f76605c4-3372-458f-b443-765cba65564a",
 			"OrganizationName": "Ouachita County Medical Center",
-			"NPIID": "",
+			"NPIID": "1245284769",
 			"OrganizationZipCode": ""
 		},
 		{

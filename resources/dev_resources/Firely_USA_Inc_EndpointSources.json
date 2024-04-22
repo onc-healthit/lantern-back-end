@@ -1,8 +1,14 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://secure.server.fire.ly/r4",
+			"OrganizationName": "Firely Secure Example REST Endpoint",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://server.fire.ly/r4",
-			"OrganizationName": "Firely B.V.",
+			"OrganizationName": "Firely Non-secure Example REST Endpoint",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

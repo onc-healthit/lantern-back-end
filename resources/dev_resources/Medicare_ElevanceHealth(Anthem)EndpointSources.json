@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://patient360c.amerigroup.com/P360Member/api/fhir",
+			"OrganizationName": "Amerigroup",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.amerigroup.com/P360Member/api/fhir",
+			"OrganizationName": "Amerigroup Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ca.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem Blue Cross CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ks.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Cross Blue Shield Kansas  Medicare Part D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360kc.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Cross Blue Shield Kansas City",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.bluemedadv.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Medicare Advantage",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ny.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Rx New York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.clearhealthalliance.com/P360Member/api/fhir",
+			"OrganizationName": "Clear Health Alliance",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

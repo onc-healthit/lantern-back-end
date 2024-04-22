@@ -1,6 +1,36 @@
 [
 	{
 		"FormatType": "Lantern",
+		"URL": "https://developer.advancedmd.com/fhir/base-urls",
+		"EndpointName": "AdvancedMD",
+		"FileName": "AdvancedMD_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints",
+		"EndpointName": "MedicalMine Inc.",
+		"FileName": "MedicalMine_Inc_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.integraconnect.com/certifications/",
+		"EndpointName": "Integra Connect Newco, LLC",
+		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://app-52512.on-aptible.com/service-base-urls",
+		"EndpointName": "Healthie",
+		"FileName": "Healthie_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.nextgen.com/patient-access-api",
+		"EndpointName": "NextGen Healthcare",
+		"FileName": "NextGen_Healthcare_2_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://apidocs.onemedical.io/fhir/overview/",
 		"EndpointName": "1Life Healthcare, Inc",
 		"FileName": "1Life_Healthcare_Inc_EndpointSources.json"
@@ -25,7 +55,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhir.footholdtechnology.com/endpoints",
+		"URL": "https://fhir.footholdtechnology.com/demodb/endpoints",
 		"EndpointName": "Foothold Technology, Inc.",
 		"FileName": "Foothold_Technology_Inc_EndpointSources.json"
 	},
@@ -34,12 +64,6 @@
 		"URL": "https://apifhir.axeium.net:8443/reference-server/",
 		"EndpointName": "Brilogy Corporation",
 		"FileName": "Brilogy_Corporation_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://developer.advancedmd.com/fhir/base-urls",
-		"EndpointName": "AdvancedMD",
-		"FileName": "AdvancedMD_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -199,12 +223,6 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints",
-		"EndpointName": "MedicalMine Inc.",
-		"FileName": "MedicalMine_Inc_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://api.azaleahealth.com/fhir/R4/Endpoint",
 		"EndpointName": "Azalea Health",
 		"FileName": "Azalea_Health_1_EndpointSources.json"
@@ -361,9 +379,15 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhirpt-stage.officeally.com/fhir/r4/endpoints",
+		"URL": "https://fhirpt.officeally.com/",
 		"EndpointName": "Office Ally, LLC",
 		"FileName": "Office_Ally_LLC_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://fhirpt-stage.officeally.com/fhir/r4/endpoints",
+		"EndpointName": "Office Ally, LLC",
+		"FileName": "Office_Ally_LLC_1_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -397,7 +421,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.endosoft.com/fhir",
+		"URL": "https://www.endosoft.com/fhir/",
 		"EndpointName": "EndoSoft, LLC",
 		"FileName": "EndoSoft_LLC_EndpointSources.json"
 	},
@@ -406,6 +430,12 @@
 		"URL": "https://open.epic.com/MyApps/Endpoints",
 		"EndpointName": "Epic Systems Corporation",
 		"FileName": "Epic_Systems_Corporation_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://open.epic.com/Endpoints/R4",
+		"EndpointName": "Epic Systems Corporation",
+		"FileName": "Epic_Systems_Corporation_1_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -487,25 +517,19 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://app-52512.on-aptible.com/service-base-urls",
-		"EndpointName": "Healthie",
-		"FileName": "Healthie_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://amsemr.com/endpoints/",
 		"EndpointName": "American Medical Solutions, Inc.",
 		"FileName": "American_Medical_Solutions_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.ipclinical.com/mu-disclosure.html",
+		"URL": "https://ipclinical.com/mu-disclousure/",
 		"EndpointName": "Physicians EMR, LLC",
 		"FileName": "Physicians_EMR_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://inpracsys.com/fhir",
+		"URL": "https://inpracsys.com/fhir/",
 		"EndpointName": "InPracSys",
 		"FileName": "InPracSys_EndpointSources.json"
 	},
@@ -514,12 +538,6 @@
 		"URL": "https://qualifacts.com/api-page/platform/insync/insync-fhir-org-list.html",
 		"EndpointName": "Qualifacts Systems, LLC",
 		"FileName": "Qualifacts_Systems_LLC_2_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://www.integraconnect.com/certifications/",
-		"EndpointName": "Integra Connect Newco, LLC",
-		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -547,7 +565,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhirjuno-prod-web.dssinc.com/fhir/r4/endpoints",
+		"URL": "https://fhirjuno-prod-web.dssinc.com",
 		"EndpointName": "DSS, Inc.",
 		"FileName": "DSS_Inc_EndpointSources.json"
 	},
@@ -559,9 +577,15 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints",
+		"URL": "https://dssjess-dev-web.dssinc.com",
 		"EndpointName": "DSS, Inc.",
 		"FileName": "DSS_Inc_2_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://kantime.com/wp-content/uploads/2024/03/fhir-base-urls.json",
+		"EndpointName": "Kanrad Technologies Inc",
+		"FileName": "Kanrad_Technologies_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -667,7 +691,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://medi-ehr.com/fhir-api-eps",
+		"URL": "https://medi-ehr.com/fhir-api-eps/",
 		"EndpointName": "Medi-EHR, LLC",
 		"FileName": "MediEHR_LLC_EndpointSources.json"
 	},
@@ -751,7 +775,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhir.meditouchehr.com/api/fhir/r4",
+		"URL": "https://www.nextgen.com/api/practice-search",
 		"EndpointName": "NextGen Healthcare",
 		"FileName": "NextGen_Healthcare_1_EndpointSources.json"
 	},
@@ -1027,19 +1051,19 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://genensys.com/api/",
+		"URL": "https://genensys.com/api-documentation/",
 		"EndpointName": "Genensys LLC",
 		"FileName": "Genensys_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://dhfhirpresentation.smartcarenet.com/",
+		"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints",
 		"EndpointName": "Streamline Healthcare Solutions",
 		"FileName": "Streamline_Healthcare_Solutions_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints",
+		"URL": "https://dhfhirpresentation.smartcarenet.com/",
 		"EndpointName": "Streamline Healthcare Solutions",
 		"FileName": "Streamline_Healthcare_Solutions_1_EndpointSources.json"
 	},
@@ -1063,7 +1087,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhir.practicegateway.net/smart",
+		"URL": "https://fhir.practicegateway.net/smart/Endpoint?_format=application/json",
 		"EndpointName": "Sophrona Solutions, Inc.",
 		"FileName": "Sophrona_Solutions_Inc_EndpointSources.json"
 	},
@@ -1159,7 +1183,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://fhir.allegiancemd.io/R4/",
+		"URL": "https://fhir.allegiancemd.io/R4/swagger-ui/",
 		"EndpointName": "AllegianceMD Software, Inc.",
 		"FileName": "AllegianceMD_Software_Inc_EndpointSources.json"
 	},
@@ -1261,13 +1285,13 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.ehana.com/s/fhir-base-urls.csv",
+		"URL": "https://www.ehana.com/certification-documentation",
 		"EndpointName": "eHana",
 		"FileName": "eHana_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://emedpractice.com/Fhir/FhirHelpDocument.html",
+		"URL": "https://emedpractice.com/fhir/fhirhelpdocument.html",
 		"EndpointName": "eMedPractice LLC",
 		"FileName": "eMedPractice_LLC_EndpointSources.json"
 	},
@@ -1303,13 +1327,13 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "http://www.interopengine.com/2021",
+		"URL": "https://appstudio.interopengine.com/partner/fhirR4endpoints-mednetmedical.json",
 		"EndpointName": "MedNet Medical Solutions",
 		"FileName": "MedNet_Medical_Solutions_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://ehr.escribe.com/ehr/api/fhir",
+		"URL": "https://ehr.escribe.com/ehr/api/fhir/swagger-ui/",
 		"EndpointName": "Lille Group, Inc.",
 		"FileName": "Lille_Group_Inc_EndpointSources.json"
 	},

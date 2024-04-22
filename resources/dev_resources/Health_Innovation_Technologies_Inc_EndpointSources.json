@@ -1,18 +1,6 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/practicezero/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/practiceone/r4",
-			"OrganizationName": "",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/basepractice/r4",
 			"OrganizationName": "",
 			"NPIID": "",
@@ -56,6 +44,18 @@
 		},
 		{
 			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/revolutionehr/1234568/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/19/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://revolutionehrdev.dynamicfhir.com/fhir/dhit/onboardpractice03/r4",
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""

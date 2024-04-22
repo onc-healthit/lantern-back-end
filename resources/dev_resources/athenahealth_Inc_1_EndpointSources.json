@@ -31,6 +31,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhrduscvmap22.cloud.athenahealth.com:9443/demoAPIServer/fhir/r4",
+			"OrganizationName": "SB_V22",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
 			"OrganizationName": "AHG",
 			"NPIID": "",
@@ -51,12 +57,6 @@
 		{
 			"URL": "https://websters.com/dghbAPIServer/fhir/r4",
 			"OrganizationName": "Websters",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://cssecure.xlcon.com:9443/centricitypsAPIServer/fhir/r4",
-			"OrganizationName": "Cardiac Solutions",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

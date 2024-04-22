@@ -18,20 +18,16 @@ func AdvancedMdWebscraper(chplURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	doc.Find("p").Each(func(index int, pElem *goquery.Selection) {
-		spanElem := pElem.Find("span").First()
-		if strings.Contains(spanElem.Text(), "Production environment") {
-			aElem := pElem.Find("a").First()
-			hrefText, exists := aElem.Attr("href")
-			if exists {
-				var entry LanternEntry
+	doc.Find(".container").Each(func(index int, cElem *goquery.Selection) {
+		cElem.Find("p").Each(func(index int, pElem *goquery.Selection) {
+			spanElem := pElem.Find("span").First()
+			var entry LanternEntry
 
-				entryURL := strings.TrimSpace(hrefText)
-				entry.URL = entryURL
+			entryURL := strings.TrimSpace(spanElem.Text())
+			entry.URL = entryURL
 
-				lanternEntryList = append(lanternEntryList, entry)
-			}
-		}
+			lanternEntryList = append(lanternEntryList, entry)
+		})
 	})
 
 	endpointEntryList.Endpoints = lanternEntryList

@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/ALT227916",
+			"OrganizationName": "Altoona Ophthalmology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/CHA227610",
+			"OrganizationName": "Charlotte Ophthalmology Center for Sight",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE172597",
+			"OrganizationName": "EYEMDEMR-BMGR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227239",
+			"OrganizationName": "EYEMDEMR-DEMO04",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227254",
+			"OrganizationName": "EYEMDEMR-DEV SERVER",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227392",
+			"OrganizationName": "EyeMD EMR Laptop - Blake",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227590",
+			"OrganizationName": "EYEMDEMR-SPRT09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227904",
+			"OrganizationName": "EYEMDEMR INTERNAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE227931",
+			"OrganizationName": "EYEMDEMR-SPRT10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smartonfhir.myeyecarerecords.com/fhir/EYE289101",
+			"OrganizationName": "EYEMDEMR-DEV8",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
