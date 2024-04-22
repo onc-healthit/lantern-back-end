@@ -117,7 +117,7 @@ func Test_persistCriterias(t *testing.T) {
 
 	critList := []chplCertCriteria{crit1, crit2}
 
-	err = persistCriterias(ctx, store, &critList)
+	err = persistCriterias(ctx, store, critList)
 	th.Assert(t, err == nil, err)
 
 	err = ctStmt.QueryRow().Scan(&ct)
@@ -140,7 +140,7 @@ func Test_persistCriterias(t *testing.T) {
 	crit2 = testCHPLCrit
 	crit2.ID = 46
 
-	err = persistCriterias(ctx, store, &critList)
+	err = persistCriterias(ctx, store, critList)
 	th.Assert(t, errors.Cause(err) == context.Canceled, "expected persistCriterias to error out due to context ending")
 }
 
