@@ -119,8 +119,7 @@ var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
 
-// Invalid resource bundle json
-var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
+// var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
 var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
 var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
 var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"

@@ -21,7 +21,7 @@ func MedicalMineWebscraper(CHPLURL string, fileToWriteTo string) {
 	found := false
 	doc.Find(".content").Each(func(index int, contentElem *goquery.Selection) {
 		contentElem.Find("p").Each(func(indextr int, pElem *goquery.Selection) {
-			if found == true {
+			if found {
 				return
 			}
 			codeElems := contentElem.Find("code").First()
