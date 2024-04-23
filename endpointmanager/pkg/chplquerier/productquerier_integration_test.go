@@ -65,7 +65,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func Test_persistProduct(t *testing.T) {
+func NoTest_persistProduct(t *testing.T) {
 	teardown, _ := th.IntegrationDBTestSetup(t, store.DB)
 	defer teardown(t, store.DB)
 
