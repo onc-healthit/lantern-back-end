@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/mednetmedical.fsi",
+			"OrganizationName": "Felix Sokolsky, M.D., Internal Medicine, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "20877"
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/mednetmedical.ima",
+			"OrganizationName": "Inter Med Associates, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": "01570"
+		}
+	]
+}

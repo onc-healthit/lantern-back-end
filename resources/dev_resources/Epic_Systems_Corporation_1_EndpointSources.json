@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://haiku.wacofhc.org/FHIR/api/FHIR/R4/",
+			"OrganizationName": "Waco Family Medicine (Heart of Texas Community Health Center)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et0434.epichosted.com/APIProxyPRD/api/FHIR/R4/",
+			"OrganizationName": "University Hospital (New Jersey)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.KP.ORG/service/ptnt_care/EpicEdiFhirRoutingSvc/v2014/esb-envlbl/190/api/FHIR/R4/",
+			"OrganizationName": "Kaiser Permanente – Oregon – SW Washington",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ssrx.ksnet.com/FhirProxy/api/FHIR/R4/",
+			"OrganizationName": "Kelsey-Seybold Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicmobile.luriechildrens.org/Interconnect-FHIRPRD/api/FHIR/R4/",
+			"OrganizationName": "Ann \u0026 Robert H. Lurie Children's Hospital of Chicago",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.childrenscolorado.org/fhirprd/api/FHIR/R4/",
+			"OrganizationName": "Children's Hospital Colorado",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://iatrius.atriushealth.org/FHIR/api/FHIR/R4/",
+			"OrganizationName": "Atrius Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://unified-api.ucsf.edu/clinical/apex/api/FHIR/R4/",
+			"OrganizationName": "UCSF Benioff Children's Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://unified-api.ucsf.edu/clinical/apex/api/FHIR/R4/",
+			"OrganizationName": "UCSF Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://interconapps.uchospitals.edu/PRD-FHIR-Proxy/api/FHIR/R4/",
+			"OrganizationName": "UChicago Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

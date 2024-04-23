@@ -167,6 +167,12 @@
 			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dhfhirpresentation.smartcarenet.com/fhir/communitycounselingcenter/1427192038/r4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
 		}
 	]
 }

@@ -1,0 +1,352 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://patient360c.amerigroup.com/P360Member/api/fhir",
+			"OrganizationName": "Amerigroup",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.amerigroup.com/P360Member/api/fhir",
+			"OrganizationName": "Amerigroup Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ca.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem Blue Cross CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Anthem Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ks.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Cross Blue Shield Kansas  Medicare Part D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360kc.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Cross Blue Shield Kansas City",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.bluemedadv.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Medicare Advantage",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ny.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Blue Rx New York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.clearhealthalliance.com/P360Member/api/fhir",
+			"OrganizationName": "Clear Health Alliance",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.mydellchildrens.com/P360Member/api/fhir",
+			"OrganizationName": "Dell Children's Health Plan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.empireblue.com/P360Member/api/fhir",
+			"OrganizationName": "Empire Blue",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.empireblue.com/P360Member/api/fhir",
+			"OrganizationName": "Empire Blue Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360la.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue LA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluela.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue LA Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360mo.anthem.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue MO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluemo.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue MO Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluenc.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue NC Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluene.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue NE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360nc.bcbsdirect.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue North Carolina",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluesc.com/P360Member/api/fhir",
+			"OrganizationName": "Healthy Blue SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.mybcbswny.com/P360Member/api/fhir",
+			"OrganizationName": "Highmark Western New York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.simplyhealthcareplans.com/P360Member/api/fhir",
+			"OrganizationName": "Simply Healthcare Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.simplyhealthcareplans.com/P360Member/api/fhir",
+			"OrganizationName": "Simply Healthcare Medicare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.summitcommunitycare.com/P360Member/api/fhir",
+			"OrganizationName": "Summit Community Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.unicare.com/P360Member/api/fhir",
+			"OrganizationName": "Unicare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360mass.unicare.com/P360Member/api/fhir",
+			"OrganizationName": "Unicare Massachusetts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.unicare.com/P360Member/api/fhir",
+			"OrganizationName": "Unicare Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.wellpoint.com/P360Member/api/fhir",
+			"OrganizationName": "Wellpoint",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.amerigroup.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Amerigroup",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.amerigroup.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Amerigroup Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.anthem.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Anthem",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ca.anthem.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Anthem Blue Cross CA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.anthem.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Anthem Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ks.bcbsdirect.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Blue Cross Blue Shield Kansas  Medicare Part D",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360kc.bcbsdirect.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Blue Cross Blue Shield Kansas City",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.bluemedadv.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Blue Medicare Advantage",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360ny.bcbsdirect.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Blue Rx New York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.clearhealthalliance.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Clear Health Alliance",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.mydellchildrens.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Dell Children's Health Plan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.empireblue.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Empire Blue",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.empireblue.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Empire Blue Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360la.anthem.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue LA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluela.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue LA Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360mo.anthem.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue MO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluemo.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue MO Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluenc.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue NC Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluene.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue NE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360nc.bcbsdirect.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue North Carolina",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.healthybluesc.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Healthy Blue SC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.mybcbswny.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Highmark Western New York",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.simplyhealthcareplans.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Simply Healthcare Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.simplyhealthcareplans.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Simply Healthcare Medicare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.summitcommunitycare.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Summit Community Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360c.unicare.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Unicare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360mass.unicare.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Unicare Massachusetts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.unicare.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Unicare Medicaid",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patient360.wellpoint.com/P360Member/api/fhir-r4",
+			"OrganizationName": "Wellpoint",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

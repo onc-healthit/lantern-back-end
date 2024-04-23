@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.zoommd.com/r4",
+			"OrganizationName": "Production FHIR Server Endpoint",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

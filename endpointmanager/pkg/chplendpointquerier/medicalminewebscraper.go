@@ -18,20 +18,22 @@ func MedicalMineWebscraper(CHPLURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
+	found := false
 	doc.Find(".content").Each(func(index int, contentElem *goquery.Selection) {
 		contentElem.Find("p").Each(func(indextr int, pElem *goquery.Selection) {
-			if strings.Contains(pElem.Text(), "The base URL for accessing all the ChARM FHIR APIs is below") {
-				codeContainingPElem := pElem.Next()
-				codeElems := codeContainingPElem.Find("code")
-				if codeElems.Length() > 0 {
-					var entry LanternEntry
+			if found {
+				return
+			}
+			codeElems := contentElem.Find("code").First()
+			if codeElems.Length() > 0 {
+				var entry LanternEntry
 
-					URL := strings.TrimSpace(codeElems.Eq(0).Text())
+				URL := strings.TrimSpace(codeElems.Eq(0).Text())
 
-					entry.URL = URL
+				entry.URL = URL
 
-					lanternEntryList = append(lanternEntryList, entry)
-				}
+				lanternEntryList = append(lanternEntryList, entry)
+				found = true
 			}
 		})
 	})

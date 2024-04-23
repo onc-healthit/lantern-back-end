@@ -1,0 +1,64 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://api.alaskafhir.com/r4",
+			"OrganizationName": "Alaska",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.arkansasfhir.com/r4",
+			"OrganizationName": "Arkansas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api-cdss-prd.safhir.io/v1/api",
+			"OrganizationName": "Connecticut",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.delawarefhir.com/r4",
+			"OrganizationName": "Delaware",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.georgiafhir.com/r4",
+			"OrganizationName": "Georgia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api-idmedicaid.safhir.io/v1/api",
+			"OrganizationName": "Idaho",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.iowafhir.com/r4",
+			"OrganizationName": "Iowa",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.kansasfhir.com/r4",
+			"OrganizationName": "Kansas",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.kentuckyfhir.com/r4",
+			"OrganizationName": "Kentucky",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://api.louisianafhir.com/r4",
+			"OrganizationName": "Louisiana",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

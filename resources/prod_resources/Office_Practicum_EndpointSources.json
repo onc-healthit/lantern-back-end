@@ -127,6 +127,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/2013/api/FHIR/R4",
+			"OrganizationName": "Bright Future Pediatrics OK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/1823/api/FHIR/R4",
 			"OrganizationName": "Bright Pediatrics PC GA",
 			"NPIID": "",
@@ -391,6 +397,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/1941/api/FHIR/R4",
+			"OrganizationName": "Dr Edward Moayyad Pediatrics Clinic Associates TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/1658/api/FHIR/R4",
 			"OrganizationName": "Dunwoody Pediatrics PC GA",
 			"NPIID": "",
@@ -447,6 +459,12 @@
 		{
 			"URL": "https://applications.op.healthcare/825/api/FHIR/R4",
 			"OrganizationName": "FairHope Pediatrics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2173/api/FHIR/R4",
+			"OrganizationName": "First Pediatrics Medical Group CA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -919,6 +937,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/1626/api/FHIR/R4",
+			"OrganizationName": "Next Step Pediatrics LLC MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/580/api/FHIR/R4",
 			"OrganizationName": "Nicolas Rich JR MD FAAP PA",
 			"NPIID": "",
@@ -1123,6 +1147,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/3138/api/FHIR/R4",
+			"OrganizationName": "Pediatric Care Center PLLC MS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/645/api/FHIR/R4",
 			"OrganizationName": "Pediatric Care Corner",
 			"NPIID": "",
@@ -1167,6 +1197,12 @@
 		{
 			"URL": "https://applications.op.healthcare/3112/api/FHIR/R4",
 			"OrganizationName": "Pediatric Dream Care PA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/2037/api/FHIR/R4",
+			"OrganizationName": "Pediatric Health Specialists Inc TX",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1429,6 +1465,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/2072/api/FHIR/R4",
+			"OrganizationName": "Shari Bass MD LLC TX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/2160/api/FHIR/R4",
 			"OrganizationName": "Shawnee Mission Pediatrics KS",
 			"NPIID": "",
@@ -1563,6 +1605,12 @@
 		{
 			"URL": "https://applications.op.healthcare/901/api/FHIR/R4",
 			"OrganizationName": "The Kidz Care Klinic MS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applications.op.healthcare/1102/api/FHIR/R4",
+			"OrganizationName": "The New York Foundling",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

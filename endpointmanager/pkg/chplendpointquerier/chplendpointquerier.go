@@ -50,7 +50,9 @@ var qualifactsCredibleURL = "https://qualifacts.com/api-page/_downloads/credible
 var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
 var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
-var integraconnectURL = "https://www.integraconnect.com/certifications/"
+
+// No endpoint listed
+// var integraconnectURL = "https://www.integraconnect.com/certifications/"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
 var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints"
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
@@ -116,7 +118,8 @@ var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
 var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
-var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
+
+// var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
 var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
 var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
 var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"
@@ -153,6 +156,34 @@ var criterionsURL = "https://criterions.com/fhir-end-points/"
 var maximusURL = "https://documents.maximus.care"
 var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 var inpracsysURL = "https://inpracsys.com/fhir/"
+
+// State Payer list
+var atenaURL = "https://developerportal.aetna.com/fhirapis"
+var centeneURL = "https://partners.centene.com/apiDetail/2718669d-6e2e-42b5-8c90-0a82f13a30ba"
+var cignaURL = "https://developer.cigna.com/docs/service-apis/patient-access/implementation-guide#Implementation-Guide-Base-URL"
+var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
+
+// var guidewellURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/469/api/466#/PatientAccessAPI_105/overview"
+// var hcscURL = "https://interoperability.hcsc.com/s/patient-access-api"
+// var humanaURL = "https://developers.humana.com/patient-api/doc"
+// var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
+// var molinaURL = "https://developer.interop.molinahealthcare.com/api-details#api=patient-access&operation=5f72ab665269f310ef58b361"
+var unitedHealthURL = "https://www.uhc.com/legal/interoperability-apis"
+var meldrxURL = "https://app.meldrx.com/api/Directories/fhir/endpoints"
+var emr4MDURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-mednetmedical.json"
+var smartCareURL = "https://dhfhirpresentation.smartcarenet.com/"
+var dssEmergencyURL = "https://dssjess-dev-web.dssinc.com"
+var e11URL = "https://fhir.10e11.com/"
+var practicegatewayURL = "https://fhir.practicegateway.net/smart/Endpoint?_format=application/json"
+var procentiveFhirURL = "https://fhir.procentive.com/"
+var fhirDssjunoURL = "https://fhirjuno-prod-web.dssinc.com"
+var officeallyURL = "https://fhirpt.officeally.com/"
+var epicURL = "https://open.epic.com/Endpoints/R4"
+var qualifactsURL = "https://qualifacts.com/api-page/_downloads/carelogic-fhir-org-list.json"
+var myeyecarerecordsURL = "https://smartonfhir.myeyecarerecords.com/fhir/Endpoint?_format=application/fhir+json&status=active"
+var nextgenAPIURL = "https://www.nextgen.com/patient-access-api"
+var sabiamedURL = "https://www.sabiamed.com/api-endpoints"
+var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -226,8 +257,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3, true, 1, -1)
 	} else if URLsEqual(chplURL, eclinicalworksURL) {
 		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
-	} else if URLsEqual(chplURL, integraconnectURL) {
-		IntegraConnectWebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, integraconnectURL) {
+		// 	IntegraConnectWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, streamlinemdURL) {
 		StreamlineMDCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, bridgepatientportalURL) {
@@ -372,8 +403,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcisgoldURL) {
 		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, healthieURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, healthieURL) {
+		// 	BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medConnectURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, citiusTechURL) {
@@ -432,6 +463,58 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser("https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints", fileToWriteTo)
 	} else if URLsEqual(chplURL, veradigmURL) {
 		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
+	} else if URLsEqual(chplURL, meldrxURL) {
+		BundleQuerierParser(meldrxURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, emr4MDURL) {
+		BundleQuerierParser(emr4MDURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, smartCareURL) {
+		BundleQuerierParser(smartCareURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, dssEmergencyURL) {
+		BundleQuerierParser(dssEmergencyURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, e11URL) {
+		BundleQuerierParser(e11URL, fileToWriteTo)
+	} else if URLsEqual(chplURL, practicegatewayURL) {
+		BundleQuerierParser(practicegatewayURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, procentiveFhirURL) {
+		BundleQuerierParser(procentiveFhirURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, fhirDssjunoURL) {
+		BundleQuerierParser(fhirDssjunoURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, officeallyURL) {
+		BundleQuerierParser(officeallyURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, epicURL) {
+		BundleQuerierParser(epicURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, myeyecarerecordsURL) {
+		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, sabiamedURL) {
+		BundleQuerierParser(sabiamedURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, myeyecarerecordsURL) {
+		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, zoommdURL) {
+		ZoomMDCSVParser("https://www.zoommd.com/FHIRServerURLs_ZoomMD.csv", fileToWriteTo)
+	} else if URLsEqual(chplURL, qualifactsURL) {
+		QualifactsWebscraper(qualifactsURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, nextgenAPIURL) {
+		NextgenAPIWebscraper(nextgenAPIURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, atenaURL) {
+		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Binary_%7Bid%7D.yaml", fileToWriteTo)
+	} else if URLsEqual(chplURL, centeneURL) {
+		CenteneURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, cignaURL) {
+		CignaURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, anthemURL) {
+		AnthemURLParser("https://patient360.anthem.com/P360Member/fhir/endpoints", fileToWriteTo)
+		// } else if URLsEqual(chplURL, guidewellURL) {
+		// 	GuidewellURLWebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, hcscURL) {
+		// 	HcscURLWebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, humanaURL) {
+		// 	HumanaURLWebscraper(chplURL, fileToWriteTo)
+		//} else if URLsEqual(chplURL, kaiserURL) {
+		//KaiserURLWebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, molinaURL) {
+		// 	MolinaURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, unitedHealthURL) {
+		UnitedHealthURLWebscraper(chplURL, fileToWriteTo)
 	}
 }
 

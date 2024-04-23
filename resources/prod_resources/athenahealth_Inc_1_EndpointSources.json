@@ -31,6 +31,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhrduscvmap22.cloud.athenahealth.com:9443/demoAPIServer/fhir/r4",
+			"OrganizationName": "SB_V22",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://patientapi.myaffinityhealth.com:9443/affinityAPIServer/fhir/r4",
 			"OrganizationName": "AHG",
 			"NPIID": "",
@@ -111,6 +117,12 @@
 		{
 			"URL": "https://myinterop.72med.com:9443/centricitypsAPIServer/fhir/r4",
 			"OrganizationName": "72 Med Assoc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dmo.devathenahealthcloud.com:9443/demoAPIServer/fhir/r4",
+			"OrganizationName": "athenahealthtest",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

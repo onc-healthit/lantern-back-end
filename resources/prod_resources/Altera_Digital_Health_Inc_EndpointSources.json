@@ -1,6 +1,546 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWweb.twops.local/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.160.126.33/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://172.19.5.119/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16testps1.nmhs.net/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.160.186.44/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.71.31.74/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://172.19.40.101/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SVRASWEB30.abq.local/fhir",
+			"OrganizationName": "\"ABQ",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EHRWEBTST.duvoisin.us/fhir",
+			"OrganizationName": "\"Columbia",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-Int-App.services.local/fhir",
+			"OrganizationName": "\"Integration",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SYKQEHRWB05V.nslijhs.net/fhir",
+			"OrganizationName": "\"Northwell",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SYKQEHRWB07V.nslijhs.net/fhir",
+			"OrganizationName": "\"Northwell",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Sears",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EHRWebtest02.sos.com/fhir",
+			"OrganizationName": "\"Syracuse",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"The",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "\"The",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES51.rd.allscripts.com/FHIR",
+			"OrganizationName": "163COREES51_MU3FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES51/FHIR",
+			"OrganizationName": "163COREES51_MU3FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://OPENTW18.rd.allscripts.com/FHIR",
+			"OrganizationName": "18.1 Innovations Testing Box",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60/FHIR",
+			"OrganizationName": "182COREES60_Allscripts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "Http://IN2COREES60/FHIR",
+			"OrganizationName": "182COREES60_FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - UK Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "A - US Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.160.186.44/fhir",
+			"OrganizationName": "abc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.abqhp.com/FHIR",
+			"OrganizationName": "ABQ Health Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "ACS Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://portal.actonmedical.com/FHIR",
+			"OrganizationName": "Acton Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ADPTW181.rd.allscripts.com/FHIR",
+			"OrganizationName": "ADPTW18.1 FHIR Test System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ahsFHIRlive.acmc.com/FHIR",
+			"OrganizationName": "Affiliated Community Medical Centers",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.133.34.166/fhir",
+			"OrganizationName": "AFHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AHSFHIRPROD.amc.edu/FHIR",
+			"OrganizationName": "Albany Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ahsfhirprod.amc.edu/FHIR",
+			"OrganizationName": "Albany Medical Center - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ali-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Alignment healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ali-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Alignment healthcare-PROD Patient Access (Apps)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63/rd.allscripts.com/FHIR",
+			"OrganizationName": "Allcripts_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://DTS-T03-SCMWEB2.rd.allscripts.com/FHIR",
+			"OrganizationName": "Allscripts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.rd.allscripts.com/FHIR",
+			"OrganizationName": "Allscripts 143to173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw181unityfhir.open.allscripts.com/FHIR",
+			"OrganizationName": "Allscripts ADP Open Touchworks Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.133.86.113/fhir",
+			"OrganizationName": "Allscripts FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "Allscripts FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3q161web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Allscripts FHIR Regression AHC box",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3q161web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Allscripts FHIR Regression Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lv01ascmsh001vm.lv0.hos/FHIR",
+			"OrganizationName": "Allscripts SunComm Lompoc Valley Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://cdt163es11/FHIR",
+			"OrganizationName": "Allscripts_CD11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES43/FHIR",
+			"OrganizationName": "Allscripts-163COREES43",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES7.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "AllscriptsFHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://spfhir.allscripts.com/FHIR",
+			"OrganizationName": "AllscriptsLLP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "Alscripts FHiR 151",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ah1scmfhir.altahospitals.com/FHIR",
+			"OrganizationName": "Alta Hospital System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ah1scmfhir.altahospitals.com/FHIR",
+			"OrganizationName": "Alta Hospital System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AH1SCM2FHIR.altahospitals.com/FHIR",
+			"OrganizationName": "ALTA Hospitals",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://AH1SCM2FHIR.altahospitals.com/fhir",
 			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
 			"NPIID": "",
@@ -21,6 +561,132 @@
 		{
 			"URL": "https://AH1SCM2FHIR.altahospitals.com/open",
 			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ah2scmfhir.altahospitals.com/FHIR",
+			"OrganizationName": "Alta Hospitals System - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://HeliosGwSvr.apacdemo.com/FHIR",
+			"OrganizationName": "anzdemo",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.apprhs.org/FHIR",
+			"OrganizationName": "Appalachian Regional",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171jt.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple AHC 17.1 CU6 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171jt.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple AHC 17.1 CU6 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171jt.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple FHIR AHC Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple FHIR FMH Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple FHIR FMH Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3q161web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Apple FHIR Regression Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple FMH FHIR Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple FMH Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applepro171.open.allscripts.com//FHIR",
+			"OrganizationName": "Apple Pro 17.1 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm163cu6.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple SCM 16.3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm163cu6.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple SCM 16.3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm163cu6.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple SCM 16.3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm163cu6.open.allscripts.com/FHIR",
+			"OrganizationName": "Apple SCM 16.3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://argonauttwfhir.open.allscripts.com/FHIR",
+			"OrganizationName": "Argonaut TW FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AriaFHIR.allscriptscloud.com/FHIR",
+			"OrganizationName": "Aria Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.azacp.com/FHIR",
+			"OrganizationName": "Arizona Community Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtw.genesys.org/FHIR",
+			"OrganizationName": "Ascension health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://charts.associatedneurologists.com/FHIR",
+			"OrganizationName": "Associated Neurologists - Prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -49,6 +715,72 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://pro171.open.allscripts.com/FHIR",
+			"OrganizationName": "Azure FHIR Sandbox Professional  17.1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm163cu3.open.allscripts.com/fhir",
+			"OrganizationName": "Azure FHIR Sandbox Sunrise 16.3 CU3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirweb.balladhealth.org/FHIR",
+			"OrganizationName": "Balladhealth.org",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.bhcpns.org/FHIR",
+			"OrganizationName": "Baptist Health Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://myrecord.bmcjax.com/FHIR",
+			"OrganizationName": "Baptist Health System Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "Basu",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.fhir.bswhealth.org/FHIR",
+			"OrganizationName": "Baylor Scott \u0026 White Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.bhs1.org/FHIR",
+			"OrganizationName": "Berkshire Health Systems",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.blessinghospital.com/FHIR",
+			"OrganizationName": "Blessing Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://qyvmsunedvweb01/FHIR",
+			"OrganizationName": "Blessing Hospital - DEV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://qyvmsunedvweb01.adbcs.blessinghospital.com/FHIR",
+			"OrganizationName": "Blessing Hospital - DEV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.blessinghospital.com/R2/fhir",
 			"OrganizationName": "Blessing Hospital - PROD1",
 			"NPIID": "",
@@ -69,6 +801,36 @@
 		{
 			"URL": "https://fhir.blessinghospital.com/open",
 			"OrganizationName": "Blessing Hospital - PROD1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://qyvmsunedvweb01.adbcs.blessinghospital.com/FHIR",
+			"OrganizationName": "Blessing Hospital -DEV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SEDVWEB.adbcs.blessinghospital.com/FHIR",
+			"OrganizationName": "Blessing Hospital Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtw.blessinghospital.com/FHIR",
+			"OrganizationName": "Blessing Physician Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://EDU-SA-08/edusvc.lan/FHIR",
+			"OrganizationName": "Blessing Pro",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.bronxleb.org/FHIR",
+			"OrganizationName": "Bronx-Lebanon Hospital Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -97,6 +859,42 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://Fhir.brownandtoland.com/FHIR",
+			"OrganizationName": "Brown \u0026 Toland Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chmbfhir.chmbinc.com/FHIR",
+			"OrganizationName": "California Healthcare Med Bill",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirm.myctca.com/FHIR",
+			"OrganizationName": "Cancer Treatment Centers of America",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhire.myctca.com/FHIR",
+			"OrganizationName": "Cancer Treatment Centers of America",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirc.myctca.com/FHIR",
+			"OrganizationName": "Cancer Treatment Centers of America",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIRLIVE.capcare.com/FHIR",
+			"OrganizationName": "Capital care medical group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.cardassoc.com/R2/fhir",
 			"OrganizationName": "Cardiology Assoc of Mobile PC",
 			"NPIID": "",
@@ -117,6 +915,36 @@
 		{
 			"URL": "https://fhir.cardassoc.com/fhir",
 			"OrganizationName": "Cardiology Assoc of Mobile PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.cardassoc.com/FHIR",
+			"OrganizationName": "Cardiology Associates of Mobile",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://srt-scm.dbmazure.com/FHIR",
+			"OrganizationName": "Care Director Plan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.carsontahoe.org/FHIR",
+			"OrganizationName": "Carson Tahoe Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chi-fhire.allscriptscloud.com/FHIR",
+			"OrganizationName": "Catholic Health Initiatives East",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://suntstfhirvip.cmc-nh.org/FHIR",
+			"OrganizationName": "Catholic Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -145,6 +973,108 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://ehrlivefhir.corp.communitycare.com/FHIR",
+			"OrganizationName": "CCP TAS_ PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cdd163es.rd.allscripts.com/fhir",
+			"OrganizationName": "CD_DEV_163",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Centegra Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-live.savannahgi.com/FHIR",
+			"OrganizationName": "Center for digestive and liver health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.reverehealth.com/FHIR",
+			"OrganizationName": "Central Utah Clinic dba Revere Health - Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chi-fhirw.allscriptscloud.com/FHIR",
+			"OrganizationName": "CHI WEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twctl4unity.allscripts.com/FHIR",
+			"OrganizationName": "Client Test Lab Four",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twctl6web.rd.allscripts.com/FHIR",
+			"OrganizationName": "Client Test Lab Six",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "CMRE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "CMRE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "CMRE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://twfhir.cchealthcare.com//FHIR",
+			"OrganizationName": "Coastal Carolina Health Care, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eventbus.cchealthcare.com/FHIR",
+			"OrganizationName": "Coastal Carolina Health Care, PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.colaneph.com/FHIR",
+			"OrganizationName": "Columbia Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ASFHIRCROWN.nyp.org/FHIR",
+			"OrganizationName": "Columbia University Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://firelive.corp.communitycare.com/FHIR",
+			"OrganizationName": "Community Care Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://srvtwlaunity.corp.communitycare.com/FHIR",
+			"OrganizationName": "Community Care Physicians, P.C",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://ehrlivefhir.corp.communitycare.com/R2/open",
 			"OrganizationName": "Community Care Physicians, P.C,",
 			"NPIID": "",
@@ -165,6 +1095,258 @@
 		{
 			"URL": "https://ehrlivefhir.corp.communitycare.com/fhir",
 			"OrganizationName": "Community Care Physicians, P.C,",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.cmhshealth.org/FHIR",
+			"OrganizationName": "Community Memorial Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CON-FHIR.allscriptscloud.com/FHIR",
+			"OrganizationName": "Concentra Health Services Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.allscripts.pro/fhirroute/fhir/10422841",
+			"OrganizationName": "Congress Orthopaedic Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://corea184esa.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_AUT_184_A1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://corea184esa.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_AUT_184_A2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://corea184esb.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_AUT_184_B1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://coret184es.rd.allscripts.com/FHIR",
+			"OrganizationName": "core_qa_184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://coret184es.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_QA_184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://coret184es0.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_QA_184_CU0",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://coret184es.rd.allscripts.com/FHIR",
+			"OrganizationName": "CORE_QA_184FR4to20",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.covhs.org/FHIR",
+			"OrganizationName": "Covenant Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://crmcmobile.sunrisecommunitycare.com/FHIR",
+			"OrganizationName": "CRMC SunComm",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://touchworksfhir.wtbyhosp.org/FHIR",
+			"OrganizationName": "CT Physician Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.cpsresource.com/FHIR",
+			"OrganizationName": "CT Physician Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhiret.myctca.com/FHIR",
+			"OrganizationName": "CTCA - TEST - Eastern",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirct.myctca.com/FHIR",
+			"OrganizationName": "CTCA - TEST Central",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirmt.myctca.com/FHIR",
+			"OrganizationName": "CTCA TESTM FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.cvcheart.com/FHIR",
+			"OrganizationName": "CVC-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://rrcs-50-84-233-162.sw.biz.rr.com/FHIR",
+			"OrganizationName": "Dallas Nephrology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Davis Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.jsahealthcare.com/FHIR",
+			"OrganizationName": "DAVITA FL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.dekalbmedicalportal.org/FHIR",
+			"OrganizationName": "Dekalb Regional Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://secure.dekalbmedicalportal.org/FHIRtest184",
+			"OrganizationName": "Dekalb Regional Medical Center 18.4 Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://secure.dekalbmedicalportal.org/FHIRTest",
+			"OrganizationName": "Dekalb Regional Medical Center Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIRTEST.DK1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "Dekalb Regional Medical Center Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.tw-dha.org/FHIR",
+			"OrganizationName": "Delta Health Alliance",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170100D1",
+			"OrganizationName": "DEV H E170101 A000000 P000000 DB 1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170100D1",
+			"OrganizationName": "DEV H E170101 A000000 P000000 DB 1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170100D1",
+			"OrganizationName": "DEV H E170101 A000000 P000000 DB 1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170100D2",
+			"OrganizationName": "DEV_H_E170101_A000000_P000000_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170100D3",
+			"OrganizationName": "DEV_H_E170101_A000000_P000000_DB3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170300D1",
+			"OrganizationName": "DEV_H_E170300_A000000_P000000_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170300D1",
+			"OrganizationName": "DEV_H_E170300_A000000_P000000_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170300D2",
+			"OrganizationName": "DEV_H_E170300_A000000_P000000_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/ZH170300D3",
+			"OrganizationName": "DEV_H_E170300_A000000_P000000_DB3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Dickinson County Healthcare System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ducm-fhir.medconnect.gehealthcare.com/FHIR",
+			"OrganizationName": "Drexel University",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pchsfhir.chs.allscriptstw.com/FHIR",
+			"OrganizationName": "East Carolina Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chs-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "East Carolina Internal Medicine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.106.16.93/bobby_fhir",
+			"OrganizationName": "EMR Database Install Client (1963bob)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.106.16.93/bobby_fhir",
+			"OrganizationName": "EMR Database Install Client (1963bob)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://eng-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "EngageMED- Prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -193,6 +1375,972 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://myhealth.ecmc.edu//FHIR",
+			"OrganizationName": "Erie County Medical Center Corporation - Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.evanhospital.com/FHIR",
+			"OrganizationName": "Evangelical Community",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twkfhir.evanhospital.com/FHIR",
+			"OrganizationName": "Evangelical Community Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://MG-NS-FHIR.evms.edu/FHIR",
+			"OrganizationName": "EVMS",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.excelahealth.org/FHIR",
+			"OrganizationName": "Excela Health - Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://phuffhir.huf.allscriptstw.com/FHIR",
+			"OrganizationName": "Faculty Practice Plan Howard University",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw181.open.allscripts.com/FHIR",
+			"OrganizationName": "FHIR TW 18.1 Prod CSP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_143163To173COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_143To173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_143To173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_151To173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_151To173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES43.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREE43",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES27.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES27",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES27.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES27",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES27.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES27",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES37.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES37",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM//FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSMQAES38.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES38",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_163COREES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES64.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES64",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES64.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_1733COREES64",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_17346COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPRTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.com/FHIR",
+			"OrganizationName": "FHIR_173COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://NSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES42.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES42",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM//FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM//FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES62.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES62",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES62.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES62",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES66.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES66",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES66.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173COREES66",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMDEVES3.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_173DEVES3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES25.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES25",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES41.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES41",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSACRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM//FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES60.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_182COREES60",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREEES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCSMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.Allscripts.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTA.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES63.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES63",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES73.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES73",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMQAES73.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_184COREES73",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES56/FHIR",
+			"OrganizationName": "FHIR_ES56",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES5.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1733AUTOES5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INCDAUTOES4.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA173AUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES11.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES11",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "FHIR_QA1822AUTOES12",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://inscmqaes38.rd.allscripts.com/FHIR",
+			"OrganizationName": "FHIR_Shashank",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.133.66.16/FHIR",
+			"OrganizationName": "FireBird Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR221.flaglerhospital.org/FHIR",
+			"OrganizationName": "Flagler Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR221.flaglerhospital.org/FHIR",
+			"OrganizationName": "Flagler Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.flaglerhospital.org/FHIR",
+			"OrganizationName": "FLAGLER HOSPITAL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://FHIR.flaglerhospital.org/fhir",
 			"OrganizationName": "Flagler Hospital Inc - PROD",
 			"NPIID": "",
@@ -213,6 +2361,54 @@
 		{
 			"URL": "https://fhir.flaglerhospital.org/R2/fhir",
 			"OrganizationName": "Flagler Hospital Inc - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FP.fhcp.com/FHIR",
+			"OrganizationName": "Florida Health Care Plan, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Fremont-Rideout Health Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapitest.paragon.allscriptscloud.com",
+			"OrganizationName": "Fremont-Rideout Health Group (Test)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://RHAEGAL.endo-world.com/FHIR",
+			"OrganizationName": "Gastroenterology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.gs0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Genesys Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AHWSCMMIGRA188.migra.ds.sjhs.com/FHIR",
+			"OrganizationName": "Genesys Health Systems",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://apps.genesyspho.com/FHIR",
+			"OrganizationName": "Genesys PHO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.gesslerclinic.com/FHIR",
+			"OrganizationName": "Gessler Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -277,6 +2473,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://FHIR.grantspassclinic.com/FHIR",
+			"OrganizationName": "Grants Pass Clinic - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.ggclinic.com/R2/open-R4",
 			"OrganizationName": "Graves Gilbert",
 			"NPIID": "",
@@ -297,6 +2499,30 @@
 		{
 			"URL": "https://fhir.ggclinic.com/R2/fhir-R4",
 			"OrganizationName": "Graves Gilbert",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.ggclinic.com/FHIR",
+			"OrganizationName": "Graves Gilbert Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.ggclinic.com/FHIR",
+			"OrganizationName": "Graves Gilbert Clininc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.mfa.gwu.edu/FHIR",
+			"OrganizationName": "GW MFA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.mfa.gwu.edu/FHIR",
+			"OrganizationName": "GW MFA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -325,6 +2551,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://har-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Harrington Memorial Hospital - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmfhiP01.priv.health-first.org/FHIR",
+			"OrganizationName": "Health First",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmfhiP01.priv.health-first.org/FHIR",
+			"OrganizationName": "Health First",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmfhis01.priv.health-first.org/FHIR",
+			"OrganizationName": "Health First",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.hf.org/R2/fhir",
 			"OrganizationName": "Health First Shared Services Inc - PROD",
 			"NPIID": "",
@@ -345,6 +2595,30 @@
 		{
 			"URL": "https://fhir.hf.org/open",
 			"OrganizationName": "Health First Shared Services Inc - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.myhcp.com/FHIR",
+			"OrganizationName": "HealthCare Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw1fhir.hcpnv.com/FHIR",
+			"OrganizationName": "Healthcare Partners-Nevada",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://HCSFHIR.allscriptscloud.com/FHIR",
+			"OrganizationName": "Healthcare South",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.cshp.net/FHIR",
+			"OrganizationName": "HealthCarePartnersColorado",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -397,6 +2671,42 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "http://172.16.66.167/InvitePortal/FHIR",
+			"OrganizationName": "Hoag Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.holstonmedicalgroup.com/fhir",
+			"OrganizationName": "Holston Medical Group-Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://touchworks-pta.holy-cross.com/FHIR",
+			"OrganizationName": "Holy Cross Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CT2FSH1.CT1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "https://CT2FSH1.CT1ADCV1.ECLPTSC.ECLIPSNET.COM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://Secure.hhphysicians.org/FHIR",
+			"OrganizationName": "Huntington Medical Foundation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.hutchclinic.com/FHIR",
+			"OrganizationName": "Hutchinso - prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://ahsfhirprod.hutchclinic.com/fhir",
 			"OrganizationName": "Hutchinson Clinic",
 			"NPIID": "",
@@ -421,6 +2731,42 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.hutchclinic.com/FHIR",
+			"OrganizationName": "Hutchinson-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://Fhirtw.hvhs.org/FHIR",
+			"OrganizationName": "HVHS-Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twunity.revohealth.com/FHIR",
+			"OrganizationName": "Infinite Health Collaborative P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://innov-r2-scm20.rd.allscripts.com/FHIR",
+			"OrganizationName": "innov-r2-scm20-prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES10.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "INSCMAUTOES10",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://crt-scm22-fhir1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Interanl Dev 22",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://tw1fhir.hcpnv.com/R2/Fhir",
 			"OrganizationName": "Intermountain Medical Holdings Nevada, Inc.",
 			"NPIID": "",
@@ -441,6 +2787,48 @@
 		{
 			"URL": "https://tw1fhir.hcpnv.com/Open",
 			"OrganizationName": "Intermountain Medical Holdings Nevada, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.141.6.75/fhir",
+			"OrganizationName": "Interoperability",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://inviteportaltemp.com/fhir",
+			"OrganizationName": "Invite Portal (to be thrown away)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AHSFHIR02.iowaclinic.com/FHIR",
+			"OrganizationName": "IOWA Clinic Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Jackson",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.jrmc.org/FHIR",
+			"OrganizationName": "Jefferson Regional Medical Center - Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://jsh2ascmsh001vm.jsh.hos/FHIR",
+			"OrganizationName": "Jennie Stuart Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://jsh1ascmshvp.jsh.hos/FHIR",
+			"OrganizationName": "Jennie Stuart Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -499,6 +2887,78 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhirprod.matherhospital.org/FHIR",
+			"OrganizationName": "JT Mather Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.jt0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "JT Mather Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.lrhc.org/FHIR",
+			"OrganizationName": "Lake Region Healthcare Corp",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lk01atwxfh001vm.LK0.hos/FHIR",
+			"OrganizationName": "Lakeview clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.libertyhospital.org/FHIR",
+			"OrganizationName": "Liberty Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhireastus.allscripts.pro/fhirroute/fhir/11042841",
+			"OrganizationName": "LifeWay Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/fhir",
+			"OrganizationName": "lksdjf",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.lompocvmc.com/FHIR",
+			"OrganizationName": "Lompoc Valley",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.lompocvmc.com/FHIR",
+			"OrganizationName": "Lompoc Valley - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lv01ascmsh001vm.lv0.hos/FHIR",
+			"OrganizationName": "Lompoc Valley Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://LHNFHIR.LSUHSC.EDU/FHIR",
+			"OrganizationName": "Louisiana State University-LIVE",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.mylrh.org/FHIR",
+			"OrganizationName": "LRH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://pma0fhir.ma0.allscriptstw.com/R2/Open",
 			"OrganizationName": "MaineGeneral Health",
 			"NPIID": "",
@@ -519,6 +2979,12 @@
 		{
 			"URL": "https://pma0fhir.ma0.allscriptstw.com/Open",
 			"OrganizationName": "MaineGeneral Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pma0fhir.ma0.allscriptstw.com/FHIR",
+			"OrganizationName": "MaineGeneral Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -547,6 +3013,42 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://MCFHIR.mankatoclinic.com/FHIR",
+			"OrganizationName": "Mankato Clinic prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.133.66.11/works_fhir",
+			"OrganizationName": "Manoj Testing Multiple DB Elsewhere",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INN-00000157/FHIR",
+			"OrganizationName": "Manojs Practice",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.marshall.edu/FHIR",
+			"OrganizationName": "Marshall university",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com//fhir-dbm-dev1",
+			"OrganizationName": "MaximSh",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mea-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Medical Education Assistance Coporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mea-fhir.allscriptscloud.com/R2/Fhir",
 			"OrganizationName": "Medical Education Assistance Corporation",
 			"NPIID": "",
@@ -567,6 +3069,42 @@
 		{
 			"URL": "https://mea-fhir.allscriptscloud.com/Fhir",
 			"OrganizationName": "Medical Education Assistance Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pmdsunity.allscriptscloud.com/FHIR",
+			"OrganizationName": "Medisync Midwest - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.nbmchealth.com/FHIR",
+			"OrganizationName": "Medisync Midwest LLC - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mock-fhir.methodisthospital.org/FHIR",
+			"OrganizationName": "Methodist Hospital of Southern California",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.mnassoc.com/FHIR",
+			"OrganizationName": "Metrolina Nephrology Associates, PA - Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.manapa.com/FHIR",
+			"OrganizationName": "Mid Atlantic Nephrology Associates - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.midwestern.edu/FHIR",
+			"OrganizationName": "Midwestern University",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -595,6 +3133,66 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://TFHIRCIS.MSKCC.ORG/FHIR",
+			"OrganizationName": "MSK Dev",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://mu-proehr2.rd.allscripts.com/FHIR",
+			"OrganizationName": "MU-PROEHR2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMQAES51.rd.allscripts.com/FHIR",
+			"OrganizationName": "MU3FHIR-163COREES51",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAMSG1.rd.allscripts.com/fhir",
+			"OrganizationName": "MultiServer",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "MultiServer",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.mmclinic.com/FHIR",
+			"OrganizationName": "Murfreesboro Medical Clinic-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://testmymercyclinic.com/fhir",
+			"OrganizationName": "My Mercy Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://testmymercyclinic.com/fhir",
+			"OrganizationName": "My Mercy Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://testmymercyclinic.com/fhir",
+			"OrganizationName": "My Mercy Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://edu-sa-07.edusvc.lan/FHIR",
+			"OrganizationName": "Nani Lab",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhirprod.numc.edu/open",
 			"OrganizationName": "Nassau Health Care Corporation - NU1",
 			"NPIID": "",
@@ -615,6 +3213,60 @@
 		{
 			"URL": "https://fhirprod.numc.edu/fhir",
 			"OrganizationName": "Nassau Health Care Corporation - NU1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.numc.edu//FHIR",
+			"OrganizationName": "Nassau Health Care Corporation Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://NU1DSH2.NU1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "Nassau Healthcare Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://nu2dsh1.nu1adcv1.eclptsc.eclipsnet.com/FHIR",
+			"OrganizationName": "Nassau Healthcare Corporation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.njhealth.org/FHIR",
+			"OrganizationName": "National Jewish Med \u0026 Research",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testfhir.njhealth.org/FHIR",
+			"OrganizationName": "National Jewish Med \u0026 Research - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testfhir.njhealth.org/FHIR",
+			"OrganizationName": "National Jewish Med \u0026 Research TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIRPROD.cpsmdit.com/FHIR",
+			"OrganizationName": "National Physician Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIRPROD.npsmdit.com/FHIR",
+			"OrganizationName": "National Physician Services",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirweb.ngdc.com//FHIR",
+			"OrganizationName": "NE Georgia Diagostic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -643,6 +3295,120 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhirapi.thekidneydocs.com/FHIR",
+			"OrganizationName": "Nephrology and Hypertension Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://p-fhir.thecenter.local/FHIR",
+			"OrganizationName": "Neuromusculoskeletal Center Of The Casades PC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tscmportal.libertyhospital.org/FHIR",
+			"OrganizationName": "New Liberty Hospital -TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "Http://localhost/FHIR",
+			"OrganizationName": "New TW SQL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ode-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "New West Physicians",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmwest.nyp.org/FHIR",
+			"OrganizationName": "New York Presbyterian Hospital - West Campus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.131.54.29/FHIR",
+			"OrganizationName": "NewLaptop",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirweb.ngdc.com/FHIR",
+			"OrganizationName": "NGDC - prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SCM16PRODPS.nmhs.net/FHIR",
+			"OrganizationName": "NMMC - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir-test.nfobgyn.com/fhir",
+			"OrganizationName": "North Florida OB-GYN FHIR TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR-Test.NFobgyn.com/FHIR",
+			"OrganizationName": "North Florida OB-GYN TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16devps1.nmhs.net/FHIR",
+			"OrganizationName": "North Miss DEV 17.3 Hardware Region",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16devps1.nmhs.net/FHIR",
+			"OrganizationName": "North Miss DEV 17.3 Hardware Region",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16devps1.nmhs.net/FHIR",
+			"OrganizationName": "North Miss DEV 17.3 Hardware Region",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16devps1.nmhs.net/FHIR",
+			"OrganizationName": "North Miss DEV 17.3 Hardware Region",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodps.nmhs.net/FHIR",
+			"OrganizationName": "North Mississippi Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIRDEV.NMHS.NET/fhir",
+			"OrganizationName": "North Mississippi Medical Center - DEV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm16devps1.nmhs.net//FHIR",
+			"OrganizationName": "North Mississippi Medical Center - DEV",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.71.33.74/fhir",
+			"OrganizationName": "North Mississippi Medical Center - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://SCMPORTAL.NMHS.NET/open",
 			"OrganizationName": "North Mississippi Medical Center - SCMPROD",
 			"NPIID": "",
@@ -663,6 +3429,66 @@
 		{
 			"URL": "https://SCMPORTAL.NMHS.NET/R2/open",
 			"OrganizationName": "North Mississippi Medical Center - SCMPROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://Fhir.nohc.com/FHIR",
+			"OrganizationName": "North Ohio Heart",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "North Sunflower Medical Center -  PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.ns0.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.ns0.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/open",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://lij-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Northwell Community",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR55.northwell.edu/FHIR",
+			"OrganizationName": "Northwell DEV 18.4 Azure",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -691,6 +3517,84 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir01.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health DEV16.3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR04.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health DEV184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://FHIR.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health PROD (18.4)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR05.northwell.edu//FHIR",
+			"OrganizationName": "Northwell Health QA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://FHIR02.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health QA 22.1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR05.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Health QA184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://FHIR03.northwell.edu/FHIR",
+			"OrganizationName": "Northwell PRE PROD 22.1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twfhir04.northwell.edu/FHIR",
+			"OrganizationName": "Northwell Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR05.northwell.edu/FHIR",
+			"OrganizationName": "Northwelll Health DEV 18.4",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.orthopartners.com/FHIR",
+			"OrganizationName": "Norwich Orthopedic Group, P.C.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pnytfhir.nyt.allscriptstw.com/FHIR",
+			"OrganizationName": "Nystrom Associates - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirsouthcentus.allscripts.pro/fhirroute/fhir/10014409",
+			"OrganizationName": "Ob/Gyn Assoc, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw-fhir.okarthritis.com/FHIR",
+			"OrganizationName": "Oklahoma Arthritis Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://tw-fhir.okarthritis.com/open",
 			"OrganizationName": "Oklahoma Arthritis Center (PROD)",
 			"NPIID": "",
@@ -711,6 +3615,66 @@
 		{
 			"URL": "https://tw-fhir.okarthritis.com/fhir",
 			"OrganizationName": "Oklahoma Arthritis Center (PROD)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.och.org/FHIR",
+			"OrganizationName": "Oktibbeha County Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescmuk.uk.open.allscripts.com/FHIR",
+			"OrganizationName": "Open Apple UK Prod Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://open-sn4.rd.allscripts.com/FHIR",
+			"OrganizationName": "OPEN-SN4-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://open-sn5.rd.allscripts.com/FHIR",
+			"OrganizationName": "OpenSN5-SCM 16.3_FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://opentw17-pm15.open.allscripts.com/FHIR",
+			"OrganizationName": "opent17-pm15",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://optumdevtw17pm15.open.allscripts.com/FHIR",
+			"OrganizationName": "Optum Development",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.optumcaremw.com/FHIR",
+			"OrganizationName": "OptumCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sxafhir.orlandohealth.com/FHIR",
+			"OrganizationName": "Orlando Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.allscripts.health-central.org/FHIR",
+			"OrganizationName": "Orlando Health Central",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWFHIR.ORLANDOHEALTH.COM/FHIR",
+			"OrganizationName": "Orlando Regional Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -739,6 +3703,144 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://OCFHIR.ORTHOCAROLINA.COM/FHIR",
+			"OrganizationName": "OrthoCarolina, P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://OCFHIR.ORTHOCAROLINA.COM/FHIR",
+			"OrganizationName": "OrthoCarolina, P.A",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://OCFHIR.ORTHOCAROLINA.COM/FHIR",
+			"OrganizationName": "OrthoCarolina, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.ORTHOINDY.COM/FHIR",
+			"OrganizationName": "OrthoIndy - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pv01ascmshvp.pv0.hos/FHIR",
+			"OrganizationName": "Palo Verde",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.paloverdehospital.org/FHIR",
+			"OrganizationName": "Palo Verde Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://paragonADEMO.com/fhir",
+			"OrganizationName": "Paragon ADEMO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://paragonADEMO.com/fhir",
+			"OrganizationName": "Paragon ADEMO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Paragon Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientlinkscm.eastus.cloudapp.azure.com/FHIR",
+			"OrganizationName": "Patient Link SCM Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://patientwebsiteuk.fhir.api.com/fhir",
+			"OrganizationName": "Patient Website - UK",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientlinkscm.eastus.cloudapp.azure.com/FHIR",
+			"OrganizationName": "PatientLink SCM Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://adppartneraccess01.open.allscripts.com:20043/FHIR",
+			"OrganizationName": "PatientLink TW AHC FHIR Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://adppartneraccess01.open.allscripts.com:20040/FHIR",
+			"OrganizationName": "PatientLink TW FHIR AHC Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://patientlinkscm.open.allscripts.com/FHIR",
+			"OrganizationName": "Patientlinks SCM sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://EDU-SA-06.edusvc.lan/FHIR",
+			"OrganizationName": "Paul Lab",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://EDU-SA-INST.edusvc.lan/FHIR",
+			"OrganizationName": "Paul Lab",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://EDU-SA-05.edusvc.lan/FHIR",
+			"OrganizationName": "Paul Lab",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pmg-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Penn State Health Community Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pc1.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Phoenix Children's Hospital - Mock",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pc0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Phoenix Childrens Hospital - Production",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://nocfhir.palremote.com/FHIR",
+			"OrganizationName": "Physician Associates-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.piedmonthealthcare.com/FHIR",
+			"OrganizationName": "Piedmont Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://ehr-fhir.piedmonthealthcare.com/Open",
 			"OrganizationName": "Piedmont HealthCare",
 			"NPIID": "",
@@ -759,6 +3861,18 @@
 		{
 			"URL": "https://ehr-fhir.piedmonthealthcare.com/R2/Fhir",
 			"OrganizationName": "Piedmont HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ehrfhir.pih.net/FHIR",
+			"OrganizationName": "PIH Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.pihhealth.org/FHIR",
+			"OrganizationName": "PIH Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -811,6 +3925,48 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.pinehurstmedical.com/FHIR",
+			"OrganizationName": "Pinehurst Medical Clinic, Inc-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pinehurstsurgical.com/FHIR",
+			"OrganizationName": "Pinehurst Surgical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://adppartneraccess01.open.allscripts.com:20043/FHIR",
+			"OrganizationName": "PL AHC TW Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://adppartneraccess01.open.allscripts.com:20044/FHIR",
+			"OrganizationName": "PL PEHR Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pmsifhir.pmsiforlife.com/FHIR",
+			"OrganizationName": "Pottstown Medical Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pmamail.com/FHIR",
+			"OrganizationName": "Premier Medical Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.pcpgj.com/FHIR",
+			"OrganizationName": "Primary Care Partners",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.pcpgj.com/R2/Fhir",
 			"OrganizationName": "Primary Care Partners PROD",
 			"NPIID": "",
@@ -831,6 +3987,42 @@
 		{
 			"URL": "https://fhir.pcpgj.com/Open",
 			"OrganizationName": "Primary Care Partners PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://someproclinicforray.com/fhir",
+			"OrganizationName": "Pro Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://someproclinicforray.com/fhir",
+			"OrganizationName": "Pro Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://someproclinicforray.com/fhir",
+			"OrganizationName": "Pro Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://someproclinicforray.com/fhir",
+			"OrganizationName": "Pro Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pro181.open.allscripts.com/FHIR",
+			"OrganizationName": "PRO182 FHIR Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://FHIR.gs0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Prod Genesys",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -859,6 +4051,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://Patientaccess.prohealthmd.com/FHIR",
+			"OrganizationName": "ProHealth",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.127.33.195/fhir",
+			"OrganizationName": "Providers Management",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://apps.genesyspho.com/R2/fhir",
 			"OrganizationName": "Providers Management Inc",
 			"NPIID": "",
@@ -879,6 +4083,156 @@
 		{
 			"URL": "https://apps.genesyspho.com/fhir",
 			"OrganizationName": "Providers Management Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE170302D1",
+			"OrganizationName": "QA_E_E170302_A170300_P140104_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE170302D2",
+			"OrganizationName": "QA_E_E170302_A170300_P160020_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE180200D1",
+			"OrganizationName": "QA_E_E180200_A180100_P160002_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE180200D2",
+			"OrganizationName": "QA_E_E180200_A180100_P160002_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE180200D2",
+			"OrganizationName": "QA_E_E180200_A180100_P160002_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QE170103D1",
+			"OrganizationName": "QA_EHR_E170103_A000000_P000000_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QH180200D1",
+			"OrganizationName": "QA_H_E180200_A180100_P160002_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QH180200D2",
+			"OrganizationName": "QA_H_E180200_A180100_P160002_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/AHS1713Tes",
+			"OrganizationName": "QA_SUP_E170103_A000000_P000000_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/AHS1713Tes",
+			"OrganizationName": "QA_SUP_E170103_A000000_P000000_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170103D1",
+			"OrganizationName": "QA_U_E170103_A170300_P140104_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170103D2",
+			"OrganizationName": "QA_U_E170103_A170300_P160002_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170103D3",
+			"OrganizationName": "QA_U_E170103_A170300_P160002_DB3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170300D1",
+			"OrganizationName": "QA_U_E170300_A170300_P140104_DB1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170300D2",
+			"OrganizationName": "QA_U_E170300_A170300_P160020_DB2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prostage.allscriptscloud.com/fhirroute/fhir/QU170300D3",
+			"OrganizationName": "QA_U_E170300_A170300_P160020_DB3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES3.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "QA1636AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES3.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "QA1636AUTO",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES7.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "QA1636AUTOES7",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://INSCMAUTOES7.RD.ALLSCRIPTS.COM/FHIR",
+			"OrganizationName": "QA1636AUTOES7",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://INSCMAUTOES12.rd.allscripts.com/FHIR",
+			"OrganizationName": "QA184AUTOES12-FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twb10d181web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Rebar Dev TW 18.1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PSRS-RES-ES1.rd.allscripts.com/FHIR",
+			"OrganizationName": "RESEARCH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PSRS-RES-ES1.rd.allscripts.com/FHIR",
+			"OrganizationName": "RESEARCH",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod184.resolutehealth.com/FHIR",
+			"OrganizationName": "Resolute Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -907,6 +4261,66 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Ringgold",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.rwjbh.org/FHIR",
+			"OrganizationName": "Robert Wood Johnson",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://rwj-fhir.allscriptscloud.com//FHIR",
+			"OrganizationName": "Robert Wood Johnson Physician Enterprise PA",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.uhhospitals.org/FHIR",
+			"OrganizationName": "Robinson Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://edu-sa-03.edusvc.lan/FHIR",
+			"OrganizationName": "rohan test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Roosevelt",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SCM18PrdFHIRLB.roswellpark.org/FHIR",
+			"OrganizationName": "Roswell Park",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm18devweb.roswellpark.org/FHIR",
+			"OrganizationName": "Roswell Park - Development",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm18tstfhirlb.roswellpark.org/FHIR",
+			"OrganizationName": "RoswellPark Cancer Institute-Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ahr.srft.nhs.uk/FHIR",
+			"OrganizationName": "Salford Royal FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhirprod.sa0.hos.allscriptscloud.com/R2/fhir",
 			"OrganizationName": "Saline Memorial Hospital - SA01",
 			"NPIID": "",
@@ -927,6 +4341,30 @@
 		{
 			"URL": "https://fhirprod.sa0.hos.allscriptscloud.com/open",
 			"OrganizationName": "Saline Memorial Hospital - SA01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cls1ascmshvp.cls.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "San Carlos Apache Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod-sang.allscriptscommunity.com/FHIR",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sng1ascmshvp.sng.hos/FHIR",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sng.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "San Gorgonio Memorial Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -979,6 +4417,156 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://smdpwb01.smh.com/FHIR",
+			"OrganizationName": "Sarasota Memorial Hosp PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://smdtwb01.smh.com/FHIR",
+			"OrganizationName": "Sarasota Memorial Hosp TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.smh.com/FHIR",
+			"OrganizationName": "Sarasota Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mobilityMDt.smh.com/FHIR",
+			"OrganizationName": "Sarasota Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://scmstageinstall.cloudapp.net/FHIR",
+			"OrganizationName": "SCM FHIR Sandbox Installer Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmfhirconnect.open.allscripts.com:4438/FHIR",
+			"OrganizationName": "SCM221",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://DTS-T03-SCMWEB2.rd.allscripts.com/FHIR",
+			"OrganizationName": "SCMT03",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sears-17-1-app.services.local/FHIR",
+			"OrganizationName": "Sears Test 17.1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.0.2.4/fhir",
+			"OrganizationName": "Services Gold",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://SFE-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "sfe-production",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://VTSFEWE2FHRS001.nonprod.sfe.h/FHIR",
+			"OrganizationName": "sfe-test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.prod.elevateent.com/FHIR",
+			"OrganizationName": "SFEENT-Production",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.scmgconnect.com/FHIR",
+			"OrganizationName": "Sharp Community Medical Group",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.scmgconnect.com/FHIR",
+			"OrganizationName": "Sharp Community Medical Group - Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twapi.sharp.com/FHIR",
+			"OrganizationName": "Sharp HealthCare - SharpReesStealy",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sh01ascmsh002vm.sh0.hos/FHIR",
+			"OrganizationName": "Shenandoah medical center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.smchospital.com/FHIR",
+			"OrganizationName": "Shenandoah Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Shenandoah Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Shenandoah Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/fhir",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R2/open",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.ep0.hos.allscriptscloud.com/open",
 			"OrganizationName": "Sheppard Pratt Health System - EP01",
 			"NPIID": "",
@@ -999,6 +4587,12 @@
 		{
 			"URL": "https://fhir.ep0.hos.allscriptscloud.com/R2/fhir",
 			"OrganizationName": "Sheppard Pratt Health System - EP01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.signature-healthcare.org//FHIR",
+			"OrganizationName": "Signature health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1027,6 +4621,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://SN2CSH1.SN1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "South Nassau Communities Hospital - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirweb.emrspi.org/FHIR",
+			"OrganizationName": "Springfield Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://portal.springhill.org/open",
 			"OrganizationName": "Springhill Hospitals Inc - SPRINGHILL_PRODUCTION",
 			"NPIID": "",
@@ -1047,6 +4653,24 @@
 		{
 			"URL": "https://portal.springhill.org/fhir",
 			"OrganizationName": "Springhill Hospitals Inc - SPRINGHILL_PRODUCTION",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://test01portal.springhill.org/FHIR",
+			"OrganizationName": "Springhill Medical Center [TEST01]",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://test02portal.springhill.org/FHIR",
+			"OrganizationName": "Springhill Medical Center [TEST02]",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://10.171.252.217/fhir",
+			"OrganizationName": "SRFT FHIR Hosting",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1099,6 +4723,54 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir-allscripts.sbrmc.org/FHIR",
+			"OrganizationName": "St. Bernards Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sjhsfhir.chmbinc.com/FHIR",
+			"OrganizationName": "St. Joseph Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://aipwl-fhir.stjoe.org/FHIR",
+			"OrganizationName": "St. Joseph Heritage Healthcare - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://sbhscmfhir.barnabas.network/FHIR",
+			"OrganizationName": "St.Barnabas Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.sm0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "St.Mary's of Michigan",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.sterncardio.com/FHIR",
+			"OrganizationName": "Stern Cardiovascular Foundation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.sterncardio.com/FHIR",
+			"OrganizationName": "Stern Cardiovascular Foundation",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://VS900514.nrmc.org/FHIR",
+			"OrganizationName": "Summit - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.summithealthcare.net/open",
 			"OrganizationName": "Summit Healthcare Association - PROD",
 			"NPIID": "",
@@ -1119,6 +4791,96 @@
 		{
 			"URL": "https://fhir.summithealthcare.net/R2/fhir",
 			"OrganizationName": "Summit Healthcare Association - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.summithealthcare.com/FHIR",
+			"OrganizationName": "Summit Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pso0fhir.so0.allscriptstw.com/FHIR",
+			"OrganizationName": "Summit Orthopedics Ltd-Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://alc1crmswebvip.sunrisecommunitycare.com/FHIR",
+			"OrganizationName": "SunComm CRMC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://alc1crmswebvip.sunrisecommunitycare.com/FHIR",
+			"OrganizationName": "SunComm CRMC Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm163cu3.open.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise 16.3 CU3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm184region.open.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise 18.4 Open ADP Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://applescm184.open.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise 184 CU3 Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://spfhir.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise 184 UK Sandpit Fhir (19.4.197.206_Sunrise184_MU3)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmlatestdev.open.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise Latest Dev",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-c05-scmweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "Sunrise Medical Center - Dev Methodology S2V",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-t02-scmweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "Sunrise Medical Center - DTS Testbed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-t02-scmweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "Sunrise Medical Center - DTS Testbed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-t02-scmweb2.rd.allscripts.com/FHIR",
+			"OrganizationName": "Sunrise Medical Center - DTS Testbed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-t02-scmweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "Sunrise Medical Center - DTS Testbed",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dts-t02-scmweb2.rd.allscripts.com/fhir",
+			"OrganizationName": "Sunrise Medical Center - DTS Testbed",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1147,6 +4909,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.sutherlandclinic.com/FHIR",
+			"OrganizationName": "Sutherland Cardiology Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.sosbones.com/FHIR",
+			"OrganizationName": "Syracuse Orthopedic Specialist",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://ptalfhir.tal.allscriptstw.com/fhir",
 			"OrganizationName": "Tallahassee Memorial Healthcare - PROD",
 			"NPIID": "",
@@ -1167,6 +4941,486 @@
 		{
 			"URL": "https://ptalfhir.tal.allscriptstw.com/Open",
 			"OrganizationName": "Tallahassee Memorial Healthcare - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ptalfhir.tal.allscriptstw.com/FHIR",
+			"OrganizationName": "Tallahassee Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://localhost/FHIR",
+			"OrganizationName": "test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testclinic.com/fhir",
+			"OrganizationName": "Test Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://localhost/FHIR",
+			"OrganizationName": "test machine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.133.66.16/FHIR",
+			"OrganizationName": "Test machine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "TestClient",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAMSG1.rd.allscripts.com/fhir",
+			"OrganizationName": "TestClient",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAWEB1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAMSG1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAMSG1.rd.allscripts.com/fhir",
+			"OrganizationName": "Tester",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TWCMRE171GAMSG1.rd.allscripts.com/fhir",
+			"OrganizationName": "Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://dlissTWWeb.twops.local/fhir",
+			"OrganizationName": "Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW1141APP.twops.local/fhir",
+			"OrganizationName": "Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://localhost/FHIR",
+			"OrganizationName": "Testing",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.133.66.16/FHIR",
+			"OrganizationName": "testing prod register",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://localhost/FHIR",
+			"OrganizationName": "testmachine",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://Amarillohealth.ttuhsc.edu/FHIR",
+			"OrganizationName": "Texas Tech Physicians of Amarillo",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1219,6 +5473,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.chsys.org/FHIR",
+			"OrganizationName": "The Children's Hospital of Alabama",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://tw22fhir.jacksonclinic.com/Fhir",
 			"OrganizationName": "The Jackson Clinic",
 			"NPIID": "",
@@ -1243,6 +5503,126 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://tw22fhir.jacksonclinic.com/FHIR",
+			"OrganizationName": "The Jackson Clinic, P.A.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twfhirprod.uth.edu/FHIR",
+			"OrganizationName": "The University of Texas Health Science Center at Houston",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twb10d181web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "Touchworks",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw171fmh.open.allscripts.com/FHIR",
+			"OrganizationName": "Touchworks 17.1 (FMH) FHIR Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw171.open.allscripts.com/FHIR",
+			"OrganizationName": "Touchworks 17.1 FHIR Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://40.71.37.243/FHIR",
+			"OrganizationName": "Touchworks Dev",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "http://10.160.206.248/FHIR",
+			"OrganizationName": "Touchworks17.1FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scm163dev.open.allscripts.com/FHIR",
+			"OrganizationName": "Transplant Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod184.trinitas.org/FHIR",
+			"OrganizationName": "Trinitas Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://prodmobility.se1adcv1.allscriptscloud.com/FHIR",
+			"OrganizationName": "Trinitas Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod184.trinitas.org/FHIR",
+			"OrganizationName": "Trinitas Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.trinitas.org/FHIR",
+			"OrganizationName": "Trinitas Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "HTTPS://se01ascmshvp/FHIR",
+			"OrganizationName": "Trinitas Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SE1ESH1.SE1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "Trinitas Hospital - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SE1ESH1.SE1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "Trinitas Hospital - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://SE1ESH1.SE1ADCV1.ECLPTSC.ECLIPSNET.COM/FHIR",
+			"OrganizationName": "Trinitas Hospital - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.trinitas.org/FHIR",
+			"OrganizationName": "Trinitas Regional Medical Center - Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://se2esh1.se1adcv1.eclptsc.eclipsnet.com//FHIR",
+			"OrganizationName": "Trinitas Regional Medical Center- TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://T22scmFHIR.tchealth.org/FHIR",
+			"OrganizationName": "Tuba City Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.tchealth.org/FHIR",
+			"OrganizationName": "Tuba City Health - TEST",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.tchealth.org/open",
 			"OrganizationName": "Tuba City Regional Health Care Corporation - PROD_22",
 			"NPIID": "",
@@ -1263,6 +5643,42 @@
 		{
 			"URL": "https://fhir.tchealth.org/R2/fhir",
 			"OrganizationName": "Tuba City Regional Health Care Corporation - PROD_22",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.tucsonortho.com/FHIR",
+			"OrganizationName": "Tucson Orthopedic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3devweb2.rd.allscripts.com/FHIR",
+			"OrganizationName": "Tw - Prod - twr3devweb2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171.open.allscripts.com/FHIR",
+			"OrganizationName": "TW Apple Sandbox 2018.1.1382.2083",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twcwfr1int13.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW Custom IDP with Backend",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twcqm171int.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW QA Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twreg181web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW Reg Server - Fhir 19.4.17.136",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1303,19 +5719,127 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://twcwfr1int13.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW17.1 - IDP - Stage - twcwfr1int13 20.2.1026.1160",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twcwfr1int13.rd.allscripts.com/FHIR",
+			"OrganizationName": "TW17.1 - Prod Downtown - twcwfr1int13",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://appletw171jt.open.allscripts.com/FHIR",
+			"OrganizationName": "TW17.1 Production appletw171jt",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3q161web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "tw3q161",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twb10devweb2.rd.allscripts.com//FHIR",
+			"OrganizationName": "twb10devweb2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twb10q181web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "twb10q181web1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://TW-CM-TEST-01.rd.allscripts.com/fhir",
+			"OrganizationName": "TWCMTEST01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twfhirweb1.rd.allscripts.com/FHIR",
+			"OrganizationName": "TWProd",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twqademoweb3.rd.allscripts.com//FHIR",
+			"OrganizationName": "TWQADEMOSQL3",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr1d181web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "twr1d181web1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twr3q161web1.rd.allscripts.com/FHIR",
+			"OrganizationName": "twr3q161web1.rd.allscripts.com",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://twfhir.uasomh.uab.edu/R2/fhir",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://twfhir.uasomh.uab.edu/open",
+			"URL": "https://twfhir.uasomh.uab.edu/Open",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://twfhir.uasomh.uab.edu/fhir",
+			"URL": "https://twfhir.uasomh.uab.edu/Fhir",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -1323,6 +5847,66 @@
 		{
 			"URL": "https://twfhir.uasomh.uab.edu/R2/open",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twfhir.uasomh.uab.edu/FHIR",
+			"OrganizationName": "UAB-Huntsville Regional Campus",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://twfhir.uasomh.uab.edu/FHIR",
+			"OrganizationName": "UAB-Huntsville Regional Campus- Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://PSRS-UAT-ES1.rd.allscripts.com/FHIR",
+			"OrganizationName": "UAT",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirubmd.med.buffalo.edu/FHIR",
+			"OrganizationName": "UBMD - production",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirtest.uhhospitals.org/FHIR",
+			"OrganizationName": "UH Portage - FHIR Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://UKFHIR.mc.uky.edu/FHIR",
+			"OrganizationName": "UK Healthcare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://spfhir.allscripts.com/FHIR",
+			"OrganizationName": "UK SANDPIT FHIR",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://spfhir.allscripts.com/FHIR",
+			"OrganizationName": "UKSANDPIT184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://spfhir.allscripts.com/FHIR",
+			"OrganizationName": "UKSANDPIT184",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mobility.unitedregional.org/FHIR",
+			"OrganizationName": "United Regional Prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1351,6 +5935,66 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://uhcfhir01.unityhc.com/FHIR",
+			"OrganizationName": "Unity HealthCareLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testfhir.uhstx.com/FHIR",
+			"OrganizationName": "University Health System Bexar - Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testfhir.uhstx.com/FHIR",
+			"OrganizationName": "University Health System Bexar - Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://testfhir.uhstx.com/FHIR",
+			"OrganizationName": "University Health System Bexar Test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.uhstx.com/FHIR",
+			"OrganizationName": "University Heath System Bexar E49705 Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhiruh.uhhospitals.org/FHIR",
+			"OrganizationName": "University Hospitals",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.uhhospitals.org/FHIR",
+			"OrganizationName": "University Hospitals Health System Inc Prod",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://AMBFHIR.mc.uky.edu/FHIR",
+			"OrganizationName": "University Of Kentucky Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://mylinks.ulp.org/FHIR",
+			"OrganizationName": "University Physicians Assoc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://charts.uropartners.com/FHIR",
+			"OrganizationName": "UroPartners, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.methodisthospital.org/R2/fhir",
 			"OrganizationName": "USC Arcadia Hospital - PROD",
 			"NPIID": "",
@@ -1371,6 +6015,54 @@
 		{
 			"URL": "https://fhir.methodisthospital.org/R2/open",
 			"OrganizationName": "USC Arcadia Hospital - PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ous-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "USMD Holding-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://ous-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "USMD Holding-PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://V2qatw17-pm15.open.allscripts.com/FHIR",
+			"OrganizationName": "V2qatw17-pm15",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://openapi.paragon.allscriptscloud.com",
+			"OrganizationName": "Val Verde",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://CiepDevTw.Veradigm.com/FHIR",
+			"OrganizationName": "Veradigm Health Plans",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://cieptw.veradigm.com/FHIR",
+			"OrganizationName": "Veradigm Health Plans",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://pasfhir.vmchealth.com/FHIR",
+			"OrganizationName": "Visalia Medical Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://wwc-as-unity.wallawallaclinic.com/FHIR",
+			"OrganizationName": "Walla walla clinic prod",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1399,6 +6091,24 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://wrm-fhir.allscriptscloud.com/FHIR",
+			"OrganizationName": "Washington Regional Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.wm0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Wayne Memorial Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.WM0.hos.allscriptscloud.com/FHIR",
+			"OrganizationName": "Wayne Memorial Hospital -  PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.WM0.hos.allscriptscloud.com/R2/fhir",
 			"OrganizationName": "Wayne Memorial Hospital - WM_PROD",
 			"NPIID": "",
@@ -1419,6 +6129,12 @@
 		{
 			"URL": "https://fhir.WM0.hos.allscriptscloud.com/open",
 			"OrganizationName": "Wayne Memorial Hospital - WM_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.wheelinghospital.org/FHIR",
+			"OrganizationName": "Wheeling Hospital",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1479,6 +6195,12 @@
 		{
 			"URL": "https://fhir.we0.hos.allscriptscloud.com/R2/Fhir",
 			"OrganizationName": "Wise - WE01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.wyckoffhospital.org/FHIR",
+			"OrganizationName": "Wyckoff Heights Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1753,6 +6475,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.reverehealth.com/fhir",
+			"OrganizationName": "Central Utah Clinic dba Revere Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.reverehealth.com/open",
+			"OrganizationName": "Central Utah Clinic dba Revere Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.reverehealth.com/R4/fhir-R4",
 			"OrganizationName": "Central Utah Clinic dba Revere Health",
 			"NPIID": "",
@@ -1923,6 +6657,12 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/10159538-TEST",
 			"OrganizationName": "Davis Health (Test)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com//fhir-dbm-dev1",
+			"OrganizationName": "DBM DEV",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2144,19 +6884,13 @@
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/HCAPROD_36",
-			"OrganizationName": "HCAPROD_36",
+			"OrganizationName": "HCA Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/HCAPROD_36",
-			"OrganizationName": "HCAPROD_36",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.fhirpoint.open.allscripts.comfhir/HCAPROD_36",
-			"OrganizationName": "HCAPROD_36",
+			"OrganizationName": "HCA Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2493,6 +7227,30 @@
 		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10058176",
 			"OrganizationName": "Knox Community Hospital",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.kp0.hos.allscriptscloud.com/open-Prod",
+			"OrganizationName": "KPC Healthcare - KP01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.kp0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "KPC Healthcare - KP01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.kp0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "KPC Healthcare - KP01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.kp0.hos.allscriptscloud.com/fhir-Prod",
+			"OrganizationName": "KPC Healthcare - KP01",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2863,6 +7621,42 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/open",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.NS0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.ns0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "North Sunflower Medical Center - NSF_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.northwell.edu/R4/fhir-Prod",
 			"OrganizationName": "Northwell Health - PROD01",
 			"NPIID": "",
@@ -2936,6 +7730,12 @@
 		},
 		{
 			"URL": "https://tw-fhir.okarthritis.com/open",
+			"OrganizationName": "Oklahoma Arthritis Center (PROD)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw-fhir.okarthritis.com/R4/open-R4",
 			"OrganizationName": "Oklahoma Arthritis Center (PROD)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -3151,6 +7951,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://apps.genesyspho.com/fhir",
+			"OrganizationName": "Providers Management Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://apps.genesyspho.com/R4/fhir-R4",
 			"OrganizationName": "Providers Management Inc",
 			"NPIID": "",
@@ -3158,6 +7964,12 @@
 		},
 		{
 			"URL": "https://apps.genesyspho.com/R4/open-R4",
+			"OrganizationName": "Providers Management Inc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://apps.genesyspho.com/open",
 			"OrganizationName": "Providers Management Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -3339,6 +8151,42 @@
 		{
 			"URL": "https://MobilityMD.smh.com/open",
 			"OrganizationName": "Sarasota Memorial Health Care - SCMP",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/open-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://scmprodweb.sh0.hos.allscriptscloud.com/fhir-Prod",
+			"OrganizationName": "Shenandoah Medical Center - SH_PROD",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3655,6 +8503,30 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir.se1adcv1.allscriptscloud.com/R4/fhir-Prod",
+			"OrganizationName": "Trinitas Regional Medical Center - SE1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.se1adcv1.allscriptscloud.com/open-Prod",
+			"OrganizationName": "Trinitas Regional Medical Center - SE1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.se1adcv1.allscriptscloud.com/fhir-Prod",
+			"OrganizationName": "Trinitas Regional Medical Center - SE1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.se1adcv1.allscriptscloud.com/R4/open-Prod",
+			"OrganizationName": "Trinitas Regional Medical Center - SE1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir.fhirpoint.open.allscripts.com/fhirroute/open/10155897-PROD",
 			"OrganizationName": "Trios Health (aka RCCH Health Partners)",
 			"NPIID": "",
@@ -3799,13 +8671,13 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://twfhir.uasomh.uab.edu/open",
+			"URL": "https://twfhir.uasomh.uab.edu/Open",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://twfhir.uasomh.uab.edu/fhir",
+			"URL": "https://twfhir.uasomh.uab.edu/Fhir",
 			"OrganizationName": "UAB Huntsville Regional Medical Campus",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -4143,6 +9015,12 @@
 		{
 			"URL": "https://fhirprod.wyckoffhospital.org/open",
 			"OrganizationName": "Wyckoff Heights Medical Center - WO01",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://inv-r4-dbm-dev.rd.allscripts.com/fhir-dbm-dev8",
+			"OrganizationName": "yan",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

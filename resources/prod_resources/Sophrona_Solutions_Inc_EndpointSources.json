@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://mecil1-fhir.practicegateway.net",
+			"OrganizationName": "McCarthy Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://nea1-fhir.practicegateway.net",
+			"OrganizationName": "Nashua Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

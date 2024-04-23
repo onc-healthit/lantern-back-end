@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://apif1.aetna.com/fhir/v2/patientaccess",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

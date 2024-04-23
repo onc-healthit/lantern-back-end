@@ -44,19 +44,19 @@
 		},
 		{
 			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.acc",
-			"OrganizationName": "Advanced Cardio Care  -",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.englard",
-			"OrganizationName": "Arthur Englard M.D",
+			"OrganizationName": "Advanced Cardio Care -",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.phyanesthesia",
-			"OrganizationName": "Physicians Anesthesia",
+			"OrganizationName": "Physicians Anesthesia -",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhir.healthtogo.me/fhir/r4/criterions.southbay",
+			"OrganizationName": "South Bay Medical Care -",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

@@ -1,6 +1,18 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://app.meldrx.com/api/fhir/7b595cb8-51f7-452d-a114-032667f38989",
+			"OrganizationName": "Unit Tests: Athena Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/a62a678b-b318-4585-bde2-067e81338072",
+			"OrganizationName": "Unit Tests: Cerner Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://app.meldrx.com/api/fhir/hmc-001",
 			"OrganizationName": "Harbor - UCLA Medical Center",
 			"NPIID": "",
@@ -26,37 +38,25 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/eyeandface",
-			"OrganizationName": "EYE AND FACE LLC - David Leventer",
+			"OrganizationName": "EyeAndFace",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fhs",
-			"OrganizationName": "Fagadau, Hawk \u0026 Swanson, MD LLP",
+			"OrganizationName": "Fagadau, Hawk \u0026 Swanson",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/gcny",
-			"OrganizationName": "Glaucoma Consultants of NY",
+			"OrganizationName": "Glaucoma Consultants Of New York",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/moran",
 			"OrganizationName": "Moran",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/aves",
-			"OrganizationName": "AVES - ANew Vision Eye Specialists",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/ohioeye",
-			"OrganizationName": "Ohio Eye Alliance",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

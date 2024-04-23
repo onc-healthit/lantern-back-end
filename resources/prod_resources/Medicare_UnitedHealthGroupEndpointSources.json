@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://public.fhir.flex.optum.com/R4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

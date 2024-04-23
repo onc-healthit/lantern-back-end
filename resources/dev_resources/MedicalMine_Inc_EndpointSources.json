@@ -1,3 +1,10 @@
 {
-	"Endpoints": null
+	"Endpoints": [
+		{
+			"URL": "https://ehr2.charmtracker.com/api/ehr/v2/fhir",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
 }

@@ -36,7 +36,7 @@ func Test_makeCHPLCriteriaURL(t *testing.T) {
 	viper.Set("chplapikey", "tmp_api_key")
 	defer viper.Set("chplapikey", apiKey)
 
-	expected := "https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key"
+	expected := "https://chpl.healthit.gov/rest/certification-criteria?api_key=tmp_api_key"
 
 	actualURL, err := makeCHPLCriteriaURL()
 	th.Assert(t, err == nil, err)
@@ -71,8 +71,7 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 
 	// basic test
 
-	critListJSON := `{
-		"criteria": [
+	critListJSON := `[
 		{
 			"id": 44,
 			"number": "170.315 (f)(2)",
@@ -84,15 +83,15 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 		},
 		{
 			"id": 64,
-            "number": "170.314 (a)(4)",
-            "title": "Vital signs, body mass index, and growth Charts",
-            "certificationEditionId": 2,
-            "certificationEdition": "2014",
-            "description": "Vital signs",
-            "removed": false
-		}]}
-		`
-
+			"number": "170.314 (a)(4)",
+			"title": "Vital signs, body mass index, and growth Charts",
+			"certificationEditionId": 2,
+			"certificationEdition": "2014",
+			"description": "Vital signs",
+			"removed": false
+		}
+	]
+	`
 	expectedCrit1 := testCHPLCrit
 
 	expectedCrit2 := chplCertCriteria{
@@ -105,18 +104,16 @@ func Test_convertCriteriaJSONToObj(t *testing.T) {
 		Removed:                false,
 	}
 
-	expectedCritList := chplCertifiedCriteriaList{
-		Results: []chplCertCriteria{expectedCrit1, expectedCrit2},
-	}
+	var Results = []chplCertCriteria{expectedCrit1, expectedCrit2}
 
 	ctx = context.Background()
 	critList, err := convertCriteriaJSONToObj(ctx, []byte(critListJSON))
 	th.Assert(t, err == nil, err)
-	th.Assert(t, critList.Results != nil, "Expected results field to be filled out for criteria list.")
-	th.Assert(t, len(critList.Results) == len(expectedCritList.Results), fmt.Sprintf("Number of criteria is %d. Should be %d.", len(critList.Results), len(expectedCritList.Results)))
+	th.Assert(t, critList != nil, "Expected results field to be filled out for criteria list.")
+	th.Assert(t, len(critList) == len(Results), fmt.Sprintf("Number of criteria is %d. Should be %d.", len(critList), len(Results)))
 
-	for i, crit := range critList.Results {
-		th.Assert(t, crit == expectedCritList.Results[i], "Expected parsed criteria to equal expected criteria.")
+	for i, crit := range critList {
+		th.Assert(t, crit == Results[i], "Expected parsed criteria to equal expected criteria.")
 	}
 
 	// test with canceled context
@@ -167,16 +164,16 @@ func Test_getCriteriaJSON(t *testing.T) {
 	th.Assert(t, err == nil, err)
 
 	// convert received JSON so we can count the number of entries received
-	criteria, err := convertCriteriaJSONToObj(ctx, critJSON)
+	criteria, err := convertCriteriaListJSONToObj(ctx, critJSON)
 	th.Assert(t, err == nil, err)
-	actualCriteriaReceived := len(criteria.Results)
+	actualCriteriaReceived := len(criteria)
 	th.Assert(t, actualCriteriaReceived == expectedCriteriaReceived, fmt.Sprintf("Expected to receive %d criteria. Actually received %d criteria.", expectedCriteriaReceived, actualCriteriaReceived))
 
 	// test context ended.
 	// also checks what happens when an http request fails
 
 	hook := logtest.NewGlobal()
-	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key\": context canceled"
+	expectedErr := "Got error:\nmaking the GET request to the CHPL server failed: Get \"https://chpl.healthit.gov/rest/certification-criteria?api_key=tmp_api_key\": context canceled"
 
 	tc, err = basicTestCriteriaClient()
 	th.Assert(t, err == nil, err)
@@ -198,7 +195,7 @@ func Test_getCriteriaJSON(t *testing.T) {
 
 	// test http status != 200
 
-	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/data/certification-criteria?api_key=tmp_api_key"
+	expectedErr = "Got error:\nCHPL request responded with status: 404 Not Found\n\nfrom URL: https://chpl.healthit.gov/rest/certification-criteria?api_key=tmp_api_key"
 
 	tc = th.NewTestClientWith404()
 	defer tc.Close()

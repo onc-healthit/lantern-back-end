@@ -2,7 +2,6 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
@@ -13,7 +12,6 @@ func AidboxQuerierParser(aidboxURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	fmt.Println(aidboxURL)
 	respBody, err := helpers.QueryEndpointList(aidboxURL)
 	if err != nil {
 		log.Fatal(err)

@@ -1,62 +1,62 @@
 {
 	"Endpoints": [
 		{
-			"URL": "https://AH1SCM2FHIR.altahospitals.com/fhir",
-			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
+			"URL": "https://EEHRTOP-ALL01.services.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://AH1SCM2FHIR.altahospitals.com/R2/fhir",
-			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://AH1SCM2FHIR.altahospitals.com/R2/open",
-			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
+			"URL": "https://TWweb.twops.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://AH1SCM2FHIR.altahospitals.com/open",
-			"OrganizationName": "Alta Hospitals System - ALTA_SCM_PROD",
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.atlanticgeneral.org/open",
-			"OrganizationName": "Atlantic General Hospital - AG01",
+			"URL": "https://10.160.126.33/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.atlanticgeneral.org/R2/fhir",
-			"OrganizationName": "Atlantic General Hospital - AG01",
+			"URL": "https://172.19.5.119/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.atlanticgeneral.org/R2/open",
-			"OrganizationName": "Atlantic General Hospital - AG01",
+			"URL": "https://scm16testps1.nmhs.net/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhirprod.atlanticgeneral.org/fhir",
-			"OrganizationName": "Atlantic General Hospital - AG01",
+			"URL": "https://sears-15-1-app.services.local/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.blessinghospital.com/R2/fhir",
-			"OrganizationName": "Blessing Hospital - PROD1",
+			"URL": "https://10.160.186.44/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://fhir.blessinghospital.com/R2/open",
-			"OrganizationName": "Blessing Hospital - PROD1",
+			"URL": "https://CCTDEVELOPMENT.rd.allscripts.com/fhir",
+			"OrganizationName": "",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

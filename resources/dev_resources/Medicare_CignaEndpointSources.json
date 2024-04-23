@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://fhir.cigna.com/PatientAccess/v1/",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

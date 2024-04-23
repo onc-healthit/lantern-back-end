@@ -259,6 +259,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://bcmedapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Bradley County Med Ctr MaaS Pod XXX XX",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.bristolhospital.org/v2/argonaut/v1",
 			"OrganizationName": "Bristol Hospital",
 			"NPIID": "",
@@ -2299,6 +2305,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://stbhapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "St. Bernard Hosp \u0026 Hlthcr Ctr MaaS Pod 011 09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.stbh.org:443/v2/argonaut/v1",
 			"OrganizationName": "St. Bernard Hospital - C/S,",
 			"NPIID": "",
@@ -2485,8 +2497,20 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://bwwmhapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Tombigbee Healthcare Auth MaaS Pod 006 09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://touchetteapi.meditech.cloud:443/v2/argonaut/v1",
 			"OrganizationName": "Touchette Reg Hosp MaaS Pod 011 07",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://townsenhospitalapi.meditech.cloud:443/v2/argonaut/v1",
+			"OrganizationName": "Townsen Mem Hosp MaaS Pod 009 05",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3015,6 +3039,12 @@
 		{
 			"URL": "https://bbghapi.meditech.cloud:443/v1/uscore/R4",
 			"OrganizationName": "Box Butte General Hospital MaaS Pod 11 02",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://bcmedapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Bradley County Med Ctr MaaS Pod XXX XX",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5059,6 +5089,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://stbhapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "St. Bernard Hosp \u0026 Hlthcr Ctr MaaS Pod 011 09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://mtrestapis-live01.stbh.org:443/v1/uscore/R4",
 			"OrganizationName": "St. Bernard Hospital - C/S,",
 			"NPIID": "",
@@ -5245,8 +5281,20 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://bwwmhapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Tombigbee Healthcare Auth MaaS Pod 006 09",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://touchetteapi.meditech.cloud:443/v1/uscore/R4",
 			"OrganizationName": "Touchette Reg Hosp MaaS Pod 011 07",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://townsenhospitalapi.meditech.cloud:443/v1/uscore/R4",
+			"OrganizationName": "Townsen Mem Hosp MaaS Pod 009 05",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},

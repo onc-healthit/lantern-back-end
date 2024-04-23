@@ -1,6 +1,18 @@
 {
 	"Endpoints": [
 		{
+			"URL": "https://app.meldrx.com/api/fhir/7b595cb8-51f7-452d-a114-032667f38989",
+			"OrganizationName": "Unit Tests: Athena Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/a62a678b-b318-4585-bde2-067e81338072",
+			"OrganizationName": "Unit Tests: Cerner Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://app.meldrx.com/api/fhir/hmc-001",
 			"OrganizationName": "Harbor - UCLA Medical Center",
 			"NPIID": "",
@@ -26,19 +38,19 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/eyeandface",
-			"OrganizationName": "EYE AND FACE LLC - David Leventer",
+			"OrganizationName": "EyeAndFace",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fhs",
-			"OrganizationName": "Fagadau, Hawk \u0026 Swanson, MD LLP",
+			"OrganizationName": "Fagadau, Hawk \u0026 Swanson",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/gcny",
-			"OrganizationName": "Glaucoma Consultants of NY",
+			"OrganizationName": "Glaucoma Consultants Of New York",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -56,85 +68,85 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ohioeye",
-			"OrganizationName": "Ohio Eye Alliance",
+			"OrganizationName": "ohioeye",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/camino",
-			"OrganizationName": "Camino Health Center",
+			"OrganizationName": "Camino",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/centralparkway",
-			"OrganizationName": "Central Parkway Eye Care Center, PA",
+			"OrganizationName": "Central Parkway",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/canyoneye",
-			"OrganizationName": "Canyon Eye Associates Inc",
+			"OrganizationName": "Canyon Eye-Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/cecc",
-			"OrganizationName": "Cataract \u0026 Eyecare Center of Dickson",
+			"OrganizationName": "Cataract and-Eyecare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/princetoneye",
-			"OrganizationName": "Dr Chirag Shah",
+			"OrganizationName": "princetoneye",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/rhop",
-			"OrganizationName": "Riverhill Ophthalmology",
+			"OrganizationName": "rhop",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/shnayder",
-			"OrganizationName": "Dr. Eric Shnayder",
+			"OrganizationName": "Shnayder",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/shorthills",
-			"OrganizationName": "Short Hills Ophthalmology",
+			"OrganizationName": "Shorthills",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/sio",
-			"OrganizationName": "Staten Island Ophthalmology - Dr. Kung",
+			"OrganizationName": "sio",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/sondheimer",
-			"OrganizationName": "Dr. Stuart Sondheimer, SC",
+			"OrganizationName": "sondheimer",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/supremevision",
-			"OrganizationName": "Supreme Vision",
+			"OrganizationName": "supremevision",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/teent",
-			"OrganizationName": "Eye, Ear, Nose \u0026 Throat Institute",
+			"OrganizationName": "teent",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/westlake",
-			"OrganizationName": "George S. Hoffman MD",
+			"OrganizationName": "westlake",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -152,19 +164,19 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/curreri",
-			"OrganizationName": "Curreri Ophthalmology Care LLC",
+			"OrganizationName": "Curreri Ophthalmology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/edison",
-			"OrganizationName": "Edison Ophthalmology Assoc, LLC",
+			"OrganizationName": "Edison Ophthalmology-Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/prairieeye",
-			"OrganizationName": "Prairie Eye \u0026 Lasik Center",
+			"OrganizationName": "Prairie Eye",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -188,19 +200,19 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/hudson",
-			"OrganizationName": "VisionFirst Eye Center - AL",
+			"OrganizationName": "HudsonOphthalmology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/lcosi",
-			"OrganizationName": "Mostafavi Eye Institute",
+			"OrganizationName": "Lasik Center-of-Staten-Island",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/antigua",
-			"OrganizationName": "Maida P. Antigua",
+			"OrganizationName": "Antigua",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -236,7 +248,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00005",
-			"OrganizationName": "ACTIVE DERMATOLOGY, PLLC",
+			"OrganizationName": "Active Dermatology, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -398,7 +410,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00032",
-			"OrganizationName": "BETTY RAJAN, MD, PLLC",
+			"OrganizationName": "Betty Rajan, M.D., PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -422,7 +434,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00036",
-			"OrganizationName": "BRIAN A HARRIS DERMATOLOGY",
+			"OrganizationName": "Brian A Harris Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -614,7 +626,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00068",
-			"OrganizationName": "DAVIDDERM LLC",
+			"OrganizationName": "Daviderm LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -638,7 +650,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00072",
-			"OrganizationName": "DELILAH ALONSO MD PA",
+			"OrganizationName": "Delilah Alonso M.D. PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -842,7 +854,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00106",
-			"OrganizationName": "DR DELILAH ALONSO DERMATOLOGY LLC",
+			"OrganizationName": "Dr Delilah Alonso Dermatology LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -920,7 +932,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00119",
-			"OrganizationName": "EPSTEIN \u0026 TUFFANELLI MD'S INC",
+			"OrganizationName": "Epstein \u0026 Tuffanelli M.D.'s Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -980,7 +992,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00129",
-			"OrganizationName": "FLORES DERMATOLOGY LLC",
+			"OrganizationName": "Flores Dermatology LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1016,7 +1028,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00135",
-			"OrganizationName": "FRANCISCO FLORES M.D. LLC",
+			"OrganizationName": "Francisco Flores M.D. LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1100,7 +1112,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00149",
-			"OrganizationName": "HEFTER DERMATOLOGY",
+			"OrganizationName": "Hefter Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1124,7 +1136,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00153",
-			"OrganizationName": "H ROSS HARRIS",
+			"OrganizationName": "H Ross Harris",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1136,7 +1148,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00155",
-			"OrganizationName": "HUNTINGTON DERMATOLOGY MEDICAL GROUP",
+			"OrganizationName": "Huntington Dermatology Medical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1160,7 +1172,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00159",
-			"OrganizationName": "IMPERIAL DERMATOLOGY",
+			"OrganizationName": "Imperial Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1178,13 +1190,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00162",
-			"OrganizationName": "INNOVA DERMATOLOGY PC",
+			"OrganizationName": "Innova Dermatology PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00163",
-			"OrganizationName": "INNOVATIVE DERMATOLOGY",
+			"OrganizationName": "Innovative Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1376,7 +1388,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00195",
-			"OrganizationName": "MARK RAY MD DERMATOLOGY",
+			"OrganizationName": "Mark Ray M.D. Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1436,7 +1448,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00205",
-			"OrganizationName": "MI SKIN CENTER PLLC",
+			"OrganizationName": "MI Skin Center PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1652,7 +1664,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00241",
-			"OrganizationName": "RACHEL ABUAV MD MEDICAL CORPORATION",
+			"OrganizationName": "Rachel Abuav M.D. Medical Corporation",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1712,7 +1724,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00251",
-			"OrganizationName": "RVL SKINCARE, PC",
+			"OrganizationName": "RVL Skincare, PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1862,7 +1874,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00276",
-			"OrganizationName": "SKIN WIN DERMATOLOGY",
+			"OrganizationName": "Skin Win Dermatology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1934,7 +1946,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00288",
-			"OrganizationName": "SUNSET DERMATOLOGY SKIN, LASER \u0026 VEIN CENTER LLC",
+			"OrganizationName": "Sunset Dermatology Skin, Laser \u0026 Vein Center LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2006,7 +2018,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00300",
-			"OrganizationName": "T.J. GIUFFRIDA, M.D., LLC",
+			"OrganizationName": "T.J. Giuffrida, M.D., LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2150,7 +2162,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ez_00324",
-			"OrganizationName": "WILTZDERM LLC",
+			"OrganizationName": "Wiltzderm LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2210,7 +2222,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_4109",
-			"OrganizationName": "PAYDCSUPPORT.COM",
+			"OrganizationName": "PayDCSupport.com",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2684,7 +2696,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_4722",
-			"OrganizationName": "CHIROPRACTIC WELLNESS CENTER OF CLIFTON, PC",
+			"OrganizationName": "Chiropractic Wellness Center of Clifton, PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2726,7 +2738,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_4745",
-			"OrganizationName": "WILLIAM A. CARONE, D.C.",
+			"OrganizationName": "William A. Carone, D.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3020,7 +3032,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_4858",
-			"OrganizationName": "GLENN W WECKEL DC INC",
+			"OrganizationName": "Glenn W Weckel DC Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3056,7 +3068,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_4876",
-			"OrganizationName": "Chiro Plus Clinics  SW Office",
+			"OrganizationName": "Chiro Plus Clinics SW Office",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3386,7 +3398,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5050",
-			"OrganizationName": "UNANIMOUS CHIROPRACTIC INC",
+			"OrganizationName": "Unanimous Chiropractic Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3410,7 +3422,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5060",
-			"OrganizationName": "BAZZANI CHIROPRACTIC MANCHESTER",
+			"OrganizationName": "Bazzani Chiropractic Manchester",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3440,7 +3452,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5073",
-			"OrganizationName": "GARDEN STATE CHIROPRACTIC LLC",
+			"OrganizationName": "Garden State Chiropractic LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3638,7 +3650,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5151",
-			"OrganizationName": "ROSELAND SPINAL REHAB CENTER",
+			"OrganizationName": "Roseland Spinal Rehab Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4346,7 +4358,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5467",
-			"OrganizationName": "SIEGEL CHIROPRACTIC CENTER,  INC",
+			"OrganizationName": "Siegel Chiropractic Center, Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4706,7 +4718,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6461",
-			"OrganizationName": "Power Health Colorado  LLC",
+			"OrganizationName": "Power Health Colorado LLC 2",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4808,7 +4820,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6565",
-			"OrganizationName": "Core Physical Medicine",
+			"OrganizationName": "Core Physical Medicine 1",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4874,7 +4886,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6594",
-			"OrganizationName": "SEAPORT CHIROPRACTIC PC",
+			"OrganizationName": "Seaport Chiropractic PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4887,12 +4899,6 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6597",
 			"OrganizationName": "Schreck Chiropractic and Wellness",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/paydc_6599",
-			"OrganizationName": "Dr. Shaun R Gifford DC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5215,12 +5221,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://app.meldrx.com/api/fhir/ASVJ32BH",
-			"OrganizationName": "Kay, Tabas \u0026 Niknam Ophthalmology Associates",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://app.meldrx.com/api/fhir/YRFOGVAF",
 			"OrganizationName": "1960 Eye Surgeons, P.A. - Houston, TX",
 			"NPIID": "",
@@ -5282,7 +5282,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5619",
-			"OrganizationName": "NORTH JERSEY PAIN \u0026 REHAB CENTER, LLC",
+			"OrganizationName": "North Jersey Pain \u0026 Rehab Center, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5864,7 +5864,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5853",
-			"OrganizationName": "REHABILITY, LLC",
+			"OrganizationName": "Rehability, LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5996,7 +5996,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5936",
-			"OrganizationName": "REVIVE CHIROPRACTIC HEALING CENTER",
+			"OrganizationName": "Revive Chiropractic Healing Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6146,7 +6146,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6028",
-			"OrganizationName": "ROSE POINT CHIROPRACTIC LLC",
+			"OrganizationName": "Rose Point Chiropractic LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6248,13 +6248,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6144",
-			"OrganizationName": "Arctic Pain Relief Center � Wasilla",
+			"OrganizationName": "Arctic Pain Relief Center Wasilla",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6147",
-			"OrganizationName": "Northwest Pain Relief Centers � Sequim",
+			"OrganizationName": "Northwest Pain Relief Centers Sequim",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6278,7 +6278,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6156",
-			"OrganizationName": "CARE \u0026 CURE PHYSICAL THERAPY",
+			"OrganizationName": "Care \u0026 Cure Physical Therapy",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -6488,7 +6488,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6276",
-			"OrganizationName": "Robert D Jackson Jr PC DBA Applewood Chiropractic  - CICN",
+			"OrganizationName": "Robert D Jackson Jr PC DBA Applewood Chiropractic - CICN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7064,7 +7064,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6788",
-			"OrganizationName": "Alliance Health Partners � PMIN",
+			"OrganizationName": "Alliance Health Partners PMIN",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7130,7 +7130,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6799",
-			"OrganizationName": "INNATE CHIROPRACTIC, PLLC",
+			"OrganizationName": "Innate Chiropractic, PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7274,7 +7274,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6828",
-			"OrganizationName": "Green Mountain Chiropractic and Massage � SMIC",
+			"OrganizationName": "Green Mountain Chiropractic and Massage SMIC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7419,12 +7419,6 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/uc09032_suracisrinivasanuro",
 			"OrganizationName": "Aldo J. Suraci, M.D., P.C. 1298 - 9032",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/uc40982_advuromedcenter",
-			"OrganizationName": "Alfred A. Sidhom, M.D., A Professional Corporation dba Advanced Urology Medical Center - 40982",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -7747,12 +7741,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://app.meldrx.com/api/fhir/uc5317_dfwurologyconsultants",
-			"OrganizationName": "DFW Urology Consultants - 5317",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://app.meldrx.com/api/fhir/uc33968_douglasankrommd",
 			"OrganizationName": "Douglas Ankrom, MD - 33968",
 			"NPIID": "",
@@ -7861,12 +7849,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://app.meldrx.com/api/fhir/uc32697_guinc",
-			"OrganizationName": "GU, Inc. - 32697",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://app.meldrx.com/api/fhir/uc07750_johnbertinimd",
 			"OrganizationName": "Gulf Coast Urology (formerly John Bertini MD) - 32468",
 			"NPIID": "",
@@ -7923,6 +7905,12 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/uc27964_jeffreymarksmd",
 			"OrganizationName": "Jeffrey Marks, MD - 27964",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc07683_jonathanamaselmd",
+			"OrganizationName": "Jonathan L Masel MD - GenesisCare - 32408",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -8281,12 +8269,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://app.meldrx.com/api/fhir/uc35319_riograndeurology",
-			"OrganizationName": "Rio Grande Urology PA 1136 - 35319",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://app.meldrx.com/api/fhir/uc32329_robertbkiddmdapmc",
 			"OrganizationName": "Robert B. Kidd, MD, APMC - 32329",
 			"NPIID": "",
@@ -8427,6 +8409,12 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/uc05427_southcountyurological",
 			"OrganizationName": "South County Urological 1027 - 5427",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc30552_sfmujerrysingermd",
+			"OrganizationName": "South Florida Medicine Urology - Jerry Singer MD - 21C SFM - 30552",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -8731,12 +8719,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://app.meldrx.com/api/fhir/uc02416_urologycareinc",
-			"OrganizationName": "Urology Care Inc. - 27875",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://app.meldrx.com/api/fhir/uc41193_urocarecentralfl",
 			"OrganizationName": "Urology Care of Central Florida, PA - 41193",
 			"NPIID": "",
@@ -8853,12 +8835,6 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/uc06200_westcontracostaurological",
 			"OrganizationName": "West Contra Costa Urological - 31068",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/uc09277_westtexasurologyclinic",
-			"OrganizationName": "West Texas Urology Clinic 1286 - 9277",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10442,7 +10418,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6420",
-			"OrganizationName": "ARCTIC CHIROPRACTIC SOLDOTNA",
+			"OrganizationName": "Arctic Chiropractic Soldotna",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10502,7 +10478,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6460",
-			"OrganizationName": "Daniel V. Fortuna, D.C.,  S.C.",
+			"OrganizationName": "Daniel V. Fortuna, D.C., S.C.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10754,7 +10730,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6563",
-			"OrganizationName": "Core Physical Medicine",
+			"OrganizationName": "Core Physical Medicine 2",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10922,7 +10898,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6646",
-			"OrganizationName": "THE WELLNESS CENTER AT RITTENHOUSE LLC DBA UTAH NECK \u0026 BACK CLINIC",
+			"OrganizationName": "The Wellness Center at Rittenhouse LLC dba Utah Neck \u0026 Back Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -10958,7 +10934,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ennoblecare",
-			"OrganizationName": "Ennoble HC DMV LLC",
+			"OrganizationName": "Ennoble Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11048,7 +11024,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/rockymountainveinbozeman",
-			"OrganizationName": "Rocky Mountain Vein Clinics, PC -Bozeman MT",
+			"OrganizationName": "Rocky Mountain Vein Clinics, PC - Bozeman MT",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11120,7 +11096,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-achc",
-			"OrganizationName": "ACTIVE COMMUNITY HEALTH CENTER",
+			"OrganizationName": "Active Community Health Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11192,7 +11168,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-bpa",
-			"OrganizationName": "Courage to Change)",
+			"OrganizationName": "Courage to Change",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11222,7 +11198,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-cca",
-			"OrganizationName": "CARBONDALE COUNSELING ASSOCIATES",
+			"OrganizationName": "Carbondale Counseling Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11600,7 +11576,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-pcc",
-			"OrganizationName": "PERSPECTIVES OF TROY",
+			"OrganizationName": "Perspectives of Troy",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11624,7 +11600,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-phc",
-			"OrganizationName": "PSYCHOLOGICAL HEALTHCARE",
+			"OrganizationName": "Psychological Healthcare",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11732,7 +11708,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-serenity",
-			"OrganizationName": "SERENITY TRAUMA HEALING CENTER",
+			"OrganizationName": "Serenity Trauma Healing Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11774,7 +11750,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-tabor",
-			"OrganizationName": "THE TABOR THERAPY GROUP",
+			"OrganizationName": "The Tabor Therapy Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11840,7 +11816,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-usafwb",
-			"OrganizationName": "USA FAMILY WELL BEING",
+			"OrganizationName": "USA Family Well Being",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11870,7 +11846,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/pimsy-xplor",
-			"OrganizationName": "XPLOR COUNSELING",
+			"OrganizationName": "Xplor Counseling",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -11954,79 +11930,79 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecnj",
-			"OrganizationName": "OPTOMETRIC PHYSICIANS OF MIDDLETOWN PA",
+			"OrganizationName": "Optometric Physicians of Middletown PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecga",
-			"OrganizationName": "CLARKSON OPTOMETRY GEORGIA INC",
+			"OrganizationName": "Clarkson Optometry Georgia Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_eca",
-			"OrganizationName": "EYECARE ASSOCIATES, INC.",
+			"OrganizationName": "Eyecare Associates, Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecva",
-			"OrganizationName": "MAY \u0026 HETTLER, O.D., PLLC",
+			"OrganizationName": "May \u0026 Hettler, O.D., PLLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecfl",
-			"OrganizationName": "SIGHT AND SUN EYEWORKS LLC",
+			"OrganizationName": "Sight and Sun Eyeworks LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecoh",
-			"OrganizationName": "CLARKSON OPTOMETRY MIDWEST INC",
+			"OrganizationName": "Clarkson Optometry Midwest Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecmo",
-			"OrganizationName": "CLARKSON OPTOMETRY INC",
+			"OrganizationName": "Clarkson Optometry Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecmi",
-			"OrganizationName": "BENNETT OPTOMETRY LLC",
+			"OrganizationName": "Bennett Optometry LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecil",
-			"OrganizationName": "CLARKSON OPTOMETRY ILLINOIS, PC",
+			"OrganizationName": "Clarkson Optometry Illinois, PC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecks",
-			"OrganizationName": "DRS PRICE YOUNG ODLE \u0026 HORSCH PA",
+			"OrganizationName": "Drs Price Young Odle \u0026 Horsch PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_ecc",
-			"OrganizationName": "EYECARECENTER OD PA",
+			"OrganizationName": "Eyecarecenter OD PA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cectx",
-			"OrganizationName": "FRISCO EYE ASSOCIATES",
+			"OrganizationName": "Frisco Eye Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ecp_cecaz",
-			"OrganizationName": "ADVANCED EYECARE AND VISION THERAPY INC",
+			"OrganizationName": "Advanced Eyecare and Vision Therapy Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12038,19 +12014,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/osteal_cov",
-			"OrganizationName": "Covenant",
+			"OrganizationName": "Osteal Covenant",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/imedicware_capitaleye",
 			"OrganizationName": "Capital Eye Consultants, PA",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://app.meldrx.com/api/fhir/imedicware_maxvision",
-			"OrganizationName": "Max Vision PLLC dba Eye Physicians of Lakewood",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12134,13 +12104,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/experity-drx0115",
-			"OrganizationName": "AFC Hollywood, FL",
+			"OrganizationName": "AFC Hollywood, FL MeldRx",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/uc05455_yakimaurologyassoc",
-			"OrganizationName": "Yakima Urology at Memorial Tr",
+			"OrganizationName": "Yakima Urology Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12374,7 +12344,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/osteal_uap",
-			"OrganizationName": "University of Arizona - Banner Health",
+			"OrganizationName": "University of Arizona Banner Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12422,7 +12392,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_5331",
-			"OrganizationName": "Forbes Family Chiropractic, PC",
+			"OrganizationName": "Forbes Family Chiropractic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12440,7 +12410,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/jrl43lk4",
-			"OrganizationName": "Jeffrey R. Lander, MD, LLC (Leader Heights Eye Center)",
+			"OrganizationName": "Leader Heights Eye Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12452,7 +12422,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/wey56dv9",
-			"OrganizationName": "Wade E. Young, M.D., Inc dba Tiffin Eye Center",
+			"OrganizationName": "Tiffin Eye Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12536,13 +12506,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/3n7m2x7h",
-			"OrganizationName": "OXFORD EYE SURGERY CENTER",
+			"OrganizationName": "Oxford Eye Surgery Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/4t6c9b0p",
-			"OrganizationName": "RAYNER OPTICAL, LLC",
+			"OrganizationName": "Rayner Optical LLC",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12584,7 +12554,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/9p7k5f3d",
-			"OrganizationName": "Mission Hills Eye Center Medical Associates, Inc.",
+			"OrganizationName": "Mission Hills Eye Center Medical Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12722,7 +12692,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/imedicware_cep",
-			"OrganizationName": "California Eye Professionals (CEP)",
+			"OrganizationName": "California Eye Professionals",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12734,7 +12704,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/vo90cc71",
-			"OrganizationName": "Visionary Ophthalmology and Cataract Care, PLLC",
+			"OrganizationName": "Visionary Ophthalmology and Cataract Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12794,7 +12764,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/imedicware_ehb_jr_facs",
-			"OrganizationName": "Edward H Bedrossian Jr Md Facs (ehb)",
+			"OrganizationName": "Edward H Bedrossian Jr Md",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12926,7 +12896,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/gr61ec73",
-			"OrganizationName": "EYES OF GRACE",
+			"OrganizationName": "Eyes of Grace",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12938,7 +12908,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ce49nb17",
-			"OrganizationName": "Coastal Eye Clinic - New Bern, NC",
+			"OrganizationName": "Coastal Eye Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -12998,7 +12968,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ce45in12",
-			"OrganizationName": "Complete Eye Care Inc",
+			"OrganizationName": "Complete Eye Care",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13010,7 +12980,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ec20lk88",
-			"OrganizationName": "EyeCare 20/20 - NJ",
+			"OrganizationName": "EyeCare 20/20",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13040,13 +13010,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_innovativeminimallyinvasiveimagingtherapeutics",
-			"OrganizationName": "Innovative Minimally Invasive Imaging \u0026 Therapeutics, Inc.",
+			"OrganizationName": "Innovative Minimally Invasive Imaging \u0026 Therapeutics, Inc",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_northwestmichigansurgicalgroup",
-			"OrganizationName": "NWMI - NW-Michigan",
+			"OrganizationName": "Northwest Michigan Surgical Group",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13058,7 +13028,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_valleyvascularconsultants",
-			"OrganizationName": "Valley Vascular Consultants (VVC)",
+			"OrganizationName": "Valley Vascular Consultants",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13070,25 +13040,25 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vascularandveincenterofnj",
-			"OrganizationName": "Vascular \u0026 Vein Center of NJ (VVCNJ)",
+			"OrganizationName": "Vascular \u0026 Vein Center of NJ",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vascularaction",
-			"OrganizationName": "Vascular Action, LLC",
+			"OrganizationName": "Vascular Action",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vascularspecialists",
-			"OrganizationName": "Vascular Specialists, LLC",
+			"OrganizationName": "Vascular Specialists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vivaa",
-			"OrganizationName": "VIVAA LLC Vein Vascular and Aesthetic Associates",
+			"OrganizationName": "VIVAA",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13100,13 +13070,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_indianavascularsurgerycenter",
-			"OrganizationName": "Indiana Vascular Surgery Center Dr. Sanjay Mohindra (DSM)",
+			"OrganizationName": "Indiana Vascular Surgery Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_ozarkregionalveincenter",
-			"OrganizationName": "OZARK REGIONAL VEIN CENTER LLC",
+			"OrganizationName": "Ozark Regional Vein Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13118,7 +13088,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_acvtccvcnm",
-			"OrganizationName": "ACV Traverse CVCNM",
+			"OrganizationName": "Cardiac and Vascular Consultants of North Michigan",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13148,31 +13118,31 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_comprehensivevascularsurgeryofgeorgia",
-			"OrganizationName": "Comprehensive Vascular Surgery of Georgia (CVSG)",
+			"OrganizationName": "Comprehensive Vascular Surgery of Georgia",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_lakesinterventionalradiology",
-			"OrganizationName": "Lakes Interventional Radiology dba Unique Interventional Radiology",
+			"OrganizationName": "Lakes Interventional Radiology",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_medicalveinclinic",
-			"OrganizationName": "Medical Vein Clinic (MVC)",
+			"OrganizationName": "Medical Vein Clinic",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_northeastohiovascularassociates",
-			"OrganizationName": "Northeast Ohio Vascular Associates - Rollins",
+			"OrganizationName": "Northeast Ohio Vascular Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_orangecountyvascularspecialists",
-			"OrganizationName": "Orange County Vascular Specialists (OCVS)",
+			"OrganizationName": "Orange County Vascular Specialists",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13190,31 +13160,31 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_surgicalassociatesofsandiego",
-			"OrganizationName": "Surgical Associates of San Diego (SASD)",
+			"OrganizationName": "Surgical Associates of San Diego",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_solanocardiovascularconsultants",
-			"OrganizationName": "Solano Cardiovascular",
+			"OrganizationName": "Solano Cardiovascular Consultants",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_surgicalcareassociates",
-			"OrganizationName": "Surgical Care Associates, P.S.C - KYSurgical",
+			"OrganizationName": "Surgical Care Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vascularcenterofintervention",
-			"OrganizationName": "Vascular Center of Intervention - Dr. Lee",
+			"OrganizationName": "Vascular Center of Intervention",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/fivos_vascularcenterofmobile",
-			"OrganizationName": "Vascular Center of Mobile (VCOM)",
+			"OrganizationName": "Vascular Center of Mobile",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13256,19 +13226,19 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/radnet_arizona",
-			"OrganizationName": "Radnet Arizona",
+			"OrganizationName": "RadNet Arizona,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/radnet_california",
-			"OrganizationName": "RadNet California",
+			"OrganizationName": "RadNet California,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/radnet_florida",
-			"OrganizationName": "RadNet Florida",
+			"OrganizationName": "RadNet Florida,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13382,7 +13352,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/vb06qa83",
-			"OrganizationName": "Vidulich, Blase and Associates (Pearle Vision)",
+			"OrganizationName": "Vidulich, Blase and Associates",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13436,7 +13406,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/ke29rv65",
-			"OrganizationName": "Kesselman Eye Care Inc. dba Riviera Vision",
+			"OrganizationName": "Kesselman Eye Care Inc.",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13490,13 +13460,13 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/radnet_midatlantic",
-			"OrganizationName": "RadNet MidAtlantic",
+			"OrganizationName": "RadNet MidAtlantic,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/radnet_northeast",
-			"OrganizationName": "RadNet Northeast",
+			"OrganizationName": "RadNet Northeast,",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13574,7 +13544,7 @@
 		},
 		{
 			"URL": "https://app.meldrx.com/api/fhir/paydc_6812",
-			"OrganizationName": "Premier Physical Medicine PA",
+			"OrganizationName": "Premier Physical Medicine",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -13669,6 +13639,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://app.meldrx.com/api/fhir/uc32562_hmgurology",
+			"OrganizationName": "Holston Medical Group, P.C. d/b/a HMG Urology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://app.meldrx.com/api/fhir/amritamedical_provider",
 			"OrganizationName": "Amrita Medical",
 			"NPIID": "",
@@ -13707,6 +13683,576 @@
 		{
 			"URL": "https://app.meldrx.com/api/fhir/senthiltest0105",
 			"OrganizationName": "senthiltest0105",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc35349_bostonurologyinstitute",
+			"OrganizationName": "Greater Boston Urology, LLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc40982_advuromedcenter",
+			"OrganizationName": "Alfred A. Sidhom, M.D., A Professional Corporation dba Advanced Urology Medical Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc09277_westtexasurologyclinic",
+			"OrganizationName": "West Texas Urology Clinic 1286",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc02416_urologycareinc",
+			"OrganizationName": "Urology Care Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc32697_guinc",
+			"OrganizationName": "GU, Inc.",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc5317_dfwurologyconsultants",
+			"OrganizationName": "DFW Urology Consultants",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/mplus_georgiaeyespecialists",
+			"OrganizationName": "Georgia Eye Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/charlottefas",
+			"OrganizationName": "Charlotte Foot \u0026 Ankle Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/psych-associate",
+			"OrganizationName": "Psychology Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/nmpeds",
+			"OrganizationName": "Roman Alder, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/worcesterortho",
+			"OrganizationName": "Worcester County Orthopedics",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/hspmrc",
+			"OrganizationName": "Hot Springs Physical Medicine \u0026 Rehab Clinic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/blummd",
+			"OrganizationName": "Theodore Blum, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/sanderspodiatry",
+			"OrganizationName": "Sanders Podiatry",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/gfaac",
+			"OrganizationName": "Green Foot and Ankle Care",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/mabramson",
+			"OrganizationName": "Mitchell Abramson, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/frangerdpm",
+			"OrganizationName": "Robert Franger, DPM",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/caredimensions",
+			"OrganizationName": "Care Dimensions HomeMD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/gmneuro",
+			"OrganizationName": "Greater Milford Neurology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/nefoodallergy",
+			"OrganizationName": "NE Food Allergy Treatment Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/rams",
+			"OrganizationName": "Raleigh Associated Medical Specialists",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/c9e30f05-18ba-4c76-9a04-0ae63ce828f4",
+			"OrganizationName": "Epic Sandbox (Health Universe)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/11849765-bd03-427a-98dc-0ddbdfb877a4",
+			"OrganizationName": "Standalone",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/825af4b7-d3f2-49ed-80cd-0f684471236e",
+			"OrganizationName": "test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/32484d70-c6be-42ca-a0a0-0f6db73e1b83",
+			"OrganizationName": "Provider",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0db0833b-0c4d-47aa-a68d-136042e2c8b8",
+			"OrganizationName": "Epic Dev Env",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/6b11b99f-0aa3-4cc3-972f-158c70c88c4d",
+			"OrganizationName": "Standalone",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/353ffd73-a5e5-4515-afbe-167fbca9d214",
+			"OrganizationName": "SLI Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/39ed29b2-c52c-4913-bfda-183f327a4476",
+			"OrganizationName": "Epic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/b99c04e4-8763-4886-960f-1d242a531c8d",
+			"OrganizationName": "Standalone Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/d02189f9-f3cb-4c5c-9ecf-1d2640ab0625",
+			"OrganizationName": "medblocks-epic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/efd6acd2-6c28-44dd-a7e4-21fd1e31aec7",
+			"OrganizationName": "shahriar_workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0df9d1b9-cdc6-4807-80fc-255137a56e04",
+			"OrganizationName": "epic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/8c3aab4f-e90b-4c77-ae54-2c9c7319a134",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/15cfb23f-46cd-4bb3-b8c2-303e30ac3ee2",
+			"OrganizationName": "SMART-Health-IT Sandbox (Patient)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/a6e2552f-f7f4-44a9-a7d4-30456595c87e",
+			"OrganizationName": "Epic_shahriar_workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/dec945fe-5b4d-471b-9c7d-36628ede973e",
+			"OrganizationName": "SaratTest",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0d6c0753-7b0e-4c58-8678-40cb1183fea8",
+			"OrganizationName": "Noki (Epic)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0aae2a4f-daf2-4085-b6c0-427871065bfd",
+			"OrganizationName": "test",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/paydc_6599",
+			"OrganizationName": "Dr. Shaun Gifford DC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/9a4c40f3-b59f-485d-b632-45eb1be2a13e",
+			"OrganizationName": "Epic SLI Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_geas",
+			"OrganizationName": "Garland Eye Associates",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/b9b180b7-229f-40ed-9434-50ed3e221a11",
+			"OrganizationName": "carewell",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/144b8485-76f9-49e2-a62b-55211f303910",
+			"OrganizationName": "medblocks",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/2fd2ad68-8772-4262-b622-57db45f89d06",
+			"OrganizationName": "CareWell (Cerner)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/4b2a7eeb-ca1d-436a-89d5-5d72ddbb79a0",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/2fa847fa-33ba-48e2-bd40-61800e5bcbe4",
+			"OrganizationName": "test2",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/medflow_southernshoreseyecenter",
+			"OrganizationName": "Southern Shores Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/02797a82-b390-4b99-846a-641ea6ef3c38",
+			"OrganizationName": "SMART Health IT Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/46de5b11-0a86-46a9-bc8c-67244ced60e5",
+			"OrganizationName": "Veradigm Allscripts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/9b267616-c406-4273-a671-675db898e13f",
+			"OrganizationName": "Good health (epic)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/185e7a60-68d9-4338-a187-697e4fa8cec5",
+			"OrganizationName": "NextGen Sandbox (Patient)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/renoheartascularinstitute",
+			"OrganizationName": "Reno Heart and Vascular Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/8d09d1de-497b-4a29-8f34-6f4b09ee582b",
+			"OrganizationName": "testcerner",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/dfe6af88-b252-4c8c-98cb-7b2063bd83c2",
+			"OrganizationName": "sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/dfbe651e-4f62-4073-9865-7db5235943bf",
+			"OrganizationName": "Enliv",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/d1b70d3e-61d6-4ccc-9b51-7f150de511a1",
+			"OrganizationName": "livewell",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/8cb8aa92-a2d9-4e43-b215-85172827e54e",
+			"OrganizationName": "epic-sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/54fedf6c-1b75-42a5-a744-86ba7a7f5678",
+			"OrganizationName": "Epic Hospital 1",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/mve_iwasaeyecenter",
+			"OrganizationName": "Iwasa Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/7cbaeda4-355d-4928-a4e5-8d11c76cd19a",
+			"OrganizationName": "sandards",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/c8c7aea0-749b-49a7-9659-8eeed38391da",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_okeye",
+			"OrganizationName": "Oklahoma Eye Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/2ed76f05-7d48-47e4-abdb-934bd9c59bc6",
+			"OrganizationName": "testepic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/e1558f23-9d41-4ea1-b6ce-9923c5d32db1",
+			"OrganizationName": "cerner",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/3179ef9c-dee7-4a8a-8518-9b528a472160",
+			"OrganizationName": "epic sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/7b3d37e4-2e6e-4045-9c17-9e9f4dcbd202",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/1c6abdae-fb12-46d4-b386-a67c4c88cd7d",
+			"OrganizationName": "Standalone",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/5ed3b554-bedf-4e8c-8014-a746bc31f73a",
+			"OrganizationName": "good health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/fei_sandiegocounty",
+			"OrganizationName": "San Diego County",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0054a937-4fbd-46e8-917c-bb2dbe2599c8",
+			"OrganizationName": "cerner sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/37a2c9ad-b932-41de-801c-bb2f7cd670af",
+			"OrganizationName": "Epic Linked Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_keywhitman",
+			"OrganizationName": "Key-Whitman Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/3d1a05a0-259c-47d0-871b-c53bcd81ee11",
+			"OrganizationName": "Tiger5",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_shorelinevision",
+			"OrganizationName": "Shoreline Vision",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/da3e577a-0a16-48c0-9a3f-ccce5bf4adaf",
+			"OrganizationName": "patient app Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/mdoffice_rowlandophthalmology",
+			"OrganizationName": "Rowland Ophthalmology",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/6c3b8f8f-7f35-421e-ab0c-d09427cfac8e",
+			"OrganizationName": "medblocks-cener",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/5e8579d7-c322-4721-9efa-d5f433e1b107",
+			"OrganizationName": "Good Health (Epic)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/ee5deec1-42bd-495c-8314-d6c67c025acd",
+			"OrganizationName": "Cerner Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/medflow_cedareyecenter",
+			"OrganizationName": "Cedar Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/d50a4c6c-df83-4bb3-92d3-dbf155fa18a7",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/0390539e-ee20-4abf-9ef8-dd10259934fc",
+			"OrganizationName": "Test ws",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/21512484-7c77-4fa1-8cac-de21978b6614",
+			"OrganizationName": "Unit Tests: Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_marr",
+			"OrganizationName": "Marr-Kirkland Eye Center",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_tysoneye",
+			"OrganizationName": "Tyson Eye",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/imedicware_mage",
+			"OrganizationName": "Magruder Eye Institute",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/9ef51b1d-6424-4aff-bd95-ee572aecce9d",
+			"OrganizationName": "Good health provider workspace(epic)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/caae1a8d-c192-42ec-9ef0-ee88abd06a80",
+			"OrganizationName": "Epic Sandbox",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc35499_urologyexperts",
+			"OrganizationName": "Urology Experts",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/b0ac7522-da83-4c22-b639-f7498099aa78",
+			"OrganizationName": "My Workspace",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/187da151-72cd-4801-bdfb-fa4eb5b9add7",
+			"OrganizationName": "SMART-Health-IT Sandbox (Provider)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/uc35319_riograndeurology",
+			"OrganizationName": "Rio Grande Urology PA 1136 - 35319",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/41b15166-94fa-4fd2-ae6d-fd689124bae1",
+			"OrganizationName": "epic",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://app.meldrx.com/api/fhir/be803dcc-7fff-4c66-89cc-fdf354ca88d2",
+			"OrganizationName": "my workspace",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}

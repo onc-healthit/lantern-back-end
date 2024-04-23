@@ -14,7 +14,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
-var chplAPICertCriteriaPath string = "/data/certification-criteria"
+var chplAPICertCriteriaPath string = "/certification-criteria"
 
 type chplCertifiedCriteriaList struct {
 	Results []chplCertCriteria `json:"criteria"`
@@ -34,14 +34,14 @@ type chplCertCriteria struct {
 // GetCHPLCriteria queries CHPL for its certification criteria using 'cli' and stores the criteria in 'store'
 // within the given context 'ctx'.
 func GetCHPLCriteria(ctx context.Context, store *postgresql.Store, cli *http.Client, userAgent string) error {
-	log.Debug("requesting certification criteria from CHPL")
+	log.Info("requesting certification criteria from CHPL")
 	critJSON, err := getCriteriaJSON(ctx, cli, userAgent)
 	if err != nil {
 		return err
 	}
-	log.Debug("done requesting certification criteria from CHPL")
+	log.Info("done requesting certification criteria from CHPL")
 
-	log.Debug("converting chpl json into certification criteria objects")
+	log.Info("converting chpl json into certification criteria objects")
 	critList, err := convertCriteriaJSONToObj(ctx, critJSON)
 	if err != nil {
 		return errors.Wrap(err, "converting certification criteria JSON into a 'chplCriteriaList' object failed")
@@ -57,6 +57,7 @@ func GetCHPLCriteria(ctx context.Context, store *postgresql.Store, cli *http.Cli
 // makes the request to CHPL and returns the byte string
 func getCriteriaJSON(ctx context.Context, client *http.Client, userAgent string) ([]byte, error) {
 	chplURL, err := makeCHPLCriteriaURL()
+	log.Info(chplURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating CHPL certification criteria URL")
 	}
@@ -82,7 +83,7 @@ func makeCHPLCriteriaURL() (*url.URL, error) {
 }
 
 // takes the json byte string and converts it into the associated JSON model
-func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) (*chplCertifiedCriteriaList, error) {
+func convertCriteriaListJSONToObj(ctx context.Context, critJSON []byte) ([]chplCertCriteria, error) {
 	var critList chplCertifiedCriteriaList
 
 	// don't unmarshal the JSON if the context has ended
@@ -98,7 +99,27 @@ func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) (*chplCertif
 		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertifiedCriteriaList object failed.")
 	}
 
-	return &critList, nil
+	return critList.Results, nil
+}
+
+// takes the json byte string and converts it into the associated JSON model
+func convertCriteriaJSONToObj(ctx context.Context, critJSON []byte) ([]chplCertCriteria, error) {
+	//var critList chplCertifiedCriteriaList
+	var critList []chplCertCriteria
+	// don't unmarshal the JSON if the context has ended
+	select {
+	case <-ctx.Done():
+		return nil, errors.Wrap(ctx.Err(), "Unable to convert certified criteria JSON to objects - context ended")
+	default:
+		// ok
+	}
+
+	err := json.Unmarshal(critJSON, &critList)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshalling the JSON into a chplCertCriteria object failed.")
+	}
+
+	return critList, nil
 }
 
 // takes the JSON model and converts it into an endpointmanager.CertificationCriteria
@@ -118,18 +139,18 @@ func parseHITCriteria(criteria *chplCertCriteria, store *postgresql.Store) (*end
 }
 
 // persists the criteria parsed from CHPL
-func persistCriterias(ctx context.Context, store *postgresql.Store, critList *chplCertifiedCriteriaList) error {
-	for i, criteria := range critList.Results {
+func persistCriterias(ctx context.Context, store *postgresql.Store, critList []chplCertCriteria) error {
+	for i, criteria := range critList {
 
 		select {
 		case <-ctx.Done():
-			return errors.Wrapf(ctx.Err(), "persisted %d out of %d certification criteria before context ended", i, len(critList.Results))
+			return errors.Wrapf(ctx.Err(), "persisted %d out of %d certification criteria before context ended", i, len(critList))
 		default:
 			// ok
 		}
 
 		if i%100 == 0 {
-			log.Infof("persisting chpl certification criteria %d/%d", i, len(critList.Results))
+			log.Infof("persisting chpl certification criteria %d/%d", i, len(critList))
 		}
 
 		err := persistCriteria(ctx, store, &criteria)

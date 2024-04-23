@@ -229,12 +229,6 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicarrprod.uhnj.org/FHIR-Proxy/api/FHIR/DSTU2/",
-			"OrganizationName": "University Hospital (New Jersey)",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
 			"URL": "https://scripts.prevea.com/FHIR-ARR-PRD/api/FHIR/DSTU2/",
 			"OrganizationName": "Hospital Sisters Health System (HSHS)",
 			"NPIID": "",
@@ -524,7 +518,7 @@
 		},
 		{
 			"URL": "https://fhir.myeverettclinic.com/fhir/api/FHIR/DSTU2/",
-			"OrganizationName": "The Everett Clinic",
+			"OrganizationName": "Optum Care Washington",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -1609,7 +1603,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://interconnect.wellspan.org/interconnect-prd-fhir/api/FHIR/DSTU2/",
+			"URL": "https://interconnect.wellspan.org/interconnect-prd-oauth2/api/FHIR/DSTU2/",
 			"OrganizationName": "WellSpan Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -1723,7 +1717,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicproxy.et1024.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"URL": "https://epicproxy.et1024.epichosted.com/APIPROXYPRD/api/FHIR/DSTU2/",
 			"OrganizationName": "South Georgia Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -2199,12 +2193,6 @@
 		{
 			"URL": "https://epic-fhir.mercy.net/prdfhirstl/api/FHIR/DSTU2/",
 			"OrganizationName": "Mercy Health (Arkansas, Louisiana, Mississippi and Texas)",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://eprescribe.mercy.net/PRDFHIRSGF/MTSM/api/FHIR/DSTU2/",
-			"OrganizationName": "River Valley",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2797,6 +2785,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1299.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Albany Med Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
 			"OrganizationName": "West Bend Family Medicine",
 			"NPIID": "",
@@ -2845,8 +2839,44 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et0434.epichosted.com/APIProxyPRD/api/FHIR/DSTU2/",
+			"OrganizationName": "University Hospital (New Jersey)",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1275.epichosted.com/fhirproxy/api/FHIR/DSTU2/",
 			"OrganizationName": "Sharp HealthCare",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1334.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Benefis Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chperx.health-partners.org/Proxy-FHIR/api/FHIR/DSTU2/",
+			"OrganizationName": "Bon Secours Mercy Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.musc.edu/fhirprod/TIDELANDS/api/FHIR/DSTU2/",
+			"OrganizationName": "Tidelands Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://interconnect.brgeneral.org/oauth/api/FHIR/DSTU2/",
+			"OrganizationName": "Baton Rouge General",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/DSTU2/",
+			"OrganizationName": "Innovista Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -2857,8 +2887,8 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
-			"OrganizationName": "Ritual Medical",
+			"URL": "https://epicproxy.et0434.epichosted.com/APIProxyPRD/api/FHIR/R4/",
+			"OrganizationName": "University Hospital (New Jersey)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3147,12 +3177,6 @@
 		{
 			"URL": "https://fhir.guthrie.org/FHIR-PRD/api/FHIR/R4/",
 			"OrganizationName": "The Guthrie Clinic",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://epicarrprod.uhnj.org/FHIR-Proxy/api/FHIR/R4/",
-			"OrganizationName": "University Hospital (New Jersey)",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3512,7 +3536,7 @@
 		},
 		{
 			"URL": "https://fhir.myeverettclinic.com/fhir/api/FHIR/R4/",
-			"OrganizationName": "The Everett Clinic",
+			"OrganizationName": "Optum Care Washington",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3531,12 +3555,6 @@
 		{
 			"URL": "https://haiku.bshsi.org/fhir/COV_OAUTH/api/FHIR/R4/",
 			"OrganizationName": "Covenant Health",
-			"NPIID": "",
-			"OrganizationZipCode": ""
-		},
-		{
-			"URL": "https://chperx.health-partners.org/Proxy-FHIR/api/FHIR/R4/",
-			"OrganizationName": "Mercy Health - OH, KY",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -3783,6 +3801,18 @@
 		{
 			"URL": "https://hscsesoap.hscs.virginia.edu/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "UVA Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chperx.health-partners.org/Proxy-FHIR/api/FHIR/R4/",
+			"OrganizationName": "Mercy Health - OH, KY",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://chperx.health-partners.org/Proxy-FHIR/api/FHIR/R4/",
+			"OrganizationName": "Bon Secours Mercy Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4137,6 +4167,12 @@
 		{
 			"URL": "https://fhirprod.musc.edu/fhirprod/api/FHIR/R4/",
 			"OrganizationName": "Medical University of South Carolina",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://fhirprod.musc.edu/fhirprod/TIDELANDS/api/FHIR/R4/",
+			"OrganizationName": "Tidelands Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -4753,7 +4789,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://interconnect.wellspan.org/interconnect-prd-fhir/api/FHIR/R4/",
+			"URL": "https://interconnect.wellspan.org/interconnect-prd-oauth2/api/FHIR/R4/",
 			"OrganizationName": "WellSpan Health",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -4903,7 +4939,7 @@
 			"OrganizationZipCode": ""
 		},
 		{
-			"URL": "https://epicproxy.et1024.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"URL": "https://epicproxy.et1024.epichosted.com/APIPROXYPRD/api/FHIR/R4/",
 			"OrganizationName": "South Georgia Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
@@ -5425,6 +5461,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Ritual Medical",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1221.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Muscogee - Creek Nation Department of Health",
 			"NPIID": "",
@@ -5611,6 +5653,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://epicproxy.et1299.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Albany Med Health System",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://rp-prd.copcp.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Central Ohio Primary Care Physicians",
 			"NPIID": "",
@@ -5659,8 +5707,20 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://interconnect.brgeneral.org/oauth/api/FHIR/R4",
+			"OrganizationName": "Baton Rouge General",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://epicproxy.et1327.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "San Ysidro Health",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et1334.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Benefis Health System",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
@@ -5673,6 +5733,12 @@
 		{
 			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
 			"OrganizationName": "Dr. Bruce W Moskowitz, MD",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://epicproxy.et4001.epichosted.com/FHIRProxy/api/FHIR/R4/",
+			"OrganizationName": "Innovista Medical Center",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		}
