@@ -1,0 +1,10 @@
+{
+	"Endpoints": [
+		{
+			"URL": "https://connect.pointclickcare.com/fhir/R4",
+			"OrganizationName": "",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}
