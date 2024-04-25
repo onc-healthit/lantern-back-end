@@ -51,7 +51,6 @@ var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-speci
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
 var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
 
-// No endpoint listed
 // var integraconnectURL = "https://www.integraconnect.com/certifications/"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
 var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints"
