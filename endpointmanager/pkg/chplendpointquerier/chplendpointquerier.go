@@ -183,6 +183,9 @@ var myeyecarerecordsURL = "https://smartonfhir.myeyecarerecords.com/fhir/Endpoin
 var nextgenAPIURL = "https://www.nextgen.com/patient-access-api"
 var sabiamedURL = "https://www.sabiamed.com/api-endpoints"
 var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
+var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
+var pointclickURL = "https://fhir.pointclickcare.com/"
+var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -514,6 +517,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		// 	MolinaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, unitedHealthURL) {
 		UnitedHealthURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, footholdURL) {
+		FootholdURLQuerierParser(footholdURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, pointclickURL) {
+		PointclickWebscraper(pointclickURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, nextgenPracticeURL) {
+		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
 	}
 }
 

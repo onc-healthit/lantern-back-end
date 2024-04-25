@@ -8815,6 +8815,18 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://tw181unityfhir.open.allscripts.com/https://tw181unityfhir.open.allscripts.com/OPEN",
+			"OrganizationName": "Veradigm Connect TW R4",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://tw181unityfhir.open.allscripts.com/https://tw181unityfhir.open.allscripts.com/FHIR",
+			"OrganizationName": "Veradigm Connect TW R4",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhirprod.whs.org/R4/fhir-Prod",
 			"OrganizationName": "Washington Health System - WH01",
 			"NPIID": "",

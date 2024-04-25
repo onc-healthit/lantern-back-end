@@ -1,0 +1,16 @@
+{
+	"Endpoints": [
+		{
+			"URL": "fhir.footholdtechnology.com/cgc",
+			"OrganizationName": "cgc",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "fhir.footholdtechnology.com/demodb",
+			"OrganizationName": "demodb",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		}
+	]
+}

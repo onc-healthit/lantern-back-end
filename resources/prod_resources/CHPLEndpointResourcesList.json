@@ -1,36 +1,6 @@
 [
 	{
 		"FormatType": "Lantern",
-		"URL": "https://developer.advancedmd.com/fhir/base-urls",
-		"EndpointName": "AdvancedMD",
-		"FileName": "AdvancedMD_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints",
-		"EndpointName": "MedicalMine Inc.",
-		"FileName": "MedicalMine_Inc_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://www.integraconnect.com/certifications/",
-		"EndpointName": "Integra Connect Newco, LLC",
-		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://app-52512.on-aptible.com/service-base-urls",
-		"EndpointName": "Healthie",
-		"FileName": "Healthie_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
-		"URL": "https://www.nextgen.com/patient-access-api",
-		"EndpointName": "NextGen Healthcare",
-		"FileName": "NextGen_Healthcare_2_EndpointSources.json"
-	},
-	{
-		"FormatType": "Lantern",
 		"URL": "https://apidocs.onemedical.io/fhir/overview/",
 		"EndpointName": "1Life Healthcare, Inc",
 		"FileName": "1Life_Healthcare_Inc_EndpointSources.json"
@@ -64,6 +34,12 @@
 		"URL": "https://apifhir.axeium.net:8443/reference-server/",
 		"EndpointName": "Brilogy Corporation",
 		"FileName": "Brilogy_Corporation_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://developer.advancedmd.com/fhir/base-urls",
+		"EndpointName": "AdvancedMD",
+		"FileName": "AdvancedMD_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -220,6 +196,12 @@
 		"URL": "https://carefluence.com/carefluence-fhir-endpoints/",
 		"EndpointName": "Carefluence",
 		"FileName": "Carefluence_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints",
+		"EndpointName": "MedicalMine Inc.",
+		"FileName": "MedicalMine_Inc_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -517,6 +499,12 @@
 	},
 	{
 		"FormatType": "Lantern",
+		"URL": "https://app-52512.on-aptible.com/service-base-urls",
+		"EndpointName": "Healthie",
+		"FileName": "Healthie_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
 		"URL": "https://amsemr.com/endpoints/",
 		"EndpointName": "American Medical Solutions, Inc.",
 		"FileName": "American_Medical_Solutions_Inc_EndpointSources.json"
@@ -538,6 +526,12 @@
 		"URL": "https://qualifacts.com/api-page/platform/insync/insync-fhir-org-list.html",
 		"EndpointName": "Qualifacts Systems, LLC",
 		"FileName": "Qualifacts_Systems_LLC_2_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.integraconnect.com/certifications/",
+		"EndpointName": "Integra Connect Newco, LLC",
+		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
@@ -745,7 +739,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://mmdpcf.modulemd.com/cf.fhir.r4",
+		"URL": "https://mmdpcf.modulemd.com/cf.fhir.r4/metadata",
 		"EndpointName": "ModuleMD",
 		"FileName": "ModuleMD_EndpointSources.json"
 	},
@@ -778,6 +772,12 @@
 		"URL": "https://www.nextgen.com/api/practice-search",
 		"EndpointName": "NextGen Healthcare",
 		"FileName": "NextGen_Healthcare_1_EndpointSources.json"
+	},
+	{
+		"FormatType": "Lantern",
+		"URL": "https://www.nextgen.com/patient-access-api",
+		"EndpointName": "NextGen Healthcare",
+		"FileName": "NextGen_Healthcare_2_EndpointSources.json"
 	},
 	{
 		"FormatType": "Lantern",
