@@ -781,6 +781,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1845",
+			"OrganizationName": "Rock Creek NeurosurgeryLLC",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://fhir-api.fhirprod.aws.greenwayhealth.com/fhir/R4/2.16.840.1.113883.3.441.1858",
 			"OrganizationName": "Cardiology of Atlanta",
 			"NPIID": "",

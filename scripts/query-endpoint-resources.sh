@@ -59,7 +59,7 @@ echo "Downloading Medicare State Endpoint List..."
 URL="https://chpl.healthit.gov/rest/search/v3?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
 FILENAME="CHPLEndpointResourcesList.json"
 cd ../../endpointmanager/cmd/CHPLpopulator
-#go run main.go $URL $FILENAME
+go run main.go $URL $FILENAME
 cd ../../../resources/prod_resources
 echo "done"
 

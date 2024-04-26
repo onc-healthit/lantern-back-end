@@ -1207,6 +1207,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://applications.op.healthcare/3151/api/FHIR/R4",
+			"OrganizationName": "Pediatric Healthcare Unlimited SC IL",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://applications.op.healthcare/1195/api/FHIR/R4",
 			"OrganizationName": "Pediatric Medicine of Wallingford LLP CT",
 			"NPIID": "",

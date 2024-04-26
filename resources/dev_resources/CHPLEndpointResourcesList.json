@@ -739,7 +739,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://mmdpcf.modulemd.com/cf.fhir.r4",
+		"URL": "https://mmdpcf.modulemd.com/cf.fhir.r4/metadata",
 		"EndpointName": "ModuleMD",
 		"FileName": "ModuleMD_EndpointSources.json"
 	},

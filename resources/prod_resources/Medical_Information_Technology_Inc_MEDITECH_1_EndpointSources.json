@@ -811,6 +811,12 @@
 			"OrganizationZipCode": ""
 		},
 		{
+			"URL": "https://live01.freemanhealth.net:443/v2/argonaut/v1",
+			"OrganizationName": "Freeman Hospital West",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
 			"URL": "https://api01.fresnosurgicalhospital.com:443/v2/argonaut/v1",
 			"OrganizationName": "Fresno Surgery Center (FSH Health)-C/S ***MASTER SITE***",
 			"NPIID": "",
@@ -3591,6 +3597,12 @@
 		{
 			"URL": "https://frdrestapis-live01.fmh.org:443/v1/uscore/R4",
 			"OrganizationName": "Frederick Health Expanse",
+			"NPIID": "",
+			"OrganizationZipCode": ""
+		},
+		{
+			"URL": "https://live01.freemanhealth.net:443/v1/uscore/R4",
+			"OrganizationName": "Freeman Hospital West",
 			"NPIID": "",
 			"OrganizationZipCode": ""
 		},
