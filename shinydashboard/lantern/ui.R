@@ -335,6 +335,8 @@ ui <- dashboardPage(
 
     "))),
     tags$head(tags$link(rel = "shortcut icon", href = "images/favicon.ico")),
+    tags$head(includeHTML("google-analytics.html")),
+    tags$noscript(tags$iframe(src = "https://www.googletagmanager.com/ns.html?id=GTM-KC3FP96", height = "0", width = "0", style = "display:none;visibility:hidden")),
     development_banner(devbanner),
     uiOutput("resource_tab_popup"),
     h1(textOutput("page_title")),
