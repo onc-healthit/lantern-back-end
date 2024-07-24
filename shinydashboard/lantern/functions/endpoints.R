@@ -937,6 +937,7 @@ database_fetcher <- reactive({
   app_data$http_pct(get_http_response_summary_tbl(db_tables))
   app_data$endpoint_resource_types(get_fhir_resource_types(db_connection))
   app_data$capstat_fields(get_capstat_fields(db_connection))
+  app_data$capstat_values(get_capstat_values(db_connection))
   app_data$supported_profiles(get_supported_profiles(db_connection))
   app_data$last_updated(now("UTC"))
   app_data$security_endpoints(get_security_endpoints(db_connection))
