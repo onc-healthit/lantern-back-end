@@ -153,13 +153,21 @@ func GetInfoHistoryDuplicateData(ctx context.Context, store *postgresql.Store, q
 			}
 		}
 
-		duplicateInfoHistoryDataWriter.WriteAll(pruningData)
+		err = duplicateInfoHistoryDataWriter.WriteAll(pruningData)
+		if err != nil {
+			log.Fatal("Error writing to duplicateInfoHistoryDataWriter:", err)
+		}
+
 		duplicateInfoHistoryDataWriter.Flush()
 		if err := duplicateInfoHistoryDataWriter.Error(); err != nil {
 			log.Fatal("Error flushing duplicateInfoHistoryDataWriter:", err)
 		}
 
-		distinctURLWriter.Write([]string{url})
+		err = distinctURLWriter.Write([]string{url})
+		if err != nil {
+			log.Fatal("Error writing to distinctURLWriter:", err)
+		}
+
 		distinctURLWriter.Flush()
 		if err := distinctURLWriter.Error(); err != nil {
 			log.Fatal("Error flushing distinctURLWriter:", err)
@@ -171,9 +179,7 @@ func GetInfoHistoryDuplicateData(ctx context.Context, store *postgresql.Store, q
 func flatten2D(data2D [][]string) []string {
 	var data1D []string
 	for _, row := range data2D {
-		for _, element := range row {
-			data1D = append(data1D, element)
-		}
+		data1D = append(data1D, row...)
 	}
 	return data1D
 }
