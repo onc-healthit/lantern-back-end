@@ -347,6 +347,38 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
+# Perform History Cleanup
+
+You can perform a manual history cleanup operation which will prune all repetitive entries, determined using comparisons from the history pruning algorithm, present in the fhir_endpoints_info_history table. It will also prune the corresponding entries from the validations and validation_results table. It is a two-step process.
+
+Step 1: Collect the identifiers of repetitive entries
+
+Change directory to the /scripts inside lantern-back-end and run:
+
+ ```bash
+    ./duplicate_info_history_check.sh
+  ```
+
+This will start capturing the identifiers of repetitive entries in the fhir_endpoints_info_history table and store it in duplicateInfoHistoryIds.csv file inside the /home directory of the lantern-back-end_endpoint_manager_1 container.
+
+To retrieve the csv file, change directory to /lantern-back-end and run:
+
+ ```bash
+    docker cp lantern-back-end_endpoint_manager_1:/home/duplicateInfoHistoryIds.csv .
+  ```
+
+Step 2: Perform the history cleanup
+
+Change directory to the /scripts inside lantern-back-end and run:
+
+ ```bash
+    ./history_cleanup.sh
+  ```
+
+Note: Ensure that the duplicateInfoHistoryIds.csv file is present in /lantern-back-end before executing this script.
+
+This will start the deletion of data from fhir_endpoints_info_history, validations and validation_results tables using the captured identifiers of repetitive entries.
+
 # Running Lantern Services Individually
 
 ## Internal Services
