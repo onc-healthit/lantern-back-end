@@ -10,7 +10,6 @@ function(input, output, session) { #nolint
 
 selected_fhir_endpoint_profiles <- reactive({
     res <- isolate(app_data$supported_profiles())
-   
     req(input$fhir_version, input$vendor)
 
     res <- res %>% filter(fhir_version %in% input$fhir_version)
@@ -21,13 +20,13 @@ selected_fhir_endpoint_profiles <- reactive({
 
      if (length(input$profile_resource) > 0) {
         if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-        res <- res %>% filter(resource == input$profile_resource)
+          res <- res %>% filter(resource == input$profile_resource)
         }
     }
 
     if (length(input$profile_resource) > 0) {
         if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-        res <- res %>% filter(resource == input$profile_resource)
+          res <- res %>% filter(resource == input$profile_resource)
         }
     }
 
@@ -37,7 +36,6 @@ selected_fhir_endpoint_profiles <- reactive({
     group_by(url) %>%
     mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     mutate_at(vars(-group_cols()), as.character)
-
 
     return(res)
   })
@@ -1320,7 +1318,7 @@ output$no_filter_profile_table <- DT::renderDataTable({
       DT::datatable(
         selected_fhir_endpoint_profiles(),
         escape = FALSE,
-        colnames = c('Endpoint', 'Profile URL', 'Profile Name', 'Resource', 'FHIR Version', 'Certified API Developer Name'),
+        colnames = c("Endpoint", "Profile URL", "Profile Name", "Resource", "FHIR Version", "Certified API Developer Name"),
         options = list(
         lengthMenu = c(5, 30, 50),
         pageLength = 5,
