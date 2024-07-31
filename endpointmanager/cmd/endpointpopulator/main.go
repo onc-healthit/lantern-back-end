@@ -74,7 +74,6 @@ func main() {
 	}
 
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL)
-	// helpers.FailOnError("Endponint List Parsing Error: ", err)
 	if err != nil {
 		fmt.Println("Endpoint List Parsing Error: ", err)
 	}
