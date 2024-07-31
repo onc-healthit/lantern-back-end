@@ -11,7 +11,8 @@ if [ ! -f "$csv_file" ]; then
 fi
 
 while IFS=',' read -r col1 col2 col3 col4; do
-    echo "Deleting entries for data: $col1, $col2, $col3, $col4"
+    DATE=$(date)
+    echo "($DATE) Deleting entries for data: $col1, $col2, $col3, $col4"
     
     # Delete entry from the info history table
     QUERY=$(echo "DELETE FROM fhir_endpoints_info_history WHERE url='$col1' AND operation='U' AND requested_fhir_version='$col3' AND entered_at = '$col2';")
