@@ -75,7 +75,7 @@ func main() {
 	}
 
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL)
-	if err!=nil && strings.Contains(err.Error(), "incorrect reference value") {
+	if err != nil && strings.Contains(err.Error(), "incorrect reference value") {
 		log.Error("Endpoint List Parsing Error: ", err)
 	}
 
