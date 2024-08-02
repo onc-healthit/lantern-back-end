@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package jsonexport
@@ -163,7 +164,13 @@ func Test_getHistory(t *testing.T) {
 
 	// base case with export type equal to month
 
-	oldDate := time.Now().AddDate(0, -1, 0).Format("2006-01-02 15:04:05.000000000")
+	// LANTERN-726: (Special Case) Subtract the day by 1 if it is the 31st of a month for accurate calculation of oldDate
+	now := time.Now()
+	if now.Day() == 31 {
+		now = now.AddDate(0, 0, -1)
+	}
+
+	oldDate := now.AddDate(0, -1, 0).Format("2006-01-02 15:04:05.000000000")
 
 	updateEndpointInfoHistoryDate := `
 	UPDATE fhir_endpoints_info_history
