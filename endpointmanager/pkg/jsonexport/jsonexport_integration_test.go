@@ -170,6 +170,11 @@ func Test_getHistory(t *testing.T) {
 		now = now.AddDate(0, 0, -1)
 	}
 
+	// Subtract the day again by 2 so that the oldDate is Feb 28 if the current date is March 31.
+	if now.Month() == time.March {
+		now = now.AddDate(0, 0, -2)
+	}
+
 	oldDate := now.AddDate(0, -1, 0).Format("2006-01-02 15:04:05.000000000")
 
 	updateEndpointInfoHistoryDate := `
