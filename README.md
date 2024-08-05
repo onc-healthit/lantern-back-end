@@ -375,9 +375,15 @@ Change directory to the /scripts inside lantern-back-end and run:
     ./history_cleanup.sh
   ```
 
-Note: Ensure that the duplicateInfoHistoryIds.csv file is present in /lantern-back-end before executing this script.
+This will start the deletion of data from fhir_endpoints_info_history table using the captured identifiers of repetitive entries.
 
-This will start the deletion of data from fhir_endpoints_info_history, validations and validation_results tables using the captured identifiers of repetitive entries.
+ ```bash
+    ./validations_cleanup.sh
+  ```
+
+This will start the deletion of data from validations and validation_results tables using the captured identifiers of repetitive entries.
+
+Note: Ensure that the duplicateInfoHistoryIds.csv file is present in /lantern-back-end before executing the above scripts.
 
 # Running Lantern Services Individually
 
