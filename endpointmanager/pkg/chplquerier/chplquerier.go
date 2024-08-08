@@ -47,7 +47,8 @@ func makeCHPLURL(path string, queryArgs map[string]string, pageSize int, pageNum
 func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAgent string) ([]byte, error) {
 	// request ceritified products list
 	// Adds a short delay between request
-	time.Sleep(time.Duration(500 * time.Millisecond))
+	// LANTERN-721: Increased the delay to 1.2 seconds since the CHPL API rate limit is one request per second
+	time.Sleep(time.Duration(1200 * time.Millisecond))
 	req, err := http.NewRequest("GET", chplURL.String(), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating http request failed")
