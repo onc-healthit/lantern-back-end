@@ -62,7 +62,7 @@ selected_fhir_endpoint_profiles <- reactive({
         )
       } else {
         tagList(
-            reactable::reactableOutput(ns("no_filter_profile_table"))
+            DT::dataTableOutput("no_filter_profile_table")
         )
      }
     }
@@ -82,31 +82,6 @@ selected_fhir_endpoint_profiles <- reactive({
                   fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
               ),
-              striped = TRUE,
-              searchable = TRUE,
-              showSortIcon = TRUE,
-              highlight = TRUE,
-              defaultPageSize = 10
-
-     )
-  })
-
-  output$no_filter_profile_table <- reactable::renderReactable({
-     reactable(
-              selected_fhir_endpoint_profiles(),
-              defaultColDef = colDef(
-                align = "center"
-              ),
-              columns = list(
-                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left", html = TRUE),
-                  profileurl = colDef(name = "Profile URL", minWidth = 300, align = "left", sortable = FALSE, aggregate = "count",
-                  format = list(aggregated = colFormat(prefix = "Count: "))),
-                  profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
-                  resource = colDef(name = "Resource", sortable = FALSE),
-                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE, aggregate = "unique"),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
-              ),
-              groupBy = "url",
               striped = TRUE,
               searchable = TRUE,
               showSortIcon = TRUE,
