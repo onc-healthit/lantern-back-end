@@ -17,6 +17,7 @@ import (
 	"github.com/streadway/amqp"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
+	"strings"
 )
 
 func main() {
@@ -74,7 +75,9 @@ func main() {
 	}
 
 	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL)
-	helpers.FailOnError("Endpoint List Parsing Error: ", err)
+	if err != nil && strings.Contains(err.Error(), "incorrect reference value") {
+		log.Error("Endpoint List Parsing Error: ", err)
+	}
 
 	err = config.SetupConfig()
 	helpers.FailOnError("", err)
