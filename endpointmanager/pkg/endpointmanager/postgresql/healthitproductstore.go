@@ -418,10 +418,7 @@ func (s *Store) DeleteLinksByProduct(ctx context.Context, productID int) error {
 
 func prepareHealthITProductStatements(s *Store) error {
 	var err error
-	addHealthITProductMapStatement, err = s.DB.Prepare(`
-		INSERT INTO healthit_products_map (id, healthit_product_id)
-		VALUES ($1, $2)
-		RETURNING id;`)
+	addHealthITProductMapStatement, err = s.DB.Prepare(`INSERT INTO healthit_products_map (id, healthit_product_id) VALUES ($1, $2) ON CONFLICT (id, healthit_product_id) DO UPDATE SET id=EXCLUDED.id RETURNING id;`)
 	if err != nil {
 		return err
 	}
