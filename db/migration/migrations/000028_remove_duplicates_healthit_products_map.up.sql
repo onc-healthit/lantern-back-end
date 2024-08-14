@@ -20,4 +20,6 @@ $$ LANGUAGE plpgsql;
 
 SELECT delete_duplicate_data_in_healthit_products_map();
 
+ALTER TABLE IF EXISTS public.healthit_products_map ADD CONSTRAINT unique_id_healthit_product UNIQUE (id, healthit_product_id);
+
 COMMIT;

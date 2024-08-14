@@ -131,7 +131,8 @@ CREATE TABLE healthit_products (
 
 CREATE TABLE healthit_products_map (
     id SERIAL,
-    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
+    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL,
+    CONSTRAINT unique_id_healthit_product UNIQUE(id, healthit_product_id)
 );
 
 CREATE TABLE certification_criteria (
