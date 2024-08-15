@@ -1,5 +1,7 @@
 BEGIN;
 
+DROP TABLE IF EXISTS info_history_pruning_metadata;
+
 CREATE TABLE info_history_pruning_metadata (
     id                                  SERIAL PRIMARY KEY,
     started_on                          timestamp with time zone NOT NULL DEFAULT now(),
