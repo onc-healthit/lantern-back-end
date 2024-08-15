@@ -248,7 +248,13 @@ func prepareHistoryPruningStatements(s *Store) error {
 		WHERE (operation='U' OR operation='I')
 			AND url = $1
 			AND (date_trunc('minute', entered_at) <= date_trunc('minute', current_date - INTERVAL '` + thresholdString + ` minute'))
-			AND (date_trunc('minute', entered_at) >= date_trunc('minute', current_date - INTERVAL '` + queryIntString + ` minute'))
+			AND (date_trunc('minute', entered_at) >= COALESCE((SELECT date_trunc('minute', entered_at) 
+														FROM fhir_endpoints_info_history 
+														WHERE (operation='U' OR operation='I') 
+														AND (date_trunc('minute', entered_at) < date_trunc('minute', current_date - INTERVAL '` + queryIntString + ` minute'))
+														AND url = $1
+													ORDER BY entered_at DESC LIMIT 1),
+													date_trunc('minute', current_date - INTERVAL '` + queryIntString + ` minute')))
 		ORDER BY entered_at ASC;`)
 	if err != nil {
 		return err
