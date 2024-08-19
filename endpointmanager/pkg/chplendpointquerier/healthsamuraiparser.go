@@ -1,39 +1,45 @@
 package chplendpointquerier
 
 import (
-	"strings"
+	"encoding/json"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
+type HealthSamuraiBundle struct {
+	Entries []HealthSamuraiBundleEntry `json:"entry"`
+}
+
+type HealthSamuraiBundleEntry struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+
 func HealthSamuraiWebscraper(CHPLURL string, fileToWriteTo string) {
 
+	var entry LanternEntry
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, ".container")
+	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	doc.Find(".container").Each(func(index int, containterElems *goquery.Selection) {
-		containterElems.Find(".row").Each(func(index int, rowElems *goquery.Selection) {
-			rowElems.Find(".col-12").Each(func(index int, colElems *goquery.Selection) {
-				colElems.Find("ul").Each(func(index int, ulElems *goquery.Selection) {
-					ulElems.Find("li").Each(func(index int, liElems *goquery.Selection) {
-						var entry LanternEntry
+	var healthSamuraiBundle HealthSamuraiBundle
+	err = json.Unmarshal(respBody, &healthSamuraiBundle)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-						entryURL := strings.TrimSpace(liElems.Text())
-						entry.URL = entryURL
+	for _, bundleEntry := range healthSamuraiBundle.Entries {
+		entry.URL = bundleEntry.Url
+		entry.OrganizationName = bundleEntry.Name
 
-						lanternEntryList = append(lanternEntryList, entry)
-					})
-				})
-			})
-		})
-	})
+		lanternEntryList = append(lanternEntryList, entry)
+	}
 
 	endpointEntryList.Endpoints = lanternEntryList
 
