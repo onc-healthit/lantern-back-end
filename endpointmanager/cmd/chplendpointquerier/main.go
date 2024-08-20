@@ -13,8 +13,8 @@ func main() {
 	var fileToWriteTo string
 
 	if len(os.Args) >= 1 {
-		chplURL = os.Args[1]
-		fileToWriteTo = os.Args[2]
+		chplURL = "abcd"
+		fileToWriteTo = "test.json"
 	} else {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
