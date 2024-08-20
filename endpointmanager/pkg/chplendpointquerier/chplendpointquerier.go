@@ -287,7 +287,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == medinfoengineeringURL {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == emedpracticeURL {
-		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+		eMedPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == doc_torURL {
 		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
