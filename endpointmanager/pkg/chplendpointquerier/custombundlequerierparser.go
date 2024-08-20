@@ -7,17 +7,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type HealthSamuraiBundle struct {
-	Entries []HealthSamuraiBundleEntry `json:"entry"`
+type CustomBundle struct {
+	Entries []CustomBundleEntry `json:"entry"`
 }
 
-type HealthSamuraiBundleEntry struct {
+type CustomBundleEntry struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 	Url  string `json:"url"`
 }
 
-func HealthSamuraiWebscraper(CHPLURL string, fileToWriteTo string) {
+func CustomBundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	var entry LanternEntry
 	var lanternEntryList []LanternEntry
@@ -28,13 +28,13 @@ func HealthSamuraiWebscraper(CHPLURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	var healthSamuraiBundle HealthSamuraiBundle
-	err = json.Unmarshal(respBody, &healthSamuraiBundle)
+	var customBundle CustomBundle
+	err = json.Unmarshal(respBody, &customBundle)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, bundleEntry := range healthSamuraiBundle.Entries {
+	for _, bundleEntry := range customBundle.Entries {
 		entry.URL = bundleEntry.Url
 		entry.OrganizationName = bundleEntry.Name
 
