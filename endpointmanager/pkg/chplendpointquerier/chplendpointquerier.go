@@ -2,10 +2,9 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"strings"
-	log "github.com/sirupsen/logrus"
-
 )
 
 type EndpointList struct {
