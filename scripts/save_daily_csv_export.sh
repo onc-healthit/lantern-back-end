@@ -11,7 +11,7 @@ CURRENT_DATE=$(date +"%m_%d_%Y")
 FILE_DIR="/lantern-project/onc-open-data/lantern-daily-data/$YEAR/$MONTH"
 FILE_NAME=${CURRENT_DATE}endpointdata.csv
 mkdir -p $FILE_DIR
-log_file="/etc/lantern/logs/daily.txt"
+log_file="/etc/lantern/logs/save_daily_csv_export_logs.txt"
 EXPORTFILE="/etc/lantern/dailyexport/$FILE_NAME"
 echo $EXPORTFILE
 #URL="http://127.0.0.1:8989/api/download"
@@ -47,5 +47,5 @@ while [ $attempts -lt $max_attempts ]; do
 done
 
 if [ $attempts -eq $max_attempts ]; then
-    echo "Maximum number of attempts reached. Exiting."
+    echo "Maximum number of attempts reached. Exiting." >> $log_file
 fi
