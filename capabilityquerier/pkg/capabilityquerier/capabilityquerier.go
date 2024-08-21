@@ -108,7 +108,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		time.Sleep(time.Duration(500 * time.Millisecond))
 		req, err := http.NewRequest("GET", versionsURL, nil)
 		if err != nil {
-			log.Errorf("unable to create new GET request from URL: " + versionsURL)
+			log.Errorf("unable to create new GET request from URL: %s", versionsURL)
 		} else {
 			req.Header.Set("User-Agent", qa.UserAgent)
 			trace := &httptrace.ClientTrace{}
