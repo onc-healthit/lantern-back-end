@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
+	log "github.com/sirupsen/logrus"
+
 )
 
 type EndpointList struct {
@@ -524,6 +526,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PointclickWebscraper(pointclickURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
+	} else {
+		log.Warnf("Handler is required for url %s", chplURL)
 	}
 }
 
