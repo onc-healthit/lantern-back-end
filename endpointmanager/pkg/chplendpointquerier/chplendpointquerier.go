@@ -31,7 +31,8 @@ var trimedtechURL = "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.ht
 var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html"
 var cernerGitHubURL = "https://github.com/cerner/ignite-endpoints"
 var cernerSoarianR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
-var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
+
+// var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
 var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
 var practiceSuiteURL = "https://academy.practicesuite.com/fhir-server-links/"
 var bizmaticsURL = "https://prognocis.com/fhir/index.html"
@@ -222,8 +223,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cernerGitHubURL) {
 		CernerBundleParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, techCareURL) {
-		Techcarewebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, techCareURL) {
+		// 	Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, carefluenceURL) {
 		CarefluenceWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, bizmaticsURL) {
