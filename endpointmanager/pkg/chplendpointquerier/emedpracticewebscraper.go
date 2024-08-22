@@ -44,7 +44,6 @@ func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
 						}
 
 						fhirURL := preElems.Text()[urlStart : urlStart+urlEnd+len("8443")]
-						fmt.Println(fhirURL)
 						entry.URL = fhirURL
 						lanternEntryList = append(lanternEntryList, entry)
 						
