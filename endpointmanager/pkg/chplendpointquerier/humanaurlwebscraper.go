@@ -6,12 +6,10 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"fmt"
 )
 
 func HumanaURLWebscraper(CHPLURL string, fileToWriteTo string) {
 
-	fmt.Print("Running")
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
