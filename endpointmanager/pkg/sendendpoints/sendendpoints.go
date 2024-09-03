@@ -8,6 +8,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
+
 	//"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -59,9 +60,7 @@ func GetEnptsAndSend(
 		}
 		log.Info("Waiting 30 minutes to start history pruning and json export")
 		// Wait 30 minutes to ensure querier is done before starting history pruning and json export
-		time.Sleep(time.Duration(30) * time.Minute)
-		log.Info("Starting history pruning")
-		historypruning.PruneInfoHistory(ctx, store, true)
+		// time.Sleep(time.Duration(30) * time.Minute)
 		//log.Info("Starting json export")
 		//err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", "30days")
 		//if err != nil {
@@ -73,6 +72,24 @@ func GetEnptsAndSend(
 		//}
 
 		log.Infof("Waiting %d minutes", qInterval)
+		time.Sleep(time.Duration(qInterval) * time.Minute)
+	}
+}
+
+func HistoryPruning(
+	ctx context.Context,
+	wg *sync.WaitGroup,
+	qInterval int,
+	store *postgresql.Store,
+	errs chan<- error) {
+
+	defer wg.Done()
+
+	for {
+		log.Info("Starting history pruning")
+		historypruning.PruneInfoHistory(ctx, store, true)
+
+		log.Infof("History Pruning complete. Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
 }
