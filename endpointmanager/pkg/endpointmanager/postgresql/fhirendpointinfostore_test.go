@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package postgresql
@@ -36,7 +37,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 	}
 
 	var endpointOrganization1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Example Inc.",
+		OrganizationName:  "Example Inc.",
 		OrganizationNPIID: "1"}
 
 	var endpointOrganization2 = &endpointmanager.FHIREndpointOrganization{
@@ -44,11 +45,11 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// add endpoints that can later be referenced
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2/",
+		URL:              "example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpointOrganization1},
-		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+		ListSource:       "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:               "other.example.com/FHIR/DSTU2/",
+		URL:              "other.example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpointOrganization2}}
 	store.AddFHIREndpoint(ctx, endpoint1)
 	store.AddFHIREndpoint(ctx, endpoint2)
@@ -87,30 +88,30 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
-		URL:                   endpoint1.URL,
-		VendorID:              cerner.ID,
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir"},
-		CapabilityStatement:   cs,
+		URL:                      endpoint1.URL,
+		VendorID:                 cerner.ID,
+		TLSVersion:               "TLS 1.1",
+		MIMETypes:                []string{"application/json+fhir"},
+		CapabilityStatement:      cs,
 		CapabilityStatementBytes: csJSON,
-		SMARTResponse:         nil,
-		SMARTResponseBytes: []byte("null"),
-		RequestedFhirVersion:  "None",
-		CapabilityFhirVersion: "1.0.2",
-		Metadata:              endpointMetadata1}
+		SMARTResponse:            nil,
+		SMARTResponseBytes:       []byte("null"),
+		RequestedFhirVersion:     "None",
+		CapabilityFhirVersion:    "1.0.2",
+		Metadata:                 endpointMetadata1}
 
 	var endpointInfo1RequestedVersion = &endpointmanager.FHIREndpointInfo{
-		URL:                   endpoint1.URL,
-		VendorID:              cerner.ID,
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir"},
-		CapabilityStatement:   cs,
+		URL:                      endpoint1.URL,
+		VendorID:                 cerner.ID,
+		TLSVersion:               "TLS 1.1",
+		MIMETypes:                []string{"application/json+fhir"},
+		CapabilityStatement:      cs,
 		CapabilityStatementBytes: csJSON,
-		SMARTResponse:         nil,
-		SMARTResponseBytes: []byte("null"),
-		RequestedFhirVersion:  "1.0.0",
-		CapabilityFhirVersion: "1.0.2",
-		Metadata:              endpointMetadata1RequestedVersion}
+		SMARTResponse:            nil,
+		SMARTResponseBytes:       []byte("null"),
+		RequestedFhirVersion:     "1.0.0",
+		CapabilityFhirVersion:    "1.0.2",
+		Metadata:                 endpointMetadata1RequestedVersion}
 
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:                   endpoint2.URL,

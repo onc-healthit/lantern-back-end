@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package jsonexport
@@ -25,9 +26,9 @@ var testEndpointOrganization = &endpointmanager.FHIREndpointOrganization{
 	OrganizationName: "Test Org"}
 
 var testEndpoint = endpointmanager.FHIREndpoint{
-	URL:               "www.testURL.com",
+	URL:              "www.testURL.com",
 	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testEndpointOrganization},
-	ListSource:        "Test List Source",
+	ListSource:       "Test List Source",
 }
 
 var testEndpointMetadata = endpointmanager.FHIREndpointMetadata{
@@ -146,9 +147,9 @@ func Test_getHistory(t *testing.T) {
 	resultCh := make(chan Result)
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
-		fhirURL: "www.testURL.com",
-		store:   store,
-		result:  resultCh,
+		fhirURL:    "www.testURL.com",
+		store:      store,
+		result:     resultCh,
 		exportType: "30days",
 	}
 
@@ -193,9 +194,9 @@ func Test_getHistory(t *testing.T) {
 	resultChMonth := make(chan Result)
 	jobArgsMonth := make(map[string]interface{})
 	jobArgsMonth["historyArgs"] = historyArgs{
-		fhirURL: "www.testURL.com",
-		store:   store,
-		result:  resultChMonth,
+		fhirURL:    "www.testURL.com",
+		store:      store,
+		result:     resultChMonth,
 		exportType: "month",
 	}
 
@@ -209,7 +210,6 @@ func Test_getHistory(t *testing.T) {
 	}
 
 	// base case with export type equal to all
-
 
 	_, err = store.DB.Exec("DElETE FROM fhir_endpoints_info;")
 	th.Assert(t, err == nil, err)
@@ -227,13 +227,12 @@ func Test_getHistory(t *testing.T) {
 	// 3 endpoints should be stored since 1 entry will also be added for deleting from the fhir_endpoints_info table
 	th.Assert(t, actualNumEndptsStored == 3, fmt.Sprintf("Expected 3 endpoints stored. Actually had %d endpoints stored.", actualNumEndptsStored))
 
-
 	resultChAll := make(chan Result)
 	jobArgsAll := make(map[string]interface{})
 	jobArgsAll["historyArgs"] = historyArgs{
-		fhirURL: "www.testURL.com",
-		store:   store,
-		result:  resultChAll,
+		fhirURL:    "www.testURL.com",
+		store:      store,
+		result:     resultChAll,
 		exportType: "all",
 	}
 
@@ -261,9 +260,9 @@ func Test_getHistory(t *testing.T) {
 	resultCh3 := make(chan Result)
 	jobArgs3 := make(map[string]interface{})
 	jobArgs3["historyArgs"] = historyArgs{
-		fhirURL: "thisurldoesntexist.com",
-		store:   store,
-		result:  resultCh3,
+		fhirURL:    "thisurldoesntexist.com",
+		store:      store,
+		result:     resultCh3,
 		exportType: "30days",
 	}
 

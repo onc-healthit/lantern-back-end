@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package postgresql
@@ -51,16 +52,16 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 
 	// endpointInfos
 	var endpointInfo1 = &endpointmanager.FHIREndpointInfo{
-		URL:                   "example.com/FHIR/DSTU2/",
-		TLSVersion:            "TLS 1.1",
-		MIMETypes:             []string{"application/json+fhir"},
-		CapabilityStatement:   cs,
+		URL:                      "example.com/FHIR/DSTU2/",
+		TLSVersion:               "TLS 1.1",
+		MIMETypes:                []string{"application/json+fhir"},
+		CapabilityStatement:      cs,
 		CapabilityStatementBytes: csJSON,
-		RequestedFhirVersion:  "None",
-		CapabilityFhirVersion: "1.0.2",
-		SMARTResponse:         nil,
-		SMARTResponseBytes: []byte("null"),
-		Metadata:              endpointMetadata1}
+		RequestedFhirVersion:     "None",
+		CapabilityFhirVersion:    "1.0.2",
+		SMARTResponse:            nil,
+		SMARTResponseBytes:       []byte("null"),
+		Metadata:                 endpointMetadata1}
 	var endpointInfo2 = &endpointmanager.FHIREndpointInfo{
 		URL:                   "other.example.com/FHIR/DSTU2/",
 		TLSVersion:            "TLS 1.2",

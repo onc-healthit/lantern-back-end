@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package chplmapper
@@ -200,9 +201,9 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep := &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2",
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement
@@ -240,9 +241,9 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example2.com/FHIR/DSTU2",
+		URL:              "example2.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg2}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
@@ -250,20 +251,20 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint with list source found in CHPL products info file
 	ep2 := &endpointmanager.FHIREndpoint{
-		URL:               "example3.com/FHIR/DSTU2",
+		URL:              "example3.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg3},
-		ListSource:        "https://api.bluebuttonpro.com/swagger/index.html"}
-	
+		ListSource:       "https://api.bluebuttonpro.com/swagger/index.html"}
+
 	store.AddFHIREndpoint(ctx, ep2)
 
 	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "Example2 Inc."}
 
 	ep3 := &endpointmanager.FHIREndpoint{
-		URL:               "example4.com/FHIR/DSTU2",
+		URL:              "example4.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4},
-		ListSource:        "https://nextgen.com/api/practice-search"}
-	
+		ListSource:       "https://nextgen.com/api/practice-search"}
+
 	store.AddFHIREndpoint(ctx, ep3)
 
 	// endpoint info
@@ -363,9 +364,9 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example5.com/FHIR/DSTU2",
+		URL:              "example5.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg5}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement with product HIEBus
@@ -396,7 +397,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example6.com/FHIR/DSTU2",
+		URL:              "example6.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg6}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -452,7 +453,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep := &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2",
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg7}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -536,9 +537,9 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep2 := &endpointmanager.FHIREndpoint{
-		URL:               "example2.com/FHIR/DSTU2",
+		URL:              "example2.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg8},
-		ListSource:        "https://nextgen.com/api/practice-search"}
+		ListSource:       "https://nextgen.com/api/practice-search"}
 	store.AddFHIREndpoint(ctx, ep2)
 
 	// endpoint info

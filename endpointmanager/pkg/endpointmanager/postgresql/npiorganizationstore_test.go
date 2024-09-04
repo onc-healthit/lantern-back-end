@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package postgresql
@@ -322,18 +323,18 @@ func Test_LinkNPIOrganizationToFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1Org = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Example Inc.",
+		OrganizationName:  "Example Inc.",
 		OrganizationNPIID: "1"}
-	
+
 	var endpoint2Org = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "Other Example Inc."}
 
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2/",
+		URL:              "example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpoint1Org},
-		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+		ListSource:       "https://github.com/cerner/ignite-endpoints"}
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:               "other.example.com/FHIR/DSTU2/",
+		URL:              "other.example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpoint2Org}}
 
 	err = store.AddNPIOrganization(ctx, npio1)
