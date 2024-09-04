@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -356,7 +356,7 @@ func basicTestClient() (*th.TestClient, error) {
 
 func testClientWithContentType(contentType string) (*th.TestClient, error) {
 	path := filepath.Join("testdata", "metadata.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

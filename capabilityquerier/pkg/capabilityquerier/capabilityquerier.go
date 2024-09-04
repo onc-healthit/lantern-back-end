@@ -6,7 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
@@ -422,7 +422,7 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 			defer resp.Body.Close()
 			mimeMatches = true
 
-			capStat, err = ioutil.ReadAll(resp.Body)
+			capStat, err = io.ReadAll(resp.Body)
 			if err != nil {
 				return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
 			}
