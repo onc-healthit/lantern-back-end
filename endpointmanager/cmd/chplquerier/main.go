@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
