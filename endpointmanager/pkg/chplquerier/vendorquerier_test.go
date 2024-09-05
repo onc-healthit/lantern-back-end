@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -428,7 +428,7 @@ func Test_parseVendor(t *testing.T) {
 func basicVendorTestClient() (*th.TestClient, error) {
 
 	path := filepath.Join("testdata", "chpl_vendors.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

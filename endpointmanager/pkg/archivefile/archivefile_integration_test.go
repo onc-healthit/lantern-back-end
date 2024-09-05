@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -545,7 +544,7 @@ func Test_getMetadata(t *testing.T) {
 
 func setupCapabilityStatement(t *testing.T, path string) {
 	// capability statement
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)

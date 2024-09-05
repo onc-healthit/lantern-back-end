@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -211,7 +211,7 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 	defer jsonFile.Close()
 
 	var softwareNameVersion []map[string]string
-	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	byteValueFile, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +322,7 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 
 	var softwareListMap = make(map[string]ChplMapResults)
 
-	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	byteValueFile, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return nil, err
 	}

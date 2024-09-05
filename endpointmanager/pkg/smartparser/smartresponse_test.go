@@ -1,7 +1,7 @@
 package smartparser
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -13,7 +13,7 @@ func Test_SMARTResponseEqual(t *testing.T) {
 
 	// get SMART Response
 	path := filepath.Join("../testdata", "authorization_cerner_smart_response.json")
-	smartResponseJSON1, err := ioutil.ReadFile(path)
+	smartResponseJSON1, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse1, err := NewSMARTResp(smartResponseJSON1)
@@ -27,7 +27,7 @@ func Test_SMARTResponseEqual(t *testing.T) {
 	th.Assert(t, !equal, "expected equality comparison to nil to be false")
 
 	// test equal
-	smartResponseJSON2, err := ioutil.ReadFile(path)
+	smartResponseJSON2, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse2, err = NewSMARTResp(smartResponseJSON2)
@@ -73,7 +73,7 @@ func Test_SMARTResponseEqual(t *testing.T) {
 
 	// get different SMART Response format to ensure Equal works for any smart response format
 	path = filepath.Join("../testdata", "fhir_sandbox_smart_response.json")
-	smartResponseJSON1, err = ioutil.ReadFile(path)
+	smartResponseJSON1, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse1, err = NewSMARTResp(smartResponseJSON1)
@@ -87,7 +87,7 @@ func Test_SMARTResponseEqual(t *testing.T) {
 	th.Assert(t, !equal, "expected equality comparison to nil to be false")
 
 	// test equal
-	smartResponseJSON2, err = ioutil.ReadFile(path)
+	smartResponseJSON2, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse2, err = NewSMARTResp(smartResponseJSON2)
@@ -113,7 +113,7 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 
 	// get SMART Response
 	path := filepath.Join("../testdata", "authorization_cerner_smart_response.json")
-	smartResponseJSON1, err := ioutil.ReadFile(path)
+	smartResponseJSON1, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse1, err := NewSMARTResp(smartResponseJSON1)
@@ -127,7 +127,7 @@ func Test_SMARTResponseEqualIgnore(t *testing.T) {
 	th.Assert(t, !equal, "expected equality comparison to nil to be false")
 
 	// test equal
-	smartResponseJSON2, err := ioutil.ReadFile(path)
+	smartResponseJSON2, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	SMARTResponse2, err = NewSMARTResp(smartResponseJSON2)

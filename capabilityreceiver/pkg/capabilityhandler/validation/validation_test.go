@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -940,7 +940,7 @@ func Test_VersionResponseValid(t *testing.T) {
 // getDSTU2CapStat gets a DSTU2 Capability Statement
 func getDSTU2CapStat() (capabilityparser.CapabilityStatement, error) {
 	path := filepath.Join("../../../testdata", "test_dstu2_capability_statement.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -954,7 +954,7 @@ func getDSTU2CapStat() (capabilityparser.CapabilityStatement, error) {
 // getDSTU2CapStat gets a R4 Capability Statement
 func getR4CapStat() (capabilityparser.CapabilityStatement, error) {
 	path := filepath.Join("../../../testdata", "test_r4_capability_statement.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -967,7 +967,7 @@ func getR4CapStat() (capabilityparser.CapabilityStatement, error) {
 
 func getSmartResponse() (smartparser.SMARTResponse, error) {
 	path := filepath.Join("../../../testdata", "authorization_cerner_smart_response.json")
-	srJSON, err := ioutil.ReadFile(path)
+	srJSON, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

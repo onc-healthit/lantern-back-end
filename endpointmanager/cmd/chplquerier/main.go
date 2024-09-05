@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -33,7 +32,7 @@ func main() {
 	}
 
 	// Read version file that is mounted to make user agent
-	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	version, err := os.ReadFile("/etc/lantern/VERSION")
 	if err != nil {
 		log.Warnf("Cannot read VERSION file")
 	}

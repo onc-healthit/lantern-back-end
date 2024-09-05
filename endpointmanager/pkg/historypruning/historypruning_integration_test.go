@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -1210,7 +1209,7 @@ func checkValidationResultCount(ctx context.Context, store *postgresql.Store, to
 
 func setupCapabilityStatement(t *testing.T, path string) {
 	// capability statement
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)

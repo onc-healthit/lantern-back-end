@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -88,7 +87,7 @@ func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}
@@ -102,7 +101,7 @@ func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}

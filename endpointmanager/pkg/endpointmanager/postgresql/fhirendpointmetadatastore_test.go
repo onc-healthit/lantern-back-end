@@ -6,7 +6,7 @@ package postgresql
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -25,7 +25,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		t.Error(err)
 	}

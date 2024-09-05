@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -27,7 +27,7 @@ func Test_PersistFHIREndpointInfo(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		t.Error(err)
 	}

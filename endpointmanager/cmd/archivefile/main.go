@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -55,6 +54,6 @@ func main() {
 	helpers.FailOnError("", err)
 
 	// Write to the given file
-	err = ioutil.WriteFile(writeFile, finalFormatJSON, 0644)
+	err = os.WriteFile(writeFile, finalFormatJSON, 0644)
 	helpers.FailOnError("ERROR: Writing to given file failed", err)
 }

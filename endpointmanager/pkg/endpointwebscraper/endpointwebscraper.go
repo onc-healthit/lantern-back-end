@@ -2,7 +2,7 @@ package endpointwebscraper
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 type EndpointList struct {
@@ -35,7 +35,7 @@ func WriteEndpointListFile(endpointEntryList EndpointList, fileToWriteTo string)
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func WriteEndpointListFile(endpointEntryList EndpointList, fileToWriteTo string)
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}

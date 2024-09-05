@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -171,14 +170,14 @@ func Test_updateOperationResource(t *testing.T) {
 
 func setupCapabilityStatements(t *testing.T, path1 string, path2 string) {
 	// capability statement
-	csJSON, err := ioutil.ReadFile(path1)
+	csJSON, err := os.ReadFile(path1)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
 	capStat1, err = cs.GetJSON()
 	th.Assert(t, err == nil, err)
 
-	csJSON2, err := ioutil.ReadFile(path2)
+	csJSON2, err := os.ReadFile(path2)
 	th.Assert(t, err == nil, err)
 	cs2, err := capabilityparser.NewCapabilityStatement(csJSON2)
 	th.Assert(t, err == nil, err)

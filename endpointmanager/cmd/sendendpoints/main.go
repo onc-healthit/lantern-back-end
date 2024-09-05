@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 	"sync"
 
@@ -33,7 +32,7 @@ func main() {
 
 	var emptyJSON []byte
 	if _, err := os.Stat("/etc/lantern/exportfolder/fhir_endpoints_fields.json"); os.IsNotExist(err) {
-		err = ioutil.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
+		err = os.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
 		helpers.FailOnError("Failed to create empty JSON export file", err)
 	}
 

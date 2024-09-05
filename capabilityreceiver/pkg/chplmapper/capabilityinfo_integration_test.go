@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -208,7 +207,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -231,7 +230,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -297,7 +296,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "advantagecare_physicians_stu3.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -371,7 +370,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement with product HIEBus
 	path = filepath.Join("../../testdata", "careevolution_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -461,7 +460,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -484,7 +483,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "novendor_capability_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -577,7 +576,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[1].ID // "Cerner Corporation"
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -591,7 +590,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[0].ID // "Epic Systems Corporation" // this uses the "hackMatch" capability
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -619,7 +618,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[5].ID // "Allscripts"
 
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -633,7 +632,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[4].ID // "Medical Information Technology, Inc. (MEDITECH)"
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -690,7 +689,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Cerner Corporation"
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -704,7 +703,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -718,7 +717,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Allscripts" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -732,7 +731,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Medical Information Technology, Inc. (MEDITECH)" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -789,7 +788,7 @@ func Test_hackMatch(t *testing.T) {
 	expected = "Epic Systems Corporation"
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -826,7 +825,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = "Epic Systems Corporation"
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -841,7 +840,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = ""
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -856,7 +855,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = ""
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)

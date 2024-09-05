@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -86,7 +85,7 @@ func populateTestEndpointData(testEndpointList string, source string) {
 	var listOfEndpoints fetcher.ListOfEndpoints
 	var knownSource string
 	var knownFormat string
-	content, err := ioutil.ReadFile(testEndpointList)
+	content, err := os.ReadFile(testEndpointList)
 	helpers.FailOnError("", err)
 
 	if source == "Test" {
