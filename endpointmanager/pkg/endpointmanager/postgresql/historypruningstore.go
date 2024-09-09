@@ -165,7 +165,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 	pruningThreshold := viper.GetInt("pruning_threshold")
 
 	thresholdString := strconv.Itoa(pruningThreshold)
-	queryIntString := strconv.Itoa(pruningThreshold * 2)
+	queryIntString := strconv.Itoa(pruningThreshold + 7200)
 
 	distinctURLStatementQueryInterval, err = s.DB.Prepare(`
 		select DISTINCT(url) FROM fhir_endpoints_info_history
