@@ -3,7 +3,7 @@ package capabilityhandler
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -256,7 +256,7 @@ func convertInterfaceToBytes(message map[string]interface{}) ([]byte, error) {
 
 func setupCapabilityStatement(t *testing.T, path string) {
 	// capability statement
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)

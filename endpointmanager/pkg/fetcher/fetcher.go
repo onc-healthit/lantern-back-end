@@ -3,7 +3,7 @@ package fetcher
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
@@ -50,7 +50,7 @@ func GetEndpointsFromFilepath(filePath string, format string, source string, lis
 	// Defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, _ := io.ReadAll(jsonFile)
 	if len(byteValue) == 0 {
 		return ListOfEndpoints{}, nil
 	}

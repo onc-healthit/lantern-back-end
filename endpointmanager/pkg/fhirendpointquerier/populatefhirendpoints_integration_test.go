@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package populatefhirendpoints
@@ -31,11 +32,11 @@ var testEndpointEntry2 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	ListSource:           "epicList",
 }
 var testEndpointEntry3 fetcher.EndpointEntry = fetcher.EndpointEntry{
-	OrganizationName:    "fakeOrganization",
+	OrganizationName:     "fakeOrganization",
 	FHIRPatientFacingURI: "http://example.com/DTSU2/",
 	ListSource:           "Lantern",
 	NPIID:                "1",
-	OrganizationZipCode: "12345",
+	OrganizationZipCode:  "12345",
 }
 var testEndpointEntry4 fetcher.EndpointEntry = fetcher.EndpointEntry{
 	OrganizationName:     "fakeOrganization2",
@@ -48,19 +49,19 @@ var testFHIREndpoint2Org = &endpointmanager.FHIREndpointOrganization{
 	OrganizationName: "Access Community Health Network"}
 
 var testFHIREndpoint3Org = &endpointmanager.FHIREndpointOrganization{
-	OrganizationName: "fakeOrganization",
-	OrganizationNPIID: "1",
+	OrganizationName:    "fakeOrganization",
+	OrganizationNPIID:   "1",
 	OrganizationZipCode: "12345"}
 
 var testFHIREndpoint2 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFHIREndpoint2Org},
-	URL:               "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
-	ListSource:        "epicList",
+	URL:              "https://eprescribing.accesscommunityhealth.net/FHIR/api/FHIR/DSTU2/",
+	ListSource:       "epicList",
 }
 var testFHIREndpoint3 endpointmanager.FHIREndpoint = endpointmanager.FHIREndpoint{
 	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFHIREndpoint3Org},
-	URL:               "http://example.com/DTSU2/",
-	ListSource:        "Lantern",
+	URL:              "http://example.com/DTSU2/",
+	ListSource:       "Lantern",
 }
 
 func TestMain(m *testing.M) {
@@ -182,7 +183,7 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, fhirEndpt.Equal(savedEndpt), "stored data does not equal expected store data")
 
 	// check that an item with the same URL replaces item and merges the organization names lists
-	
+
 	endpt.OrganizationName = "AdvantageCare Physicians 2"
 	err = saveEndpointData(ctx, store, &endpt)
 	th.Assert(t, err == nil, err)
@@ -195,7 +196,7 @@ func Test_saveEndpointData(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	savedEndpt, err = store.GetFHIREndpoint(ctx, endptID)
 	th.Assert(t, err == nil, err)
-	
+
 	savedEndptOrganizationList := savedEndpt.GetOrganizationNames()
 	th.Assert(t, helpers.StringArraysEqual(savedEndptOrganizationList, []string{"AdvantageCare Physicians", "AdvantageCare Physicians 2"}),
 		fmt.Sprintf("stored data %v does not equal expected store data [AdvantageCare Physicians, AdvantageCare Physicians 2]", savedEndptOrganizationList))
@@ -303,7 +304,7 @@ func Test_AddEndpointData(t *testing.T) {
 	endpt2 = testEndpointEntry
 
 	endpt2.OrganizationName = "New Name"
-	
+
 	// endpt1 and endpt2 identical other than organization name.
 	// endpt1 has organization name "AdvantageCare Physicians"
 	listEndpoints = fetcher.ListOfEndpoints{Entries: []fetcher.EndpointEntry{endpt1, endpt2}}
@@ -351,7 +352,7 @@ func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	org_query_str := "SELECT COUNT(*) FROM fhir_endpoint_organizations;"
 	var ct int
 	var ctOrg int
-	
+
 	// Add first endpoint
 	err = store.AddFHIREndpoint(ctx, &endpt1)
 	th.Assert(t, err == nil, err)
@@ -416,11 +417,11 @@ func Test_RemoveOldEndpointsAndOldOrganizations(t *testing.T) {
 	// Check that first endpoint is removed based on update time
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt1.URL, endpt1.ListSource)
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint to removed")
-	
+
 	// Check that first endpoint's organization is removed based on update time
 	_, err = store.GetFHIREndpointOrganizationByInfo(ctx, endpt1.ID, endpt1.OrganizationList[0])
 	th.Assert(t, err == sql.ErrNoRows, "Expected endpoint 1's organization to removed")
-	
+
 	// Check that second endpoint still exist
 	_, err = store.GetFHIREndpointUsingURLAndListSource(ctx, endpt2.URL, endpt2.ListSource)
 	th.Assert(t, err == nil, "Endpoint should still exist from different listsource")

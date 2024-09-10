@@ -131,7 +131,8 @@ CREATE TABLE healthit_products (
 
 CREATE TABLE healthit_products_map (
     id SERIAL,
-    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL
+    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL,
+    CONSTRAINT unique_id_healthit_product UNIQUE(id, healthit_product_id)
 );
 
 CREATE TABLE certification_criteria (
@@ -274,6 +275,16 @@ CREATE TABLE validations (
     validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL
 );
 
+CREATE TABLE info_history_pruning_metadata (
+    id                                  SERIAL PRIMARY KEY,
+    started_on                          timestamp with time zone NOT NULL DEFAULT now(),
+    ended_on                            timestamp with time zone,
+    successful                          boolean NOT NULL DEFAULT false,
+    num_rows_processed                  integer NOT NULL DEFAULT 0,
+    num_rows_pruned                     integer NOT NULL DEFAULT 0,
+    query_int_start_date                timestamp with time zone NOT NULL,
+    query_int_end_date                  timestamp with time zone NOT NULL
+);
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints

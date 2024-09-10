@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package archivefile
@@ -6,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -33,16 +33,16 @@ var workerDur int
 var numWorkers int
 
 var testFhirEndpointInfo = endpointmanager.FHIREndpointInfo{
-	URL:        "http://example.com/DTSU2/",
-	MIMETypes:  []string{"application/json+fhir"},
-	TLSVersion: "TLS 1.2",
+	URL:                  "http://example.com/DTSU2/",
+	MIMETypes:            []string{"application/json+fhir"},
+	TLSVersion:           "TLS 1.2",
 	RequestedFhirVersion: "None",
 }
 
 var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
-	URL:        "http://example.com/DTSU2/",
-	MIMETypes:  []string{"application/fhir+json"},
-	TLSVersion: "TLS 1.3",
+	URL:                  "http://example.com/DTSU2/",
+	MIMETypes:            []string{"application/fhir+json"},
+	TLSVersion:           "TLS 1.3",
 	RequestedFhirVersion: "None",
 }
 
@@ -51,26 +51,26 @@ var testFhirEndpointOrganization = &endpointmanager.FHIREndpointOrganization{
 }
 
 var testFhirEndpoint = endpointmanager.FHIREndpoint{
-	URL:               "http://example.com/DTSU2/",
+	URL:              "http://example.com/DTSU2/",
 	OrganizationList: []*endpointmanager.FHIREndpointOrganization{testFhirEndpointOrganization},
-	ListSource:        "http://cerner.com/dstu2",
+	ListSource:       "http://cerner.com/dstu2",
 }
 
 var testMetadata = endpointmanager.FHIREndpointMetadata{
-	URL:               "http://example.com/DTSU2/",
-	HTTPResponse:      200,
-	Errors:            "Smart Response Failed",
-	ResponseTime:      0.8,
-	SMARTHTTPResponse: 400,
+	URL:                  "http://example.com/DTSU2/",
+	HTTPResponse:         200,
+	Errors:               "Smart Response Failed",
+	ResponseTime:         0.8,
+	SMARTHTTPResponse:    400,
 	RequestedFhirVersion: "None",
 }
 
 var testMetadata2 = endpointmanager.FHIREndpointMetadata{
-	URL:               "http://example.com/DTSU2/",
-	HTTPResponse:      200,
-	Errors:            "Smart Response Failed",
-	ResponseTime:      1.0,
-	SMARTHTTPResponse: 0,
+	URL:                  "http://example.com/DTSU2/",
+	HTTPResponse:         200,
+	Errors:               "Smart Response Failed",
+	ResponseTime:         1.0,
+	SMARTHTTPResponse:    0,
 	RequestedFhirVersion: "None",
 }
 
@@ -332,12 +332,12 @@ func Test_getHistory(t *testing.T) {
 	resultCh2 := make(chan Result)
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
-		fhirURL:   "http://example.com/DTSU2/",
+		fhirURL:              "http://example.com/DTSU2/",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh2,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh2,
 	}
 
 	go getHistory(ctx, &jobArgs2)
@@ -361,12 +361,12 @@ func Test_getHistory(t *testing.T) {
 	resultCh := make(chan Result)
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
-		fhirURL:   "http://example.com/DTSU2/",
+		fhirURL:              "http://example.com/DTSU2/",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh,
 	}
 
 	go getHistory(ctx, &jobArgs)
@@ -395,12 +395,12 @@ func Test_getHistory(t *testing.T) {
 	resultCh4 := make(chan Result)
 	jobArgs4 := make(map[string]interface{})
 	jobArgs4["historyArgs"] = historyArgs{
-		fhirURL:   "thisurldoesntexist.com",
+		fhirURL:              "thisurldoesntexist.com",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh4,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh4,
 	}
 
 	go getHistory(ctx, &jobArgs4)
@@ -435,12 +435,12 @@ func Test_getMetadata(t *testing.T) {
 	resultCh := make(chan Result)
 	jobArgs := make(map[string]interface{})
 	jobArgs["historyArgs"] = historyArgs{
-		fhirURL:   "http://example.com/DTSU2/",
+		fhirURL:              "http://example.com/DTSU2/",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh,
 	}
 
 	go getMetadata(ctx, &jobArgs)
@@ -460,12 +460,12 @@ func Test_getMetadata(t *testing.T) {
 	resultCh2 := make(chan Result)
 	jobArgs2 := make(map[string]interface{})
 	jobArgs2["historyArgs"] = historyArgs{
-		fhirURL:   "http://example.com/DTSU2/",
+		fhirURL:              "http://example.com/DTSU2/",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh2,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh2,
 	}
 
 	go getMetadata(ctx, &jobArgs2)
@@ -488,12 +488,12 @@ func Test_getMetadata(t *testing.T) {
 	resultCh3 := make(chan Result)
 	jobArgs3 := make(map[string]interface{})
 	jobArgs3["historyArgs"] = historyArgs{
-		fhirURL:   "http://example.com/DTSU2/",
+		fhirURL:              "http://example.com/DTSU2/",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh3,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh3,
 	}
 
 	go getMetadata(ctx, &jobArgs3)
@@ -524,12 +524,12 @@ func Test_getMetadata(t *testing.T) {
 	resultCh5 := make(chan Result)
 	jobArgs5 := make(map[string]interface{})
 	jobArgs5["historyArgs"] = historyArgs{
-		fhirURL:   "thisurldoesntexist.com",
+		fhirURL:              "thisurldoesntexist.com",
 		requestedFhirVersion: "None",
-		dateStart: formatToday,
-		dateEnd:   formatTomorrow,
-		store:     store,
-		result:    resultCh5,
+		dateStart:            formatToday,
+		dateEnd:              formatTomorrow,
+		store:                store,
+		result:               resultCh5,
 	}
 
 	go getMetadata(ctx, &jobArgs5)
@@ -544,7 +544,7 @@ func Test_getMetadata(t *testing.T) {
 
 func setupCapabilityStatement(t *testing.T, path string) {
 	// capability statement
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -583,7 +583,7 @@ func addFHIREndpointInfoHistory(ctx context.Context,
 		pq.Array(e.MIMETypes),
 		vendorID,
 		capabilityStatementJSON,
-		e.CapabilityFhirVersion, 
+		e.CapabilityFhirVersion,
 		e.RequestedFhirVersion)
 	if err != nil {
 		return err

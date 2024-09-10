@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package postgresql
@@ -22,7 +23,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	ctx := context.Background()
 
 	var endpointOrganization1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Example Inc.",
+		OrganizationName:  "Example Inc.",
 		OrganizationNPIID: "1"}
 
 	var endpointOrganization2 = &endpointmanager.FHIREndpointOrganization{
@@ -30,12 +31,12 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 
 	// endpoints
 	var endpoint1 = &endpointmanager.FHIREndpoint{
-		URL:               "https://example.com/FHIR/DSTU2/",
+		URL:              "https://example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpointOrganization1},
-		ListSource:        "https://github.com/cerner/ignite-endpoints"}
+		ListSource:       "https://github.com/cerner/ignite-endpoints"}
 
 	var endpoint2 = &endpointmanager.FHIREndpoint{
-		URL:               "https://other.example.com/FHIR/DSTU2/",
+		URL:              "https://other.example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{endpointOrganization2}}
 
 	// add endpoints
@@ -118,11 +119,11 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 
 	var org1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Org 1",
+		OrganizationName:  "Org 1",
 		OrganizationNPIID: "2"}
 
 	var org2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Org 2",
+		OrganizationName:  "Org 2",
 		OrganizationNPIID: "3"}
 
 	e1.OrganizationList = []*endpointmanager.FHIREndpointOrganization{org1, org2}
@@ -152,11 +153,11 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	// update endpoint NPI Org
 
 	var NPIOrg = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "Fake Organization",
+		OrganizationName:  "Fake Organization",
 		OrganizationNPIID: "123"}
 
 	var fhirEndpointNPIOrg = &endpointmanager.FHIREndpoint{
-		URL:               "https://example.com/FHIR/DSTU2/",
+		URL:              "https://example.com/FHIR/DSTU2/",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{NPIOrg},
 	}
 
@@ -260,7 +261,7 @@ func Test_PersistFHIREndpoint(t *testing.T) {
 	}
 
 	for _, ep := range endpts {
-		
+
 		epOrganizationsList := ep.GetOrganizationNames()
 
 		if ep.ID == endpoint1.ID {

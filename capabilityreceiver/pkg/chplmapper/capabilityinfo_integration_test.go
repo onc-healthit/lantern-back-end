@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package chplmapper
@@ -6,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -200,14 +200,14 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep := &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2",
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -230,7 +230,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -240,9 +240,9 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example2.com/FHIR/DSTU2",
+		URL:              "example2.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg2}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	var epOrg3 = &endpointmanager.FHIREndpointOrganization{
@@ -250,20 +250,20 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint with list source found in CHPL products info file
 	ep2 := &endpointmanager.FHIREndpoint{
-		URL:               "example3.com/FHIR/DSTU2",
+		URL:              "example3.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg3},
-		ListSource:        "https://api.bluebuttonpro.com/swagger/index.html"}
-	
+		ListSource:       "https://api.bluebuttonpro.com/swagger/index.html"}
+
 	store.AddFHIREndpoint(ctx, ep2)
 
 	var epOrg4 = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "Example2 Inc."}
 
 	ep3 := &endpointmanager.FHIREndpoint{
-		URL:               "example4.com/FHIR/DSTU2",
+		URL:              "example4.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg4},
-		ListSource:        "https://nextgen.com/api/practice-search"}
-	
+		ListSource:       "https://nextgen.com/api/practice-search"}
+
 	store.AddFHIREndpoint(ctx, ep3)
 
 	// endpoint info
@@ -296,7 +296,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "advantagecare_physicians_stu3.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -363,14 +363,14 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 
 	// populate fhir endpoint
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example5.com/FHIR/DSTU2",
+		URL:              "example5.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg5}}
-	
+
 	store.AddFHIREndpoint(ctx, ep)
 
 	// capability statement with product HIEBus
 	path = filepath.Join("../../testdata", "careevolution_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -396,7 +396,7 @@ func Test_MatchEndpointToProduct(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep = &endpointmanager.FHIREndpoint{
-		URL:               "example6.com/FHIR/DSTU2",
+		URL:              "example6.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg6}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -452,7 +452,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep := &endpointmanager.FHIREndpoint{
-		URL:               "example.com/FHIR/DSTU2",
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg7}}
 	store.AddFHIREndpoint(ctx, ep)
 
@@ -460,7 +460,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err := capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -483,7 +483,7 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../../testdata", "novendor_capability_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = capabilityparser.NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -536,9 +536,9 @@ func Test_MatchEndpointToVendor(t *testing.T) {
 		OrganizationName: "Example Inc."}
 
 	ep2 := &endpointmanager.FHIREndpoint{
-		URL:               "example2.com/FHIR/DSTU2",
+		URL:              "example2.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrg8},
-		ListSource:        "https://nextgen.com/api/practice-search"}
+		ListSource:       "https://nextgen.com/api/practice-search"}
 	store.AddFHIREndpoint(ctx, ep2)
 
 	// endpoint info
@@ -576,7 +576,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[1].ID // "Cerner Corporation"
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -590,7 +590,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[0].ID // "Epic Systems Corporation" // this uses the "hackMatch" capability
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -618,7 +618,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[5].ID // "Allscripts"
 
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -632,7 +632,7 @@ func Test_getVendorMatch(t *testing.T) {
 	expected = vendors[4].ID // "Medical Information Technology, Inc. (MEDITECH)"
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -689,7 +689,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Cerner Corporation"
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -703,7 +703,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -717,7 +717,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Allscripts" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "allscripts_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -731,7 +731,7 @@ func Test_publisherMatch(t *testing.T) {
 	expected = "Medical Information Technology, Inc. (MEDITECH)" // the capability statement is missing the publisher
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -788,7 +788,7 @@ func Test_hackMatch(t *testing.T) {
 	expected = "Epic Systems Corporation"
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -825,7 +825,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = "Epic Systems Corporation"
 
 	path = filepath.Join("../../testdata", "epic_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -840,7 +840,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = ""
 
 	path = filepath.Join("../../testdata", "cerner_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)
@@ -855,7 +855,7 @@ func Test_hackMatchEpic(t *testing.T) {
 	expected = ""
 
 	path = filepath.Join("../../testdata", "meditech_capability_dstu2.json")
-	dstu2JSON, err = ioutil.ReadFile(path)
+	dstu2JSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 
 	dstu2, err = capabilityparser.NewCapabilityStatement(dstu2JSON)

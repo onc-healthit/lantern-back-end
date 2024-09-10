@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -100,7 +100,7 @@ func Test_NewCapabilityStatement(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../testdata", "epic_capability_dstu2.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -113,7 +113,7 @@ func Test_NewCapabilityStatement(t *testing.T) {
 
 	// capability statement
 	path = filepath.Join("../testdata", "epic_capability_stu3.json")
-	csJSON, err = ioutil.ReadFile(path)
+	csJSON, err = os.ReadFile(path)
 	th.Assert(t, err == nil, err)
 	cs, err = NewCapabilityStatement(csJSON)
 	th.Assert(t, err == nil, err)
@@ -764,7 +764,7 @@ func Test_Equal_Ignore(t *testing.T) {
 
 func getDSTU2CapStat() (CapabilityStatement, error) {
 	path := filepath.Join("../testdata", "allscripts_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

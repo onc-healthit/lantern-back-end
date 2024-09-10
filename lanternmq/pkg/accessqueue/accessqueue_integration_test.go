@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package accessqueue_test
@@ -143,7 +144,6 @@ func Test_CleanQueue(t *testing.T) {
 	th.Assert(t, err == nil, err)
 }
 
-
 func Test_QueueCount(t *testing.T) {
 	queueIsEmpty(t, qName)
 	defer checkCleanQueue(t, qName, channel)
@@ -182,7 +182,7 @@ func Test_QueueCount(t *testing.T) {
 	// ack the message
 	_, _, err = channel.Get(qName, true)
 	th.Assert(t, err == nil, err)
-		
+
 }
 
 func queueIsEmpty(t *testing.T, queueName string) {

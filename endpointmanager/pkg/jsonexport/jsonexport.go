@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/lib/pq"
@@ -60,7 +60,7 @@ func CreateJSONExport(ctx context.Context, store *postgresql.Store, fileToWriteT
 		return err
 	}
 	// Write to the given file
-	err = ioutil.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
+	err = os.WriteFile(fileToWriteTo, finalFormatJSON, 0644)
 	return err
 }
 
