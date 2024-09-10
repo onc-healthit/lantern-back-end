@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -187,7 +187,7 @@ func main() {
 	log.Info("Successfully connected to DB!")
 
 	// Read version file that is mounted
-	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	version, err := os.ReadFile("/etc/lantern/VERSION")
 	helpers.FailOnError("", err)
 	versionString := string(version)
 	versionNum := strings.Split(versionString, "=")

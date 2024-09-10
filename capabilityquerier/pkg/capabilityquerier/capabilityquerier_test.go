@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -356,7 +356,7 @@ func basicTestClient() (*th.TestClient, error) {
 
 func testClientWithContentType(contentType string) (*th.TestClient, error) {
 	path := filepath.Join("testdata", "metadata.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -378,7 +378,7 @@ func testClientWithContentType(contentType string) (*th.TestClient, error) {
 
 func testClientOnlyAcceptGivenType(contentType string) (*th.TestClient, error) {
 	path := filepath.Join("testdata", "metadata.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -414,7 +414,7 @@ func testClientWithTLSVersion(tlsVersion uint16) (*th.TestClient, error) {
 func testClientWithNoTLS() (*th.TestClient, error) {
 
 	path := filepath.Join("testdata", "metadata.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -430,7 +430,7 @@ func testClientWithNoTLS() (*th.TestClient, error) {
 
 func capabilityStatement() ([]byte, error) {
 	path := filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err := ioutil.ReadFile(path)
+	expectedCapStat, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

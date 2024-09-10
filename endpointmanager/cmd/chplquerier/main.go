@@ -2,16 +2,15 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplquerier"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -33,7 +32,7 @@ func main() {
 	}
 
 	// Read version file that is mounted to make user agent
-	version, err := ioutil.ReadFile("/etc/lantern/VERSION")
+	version, err := os.ReadFile("/etc/lantern/VERSION")
 	if err != nil {
 		log.Warnf("Cannot read VERSION file")
 	}

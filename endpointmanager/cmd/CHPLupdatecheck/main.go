@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	http "net/http"
 	"os"
 	"path/filepath"
@@ -48,7 +48,7 @@ func main() {
 	}
 	defer res.Body.Close()
 
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +71,7 @@ func main() {
 
 	// Get CHPL Endpoint list stored in Lantern resources folder
 	path := filepath.Join("../../../resources/prod_resources/", "CHPLEndpointResourcesList.json")
-	CHPLFile, err := ioutil.ReadFile(path)
+	CHPLFile, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,7 +91,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+		err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -101,7 +101,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = ioutil.WriteFile("../../../resources/prod_resources/updatedEmails.json", finalFormatJSON, 0644)
+		err = os.WriteFile("../../../resources/prod_resources/updatedEmails.json", finalFormatJSON, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}

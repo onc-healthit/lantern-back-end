@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -143,7 +142,7 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	}
 	defer res.Body.Close()
 
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}

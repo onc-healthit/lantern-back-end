@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -290,7 +289,7 @@ func setup() error {
 
 func capabilityStatementOriginalBytes() ([]byte, error) {
 	path := filepath.Join("testdata", "metadata.json")
-	expectedCapStat, err := ioutil.ReadFile(path)
+	expectedCapStat, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

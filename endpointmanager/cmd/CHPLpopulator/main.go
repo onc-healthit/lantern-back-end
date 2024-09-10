@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	http "net/http"
 	"os"
 	"regexp"
@@ -214,7 +214,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToCHPLList, finalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteToCHPLList, finalFormatJSON, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -225,7 +225,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToCHPLList, devfinalFormatJSONEndpoints, 0644)
+	err = os.WriteFile("../../../resources/dev_resources/"+fileToWriteToCHPLList, devfinalFormatJSONEndpoints, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -235,7 +235,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteToSoftwareInfo, finalFormatJSONSoftware, 0644)
+	err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteToSoftwareInfo, finalFormatJSONSoftware, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -246,7 +246,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteToSoftwareInfo, devfinalFormatJSONSoftware, 0644)
+	err = os.WriteFile("../../../resources/dev_resources/"+fileToWriteToSoftwareInfo, devfinalFormatJSONSoftware, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -271,7 +271,7 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 	}
 	defer res.Body.Close()
 
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
