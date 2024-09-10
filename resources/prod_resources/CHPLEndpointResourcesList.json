@@ -529,7 +529,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://www.integraconnect.com/certifications/",
+		"URL": "https://portal.minerva.integracloud.com/minerva/fhir/r4/us-core/bundle",
 		"EndpointName": "Integra Connect Newco, LLC",
 		"FileName": "Integra_Connect_Newco_LLC_EndpointSources.json"
 	},
