@@ -10,7 +10,6 @@ import (
 
 func HumanaURLWebscraper(CHPLURL string, fileToWriteTo string) {
 
-
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
@@ -19,17 +18,17 @@ func HumanaURLWebscraper(CHPLURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 	doc.Find("p").Each(func(index int, pElement *goquery.Selection) {
-		pElement.Find("label").Each(func(index int, labelElement *goquery.Selection){
-			if (strings.Contains(labelElement.Text(), "https")){
+		pElement.Find("label").Each(func(index int, labelElement *goquery.Selection) {
+			if strings.Contains(labelElement.Text(), "https") {
 				url := labelElement.Text()
 				url = strings.TrimSuffix(url, "/Patient")
 				var entry LanternEntry
-						entry.URL = url
-						lanternEntryList = append(lanternEntryList, entry)
+				entry.URL = url
+				lanternEntryList = append(lanternEntryList, entry)
 			}
 		})
 	})
-	
+
 	endpointEntryList.Endpoints = lanternEntryList
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
