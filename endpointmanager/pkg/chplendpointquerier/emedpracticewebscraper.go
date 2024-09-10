@@ -1,13 +1,12 @@
 package chplendpointquerier
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"github.com/PuerkitoBio/goquery"
-
 )
 
 func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
@@ -30,7 +29,7 @@ func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
 					preElems := liElems.Find("pre")
 					if preElems.Length() > 0 {
 						var entry LanternEntry
-						
+
 						urlStart := strings.Index(preElems.Text(), "https://")
 						if urlStart == -1 {
 							fmt.Println("URL not found")
@@ -46,9 +45,9 @@ func eMedPracticeWebscraper(CHPLURL string, fileToWriteTo string) {
 						fhirURL := preElems.Text()[urlStart : urlStart+urlEnd+len("8443")]
 						entry.URL = fhirURL
 						lanternEntryList = append(lanternEntryList, entry)
-						
+
 						urlFound = true
-						
+
 						return
 					}
 				}

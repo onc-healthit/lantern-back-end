@@ -167,6 +167,7 @@ var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
 // var hcscURL = "https://interoperability.hcsc.com/s/patient-access-api"
 var humanaURL = "https://developers.humana.com/apis/patient-api/doc"
 var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
+
 // var molinaURL = "https://developer.interop.molinahealthcare.com/api-details#api=patient-access&operation=5f72ab665269f310ef58b361"
 var unitedHealthURL = "https://www.uhc.com/legal/interoperability-apis"
 var meldrxURL = "https://app.meldrx.com/api/Directories/fhir/endpoints"
@@ -511,8 +512,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		// } else if URLsEqual(chplURL, hcscURL) {
 		// 	HcscURLWebscraper(chplURL, fileToWriteTo)
 
-		} else if URLsEqual(chplURL, humanaURL) {
-			HumanaURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, humanaURL) {
+		HumanaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, kaiserURL) {
 		KaiserURLWebscraper(chplURL, fileToWriteTo)
 		// } else if URLsEqual(chplURL, molinaURL) {
