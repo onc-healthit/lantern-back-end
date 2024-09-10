@@ -51,8 +51,7 @@ var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-speci
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
 var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
 
-// No endpoint listed
-// var integraconnectURL = "https://www.integraconnect.com/certifications/"
+var integraconnectURL = "https://portal.minerva.integracloud.com/minerva/fhir/r4/us-core/bundle"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
 var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints"
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
@@ -261,8 +260,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3, true, 1, -1)
 	} else if URLsEqual(chplURL, eclinicalworksURL) {
 		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
-		// } else if URLsEqual(chplURL, integraconnectURL) {
-		// 	IntegraConnectWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, integraconnectURL) {
+		IntegraConnectWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, streamlinemdURL) {
 		StreamlineMDCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, bridgepatientportalURL) {

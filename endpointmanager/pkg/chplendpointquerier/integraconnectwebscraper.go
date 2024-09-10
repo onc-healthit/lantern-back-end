@@ -1,49 +1,57 @@
 package chplendpointquerier
 
 import (
+	"encoding/json"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
 func IntegraConnectWebscraper(CHPLURL string, fileToWriteTo string) {
 
-	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "")
+	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	doc.Find("table").Each(func(index int, tablehtml *goquery.Selection) {
-		tablehtml.Find("tbody").Each(func(indextr int, rowhtml *goquery.Selection) {
-			rowhtml.Find("tr").Each(func(indextr int, rowbodyhtml *goquery.Selection) {
-				var entry LanternEntry
-				tableEntries := rowbodyhtml.Find("td")
-				if tableEntries.Length() > 0 {
-					organizationName := strings.TrimSpace(tableEntries.Eq(0).Text())
+	var data map[string]interface{}
+	err = json.Unmarshal([]byte(respBody), &data)
+	if err != nil {
+		log.Println("Error unmarshaling JSON:", err)
+		return
+	}
 
-					aElemURL := tableEntries.Eq(1).Find("a")
-					hrefText, exists := aElemURL.Eq(0).Attr("href")
-					if exists {
-						URL := strings.TrimSpace(hrefText)
-						entry.URL = URL
-						entry.OrganizationName = organizationName
-						lanternEntryList = append(lanternEntryList, entry)
-					}
-				}
-			})
-		})
-	})
+	entries := data["entry"].([]interface{})
 
-	endpointEntryList.Endpoints = lanternEntryList
+	var filteredEntries []map[string]interface{}
+
+	// Filter the entries based on the resourceType set to Organization or Endpoint
+	for _, entry := range entries {
+		resource := entry.(map[string]interface{})["resource"].(map[string]interface{})
+		if strings.EqualFold(strings.TrimSpace(resource["resourceType"].(string)), "Organization") ||
+			strings.EqualFold(strings.TrimSpace(resource["resourceType"].(string)), "Endpoint") {
+			filteredEntries = append(filteredEntries, entry.(map[string]interface{}))
+		}
+	}
+
+	// Update the data with the filtered entries
+	data["entry"] = filteredEntries
+
+	// Marshal the data into json file
+	newJsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		log.Println("Error marshaling JSON:", err)
+		return
+	}
+
+	// convert bundle data to lantern format
+	endpointEntryList.Endpoints = BundleToLanternFormat(newJsonData)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
