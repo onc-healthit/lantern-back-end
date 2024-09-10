@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type EndpointList struct {
