@@ -37,7 +37,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://developers.humana.com/patient-api/doc",
+		"URL": "https://developers.humana.com/apis/patient-api/doc",
 		"EndpointName": "Humana",
 		"FileName": "Medicare_HumanaEndpointSources.json"
 	},
