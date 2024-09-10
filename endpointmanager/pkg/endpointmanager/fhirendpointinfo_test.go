@@ -1,7 +1,7 @@
 package endpointmanager
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -259,7 +259,7 @@ func Test_FHIREndpointInfoEqual(t *testing.T) {
 
 	// capability statement
 	path := filepath.Join("../testdata", "cerner_capability_dstu2.json")
-	csJSON, err := ioutil.ReadFile(path)
+	csJSON, err := os.ReadFile(path)
 	if err != nil {
 		t.Error(err)
 	}

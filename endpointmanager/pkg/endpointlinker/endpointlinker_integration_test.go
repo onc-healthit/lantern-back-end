@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package endpointlinker
@@ -12,8 +13,8 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
-	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/spf13/viper"
 )
 
@@ -49,26 +50,26 @@ func Test_matchByID(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	var epOrganization1 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR",
+		OrganizationName:  "FOO FOO BAR",
 		OrganizationNPIID: "1"}
 
 	var epOrganization2 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR",
+		OrganizationName:  "FOO FOO BAR",
 		OrganizationNPIID: "2"}
 
 	var epOrganization3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR",
+		OrganizationName:  "FOO FOO BAR",
 		OrganizationNPIID: "3"}
 
 	var epOrganization4 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "FOO FOO BAR",
+		OrganizationName:  "FOO FOO BAR",
 		OrganizationNPIID: "4"}
 
 	var ep = &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization1, epOrganization2, epOrganization3},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 
 	ctx := context.Background()
 
@@ -131,15 +132,15 @@ func Test_addMatch(t *testing.T) {
 	defer teardown(t, store.DB)
 
 	ctx := context.Background()
-	
+
 	var epOrganization = &endpointmanager.FHIREndpointOrganization{
 		OrganizationName: "FOO FOO BAR"}
 
 	ep := &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
-		OrganizationList:  []*endpointmanager.FHIREndpointOrganization{epOrganization},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
+		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization},
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	npiID := "1"
 	confidence := .6
 
@@ -186,28 +187,28 @@ func Test_manualLinkerCorrections(t *testing.T) {
 		OrganizationName: "FOO BAR BAR"}
 
 	var epOrganization3 = &endpointmanager.FHIREndpointOrganization{
-		OrganizationName: "BAR BAR FOO",
+		OrganizationName:  "BAR BAR FOO",
 		OrganizationNPIID: "3"}
-	
+
 	ep1 := &endpointmanager.FHIREndpoint{
-		ID:                1,
-		URL:               "example.com/FHIR/DSTU2",
+		ID:               1,
+		URL:              "example.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization1},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	npiID1 := "1"
 	confidence1 := .6
 	ep2 := &endpointmanager.FHIREndpoint{
-		ID:                2,
-		URL:               "example2.com/FHIR/DSTU2",
+		ID:               2,
+		URL:              "example2.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization2},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	npiID2 := "2"
 	confidence2 := .8
 	ep3 := &endpointmanager.FHIREndpoint{
-		ID:                3,
-		URL:               "example3.com/FHIR/DSTU2",
+		ID:               3,
+		URL:              "example3.com/FHIR/DSTU2",
 		OrganizationList: []*endpointmanager.FHIREndpointOrganization{epOrganization3},
-		ListSource:        "https://open.epic.com/Endpoints/DSTU2"}
+		ListSource:       "https://open.epic.com/Endpoints/DSTU2"}
 	npiID3 := "3"
 	confidence3 := .5
 
@@ -287,7 +288,7 @@ func Test_manualLinkerCorrections(t *testing.T) {
 
 	sNpiID, sEpURL, sConfidence, err = store.GetNPIOrganizationFHIREndpointLink(ctx, npiID2, ep2.URL)
 	th.Assert(t, err == sql.ErrNoRows, "Expected sql no rows error due to being in blocklist file")
-	
+
 	endpoint3, err := store.GetFHIREndpoint(ctx, ep3.ID)
 	npiIDsArray := endpoint3.GetNPIIDs()
 	organizationNamesArray := endpoint3.GetOrganizationNames()

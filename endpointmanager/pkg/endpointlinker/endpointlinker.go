@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 	"os"
 	"regexp"
@@ -415,7 +415,7 @@ func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
 	defer jsonFile.Close()
 
 	var linkerCorrections []map[string]string
-	byteValueFile, err := ioutil.ReadAll(jsonFile)
+	byteValueFile, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return nil, err
 	}

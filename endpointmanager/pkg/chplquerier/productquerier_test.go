@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -661,7 +661,7 @@ func Test_getProductJSON(t *testing.T) {
 func basicTestClient() (*th.TestClient, error) {
 
 	path := filepath.Join("testdata", "chpl_certified_products.json")
-	okResponse, err := ioutil.ReadFile(path)
+	okResponse, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

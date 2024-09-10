@@ -2,7 +2,7 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -119,7 +119,7 @@ var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
 
-// var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
+var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
 var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
 var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
 var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"
@@ -166,7 +166,7 @@ var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
 // var guidewellURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/469/api/466#/PatientAccessAPI_105/overview"
 // var hcscURL = "https://interoperability.hcsc.com/s/patient-access-api"
 var humanaURL = "https://developers.humana.com/apis/patient-api/doc"
-// var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
+var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
 // var molinaURL = "https://developer.interop.molinahealthcare.com/api-details#api=patient-access&operation=5f72ab665269f310ef58b361"
 var unitedHealthURL = "https://www.uhc.com/legal/interoperability-apis"
 var meldrxURL = "https://app.meldrx.com/api/Directories/fhir/endpoints"
@@ -243,7 +243,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, firstInsightURL) {
 		FirstInsightBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, healthSamuraiURL) {
-		HealthSamuraiWebscraper("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
+		CustomBundleQuerierParser("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
 	} else if URLsEqual(chplURL, triarqURL) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cyfluentURL) {
@@ -406,8 +406,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcisgoldURL) {
 		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
-		// } else if URLsEqual(chplURL, healthieURL) {
-		// 	BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, healthieURL) {
+		CustomBundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medConnectURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, citiusTechURL) {
@@ -510,10 +510,11 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		// 	GuidewellURLWebscraper(chplURL, fileToWriteTo)
 		// } else if URLsEqual(chplURL, hcscURL) {
 		// 	HcscURLWebscraper(chplURL, fileToWriteTo)
+
 		} else if URLsEqual(chplURL, humanaURL) {
 			HumanaURLWebscraper(chplURL, fileToWriteTo)
-		//} else if URLsEqual(chplURL, kaiserURL) {
-		//KaiserURLWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, kaiserURL) {
+		KaiserURLWebscraper(chplURL, fileToWriteTo)
 		// } else if URLsEqual(chplURL, molinaURL) {
 		// 	MolinaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, unitedHealthURL) {
@@ -534,7 +535,7 @@ func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/prod_resources/"+fileToWriteTo, finalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}
@@ -548,7 +549,7 @@ func WriteCHPLFile(endpointEntryList EndpointList, fileToWriteTo string) error {
 		return err
 	}
 
-	err = ioutil.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
+	err = os.WriteFile("../../../resources/dev_resources/"+fileToWriteTo, reducedFinalFormatJSON, 0644)
 	if err != nil {
 		return err
 	}

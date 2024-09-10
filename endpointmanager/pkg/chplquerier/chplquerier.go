@@ -3,7 +3,7 @@ package chplquerier
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -66,7 +66,7 @@ func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAge
 		return nil, errors.New("CHPL request responded with status: " + resp.Status)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "reading the CHPL response body failed")
 	}
