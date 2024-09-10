@@ -64,7 +64,7 @@ var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-us
 var varianmedicalURL = "https://variandev.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
 var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
-var emedpracticeURL = "https://emedpractice.com/Fhir/FhirHelpDocument.html"
+var emedpracticeURL = "https://emedpractice.com/fhir/fhirhelpdocument.html"
 var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 var azaleahealthURL = "https://api.azaleahealth.com/fhir/R4/Endpoint"
 var cloudcraftURL = "https://fhirapitest.naiacorp.net/fhir/r4/endpoints/"
@@ -288,7 +288,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if chplURL == medinfoengineeringURL {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == emedpracticeURL {
-		eMedPracticeWebscraper("https://servicebackup.emedpractice.com:8443/helpdoc/fhir_helpdoc.html", fileToWriteTo)
+		eMedPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == doc_torURL {
 		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
