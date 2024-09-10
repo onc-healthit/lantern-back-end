@@ -119,7 +119,7 @@ var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
 
-// var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
+var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
 var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
 var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
 var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"
@@ -244,7 +244,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, firstInsightURL) {
 		FirstInsightBundleParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, healthSamuraiURL) {
-		HealthSamuraiWebscraper("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
+		CustomBundleQuerierParser("https://smartbox.aidbox.app/service-base-urls", fileToWriteTo)
 	} else if URLsEqual(chplURL, triarqURL) {
 		TRIARQPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cyfluentURL) {
@@ -407,8 +407,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcisgoldURL) {
 		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
-		// } else if URLsEqual(chplURL, healthieURL) {
-		// 	BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, healthieURL) {
+		CustomBundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medConnectURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, citiusTechURL) {
