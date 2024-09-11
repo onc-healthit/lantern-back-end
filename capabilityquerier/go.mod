@@ -1,6 +1,6 @@
 module github.com/onc-healthit/lantern-back-end/capabilityquerier
 
-go 1.14
+go 1.16
 
 require (
 	github.com/onc-healthit/lantern-back-end/endpointmanager v0.0.0-20240828212004-32ed2f80dc99
