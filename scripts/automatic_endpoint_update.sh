@@ -10,7 +10,7 @@ current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
 chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 
 cd ../resources
-cp prod_resources resources
+cp -r prod_resources resources
 docker cp resources lantern-back-end_endpoint_manager_1:/etc/lantern
 
 docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populateEndpoints.sh || {
