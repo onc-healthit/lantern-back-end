@@ -12,6 +12,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// CSVParser reads a CSV from a URL or file and writes processed data to an output file.
+// Parameters:
+// - inputSource: URL or file path of the input CSV.
+// - fileToWriteTo: File path to write the processed data.
+// - csvFilePath: Temporary file path for storing the downloaded CSV (if applicable).
+// - numrecords: Number of records to process (-1 for all records).
+// - startrecord: Starting index of records to process.
+// - header: Boolean indicating if the CSV has a header to skip.
+// - urlIndex: Column index where the URL is located.
+// - organizationIndex: Column index where the organization name is located.
 func CSVParser(inputSource string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int, header bool, urlIndex int, organizationIndex int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
