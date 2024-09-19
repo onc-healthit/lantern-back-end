@@ -26,7 +26,7 @@ func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo strin
 	if vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
 	} else if vendorURL == oneUpURL {
-		chplendpointquerier.CSVParser("../../../resources/prod_resources/oneupdata.csv", "1UpEndpointSources.json", "", -1, 0, true, 2, 1)
+		chplendpointquerier.CSVParser("../../../resources/prod_resources/oneupdata.csv", "1UpEndpointSources.json", "", -1, 0, true, 2, 0)
 	}
 }
 
