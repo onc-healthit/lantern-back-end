@@ -97,18 +97,6 @@ time_until_next_run <- function() {
   return(time_until_next_run)
 }
 
-time_until_next_run <- function() {
-  current_time <- Sys.time()
-  message("current_time ", current_time)
-  current_hour <- as.numeric(format(current_time, "%H"))
-  current_minute <- as.numeric(format(current_time, "%M"))
-
-  hours_until_2am <- ifelse(current_hour >= 6, 24 - current_hour + 6, 6 - current_hour)
-  time_until_next_run <- (hours_until_2am * 60 * 60) - (current_minute * 60)
-  message("time_until_next_run: ", time_until_next_run)
-  return(time_until_next_run)
-}
-
 updater <- observe({
   time_until_next_run_value <- time_until_next_run()
   invalidateLater(time_until_next_run_value *1000) # convert minutes to milliseconds
