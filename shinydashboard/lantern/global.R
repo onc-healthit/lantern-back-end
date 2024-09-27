@@ -85,13 +85,22 @@ app_data <<- list(
   validation_tbl = reactiveVal(NULL)               # validation rules and results
 )
 
-# Define observer based on a refresh_timeout to refetch data from the database
+time_until_next_run <- function() {
+  current_time <- Sys.time()
+  message("current_time ", current_time)
+  current_hour <- as.numeric(format(current_time, "%H"))
+  current_minute <- as.numeric(format(current_time, "%M"))
+
+  hours_until_2am <- ifelse(current_hour >= 6, 24 - current_hour + 6, 6 - current_hour)
+  time_until_next_run <- (hours_until_2am * 60 * 60) - (current_minute * 60)
+  message("time_until_next_run: ", time_until_next_run)
+  return(time_until_next_run)
+}
+
 updater <- observe({
-
-  invalidateLater(config_yaml$refresh_timeout_minutes * 60 * 1000) # convert minutes to milliseconds
-  # Database fetch is a reactive val that is set to 1 when the global app_data tables must be re-populated and is set to 0 when it is completed
+  time_until_next_run_value <- time_until_next_run()
+  invalidateLater(time_until_next_run_value*1000) # convert minutes to milliseconds
   database_fetch(1)
-
 })
 
 onStop(function() {

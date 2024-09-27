@@ -10,13 +10,12 @@ time_until_next_run <- function() {
   current_hour <- as.numeric(format(current_time, "%H"))
   current_minute <- as.numeric(format(current_time, "%M"))
 
-  hours_until_2am <- ifelse(current_hour >= 3, 24 - current_hour + 3, 3 - current_hour)
+  hours_until_2am <- ifelse(current_hour >= 6, 24 - current_hour + 6, 6 - current_hour)
   time_until_next_run <- (hours_until_2am * 60 * 60) - (current_minute * 60)
   message("time_until_next_run: ", time_until_next_run)
   return(time_until_next_run)
 }
 
-time_duration <- time_until_next_run()
 timer <- reactiveTimer(time_duration * 1000)
 
 

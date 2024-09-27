@@ -70,7 +70,7 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
-	timeoutContext, cancel := context.WithTimeout(ctx, 3*time.Minute)
+	timeoutContext, cancel := context.WithTimeout(ctx, 60*time.Minute)
 	defer cancel()
 
 	var htmlContent string
