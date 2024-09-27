@@ -99,7 +99,7 @@ time_until_next_run <- function() {
 
 updater <- observe({
   time_until_next_run_value <- time_until_next_run()
-  invalidateLater(time_until_next_run_value *1000) # convert minutes to milliseconds
+  invalidateLater(time_until_next_run_value * 1000)
   database_fetch(1)
 })
 
