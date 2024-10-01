@@ -33,11 +33,13 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	fhirEndpoint = doc.Find("b").Text()
@@ -53,11 +55,13 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
@@ -74,17 +78,17 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
+		return
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
 	fhirEndpoint += doc.Text()
-
-	log.Info(fhirEndpoint)
 
 	var entry LanternEntry
 	entry.URL = strings.TrimSpace(fhirEndpoint)
