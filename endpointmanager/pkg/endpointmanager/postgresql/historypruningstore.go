@@ -131,6 +131,26 @@ func (s *Store) PruningDeleteInfoHistory(ctx context.Context, url string, entryD
 	return err
 }
 
+// CheckIfValidationResultIDExists returns true if the fhir_endpoints_info table contains validation_result_id, else false
+func (s *Store) CheckIfValidationResultIDExists(ctx context.Context, valResID int) (bool, error) {
+	var count int
+
+	// Ensure the current entry in fhir_endpoints_info table does not this validation result id
+	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE validation_result_id=$1;", valResID)
+
+	err := row.Scan(&count)
+	if err != nil {
+		return true, err
+	}
+
+	// If there is an entry in the fhir endpoints info table that has this id, do nothing
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 // PruningDeleteValidationTable deletes validation table entries based on the given ID
 func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) error {
 	_, err := pruningDeleteValStatement.ExecContext(ctx, valResID)
@@ -140,22 +160,7 @@ func (s *Store) PruningDeleteValidationTable(ctx context.Context, valResID int) 
 // PruningDeleteValidationResultEntry deletes an entry from the validation_results table based
 // on the given ID
 func (s *Store) PruningDeleteValidationResultEntry(ctx context.Context, valResID int) error {
-	var count int
-
-	// Ensure the current entry in fhir_endpoints_info table does not this validation result id
-	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info WHERE validation_result_id=$1;", valResID)
-
-	err := row.Scan(&count)
-	if err != nil {
-		return err
-	}
-
-	// If there is an entry in the fhir endpoints info table that has this id, do nothing
-	if count > 0 {
-		return nil
-	}
-
-	_, err = pruningDeleteValResStatement.ExecContext(ctx, valResID)
+	_, err := pruningDeleteValResStatement.ExecContext(ctx, valResID)
 	return err
 }
 
@@ -165,7 +170,7 @@ func prepareHistoryPruningStatements(s *Store) error {
 	pruningThreshold := viper.GetInt("pruning_threshold")
 
 	thresholdString := strconv.Itoa(pruningThreshold)
-	queryIntString := strconv.Itoa(pruningThreshold * 2)
+	queryIntString := strconv.Itoa(pruningThreshold + 7200)
 
 	distinctURLStatementQueryInterval, err = s.DB.Prepare(`
 		select DISTINCT(url) FROM fhir_endpoints_info_history

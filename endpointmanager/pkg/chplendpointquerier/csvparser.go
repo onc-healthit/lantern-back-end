@@ -1,6 +1,7 @@
 package chplendpointquerier
 
 import (
+	"encoding/csv"
 	"io"
 	"strings"
 
@@ -11,15 +12,44 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int, header bool, urlIndex int, organizationIndex int) {
+// CSVParser reads a CSV from a URL or file and writes processed data to an output file.
+// Parameters:
+// - inputSource: URL or file path of the input CSV.
+// - fileToWriteTo: File path to write the processed data.
+// - csvFilePath: Temporary file path for storing the downloaded CSV (if applicable).
+// - numrecords: Number of records to process (-1 for all records).
+// - startrecord: Starting index of records to process.
+// - header: Boolean indicating if the CSV has a header to skip.
+// - urlIndex: Column index where the URL is located.
+// - organizationIndex: Column index where the organization name is located.
+func CSVParser(inputSource string, fileToWriteTo string, csvFilePath string, numrecords int, startrecord int, header bool, urlIndex int, organizationIndex int) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, header)
-	if err != nil {
-		log.Fatal(err)
+	var csvReader *csv.Reader
+	var file *os.File
+	var err error
+	if strings.HasPrefix(inputSource, "http://") || strings.HasPrefix(inputSource, "https://") {
+		csvReader, file, err = helpers.QueryAndOpenCSV(inputSource, csvFilePath, header)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+	} else {
+		file, err = os.Open(inputSource)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+
+		csvReader = csv.NewReader(file)
+		if header {
+			_, err := csvReader.Read()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
-	defer file.Close()
 
 	records := 0
 	for {
@@ -59,8 +89,10 @@ func CSVParser(CHPLURL string, fileToWriteTo string, csvFilePath string, numreco
 		log.Fatal(err)
 	}
 
-	err = os.Remove(csvFilePath)
-	if err != nil {
-		log.Fatal(err)
+	if _, err := os.Stat(csvFilePath); err == nil {
+		err = os.Remove(csvFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }

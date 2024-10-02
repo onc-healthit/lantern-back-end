@@ -165,8 +165,8 @@ var centeneURL = "https://partners.centene.com/apiDetail/2718669d-6e2e-42b5-8c90
 var cignaURL = "https://developer.cigna.com/docs/service-apis/patient-access/implementation-guide#Implementation-Guide-Base-URL"
 var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
 
-// var guidewellURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/469/api/466#/PatientAccessAPI_105/overview"
 var hcscURL = "https://interoperability.hcsc.com/s/provider-directory-api"
+var guidewellURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/469/api/466#/PatientAccessAPI_105/overview"
 var humanaURL = "https://developers.humana.com/apis/patient-api/doc"
 var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
 
@@ -326,7 +326,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
 	} else if URLsEqual(chplURL, snfistURL) {
-		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", 2, 1, true, 1, 0)
+		chplURL = strings.Replace(chplURL, "endpointlist", "assets/FHIRServiceURLs.csv", 1)
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, true, 1, -1)
 	} else if URLsEqual(chplURL, athenaClinicalsURL) {
 		CSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo, "./athenanet-fhir-base-urls.csv", 17136, 2, true, 3, 1)
 	} else if URLsEqual(chplURL, criterionsURL) {
@@ -509,11 +510,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CignaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, anthemURL) {
 		AnthemURLParser("https://patient360.anthem.com/P360Member/fhir/endpoints", fileToWriteTo)
-		// } else if URLsEqual(chplURL, guidewellURL) {
-		// 	GuidewellURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, hcscURL) {
 		HcscURLWebscraper(chplURL, fileToWriteTo)
-
+	} else if URLsEqual(chplURL, guidewellURL) {
+		GuidewellURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, humanaURL) {
 		HumanaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, kaiserURL) {

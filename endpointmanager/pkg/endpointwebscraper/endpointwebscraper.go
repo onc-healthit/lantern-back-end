@@ -3,6 +3,8 @@ package endpointwebscraper
 import (
 	"encoding/json"
 	"os"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/chplendpointquerier"
 )
 
 type EndpointList struct {
@@ -24,7 +26,7 @@ func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo strin
 	if vendorURL == careEvolutionURL {
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
 	} else if vendorURL == oneUpURL {
-		OneUpQuerier("https://api.1up.health/connect/system/clinical", fileToWriteTo)
+		chplendpointquerier.CSVParser("../../../resources/prod_resources/oneupdata.csv", "1UpEndpointSources.json", "", -1, 0, true, 2, 0)
 	}
 }
 
