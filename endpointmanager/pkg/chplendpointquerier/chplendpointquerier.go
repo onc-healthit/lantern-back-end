@@ -326,7 +326,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, netsmarttechnologiesURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, false, 1, 0)
 	} else if URLsEqual(chplURL, snfistURL) {
-		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", 2, 1, true, 1, 0)
+		chplURL = strings.Replace(chplURL, "endpointlist", "assets/FHIRServiceURLs.csv", 1)
+		CSVParser(chplURL, fileToWriteTo, "./fhir_base_urls.csv", -1, 0, true, 1, -1)
 	} else if URLsEqual(chplURL, athenaClinicalsURL) {
 		CSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo, "./athenanet-fhir-base-urls.csv", 17136, 2, true, 3, 1)
 	} else if URLsEqual(chplURL, criterionsURL) {
