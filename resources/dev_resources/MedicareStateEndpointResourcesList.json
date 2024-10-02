@@ -31,7 +31,7 @@
 	},
 	{
 		"FormatType": "Lantern",
-		"URL": "https://interoperability.hcsc.com/s/patient-access-api",
+		"URL": "https://interoperability.hcsc.com/s/provider-directory-api",
 		"EndpointName": "HCSC",
 		"FileName": "Medicare_HCSCEndpointSources.json"
 	},
