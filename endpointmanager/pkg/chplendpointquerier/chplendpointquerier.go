@@ -529,7 +529,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PointclickWebscraper(pointclickURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
-	} else if URLsEqual(chplURL,aspmdURL ) {
+	} else if URLsEqual(chplURL, aspmdURL) {
 		AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
