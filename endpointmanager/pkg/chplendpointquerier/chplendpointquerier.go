@@ -190,6 +190,7 @@ var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
 var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
 var pointclickURL = "https://fhir.pointclickcare.com/"
 var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
+var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -528,6 +529,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PointclickWebscraper(pointclickURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
+	} else if URLsEqual(chplURL,aspmdURL ) {
+		AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}
