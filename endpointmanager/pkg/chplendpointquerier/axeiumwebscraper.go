@@ -1,9 +1,9 @@
 package chplendpointquerier
 
 import (
-	"strings"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 func AxeiumeWebscraper(vendorURL string, fileToWriteTo string) {
@@ -14,7 +14,7 @@ func AxeiumeWebscraper(vendorURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	fhirEndpoint, exists := doc.Find("input#fhirEndpoint").Attr("value")
 	if exists {
 		var entry LanternEntry

@@ -190,7 +190,7 @@ var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
 var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
 var pointclickURL = "https://fhir.pointclickcare.com/"
 var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
-var axeiumURL="https://apifhir.axeium.net:8443/reference-server/"
+var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -529,7 +529,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PointclickWebscraper(pointclickURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, axeiumURL){
+	} else if URLsEqual(chplURL, axeiumURL) {
 		AxeiumeWebscraper(axeiumURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
