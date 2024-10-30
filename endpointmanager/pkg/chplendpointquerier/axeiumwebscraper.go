@@ -1,7 +1,6 @@
 package chplendpointquerier
 
 import (
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
@@ -10,23 +9,17 @@ func AxeiumeWebscraper(vendorURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "")
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	fhirEndpoint, exists := doc.Find("input#fhirEndpoint").Attr("value")
-	if exists {
+
 		var entry LanternEntry
 
-		fhirURL := strings.TrimSpace(fhirEndpoint)
+		fhirURL := strings.TrimSpace(vendorURL)+"r4"
 		entry.URL = fhirURL
 		lanternEntryList = append(lanternEntryList, entry)
-	}
 
 	endpointEntryList.Endpoints = lanternEntryList
 
-	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	err := WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
 		log.Fatal(err)
 	}
