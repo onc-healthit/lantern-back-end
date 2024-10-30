@@ -1,44 +1,39 @@
 package chplendpointquerier
 
 import (
-	"github.com/PuerkitoBio/goquery"
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-	log "github.com/sirupsen/logrus"
+    "github.com/PuerkitoBio/goquery"
+    "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+    log "github.com/sirupsen/logrus"
+    "strings"
 )
 
-func AspMDeWebscraper(vendorURL string, fileToWriteTo string) {
+func AspMDeWebscraper(chplURL string, fileToWriteTo string) {
+    found := false
 
-	var lanternEntryList []LanternEntry
-	var endpointEntryList EndpointList
-	found := false
-	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "p")
-	if err != nil {
-		log.Fatal(err)
-	}
+    baseURL := strings.TrimSuffix(chplURL, "/fhir_aspmd.asp#apiendpoints")
+	baseURL = strings.TrimSuffix(baseURL, "/fhir_aspmd.asp")
 
-	doc.Find("h1").Each(func(i int, s *goquery.Selection) {
-		sectionTitle := s.Text()
 
-		if sectionTitle == "Public Endpoint" {
-			s.Parent().Find("a").Each(func(j int, link *goquery.Selection) {
-				if found {
-					return
-				}
-				href, exists := link.Attr("href")
-				if exists {
-					var entry LanternEntry
-					entry.URL = href
-					lanternEntryList = append(lanternEntryList, entry)
-					found = true
-				}
-			})
-		}
-	})
+    doc, err := helpers.ChromedpQueryEndpointList(chplURL, "p")
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	endpointEntryList.Endpoints = lanternEntryList
+    doc.Find("h1").Each(func(i int, s *goquery.Selection) {
+        sectionTitle := s.Text()
 
-	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
-	if err != nil {
-		log.Fatal(err)
-	}
+        if sectionTitle == "Public Endpoint" {
+            s.Parent().Find("a").Each(func(j int, link *goquery.Selection) {
+                if found {
+                    return
+                }
+                href, exists := link.Attr("href")
+                if exists && strings.Contains(href, "endpoints.asp") {
+                    bundleURL := baseURL + "/" + href
+                    found = true
+					BundleQuerierParser(bundleURL, fileToWriteTo)
+                }
+            })
+        }
+    })
 }
