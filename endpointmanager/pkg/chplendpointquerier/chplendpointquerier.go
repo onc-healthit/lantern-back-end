@@ -148,7 +148,6 @@ var willowURL = "https://www.willowgladetechnologies.com/requirements"
 var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
 var medicaURL = "https://code.medicasoft.us/fhir_r4_endpoints.html"
 var dss2URL = "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints"
-var dynamicfhirURL = "https://dynamicfhirpresentation.dynamicfhirsandbox.com/"
 var cozevaURL = "https://fhir.cozeva.com/endpoints"
 var fhirjunoURL = "https://fhirjuno-prod-web.dssinc.com/fhir/r4/endpoints"
 var hcsincURL = "https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api/Endpoint?connection-type=hl7-fhir-rest"
@@ -484,8 +483,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(hcsincURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, fhirjunoURL) {
 		BundleQuerierParser(fhirjunoURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, dynamicfhirURL) {
-		BundleQuerierParser("https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints", fileToWriteTo)
 	} else if URLsEqual(chplURL, veradigmURL) {
 		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
 	} else if URLsEqual(chplURL, meldrxURL) {
