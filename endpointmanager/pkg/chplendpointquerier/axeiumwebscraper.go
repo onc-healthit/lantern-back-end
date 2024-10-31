@@ -10,12 +10,11 @@ func AxeiumeWebscraper(vendorURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
+	var entry LanternEntry
 
-		var entry LanternEntry
-
-		fhirURL := strings.TrimSpace(vendorURL)+"r4"
-		entry.URL = fhirURL
-		lanternEntryList = append(lanternEntryList, entry)
+	fhirURL := strings.TrimSpace(vendorURL) + "r4"
+	entry.URL = fhirURL
+	lanternEntryList = append(lanternEntryList, entry)
 
 	endpointEntryList.Endpoints = lanternEntryList
 
