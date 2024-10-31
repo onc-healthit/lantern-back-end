@@ -469,3 +469,14 @@ CREATE INDEX healthit_product_name_version_idx ON healthit_products (name, versi
 CREATE INDEX metadata_response_time_idx ON fhir_endpoints_metadata(response_time_seconds);
 CREATE INDEX metadata_requested_version_idx ON fhir_endpoints_metadata(requested_fhir_version);
 CREATE INDEX metadata_url_idx ON fhir_endpoints_metadata(url);
+
+-- LANTERN-759
+CREATE INDEX validations_val_res_id_idx ON validations (validation_result_id);
+CREATE INDEX fhir_endpoints_info_validation_result_id_idx ON fhir_endpoints_info (validation_result_id); 
+CREATE INDEX fhir_endpoints_info_history_entered_at_idx ON fhir_endpoints_info_history (entered_at);
+CREATE INDEX fhir_endpoints_info_history_operation_idx ON fhir_endpoints_info_history (operation);
+CREATE INDEX fhir_endpoints_info_history_requested_fhir_version_idx ON fhir_endpoints_info_history (requested_fhir_version);
+CREATE INDEX healthit_products_certification_status_idx ON healthit_products (certification_status);
+CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
+CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
+CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
