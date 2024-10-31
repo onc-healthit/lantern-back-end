@@ -190,6 +190,7 @@ var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
 var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
 var pointclickURL = "https://fhir.pointclickcare.com/"
 var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
+var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 
 var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
@@ -545,6 +546,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		PointclickWebscraper(pointclickURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, aspmdURL) {
+		AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, axeiumURL) {
 		AxeiumeWebscraper(axeiumURL, fileToWriteTo)
 	} else if contains(bundleQuerierArray, chplURL) {
