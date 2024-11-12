@@ -487,7 +487,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, fhirjunoURL) {
 		BundleQuerierParser(fhirjunoURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, veradigmURL) {
-		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
+		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4?endpointFilter=All", fileToWriteTo)
 	} else if URLsEqual(chplURL, meldrxURL) {
 		BundleQuerierParser(meldrxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, emr4MDURL) {

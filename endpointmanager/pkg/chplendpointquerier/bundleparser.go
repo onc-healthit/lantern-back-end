@@ -53,12 +53,14 @@ func BundleToLanternFormat(bundle []byte) []LanternEntry {
 
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
-			addressMapArr := bundleEntry.Resource.Address.([]interface{})
-			for _, address := range addressMapArr {
-				addressMap := address.(map[string]interface{})
-				postalCode, ok := addressMap["postalCode"].(string)
-				if ok {
-					organizationZip[bundleEntry.Resource.OrgId] = postalCode
+			if bundleEntry.Resource.Address != nil {
+				addressMapArr := bundleEntry.Resource.Address.([]interface{})
+				for _, address := range addressMapArr {
+					addressMap := address.(map[string]interface{})
+					postalCode, ok := addressMap["postalCode"].(string)
+					if ok {
+						organizationZip[bundleEntry.Resource.OrgId] = postalCode
+					}
 				}
 			}
 		}
