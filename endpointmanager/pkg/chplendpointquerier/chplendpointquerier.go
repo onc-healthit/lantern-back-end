@@ -114,6 +114,7 @@ var firelyURL = "https://docs.fire.ly/projects/Firely-Server/en/latest/_static/g
 var azurewebsitesURL = "https://sfp-proxy9794.azurewebsites.net/fhir/base-url"
 var viewmymedURL = "https://portal.viewmymed.com/fhir/Endpoint"
 var imedemrURL = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php?format=csv"
+var imedemrURL2 = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php"
 var moyaeURL = "https://documenter.getpostman.com/view/15917486/UyxojQMd#a24aa40c-fe15-478e-a555-3c2cb10d56c9"
 var myheloURL = "https://www.myhelo.com/api/"
 var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
@@ -418,6 +419,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, imedemrURL) {
 		ImedemrWebscraper("https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php", fileToWriteTo)
+	} else if URLsEqual(chplURL, imedemrURL2) {
+		ImedemrWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, moyaeURL) {
 		MoyaeURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, myheloURL) {
