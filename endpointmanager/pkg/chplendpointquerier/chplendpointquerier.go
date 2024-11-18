@@ -200,7 +200,7 @@ var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoi
 	"https://smartserver.novoclinical.com/.well-known/bundle", "https://fhir.prod.flatiron.io/fhir", "https://public-files.oystehr.com/endpoint.json",
 	"https://fhirpresentation.pcsdataxchg.com/fhir/r4/endpoints", "https://pic-fhir.harrisambulatory.com/endpoints/r4", "https://pul-fhir.harrisambulatory.com/endpoints/r4", "https://fhir.qsmartcare.com:8000",
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
-	"https://fhir.ethizo.com/api/4.0.0/service_based_url"}
+	"https://fhir.ethizo.com/api/4.0.0/service_based_url", "https://fhir.maximus.care/api/service_based_url"}
 
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
