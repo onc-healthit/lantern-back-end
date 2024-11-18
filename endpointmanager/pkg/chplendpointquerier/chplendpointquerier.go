@@ -204,6 +204,8 @@ var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoi
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
 	"https://fhir.ethizo.com/api/4.0.0/service_based_url"}
 
+var ezemrxURL = "https://www.ezemrx.com/fhir"
+
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
 		if v == str {
@@ -554,6 +556,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, axeiumURL) {
 		AxeiumeWebscraper(axeiumURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, ezemrxURL) {
+		EzemrxWebscraper(chplURL, fileToWriteTo)
 	} else if contains(bundleQuerierArray, chplURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, ehealthlineURL) {
