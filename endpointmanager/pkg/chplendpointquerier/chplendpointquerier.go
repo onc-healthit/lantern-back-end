@@ -102,7 +102,7 @@ var smartemrURL = "https://smartemr.readme.io/reference/getting-started#base-url
 var tebraURL = "https://fhir.prd.cloud.tebra.com/fhir-request/swagger-ui/"
 var landmarkhealthURL = "https://lmdmzprodws.landmarkhealth.org/docs/fhir-base-urls.csv"
 var nthtechnologyURL = "https://admin.nthtechnology.com/fhir_endpoints.php/json"
-var netsmartURL = "https://careconnect-uat.netsmartcloud.com/"
+var netsmartURL = "https://careconnect.netsmartcloud.com/csv/service-base-urls-20240905.csv"
 
 var omnimdURL = "https://fhirregistration.omnimd.com/#/specification"
 var pcesystemsURL = "https://www.pcesystems.com/g10APIInfo.html"
@@ -194,6 +194,7 @@ var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
+var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
 
 var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
@@ -205,6 +206,11 @@ var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoi
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
 	"https://fhir.ethizo.com/api/4.0.0/service_based_url"}
 
+var ontadaURL = "https://g2fhir-int.mckesson.com/docs/index.html"
+var mdlandURL = "https://api-fhir-proxy-2.mdland.net/"
+var abeoURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
+var nextechURL2 = "https://www.nextech.com/developers-portal"
+var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
 
 func contains(arr [30]string, str string) bool {
@@ -402,7 +408,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, nthtechnologyURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, netsmartURL) {
-		NetsmartCSVParser("https://careconnect-uat.netsmartcloud.com/baseUrls", fileToWriteTo)
+		NetsmartCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, omnimdURL) {
 		OmniMDWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcesystemsURL) {
@@ -563,6 +569,18 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(emdscloudURL, chplURL) {
 		EmdsCloudWebscraper(emdscloudURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, betaAfoundriaURL) {
+		BetaAfoundriaWebScraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, ontadaURL) {
+		OntadaWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, mdlandURL) {
+		MdlandWebscraper("https://api.mdland.com/Mdland%20SMART%20on%20FHIR%20OAuth%202.0%20Guide.htm", fileToWriteTo)
+	} else if URLsEqual(abeoURL, chplURL) {
+		CustomCSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", -1, 0, true, 1, 0)
+	} else if URLsEqual(nextechURL2, chplURL) {
+		CSVParser("https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv", fileToWriteTo, "./Nextech FHIR Base URL.csv", -1, 0, true, 1, 0)
+	} else if URLsEqual(icareURL, chplURL) {
+		CSVParser(chplURL, fileToWriteTo, "./endpoints.csv", -1, 0, true, 1, 0)
 	} else if URLsEqual(chplURL, ehealthlineURL) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else {
