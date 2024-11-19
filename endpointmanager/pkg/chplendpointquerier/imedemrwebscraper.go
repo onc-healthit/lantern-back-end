@@ -22,7 +22,8 @@ func ImedemrWebscraper(CHPLURL string, fileToWriteTo string) {
 
 		tableElem.Find("tbody").Each(func(index int, tbodyElem *goquery.Selection) {
 			tbodyElem.Find("tr").Each(func(trIndex int, trElem *goquery.Selection) {
-				if trIndex >= 1 {
+				// LANTERN-783: Changed the condition to include the first row of table
+				if trIndex >= 0 {
 					tdElem := trElem.Find("td")
 					org := tdElem.Eq(0)
 					URL := tdElem.Eq(1)
