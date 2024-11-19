@@ -194,6 +194,7 @@ var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
+var drcloudURL = "https://drcloudehr.com/drcloudehr-api-documentation/"
 
 var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
 	"https://ct-fhir.harrisambulatory.com/Endpoints/R4", "https://kantime.com/wp-content/uploads/2024/03/fhir-base-urls.json",
@@ -577,6 +578,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./endpoints.csv", -1, 0, true, 1, 0)
 	} else if URLsEqual(chplURL, ehealthlineURL) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, drcloudURL) {
+		DrcloudehrWebscraper(chplURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}
