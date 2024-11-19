@@ -114,6 +114,7 @@ var firelyURL = "https://docs.fire.ly/projects/Firely-Server/en/latest/_static/g
 var azurewebsitesURL = "https://sfp-proxy9794.azurewebsites.net/fhir/base-url"
 var viewmymedURL = "https://portal.viewmymed.com/fhir/Endpoint"
 var imedemrURL = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php?format=csv"
+var imedemrURL2 = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php"
 var moyaeURL = "https://documenter.getpostman.com/view/15917486/UyxojQMd#a24aa40c-fe15-478e-a555-3c2cb10d56c9"
 var myheloURL = "https://www.myhelo.com/api/"
 var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
@@ -193,6 +194,7 @@ var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
+var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
 
 var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
 	"https://ct-fhir.harrisambulatory.com/Endpoints/R4", "https://kantime.com/wp-content/uploads/2024/03/fhir-base-urls.json",
@@ -202,6 +204,8 @@ var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoi
 	"https://fhirpresentation.pcsdataxchg.com/fhir/r4/endpoints", "https://pic-fhir.harrisambulatory.com/endpoints/r4", "https://pul-fhir.harrisambulatory.com/endpoints/r4", "https://fhir.qsmartcare.com:8000",
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
 	"https://fhir.ethizo.com/api/4.0.0/service_based_url"}
+
+var ezemrxURL = "https://www.ezemrx.com/fhir"
 
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
@@ -419,6 +423,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, imedemrURL) {
 		ImedemrWebscraper("https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php", fileToWriteTo)
+	} else if URLsEqual(chplURL, imedemrURL2) {
+		ImedemrWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, moyaeURL) {
 		MoyaeURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, myheloURL) {
@@ -488,7 +494,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, fhirjunoURL) {
 		BundleQuerierParser(fhirjunoURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, veradigmURL) {
-		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4", fileToWriteTo)
+		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4?endpointFilter=All", fileToWriteTo)
 	} else if URLsEqual(chplURL, meldrxURL) {
 		BundleQuerierParser(meldrxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, emr4MDURL) {
@@ -551,10 +557,14 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, axeiumURL) {
 		AxeiumeWebscraper(axeiumURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, ezemrxURL) {
+		EzemrxWebscraper(chplURL, fileToWriteTo)
 	} else if contains(bundleQuerierArray, chplURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, betaAfoundriaURL) {
 		BetaAfoundriaWebScraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, ehealthlineURL) {
+		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}

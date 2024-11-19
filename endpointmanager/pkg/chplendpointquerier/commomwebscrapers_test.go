@@ -24,6 +24,11 @@ func TestWebScrapers(t *testing.T) {
 			url:         "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp",
 			fileName:    "ASPMD_Inc_EndpointSources.json",
 		},
+		{
+			scraperFunc: EzemrxWebscraper,
+			url:         "https://www.ezemrx.com/fhir",
+			fileName:    "ezEMRx_Inc_EndpointSources.json",
+		},
 	}
 
 	for _, tc := range testCases {
