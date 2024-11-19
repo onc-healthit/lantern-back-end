@@ -1,9 +1,10 @@
 package chplendpointquerier
 
 import (
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"io"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
 	"os"
 
@@ -14,7 +15,7 @@ func NetsmartCSVParser(CHPLURL string, fileToWriteTo string) {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
-	csvFilePath := "./netsmart-fhir-base-urls.csv"
+	csvFilePath := "./service-base-urls-20240905.csv"
 
 	csvReader, file, err := helpers.QueryAndOpenCSV(CHPLURL, csvFilePath, true)
 	if err != nil {
@@ -33,9 +34,11 @@ func NetsmartCSVParser(CHPLURL string, fileToWriteTo string) {
 
 		var entry LanternEntry
 		orgName := strings.TrimSpace(rec[0])
-		URL := strings.TrimSpace(rec[1])
+		zipcode := strings.TrimSpace(rec[4])
+		URL := strings.TrimSpace(rec[5])
 
 		entry.OrganizationName = orgName
+		entry.OrganizationZipCode = zipcode
 		entry.URL = URL
 		lanternEntryList = append(lanternEntryList, entry)
 	}
