@@ -193,6 +193,7 @@ var pointclickURL = "https://fhir.pointclickcare.com/"
 var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
+var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
 var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
 
@@ -566,6 +567,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		EzemrxWebscraper(chplURL, fileToWriteTo)
 	} else if contains(bundleQuerierArray, chplURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(emdscloudURL, chplURL) {
+		EmdsCloudWebscraper(emdscloudURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, betaAfoundriaURL) {
 		BetaAfoundriaWebScraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, ontadaURL) {
