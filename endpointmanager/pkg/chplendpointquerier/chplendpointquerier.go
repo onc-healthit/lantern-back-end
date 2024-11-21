@@ -194,6 +194,7 @@ var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
 var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
 var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
 var curemdURL = "https://www.curemd.com/developer/base-fhir-urls/"
+var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
 var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
 
@@ -569,6 +570,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, curemdURL) {
 		CuremdWebscraper(curemdURL, fileToWriteTo)
+	} else if URLsEqual(emdscloudURL, chplURL) {
+		EmdsCloudWebscraper(emdscloudURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, betaAfoundriaURL) {
 		BetaAfoundriaWebScraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, ontadaURL) {
