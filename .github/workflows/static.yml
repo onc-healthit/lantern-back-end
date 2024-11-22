@@ -10,7 +10,7 @@ jobs:
         - uses: actions/checkout@v2
         
         - name: Install golangci-lint\
-          run: sudo snap install golangci-lint
+          run: sudo snap install golangci-lint --classic
 
         - name: Run Go Lintr
           run: make lint_go
