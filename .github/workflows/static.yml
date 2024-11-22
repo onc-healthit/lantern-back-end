@@ -5,22 +5,18 @@ on: [push]
 jobs:
   Golintr:
       name: Go Lintr
-      runs-on: macOS-latest
+      runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
         - name: Install golangci-lint\
-          run: brew install golangci-lint
+          run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
         - name: Run Go Lintr
           run: make lint_go
   Rlintr:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Update Homebrew
-        run: brew update-reset
-
-      
       - uses: r-lib/actions/setup-r@v2
           
       - name: Lint R Files
