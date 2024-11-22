@@ -9,11 +9,8 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         
-        -name: Install Homebrew
-          run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
         - name: Install golangci-lint\
-          run: brew install golangci-lint
+          run: snap install golangci-lint
 
         - name: Run Go Lintr
           run: make lint_go
