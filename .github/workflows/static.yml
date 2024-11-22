@@ -8,8 +8,13 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
+        
+        -name: Install Homebrew
+          run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
         - name: Install golangci-lint\
-          run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          run: brew install golangci-lint
+
         - name: Run Go Lintr
           run: make lint_go
   Rlintr:
