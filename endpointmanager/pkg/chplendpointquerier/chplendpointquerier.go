@@ -585,7 +585,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, ehealthlineURL) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, fhirptURL) {
-		FhirptWebScraper(chplURL, fileToWriteTo)
+		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}
