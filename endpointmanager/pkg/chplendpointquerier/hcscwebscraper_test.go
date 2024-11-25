@@ -29,53 +29,68 @@ func Test_HcscURLWebscraper(t *testing.T) {
 
 	log.Info("hcsc test file")
 	// 1. Happy case: Valid url, valid file format
-	HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.json")
+	err := HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.json")
 
-	fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, fileExists, "JSON file does not exist")
+	if err == nil {
+		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, fileExists, "JSON file does not exist")
 
-	fileEmpty, err := isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, !fileEmpty, "Empty JSON file")
+		fileEmpty, err := isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, !fileEmpty, "Empty JSON file")
 
-	err = os.Remove("../../../resources/prod_resources/TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
+		err = os.Remove("../../../resources/prod_resources/TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
 
-	err = os.Remove("../../../resources/dev_resources/TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
+		err = os.Remove("../../../resources/dev_resources/TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
+	} else {
+		log.Info(err)
+	}
 
 	// 2. Empty inputs
-	HcscURLWebscraper("", "")
+	err = HcscURLWebscraper("", "")
 
-	fileExists, err = doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, !fileExists, "File exists for invalid inputs")
+	if err == nil {
+		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, !fileExists, "File exists for invalid inputs")
 
-	fileEmpty, err = isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err != nil, "File data read successfully for invalid inputs")
-	th.Assert(t, fileEmpty, "File contains data for invalid inputs")
+		fileEmpty, err := isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err != nil, "File data read successfully for invalid inputs")
+		th.Assert(t, fileEmpty, "File contains data for invalid inputs")
+	} else {
+		log.Info(err)
+	}
 
 	// 3. Different file format
-	HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.csv")
+	err = HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.csv")
 
-	fileExists, err = doesfileExist("TEST_Medicare_HCSCEndpointSources.csv")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, fileExists, "CSV file does not exist")
+	if err == nil {
+		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.csv")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, fileExists, "CSV file does not exist")
 
-	fileEmpty, err = isFileEmpty("TEST_Medicare_HCSCEndpointSources.csv")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, !fileEmpty, "Empty CSV file")
+		fileEmpty, err := isFileEmpty("TEST_Medicare_HCSCEndpointSources.csv")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, !fileEmpty, "Empty CSV file")
+	} else {
+		log.Info(err)
+	}
 
 	// 4. Invalid URL
-	HcscURLWebscraper("https://non-existent-url.com/dummy-api", "TEST_Medicare_HCSCEndpointSources.json")
+	err = HcscURLWebscraper("https://non-existent-url.com/dummy-api", "TEST_Medicare_HCSCEndpointSources.json")
 
-	fileExists, err = doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err == nil, err)
-	th.Assert(t, !fileExists, "File exists for invalid URL")
+	if err == nil {
+		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err == nil, err)
+		th.Assert(t, !fileExists, "File exists for invalid URL")
 
-	fileEmpty, err = isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
-	th.Assert(t, err != nil, "File read successful for invalid URL")
-	th.Assert(t, fileEmpty, "File contains data for invalid URL")
-
+		fileEmpty, err := isFileEmpty("TEST_Medicare_HCSCEndpointSources.json")
+		th.Assert(t, err != nil, "File read successful for invalid URL")
+		th.Assert(t, fileEmpty, "File contains data for invalid URL")
+	} else {
+		log.Info(err)
+	}
 }

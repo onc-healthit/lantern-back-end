@@ -4,10 +4,9 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
-	log "github.com/sirupsen/logrus"
 )
 
-func OntadaWebscraper(chplURL string, fileToWriteTo string) {
+func OntadaWebscraper(chplURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
@@ -15,7 +14,7 @@ func OntadaWebscraper(chplURL string, fileToWriteTo string) {
 
 	doc, err := helpers.ChromedpQueryEndpointList(chplURL, ".sc-dTSzeu.dfUAUz")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	divElem := doc.Find(".sc-dTSzeu.dfUAUz").First()
@@ -30,7 +29,8 @@ func OntadaWebscraper(chplURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
+	return nil
 }
