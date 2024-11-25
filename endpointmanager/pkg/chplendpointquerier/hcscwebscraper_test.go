@@ -31,7 +31,7 @@ func Test_HcscURLWebscraper(t *testing.T) {
 	// 1. Happy case: Valid url, valid file format
 	err := HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.json")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "JSON file does not exist")
@@ -50,7 +50,7 @@ func Test_HcscURLWebscraper(t *testing.T) {
 	// 2. Empty inputs
 	err = HcscURLWebscraper("", "")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, !fileExists, "File exists for invalid inputs")
@@ -63,7 +63,7 @@ func Test_HcscURLWebscraper(t *testing.T) {
 	// 3. Different file format
 	err = HcscURLWebscraper("https://interoperability.hcsc.com/s/provider-directory-api", "TEST_Medicare_HCSCEndpointSources.csv")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.csv")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "CSV file does not exist")
@@ -76,7 +76,7 @@ func Test_HcscURLWebscraper(t *testing.T) {
 	// 4. Invalid URL
 	err = HcscURLWebscraper("https://non-existent-url.com/dummy-api", "TEST_Medicare_HCSCEndpointSources.json")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_HCSCEndpointSources.json")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, !fileExists, "File exists for invalid URL")

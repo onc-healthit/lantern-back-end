@@ -51,7 +51,7 @@ func TestWebScrapers(t *testing.T) {
 func runWebScraperTest(t *testing.T, scraperFunc WebScraperFunc, url, fileName string) {
 	err := scraperFunc(url, fileName)
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist(fileName)
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "File does not exist")

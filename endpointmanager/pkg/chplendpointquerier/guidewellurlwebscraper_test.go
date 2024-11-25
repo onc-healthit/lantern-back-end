@@ -13,7 +13,7 @@ func Test_GuidewellURLWebscraper(t *testing.T) {
 	// 1. Happy case: Valid url, valid file format
 	err := GuidewellURLWebscraper("https://developer.bcbsfl.com/interop/interop-developer-portal/product/306/api/285#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get", "TEST_Medicare_GuidewellPatientAccessEndpointSources.json")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_GuidewellPatientAccessEndpointSources.json")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "JSON file does not exist")
@@ -32,7 +32,7 @@ func Test_GuidewellURLWebscraper(t *testing.T) {
 	// 2. Different file format
 	err = GuidewellURLWebscraper("https://developer.bcbsfl.com/interop/interop-developer-portal/product/306/api/285#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get", "TEST_Medicare_GuidewellPatientAccessEndpointSources.csv")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_GuidewellPatientAccessEndpointSources.csv")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "CSV file does not exist")
@@ -52,7 +52,7 @@ func Test_GuidewellURLWebscraper(t *testing.T) {
 	// 1. Happy case: Valid url, valid file format
 	err = GuidewellURLWebscraper("https://developer.bcbsfl.com/interop/interop-developer-portal/product/309/api/288#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get", "TEST_Medicare_GuidewellPayer2PayerEndpointSources.json")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_GuidewellPayer2PayerEndpointSources.json")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "JSON file does not exist")
@@ -71,7 +71,7 @@ func Test_GuidewellURLWebscraper(t *testing.T) {
 	// 2. Different file format
 	err = GuidewellURLWebscraper("https://developer.bcbsfl.com/interop/interop-developer-portal/product/309/api/288#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get", "TEST_Medicare_GuidewellPayer2PayerEndpointSources.csv")
 
-	if err != nil {
+	if err == nil {
 		fileExists, err := doesfileExist("TEST_Medicare_GuidewellPayer2PayerEndpointSources.csv")
 		th.Assert(t, err == nil, err)
 		th.Assert(t, fileExists, "CSV file does not exist")
