@@ -8,14 +8,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func MdlandWebscraper(chplURL string, fileToWriteTo string) {
+func MdlandWebscraper(chplURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
 	doc, err := helpers.ChromedpQueryEndpointList(chplURL, ".MsoNormal")
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
 	doc.Find("span").Each(func(index int, spanElem *goquery.Selection) {
@@ -35,7 +36,9 @@ func MdlandWebscraper(chplURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
+	return nil
 }

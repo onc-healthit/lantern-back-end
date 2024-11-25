@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
+func HcscURLWebscraper(chplURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
@@ -33,13 +33,13 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = doc.Find("b").Text()
@@ -55,13 +55,13 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
@@ -78,13 +78,13 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
 		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
@@ -98,6 +98,9 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
+
+	return nil
 }

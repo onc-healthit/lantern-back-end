@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func EzemrxWebscraper(CHPLURL string, fileToWriteTo string) {
+func EzemrxWebscraper(CHPLURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
@@ -15,7 +15,8 @@ func EzemrxWebscraper(CHPLURL string, fileToWriteTo string) {
 
 	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "#comp-lb6njyhb")
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
 	divElem := doc.Find("#comp-lb6njyhb").First()
@@ -32,7 +33,9 @@ func EzemrxWebscraper(CHPLURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
+	return nil
 }

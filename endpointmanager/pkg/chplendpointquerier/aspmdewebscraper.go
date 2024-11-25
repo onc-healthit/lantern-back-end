@@ -1,13 +1,14 @@
 package chplendpointquerier
 
 import (
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
-func AspMDeWebscraper(chplURL string, fileToWriteTo string) {
+func AspMDeWebscraper(chplURL string, fileToWriteTo string) error {
 	found := false
 
 	baseURL := strings.TrimSuffix(chplURL, "/fhir_aspmd.asp#apiendpoints")
@@ -15,7 +16,8 @@ func AspMDeWebscraper(chplURL string, fileToWriteTo string) {
 
 	doc, err := helpers.ChromedpQueryEndpointList(chplURL, "p")
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
 	doc.Find("h1").Each(func(i int, s *goquery.Selection) {
@@ -35,4 +37,6 @@ func AspMDeWebscraper(chplURL string, fileToWriteTo string) {
 			})
 		}
 	})
+
+	return nil
 }

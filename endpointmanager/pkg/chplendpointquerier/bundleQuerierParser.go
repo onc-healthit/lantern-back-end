@@ -5,13 +5,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
+func BundleQuerierParser(CHPLURL string, fileToWriteTo string) error {
 
 	var endpointEntryList EndpointList
 
 	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
 
 	// convert bundle data to lantern format
@@ -19,6 +20,9 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		log.Info(err)
+		return err
 	}
+
+	return nil
 }
