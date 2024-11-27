@@ -1,8 +1,6 @@
 package chplendpointquerier
 
 import (
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
@@ -16,13 +14,13 @@ func entryExists(lanternEntryList []LanternEntry, lanternEntry LanternEntry) boo
 	return false
 }
 
-func GuidewellURLWebscraper(CHPLURL string, fileToWriteTo string) {
+func GuidewellURLWebscraper(CHPLURL string, fileToWriteTo string) error {
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 
 	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, "div.apiEndpointUrl")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	doc.Find("div.apiEndpointUrl").Each(func(index int, urlElements *goquery.Selection) {
 
@@ -38,7 +36,8 @@ func GuidewellURLWebscraper(CHPLURL string, fileToWriteTo string) {
 	endpointEntryList.Endpoints = lanternEntryList
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
+	return nil
 }

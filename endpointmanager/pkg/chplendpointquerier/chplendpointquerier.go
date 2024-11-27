@@ -225,6 +225,8 @@ func contains(arr [30]string, str string) bool {
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
+	var err error
+
 	if URLsEqual(chplURL, MedHostURL) {
 		MedHostQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, NextGenURL) {
@@ -543,9 +545,9 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, anthemURL) {
 		AnthemURLParser("https://patient360.anthem.com/P360Member/fhir/endpoints", fileToWriteTo)
 	} else if URLsEqual(chplURL, hcscURL) {
-		HcscURLWebscraper(chplURL, fileToWriteTo)
+		err = HcscURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, guidewellPatAccURL) || URLsEqual(chplURL, guidewellP2PURL) {
-		GuidewellURLWebscraper(chplURL, fileToWriteTo)
+		err = GuidewellURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, humanaURL) {
 		HumanaURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, kaiserURL) {
@@ -561,11 +563,11 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, nextgenPracticeURL) {
 		NextgenPracticeWebscraper(nextgenPracticeURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, aspmdURL) {
-		AspMDeWebscraper(aspmdURL, fileToWriteTo)
+		err = AspMDeWebscraper(aspmdURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, axeiumURL) {
 		AxeiumeWebscraper(axeiumURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, ezemrxURL) {
-		EzemrxWebscraper(chplURL, fileToWriteTo)
+		err = EzemrxWebscraper(chplURL, fileToWriteTo)
 	} else if contains(bundleQuerierArray, chplURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, curemdURL) {
@@ -575,9 +577,9 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, betaAfoundriaURL) {
 		BetaAfoundriaWebScraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, ontadaURL) {
-		OntadaWebscraper(chplURL, fileToWriteTo)
+		err = OntadaWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, mdlandURL) {
-		MdlandWebscraper("https://api.mdland.com/Mdland%20SMART%20on%20FHIR%20OAuth%202.0%20Guide.htm", fileToWriteTo)
+		err = MdlandWebscraper("https://api.mdland.com/Mdland%20SMART%20on%20FHIR%20OAuth%202.0%20Guide.htm", fileToWriteTo)
 	} else if URLsEqual(abeoURL, chplURL) {
 		CustomCSVParser(chplURL, fileToWriteTo, "./FHIRServiceURLs.csv", -1, 0, true, 1, 0)
 	} else if URLsEqual(nextechURL2, chplURL) {
@@ -588,6 +590,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
+	}
+
+	if err != nil {
+		log.Info(err)
 	}
 }
 

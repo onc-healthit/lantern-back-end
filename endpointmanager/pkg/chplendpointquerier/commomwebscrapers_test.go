@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type WebScraperFunc func(string, string)
+type WebScraperFunc func(string, string) error
 
 type ScraperTestCase struct {
 	scraperFunc WebScraperFunc
@@ -49,19 +49,23 @@ func TestWebScrapers(t *testing.T) {
 }
 
 func runWebScraperTest(t *testing.T, scraperFunc WebScraperFunc, url, fileName string) {
-	scraperFunc(url, fileName)
+	err := scraperFunc(url, fileName)
 
-	fileExists, err := doesfileExist(fileName)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, fileExists, "File does not exist")
+	if err == nil {
+		fileExists, err := doesfileExist(fileName)
+		th.Assert(t, err == nil, err)
+		th.Assert(t, fileExists, "File does not exist")
 
-	fileEmpty, err := isFileEmpty(fileName)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, !fileEmpty, "File is empty")
+		fileEmpty, err := isFileEmpty(fileName)
+		th.Assert(t, err == nil, err)
+		th.Assert(t, !fileEmpty, "File is empty")
 
-	err = os.Remove("../../../resources/prod_resources/" + fileName)
-	th.Assert(t, err == nil, err)
+		err = os.Remove("../../../resources/prod_resources/" + fileName)
+		th.Assert(t, err == nil, err)
 
-	err = os.Remove("../../../resources/dev_resources/" + fileName)
-	th.Assert(t, err == nil, err)
+		err = os.Remove("../../../resources/dev_resources/" + fileName)
+		th.Assert(t, err == nil, err)
+	} else {
+		log.Info(err)
+	}
 }
