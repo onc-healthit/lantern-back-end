@@ -39,6 +39,11 @@ func TestWebScrapers(t *testing.T) {
 			url:         "https://www.ezemrx.com/fhir",
 			fileName:    "ezEMRx_Inc_EndpointSources.json",
 		},
+		{
+			scraperFunc: ZoobooksystemsWebscraper,
+			url:         "https://zoobooksystems.com/api-documentation/",
+			fileName:    "Zoobook_Systems_LLC_EndpointSources.json",
+		},
 	}
 
 	for _, tc := range testCases {
