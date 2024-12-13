@@ -27,7 +27,8 @@ func ChntechsolutionsWebscraper(CHPLURL string, fileToWriteTo string) {
 			re := regexp.MustCompile(pattern)
 			match := re.FindString(urlString)
 			if len(match) != 0 {
-				entry.URL = strings.TrimSpace(match)
+				match = strings.TrimSpace(match)
+				entry.URL = strings.TrimSuffix(match, "/metadata")
 				lanternEntryList = append(lanternEntryList, entry)
 				endpointEntryList.Endpoints = lanternEntryList
 			}
