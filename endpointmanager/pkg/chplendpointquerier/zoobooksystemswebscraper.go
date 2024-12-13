@@ -8,13 +8,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ZoobooksystemsWebscraper(CHPLURL string, fileToWriteTo string) {
+func ZoobooksystemsWebscraper(CHPLURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
 	doc, err := helpers.ChromedpQueryEndpointList(CHPLURL, ".col-lg-6.text-secondary.fw-bold")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	inProduction := false
@@ -46,4 +46,6 @@ func ZoobooksystemsWebscraper(CHPLURL string, fileToWriteTo string) {
 			})
 		}
 	})
+
+	return nil
 }

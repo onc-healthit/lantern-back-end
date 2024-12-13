@@ -587,7 +587,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, ehealthlineURL) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoobooksystemsURL) {
-		ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
+		err = ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}
