@@ -52,7 +52,7 @@ var qualifactsInsyncURL = "https://qualifacts.com/api-page/platform/insync/insyn
 var qualifactsCredibleURL = "https://qualifacts.com/api-page/_downloads/credible-fhir-org-list.json"
 var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
-var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev"
+var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev/external/practiceList"
 
 var integraconnectURL = "https://portal.minerva.integracloud.com/minerva/fhir/r4/us-core/bundle"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
