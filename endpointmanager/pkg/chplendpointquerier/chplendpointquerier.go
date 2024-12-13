@@ -62,7 +62,6 @@ var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#servic
 var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
 var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
 var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
-var correctekURL = "https://ulrichmedicalconcepts.com/home/the-ehr/meaningful-use/disclosure-and-transparency/"
 var varianmedicalURL = "https://varian.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
 var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
@@ -313,8 +312,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		InteropxWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == mphrxURL {
 		SwaggerUIWebscraper("https://atdevsandbox.mphrx.com/", fileToWriteTo)
-	} else if chplURL == correctekURL {
-		CorrecTekWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == varianmedicalURL {
 		VarianMedicalWebscraper(chplURL+"dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
 	} else if chplURL == caretrackerURL {
