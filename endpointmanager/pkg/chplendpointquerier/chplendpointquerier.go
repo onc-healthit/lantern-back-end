@@ -476,7 +476,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, NexusURL) {
 		CSVParser("https://www.nexusclinical.net/nexusehr-fhirapi-base-urls.csv", fileToWriteTo, "./nexusehr-fhirapi-base-urls.csv", 1, 0, true, 2, 1)
 	} else if URLsEqual(chplURL, MEDENTURL) {
-		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", 1, 0, true, 1, 0)
+		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", -1, 2, true, 1, 0)
 	} else if URLsEqual(chplURL, canvasMedicalURL) {
 		CanvasMedicalURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, maximusURL) {
