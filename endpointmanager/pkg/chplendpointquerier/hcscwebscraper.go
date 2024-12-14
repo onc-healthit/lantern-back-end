@@ -7,10 +7,9 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
-	log "github.com/sirupsen/logrus"
 )
 
-func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
+func HcscURLWebscraper(chplURL string, fileToWriteTo string) error {
 
 	var lanternEntryList []LanternEntry
 	var endpointEntryList EndpointList
@@ -32,14 +31,12 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 		chromedp.OuterHTML(`document.querySelector('ul.hcsc-p:last-of-type')`, &htmlContent, chromedp.ByJSPath))
 
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = doc.Find("b").Text()
@@ -54,14 +51,12 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 		chromedp.OuterHTML(endpointDomPath, &htmlContent, chromedp.ByJSPath))
 
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
@@ -77,14 +72,12 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 		chromedp.OuterHTML(endpointDomPath, &htmlContent, chromedp.ByJSPath))
 
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	doc, err = goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
-		log.Info(err)
-		return
+		return err
 	}
 
 	fhirEndpoint = strings.TrimSpace(fhirEndpoint)
@@ -98,6 +91,8 @@ func HcscURLWebscraper(chplURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
