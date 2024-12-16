@@ -216,6 +216,7 @@ var abeoURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
 var nextechURL2 = "https://www.nextech.com/developers-portal"
 var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
+var wrshealthURL = "https://fhir-server.sam.wrs.dev/r4/ServiceBase"
 
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
@@ -589,6 +590,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(chplURL, fileToWriteTo, "./endpoints.csv", -1, 0, true, 1, 0)
 	} else if URLsEqual(chplURL, ehealthlineURL) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, wrshealthURL) {
+		BundleQuerierParser(wrshealthURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, interopURL) {
 		InteropWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, fhirptURL) {
@@ -597,6 +600,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		ChntechsolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoobooksystemsURL) {
 		err = ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
+
 	} else {
 		log.Warnf("Handler is required for url %s", chplURL)
 	}
