@@ -196,6 +196,9 @@ var curemdURL = "https://www.curemd.com/developer/base-fhir-urls/"
 var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
 var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
+var interopURL = "https://interop.ehnote.com/fhir"
+var fhirptURL = "https://fhirpt-stage.officeally.com/fhir/r4/endpoints"
+var chntechURL = "https://onc.chntechsolutions.com/ic-ehr-fhir-api/"
 var zoobooksystemsURL = "https://zoobooksystems.com/api-documentation/"
 
 var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
@@ -589,7 +592,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		EhealthlineWebscraper(ehealthlineURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, wrshealthURL) {
 		BundleQuerierParser(wrshealthURL, fileToWriteTo)
-
+	} else if URLsEqual(chplURL, interopURL) {
+		InteropWebscraper(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, fhirptURL) {
+		BundleQuerierParser(chplURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, chntechURL) {
+		ChntechsolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoobooksystemsURL) {
 		err = ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
 
