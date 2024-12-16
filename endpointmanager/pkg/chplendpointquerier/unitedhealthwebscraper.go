@@ -21,7 +21,7 @@ func UnitedHealthURLWebscraper(CHPLURL string, fileToWriteTo string) {
 	count := 1
 	doc.Find("div").Each(func(index int, divhtml *goquery.Selection) {
 		dataOpen, exists := divhtml.Attr("data-opensnewwindow")
-		if exists && dataOpen != "" && count == 237 {
+		if exists && dataOpen != "" && count == 240 {
 			pElem := divhtml.Find("p").First()
 			if pElem.Length() > 0 && strings.Contains(pElem.Text(), ".fhir.") {
 				var entry LanternEntry
