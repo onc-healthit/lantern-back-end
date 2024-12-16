@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:11.8
+    image: postgres:11.10
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/sql/dbsetup.sql:/docker-entrypoint-initdb.d/dbsetup.sql
