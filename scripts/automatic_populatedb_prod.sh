@@ -56,3 +56,5 @@ rm -f npidata_pfile.csv
 rm -f npidata_pfile
 
 echo "$current_datetime - done" >> $log_file
+
+docker cp lantern-back-end_endpoint_manager_1:/etc/lantern/populatedb_logs.txt /etc/lantern/logs/
