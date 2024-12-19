@@ -27,7 +27,7 @@ func CuremdWebscraper(CHPLURL string, fileToWriteTo string) {
 				pTag.Find("a").Each(func(i int, link *goquery.Selection) {
 					url, exists := link.Attr("href")
 					url = strings.TrimSuffix(url, "/metadata")
-					if exists {
+					if exists && !strings.Contains(url, "sandbox") {
 						entry.URL = url
 						lanternEntryList = append(lanternEntryList, entry)
 					}
