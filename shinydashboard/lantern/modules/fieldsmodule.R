@@ -127,8 +127,8 @@ output$capstat_extension_text <- renderUI({
   selected_fhir_endpoints <- reactive({
     res <- isolate(app_data$capstat_fields())
     req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
+    # If the selected dropdown value for the fhir version is not the default "All FHIR Versions", filter
+    # the capability statement fields by which fhir version they're associated with
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
     # Same as above but with the vendor dropdown
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
