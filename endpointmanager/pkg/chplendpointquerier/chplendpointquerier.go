@@ -22,7 +22,7 @@ type LanternEntry struct {
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
-var AlteraURL = "https://open.allscripts.com/fhirendpoints"
+var AlteraURL = "https://open.allscripts.com/fhirendpoints/download/R4?endpointFilter=Patient"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://fhir.meditech.com/explorer/endpoints"
 var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
