@@ -237,8 +237,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		NextGenwebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, CanvasURL) {
 		Canvaswebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, AlteraURL) {
-		AlteraQuerier(chplURL, fileToWriteTo)
+		//} else if URLsEqual(chplURL, AlteraURL) {
+		//AlteraQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, modernizingMedicineURL) {
 		ModernizingMedicineQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, EpicURL) {
