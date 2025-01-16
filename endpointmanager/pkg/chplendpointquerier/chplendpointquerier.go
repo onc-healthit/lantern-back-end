@@ -22,7 +22,6 @@ type LanternEntry struct {
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
 var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
-var AlteraURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://fhir.meditech.com/explorer/endpoints"
 var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
@@ -208,7 +207,7 @@ var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoi
 	"https://smartserver.novoclinical.com/.well-known/bundle", "https://fhir.prod.flatiron.io/fhir", "https://public-files.oystehr.com/endpoint.json",
 	"https://fhirpresentation.pcsdataxchg.com/fhir/r4/endpoints", "https://pic-fhir.harrisambulatory.com/endpoints/r4", "https://pul-fhir.harrisambulatory.com/endpoints/r4", "https://fhir.qsmartcare.com:8000",
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
-	"https://fhir.ethizo.com/api/4.0.0/service_based_url", "https://fhir.maximus.care/api/service_based_url"}
+	"https://fhir.ethizo.com/api/4.0.0/service_based_url", "https://fhir.maximus.care/api/service_based_url", "https://open.allscripts.com/fhirendpoints/download/R4?endpointFilter=Patient"}
 
 var ontadaURL = "https://g2fhir-int.mckesson.com/docs/index.html"
 var mdlandURL = "https://api-fhir-proxy-2.mdland.net/"
@@ -237,8 +236,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		NextGenwebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, CanvasURL) {
 		Canvaswebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, AlteraURL) {
-		AlteraQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, modernizingMedicineURL) {
 		ModernizingMedicineQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, EpicURL) {
