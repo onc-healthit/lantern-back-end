@@ -121,6 +121,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 			} else {
 				if httpResponseCode == 200 && versionsResponse != nil {
 					err = json.Unmarshal(versionsResponse, &(jsonResponse))
+					log.Infof("Versions response: %v", jsonResponse)
 					if err != nil {
 						log.Errorf("Error unmarshalling versions response: %s", err.Error())
 					}
