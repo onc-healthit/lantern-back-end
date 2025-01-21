@@ -19,26 +19,19 @@ type LanternEntry struct {
 	OrganizationZipCode string `json:"OrganizationZipCode"`
 }
 
-var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
 var NextGenURL = "https://nextgen.com/api/practice-search"
-var CanvasURL = "https://docs.canvasmedical.com/reference/service-base-urls"
-var AlteraURL = "https://open.allscripts.com/fhirendpoints"
 var EpicURL = "https://open.epic.com/MyApps/Endpoints"
 var MeditechURL = "https://fhir.meditech.com/explorer/endpoints"
-var DocsAthenaURL = "https://docs.athenahealth.com/api/base-fhir-urls"
 var MyDataAthenaURL = "https://mydata.athenahealth.com/home"
 var OneMedicalURL = "https://apidocs.onemedical.io/fhir/overview/"
 var unifyURL = "https://unify-developer.chbase.com/?page=FHIRAPI"
 var trimedtechURL = "https://www.trimedtech.com/Documentation/FHIRAPI/FHIRAPI.html"
 var trimedtechv8URL = "https://www.trimedtech.com/Documentation/FHIRAPI/V8FHIRAPI.html"
-var cernerGitHubURL = "https://github.com/cerner/ignite-endpoints"
-var cernerSoarianR4URL = "https://github.com/cerner/ignite-endpoints/blob/main/soarian_patient_r4_endpoints.json"
 
 // var techCareURL = "https://devportal.techcareehr.com/Serviceurls"
 var carefluenceURL = "https://carefluence.com/carefluence-fhir-endpoints/"
 var practiceSuiteURL = "https://academy.practicesuite.com/fhir-server-links/"
 var bizmaticsURL = "https://prognocis.com/fhir/index.html"
-var indianHealthServiceURL = "https://www.ihs.gov/cis/"
 var geniusSolutionsURL = "http://www.media.geniussolutions.com/ehrTHOMAS/ehrWebApi/Help/html/ServiceUrl.html"
 var assureCareURL = "https://ipatientcare.com/onc-acb-certified-2015-edition/"
 var intelichartURL = "https://fhirtest.intelichart.com/Help/BaseUrl"
@@ -52,20 +45,17 @@ var qualifactsInsyncURL = "https://qualifacts.com/api-page/platform/insync/insyn
 var qualifactsCredibleURL = "https://qualifacts.com/api-page/_downloads/credible-fhir-org-list.json"
 var medinfoengineeringURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
 var relimedsolutionsURL = "https://help.relimedsolutions.com/fhir/fhir-service-urls.csv"
-var eclinicalworksURL = "https://fhir.eclinicalworks.com/ecwopendev/external/practiceList"
 
 var integraconnectURL = "https://portal.minerva.integracloud.com/minerva/fhir/r4/us-core/bundle"
 var streamlinemdURL = "https://patientportal.streamlinemd.com/FHIRReg/Practice%20Service%20based%20URL%20List.csv"
 var bridgepatientportalURL = "https://bridgepatientportal.docs.apiary.io/#/introduction/fhir-bridge-patient-portal/fhir-endpoints"
 var medicalmineURL = "https://www.charmhealth.com/resources/fhir/index.html#api-endpoints"
 var microfourURL = "https://oauth.patientwebportal.com/Fhir/Documentation#serviceBaseUrls"
-var magilenenterprisesURL = "https://www.qsmartcare.com/api-documentation.html"
 var interopxURL = "https://demo.interopx.com/ix-auth-server/#/endpoints"
 var mphrxURL = "https://www.mphrx.com/fhir-service-base-url-directory/"
 var varianmedicalURL = "https://varian.dynamicfhir.com/"
 var caretrackerURL = "https://hag-fhir.amazingcharts.com/ac/endpoints"
 var zhhealthcareURL = "https://blueehr.com/fhir-urls/"
-var emedpracticeURL = "https://emedpractice.com/fhir/fhirhelpdocument.html"
 var doc_torURL = "https://hag-fhir.amazingcharts.com/pc/endpoints"
 var azaleahealthURL = "https://api.azaleahealth.com/fhir/R4/Endpoint"
 var cloudcraftURL = "https://fhirapitest.naiacorp.net/fhir/r4/endpoints/"
@@ -85,14 +75,11 @@ var webedoctorURL = "https://www.webedoctor.com/docs/fhir-base-urls.csv"
 var medicscloudURL = "https://staging.medicscloud.com/MCExtAPI/FHIRMedicsCloud.htm"
 var advancedmdURL = "https://developer.advancedmd.com/fhir/base-urls"
 var agasthaURL = "http://agastha.com/production-links.html"
-var allegiancemdURL = "https://fhir.allegiancemd.io/R4/"
 var elationURL = "https://elationfhir.readme.io/reference/service-base-urls"
 var betterdayhealthURL = "https://betterdayhealth.net/fhir-docs"
 var carecloudURL = "https://api-datamanager.carecloud.com/"
-var ethizoURL = "https://fhir-api.ethizo.com/#55b1b3d2-fd9a-4afa-8d17-5bf78943702d"
 var hmsfirstURL = "https://fhir-api.hmsfirst.com/r4/EndPoints"
 var praxisemrURL = "https://www.praxisemr.com/applicationaccess/api/help/"
-var escribeHOSTURL = "https://ehr.escribe.com/ehr/api/fhir/swagger-ui/"
 var mdlogicEHRURL = "https://www.mdlogic.com/solutions/standard-api-documentation"
 var altheaURL = "https://altheafhir.mdsynergy.com"
 var webchartnowURL = "https://docs.webchartnow.com/resources/system-specifications/fhir-application-programming-interface-api/endpoints/"
@@ -108,7 +95,6 @@ var pcesystemsURL = "https://www.pcesystems.com/g10APIInfo.html"
 var medicsdaextURL = "https://staging.medicscloud.com/MedicsDAExtAPI/FHIRMedicsDocAssistant.htm"
 var azaleahealthr4URL = "https://app.azaleahealth.com/fhir/R4/Endpoint"
 var dssincURL = "https://dssjuno-dev-web.dssinc.com/dss/01ho/r4/Home/ApiDocumentation#Api_Urls"
-var kodjinURL = "https://docs.kodjin.com/service-base-urls"
 var firelyURL = "https://docs.fire.ly/projects/Firely-Server/en/latest/_static/g10/EndpointBundleFirely.json"
 var azurewebsitesURL = "https://sfp-proxy9794.azurewebsites.net/fhir/base-url"
 var viewmymedURL = "https://portal.viewmymed.com/fhir/Endpoint"
@@ -117,19 +103,15 @@ var imedemrURL2 = "https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpo
 var moyaeURL = "https://documenter.getpostman.com/view/15917486/UyxojQMd#a24aa40c-fe15-478e-a555-3c2cb10d56c9"
 var myheloURL = "https://www.myhelo.com/api/"
 var nextechURL = "https://www.nextech.com/hubfs/Nextech%20FHIR%20Base%20URL.csv"
-var novomediciURL = "https://www.novomedici.com/api-documents/"
 var patientpatternURL = "https://patientpattern-static.s3.us-west-2.amazonaws.com/static/documents/fhir-base-urls.csv"
 var pcisgoldURL = "https://fhir.pcisgold.com/fhirdocs/practices.json"
 
-var healthieURL = "https://app-52512.on-aptible.com/service-base-urls"
 var medConnectURL = "https://api.medconnecthealth.com/fhir/r4/endpoints"
 var citiusTechURL = "https://8759937.fs1.hubspotusercontent-na1.net/hubfs/8759937/assets/pdfs/Perform+ConnectServerEndpoints.json"
 var enableHealthcareURL = "https://ehifire.ehiconnect.com/fhir/r4/endpoints"
 var drchronoURL = "https://drchrono-fhirpresentation.everhealthsoftware.com/fhir/r4/endpoints"
 var visionWebURL = "https://dhpresentation.youruprise.com/fhir/r4/endpoints"
 var streamlineURL = "https://dhfhirpresentation.smartcarenet.com/fhir/r4/endpoints"
-var procentiveURL = "https://fhir-dev.procentive.com/fhir/r4/endpoints"
-var tenElevenURL = "https://fhir-dev.10e11.com/fhir/r4/endpoints"
 var henryScheinURL = "https://micromddev.dynamicfhir.com/fhir/r4/endpoints"
 var iSALUSURL = "https://isalus-fhirpresentation.everhealthsoftware.com/fhir/r4/endpoints"
 var healthInnovationURL = "https://revolutionehrdev.dynamicfhir.com/fhir/r4/endpoints"
@@ -145,7 +127,6 @@ var officePracticumURL = "https://fhir-documentation.patientmedrecords.com/endpo
 var modernizingMedicineURL = "https://mm-fhir-endpoint-display.prod.fhir.ema-api.com/"
 var welligentURL = "https://fhir.qa.welligent.com/"
 var willowURL = "https://www.willowgladetechnologies.com/requirements"
-var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
 var medicaURL = "https://code.medicasoft.us/fhir_r4_endpoints.html"
 var dss2URL = "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints"
 var cozevaURL = "https://fhir.cozeva.com/endpoints"
@@ -154,9 +135,7 @@ var hcsincURL = "https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api
 var greenwayURL = "https://developers.greenwayhealth.com/developer-platform/page/fhir-base-urls"
 var snfistURL = "https://fhir.thesnfist.com/endpointlist"
 var criterionsURL = "https://criterions.com/fhir-end-points/"
-var maximusURL = "https://documents.maximus.care"
 var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
-var inpracsysURL = "https://inpracsys.com/fhir/"
 
 // State Payer list
 var atenaURL = "https://developerportal.aetna.com/fhirapis"
@@ -184,7 +163,6 @@ var officeallyURL = "https://fhirpt.officeally.com/"
 var epicURL = "https://open.epic.com/Endpoints/R4"
 var qualifactsURL = "https://qualifacts.com/api-page/_downloads/carelogic-fhir-org-list.json"
 var myeyecarerecordsURL = "https://smartonfhir.myeyecarerecords.com/fhir/Endpoint?_format=application/fhir+json&status=active"
-var nextgenAPIURL = "https://www.nextgen.com/patient-access-api"
 var sabiamedURL = "https://www.sabiamed.com/api-endpoints"
 var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
 var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
@@ -201,14 +179,14 @@ var fhirptURL = "https://fhirpt-stage.officeally.com/fhir/r4/endpoints"
 var chntechURL = "https://onc.chntechsolutions.com/ic-ehr-fhir-api/"
 var zoobooksystemsURL = "https://zoobooksystems.com/api-documentation/"
 
-var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4", "https://dynamicfhirpresentation.dynamicfhirsandbox.com/fhir/r4/endpoints",
+var bundleQuerierArray = [30]string{"https://ac-fhir.harrisambulatory.com/endpoints/r4",
 	"https://ct-fhir.harrisambulatory.com/Endpoints/R4", "https://kantime.com/wp-content/uploads/2024/03/fhir-base-urls.json",
 	"https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-service-url-bundle", "https://bill.medgenehr.com/MedgenAPI/medgenbundle.json", "https://fhirpresentation.assertus.com/fhir/r4/endpoints",
 	"https://www.medplum.com/onc/base.json", "https://raw.githubusercontent.com/oracle-samples/ignite-endpoints/main/millennium_patient_r4_endpoints.json", "https://mmdpcf.modulemd.com/cf.fhir.r4/ServiceBaseURL.json",
 	"https://smartserver.novoclinical.com/.well-known/bundle", "https://fhir.prod.flatiron.io/fhir", "https://public-files.oystehr.com/endpoint.json",
-	"https://fhirpresentation.pcsdataxchg.com/fhir/r4/endpoints", "https://pic-fhir.harrisambulatory.com/endpoints/r4", "https://pul-fhir.harrisambulatory.com/endpoints/r4", "https://fhir.qsmartcare.com:8000",
+	"https://fhirpresentation.pcsdataxchg.com/fhir/r4/endpoints", "https://pul-fhir.harrisambulatory.com/endpoints/r4", "https://fhir.qsmartcare.com:8000",
 	"https://appstudio.interopengine.com/partner/fhirR4endpoints-umc.json", "https://testauth.strateqhealth.com/SmartOnFHIR/ValidURLs.json",
-	"https://fhir.ethizo.com/api/4.0.0/service_based_url", "https://fhir.maximus.care/api/service_based_url"}
+	"https://fhir.ethizo.com/api/4.0.0/service_based_url", "https://fhir.maximus.care/api/service_based_url", "https://open.allscripts.com/fhirendpoints/download/R4?endpointFilter=Patient", "https://aidbox.cx360.net/service-base-urls"}
 
 var ontadaURL = "https://g2fhir-int.mckesson.com/docs/index.html"
 var mdlandURL = "https://api-fhir-proxy-2.mdland.net/"
@@ -231,22 +209,14 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
 	var err error
 
-	if URLsEqual(chplURL, MedHostURL) {
-		MedHostQuerier(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, NextGenURL) {
+	if URLsEqual(chplURL, NextGenURL) {
 		NextGenwebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, CanvasURL) {
-		Canvaswebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, AlteraURL) {
-		AlteraQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, modernizingMedicineURL) {
 		ModernizingMedicineQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, EpicURL) {
 		EpicQuerier(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, MeditechURL) {
 		MeditechWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, DocsAthenaURL) {
-		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, MyDataAthenaURL) {
 		Athenawebscraper("https://mydata.athenahealth.com/aserver", fileToWriteTo)
 	} else if URLsEqual(chplURL, OneMedicalURL) {
@@ -257,14 +227,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		TriMedTechWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, trimedtechv8URL) {
 		TriMedTechV8Webscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, cernerSoarianR4URL) {
-		chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
-		chplURL = strings.Replace(chplURL, "/blob", "", 1)
-		BundleQuerierParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, cernerGitHubURL) {
-		CernerBundleParser(chplURL, fileToWriteTo)
-		// } else if URLsEqual(chplURL, techCareURL) {
-		// 	Techcarewebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, carefluenceURL) {
 		CarefluenceWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, bizmaticsURL) {
@@ -273,8 +235,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, practiceSuiteURL) {
 		PracticeSuiteWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, indianHealthServiceURL) {
-		IndianHealthWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, geniusSolutionsURL) {
 		GeniusSolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, intelichartURL) {
@@ -299,8 +259,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, relimedsolutionsURL) {
 		CSVParser(chplURL, fileToWriteTo, "./fhir_service_urls.csv", 1, 3, true, 1, -1)
-	} else if URLsEqual(chplURL, eclinicalworksURL) {
-		eClinicalWorksBundleParser("https://fhir.eclinicalworks.com/ecwopendev/external/practiceList", fileToWriteTo)
 	} else if URLsEqual(chplURL, integraconnectURL) {
 		IntegraConnectWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, streamlinemdURL) {
@@ -311,8 +269,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MedicalMineWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, microfourURL) {
 		MicroFourWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, magilenenterprisesURL) {
-		MagilenEnterprisesWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == interopxURL {
 		InteropxWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == mphrxURL {
@@ -325,8 +281,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == medinfoengineeringURL {
 		MedicalInformaticsEngineeringWebscraper(chplURL, fileToWriteTo)
-	} else if chplURL == emedpracticeURL {
-		eMedPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == doc_torURL {
 		BundleQuerierParser(chplURL+"/r4", fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
@@ -370,30 +324,22 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CriterionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, tenzingURL) {
 		TenzingURLWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, inpracsysURL) {
-		InpracsysURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medicscloudURL) {
 		MedicsCloudWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, advancedmdURL) {
 		AdvancedMdWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, agasthaURL) {
 		AgasthaWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, allegiancemdURL) {
-		AllegianceMDWebscraper("https://fhir.allegiancemd.io/R4/swagger-ui/", fileToWriteTo)
 	} else if URLsEqual(chplURL, elationURL) {
 		ElationWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, betterdayhealthURL) {
 		BetterdayHealthWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, carecloudURL) {
 		CareCloudWebscraper("https://api-datamanager.carecloud.com/fhirurl", fileToWriteTo)
-	} else if URLsEqual(chplURL, ethizoURL) {
-		EthizoWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, hmsfirstURL) {
 		HMSfirstWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, praxisemrURL) {
 		PraxisEMRWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, escribeHOSTURL) {
-		EscribeHOSTWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, mdlogicEHRURL) {
 		MDLogicEHRWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, altheaURL) {
@@ -424,8 +370,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser("https://app.azaleahealth.com/fhir/R4/Endpoint?_format=application/json", fileToWriteTo)
 	} else if URLsEqual(chplURL, dssincURL) {
 		DssIncWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, kodjinURL) {
-		KodjinWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, firelyURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, azurewebsitesURL) {
@@ -442,14 +386,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		MyheloURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextechURL) {
 		NextechURLCSVParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, novomediciURL) {
-		NovomediciURLWebscraper("https://www.novomedici.com/wp-content/uploads/2022/11/fhir-base-urls.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, patientpatternURL) {
 		PatientpatternURLCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, pcisgoldURL) {
 		PCISgoldURLWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, healthieURL) {
-		CustomBundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medConnectURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, citiusTechURL) {
@@ -461,10 +401,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, visionWebURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, streamlineURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, procentiveURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, tenElevenURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, henryScheinURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
@@ -484,16 +420,12 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CSVParser(MEDENTURL, fileToWriteTo, "./ServiceBaseURL.csv", -1, 2, true, 1, 0)
 	} else if URLsEqual(chplURL, canvasMedicalURL) {
 		CanvasMedicalURLWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, maximusURL) {
-		MaximusURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, broadStreetURL) {
 		BroadStreetURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, officePracticumURL) {
 		OfficePracticumURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, willowURL) {
 		WillowQuerierParser("https://ccdoc.phn.care/service-base-urls", fileToWriteTo)
-	} else if URLsEqual(chplURL, aidboxURL) {
-		AidboxQuerierParser(aidboxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, dss2URL) {
 		BundleQuerierParser(dss2URL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cozevaURL) {
@@ -530,14 +462,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, sabiamedURL) {
 		BundleQuerierParser(sabiamedURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, myeyecarerecordsURL) {
-		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoommdURL) {
 		ZoomMDCSVParser("https://www.zoommd.com/FHIRServerURLs_ZoomMD.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, qualifactsURL) {
 		QualifactsWebscraper(qualifactsURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, nextgenAPIURL) {
-		NextgenAPIWebscraper(nextgenAPIURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, atenaURL) {
 		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Binary_%7Bid%7D.yaml", fileToWriteTo)
 	} else if URLsEqual(chplURL, centeneURL) {
