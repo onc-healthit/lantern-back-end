@@ -29,7 +29,8 @@ endpointsmodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_availability,
-  sel_is_chpl
+  sel_is_chpl,
+  sel_is_payer
 ) {
   ns <- session$ns
 
@@ -43,6 +44,8 @@ endpointsmodule <- function(
 
   selected_fhir_endpoints <- reactive({
     res <- get_fhir_endpoints_tbl()
+    res2 <- get_fhir_endpoints_payer_info_tbl()
+
     req(sel_fhir_version(), sel_vendor(), sel_availability())
 
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
@@ -53,6 +56,16 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       res <- res %>% filter(is_chpl == toupper(sel_is_chpl()))
+    }
+
+    if(sel_is_payer() == "Provider"){
+      res <- res %>%
+        anti_join(res2, by = "url")
+    }
+
+    if(sel_is_payer() == "Payer"){
+      res <- res %>%
+        semi_join(res2, by = "url")
     }
 
     if (sel_availability() != "0-100") {
@@ -102,7 +115,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_all(as.character),
+              selected_fhir_endpoints() %>% select(urlModal, endpoint_type, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, endpoint_type, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_all(as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -119,6 +132,7 @@ endpointsmodule <- function(
                             align = "left",
                             html = TRUE),
                   endpoint_names = colDef(show = FALSE),
+                  endpoint_type = colDef(name = "Endpoint Type", sortable = FALSE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = FALSE, html = TRUE),
                   vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = FALSE),

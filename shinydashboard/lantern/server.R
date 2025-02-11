@@ -85,7 +85,8 @@ selected_fhir_endpoint_profiles <- reactive({
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$availability),
-        reactive(input$is_chpl))
+        reactive(input$is_chpl),
+        reactive(input$is_payer))
 
       callModule(
         downloadsmodule,
@@ -289,18 +290,20 @@ selected_fhir_endpoint_profiles <- reactive({
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       chplDropdown <- selectInput(inputId = "is_chpl", label = "From CHPL:", choices = c("True", "False", "All"), selected = "All", size = 1, selectize = FALSE)
+      orgDropdown <- selectInput(inputId = "is_payer", label = "Type of Organization:", choices = c("Provider", "Payer", "All"), selected = "All", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 3,
+          column(width = 4,
           tags$div(
             p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
             actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
             actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
           ),
           fhirDropdown_noLabel),
-          column(width = 3, developerDropdown),
-          column(width = 3, availabilityDropdown),
-          column(width = 3, chplDropdown)
+          column(width = 2, developerDropdown),
+          column(width = 2, availabilityDropdown),
+          column(width = 2, chplDropdown),
+          column(width = 2, orgDropdown)
         )
       } else if (show_validations_filter()) {
         fluidRow(

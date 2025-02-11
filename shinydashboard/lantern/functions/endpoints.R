@@ -40,6 +40,15 @@ get_endpoint_export_tbl <- function(db_tables) {
   endpoint_export_tbl
 }
 
+# CREATE TABLE SQL Script:
+# CREATE TABLE payer_info (url VARCHAR(500), endpoint_type VARCHAR(500));
+
+get_payer_info_tbl <- function(db_tables) {
+  payer_info_tbl <- db_tables$payer_info %>%
+  collect()
+  payer_info_tbl
+}
+
 get_endpoint_organizations <- function(db_connection) {
   res <- tbl(db_connection,
   sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
@@ -87,7 +96,7 @@ get_endpoint_totals_list <- function(db_tables) {
 get_fhir_endpoints_tbl <- function() {
   ret_tbl <- app$endpoint_export_tbl() %>%
     distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl) %>%
+    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl, endpoint_type) %>%
     left_join(app$http_response_code_tbl() %>% select(code, label),
     by = c("http_response" = "code")) %>%
     mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
@@ -96,6 +105,11 @@ get_fhir_endpoints_tbl <- function() {
       kind != "instance" ~ "true*",
       TRUE ~ cap_stat_exists
     ))
+}
+
+get_fhir_endpoints_payer_info_tbl <- function() {
+  ret_tbl <- app$payer_info_tbl() %>%
+    select(url, endpoint_type)
 }
 
 # get the endpoint tally by http_response received

@@ -55,7 +55,8 @@ app <<- list(
   vendor_list            = reactiveVal(NULL),
   http_response_code_tbl = reactiveVal(NULL),
   zip_to_zcta = reactiveVal(NULL),
-  endpoint_export_tbl = reactiveVal(NULL)
+  endpoint_export_tbl = reactiveVal(NULL),
+  payer_info_tbl = reactiveVal(NULL)
 )
 
 # define global app_data which is computed at application startup, and

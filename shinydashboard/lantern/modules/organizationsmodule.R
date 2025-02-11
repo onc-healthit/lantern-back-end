@@ -39,6 +39,11 @@ organizationsmodule_UI <- function(id) {
                           leafletOutput(ns("location_map"), width = "100%", height = "600px"),
                           htmlOutput(ns("note_text_nppes_organizations"))
                         )),
+              tabPanel("Payer Organizations",
+                        h3("Payer Organization Matches"),
+                        p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
+                        reactable::reactableOutput(ns("payer_endpoint_list_orgs_table")),
+                        htmlOutput(ns("payer_note_text"))),
               tabPanel("Endpoint List Organizations",
                         h3("Endpoint List Organization Matches"),
                         p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
@@ -103,6 +108,34 @@ organizationsmodule <- function(
     res
   })
 
+  selected_payer_endpoint_list_orgs <- reactive({
+    res <- get_endpoint_list_matches()
+    res2 <- app$payer_info_tbl()
+    # res3 <- tbl(db_connection,
+    # sql("SELECT organization_name, organization_zipcode 
+    # FROM fhir_endpoint_organizations")) %>%
+    # collect()
+
+    res <- res %>%
+        semi_join(res2, by = "url")
+        
+    # res <- res %>%
+    #     semi_join(res3, by = "organization_name")
+
+    req(sel_fhir_version(), sel_vendor())
+
+    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == sel_vendor())
+    }
+
+    res <- res %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+
+    res
+  })
+
   output$npi_orgs_table <- reactable::renderReactable({
      reactable(
               selected_npi_orgs() %>% select(organization_name, url, npi_id, zipcode,  organization_secondary_name, fhir_version, vendor_name, match_score) %>% distinct(organization_name, url, npi_id, zipcode,  organization_secondary_name, fhir_version, vendor_name, match_score) %>% group_by(organization_name),
@@ -149,7 +182,38 @@ organizationsmodule <- function(
      )
   })
 
+  output$payer_endpoint_list_orgs_table <- reactable::renderReactable({
+     reactable(
+              selected_payer_endpoint_list_orgs() %>% select(organization_name, url, fhir_version, vendor_name) %>% distinct(organization_name, url, fhir_version, vendor_name) %>% group_by(organization_name),
+              defaultColDef = colDef(
+                align = "center"
+              ),
+              columns = list(
+                  organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
+                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
+                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
+              ),
+              groupBy = c("organization_name"),
+              striped = TRUE,
+              searchable = TRUE,
+              showSortIcon = TRUE,
+              highlight = TRUE,
+              defaultPageSize = 10
+     )
+  })
+
   output$note_text <- renderUI({
+    note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
+      Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
+      with the ONC Cures Act Final Rule, or discovered through the National Plan and Provider
+      Enumeration System (NPPES). This data, therefore, may not represent all FHIR endpoints
+      in existence. Insights gathered from this data should be framed accordingly."
+    res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+    HTML(res)
+  })
+
+  output$payer_note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
       Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
       with the ONC Cures Act Final Rule, or discovered through the National Plan and Provider
