@@ -16,8 +16,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
 func main() {
@@ -125,4 +126,8 @@ func main() {
 
 	_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, isChpl, listSource)
 	helpers.FailOnError("Adding source to list_source database error: ", sourceErr)
+
+	// WORK IN PROGRESS
+	// dbErr := endptQuerier.RemoveOldEndpointsAndListSources(ctx, store)
+	// helpers.FailOnError("Removing endpoints from old list sources database error: ", dbErr)
 }

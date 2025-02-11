@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 )
 
@@ -22,6 +24,7 @@ var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
+var getChplListSourcesStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -649,6 +652,33 @@ func organizationInformationValid(organizationName sql.NullString, organizationZ
 	return organizationNameString, organizationZipCodeString, organizationNPIIDString
 }
 
+// WORK IN PROGRESS
+func (s *Store) GetChplListSources(ctx context.Context) ([]string, error) {
+
+	var chplListSourceRows *sql.Rows
+	var listSources []string
+	var listSource string
+	var err error
+
+	count := 0
+
+	chplListSourceRows, err = getChplListSourcesStatement.QueryContext(ctx)
+	helpers.FailOnError("", err)
+
+	for chplListSourceRows.Next() {
+		count += 1
+		err = chplListSourceRows.Scan(&listSource)
+		if err != nil {
+			return nil, err
+		}
+		listSources = append(listSources, listSource)
+	}
+
+	log.Print(count)
+
+	return listSources, err
+}
+
 func prepareFHIREndpointStatements(s *Store) error {
 	var err error
 	addFHIREndpointStatement, err = s.DB.Prepare(`
@@ -726,6 +756,12 @@ func prepareFHIREndpointStatements(s *Store) error {
 	}
 	updateFHIREndpointOrganizationsUpdateTime, err = s.DB.Prepare(`
 	UPDATE fhir_endpoint_organizations SET updated_at = now() WHERE id = $1`)
+
+	// WORK IN PROGRESS
+	if err != nil {
+		return err
+	}
+	getChplListSourcesStatement, err = s.DB.Prepare(`SELECT list_source FROM list_source_info WHERE is_chpl = true`)
 	if err != nil {
 		return err
 	}
