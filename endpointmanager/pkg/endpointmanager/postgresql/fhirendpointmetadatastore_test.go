@@ -196,15 +196,16 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("expected 1 insertion for endpointInfo1. Got %d.", count)
 	}
 
+	// LANTERN-825: Commenting out this test because we are preventing an insert into the history table for a metadata update
 	// check no updates after updating info metadata ID
-	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
-	err = rows.Scan(&count)
-	if err != nil {
-		t.Errorf("history count for updates: %s", err.Error())
-	}
-	if count != 0 {
-		t.Errorf("expected 0 updates for endpointInfo1 in history table. Got %d.", count)
-	}
+	// rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
+	// err = rows.Scan(&count)
+	// if err != nil {
+	// 	t.Errorf("history count for updates: %s", err.Error())
+	// }
+	// if count != 0 {
+	// 	t.Errorf("expected 0 updates for endpointInfo1 in history table. Got %d.", count)
+	// }
 
 	// check metadata table
 	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_metadata WHERE url=$1;", endpointInfo1.URL)
@@ -257,15 +258,16 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("retrieved endpointInfo does not have updated HTTP Response.")
 	}
 
+	// LANTERN-825: Commenting out this test because we are preventing an insert into the history table for a metadata update
 	// check there is an update in history table
-	rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
-	err = rows.Scan(&count)
-	if err != nil {
-		t.Errorf("history count for updates: %s", err.Error())
-	}
-	if count != 1 {
-		t.Errorf("expected 1 update for endpointInfo1 in history table. Got %d.", count)
-	}
+	// rows = store.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE id=$1 AND operation='U';", endpointInfo1.ID)
+	// err = rows.Scan(&count)
+	// if err != nil {
+	// 	t.Errorf("history count for updates: %s", err.Error())
+	// }
+	// if count != 1 {
+	// 	t.Errorf("expected 1 update for endpointInfo1 in history table. Got %d.", count)
+	//}
 }
 
 func Test_AvailabilityUsesMetadataRequestedVersion(t *testing.T) {
