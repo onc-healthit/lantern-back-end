@@ -44,6 +44,12 @@ LOGFILE=populatedb_logs_$(date +%Y%m%d%H%M%S).txt
 # rm npidata_pfile.csv
 # mv npidata_pfile2.csv npidata_pfile.csv
 
+chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
+
+cd ../resources
+cp -r prod_resources resources
+docker cp resources lantern-back-end_endpoint_manager_1:/etc/lantern
+
 echo "$current_datetime - Populating db with endpoint information..." >> $log_file
 #cd ../../scripts
 docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh || {
@@ -55,6 +61,8 @@ docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh || {
 # rm -f endpoint_pfile
 # rm -f npidata_pfile.csv
 # rm -f npidata_pfile
+
+rm -r resources
 
 echo "$current_datetime - done" >> $log_file
 
