@@ -9,8 +9,12 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW
     echo "$current_datetime - Lantern failed to refresh mv_http_responses." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX CONCURRENTLY mv_http_responses_uniq;" -U lantern -d lantern || {
-    echo "$current_datetime - Lantern failed to reindex mv_http_responses_uniq." >> $log_file
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS mv_http_responses_uniq;" -U lantern -d lantern || {
+    echo "$current_datetime - Lantern failed to drop mv_http_responses_uniq." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX mv_http_responses_uniq ON mv_http_responses (aggregation_date, vendor_name, http_code);" -U lantern -d lantern || {
+    echo "$current_datetime - Lantern failed to create mv_http_responses_uniq." >> $log_file
 }
 
 echo "$current_datetime - done." >> $log_file
