@@ -27,8 +27,10 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
 $fhir_endpoints_info_history$ LANGUAGE plpgsql;
 
 -- Restore original trigger
-CREATE TRIGGER add_fhir_endpoint_info_history_trigger 
-AFTER INSERT OR UPDATE OR DELETE ON fhir_endpoints_info 
-FOR EACH ROW EXECUTE FUNCTION add_fhir_endpoint_info_history();
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metadata.setting', 't') = 'FALSE')
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 COMMIT;

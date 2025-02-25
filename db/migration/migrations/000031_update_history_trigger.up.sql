@@ -8,11 +8,6 @@ DROP FUNCTION IF EXISTS add_fhir_endpoint_info_history() CASCADE;
 -- Create new function with metadata awareness and OR logic
 CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $$
 BEGIN
-    -- For metadata-only updates with the flag set, don't create history
-    IF current_setting('metadata.setting', 't') = 'TRUE' THEN
-        RETURN NEW;
-    END IF;
-
     -- For INSERT/DELETE operations, always create history
     IF (TG_OP = 'DELETE') THEN
         INSERT INTO fhir_endpoints_info_history 
@@ -50,9 +45,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create new trigger
-CREATE TRIGGER add_fhir_endpoint_info_history_trigger 
-AFTER INSERT OR UPDATE OR DELETE ON fhir_endpoints_info 
-FOR EACH ROW EXECUTE FUNCTION add_fhir_endpoint_info_history();
+CREATE TRIGGER add_fhir_endpoint_info_history_trigger
+AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
+FOR EACH ROW
+WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metadata.setting', 't') = 'FALSE')
+EXECUTE PROCEDURE add_fhir_endpoint_info_history();
 
 COMMIT;
