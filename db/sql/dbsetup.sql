@@ -8,7 +8,7 @@ $$ LANGUAGE plpgsql;
 
 -- LANTERN-825: Add history trigger and function
 -- Update the history trigger
-CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_historys$
 BEGIN
     -- For INSERT/DELETE operations, always create history
     IF (TG_OP = 'DELETE') THEN
@@ -45,7 +45,7 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$fhir_endpoints_info_historys$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
     DECLARE

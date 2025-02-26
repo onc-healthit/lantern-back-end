@@ -1,12 +1,11 @@
--- LANTERN-825: Update the history trigger to only insert a new row if the data has changed
 BEGIN;
-
+-- LANTERN-825: Update the history trigger to only insert a new row if the data has changed
 -- Drop the new trigger and function
 DROP TRIGGER IF EXISTS add_fhir_endpoint_info_history_trigger ON fhir_endpoints_info CASCADE;
 DROP FUNCTION IF EXISTS add_fhir_endpoint_info_history() CASCADE;
 
 -- Restore original function
-CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_history$
+CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_historys$
     BEGIN
         --
         -- Create a row in fhir_endpoints_info_history to reflect the operation performed on fhir_endpoints_info,
@@ -24,7 +23,7 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
         END IF;
         RETURN NULL; -- result is ignored since this is an AFTER trigger
     END;
-$fhir_endpoints_info_history$ LANGUAGE plpgsql;
+$fhir_endpoints_info_historys$ LANGUAGE plpgsql;
 
 -- Restore original trigger
 CREATE TRIGGER add_fhir_endpoint_info_history_trigger

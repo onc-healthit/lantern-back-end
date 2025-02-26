@@ -234,6 +234,7 @@ func Test_PersistFHIREndpointMetadata(t *testing.T) {
 		t.Errorf("expected 2 insertions in metadata table for endpointInfo1 URL with HTTP response 200. Got %d.", count)
 	}
 
+	// LANTERN-825: Test disabled because history table has been changed to not store Metadata ID updates
 	// // update endpoint info metadata id
 
 	// endpointInfo1.Metadata.HTTPResponse = 404
