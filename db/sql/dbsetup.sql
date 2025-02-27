@@ -480,3 +480,56 @@ CREATE INDEX healthit_products_certification_status_idx ON healthit_products (ce
 CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
 CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
+
+-- LANTERN-832
+CREATE MATERIALIZED VIEW mv_resource_interactions AS
+WITH expanded_resources AS (
+  SELECT
+    f.id AS endpoint_id,
+    COALESCE(v.name, 'Unknown') AS vendor_name,
+    CASE WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+         ELSE f.capability_fhir_version
+    END AS fhir_version,
+
+    -- Extract resource type from the JSONB structure
+    resource_elem->>'type' AS resource_type,
+
+    -- Extract individual operation names (this expands into multiple rows)
+    COALESCE(interaction_elem->>'code', 'not specified') AS operation_name
+
+  FROM fhir_endpoints_info f
+  LEFT JOIN vendors v ON f.vendor_id = v.id
+
+  -- Expand the "resource" array
+  LEFT JOIN LATERAL json_array_elements((f.capability_statement->'rest')->0->'resource') resource_elem
+    ON TRUE
+
+	-- Expand the "interaction" array within each resource
+  LEFT JOIN LATERAL json_array_elements(resource_elem->'interaction') interaction_elem
+    ON TRUE
+	
+  WHERE f.requested_fhir_version = 'None'
+),
+aggregated_operations AS (
+  SELECT
+    vendor_name,
+    fhir_version,
+    resource_type,
+	COUNT(DISTINCT endpoint_id) AS endpoint_count,
+    -- Aggregate operations into an array
+    ARRAY_AGG(DISTINCT operation_name) AS operations
+
+  FROM expanded_resources
+  GROUP BY vendor_name, fhir_version, resource_type
+)
+SELECT *
+FROM aggregated_operations;
+
+CREATE UNIQUE INDEX mv_resource_interactions_uniq
+  ON mv_resource_interactions (
+    vendor_name,
+    fhir_version,
+    resource_type,
+    endpoint_count,
+    operations
+  );
