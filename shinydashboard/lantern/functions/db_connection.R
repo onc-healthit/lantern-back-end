@@ -35,7 +35,10 @@ db_tables <- list(
   npi_organizations           = tbl(db_connection, "npi_organizations"),
   endpoint_export             = tbl(db_connection, "endpoint_export"),
   organization_location       = tbl(db_connection, "organization_location"),
-  vendors                     = tbl(db_connection, "vendors")
+  vendors                     = tbl(db_connection, "vendors"),
+  mv_endpoint_totals          = tbl(db_connection, "mv_endpoint_totals"),
+  mv_vendor_fhir_counts       = tbl(db_connection, "mv_vendor_fhir_counts"),
+  response_tally_mv           = tbl(db_connection, "response_tally_mv")
 )
 
 valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")

@@ -74,8 +74,16 @@ vendor_short_names <- data.frame(
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% filter(requested_fhir_version == "None") %>% distinct(url) %>% count() %>% pull(n)
+  all <- db_tables$mv_endpoint_totals %>%
+  as.data.frame() %>%
+  slice(1) %>%               
+  pull(all_endpoints)        
+
+  indexed <- db_tables$mv_endpoint_totals %>%
+  as.data.frame() %>%
+  slice(1) %>%
+  pull(indexed_endpoints)
+  
   fhir_endpoint_totals <- list(
     "all_endpoints"     = all,
     "indexed_endpoints" = indexed,
@@ -99,24 +107,10 @@ get_fhir_endpoints_tbl <- function() {
 }
 
 # get the endpoint tally by http_response received
-get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_info %>%
-    filter(requested_fhir_version == "None") %>%
-    select(metadata_id) %>%
-    left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
-    by = c("metadata_id" = "id")) %>%
-    select(http_response) %>%
-    group_by(http_response) %>%
-    tally()
-
-  # Get the list of most recent HTTP responses when requesting the capability statement from the
-  # fhir_endpoints
-  list(
-    "http_200" = max((curr_tally %>% filter(http_response == 200)) %>% pull(n), 0),
-    "http_non200" = max((curr_tally %>% filter(http_response != 200)) %>% pull(n), 0),
-    "http_404" = max((curr_tally %>% filter(http_response == 404)) %>% pull(n), 0),
-    "http_503" = max((curr_tally %>% filter(http_response == 503)) %>% pull(n), 0)
-  )
+get_response_tally_list <- function(db_connection) {
+  response_tally <- db_connection$response_tally_mv %>%
+                    as.data.frame() %>%
+                    slice(1)
 }
 
 # get the date of the most recently updated fhir_endpoint
@@ -143,7 +137,12 @@ get_http_response_summary_tbl <- function(db_tables) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Get the count of endpoints by vendor
+# Get the count of endpoints by vendors
+prepare_vendor_data <- function(db_tables) {
+  fhir_data <- db_tables$mv_vendor_fhir_counts %>% collect()
+
+  return(fhir_data)
+}
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
   tbl <- endpoint_tbl %>%
     distinct(vendor_name, url, fhir_version) %>%

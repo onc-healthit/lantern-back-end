@@ -480,3 +480,108 @@ CREATE INDEX healthit_products_certification_status_idx ON healthit_products (ce
 CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
 CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
+
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_totals;
+
+CREATE MATERIALIZED VIEW mv_endpoint_totals AS
+WITH latest_metadata AS (
+    SELECT max(fhir_endpoints_metadata.updated_at) AS last_updated
+    FROM fhir_endpoints_metadata
+), 
+totals AS (
+    SELECT 
+        (SELECT count(DISTINCT fhir_endpoints.url) FROM fhir_endpoints) AS all_endpoints,
+        (SELECT count(DISTINCT fhir_endpoints_info.url) 
+         FROM fhir_endpoints_info 
+         WHERE fhir_endpoints_info.requested_fhir_version IS NULL) AS indexed_endpoints
+)
+SELECT 
+    now() AS aggregation_date,
+    totals.all_endpoints,
+    totals.indexed_endpoints,
+    totals.all_endpoints - totals.indexed_endpoints AS nonindexed_endpoints,
+    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
+FROM totals;
+
+DROP MATERIALIZED VIEW IF EXISTS response_tally_mv;
+
+CREATE MATERIALIZED VIEW response_tally_mv AS
+WITH subquery AS (
+    SELECT 
+        fem.http_response,
+        count(*) AS response_count
+    FROM fhir_endpoints_info fei
+    JOIN fhir_endpoints_metadata fem 
+        ON fei.metadata_id = fem.id
+    WHERE fei.requested_fhir_version::text = 'None'::text
+    GROUP BY fem.http_response
+)
+SELECT 
+    COALESCE(SUM(
+        CASE 
+            WHEN subquery.http_response = 200 THEN subquery.response_count 
+            ELSE 0::bigint 
+        END), 0::numeric) AS http_200,
+    COALESCE(SUM(
+        CASE 
+            WHEN subquery.http_response <> 200 THEN subquery.response_count 
+            ELSE 0::bigint 
+        END), 0::numeric) AS http_non200,
+    COALESCE(SUM(
+        CASE 
+            WHEN subquery.http_response = 404 THEN subquery.response_count 
+            ELSE 0::bigint 
+        END), 0::numeric) AS http_404,
+    COALESCE(SUM(
+        CASE 
+            WHEN subquery.http_response = 503 THEN subquery.response_count 
+            ELSE 0::bigint 
+        END), 0::numeric) AS http_503
+FROM subquery;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts;
+
+CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
+WITH developer_counts AS (
+    SELECT 
+        v_1.name AS vendor_name,
+        sum(count(e_1.url)) OVER (PARTITION BY v_1.name) AS developer_count
+    FROM endpoint_export e_1
+    LEFT JOIN vendors v_1 
+        ON e_1.vendor_name::text = v_1.name::text
+    GROUP BY v_1.name
+)
+SELECT 
+    COALESCE(v.name, 'Unknown'::character varying) AS vendor_name,
+    COALESCE(NULLIF(btrim(e.fhir_version::text), ''::text), 'Unknown'::text) AS fhir_version,
+    count(e.url)::integer AS n,
+    COALESCE(
+        CASE
+            WHEN v.name::text = 'Allscripts' THEN 'Allscripts'
+            WHEN v.name::text = 'CareEvolution, Inc.' THEN 'CareEvolution'
+            WHEN v.name::text = 'Cerner Corporation' THEN 'Cerner'
+            WHEN v.name::text = 'Epic Systems Corporation' THEN 'Epic'
+            WHEN v.name::text = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
+            WHEN v.name::text = 'Microsoft Corporation' THEN 'Microsoft'
+            WHEN v.name::text = 'NA' THEN 'Unknown'
+            ELSE v.name
+        END, 'Unknown'::character varying
+    ) AS short_name,
+    COALESCE(dc.developer_count, 0::numeric) AS developer_count,
+    COALESCE(
+        concat(
+            round(
+                COALESCE(count(e.url)::numeric / NULLIF(dc.developer_count, 0::numeric) * 100::numeric, 0::numeric),
+                0
+            ), '%'
+        ), '0%'::text
+    ) AS percentage
+FROM endpoint_export e
+LEFT JOIN vendors v 
+    ON e.vendor_name::text = v.name::text
+LEFT JOIN developer_counts dc 
+    ON v.name::text = dc.vendor_name::text
+GROUP BY v.name, e.fhir_version, dc.developer_count
+ORDER BY 
+    COALESCE(v.name, 'Unknown'::character varying), 
+    COALESCE(e.fhir_version, 'Unknown'::character varying);

@@ -78,23 +78,28 @@ dashboard <- function(
 
   fhirVendorTableSize <- reactiveVal(NULL)
 
-  vendor_count_table <- reactive({
-    res <- isolate(app_data$vendor_count_tbl())
-    res <- res %>%
-      left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
-      mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-      mutate(percentage = paste0(percentage, "%")) %>%
-      select(vendor_name, fhir_version, n, percentage)
 
-    if (is.null(fhirVendorTableSize())) {
-      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
-    }
+  # vendor_count_table <- reactive({
+  #   res <- isolate(app_data$vendor_count_tbl())
+  #   res <- res %>%
+  #     left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
+  #     mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+  #     mutate(percentage = paste0(percentage, "%")) %>%
+  #     select(vendor_name, fhir_version, n, percentage)
 
-    res
-  })
+  #   if (is.null(fhirVendorTableSize())) {
+  #     fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
+  #   }
+
+  #   res
+  # })
 
   output$fhir_vendor_table <-  reactable::renderReactable({
-    reactable(vendor_count_table(),
+    vendor_table_data <- prepare_vendor_data(db_tables)
+    if (is.null(fhirVendorTableSize())) {
+      fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
+    }
+    reactable(vendor_table_data,
                 columns = list(
                   vendor_name = colDef(name = "Vendor"),
                   fhir_version = colDef(name = "FHIR Version"),
@@ -104,7 +109,7 @@ dashboard <- function(
                 sortable = TRUE,
                 searchable = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = isolate(fhirVendorTableSize())
+                defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
     )
   })
 
@@ -147,7 +152,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
+      "Total Endpoints", get_endpoint_totals_list(db_tables)$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
       color = "blue"
     )
   })
@@ -155,7 +160,7 @@ dashboard <- function(
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
       "Indexed Endpoints*",
-      isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
+      get_endpoint_totals_list(db_tables)$indexed_endpoints,
       icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
     )
@@ -163,21 +168,21 @@ dashboard <- function(
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
+      get_response_tally_list(db_tables) %>% pull(http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
+      get_response_tally_list(db_tables) %>% pull(http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
+      get_response_tally_list(db_tables) %>% pull(http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
       color = "orange"
     )
   })
@@ -196,7 +201,8 @@ dashboard <- function(
   })
 
   output$vendor_share_plot <- renderCachedPlot({
-   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
+   vendor_plot_data <- prepare_vendor_data(db_tables) 
+   ggplot(vendor_plot_data, aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)
       ) +
