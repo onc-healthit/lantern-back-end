@@ -32,8 +32,7 @@ resourcemodule <- function(  #nolint
 
   select_operations <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_resources())
-    res <- isolate(get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor())))
-    res
+    get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()))
   })
 
   number_resources <- reactive({

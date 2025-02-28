@@ -1,6 +1,6 @@
 #!/bin/sh
 
-log_file="/etc/lantern/refresh_materialized_views_logs.txt"
+log_file="/etc/lantern/logs/refresh_materialized_views_logs.txt"
 
 echo "$(date +"%Y-%m-%d %H:%M:%S") - Refreshing and reindexing Lantern materialized views." >> $log_file
 
