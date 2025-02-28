@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP MATERIALIZED VIEW IF EXISTS response_tally_mv;
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_totals;
 
 CREATE MATERIALIZED VIEW mv_endpoint_totals AS
 WITH latest_metadata AS (
@@ -22,4 +22,4 @@ SELECT
     (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
 FROM totals;
 
-COMMIT
+COMMIT;

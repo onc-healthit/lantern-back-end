@@ -1,5 +1,7 @@
 BEGIN;
 
+DROP MATERIALIZED VIEW IF EXISTS response_tally_mv;
+
 CREATE MATERIALIZED VIEW response_tally_mv AS
 WITH subquery AS (
     SELECT 
@@ -34,5 +36,4 @@ SELECT
         END), 0::numeric) AS http_503
 FROM subquery;
 
-
-COMMIT
+COMMIT;
