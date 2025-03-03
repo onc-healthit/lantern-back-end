@@ -12,7 +12,7 @@ totals AS (
         (SELECT count(DISTINCT fhir_endpoints.url) FROM fhir_endpoints) AS all_endpoints,
         (SELECT count(DISTINCT fhir_endpoints_info.url) 
          FROM fhir_endpoints_info 
-         WHERE fhir_endpoints_info.requested_fhir_version IS NULL) AS indexed_endpoints
+         WHERE fhir_endpoints_info.requested_fhir_version = 'None') AS indexed_endpoints
 )
 SELECT 
     now() AS aggregation_date,
