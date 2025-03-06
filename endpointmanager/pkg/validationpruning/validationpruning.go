@@ -9,13 +9,13 @@ import (
 
 func PruneValidationInfo(ctx context.Context, store *postgresql.Store) {
 	query := `
-		DELETE FROM validations v
-		WHERE v.validation_result_id IS NOT NULL
+		DELETE FROM validation_results vr
+		WHERE vr.id IS NOT NULL
 		AND NOT EXISTS (
-			SELECT 1 FROM fhir_endpoints_info fei WHERE fei.validation_result_id = v.validation_result_id
+			SELECT 1 FROM fhir_endpoints_info fei WHERE fei.validation_result_id = vr.id
 		)
 		AND NOT EXISTS (
-			SELECT 1 FROM fhir_endpoints_info_history feih WHERE feih.validation_result_id = v.validation_result_id
+			SELECT 1 FROM fhir_endpoints_info_history feih WHERE feih.validation_result_id = vr.id
 		);
 	`
 
