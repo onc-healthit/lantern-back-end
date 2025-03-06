@@ -774,27 +774,34 @@ get_organization_locations <- function(db_connection) {
   res
 }
 
-get_endpoint_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          distinct(url),
-          endpoint_names[1] as endpoint_name,
-          organization_name,
-          fhir_version,
-          vendor_name,
-          match_score,
-          left(zipcode,5) as zipcode,
-          npi_id
-        FROM organization_location")
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-  res
+get_endpoint_locations <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query from materialized view
+  query <- tbl(db_connection, "mv_endpoint_locations")
+  
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Collect the data after applying all filters in SQL
+  result <- query %>% collect()
+  
+  # Check if we need to join with zip_to_zcta data
+  if (!("lat" %in% names(result)) || !("lng" %in% names(result)) || 
+      all(is.na(result$lat)) || all(is.na(result$lng))) {
+    # Join with zip_to_zcta data in R if lat/lng are missing
+    result <- result %>%
+      left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode"))
+  }
+  
+  # Filter for valid coordinates
+  result <- result %>% filter(!is.na(lng), !is.na(lat))
+  
+  return(result)
 }
 
 get_single_endpoint_locations <- function(db_connection, endpointURL, requestedFhirVersion) {
@@ -886,25 +893,52 @@ get_validation_results <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-get_endpoint_list_matches <- function() {
-    el <- app$endpoint_export_tbl() %>%
-          separate_rows(endpoint_names, sep = ";") %>%
-          select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
-          rename(organization_name = endpoint_names) %>%
-          tidyr::replace_na(list(organization_name = "Unknown")) %>%
-          mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
-    el
+get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_endpoint_list_organizations")
+  
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Collect the data after applying filters in SQL
+  result <- query %>%
+    collect() %>%
+    tidyr::replace_na(list(organization_name = "Unknown")) %>%
+    mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
+  
+  return(result)
 }
 
-get_npi_organization_matches <- function(db_tables) {
-  nl <- db_tables$organization_location %>%
-    select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
+get_npi_organization_matches <- function(db_connection, fhir_version = NULL, vendor = NULL, confidence_range = "97-100") {
+  # Start with base query
+  query <- tbl(db_connection, "mv_npi_organization_matches")
+  
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  if (!is.null(confidence_range) && confidence_range != "97-100") {
+    query <- query %>% filter(confidence_range == !!confidence_range)
+  }
+  
+  # Collect the data after applying all filters in SQL
+  result <- query %>%
     collect() %>%
-    mutate(match_score = match_score * 100)  %>%
-    filter(match_score >= 97) %>%
     tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown")) %>%
     mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
-  nl
+  
+  return(result)
 }
 
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
