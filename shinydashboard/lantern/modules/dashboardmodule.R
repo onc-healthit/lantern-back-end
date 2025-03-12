@@ -2,6 +2,8 @@ library(shiny)
 library(shinydashboard)
 library(readr)
 library(scales)
+library(dplyr)
+library(ggplot2)
 
 custom_column_small <- function(...) {
     tags$div(
@@ -18,7 +20,6 @@ custom_column_large <- function(...) {
 }
 
 dashboard_UI <- function(id) {
-
   ns <- NS(id)
 
   tagList(
@@ -67,49 +68,43 @@ dashboard <- function(
 ) {
   ns <- session$ns
 
-
   all_vendor_counts <- reactive({
     res <- isolate(app_data$vendor_count_tbl())
     res <- res %>%
       group_by(vendor_name) %>%
-      summarise(developer_count = sum(n)) %>%
+      summarise(developer_count = sum(n), .groups = "drop") %>%
       select(vendor_name, developer_count)
   })
 
   fhirVendorTableSize <- reactiveVal(NULL)
 
+  vendor_count_table <- reactive({
+    res <- isolate(app_data$vendor_count_tbl())
+    res <- res %>%
+      left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
+      mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+      mutate(percentage = paste0(percentage, "%")) %>%
+      select(vendor_name, fhir_version, n, percentage)
 
-  # vendor_count_table <- reactive({
-  #   res <- isolate(app_data$vendor_count_tbl())
-  #   res <- res %>%
-  #     left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
-  #     mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-  #     mutate(percentage = paste0(percentage, "%")) %>%
-  #     select(vendor_name, fhir_version, n, percentage)
-
-  #   if (is.null(fhirVendorTableSize())) {
-  #     fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
-  #   }
-
-  #   res
-  # })
-
-  output$fhir_vendor_table <-  reactable::renderReactable({
-    vendor_table_data <- prepare_vendor_data(db_tables)
     if (is.null(fhirVendorTableSize())) {
-      fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
+      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
     }
-    reactable(vendor_table_data,
+
+    res
+  })
+
+  output$fhir_vendor_table <- reactable::renderReactable({
+    reactable::reactable(vendor_count_table(),
                 columns = list(
-                  vendor_name = colDef(name = "Vendor"),
-                  fhir_version = colDef(name = "FHIR Version"),
-                  n = colDef(name = "Count"),
-                  percentage = colDef(name = "Developer Percentage")
+                  vendor_name = reactable::colDef(name = "Vendor"),
+                  fhir_version = reactable::colDef(name = "FHIR Version"),
+                  n = reactable::colDef(name = "Count"),
+                  percentage = reactable::colDef(name = "Developer Percentage")
                 ),
                 sortable = TRUE,
                 searchable = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
+                defaultPageSize = isolate(fhirVendorTableSize())
     )
   })
 
@@ -119,7 +114,6 @@ dashboard <- function(
   })
 
   selected_http_summary <- reactive({
-
     res <- isolate(app_data$http_pct())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -128,22 +122,19 @@ dashboard <- function(
         left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
-        summarise(count = n())
+        summarise(count = n(), .groups = "drop")
     } else {
       res <- res %>%
         left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
         select(id, code, label) %>%
         group_by(code, label) %>%
-        summarise(count = n())
+        summarise(count = n(), .groups = "drop")
     }
 
     res
   })
 
-  # create a summary table to show the response codes received along with
-  # the description for each code
-
-    output$updated_time_box <- renderInfoBox({
+  output$updated_time_box <- renderInfoBox({
     infoBox(
       "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
       color = "purple"
@@ -152,7 +143,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", get_endpoint_totals_list(db_tables)$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
+      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
       color = "blue"
     )
   })
@@ -160,34 +151,34 @@ dashboard <- function(
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
       "Indexed Endpoints*",
-      get_endpoint_totals_list(db_tables)$indexed_endpoints,
-      icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
+      isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
+      icon = tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
     )
   })
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
+      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
+      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
+      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
       color = "orange"
     )
   })
 
-  output$http_code_table   <- renderTable(
+  output$http_code_table <- renderTable(
     selected_http_summary() %>%
       rename("HTTP Response" = code, Status = label, Count = count)
   )
@@ -200,44 +191,58 @@ dashboard <- function(
     plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
   })
 
+  # Vendor plot with true alphabetical ordering, accounting for coord_flip()
   output$vendor_share_plot <- renderCachedPlot({
-   vendor_plot_data <- prepare_vendor_data(db_tables) 
-   ggplot(vendor_plot_data, aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
+    # Get the data and fix the integer64 issue
+    df <- isolate(app_data$vendor_count_tbl())
+    df$n <- as.integer(df$n)
+    
+    # Sort the developers alphabetically
+    # For coord_flip(), we need to reverse the order of the levels 
+    # so they appear correctly (A at top, Z at bottom)
+    developer_order <- sort(unique(df$short_name), decreasing = TRUE)
+    
+    # Set the factor with alphabetical order (reversed for coord_flip)
+    df$short_name <- factor(df$short_name, levels = developer_order)
+    
+    # Create the plot with correctly ordered factors
+    ggplot(df, aes(y = n, x = short_name, fill = fhir_version)) +
       geom_col(width = 0.8) +
-      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)
-      ) +
+      geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 15)) +
       labs(fill = "FHIR Version",
            x = "",
            y = "Number of Endpoints",
            title = "Endpoints by Developer and FHIR Version") +
-      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip()
   }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
-                                  growthRate = 1.2),
+                                 height = 400,
+                                 growthRate = 1.2),
     res = 72, cache = "app", cacheKeyExpr = {
       app_data$last_updated()
     }
   )
+  
   output$response_code_plot <- renderCachedPlot({
-    ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
-    geom_bar(stat = "identity", show.legend = FALSE) +
-      geom_text(aes(label = stat(y), group = code),
-                stat = "summary", fun = sum, vjust = -1
-      ) +
+    df <- selected_http_summary()
+    df <- df %>% mutate(Response = paste(code, "-", label))
+    
+    ggplot(df, aes(x = code, fill = as.factor(Response), y = count)) +
+      geom_bar(stat = "identity", show.legend = FALSE) +
+      geom_text(aes(label = count), position = position_stack(vjust = 0.5)) +
       theme(text = element_text(size = 15)) +
       labs(fill = "Code",
-         title = "HTTP Response Codes Received from Endpoints During Most Recent Query",
-         x = "HTTP Response Received",
-         y = "Count of endpoints")
+           title = "HTTP Response Codes Received from Endpoints During Most Recent Query",
+           x = "HTTP Response Received",
+           y = "Count of endpoints")
   }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
-                                  growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = {
-    list(app_data$last_updated(), sel_vendor())
-  })
+                                 height = 400,
+                                 growthRate = 1.2),
+    res = 72, cache = "app", cacheKeyExpr = {
+      list(app_data$last_updated(), sel_vendor())
+    }
+  )
 
   observeEvent(input$show_info, {
     showModal(modalDialog(
@@ -274,5 +279,4 @@ dashboard <- function(
     res <- paste("<div style='font-size: 16px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
   })
-
 }
