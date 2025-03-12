@@ -72,13 +72,22 @@ vendor_short_names <- data.frame(
 # Return list of counts of:
 # - all registered endpoints
 # - indexed endpoints that have been queried
+# - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  # Use materialized view directly
-  result <- tbl(db_connection, "mv_endpoint_totals") %>% collect()
-  list(
-    "all_endpoints" = result$all_endpoints[1],
-    "indexed_endpoints" = result$indexed_endpoints[1],
-    "nonindexed_endpoints" = result$nonindexed_endpoints[1]
+  all <- db_tables$mv_endpoint_totals %>%
+  as.data.frame() %>%
+  slice(1) %>%               
+  pull(all_endpoints)        
+
+  indexed <- db_tables$mv_endpoint_totals %>%
+  as.data.frame() %>%
+  slice(1) %>%
+  pull(indexed_endpoints)
+  
+  fhir_endpoint_totals <- list(
+    "all_endpoints"     = all,
+    "indexed_endpoints" = indexed,
+    "nonindexed_endpoints" = max(all - indexed, 0)
   )
 }
 
@@ -98,23 +107,15 @@ get_fhir_endpoints_tbl <- function() {
 }
 
 # get the endpoint tally by http_response received
-
-get_response_tally_list <- function(db_tables) {
-  # Use materialized view directly
-  result <- tbl(db_connection, "mv_response_tally") %>% collect()
-  list(
-    "http_200" = result$http_200[1],
-    "http_non200" = result$http_non200[1],
-    "http_404" = result$http_404[1],
-    "http_503" = result$http_503[1]
-  )
+get_response_tally_list <- function(db_connection) {
+  response_tally <- db_connection$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
 }
 
 # get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  # Use materialized view directly
-  result <- tbl(db_connection, "mv_endpoint_totals") %>% collect()
-  as.character(result$last_updated[1])
+  as.character.Date(isolate(app_data$last_updated()))
 }
 
 # Compute the percentage of each response code for all responses received
@@ -142,17 +143,17 @@ prepare_vendor_data <- function(db_tables) {
 
   return(fhir_data)
 }
-# Get the count of endpoints by vendor with debugging
-# Get the count of endpoints by vendor
-# Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
-  # Try using materialized view
-  result <- tbl(db_connection, "mv_vendor_fhir_counts") %>% collect()
-  
-  # Handle integer64 issue by converting n to regular integer
-  result$n <- as.integer(result$n)
-  
-  return(result)
+  tbl <- endpoint_tbl %>%
+    distinct(vendor_name, url, fhir_version) %>%
+    group_by(vendor_name, fhir_version) %>%
+    tally() %>%
+    ungroup() %>%
+    select(vendor_name, fhir_version, n) %>%
+    left_join(vendor_short_names) %>%
+    mutate(short_name = ifelse(is.na(short_name), vendor_name, short_name))
+
+    tbl
 }
 
 get_fhir_version_factors <- function(endpoint_tbl) {
