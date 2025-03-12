@@ -1,50 +1,54 @@
 BEGIN;
 
-DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts;
+DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts CASCADE;
 
 CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
-WITH developer_counts AS (
-    SELECT 
-        v_1.name AS vendor_name,
-        sum(count(e_1.url)) OVER (PARTITION BY v_1.name) AS developer_count
-    FROM endpoint_export e_1
-    LEFT JOIN vendors v_1 
-        ON e_1.vendor_name::text = v_1.name::text
-    GROUP BY v_1.name
-)
 SELECT 
-    COALESCE(v.name, 'Unknown'::character varying) AS vendor_name,
-    COALESCE(NULLIF(btrim(e.fhir_version::text), ''::text), 'Unknown'::text) AS fhir_version,
-    count(e.url)::integer AS n,
-    COALESCE(
-        CASE
-            WHEN v.name::text = 'Allscripts' THEN 'Allscripts'
-            WHEN v.name::text = 'CareEvolution, Inc.' THEN 'CareEvolution'
-            WHEN v.name::text = 'Cerner Corporation' THEN 'Cerner'
-            WHEN v.name::text = 'Epic Systems Corporation' THEN 'Epic'
-            WHEN v.name::text = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
-            WHEN v.name::text = 'Microsoft Corporation' THEN 'Microsoft'
-            WHEN v.name::text = 'NA' THEN 'Unknown'
-            ELSE v.name
-        END, 'Unknown'::character varying
-    ) AS short_name,
-    COALESCE(dc.developer_count, 0::numeric) AS developer_count,
-    COALESCE(
-        concat(
-            round(
-                COALESCE(count(e.url)::numeric / NULLIF(dc.developer_count, 0::numeric) * 100::numeric, 0::numeric),
-                0
-            ), '%'
-        ), '0%'::text
-    ) AS percentage
+    COALESCE(v.name, 'Unknown') AS vendor_name,
+    CASE
+        WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
+        -- Apply the dash rule: if there's a dash, trim after it
+        WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
+        -- If it's not in the valid list, mark as Unknown
+        WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE e.fhir_version
+    END AS fhir_version,
+    COUNT(DISTINCT e.url) AS n,
+    CASE
+        WHEN COALESCE(v.name, 'Unknown') = 'Allscripts' THEN 'Allscripts'
+        WHEN COALESCE(v.name, 'Unknown') = 'CareEvolution, Inc.' THEN 'CareEvolution'
+        WHEN COALESCE(v.name, 'Unknown') = 'Cerner Corporation' THEN 'Cerner'
+        WHEN COALESCE(v.name, 'Unknown') = 'Epic Systems Corporation' THEN 'Epic'
+        WHEN COALESCE(v.name, 'Unknown') = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
+        WHEN COALESCE(v.name, 'Unknown') = 'Microsoft Corporation' THEN 'Microsoft'
+        WHEN COALESCE(v.name, 'Unknown') = 'Unknown' THEN 'Unknown'
+        ELSE COALESCE(v.name, 'Unknown')
+    END AS short_name
 FROM endpoint_export e
-LEFT JOIN vendors v 
-    ON e.vendor_name::text = v.name::text
-LEFT JOIN developer_counts dc 
-    ON v.name::text = dc.vendor_name::text
-GROUP BY v.name, e.fhir_version, dc.developer_count
+LEFT JOIN vendors v ON e.vendor_name = v.name
+GROUP BY 
+    COALESCE(v.name, 'Unknown'), 
+    CASE
+        WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
+        WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
+        WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE e.fhir_version
+    END,
+    CASE
+        WHEN COALESCE(v.name, 'Unknown') = 'Allscripts' THEN 'Allscripts'
+        WHEN COALESCE(v.name, 'Unknown') = 'CareEvolution, Inc.' THEN 'CareEvolution'
+        WHEN COALESCE(v.name, 'Unknown') = 'Cerner Corporation' THEN 'Cerner'
+        WHEN COALESCE(v.name, 'Unknown') = 'Epic Systems Corporation' THEN 'Epic'
+        WHEN COALESCE(v.name, 'Unknown') = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
+        WHEN COALESCE(v.name, 'Unknown') = 'Microsoft Corporation' THEN 'Microsoft'
+        WHEN COALESCE(v.name, 'Unknown') = 'Unknown' THEN 'Unknown'
+        ELSE COALESCE(v.name, 'Unknown')
+    END
 ORDER BY 
-    COALESCE(v.name, 'Unknown'::character varying), 
-    COALESCE(e.fhir_version, 'Unknown'::character varying);
+    vendor_name, fhir_version;
+
+-- Add indexes to improve query performance
+CREATE INDEX idx_mv_vendor_fhir_counts_vendor ON mv_vendor_fhir_counts(vendor_name);
+CREATE INDEX idx_mv_vendor_fhir_counts_fhir ON mv_vendor_fhir_counts(fhir_version);
 
 COMMIT;

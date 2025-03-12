@@ -1,5 +1,5 @@
 BEGIN;
 
-DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts;
+DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts CASCADE;
 
 COMMIT;
