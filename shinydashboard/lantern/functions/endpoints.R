@@ -128,7 +128,7 @@ get_endpoint_last_updated <- function(db_tables) {
 
 # Compute the percentage of each response code for all responses received
 get_http_response_summary_tbl <- function(vendor_name) {
-  query <- glue_sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = {vendor_name}", .con = db_connection)
+  query <- glue_sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = {vendor_name} ORDER BY http_code", .con = db_connection)
 
   res <- tbl(db_connection,
     sql(query)) %>%
@@ -138,7 +138,7 @@ get_http_response_summary_tbl <- function(vendor_name) {
 
 get_http_response_summary_tbl_all <- function() {
   res <- tbl(db_connection,
-    sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = 'ALL_DEVELOPERS'")) %>%
+    sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = 'ALL_DEVELOPERS' ORDER BY http_code")) %>%
     collect()
   res
 }
