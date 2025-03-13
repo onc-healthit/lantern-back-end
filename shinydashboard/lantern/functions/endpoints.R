@@ -4,6 +4,8 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times # nolint
 library(lubridate)
 
+library(glue)
+
 time_until_next_run <- function() {
   current_time <- Sys.time()
   message("current_time ", current_time)
@@ -289,23 +291,35 @@ get_fhir_resource_types <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-# Return list of resources for the given operation field by
-# endpoint_id, vendor and fhir_version
-get_fhir_resource_by_op <- function(db_connection, field) {
+# Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
+get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name) {
+  
+  # Create the base query string
+  query_str <- "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n 
+            FROM mv_resource_interactions
+            WHERE fhir_version IN ({fhir_versions_vec*})
+            AND resource_type IN ({resource_types_vec*})"
+
+  # Add a filter for operations if they are selected
+  if(length(operations_vec) >= 1){
+    query_str <- paste0(query_str, " AND operations @> ARRAY[{operations_vec*}]") 
+  }
+
+  # Add a filter for vendor name if a specific vendor is selected
+  if(vendor_name != 'All Developers'){
+    query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
+  }
+  
+  query_str <- paste0(query_str, " GROUP BY (resource_type, fhir_version)
+            ORDER BY resource_type")
+
+  query <- glue_sql(query_str, .con = db_connection)
+
   res <- tbl(db_connection,
-    sql(paste0("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      operation_resource->>'", field, "' as type
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE requested_fhir_version = 'None'"))) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    sql(query)) %>%
+  collect()
+
+  res
 }
 
 get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhirVersion, field) {
