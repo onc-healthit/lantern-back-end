@@ -73,22 +73,23 @@ vendor_short_names <- data.frame(
 # - all registered endpoints
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
+# Get Endpoint Totals
+# Return list of counts of:
+# - all registered endpoints
+# - indexed endpoints that have been queried
+# - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  all <- db_tables$mv_endpoint_totals %>%
-  as.data.frame() %>%
-  slice(1) %>%               
-  pull(all_endpoints)        
-
-  indexed <- db_tables$mv_endpoint_totals %>%
-  as.data.frame() %>%
-  slice(1) %>%
-  pull(indexed_endpoints)
+  totals_data <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1)
   
   fhir_endpoint_totals <- list(
-    "all_endpoints"     = all,
-    "indexed_endpoints" = indexed,
-    "nonindexed_endpoints" = max(all - indexed, 0)
+    "all_endpoints"     = totals_data$all_endpoints,
+    "indexed_endpoints" = totals_data$indexed_endpoints,
+    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
   )
+  
+  return(fhir_endpoint_totals)
 }
 
 # create a join to get more detailed table of fhir_endpoint information
@@ -107,15 +108,21 @@ get_fhir_endpoints_tbl <- function() {
 }
 
 # get the endpoint tally by http_response received
-get_response_tally_list <- function(db_connection) {
-  response_tally <- db_connection$mv_response_tally %>%
+get_response_tally_list <- function(db_tables) {
+  response_tally <- db_tables$mv_response_tally %>%
                     as.data.frame() %>%
                     slice(1)
+  
+  return(response_tally)
 }
 
-# get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(isolate(app_data$last_updated()))
+  last_updated <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1) %>%
+    pull(last_updated)
+  
+  as.character.Date(last_updated)
 }
 
 # Compute the percentage of each response code for all responses received
@@ -137,12 +144,29 @@ get_http_response_summary_tbl <- function(db_tables) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Get the count of endpoints by vendors
+# Fixed prepare_vendor_data to handle integer64 data type
 prepare_vendor_data <- function(db_tables) {
-  fhir_data <- db_tables$mv_vendor_fhir_counts %>% collect()
-
+  # Directly use the materialized view and convert integer64 to regular integers
+  fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
+    collect() %>%
+    mutate(n = as.integer(n))  # Convert integer64 to regular integer
+  
+  # Calculate percentage for each vendor
+  all_vendor_counts <- fhir_data %>%
+    group_by(vendor_name) %>%
+    summarise(developer_count = sum(n))
+  
+  # Join back to get percentages
+  fhir_data <- fhir_data %>%
+    left_join(all_vendor_counts, by = "vendor_name") %>%
+    mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+    mutate(percentage = paste0(percentage, "%")) %>%
+    # Select only the columns needed
+    select(vendor_name, fhir_version, n, percentage)
+  
   return(fhir_data)
 }
+
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
   tbl <- endpoint_tbl %>%
     distinct(vendor_name, url, fhir_version) %>%
