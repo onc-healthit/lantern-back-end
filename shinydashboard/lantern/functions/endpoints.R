@@ -430,28 +430,35 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
-# get contact information
+# get contact information from the materialized view
 get_contact_information <- function(db_connection) {
-
-  contacts_tbl <- tbl(db_connection,
-    sql("SELECT DISTINCT
-				  url,
-				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
-        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
-          FROM fhir_endpoints_info
-          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect()
-
-
-    res <- app$endpoint_export_tbl() %>%
-        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
-        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == "None") %>%
-        left_join(contacts_tbl, by = c("url" = "url"))
-
-    res
+  tryCatch({
+    # Query the materialized view
+    res <- tbl(db_connection, "mv_contact_information") %>%
+      # Remove technical columns if they exist
+      select(-any_of(c("aggregation_date", "synthetic_id"))) %>%
+      collect()
+    
+    return(res)
+  }, error = function(e) {
+    message("Error in get_contact_information: ", e$message)
+    # Return empty data frame with expected columns as fallback
+    return(data.frame(
+      url = character(),
+      requested_fhir_version = character(),
+      vendor_name = character(),
+      fhir_version = character(),
+      endpoint_names = character(),
+      contact_name = character(),
+      contact_type = character(),
+      contact_value = character(),
+      contact_preference = integer(),
+      has_contact = logical(),
+      num_contacts = integer(),
+      contact_rank = integer(),
+      stringsAsFactors = FALSE
+    ))
+  })
 }
 
 # get values from specific fields we're interested in displaying
