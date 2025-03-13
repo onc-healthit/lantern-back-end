@@ -127,23 +127,22 @@ get_endpoint_last_updated <- function(db_tables) {
 }
 
 # Compute the percentage of each response code for all responses received
-get_http_response_summary_tbl <- function(db_tables) {
-  db_tables$fhir_endpoints_info %>%
-    collect() %>%
-    filter(requested_fhir_version == "None") %>%
-    left_join(app$endpoint_export_tbl() %>%
-    select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
-    select(url, id, http_response, vendor_name, fhir_version) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+get_http_response_summary_tbl <- function(vendor_name) {
+  query <- glue_sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = {vendor_name} ORDER BY http_code", .con = db_connection)
+
+  res <- tbl(db_connection,
+    sql(query)) %>%
+    collect()
+    res
 }
+
+get_http_response_summary_tbl_all <- function() {
+  res <- tbl(db_connection,
+    sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = 'ALL_DEVELOPERS' ORDER BY http_code")) %>%
+    collect()
+  res
+}
+
 
 # Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
