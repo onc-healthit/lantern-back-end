@@ -597,6 +597,9 @@ FROM response_all_devs;
 CREATE UNIQUE INDEX mv_http_responses_uniq
   ON mv_http_responses (aggregation_date, vendor_name, http_code);
 
+CREATE INDEX mv_http_responses_vendor_name_idx
+  ON mv_http_responses (vendor_name);
+
 -- LANTERN-832
 CREATE MATERIALIZED VIEW mv_resource_interactions AS
 WITH expanded_resources AS (
@@ -649,3 +652,15 @@ CREATE UNIQUE INDEX mv_resource_interactions_uniq
     endpoint_count,
     operations
   );
+
+CREATE INDEX mv_resource_interactions_vendor_name_idx
+  ON mv_resource_interactions (vendor_name);
+
+CREATE INDEX mv_resource_interactions_fhir_version_idx
+  ON mv_resource_interactions (fhir_version);
+
+CREATE INDEX mv_resource_interactions_resource_type_idx
+  ON mv_resource_interactions (resource_type);
+
+CREATE INDEX mv_resource_interactions_operations_idx
+  ON mv_resource_interactions USING GIN (operations);

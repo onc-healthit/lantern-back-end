@@ -119,4 +119,9 @@ DROP INDEX IF EXISTS mv_http_responses_uniq;
 CREATE UNIQUE INDEX mv_http_responses_uniq
   ON mv_http_responses (aggregation_date, vendor_name, http_code);
 
+DROP INDEX IF EXISTS mv_http_responses_vendor_name_idx;
+
+CREATE INDEX mv_http_responses_vendor_name_idx
+  ON mv_http_responses (vendor_name);
+
 COMMIT;
