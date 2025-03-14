@@ -180,11 +180,19 @@ dashboard <- function(
   })
 
   # Fixed prepare_vendor_data to handle integer64 data type
+# Updated prepare_vendor_data to rename NA to Unknown
 prepare_vendor_data <- function(db_tables) {
   # Directly use the materialized view and convert integer64 to regular integers
   fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
     collect() %>%
     mutate(n = as.integer(n))  # Convert integer64 to regular integer
+  
+  # Replace NA values with "Unknown" in vendor_name and fhir_version
+  fhir_data <- fhir_data %>%
+    mutate(
+      vendor_name = ifelse(is.na(vendor_name), "Unknown", vendor_name),
+      fhir_version = ifelse(is.na(fhir_version), "Unknown", fhir_version)
+    )
   
   # Calculate percentage for each vendor
   all_vendor_counts <- fhir_data %>%

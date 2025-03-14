@@ -144,28 +144,6 @@ get_http_response_summary_tbl <- function(db_tables) {
     tidyr::replace_na(list(vendor_name = "Unknown"))
 }
 
-# Fixed prepare_vendor_data to handle integer64 data type
-prepare_vendor_data <- function(db_tables) {
-  # Directly use the materialized view and convert integer64 to regular integers
-  fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
-    collect() %>%
-    mutate(n = as.integer(n))  # Convert integer64 to regular integer
-  
-  # Calculate percentage for each vendor
-  all_vendor_counts <- fhir_data %>%
-    group_by(vendor_name) %>%
-    summarise(developer_count = sum(n))
-  
-  # Join back to get percentages
-  fhir_data <- fhir_data %>%
-    left_join(all_vendor_counts, by = "vendor_name") %>%
-    mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-    mutate(percentage = paste0(percentage, "%")) %>%
-    # Select only the columns needed
-    select(vendor_name, fhir_version, n, percentage)
-  
-  return(fhir_data)
-}
 
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
   tbl <- endpoint_tbl %>%
