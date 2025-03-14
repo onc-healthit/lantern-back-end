@@ -179,42 +179,55 @@ dashboard <- function(
     plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
   })
 
-  output$vendor_share_plot <- renderCachedPlot({
-  # Get data and ensure n is a regular integer
-  vendor_data <- prepare_vendor_data(db_tables)
+  # Fixed prepare_vendor_data to handle integer64 data type
+prepare_vendor_data <- function(db_tables) {
+  # Directly use the materialized view and convert integer64 to regular integers
+  fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
+    collect() %>%
+    mutate(n = as.integer(n))  # Convert integer64 to regular integer
   
-  # Filter out zero counts if any
-  vendor_data <- vendor_data %>% filter(n > 0)
+  # Calculate percentage for each vendor
+  all_vendor_counts <- fhir_data %>%
+    group_by(vendor_name) %>%
+    summarise(developer_count = sum(n))
   
-  # Make sure vendor_name is a factor for proper ordering
-  vendor_data$vendor_name <- factor(vendor_data$vendor_name)
+  # Join back to get percentages
+  fhir_data <- fhir_data %>%
+    left_join(all_vendor_counts, by = "vendor_name") %>%
+    mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+    mutate(percentage = paste0(percentage, "%")) %>%
+    # Select only the columns needed
+    select(vendor_name, fhir_version, n, percentage)
   
-  # Create the plot with simplified approach
-  ggplot(vendor_data, aes(x = fct_rev(vendor_name), y = n, fill = fhir_version)) +
-    geom_col(width = 0.8) +
-    # Add simple non-stacked text labels at the middle of each segment
-    geom_text(aes(label = n), 
-              position = position_stack(vjust = 0.5), 
-              size = 3, show.legend = FALSE) +
-    theme_minimal() +
-    theme(
-      legend.position = "top",
-      axis.text.y = element_text(size = 10),
-      axis.text.x = element_text(size = 10),
-      plot.title = element_text(size = 14)
-    ) +
-    labs(
-      fill = "FHIR Version",
-      x = "",
-      y = "Number of Endpoints",
-      title = "Endpoints by Developer and FHIR Version"
-    ) +
-    coord_flip()
-}, 
-sizePolicy = sizeGrowthRatio(width = 400, height = 400, growthRate = 1.2),
-res = 72, 
-cache = "app", 
-cacheKeyExpr = { app_data$last_updated() })
+  return(fhir_data)
+}
+
+# Restored vendor_share_plot with original visual appearance
+output$vendor_share_plot <- renderCachedPlot({
+   vendor_plot_data <- prepare_vendor_data(db_tables) %>%
+     filter(n > 0)  # Filter out zero counts
+   
+   # Ensure we have proper factor levels for vendor_name
+   vendor_plot_data$vendor_name <- factor(vendor_plot_data$vendor_name)
+   
+   ggplot(vendor_plot_data, aes(y = n, x = fct_rev(vendor_name), fill = fhir_version)) +
+      geom_col(width = 0.8) +
+      geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
+      theme(legend.position = "top") +
+      theme(text = element_text(size = 15)) +
+      labs(fill = "FHIR Version",
+           x = "",
+           y = "Number of Endpoints",
+           title = "Endpoints by Developer and FHIR Version") +
+      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
+      coord_flip()
+  }, sizePolicy = sizeGrowthRatio(width = 400,
+                                  height = 400,
+                                  growthRate = 1.2),
+    res = 72, cache = "app", cacheKeyExpr = {
+      app_data$last_updated()
+    }
+  )
   
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
