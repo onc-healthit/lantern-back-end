@@ -38,5 +38,7 @@ FROM response_counts;
 
 CREATE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
+DROP INDEX IF EXISTS idx_mv_response_tally_http_code;
+CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
 COMMIT;

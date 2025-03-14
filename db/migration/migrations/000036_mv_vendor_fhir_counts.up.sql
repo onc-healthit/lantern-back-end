@@ -50,5 +50,6 @@ ORDER BY
 -- Add indexes to improve query performance
 CREATE INDEX idx_mv_vendor_fhir_counts_vendor ON mv_vendor_fhir_counts(vendor_name);
 CREATE INDEX idx_mv_vendor_fhir_counts_fhir ON mv_vendor_fhir_counts(fhir_version);
-
+DROP INDEX IF EXISTS idx_mv_vendor_fhir_counts_unique;
+CREATE UNIQUE INDEX idx_mv_vendor_fhir_counts_unique ON mv_vendor_fhir_counts(vendor_name, fhir_version);
 COMMIT;

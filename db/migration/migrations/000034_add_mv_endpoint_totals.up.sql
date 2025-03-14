@@ -24,4 +24,7 @@ FROM totals;
 
 CREATE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
+DROP INDEX IF EXISTS idx_mv_endpoint_totals_date;
+CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
+
 COMMIT;
