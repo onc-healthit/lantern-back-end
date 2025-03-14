@@ -3,49 +3,50 @@
 log_file="/etc/lantern/logs/refresh_dashboard_views_logs.txt"
 echo "$(date +"%Y-%m-%d %H:%M:%S") - Refreshing Lantern dashboard materialized views." >> $log_file
 
-# Refresh mv_endpoint_totals
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_totals;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_totals." >> $log_file
-}
-
-# Drop and recreate index for mv_endpoint_totals
-docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_totals_date;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_totals_date." >> $log_file
-}
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_totals_date." >> $log_file
-}
-
-# Refresh mv_response_tally
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_response_tally;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_response_tally." >> $log_file
-}
-
-# Drop and recreate index for mv_response_tally
-docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_response_tally_http_code;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_response_tally_http_code." >> $log_file
-}
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_response_tally_http_code." >> $log_file
-}
-
-# Refresh mv_vendor_fhir_counts
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendor_fhir_counts;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_vendor_fhir_counts." >> $log_file
-}
-
-# Drop and recreate indexes for mv_vendor_fhir_counts
-docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_vendor_fhir_counts_vendor;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_vendor_fhir_counts_vendor." >> $log_file
-}
-docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_vendor_fhir_counts_fhir;" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_vendor_fhir_counts_fhir." >> $log_file
-}
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_vendor_fhir_counts_vendor ON mv_vendor_fhir_counts(vendor_name);" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_vendor_fhir_counts_vendor." >> $log_file
-}
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_vendor_fhir_counts_fhir ON mv_vendor_fhir_counts(fhir_version);" -U lantern -d lantern || { 
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_vendor_fhir_counts_fhir." >> $log_file
-}
+# First check if views exist and create them if needed, then create unique indexes
+docker exec -t lantern-back-end_postgres_1 psql -t -c "
+DO \$\$
+BEGIN
+    -- Check if mv_endpoint_totals exists
+    IF EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname = 'mv_endpoint_totals') THEN
+        -- Create unique index if it doesn't exist
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_mv_endpoint_totals_unique') THEN
+            EXECUTE 'CREATE UNIQUE INDEX idx_mv_endpoint_totals_unique ON mv_endpoint_totals(aggregation_date)';
+        END IF;
+        
+        -- Refresh the view
+        EXECUTE 'REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_totals';
+    ELSE
+        RAISE NOTICE 'mv_endpoint_totals does not exist, skipping refresh';
+    END IF;
+    
+    -- Check if mv_response_tally exists
+    IF EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname = 'mv_response_tally') THEN
+        -- Create unique index if it doesn't exist
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_mv_response_tally_unique') THEN
+            EXECUTE 'CREATE UNIQUE INDEX idx_mv_response_tally_unique ON mv_response_tally(http_200)';
+        END IF;
+        
+        -- Refresh the view
+        EXECUTE 'REFRESH MATERIALIZED VIEW CONCURRENTLY mv_response_tally';
+    ELSE
+        RAISE NOTICE 'mv_response_tally does not exist, skipping refresh';
+    END IF;
+    
+    -- Check if mv_vendor_fhir_counts exists
+    IF EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname = 'mv_vendor_fhir_counts') THEN
+        -- Create unique index if it doesn't exist
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_mv_vendor_fhir_counts_unique') THEN
+            EXECUTE 'CREATE UNIQUE INDEX idx_mv_vendor_fhir_counts_unique ON mv_vendor_fhir_counts(vendor_name, fhir_version)';
+        END IF;
+        
+        -- Refresh the view
+        EXECUTE 'REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendor_fhir_counts';
+    ELSE
+        RAISE NOTICE 'mv_vendor_fhir_counts does not exist, skipping refresh';
+    END IF;
+END
+\$\$;
+" -U lantern -d lantern 2>> $log_file
 
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
