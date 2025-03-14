@@ -482,7 +482,6 @@ CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizatio
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
 
 -- LANTERN-835
-DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_totals CASCADE;
 
 CREATE MATERIALIZED VIEW mv_endpoint_totals AS
 WITH latest_metadata AS (
@@ -506,10 +505,7 @@ FROM totals;
 
 CREATE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
-DROP INDEX IF EXISTS idx_mv_endpoint_totals_date;
 CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
-
-DROP MATERIALIZED VIEW IF EXISTS mv_response_tally CASCADE;
 
 CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
@@ -547,10 +543,7 @@ FROM response_counts;
 
 CREATE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
-DROP INDEX IF EXISTS idx_mv_response_tally_http_code;
 CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
-
-DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts CASCADE;
 
 CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
 SELECT 
@@ -600,5 +593,4 @@ ORDER BY
 -- Add indexes to improve query performance
 CREATE INDEX idx_mv_vendor_fhir_counts_vendor ON mv_vendor_fhir_counts(vendor_name);
 CREATE INDEX idx_mv_vendor_fhir_counts_fhir ON mv_vendor_fhir_counts(fhir_version);
-DROP INDEX IF EXISTS idx_mv_vendor_fhir_counts_unique;
 CREATE UNIQUE INDEX idx_mv_vendor_fhir_counts_unique ON mv_vendor_fhir_counts(vendor_name, fhir_version);
