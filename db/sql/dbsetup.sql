@@ -503,8 +503,6 @@ SELECT
     (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
 FROM totals;
 
-CREATE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
-
 CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
 CREATE MATERIALIZED VIEW mv_response_tally AS
@@ -540,8 +538,6 @@ SELECT
             ELSE 0 
         END), 0) AS http_503
 FROM response_counts;
-
-CREATE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
 CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
