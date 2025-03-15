@@ -56,4 +56,24 @@ CREATE UNIQUE INDEX mv_resource_interactions_uniq
     operations
   );
 
+DROP INDEX IF EXISTS mv_resource_interactions_vendor_name_idx;
+
+CREATE INDEX mv_resource_interactions_vendor_name_idx
+  ON mv_resource_interactions (vendor_name);
+
+DROP INDEX IF EXISTS mv_resource_interactions_fhir_version_idx;
+
+CREATE INDEX mv_resource_interactions_fhir_version_idx
+  ON mv_resource_interactions (fhir_version);
+
+DROP INDEX IF EXISTS mv_resource_interactions_resource_type_idx;
+
+CREATE INDEX mv_resource_interactions_resource_type_idx
+  ON mv_resource_interactions (resource_type);
+
+DROP INDEX IF EXISTS mv_resource_interactions_operations_idx;
+
+CREATE INDEX mv_resource_interactions_operations_idx
+  ON mv_resource_interactions USING GIN (operations);
+
 COMMIT;
