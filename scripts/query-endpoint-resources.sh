@@ -59,7 +59,7 @@ done
 
 #Query CHPL endpoint resource list
 echo "$current_datetime - Downloading Medicare State Endpoint List..." >> $log_file
-URL="https://chpl.healthit.gov/rest/search/v3?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182"
+URL="https://chpl.healthit.gov/rest/search/v3?api_key=${LANTERN_CHPLAPIKEY}&certificationCriteriaIds=182&certificationStatuses=Active,Suspended%20by%20ONC,Suspended%20by%20ONC-ACB"
 FILENAME="CHPLEndpointResourcesList.json"
 cd ../../endpointmanager/cmd/CHPLpopulator
 go run main.go $URL $FILENAME

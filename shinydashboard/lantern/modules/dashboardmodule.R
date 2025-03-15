@@ -99,21 +99,12 @@ dashboard <- function(
   })
 
   selected_http_summary <- reactive({
-    res <- isolate(app_data$http_pct())
+    res <- isolate(get_http_response_summary_tbl_all())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>%
-        filter(vendor_name == sel_vendor()) %>%
-        left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
-        select(id, code, label) %>%
-        group_by(code, label) %>%
-        summarise(count = n())
+      res <- isolate(get_http_response_summary_tbl(sel_vendor()))
     } else {
-      res <- res %>%
-        left_join(app$http_response_code_tbl(), by = c("code" = "code_chr")) %>%
-        select(id, code, label) %>%
-        group_by(code, label) %>%
-        summarise(count = n())
+      res <- isolate(get_http_response_summary_tbl_all())
     }
 
     res
@@ -168,7 +159,7 @@ dashboard <- function(
 
   output$http_code_table <- renderTable(
     selected_http_summary() %>%
-      rename("HTTP Response" = code, Status = label, Count = count)
+      rename("HTTP Response" = http_code, Status = code_label, Count = count_endpoints)
   )
 
   plot_height_vendors <- reactive({
@@ -238,9 +229,9 @@ output$vendor_share_plot <- renderCachedPlot({
   )
   
   output$response_code_plot <- renderCachedPlot({
-    ggplot(selected_http_summary() %>% mutate(Response = paste(code, "-", label)), aes(x = code, fill = as.factor(Response), y = count)) +
+    ggplot(selected_http_summary() %>% mutate(http_code = as.factor(http_code), Response = paste(http_code, "-", code_label)), aes(x = http_code, fill = as.factor(Response), y = count_endpoints)) +
     geom_bar(stat = "identity", show.legend = FALSE) +
-      geom_text(aes(label = stat(y), group = code),
+      geom_text(aes(label = stat(y), group = http_code),
                 stat = "summary", fun = sum, vjust = -1
       ) +
       theme(text = element_text(size = 15)) +
