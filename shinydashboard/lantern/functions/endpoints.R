@@ -75,14 +75,23 @@ vendor_short_names <- data.frame(
 # - all registered endpoints
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
+# Get Endpoint Totals
+# Return list of counts of:
+# - all registered endpoints
+# - indexed endpoints that have been queried
+# - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% filter(requested_fhir_version == "None") %>% distinct(url) %>% count() %>% pull(n)
+  totals_data <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1)
+  
   fhir_endpoint_totals <- list(
-    "all_endpoints"     = all,
-    "indexed_endpoints" = indexed,
-    "nonindexed_endpoints" = max(all - indexed, 0)
+    "all_endpoints"     = totals_data$all_endpoints,
+    "indexed_endpoints" = totals_data$indexed_endpoints,
+    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
   )
+  
+  return(fhir_endpoint_totals)
 }
 
 # create a join to get more detailed table of fhir_endpoint information
@@ -102,28 +111,20 @@ get_fhir_endpoints_tbl <- function() {
 
 # get the endpoint tally by http_response received
 get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_info %>%
-    filter(requested_fhir_version == "None") %>%
-    select(metadata_id) %>%
-    left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
-    by = c("metadata_id" = "id")) %>%
-    select(http_response) %>%
-    group_by(http_response) %>%
-    tally()
-
-  # Get the list of most recent HTTP responses when requesting the capability statement from the
-  # fhir_endpoints
-  list(
-    "http_200" = max((curr_tally %>% filter(http_response == 200)) %>% pull(n), 0),
-    "http_non200" = max((curr_tally %>% filter(http_response != 200)) %>% pull(n), 0),
-    "http_404" = max((curr_tally %>% filter(http_response == 404)) %>% pull(n), 0),
-    "http_503" = max((curr_tally %>% filter(http_response == 503)) %>% pull(n), 0)
-  )
+  response_tally <- db_tables$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
+  
+  return(response_tally)
 }
 
-# get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(isolate(app_data$last_updated()))
+  last_updated <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1) %>%
+    pull(last_updated)
+  
+  as.character.Date(last_updated)
 }
 
 # Compute the percentage of each response code for all responses received
@@ -142,7 +143,6 @@ get_http_response_summary_tbl_all <- function() {
     collect()
   res
 }
-
 
 # Get the count of endpoints by vendor
 get_fhir_version_vendor_count <- function(endpoint_tbl) {
