@@ -67,46 +67,31 @@ dashboard <- function(
 ) {
   ns <- session$ns
 
-
-  all_vendor_counts <- reactive({
-    res <- isolate(app_data$vendor_count_tbl())
-    res <- res %>%
-      group_by(vendor_name) %>%
-      summarise(developer_count = sum(n)) %>%
-      select(vendor_name, developer_count)
-  })
-
   fhirVendorTableSize <- reactiveVal(NULL)
 
-  vendor_count_table <- reactive({
-    res <- isolate(app_data$vendor_count_tbl())
-    res <- res %>%
-      left_join(all_vendor_counts(), by = c("vendor_name" = "vendor_name")) %>%
-      mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-      mutate(percentage = paste0(percentage, "%")) %>%
-      select(vendor_name, fhir_version, n, percentage)
-
-    if (is.null(fhirVendorTableSize())) {
-      fhirVendorTableSize(ceiling(nrow(app_data$vendor_count_tbl()) / 2))
-    }
-
-    res
-  })
-
   output$fhir_vendor_table <-  reactable::renderReactable({
-    reactable(vendor_count_table(),
-                columns = list(
-                  vendor_name = colDef(name = "Vendor"),
-                  fhir_version = colDef(name = "FHIR Version"),
-                  n = colDef(name = "Count"),
-                  percentage = colDef(name = "Developer Percentage")
-                ),
-                sortable = TRUE,
-                searchable = TRUE,
-                showSortIcon = TRUE,
-                defaultPageSize = isolate(fhirVendorTableSize())
-    )
-  })
+  vendor_table_data <- prepare_vendor_data(db_tables)
+  if (is.null(fhirVendorTableSize())) {
+    fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
+  }
+  
+  # Create a filtered version of the data for the table display
+  display_data <- vendor_table_data %>%
+    select(vendor_name, fhir_version, n, percentage)
+    
+  reactable(display_data,
+              columns = list(
+                vendor_name = colDef(name = "Vendor"),
+                fhir_version = colDef(name = "FHIR Version"),
+                n = colDef(name = "Count"),
+                percentage = colDef(name = "Developer Percentage")
+              ),
+              sortable = TRUE,
+              searchable = TRUE,
+              showSortIcon = TRUE,
+              defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
+  )
+})
 
   observeEvent(input$fhir_vendor_table_state$length, {
     page <- input$fhir_vendor_table_state$length
@@ -114,7 +99,6 @@ dashboard <- function(
   })
 
   selected_http_summary <- reactive({
-
     res <- isolate(get_http_response_summary_tbl_all())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -129,7 +113,7 @@ dashboard <- function(
   # create a summary table to show the response codes received along with
   # the description for each code
 
-    output$updated_time_box <- renderInfoBox({
+  output$updated_time_box <- renderInfoBox({
     infoBox(
       "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
       color = "purple"
@@ -138,7 +122,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", isolate(app_data$fhir_endpoint_totals()$all_endpoints), icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
+      "Total Endpoints", get_endpoint_totals_list(db_tables)$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
       color = "blue"
     )
   })
@@ -146,7 +130,7 @@ dashboard <- function(
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
       "Indexed Endpoints*",
-      isolate(app_data$fhir_endpoint_totals()$indexed_endpoints),
+      get_endpoint_totals_list(db_tables)$indexed_endpoints,
       icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
     )
@@ -154,26 +138,26 @@ dashboard <- function(
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
+      get_response_tally_list(db_tables) %>% pull(http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
+      get_response_tally_list(db_tables) %>% pull(http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      isolate(app_data$response_tally()$http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
+      get_response_tally_list(db_tables) %>% pull(http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
       color = "orange"
     )
   })
 
-  output$http_code_table   <- renderTable(
+  output$http_code_table <- renderTable(
     selected_http_summary() %>%
       rename("HTTP Response" = http_code, Status = code_label, Count = count_endpoints)
   )
@@ -186,11 +170,48 @@ dashboard <- function(
     plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
   })
 
-  output$vendor_share_plot <- renderCachedPlot({
-   ggplot(isolate(app_data$vendor_count_tbl()), aes(y = n, x = fct_rev(as.factor(short_name)), fill = fhir_version)) +
+  # Fixed prepare_vendor_data to handle integer64 data type
+# Updated prepare_vendor_data to rename NA to Unknown
+prepare_vendor_data <- function(db_tables) {
+  # Directly use the materialized view and convert integer64 to regular integers
+  fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
+    collect() %>%
+    mutate(n = as.integer(n))  # Convert integer64 to regular integer
+  
+  # Replace NA values with "Unknown" in vendor_name and fhir_version
+  fhir_data <- fhir_data %>%
+    mutate(
+      vendor_name = ifelse(is.na(vendor_name), "Unknown", vendor_name),
+      fhir_version = ifelse(is.na(fhir_version), "Unknown", fhir_version)
+    )
+  
+  # Calculate percentage for each vendor
+  all_vendor_counts <- fhir_data %>%
+    group_by(vendor_name) %>%
+    summarise(developer_count = sum(n))
+  
+  # Join back to get percentages
+  fhir_data <- fhir_data %>%
+    left_join(all_vendor_counts, by = "vendor_name") %>%
+    mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+    mutate(percentage = paste0(percentage, "%")) %>%
+    # Select only the columns needed
+    select(vendor_name, fhir_version, n, percentage)
+  
+  return(fhir_data)
+}
+
+# Restored vendor_share_plot with original visual appearance
+output$vendor_share_plot <- renderCachedPlot({
+   vendor_plot_data <- prepare_vendor_data(db_tables) %>%
+     filter(n > 0)  # Filter out zero counts
+   
+   # Ensure we have proper factor levels for vendor_name
+   vendor_plot_data$vendor_name <- factor(vendor_plot_data$vendor_name)
+   
+   ggplot(vendor_plot_data, aes(y = n, x = fct_rev(vendor_name), fill = fhir_version)) +
       geom_col(width = 0.8) +
-      geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)
-      ) +
+      geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
       theme(text = element_text(size = 15)) +
       labs(fill = "FHIR Version",
@@ -206,6 +227,7 @@ dashboard <- function(
       app_data$last_updated()
     }
   )
+  
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(http_code = as.factor(http_code), Response = paste(http_code, "-", code_label)), aes(x = http_code, fill = as.factor(Response), y = count_endpoints)) +
     geom_bar(stat = "identity", show.legend = FALSE) +

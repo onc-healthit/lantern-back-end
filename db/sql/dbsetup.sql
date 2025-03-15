@@ -481,6 +481,116 @@ CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
 CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
 
+-- LANTERN-835
+
+CREATE MATERIALIZED VIEW mv_endpoint_totals AS
+WITH latest_metadata AS (
+    SELECT max(updated_at) AS last_updated
+    FROM fhir_endpoints_metadata
+), 
+totals AS (
+    SELECT 
+        (SELECT count(DISTINCT url) FROM fhir_endpoints) AS all_endpoints,
+        (SELECT count(DISTINCT url) 
+         FROM fhir_endpoints_info 
+         WHERE requested_fhir_version = 'None') AS indexed_endpoints
+)
+SELECT 
+    now() AS aggregation_date,
+    totals.all_endpoints,
+    totals.indexed_endpoints,
+    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
+    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
+FROM totals;
+
+CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
+
+CREATE MATERIALIZED VIEW mv_response_tally AS
+WITH response_counts AS (
+    SELECT 
+        fem.http_response,
+        count(*) AS response_count
+    FROM fhir_endpoints_info fei
+    JOIN fhir_endpoints_metadata fem 
+        ON fei.metadata_id = fem.id
+    WHERE fei.requested_fhir_version = 'None'
+    GROUP BY fem.http_response
+)
+SELECT 
+    COALESCE(SUM(
+        CASE 
+            WHEN http_response = 200 THEN response_count 
+            ELSE 0 
+        END), 0) AS http_200,
+    COALESCE(SUM(
+        CASE 
+            WHEN http_response <> 200 THEN response_count 
+            ELSE 0 
+        END), 0) AS http_non200,
+    COALESCE(SUM(
+        CASE 
+            WHEN http_response = 404 THEN response_count 
+            ELSE 0 
+        END), 0) AS http_404,
+    COALESCE(SUM(
+        CASE 
+            WHEN http_response = 503 THEN response_count 
+            ELSE 0 
+        END), 0) AS http_503
+FROM response_counts;
+
+CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
+
+CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
+SELECT 
+    COALESCE(v.name, 'Unknown') AS vendor_name,
+    CASE
+        WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
+        -- Apply the dash rule: if there's a dash, trim after it
+        WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
+        -- If it's not in the valid list, mark as Unknown
+        WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE e.fhir_version
+    END AS fhir_version,
+    COUNT(DISTINCT e.url) AS n,
+    CASE
+        WHEN COALESCE(v.name, 'Unknown') = 'Allscripts' THEN 'Allscripts'
+        WHEN COALESCE(v.name, 'Unknown') = 'CareEvolution, Inc.' THEN 'CareEvolution'
+        WHEN COALESCE(v.name, 'Unknown') = 'Cerner Corporation' THEN 'Cerner'
+        WHEN COALESCE(v.name, 'Unknown') = 'Epic Systems Corporation' THEN 'Epic'
+        WHEN COALESCE(v.name, 'Unknown') = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
+        WHEN COALESCE(v.name, 'Unknown') = 'Microsoft Corporation' THEN 'Microsoft'
+        WHEN COALESCE(v.name, 'Unknown') = 'Unknown' THEN 'Unknown'
+        ELSE COALESCE(v.name, 'Unknown')
+    END AS short_name
+FROM endpoint_export e
+LEFT JOIN vendors v ON e.vendor_name = v.name
+GROUP BY 
+    COALESCE(v.name, 'Unknown'), 
+    CASE
+        WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
+        WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
+        WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE e.fhir_version
+    END,
+    CASE
+        WHEN COALESCE(v.name, 'Unknown') = 'Allscripts' THEN 'Allscripts'
+        WHEN COALESCE(v.name, 'Unknown') = 'CareEvolution, Inc.' THEN 'CareEvolution'
+        WHEN COALESCE(v.name, 'Unknown') = 'Cerner Corporation' THEN 'Cerner'
+        WHEN COALESCE(v.name, 'Unknown') = 'Epic Systems Corporation' THEN 'Epic'
+        WHEN COALESCE(v.name, 'Unknown') = 'Medical Information Technology, Inc. (MEDITECH)' THEN 'MEDITECH'
+        WHEN COALESCE(v.name, 'Unknown') = 'Microsoft Corporation' THEN 'Microsoft'
+        WHEN COALESCE(v.name, 'Unknown') = 'Unknown' THEN 'Unknown'
+        ELSE COALESCE(v.name, 'Unknown')
+    END
+ORDER BY 
+    vendor_name, fhir_version;
+
+-- Add indexes to improve query performance
+CREATE INDEX idx_mv_vendor_fhir_counts_vendor ON mv_vendor_fhir_counts(vendor_name);
+CREATE INDEX idx_mv_vendor_fhir_counts_fhir ON mv_vendor_fhir_counts(fhir_version);
+CREATE UNIQUE INDEX idx_mv_vendor_fhir_counts_unique ON mv_vendor_fhir_counts(vendor_name, fhir_version);
+
 -- LANTERN-831
 CREATE MATERIALIZED VIEW mv_http_responses AS
 WITH response_by_vendor AS (
