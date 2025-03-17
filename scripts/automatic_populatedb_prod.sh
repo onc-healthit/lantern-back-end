@@ -2,8 +2,9 @@
 
 EMAIL=
 
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# Commenting out SHELL and PATH variables as they are causing Go version error during the execution of query-endpoint-resources.sh
+#SHELL=/bin/sh
+#PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 log_file="/etc/lantern/logs/automatic_populatedb_prod_logs.txt"
 current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
 LOGFILE=populatedb_logs_$(date +%Y%m%d%H%M%S).txt
