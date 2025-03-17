@@ -50,7 +50,8 @@ contactsmodule <- function(
         filtered_data <- filtered_data %>%
             filter(contact_rank == 1 | is.na(contact_rank)) %>%
             arrange(url, contact_rank)  # Ensure consistent ordering
-        
+        filtered_data <- filtered_data %>%
+            distinct(url, requested_fhir_version, .keep_all = TRUE)
         # Format the data for display
         filtered_data$linkurl <- paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", filtered_data$url, "&&", filtered_data$requested_fhir_version, "&quot;,{priority: \'event\'});\">", filtered_data$url, "</a>")
         
@@ -59,9 +60,9 @@ contactsmodule <- function(
         filtered_data$contact_value <- ifelse(is.na(filtered_data$contact_value), "-", filtered_data$contact_value)
         
         # Fix show_all links - ensure they use correct HTML formatting
-        filtered_data$show_all <- ifelse(filtered_data$num_contacts > 1, 
-                                      paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to show all contact information.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", filtered_data$url, "&quot;,{priority: \'event\'});\"> Show All Contacts </a>"), 
-                                      "-")
+        filtered_data$show_all <- ifelse(filtered_data$num_contacts > 1 & filtered_data$has_contact == TRUE, 
+                              paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to show all contact information.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", filtered_data$url, "&quot;,{priority: \'event\'});\"> Show All Contacts </a>"), 
+                              "-")
         
         # Clean up endpoint names formatting using purrr instead of sapply
         filtered_data$condensed_endpoint_names <- map_chr(seq_len(nrow(filtered_data)), function(i) {

@@ -289,18 +289,20 @@ selected_fhir_endpoint_profiles <- reactive({
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
       chplDropdown <- selectInput(inputId = "is_chpl", label = "From CHPL:", choices = c("True", "False", "All"), selected = "All", size = 1, selectize = FALSE)
+      orgDropdown <- selectInput(inputId = "is_chpl", label = "Type of Organization:", choices = c("Provider", "Payer", "All"), selected = "All", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
-          column(width = 3,
+          column(width = 4,
           tags$div(
             p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
             actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
             actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
           ),
           fhirDropdown_noLabel),
-          column(width = 3, developerDropdown),
-          column(width = 3, availabilityDropdown),
-          column(width = 3, chplDropdown)
+          column(width = 2, developerDropdown),
+          column(width = 2, availabilityDropdown),
+          column(width = 2, chplDropdown),
+          column(width = 2, orgDropdown)
         )
       } else if (show_validations_filter()) {
         fluidRow(
@@ -715,49 +717,56 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   observeEvent(input$show_contact_modal, {
-    showModal(modalDialog(
-      title = "All Contacts",
-      p(input$show_contact_modal),
-      p(ifelse(is.na(
-        app_data$contact_info_tbl() %>%
+  showModal(modalDialog(
+    title = "All Contacts",
+    p(input$show_contact_modal),
+    p(
+      {
+        # Get the raw endpoint names
+        endpoint_names_raw <- app_data$contact_info_tbl() %>%
           filter(url == input$show_contact_modal) %>%
           distinct(endpoint_names) %>%
-          select(endpoint_names))
-          ||
-          app_data$contact_info_tbl() %>%
-          filter(url == input$show_contact_modal) %>%
-          distinct(endpoint_names) %>%
-          select(endpoint_names) == "",
-        "-",
+          pull(endpoint_names)
+        
+        # Apply formatting only if we have data
+        if (length(endpoint_names_raw) == 0 || is.null(endpoint_names_raw) || 
+            all(is.na(endpoint_names_raw)) || all(endpoint_names_raw == "")) {
+          "-"  # Same fallback as original
+        } else {
+          # Use the first non-NA value and clean it
+          first_valid <- endpoint_names_raw[!is.na(endpoint_names_raw)][1]
+          if (is.na(first_valid) || first_valid == "") {
+            "-"
+          } else {
+            # Remove the problematic characters (curly braces, quotes, backslashes)
+            gsub("[{}\"\\\\]", "", first_valid)
+          }
+        }
+      }
+    ),
+    reactable::renderReactable({
+      reactable(
         app_data$contact_info_tbl() %>%
+        mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
         filter(url == input$show_contact_modal) %>%
-        mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
-        distinct(endpoint_names) %>%
-        select(endpoint_names)
-      ),
-      reactable::renderReactable({
-        reactable(
-          app_data$contact_info_tbl() %>%
-          mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
-          filter(url == input$show_contact_modal) %>%
-          arrange(contact_preference) %>%
-          mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
-          select(contact_name, contact_type, contact_value) %>%
-          mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
-              defaultColDef = colDef(
-                align = "center"
-              ),
-              columns = list(
-                  contact_name = colDef(name = "Contact Name"),
-                  contact_type = colDef(name = "Contact Type"),
-                  contact_value = colDef(name = "Contact Info")
-              ),
-              groupBy = "contact_name"
-        )
-      }),
-            easyClose = TRUE
-  )))
-  })
+        arrange(contact_preference) %>%
+        mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
+        select(contact_name, contact_type, contact_value) %>%
+        mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
+            defaultColDef = colDef(
+              align = "center"
+            ),
+            columns = list(
+                contact_name = colDef(name = "Contact Name"),
+                contact_type = colDef(name = "Contact Type"),
+                contact_value = colDef(name = "Contact Info")
+            ),
+            groupBy = "contact_name"
+      )
+    }),
+    easyClose = TRUE
+  ))
+})
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({
   splitString <- strsplit(input$endpoint_popup, "&&")
