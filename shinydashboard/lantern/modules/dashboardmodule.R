@@ -99,12 +99,12 @@ dashboard <- function(
   })
 
   selected_http_summary <- reactive({
-    res <- isolate(get_http_response_summary_tbl_all())
+    res <- isolate(get_http_response_tbl_all())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- isolate(get_http_response_summary_tbl(sel_vendor()))
+      res <- isolate(get_http_response_tbl(sel_vendor()))
     } else {
-      res <- isolate(get_http_response_summary_tbl_all())
+      res <- isolate(get_http_response_tbl_all())
     }
 
     res
