@@ -152,6 +152,37 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_locations." >> $log_file
 }
 
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_list_org_uniq;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop mv_endpoint_list_organizations." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, requested_fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_endpoint_list_organizations." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_list_org_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_list_org_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_list_org_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_list_org_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_list_org_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_list_org_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_list_org_url;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_list_org_url." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_list_org_url." >> $log_file
+
 # Reindex the endpoint list organizations indexes
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endpoint_list_org_fhir;" -U lantern -d lantern
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endpoint_list_org_vendor;" -U lantern -d lantern
@@ -161,3 +192,5 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endp
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endpoint_loc_fhir;" -U lantern -d lantern
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endpoint_loc_vendor;" -U lantern -d lantern
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_endpoint_loc_url;" -U lantern -d lantern
+
+echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
