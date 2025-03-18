@@ -1,5 +1,5 @@
 BEGIN;
-DROP MATERIALIZED VIEW IF EXISTS mv_contact_information CASCADE;
+-- LANTERN-836: Create an SQL Materialized View for the Contact Information Tab
 CREATE MATERIALIZED VIEW mv_contact_information AS
 WITH contact_data AS (
   -- Get contact information from JSON
@@ -104,5 +104,4 @@ CREATE INDEX mv_contact_information_vendor_name_idx
   ON mv_contact_information (vendor_name);
 CREATE INDEX mv_contact_information_has_contact_idx 
   ON mv_contact_information (has_contact);
-
 COMMIT;
