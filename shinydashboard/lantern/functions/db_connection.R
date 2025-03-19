@@ -36,6 +36,7 @@ db_tables <- list(
   endpoint_export             = tbl(db_connection, "endpoint_export"),
   organization_location       = tbl(db_connection, "organization_location"),
   vendors                     = tbl(db_connection, "vendors"),
+  endpoint_export_mv          = tbl(db_connection, "endpoint_export_mv"),
   mv_endpoint_totals          = tbl(db_connection, "mv_endpoint_totals"),
   mv_vendor_fhir_counts       = tbl(db_connection, "mv_vendor_fhir_counts"),
   mv_response_tally          = tbl(db_connection, "mv_response_tally")

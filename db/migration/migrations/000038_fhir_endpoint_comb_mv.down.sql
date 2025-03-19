@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS fhir_endpoint_comb_mv;
+
+COMMIT;
