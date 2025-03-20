@@ -70,4 +70,7 @@ LEFT JOIN list_source_info lsi
 LEFT JOIN grouped_organizations g 
     ON p.url = g.url;
 
+-- Unique Index for refeshing the MV concurrently 
+CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
+
 COMMIT;

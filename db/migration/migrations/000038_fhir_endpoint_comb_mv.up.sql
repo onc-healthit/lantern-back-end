@@ -20,6 +20,7 @@ WITH enriched_endpoints AS (
         ON e.http_response = r.http_code
 )
 SELECT 
+    ROW_NUMBER() OVER () AS id,
     e.url,
     e.endpoint_names,
     e.info_created,
@@ -42,5 +43,8 @@ SELECT
 FROM enriched_endpoints e
 LEFT JOIN list_source_info lsi 
     ON e.list_source = lsi.list_source;
+
+--Unique index for refreshing the MV concurrently
+CREATE UNIQUE INDEX fhir_endpoint_comb_mv_unique_idx ON fhir_endpoint_comb_mv (id, url, list_source);
 
 COMMIT;
