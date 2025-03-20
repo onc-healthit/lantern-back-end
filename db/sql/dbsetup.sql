@@ -845,6 +845,9 @@ LEFT JOIN list_source_info lsi
 LEFT JOIN grouped_organizations g 
     ON p.url = g.url;
 
+-- Unique Index for refeshing the MV concurrently 
+CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
+
 --fhir_endpoint_comb_mv
 CREATE MATERIALIZED VIEW fhir_endpoint_comb_mv AS
 WITH enriched_endpoints AS (
@@ -864,6 +867,7 @@ WITH enriched_endpoints AS (
         ON e.http_response = r.http_code
 )
 SELECT 
+    ROW_NUMBER() OVER () AS id,
     e.url,
     e.endpoint_names,
     e.info_created,
@@ -886,6 +890,9 @@ SELECT
 FROM enriched_endpoints e
 LEFT JOIN list_source_info lsi 
     ON e.list_source = lsi.list_source;
+
+--Unique index for refreshing the MV concurrently
+CREATE UNIQUE INDEX fhir_endpoint_comb_mv_unique_idx ON fhir_endpoint_comb_mv (id, url, list_source);
 
 --selected_fhir_endpoints_mv
 CREATE MATERIALIZED VIEW selected_fhir_endpoints_mv AS
@@ -936,3 +943,9 @@ LEFT JOIN list_source_info lsi
 
 -- Create a unique composite index including the new id column
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_mv_unique ON selected_fhir_endpoints_mv(id, url, requested_fhir_version);
+
+-- Create single column indexes to improve filtering performance
+CREATE INDEX idx_selected_fhir_endpoints_mv_fhir_version ON selected_fhir_endpoints_mv(fhir_version);
+CREATE INDEX idx_selected_fhir_endpoints_mv_vendor_name ON selected_fhir_endpoints_mv(vendor_name);
+CREATE INDEX idx_selected_fhir_endpoints_mv_availability ON selected_fhir_endpoints_mv(availability);
+CREATE INDEX idx_selected_fhir_endpoints_mv_is_chpl ON selected_fhir_endpoints_mv(is_chpl);
