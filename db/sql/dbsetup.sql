@@ -774,3 +774,118 @@ CREATE INDEX mv_resource_interactions_resource_type_idx
 
 CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
+
+-- Materialized view for validation results plot
+CREATE MATERIALIZED VIEW mv_validation_results_plot AS
+SELECT 
+    COALESCE(vendors.name, 'Unknown') as vendor_name,
+    CASE 
+        WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+        WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE capability_fhir_version
+    END AS fhir_version,
+    v.rule_name,
+    v.valid,
+    v.reference,
+    COUNT(*) as count
+FROM validations v
+JOIN fhir_endpoints_info f ON v.validation_result_id = f.validation_result_id
+LEFT JOIN vendors ON f.vendor_id = vendors.id
+WHERE f.requested_fhir_version = 'None'
+AND v.rule_name IS NOT NULL
+GROUP BY 
+    vendors.name, 
+    f.capability_fhir_version,
+    v.rule_name, 
+    v.valid, 
+    v.reference;
+
+CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
+ON mv_validation_results_plot(vendor_name, fhir_version, rule_name, valid, reference);
+
+CREATE INDEX mv_validation_results_plot_vendor_idx ON mv_validation_results_plot(vendor_name);
+CREATE INDEX mv_validation_results_plot_fhir_idx ON mv_validation_results_plot(fhir_version);
+CREATE INDEX mv_validation_results_plot_rule_idx ON mv_validation_results_plot(rule_name);
+CREATE INDEX mv_validation_results_plot_valid_idx ON mv_validation_results_plot(valid);
+CREATE INDEX mv_validation_results_plot_reference_idx ON mv_validation_results_plot(reference);
+
+-- Materialized view for validation details
+CREATE MATERIALIZED VIEW mv_validation_details AS
+WITH validation_data AS (
+    SELECT 
+        COALESCE(vendors.name, 'Unknown') as vendor_name,
+        CASE 
+            WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+            WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+            ELSE capability_fhir_version
+        END AS fhir_version,
+        rule_name,
+        reference
+    FROM validations v
+    JOIN fhir_endpoints_info f ON v.validation_result_id = f.validation_result_id
+    LEFT JOIN vendors on f.vendor_id = vendors.id
+    WHERE f.requested_fhir_version = 'None'
+    AND v.rule_name IS NOT NULL
+),
+validation_versions AS (
+    SELECT
+        rule_name,
+        STRING_AGG(
+            CASE 
+                WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2'
+                WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3'
+                WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4'
+                ELSE fhir_version
+            END,
+            ', ' ORDER BY fhir_version
+        ) as fhir_version_names
+    FROM (
+        SELECT DISTINCT rule_name, fhir_version
+        FROM validation_data
+        WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat'
+    ) AS distinct_versions
+    GROUP BY rule_name
+)
+SELECT 
+    vd.rule_name,
+    COALESCE(vv.fhir_version_names, '') as fhir_version_names
+FROM (
+    SELECT DISTINCT rule_name
+    FROM validation_data
+) vd
+LEFT JOIN validation_versions vv ON vd.rule_name = vv.rule_name
+ORDER BY vd.rule_name;
+
+CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(rule_name);
+
+-- Materialized view for validation failures
+CREATE MATERIALIZED VIEW mv_validation_failures AS
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY f.url, v.rule_name) as id,
+    f.url,
+    CASE 
+        WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+        WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+        ELSE capability_fhir_version
+    END AS fhir_version,
+    COALESCE(vendors.name, 'Unknown') as vendor_name,
+    v.rule_name,
+    v.reference,
+    v.expected,
+    v.actual
+FROM validations v
+JOIN fhir_endpoints_info f ON v.validation_result_id = f.validation_result_id
+LEFT JOIN vendors ON f.vendor_id = vendors.id
+WHERE f.requested_fhir_version = 'None'
+AND v.valid = FALSE
+AND v.rule_name IS NOT NULL;
+
+CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(id);
+CREATE INDEX mv_validation_failures_url_idx ON mv_validation_failures(url);
+CREATE INDEX mv_validation_failures_fhir_version_idx ON mv_validation_failures(fhir_version);
+CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(vendor_name);
+CREATE INDEX mv_validation_failures_rule_name_idx ON mv_validation_failures(rule_name);
+CREATE INDEX mv_validation_failures_reference_idx ON mv_validation_failures(reference);
