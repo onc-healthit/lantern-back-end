@@ -855,28 +855,85 @@ get_cap_stat_sizes <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
+get_validation_results_plot_data <- function(db_connection) {
+  # Try to use the materialized view
+  res <- tryCatch({
+    tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
+      collect()
+  }, error = function(e) {
+    message("Error using mv_validation_results_plot, falling back to dynamic calculation: ", e$message)
+    
+    # Fallback to calculating summary dynamically
+    res <- tbl(db_connection,
+      sql("WITH validation_data AS (
+            SELECT 
+                COALESCE(vendors.name, 'Unknown') as vendor_name,
+                CASE 
+                    WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+                    WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+                    WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
+                    ELSE capability_fhir_version
+                END AS fhir_version,
+                rule_name,
+                valid,
+                reference
+            FROM fhir_endpoints_info f
+            LEFT JOIN vendors on f.vendor_id = vendors.id
+            INNER JOIN validations on f.validation_result_id = validations.validation_result_id
+            WHERE f.requested_fhir_version = 'None'
+        )
+        SELECT 
+            vendor_name,
+            fhir_version,
+            rule_name,
+            valid,
+            reference,
+            COUNT(*) as count
+        FROM validation_data
+        GROUP BY vendor_name, fhir_version, rule_name, valid, reference")) %>%
+      collect()
+    
+    return(res)
+  })
+  
+  return(res)
+}
+
 get_validation_results <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT vendors.name as vendor_name,
-          f.url as url,
-          capability_fhir_version as fhir_version,
-          rule_name,
-          valid,
-          expected,
-          actual,
-          comment,
-          reference,
-          validations.validation_result_id as id,
-          requested_fhir_version
-        FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id
-          INNER JOIN validations on f.validation_result_id = validations.validation_result_id
-        ORDER BY validations.validation_result_id, rule_name")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  # Try to use the materialized view
+  res <- tryCatch({
+    tbl(db_connection, sql("SELECT * FROM mv_validations")) %>%
+      collect()
+  }, error = function(e) {
+    message("Error using materialized view, falling back to original query: ", e$message)
+    
+    # Fallback to the original query if the materialized view doesn't exist or has an issue
+    res <- tbl(db_connection,
+      sql("SELECT vendors.name as vendor_name,
+            f.url as url,
+            capability_fhir_version as fhir_version,
+            rule_name,
+            valid,
+            expected,
+            actual,
+            comment,
+            reference,
+            validations.validation_result_id as id,
+            requested_fhir_version
+          FROM fhir_endpoints_info f
+            LEFT JOIN vendors on f.vendor_id = vendors.id
+            INNER JOIN validations on f.validation_result_id = validations.validation_result_id
+          ORDER BY validations.validation_result_id, rule_name")) %>%
+      collect() %>%
+      tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+      mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
+      mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+      mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    
+    return(res)
+  })
+  
+  return(res)
 }
 
 get_endpoint_list_matches <- function() {
@@ -984,10 +1041,11 @@ database_fetcher <- reactive({
   timer()
   start_time <- Sys.time()
   message("database_fetcher ***************************************")
-  safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
-  safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
-  safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
+  # safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
+  # safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
+  # safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
+  # safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
+  safe_execute("app_data$validation_plot_data", app_data$validation_plot_data(get_validation_results_plot_data(db_connection)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
@@ -1007,6 +1065,7 @@ database_fetcher <- reactive({
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
   safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
+  safe_execute("app_data$validation_summary", app_data$validation_summary(get_validation_results_summary(db_connection)))
   safe_execute("app_data$validation_tbl", app_data$validation_tbl(get_validation_results(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
