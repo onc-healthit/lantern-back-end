@@ -48,48 +48,123 @@ smartresponsemodule <- function(
 }
 
   selected_smart_capabilities <- reactive({
-    res <- isolate(app_data$smart_response_capabilities())
-    res <- get_filtered_data(res)
-    res
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve aggregated capabilities directly from the materialized view via SQL
+  res <- get_smart_response_capability_count(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  
+  res <- res %>% mutate(Endpoints = as.integer(Endpoints))
+  res
+  })
+
+  selected_smart_vendors <- reactive({
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve the aggregated vendor table from SQL
+  res <- get_smart_vendor_table(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  res <- res %>% mutate(Endpoints = as.integer(Endpoints))
+  res
   })
 
   selected_smart_count_total <- reactive({
-    all <- app$endpoint_export_tbl()
-    all <- get_filtered_data(all)
-    all <- all %>% distinct(url) %>% count() %>% pull(n)
-    all
+    # Get current filter values
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+    
+    req(current_fhir, current_vendor)
+    
+    # Get the count directly from the materialized view with SQL filtering
+    count <- get_selected_smart_count_total(
+      db_connection,
+      fhir_version = current_fhir,
+      vendor = current_vendor
+    )
+    
+    count
   })
 
   selected_smart_count_200 <- reactive({
-    res <- isolate(app_data$http_pct())
-    res <- get_filtered_data(res)
-    res <- res %>%
-      select(http_response) %>%
-      group_by(http_response) %>%
-      filter(http_response == 200) %>%
-      tally()
-
-    max((res %>% filter(http_response == 200)) %>% pull(n), 0)
-  })
-
-  selected_well_known_count_doc <- reactive({
-    res <- app_data$well_known_endpoints_tbl()
-    res <- get_filtered_data(res)
-    res
-  })
-
-  selected_well_known_count_no_doc <- reactive({
-    res <- app_data$well_known_endpoints_no_doc()
-    res <- get_filtered_data(res)
-    res
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve the count directly from the materialized view with all SQL filtering
+  count <- get_selected_smart_count_200(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  
+  count
   })
 
   selected_well_known_endpoints_count <- reactive({
-    res <- app$endpoint_export_tbl()
-      res <- get_filtered_data(res)
-    res <- res %>% filter(smart_http_response == 200)
-    res <- res %>% distinct(url) %>% count() %>% pull(n)
-    res
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve the count directly from the materialized view with all SQL filtering applied
+  count <- get_selected_well_known_endpoints_count(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  
+  count
+  })
+
+  selected_well_known_count_doc <- reactive({
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve the count directly from the materialized view with SQL filtering
+  count <- get_selected_well_known_count_doc(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  
+  count
+  })
+
+  selected_well_known_count_no_doc <- reactive({
+  # Get current filter values
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  
+  req(current_fhir, current_vendor)
+  
+  # Retrieve the count directly from the materialized view with SQL filtering
+  count <- get_selected_well_known_count_no_doc(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
+  
+  count
   })
 
   selected_well_known_endpoint_counts <- reactive({
@@ -98,24 +173,18 @@ smartresponsemodule <- function(
       "Total Indexed Endpoints", as.integer(selected_smart_count_total()),
       "Endpoints with successful response (HTTP 200)", as.integer(selected_smart_count_200()),
       "Well Known URI Endpoints with successful response (HTTP 200)", as.integer(selected_well_known_endpoints_count()),
-      "Well Known URI Endpoints with valid response JSON document", as.integer(nrow(selected_well_known_count_doc())),
-      "Well Known URI Endpoints without valid response JSON document", as.integer(nrow(selected_well_known_count_no_doc()))
+      "Well Known URI Endpoints with valid response JSON document", as.integer(selected_well_known_count_doc()),
+      "Well Known URI Endpoints without valid response JSON document", as.integer(selected_well_known_count_no_doc())
     )
   })
 
   output$smart_capability_count_table <- renderTable(
-    get_smart_response_capability_count(selected_smart_capabilities())
+    selected_smart_capabilities()
   )
 
-  output$smart_vendor_table <- renderTable({
-    selected_smart_capabilities() %>%
-      distinct(id, .keep_all = TRUE) %>%
-      group_by(id, fhir_version, vendor_name) %>%
-      count() %>%
-      group_by(fhir_version, vendor_name) %>%
-      count(wt = n) %>%
-      select("FHIR Version" = fhir_version, "Developer" = vendor_name, "Endpoints" = n)
-  })
+  output$smart_vendor_table <- renderTable(
+    selected_smart_vendors()
+  )
 
   output$well_known_summary_table <- renderTable(
     selected_well_known_endpoint_counts()
@@ -125,21 +194,25 @@ smartresponsemodule <- function(
 
   # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
-    if (is.null(isolate(smartPageSizeNum()))) {
-      smartPageSizeNum(10)
-    }
-    res <- isolate(app_data$well_known_endpoints_tbl())
-    res <- get_filtered_data(res)
+  if (is.null(isolate(smartPageSizeNum()))) {
+    smartPageSizeNum(10)
+  }
+  
+  current_fhir <- sel_fhir_version()
+  current_vendor <- sel_vendor()
+  req(current_fhir, current_vendor)
+  
+  res <- get_selected_endpoints(
+    db_connection,
+    fhir_version = current_fhir,
+    vendor = current_vendor
+  )
 
-    res <- res %>%
-    rowwise() %>%
-    mutate(condensed_organization_names = ifelse(length(organization_names) > 0, ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", url, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names), organization_names))
-
-    res <- res %>%
-    distinct(url, condensed_organization_names, vendor_name, capability_fhir_version) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-    select(url, condensed_organization_names, vendor_name, capability_fhir_version)
-    res
+  # Format the URL for HTML display with a modal popup.
+  res <- res %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+  
+  res
   })
 
   output$well_known_endpoints <-  reactable::renderReactable({
