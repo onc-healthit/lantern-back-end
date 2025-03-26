@@ -624,12 +624,14 @@ func Test_RunSupportedProfilesCheck(t *testing.T) {
 func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
 	var capStatBytes []byte
 	var capInt map[string]interface{}
-	if whichCapStat == "noInteraction" {
+	
+	switch whichCapStat {
+	case "noInteraction":
 		capStatBytes = []byte(`{
 		"rest": [{
 			"resource": [{"type": "AllergyIntolerance"}]
 		}]}`)
-	} else if whichCapStat == "emptyInteraction" {
+	case "emptyInteraction":
 		capStatBytes = []byte(`{
 		"rest": [{
 			"resource": [{
@@ -637,7 +639,7 @@ func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
 				"interaction": []
 			}]
 		}]}`)
-	} else if whichCapStat == "noCode" {
+	case "noCode":
 		capStatBytes = []byte(`{
 		"rest": [{
 			"resource": [{
@@ -647,7 +649,7 @@ func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
 				}]
 			}]
 		}]}`)
-	} else if whichCapStat == "manyCode" {
+	case "manyCode":
 		capStatBytes = []byte(`{
 		"rest": [{
 			"resource": [{
@@ -659,7 +661,7 @@ func generateTestCapStat(whichCapStat string) (map[string]interface{}, error) {
 				}]
 			}]
 		}]}`)
-	} else if whichCapStat == "missingType" {
+	case "missingType":
 		capStatBytes = []byte(`{
 		"rest": [{
 			"resource": [{

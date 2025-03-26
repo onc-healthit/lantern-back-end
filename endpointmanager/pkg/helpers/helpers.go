@@ -13,6 +13,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
+	logrus "github.com/sirupsen/logrus"
 )
 
 // StringArrayContains checks if the string array contains the provided string.
@@ -140,7 +141,12 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer func() {
+		err := res.Body.Close()
+		if err != nil {
+			logrus.Warnf("Error closing response body: %v", err)
+		}
+	}()
 
 	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -200,14 +206,24 @@ func downloadFile(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			logrus.Warnf("Error closing response body: %v", err)
+		}
+	}()
 
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		err := out.Close()
+		if err != nil {
+			logrus.Warnf("Error closing out file: %v", err)
+		}
+	}()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)

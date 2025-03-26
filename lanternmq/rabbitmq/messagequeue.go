@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/streadway/amqp"
@@ -391,13 +392,23 @@ func (mq *MessageQueue) DeclareExchangeReceiveQueue(chID lanternmq.ChannelID, ex
 
 // Close closes each channel that's been created, and then closes the connection to the underlying RabbitMQ
 // message service.
+// Close closes each channel that's been created, and then closes the connection to the underlying RabbitMQ
+// message service.
 func (mq *MessageQueue) Close() {
 	if mq.channels != nil {
 		for _, ch := range mq.channels {
-			ch.Close()
+			err := ch.Close()
+			if err != nil {
+				// Since Close() doesn't return an error, we can only log it
+				// You'll need to import the log package if it's not already imported
+				log.Printf("Error closing channel: %v", err)
+			}
 		}
 	}
 	if mq.connection != nil {
-		mq.connection.Close()
+		err := mq.connection.Close()
+		if err != nil {
+			log.Printf("Error closing connection: %v", err)
+		}
 	}
 }

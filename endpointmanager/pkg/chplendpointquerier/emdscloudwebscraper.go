@@ -27,7 +27,12 @@ func EmdsCloudWebscraper(CHPLURL string, fileToWriteTo string) {
 		log.Fatalf("Error making HTTP request: %v", err)
 		return
 	}
-	defer res.Body.Close()
+	defer func() {
+		err := res.Body.Close()
+		if err != nil {
+			log.Warnf("Error closing response body: %v", err)
+		}
+	}()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {

@@ -46,7 +46,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		err := res.Body.Close()
+		if err != nil {
+			log.Warnf("Error closing response body: %v", err)
+		}
+	}()
 
 	respBody, err := io.ReadAll(res.Body)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"database/sql"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	log "github.com/sirupsen/logrus"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -195,7 +196,12 @@ func (s *Store) GetAllNPIOrganizationNormalizedNames(ctx context.Context) ([]*en
 		return nil, err
 	}
 	var orgs []*endpointmanager.NPIOrganization
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var org endpointmanager.NPIOrganization
 		var location endpointmanager.Location

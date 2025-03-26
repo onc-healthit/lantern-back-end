@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
+	logrus "github.com/sirupsen/logrus"
 )
 
 type EndpointEntry struct {
@@ -32,7 +33,12 @@ func QueryMedicareEndpointList(fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			logrus.Warnf("error closing file: %v", err)
+		}
+	}()
 	for {
 		var entry EndpointEntry
 		rec, err := csvReader.Read()

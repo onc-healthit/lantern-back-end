@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // HostAndPort holds the host and port information for a resource.
@@ -40,7 +41,10 @@ func CheckResources(haps ...HostAndPort) error {
 			return err
 		}
 		if conn != nil {
-			conn.Close()
+			err := conn.Close()
+			if err != nil {
+				log.Warnf("Error closing connection: %v", err)
+			}
 		}
 	}
 	return nil

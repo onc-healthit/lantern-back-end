@@ -430,7 +430,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	}
 
-	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
+	return false, fmt.Errorf("unknown difference between healthitproducts; not performing update: %v to %v", existingDbProd, newDbProd)
 
 }
 

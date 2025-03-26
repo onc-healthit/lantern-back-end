@@ -21,7 +21,12 @@ func AthenaCSVParser(CHPLURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			log.Warnf("error closing file: %v", err)
+		}
+	}()
 
 	for {
 		rec, err := csvReader.Read()

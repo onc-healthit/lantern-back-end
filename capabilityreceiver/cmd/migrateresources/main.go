@@ -98,7 +98,12 @@ func updateOperationResource(ctx context.Context, args *map[string]interface{}) 
 		ha.result <- result
 		return nil
 	}
-	defer updateFHIREndpointInfoHistoryStatement.Close()
+	defer func() {
+		err := updateFHIREndpointInfoHistoryStatement.Close()
+		if err != nil {
+			log.Warnf("Error closing updateFHIREndpoint info history statement: %v", err)
+		}
+	}()
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `SELECT updated_at, capability_statement
@@ -114,7 +119,12 @@ func updateOperationResource(ctx context.Context, args *map[string]interface{}) 
 		return nil
 	}
 
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("Error closing history rows: %v", err)
+		}
+	}()
 	for historyRows.Next() {
 		var updatedTime time.Time
 		var capStat []byte
@@ -183,7 +193,12 @@ func updateSupportedResources(ctx context.Context, args *map[string]interface{})
 		ha.result <- result
 		return nil
 	}
-	defer updateFHIREndpointInfoHistoryStatement.Close()
+	defer func() {
+		err := updateFHIREndpointInfoHistoryStatement.Close()
+		if err != nil {
+			log.Warnf("Error closing updateFHIREndpointInfoHistoryStatement: %v", err)
+		}
+	}()
 
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 	selectHistory := `SELECT updated_at, capability_statement
@@ -199,7 +214,12 @@ func updateSupportedResources(ctx context.Context, args *map[string]interface{})
 		return nil
 	}
 
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("Error closing history rows: %v", err)
+		}
+	}()
 	for historyRows.Next() {
 		var updatedTime time.Time
 		var capStat []byte
@@ -289,7 +309,12 @@ func main() {
 	helpers.FailOnError("Make sure that the database is not empty. Error:", err)
 
 	var urls []string
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var currURL string
 		err = rows.Scan(&currURL)
@@ -339,7 +364,12 @@ func main() {
 	helpers.FailOnError("Make sure that the database is not empty. Error:", err)
 
 	var urls2 []string
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var currURL string
 		err = rows.Scan(&currURL)

@@ -140,7 +140,12 @@ func addToValidationTableHistory(ctx context.Context, args *map[string]interface
 		log.Warnf("Failed getting the history rows for URL %s. Error: %s", wa.fhirURL, err)
 		return returnResult(wa)
 	}
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("Error closing history rows: %v", err)
+		}
+	}()
 	var validationVals []validationArgs
 	for historyRows.Next() {
 		var val validationArgs
@@ -265,7 +270,12 @@ func addToValidationField(ctx context.Context, args *map[string]interface{}) err
 		return returnResult(wa)
 	}
 
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("Error closing history rows: %v", err)
+		}
+	}()
 	var validationVals []validationArgs
 	for historyRows.Next() {
 		var val validationArgs
@@ -352,7 +362,12 @@ func main() {
 	helpers.FailOnError("Make sure that the database is not empty. Error: ", err)
 
 	var urls []string
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var currURL string
 		err = rows.Scan(&currURL)
@@ -402,7 +417,12 @@ func main() {
 	helpers.FailOnError("Make sure that the database is not empty. Error:", err)
 
 	var urls2 []string
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var currURL string
 		err = rows.Scan(&currURL)

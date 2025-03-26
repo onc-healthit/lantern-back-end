@@ -22,10 +22,10 @@ var oneUpURL = "https://1up.health/fhir-endpoint-directory"
 var careEvolutionURL = "https://fhir.docs.careevolution.com/overview/public_endpoints.html"
 
 func EndpointListWebscraper(vendorURL string, vendor string, fileToWriteTo string) {
-
-	if vendorURL == careEvolutionURL {
+	switch vendorURL {
+	case careEvolutionURL:
 		HTMLtablewebscraper(vendorURL, vendor, fileToWriteTo)
-	} else if vendorURL == oneUpURL {
+	case oneUpURL:
 		chplendpointquerier.CSVParser("../../../resources/prod_resources/oneupdata.csv", "1UpEndpointSources.json", "", -1, 0, true, 2, 0)
 	}
 }

@@ -35,11 +35,12 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 		length := len(fieldNames)
 		if length != 1 {
 			for index, name := range fieldNames {
-				if index == length-1 {
+				switch index {
+				case length-1:
 					stringIndex = stringIndex + name
-				} else if index == 0 {
+				case 0:
 					stringIndex = name + "."
-				} else {
+				default:
 					stringIndex = stringIndex + name + "."
 				}
 			}
@@ -58,7 +59,6 @@ func RunIncludedFieldsChecks(capInt map[string]interface{}, includedFields []end
 
 	return includedFields
 }
-
 // Checks whether the given field is populated in the capability statement
 func checkField(capInt map[string]interface{}, fieldNames []string) bool {
 	for index, name := range fieldNames {

@@ -224,6 +224,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 }
 
 // fills out message with http response code, tls version, capability statement, and supported mime types
+// fills out message with http response code, tls version, capability statement, and supported mime types
 func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL string, endptType EndpointType, client *http.Client, userAgent string, message *Message) error {
 	var err error
 	var httpErr error
@@ -262,15 +263,15 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	// If there was no MIME type saved in the database, or the saved MIME type did not work, go through process of trying others
 	if len(message.MIMETypes) != 1 || httpResponseCode != http.StatusOK || !mimeTypeWorked {
 		// If the endpoint is a well known endpoint and it did not already have MIME type saved, try the fhir3PlusJSONMIMEType
-		if endptType == wellknown {
+		switch endptType {
+		case wellknown:
 			if len(message.MIMETypes) == 0 {
 				httpResponseCode, _, _, capResp, _, httpErr = requestWithMimeType(req, fhir3PlusJSONMIMEType, client)
 				if httpErr != nil && httpResponseCode != 0 {
 					return err
 				}
 			}
-		} else if endptType == metadata {
-
+		case metadata:
 			// If there was a MIME type saved in the database, remove it from the list of MIME types since it did not work
 			oldMIMEType := ""
 			if len(message.MIMETypes) == 1 {
@@ -321,16 +322,18 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	}
 
 	if capResp != nil {
-		if endptType == metadata {
+		switch endptType {
+		case metadata:
 			message.CapabilityStatementBytes = capResp
-		} else if endptType == wellknown {
+		case wellknown:
 			message.SMARTRespBytes = capResp
 		}
 		err := json.Unmarshal(capResp, &jsonResponse)
 		if err == nil {
-			if endptType == metadata {
+			switch endptType {
+			case metadata:
 				message.CapabilityStatement = jsonResponse
-			} else if endptType == wellknown {
+			case wellknown:
 				message.SMARTResp = jsonResponse
 			}
 		} else {
@@ -419,7 +422,12 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 		// however, it doesn't necessarily match the request type exactly and seems to cache the
 		// first JSON request type it receives and continues to respond with that.
 		if isJSONMIMEType(respMimeType) {
-			defer resp.Body.Close()
+			defer func() {
+				err := resp.Body.Close()
+				if err != nil {
+					log.Warnf("Error closing response body: %v", err)
+				}
+			}()
 			mimeMatches = true
 
 			capStat, err = io.ReadAll(resp.Body)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // OrgKeyword is a struct for each keyword
@@ -48,7 +49,12 @@ func GetEndpointsFromFilepath(filePath string, format string, source string, lis
 		return ListOfEndpoints{}, err
 	}
 	// Defer the closing of our jsonFile so that we can parse it later on
-	defer jsonFile.Close()
+	defer func() {
+		err := jsonFile.Close()
+		if err != nil {
+			log.Warnf("Error closing json file: %v", err)
+		}
+	}()
 
 	byteValue, _ := io.ReadAll(jsonFile)
 	if len(byteValue) == 0 {
@@ -78,26 +84,27 @@ func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source strin
 		return result, nil
 	}
 
-	if format == "Cerner" {
+	switch format {
+	case "Cerner":
 		cernerList, err := convertInterfaceToList(initialList, "endpoints")
 		if err != nil {
 			return result, fmt.Errorf("cerner list not given in Cerner format: %s", err)
 		}
 		result = CernerList{}.GetEndpoints(cernerList, source, listURL)
-	} else if format == "Lantern" {
+	case "Lantern":
 		lanternList, err := convertInterfaceToList(initialList, "Endpoints")
 		if err != nil {
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, source, listURL)
-	} else if format == "FHIR" {
+	case "FHIR":
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")
 		if err != nil {
 			return result, fmt.Errorf("fhir list not given in FHIR format: %s", err)
 		}
 		result = FHIRList{}.GetEndpoints(fhirList, source, listURL)
-	} else {
+	default:
 		return result, fmt.Errorf("no endpoint list parser implemented for the given format")
 	}
 

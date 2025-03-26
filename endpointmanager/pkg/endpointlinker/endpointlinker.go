@@ -18,6 +18,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 func NormalizeOrgName(orgName string) (string, error) {
@@ -412,7 +413,12 @@ func openLinkerCorrectionFiles(filepath string) ([]map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer jsonFile.Close()
+	defer func() {
+		err := jsonFile.Close()
+		if err != nil {
+			log.Warnf("Error closing JSON file: %v", err)
+		}
+	}()
 
 	var linkerCorrections []map[string]string
 	byteValueFile, err := io.ReadAll(jsonFile)
@@ -440,11 +446,12 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			var npiOrganizationName string
 
 			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
-			if err == sql.ErrNoRows {
+			switch {
+			case err == sql.ErrNoRows:
 				npiOrganizationName = ""
-			} else if err != nil {
+			case err != nil:
 				return errors.Wrap(err, "Error getting npiOrganization from database")
-			} else {
+			default:
 				npiOrganizationName = npiOrganization.Name
 			}
 
@@ -460,17 +467,18 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 
 			_, _, _, err = store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
 
-			if err == sql.ErrNoRows {
+			switch err {
+			case sql.ErrNoRows:
 				err := store.LinkNPIOrganizationToFHIREndpoint(ctx, orgID, endpointURL, confidence)
 				if err != nil {
 					return errors.Wrap(err, "Error manually linking org to FHIR endpoint")
 				}
-			} else if err == nil {
+			case nil:
 				err := store.UpdateNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL, confidence)
 				if err != nil {
 					return errors.Wrap(err, "Error manually updating org to FHIR endpoint link confidence")
 				}
-			} else {
+			default:
 				return errors.Wrap(err, "Error checking if org to FHIR endpoint link exists")
 			}
 
@@ -486,9 +494,10 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			endpointURL := unmatchMap["endpointURL"]
 			_, _, _, err := store.GetNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
 
-			if err == sql.ErrNoRows {
+			switch err {
+			case sql.ErrNoRows:
 				return nil
-			} else {
+			default:
 				err := store.DeleteNPIOrganizationFHIREndpointLink(ctx, orgID, endpointURL)
 				if err != nil {
 					return errors.Wrap(err, "Error manually unlinking org to FHIR endpoint")
@@ -498,11 +507,12 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			var npiOrganizationName string
 
 			npiOrganization, err := store.GetNPIOrganizationByNPIID(ctx, orgID)
-			if err == sql.ErrNoRows {
+			switch {
+			case err == sql.ErrNoRows:
 				npiOrganizationName = ""
-			} else if err != nil {
+			case err != nil:
 				return errors.Wrap(err, "Error getting npiOrganization from database")
-			} else {
+			default:
 				npiOrganizationName = npiOrganization.Name
 			}
 
@@ -520,7 +530,6 @@ func linkerFix(ctx context.Context, store *postgresql.Store, matchEndpointOrgani
 			if err != nil {
 				return errors.Wrap(err, "Error removing blocklist organization information from the fhir endpoints table")
 			}
-
 		}
 	}
 	return nil

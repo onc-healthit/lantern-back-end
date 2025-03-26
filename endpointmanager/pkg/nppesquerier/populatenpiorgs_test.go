@@ -7,6 +7,7 @@ import (
 
 	th "github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/testhelper"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 func Test_ParseNPIdataLine(t *testing.T) {
@@ -17,7 +18,12 @@ func Test_ParseNPIdataLine(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error reading NPI data from fixture file")
 	}
-	defer file1.Close()
+	defer func() {
+		err := file1.Close()
+		if err != nil {
+			log.Warnf("Error closing file1: %v", err)
+		}
+	}()
 
 	// Remove header line
 	_, err = reader.Read()
@@ -76,7 +82,12 @@ func Test_csvReaderContextCancel(t *testing.T) {
 	cancel()
 
 	lines, file2, err := csvReader(ctx, "testdata/npidata_pfile_fixture.csv")
-	defer file2.Close()
+	defer func() {
+		err := file2.Close()
+		if err != nil {
+			log.Warnf("Error closing file2: %v", err)
+		}
+	}()
 	th.Assert(t, errors.Cause(err) == context.Canceled, "Expected canceled context error")
 	th.Assert(t, lines == nil, "expected lines returned after error to be nil")
 }
@@ -89,7 +100,12 @@ func Test_BuildNPIOrgFromNPICsvLine(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error reading NPI data from fixture file")
 	}
-	defer file3.Close()
+	defer func() {
+		err := file3.Close()
+		if err != nil {
+			log.Warnf("Error closing file3: %v", err)
+		}
+	}()
 
 	// Remove header line
 	_, err = reader.Read()

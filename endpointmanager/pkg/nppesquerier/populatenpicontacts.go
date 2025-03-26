@@ -116,63 +116,64 @@ func isValidURL(url string) bool {
 	return urlmatched && !emailmatched
 }
 
-func removeNestedDoubleQuotesFromCSV(filename string) (error, string) {
-	file, err := os.Open(filename)
-
-	if err != nil {
-		return err, ""
-	}
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var processedlines []string
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		// These 2 regexes (pattern1 and pattern2) capture every other value enclosed in quotes in the csv
-		// combined they are able to examine all values. The matches resulting from the regexes need to be
-		// iterated over independently as the values in the regexes are captured in different group indexes
-		pattern1 := regexp.MustCompile(`(,|",")(.*?)","`)
-		matches1 := pattern1.FindAllStringSubmatch(line, -1)
-		for _, match := range matches1 {
-			// If detected nested quote, remove nested quotes
-			if strings.Contains(match[2], "\"") {
-				sanitized := strings.Replace(match[2], "\"", "", -1)
-				// replace entry with quotes removed
-				line = strings.Replace(line, match[2], sanitized, 1)
-			}
-		}
-		pattern2 := regexp.MustCompile(`"(.*?)(,|",")`)
-		matches2 := pattern2.FindAllStringSubmatch(line, -1)
-		for _, match := range matches2 {
-			// If detected nested quote, remove nested quotes
-			if strings.Contains(match[1], "\"") {
-				sanitized := strings.Replace(match[1], "\"", "", -1)
-				// replace entry with quotes removed
-				line = strings.Replace(line, match[1], sanitized, 1)
-			}
-		}
-
-		processedlines = append(processedlines, line)
-	}
-
-	file.Close()
-
-	newfilename := strings.Replace(filename, ".csv", "", 1)
-	newfile, err := os.Create(newfilename)
-	if err != nil {
-		return err, ""
-	}
-	for _, processedline := range processedlines {
-		_, err := newfile.WriteString(processedline + "\n")
-		if err != nil {
-			return err, ""
-		}
-	}
-
-	defer newfile.Close()
-
-	return nil, newfilename
+func removeNestedDoubleQuotesFromCSV(filename string) (string, error) {
+    file, err := os.Open(filename)
+    
+    if err != nil {
+        return "", err
+    }
+    
+    scanner := bufio.NewScanner(file)
+    scanner.Split(bufio.ScanLines)
+    var processedlines []string
+    
+    for scanner.Scan() {
+        line := scanner.Text()
+        pattern1 := regexp.MustCompile(`(,|",")(.*?)","`)
+        matches1 := pattern1.FindAllStringSubmatch(line, -1)
+        for _, match := range matches1 {
+            if strings.Contains(match[2], "\"") {
+                sanitized := strings.ReplaceAll(match[2], "\"", "")
+                line = strings.ReplaceAll(line, match[2], sanitized)
+            }
+        }
+        pattern2 := regexp.MustCompile(`"(.*?)(,|",")`)
+        matches2 := pattern2.FindAllStringSubmatch(line, -1)
+        for _, match := range matches2 {
+            if strings.Contains(match[1], "\"") {
+                sanitized := strings.ReplaceAll(match[1], "\"", "")
+                line = strings.ReplaceAll(line, match[1], sanitized)
+            }
+        }
+        
+        processedlines = append(processedlines, line)
+    }
+    
+    err = file.Close()
+    if err != nil {
+        return "", err
+    }
+    
+    newfilename := strings.ReplaceAll(filename, ".csv", "")
+    newfile, err := os.Create(newfilename)
+    if err != nil {
+        return "", err
+    }
+    for _, processedline := range processedlines {
+        _, err := newfile.WriteString(processedline + "\n")
+        if err != nil {
+            return "", err
+        }
+    }
+    
+    defer func() {
+        err := newfile.Close()
+        if err != nil {
+            log.Warnf("Error closing newfile: %v", err)
+        }
+    }()
+    
+    return newfilename, nil
 }
 
 // readContactCsv accepts a file and returns its content as a multi-dimentional type
@@ -185,17 +186,22 @@ func readContactCsv(ctx context.Context, filename string) ([][]string, error) {
 		// ok
 	}
 
-	err, newfilename := removeNestedDoubleQuotesFromCSV(filename)
+	newfilename, err := removeNestedDoubleQuotesFromCSV(filename)
 	if err != nil {
-		return [][]string{}, err
-	}
+    	return [][]string{}, err
+}
 
 	// Open CSV file
 	f, err := os.Open(newfilename)
 	if err != nil {
 		return [][]string{}, err
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			log.Warnf("Error closing file: %v", err)
+		}
+	}()
 
 	// Read File into a Variable
 	lines, err := csv.NewReader(f).ReadAll()

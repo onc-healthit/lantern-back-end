@@ -416,7 +416,12 @@ func ParseAndStoreNPIFile(ctx context.Context, fname string, store *postgresql.S
 	if err != nil {
 		return -1, err
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			log.Warnf("Error closing file: %v", err)
+		}
+	}()
 
 	//Remove header
 	_, err = reader.Read()

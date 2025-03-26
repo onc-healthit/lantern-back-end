@@ -20,7 +20,12 @@ func HealthCare2000SVParser(CHPLURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			log.Warnf("Error closing file: %v", err)
+		}
+	}()
 
 	// Only want the first URL in the csv file
 	rec, err := csvReader.Read()

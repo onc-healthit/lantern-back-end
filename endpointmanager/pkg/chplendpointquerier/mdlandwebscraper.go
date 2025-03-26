@@ -20,9 +20,9 @@ func MdlandWebscraper(chplURL string, fileToWriteTo string) error {
 	doc.Find("span").Each(func(index int, spanElem *goquery.Selection) {
 		if strings.Contains(spanElem.Text(), "https://") && strings.Contains(spanElem.Text(), "metadata") {
 			str := spanElem.Text()
-			str = strings.Replace(str, "GET ", "", -1)
-			str = strings.Replace(str, "/metadata", "", -1)
-			str = strings.Replace(str, "\nHTTP/1.1", "", -1)
+			str = strings.ReplaceAll(str, "GET ", "")
+			str = strings.ReplaceAll(str, "/metadata", "")
+			str = strings.ReplaceAll(str, "\nHTTP/1.1", "")
 
 			var entry LanternEntry
 			entry.URL = str

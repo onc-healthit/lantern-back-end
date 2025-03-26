@@ -38,7 +38,12 @@ func GetInfoHistoryDuplicateData(ctx context.Context, store *postgresql.Store, q
 	if err != nil {
 		log.Fatalf("Failed to create file: %s", err)
 	}
-	defer distinctURLfile.Close()
+	defer func() {
+		err := distinctURLfile.Close()
+		if err != nil {
+			log.Warnf("Error closing distinct URL file: %v", err)
+		}
+	}()
 
 	// Read the distinctURLsFromHistory file to check whether URLs are already added to it
 	csvReader := csv.NewReader(distinctURLfile)
@@ -57,7 +62,12 @@ func GetInfoHistoryDuplicateData(ctx context.Context, store *postgresql.Store, q
 	if err != nil {
 		log.Fatalf("Failed to create file: %s", err)
 	}
-	defer duplicateInfoHistoryFile.Close()
+	defer func() {
+		err := duplicateInfoHistoryFile.Close()
+		if err != nil {
+			log.Warnf("Error closing duplicate info history file: %v", err)
+		}
+	}()
 
 	// Create CSV writers
 	distinctURLWriter := csv.NewWriter(distinctURLfile)

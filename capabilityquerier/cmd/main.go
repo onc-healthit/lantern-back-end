@@ -51,7 +51,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	var msgJSON map[string]string
 	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
-		return fmt.Errorf("Error parsing queryEndpointsCapabilityStatement message JSON: %s", err.Error())
+		return fmt.Errorf("error parsing queryEndpointsCapabilityStatement message JSON: %s", err.Error())
 	}
 
 	urlString := msgJSON["url"]

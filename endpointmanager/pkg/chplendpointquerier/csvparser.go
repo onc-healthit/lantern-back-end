@@ -34,13 +34,23 @@ func CSVParser(inputSource string, fileToWriteTo string, csvFilePath string, num
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer file.Close()
+		defer func() {
+			err := file.Close()
+			if err != nil {
+				log.Warnf("error closing file: %v", err)
+			}
+		}()
 	} else {
 		file, err = os.Open(inputSource)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer file.Close()
+		defer func() {
+			err := file.Close()
+			if err != nil {
+				log.Warnf("error closing file: %v", err)
+			}
+		}()
 
 		csvReader = csv.NewReader(file)
 		if header {

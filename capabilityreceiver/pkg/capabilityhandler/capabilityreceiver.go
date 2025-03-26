@@ -231,7 +231,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
 	if err != nil {
-		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
+		return fmt.Errorf("opening chpl endpoint list info file failed, %s", err)
 	}
 
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
@@ -426,7 +426,7 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 
 	for _, version := range supportedVersions {
 		// send URL and version of FHIR version to request
-		var message map[string]string = make(map[string]string)
+		message := make(map[string]string)
 		message["url"] = url
 		message["requestVersion"] = version
 		message["defaultVersion"] = defaultVersion

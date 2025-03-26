@@ -124,7 +124,12 @@ func CreateArchive(ctx context.Context,
 	totalEntries := 0
 	urls_fhir_version := make(map[string][]string)
 	allData := make(map[string]map[string]totalSummary)
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var entry totalSummary
 		var listSource string
@@ -168,7 +173,7 @@ func CreateArchive(ctx context.Context,
 	allWorkers := workers.NewWorkers()
 	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
-		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
+		return nil, fmt.Errorf("error from starting workers. error: %s", err)
 	}
 
 	// Get history data using workers
@@ -180,7 +185,7 @@ func CreateArchive(ctx context.Context,
 	for res := range resultCh {
 		u, ok := allData[res.URL][res.RequestedFhirVersion]
 		if !ok {
-			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
+			return nil, fmt.Errorf("the URL %s does not exist in the fhir_endpoints tables", res.URL)
 		}
 		u.NumberOfUpdates = res.Summary.NumberOfUpdates
 		u.Updated = res.Summary.Updated
@@ -205,14 +210,19 @@ func CreateArchive(ctx context.Context,
 	}
 
 	vendorResults := make(map[string][]vendorEntry)
-	defer vendorRows.Close()
+	defer func() {
+		err := vendorRows.Close()
+		if err != nil {
+			log.Warnf("error closing vendor rows: %v", err)
+		}
+	}()
 	for vendorRows.Next() {
 		var v vendorEntry
 		err = vendorRows.Scan(
 			&v.URL,
 			&v.VendorName)
 		if err != nil {
-			return nil, fmt.Errorf("Error while scanning the rows of the history and vendor table. Error: %s", err)
+			return nil, fmt.Errorf("error while scanning the rows of the history and vendor table. Error: %s", err)
 		}
 
 		if val, ok := vendorResults[v.URL]; ok {
@@ -227,7 +237,7 @@ func CreateArchive(ctx context.Context,
 			req_version := requested_versions[index]
 			u, ok := allData[url][req_version]
 			if !ok {
-				return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", url)
+				return nil, fmt.Errorf("the url %s does not exist in the fhir_endpoints tables", url)
 			}
 			u.Vendor = makeDefaultMap()
 			if vResult, ok := vendorResults[url]; ok {
@@ -252,7 +262,7 @@ func CreateArchive(ctx context.Context,
 	for res := range metaResultCh {
 		u, ok := allData[res.URL][res.RequestedFhirVersion]
 		if !ok {
-			return nil, fmt.Errorf("The URL %s does not exist in the fhir_endpoints tables", res.URL)
+			return nil, fmt.Errorf("the url %s does not exist in the fhir_endpoints tables", res.URL)
 		}
 		u.ResponseTimeSecond = res.Summary.ResponseTimeSecond
 		u.HTTPResponse = res.Summary.HTTPResponse
@@ -361,7 +371,12 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		return nil
 	}
 
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("error closing history rows: %v", err)
+		}
+	}()
 	for historyRows.Next() {
 		var e historyEntry
 		var fhirVersion string
@@ -461,7 +476,12 @@ func getMetadata(ctx context.Context, args *map[string]interface{}) error {
 		return nil
 	}
 
-	defer metadataRows.Close()
+	defer func() {
+		err := metadataRows.Close()
+		if err != nil {
+			log.Warnf("error closing metadata rows: %v", err)
+		}
+	}()
 	for metadataRows.Next() {
 		var e metadataEntry
 

@@ -69,13 +69,18 @@ func createJSON(ctx context.Context, store *postgresql.Store, exportType string)
 	sqlQuery := "SELECT DISTINCT url, endpoint_names, info_created, list_source, vendor_name FROM endpoint_export WHERE info_created IS NOT NULL;"
 	rows, err := store.DB.QueryContext(ctx, sqlQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Make sure that the database is not empty. Error: %s", err)
+		return nil, fmt.Errorf("make sure that the database is not empty. Error: %s", err)
 	}
 
 	// Put into an object
 	var urls []string
 	entryCheck := make(map[string]jsonEntry)
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var entry jsonEntry
 		var vendorNameNullable sql.NullString
@@ -87,7 +92,7 @@ func createJSON(ctx context.Context, store *postgresql.Store, exportType string)
 			&listSource,
 			&vendorNameNullable)
 		if err != nil {
-			return nil, fmt.Errorf("Error scanning the row. Error: %s", err)
+			return nil, fmt.Errorf("error scanning the row. error: %s", err)
 		}
 		if !vendorNameNullable.Valid {
 			entry.VendorName = ""
@@ -120,7 +125,7 @@ func createJSON(ctx context.Context, store *postgresql.Store, exportType string)
 	// Start workers
 	err = allWorkers.Start(ctx, numWorkers, errs)
 	if err != nil {
-		return nil, fmt.Errorf("Error from starting workers. Error: %s", err)
+		return nil, fmt.Errorf("error from starting workers. error: %s", err)
 	}
 
 	resultCh := make(chan Result)
@@ -240,7 +245,8 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	// Get everything from the fhir_endpoints_info_history table for the given URL
 
 	var selectHistory string
-	if exportType == "month" {
+	switch exportType {
+	case "month":
 		selectHistory = `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
@@ -248,7 +254,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('month', fhir_endpoints_info_history.updated_at) = date_trunc('month', current_date - INTERVAL '1 month'))
 		ORDER BY fhir_endpoints_info_history.updated_at DESC;`
-	} else if exportType == "30days" {
+	case "30days":
 		selectHistory = `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
@@ -256,7 +262,7 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 		FROM fhir_endpoints_info_history, fhir_endpoints_metadata
 		WHERE fhir_endpoints_info_history.metadata_id = fhir_endpoints_metadata.id AND fhir_endpoints_info_history.url=$1 AND (date_trunc('day', fhir_endpoints_info_history.updated_at) >= date_trunc('day', current_date - INTERVAL '30 day'))
 		ORDER BY fhir_endpoints_info_history.updated_at DESC;`
-	} else if exportType == "all" {
+	case "all":
 		selectHistory = `
 		SELECT fhir_endpoints_info_history.url, fhir_endpoints_metadata.http_response, fhir_endpoints_metadata.response_time_seconds, fhir_endpoints_metadata.errors,
 		capability_statement, tls_version, mime_types, operation_resource,
@@ -278,7 +284,13 @@ func getHistory(ctx context.Context, args *map[string]interface{}) error {
 	}
 
 	// Puts the rows in an array and sends it back on the channel to be processed
-	defer historyRows.Close()
+	defer func() {
+		err := historyRows.Close()
+		if err != nil {
+			log.Warnf("Error closing history rows: %v", err)
+		}
+	}()
+	
 	for historyRows.Next() {
 		var op Operation
 		var url string

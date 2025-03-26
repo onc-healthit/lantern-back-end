@@ -11,6 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	log "github.com/sirupsen/logrus"
 )
 
 var chplDomain string = "https://chpl.healthit.gov"
@@ -60,7 +61,12 @@ func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAge
 	if err != nil {
 		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Warnf("Error closing response body: %v", err)
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New("CHPL request responded with status: " + resp.Status)

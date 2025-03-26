@@ -364,20 +364,20 @@ func areSearchParamsValid(resource map[string]interface{}) (bool, error) {
 	}
 	searchList, ok := search.([]interface{})
 	if !ok {
-		return false, fmt.Errorf("Unable to cast searchParam value in a resource to a list")
+		return false, fmt.Errorf("unable to cast searchparam value in a resource to a list")
 	}
 	for _, elem := range searchList {
 		obj, ok := elem.(map[string]interface{})
 		if !ok {
-			return false, fmt.Errorf("Unable to cast element of searchParam list to a map[string]interface{}")
+			return false, fmt.Errorf("unable to cast element of searchparam list to a map[string]interface{}")
 		}
 		name := obj["name"]
 		if name == nil {
-			return false, fmt.Errorf("Name does not exist but is required in searchParam values")
+			return false, fmt.Errorf("name does not exist but is required in searchparam values")
 		}
 		nameStr, ok := obj["name"].(string)
 		if !ok {
-			return false, fmt.Errorf("Unable to cast the name of a searchParam to a string")
+			return false, fmt.Errorf("unable to cast the name of a searchparam to a string")
 		}
 		if stringInList(nameStr, searchParams) {
 			return false, nil

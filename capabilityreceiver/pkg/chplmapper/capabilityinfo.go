@@ -208,7 +208,12 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 	if err != nil {
 		return nil, err
 	}
-	defer jsonFile.Close()
+	defer func() {
+		err := jsonFile.Close()
+		if err != nil {
+			log.Warnf("Error closing JSON file: %v", err)
+		}
+	}()
 
 	var softwareNameVersion []map[string]string
 	byteValueFile, err := io.ReadAll(jsonFile)
@@ -318,7 +323,12 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 	if err != nil {
 		return nil, err
 	}
-	defer jsonFile.Close()
+	defer func() {
+		err := jsonFile.Close()
+		if err != nil {
+			log.Warnf("Error closing JSON file: %v", err)
+		}
+	}()
 
 	var softwareListMap = make(map[string]ChplMapResults)
 

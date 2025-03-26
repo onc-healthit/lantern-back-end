@@ -228,7 +228,7 @@ func Test_getTLSVersion(t *testing.T) {
 	expectedTLSVersion = "TLS 1.0"
 	tc, err = testClientWithTLSVersion(tls.VersionTLS10)
 	th.Assert(t, err == nil, err)
-	resp, err = tc.Client.Do(req)
+	resp, err = tc.Do(req)
 	th.Assert(t, err == nil, err)
 
 	tlsVersion = getTLSVersion(resp)
@@ -239,7 +239,7 @@ func Test_getTLSVersion(t *testing.T) {
 	expectedTLSVersion = "TLS 1.1"
 	tc, err = testClientWithTLSVersion(tls.VersionTLS11)
 	th.Assert(t, err == nil, err)
-	resp, err = tc.Client.Do(req)
+	resp, err = tc.Do(req)
 	th.Assert(t, err == nil, err)
 
 	tlsVersion = getTLSVersion(resp)
@@ -250,7 +250,7 @@ func Test_getTLSVersion(t *testing.T) {
 	expectedTLSVersion = "TLS 1.2"
 	tc, err = testClientWithTLSVersion(tls.VersionTLS12)
 	th.Assert(t, err == nil, err)
-	resp, err = tc.Client.Do(req)
+	resp, err = tc.Do(req)
 	th.Assert(t, err == nil, err)
 
 	tlsVersion = getTLSVersion(resp)
@@ -265,7 +265,7 @@ func Test_getTLSVersion(t *testing.T) {
 
 	tc, err = testClientWithNoTLS()
 	th.Assert(t, err == nil, err)
-	resp, err = tc.Client.Do(req)
+	resp, err = tc.Do(req)
 	th.Assert(t, err == nil, err)
 
 	tlsVersion = getTLSVersion(resp)
@@ -404,7 +404,7 @@ func testClientWithTLSVersion(tlsVersion uint16) (*th.TestClient, error) {
 		return nil, err
 	}
 
-	transport := tc.Client.Transport.(*http.Transport)
+	transport := tc.Transport.(*http.Transport)
 	transport.TLSClientConfig.MaxVersion = tlsVersion
 	transport.TLSClientConfig.MinVersion = tlsVersion
 

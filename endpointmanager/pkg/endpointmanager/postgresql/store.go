@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq" // specified to do this for accessing postgres db
+	log "github.com/sirupsen/logrus"
 )
 
 // Store is the structure for working with the postgres database.
@@ -30,7 +31,7 @@ func NewStore(host string, port int, user string, password string, dbname string
 
 	store.DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
-		err = fmt.Errorf("Error opening database: %s", err.Error())
+		err = fmt.Errorf("error opening database: %s", err.Error())
 		panic(err.Error())
 	}
 
@@ -38,7 +39,7 @@ func NewStore(host string, port int, user string, password string, dbname string
 	// db.Open only validates the arguments, it does not create the connection.
 	err = store.DB.Ping()
 	if err != nil {
-		err = fmt.Errorf("Error creating connection to database: %s", err.Error())
+		err = fmt.Errorf("error creating connection to database: %s", err.Error())
 		panic(err.Error())
 	}
 
@@ -88,7 +89,10 @@ func NewStore(host string, port int, user string, password string, dbname string
 
 // Close closes the postgresql database connection.
 func (s *Store) Close() {
-	s.DB.Close()
+    err := s.DB.Close()
+    if err != nil {
+        log.Warnf("Error closing database connection: %v", err)
+    }
 }
 
 // converts foreign key ints to nullable ints so we don't have issues with non-existent foreign key references.

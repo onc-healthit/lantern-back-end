@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	logrus "github.com/sirupsen/logrus"
 )
 
 type EndpointList struct {
@@ -29,7 +30,12 @@ func QueryMedicaidEndpointList(fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			logrus.Warnf("Error closing file: %v", err)
+		}
+	}()
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {

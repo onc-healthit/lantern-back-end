@@ -4,10 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
+	logrus "github.com/sirupsen/logrus"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -22,6 +25,7 @@ var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
+var getChplListSourcesStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -40,7 +44,12 @@ func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHI
 	}
 
 	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
@@ -79,7 +88,12 @@ func (s *Store) GetFHIREndpointOrganizations(ctx context.Context, endpoint_id in
 	if err != nil {
 		return nil, err
 	}
-	defer orgRow.Close()
+	defer func() {
+		err := orgRow.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for orgRow.Next() {
 		var organization endpointmanager.FHIREndpointOrganization
 		err = orgRow.Scan(
@@ -175,7 +189,12 @@ func (s *Store) GetAllDistinctFHIREndpoints(ctx context.Context) ([]*endpointman
 	}
 
 	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
@@ -251,7 +270,12 @@ func (s *Store) GetFHIREndpointUsingURL(ctx context.Context, url string) ([]*end
 	}
 
 	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
@@ -347,7 +371,12 @@ func (s *Store) GetFHIREndpointsByListSourceAndOrganizationsUpdatedAtTime(ctx co
 	if err != nil {
 		return nil, err
 	}
-	defer orgRow.Close()
+	defer func() {
+		err := orgRow.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for orgRow.Next() {
 		var organization endpointmanager.FHIREndpointOrganization
 		var endpoint endpointmanager.FHIREndpoint
@@ -392,7 +421,12 @@ func (s *Store) GetFHIREndpointsUsingListSourceAndUpdateTime(ctx context.Context
 	}
 
 	var endpoints []*endpointmanager.FHIREndpoint
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			logrus.Warnf("Error closing database rows: %v", err)
+		}
+	}()
 	for rows.Next() {
 		var endpoint endpointmanager.FHIREndpoint
 		err = rows.Scan(
@@ -649,6 +683,33 @@ func organizationInformationValid(organizationName sql.NullString, organizationZ
 	return organizationNameString, organizationZipCodeString, organizationNPIIDString
 }
 
+// WORK IN PROGRESS
+func (s *Store) GetChplListSources(ctx context.Context) ([]string, error) {
+
+	var chplListSourceRows *sql.Rows
+	var listSources []string
+	var listSource string
+	var err error
+
+	count := 0
+
+	chplListSourceRows, err = getChplListSourcesStatement.QueryContext(ctx)
+	helpers.FailOnError("", err)
+
+	for chplListSourceRows.Next() {
+		count += 1
+		err = chplListSourceRows.Scan(&listSource)
+		if err != nil {
+			return nil, err
+		}
+		listSources = append(listSources, listSource)
+	}
+
+	log.Print(count)
+
+	return listSources, err
+}
+
 func prepareFHIREndpointStatements(s *Store) error {
 	var err error
 	addFHIREndpointStatement, err = s.DB.Prepare(`
@@ -726,6 +787,12 @@ func prepareFHIREndpointStatements(s *Store) error {
 	}
 	updateFHIREndpointOrganizationsUpdateTime, err = s.DB.Prepare(`
 	UPDATE fhir_endpoint_organizations SET updated_at = now() WHERE id = $1`)
+
+	// WORK IN PROGRESS
+	if err != nil {
+		return err
+	}
+	getChplListSourcesStatement, err = s.DB.Prepare(`SELECT list_source FROM list_source_info WHERE is_chpl = true`)
 	if err != nil {
 		return err
 	}

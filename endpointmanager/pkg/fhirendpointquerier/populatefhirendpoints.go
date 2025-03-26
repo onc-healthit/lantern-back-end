@@ -10,9 +10,10 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 
+	"regexp"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"regexp"
 )
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
@@ -226,4 +227,30 @@ func isValidURL(url string) bool {
 	urlmatched := urlregex.MatchString(strings.ToLower(url))
 
 	return urlmatched
+}
+
+// WORK IN PROGRESS
+func RemoveOldEndpointsAndListSources(ctx context.Context, store *postgresql.Store) error {
+	// Find list of old list_sources
+	listSources, err := store.GetChplListSources(ctx)
+	if err != nil {
+		return err
+	}
+
+	log.Info(len(listSources))
+
+	// Extract new list_sources from CHPLEndpointResourcesList.json
+	endpointsFile := "../../../resources/prod_resources/CHPLEndpointResourcesList.json"
+	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, "Lantern", "", "")
+	if err != nil && strings.Contains(err.Error(), "incorrect reference value") {
+		log.Error("Endpoint List Parsing Error: ", err)
+	}
+
+	log.Info("CHPL List sources: ", listOfEndpoints)
+
+	// Iterate over the list and identify deprecated list_sources
+
+	// Delete FHIR endpoints and related data for each deprecated list_source
+
+	return nil
 }
