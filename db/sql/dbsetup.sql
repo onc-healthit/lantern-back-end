@@ -836,6 +836,7 @@ validated AS (
 ),
 cleaned AS (
   SELECT
+  	row_number() OVER () AS mv_id,
     url,
     vendor_name,
     capability_fhir_version,
@@ -862,6 +863,7 @@ FROM cleaned
 ORDER BY url;
 
 -- Create indexes for mv_endpoint_export_tbl
+CREATE UNIQUE INDEX idx_mv_endpoint_export_tbl_unique_id ON mv_endpoint_export_tbl(mv_id);
 CREATE INDEX idx_mv_endpoint_export_tbl_vendor ON mv_endpoint_export_tbl (vendor_name);
 CREATE INDEX idx_mv_endpoint_export_tbl_fhir ON mv_endpoint_export_tbl (fhir_version);
 CREATE INDEX idx_mv_endpoint_export_tbl_vendor_fhir ON mv_endpoint_export_tbl (vendor_name, fhir_version);
@@ -884,6 +886,7 @@ WITH grouped AS (
   GROUP BY f.id, f.url, e.http_response, e.vendor_name, e.fhir_version
 )
 SELECT
+  row_number() OVER () AS mv_id,
   id,
   url,
   http_response,
@@ -894,6 +897,7 @@ SELECT
 FROM grouped;
 
 -- Create indexes for mv_http_pct
+CREATE UNIQUE INDEX idx_mv_http_pct_unique_id ON mv_http_pct(mv_id);
 CREATE INDEX idx_mv_http_pct_http_response ON mv_http_pct (http_response);
 CREATE INDEX idx_mv_http_pct_vendor ON mv_http_pct (vendor_name);
 CREATE INDEX idx_mv_http_pct_fhir ON mv_http_pct (fhir_version);
@@ -917,7 +921,9 @@ WITH base AS (
              LEFT JOIN vendors v ON f.vendor_id = v.id
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
         )
- SELECT base.url,
+ SELECT 
+   	row_number() OVER () AS mv_id,
+	base.url,
     regexp_replace(regexp_replace(regexp_replace(base.organization_names, '[{}]'::text, ''::text, 'g'::text), '","'::text, '; '::text, 'g'::text), '"'::text, ''::text, 'g'::text) AS organization_names,
     base.vendor_name,
     base.capability_fhir_version,
@@ -936,6 +942,7 @@ WITH base AS (
    FROM base;
 
 -- Create indexes for mv_well_known_endpoints
+CREATE UNIQUE INDEX idx_mv_well_known_unique_id ON mv_well_known_endpoints(mv_id);
 CREATE INDEX idx_mv_well_known_vendor ON mv_well_known_endpoints(vendor_name);
 CREATE INDEX idx_mv_well_known_fhir ON mv_well_known_endpoints(fhir_version);
 CREATE INDEX idx_mv_well_known_vendor_fhir ON mv_well_known_endpoints(vendor_name, fhir_version);
@@ -959,13 +966,15 @@ WITH base AS (
 		 LEFT JOIN vendors v ON f.vendor_id = v.id
 	  WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) <> 'object'::text
 	)
-SELECT base.id,
-base.url,
-base.vendor_id,
-base.organization_names,
-COALESCE(base.vendor_name, 'Unknown'::character varying) AS vendor_name,
-base.smart_http_response,
-base.smart_response,
+SELECT 
+	row_number() OVER () AS mv_id,
+	base.id,
+	base.url,
+	base.vendor_id,
+	base.organization_names,
+	COALESCE(base.vendor_name, 'Unknown'::character varying) AS vendor_name,
+	base.smart_http_response,
+	base.smart_response,
 	CASE
 		WHEN
 		CASE
@@ -983,6 +992,7 @@ base.smart_response,
 FROM base;
 
 -- Create indexes for mv_well_known_no_doc
+CREATE UNIQUE INDEX idx_mv_well_known_no_doc_unique_id ON mv_well_known_no_doc(mv_id);
 CREATE INDEX idx_mv_well_known_no_doc_url ON mv_well_known_no_doc(url);
 CREATE INDEX idx_mv_well_known_no_doc_vendor ON mv_well_known_no_doc(vendor_name);
 CREATE INDEX idx_mv_well_known_no_doc_fhir ON mv_well_known_no_doc(fhir_version);
@@ -991,8 +1001,10 @@ CREATE INDEX idx_mv_well_known_no_doc_vendor_fhir ON mv_well_known_no_doc(vendor
 -- Create materialized view for smart_response_capabilities
 DROP MATERIALIZED VIEW IF EXISTS mv_smart_response_capabilities CASCADE;
 CREATE MATERIALIZED VIEW mv_smart_response_capabilities AS
- 
- SELECT f.id,
+
+WITH original AS (
+ SELECT 
+ 	f.id,
     m.smart_http_response,
     COALESCE(v.name, 'Unknown'::character varying) AS vendor_name,
         CASE
@@ -1009,25 +1021,26 @@ CREATE MATERIALIZED VIEW mv_smart_response_capabilities AS
    FROM fhir_endpoints_info f
      JOIN vendors v ON f.vendor_id = v.id
      JOIN fhir_endpoints_metadata m ON f.metadata_id = m.id
-  WHERE f.requested_fhir_version::text = 'None'::text AND m.smart_http_response = 200;
+  WHERE f.requested_fhir_version::text = 'None'::text AND m.smart_http_response = 200)
+SELECT row_number() OVER () AS mv_id,
+       original.*
+FROM original;
 
 -- Create indexes for mv_smart_response_capabilities
+CREATE UNIQUE INDEX idx_mv_smart_response_capabilities_unique_id ON mv_smart_response_capabilities(mv_id);
 CREATE INDEX idx_mv_smart_response_capabilities_id ON mv_smart_response_capabilities (id);
 CREATE INDEX idx_mv_smart_response_capabilities_vendor ON mv_smart_response_capabilities (vendor_name);
 CREATE INDEX idx_mv_smart_response_capabilities_fhir ON mv_smart_response_capabilities (fhir_version);
 CREATE INDEX idx_mv_smart_response_capabilities_capability ON mv_smart_response_capabilities (capability);
-
--- Composite index on vendor_name and fhir_version
 CREATE INDEX idx_mv_smart_response_capabilities_vendor_fhir ON mv_smart_response_capabilities (vendor_name, fhir_version);
-
--- Composite index on capability and fhir_version
 CREATE INDEX idx_mv_smart_response_capabilities_capability_fhir ON mv_smart_response_capabilities (capability, fhir_version);
 
 -- Create materialized view for selected_endpoints
 DROP MATERIALIZED VIEW IF EXISTS mv_selected_endpoints CASCADE;
 CREATE MATERIALIZED VIEW mv_selected_endpoints AS
-
- SELECT DISTINCT mv_well_known_endpoints.url,
+WITH original AS (
+ SELECT
+ 	DISTINCT mv_well_known_endpoints.url,
         CASE
             WHEN mv_well_known_endpoints.organization_names IS NULL OR mv_well_known_endpoints.organization_names = ''::text THEN mv_well_known_endpoints.organization_names
             ELSE
@@ -1040,9 +1053,14 @@ CREATE MATERIALIZED VIEW mv_selected_endpoints AS
         END AS condensed_organization_names,
     mv_well_known_endpoints.vendor_name,
     mv_well_known_endpoints.capability_fhir_version
-   FROM mv_well_known_endpoints;
+ FROM mv_well_known_endpoints)
+ SELECT 
+   row_number() OVER (ORDER BY url) AS mv_id,
+   *
+ FROM original;
 
 -- Create indexes for mv_selected_endpoints
+CREATE UNIQUE INDEX idx_mv_selected_endpoints_unique_id ON mv_selected_endpoints(mv_id);
 CREATE INDEX idx_mv_selected_endpoints_vendor ON mv_selected_endpoints(vendor_name);
 CREATE INDEX idx_mv_selected_endpoints_fhir ON mv_selected_endpoints(capability_fhir_version);
 CREATE INDEX idx_mv_selected_endpoints_vendor_fhir ON mv_selected_endpoints(vendor_name, capability_fhir_version);
