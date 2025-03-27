@@ -1,6 +1,7 @@
 BEGIN;
 
 -- Drop all materialized views and their indexes
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_http_pct CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_well_known_endpoints CASCADE;
