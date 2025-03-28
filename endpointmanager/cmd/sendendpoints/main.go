@@ -29,7 +29,6 @@ func main() {
 
 	errs := make(chan error)
 
-
 	// Infinite query loop
 	var wg sync.WaitGroup
 	ctx := context.Background()
