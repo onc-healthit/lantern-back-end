@@ -339,16 +339,6 @@ cd endpointmanager/cmd/historypruning
 go run main.go
 ```
 
-### JSON Exporter
-Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a given specification.
-
-Primarily uses the `jsonexport` package.
-
-```bash
-cd endpointmanager/cmd/jsonexport 
-go run main.go <export JSON file name>
-```
-
 ### NPPES Org Populator
 
 Reads in a CSV file of NPPES organization data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
