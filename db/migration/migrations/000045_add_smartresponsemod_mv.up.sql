@@ -1,37 +1,19 @@
 BEGIN;
 
--- Create materialized view for endpoint_list_organizations
-DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
-CREATE MATERIALIZED VIEW mv_endpoint_list_organizations AS
-WITH original AS (
-  SELECT DISTINCT 
-    endpoint_export.url,
-    unnest(
-      CASE
-        WHEN endpoint_export.endpoint_names IS NULL THEN ARRAY['Unknown'::text]
-        ELSE ARRAY(
-          SELECT btrim(regexp_replace(unnest(string_to_array(regexp_replace(elem.elem::text, '["]'::text, ''::text, 'g'), ';'::text)), '\s+'::text, ' '::text, 'g'))
-          FROM unnest(endpoint_export.endpoint_names) elem(elem)
-        )
-      END
-    ) AS organization_name,
-    CASE
-      WHEN endpoint_export.fhir_version::text = '' THEN 'No Cap Stat'
-      ELSE endpoint_export.fhir_version
-    END AS fhir_version,
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
-    endpoint_export.requested_fhir_version
-  FROM endpoint_export
-)
-SELECT 
-	row_number() OVER (ORDER BY url) AS mv_id,
-    *
-FROM original
-ORDER BY organization_name, url;
+-- Create materialized view for endpoint_organization_tbl
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_organization_tbl CASCADE;
+CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
+ SELECT sub.url,
+    array_agg(sub.endpoint_names_list ORDER BY sub.endpoint_names_list) AS endpoint_names_list
+   FROM ( SELECT DISTINCT endpoint_export.url,
+            unnest(endpoint_export.endpoint_names) AS endpoint_names_list
+           FROM endpoint_export) sub
+  GROUP BY sub.url
+  ORDER BY sub.url;
 
--- Create indexes for mv_endpoint_list_organizations
-CREATE UNIQUE INDEX idx_mv_endpoint_list_org_unique_id ON mv_endpoint_list_organizations(mv_id);
-CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+-- Create indexes for mv_endpoint_organization_tbl
+CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_organization_tbl(url);
+
 
 -- Create materialized view for endpoint_export_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
