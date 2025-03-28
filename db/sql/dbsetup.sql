@@ -487,15 +487,15 @@ CREATE MATERIALIZED VIEW mv_endpoint_totals AS
 WITH latest_metadata AS (
     SELECT max(updated_at) AS last_updated
     FROM fhir_endpoints_metadata
-), 
+),
 totals AS (
-    SELECT 
+    SELECT
         (SELECT count(DISTINCT url) FROM fhir_endpoints) AS all_endpoints,
-        (SELECT count(DISTINCT url) 
-         FROM fhir_endpoints_info 
+        (SELECT count(DISTINCT url)
+         FROM fhir_endpoints_info
          WHERE requested_fhir_version = 'None') AS indexed_endpoints
 )
-SELECT 
+SELECT
     now() AS aggregation_date,
     totals.all_endpoints,
     totals.indexed_endpoints,
@@ -507,42 +507,42 @@ CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregatio
 
 CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
-    SELECT 
+    SELECT
         fem.http_response,
         count(*) AS response_count
     FROM fhir_endpoints_info fei
-    JOIN fhir_endpoints_metadata fem 
+    JOIN fhir_endpoints_metadata fem
         ON fei.metadata_id = fem.id
     WHERE fei.requested_fhir_version = 'None'
     GROUP BY fem.http_response
 )
-SELECT 
+SELECT
     COALESCE(SUM(
-        CASE 
-            WHEN http_response = 200 THEN response_count 
-            ELSE 0 
+        CASE
+            WHEN http_response = 200 THEN response_count
+            ELSE 0
         END), 0) AS http_200,
     COALESCE(SUM(
-        CASE 
-            WHEN http_response <> 200 THEN response_count 
-            ELSE 0 
+        CASE
+            WHEN http_response <> 200 THEN response_count
+            ELSE 0
         END), 0) AS http_non200,
     COALESCE(SUM(
-        CASE 
-            WHEN http_response = 404 THEN response_count 
-            ELSE 0 
+        CASE
+            WHEN http_response = 404 THEN response_count
+            ELSE 0
         END), 0) AS http_404,
     COALESCE(SUM(
-        CASE 
-            WHEN http_response = 503 THEN response_count 
-            ELSE 0 
+        CASE
+            WHEN http_response = 503 THEN response_count
+            ELSE 0
         END), 0) AS http_503
 FROM response_counts;
 
 CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
 
 CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
-SELECT 
+SELECT
     COALESCE(v.name, 'Unknown') AS vendor_name,
     CASE
         WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
@@ -565,8 +565,8 @@ SELECT
     END AS short_name
 FROM endpoint_export e
 LEFT JOIN vendors v ON e.vendor_name = v.name
-GROUP BY 
-    COALESCE(v.name, 'Unknown'), 
+GROUP BY
+    COALESCE(v.name, 'Unknown'),
     CASE
         WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
         WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
@@ -583,7 +583,7 @@ GROUP BY
         WHEN COALESCE(v.name, 'Unknown') = 'Unknown' THEN 'Unknown'
         ELSE COALESCE(v.name, 'Unknown')
     END
-ORDER BY 
+ORDER BY
     vendor_name, fhir_version;
 
 -- Add indexes to improve query performance
@@ -600,7 +600,7 @@ WITH response_by_vendor AS (
             ELSE v.name
         END AS vendor_name,
         m.http_response AS http_code,
-        CASE 
+        CASE
             WHEN m.http_response = 100 THEN 'Continue'
             WHEN m.http_response = 101 THEN 'Switching Protocols'
             WHEN m.http_response = 102 THEN 'Processing'
@@ -686,7 +686,7 @@ response_all_devs AS (
     FROM response_by_vendor
     GROUP BY http_code, code_label
 )
-SELECT 
+SELECT
     now() AS aggregation_date,
     vendor_name,
     http_code,
@@ -736,7 +736,7 @@ WITH expanded_resources AS (
 	-- Expand the "interaction" array within each resource
   LEFT JOIN LATERAL json_array_elements(resource_elem->'interaction') interaction_elem
     ON TRUE
-	
+
   WHERE f.requested_fhir_version = 'None'
 ),
 aggregated_operations AS (
@@ -774,3 +774,200 @@ CREATE INDEX mv_resource_interactions_resource_type_idx
 
 CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
+
+-- LANTERN-836: Create an SQL Materialized View for the Contact Information Tab
+CREATE MATERIALIZED VIEW mv_contact_information AS
+WITH contact_data AS (
+  -- Get contact information from JSON
+  SELECT
+    f.url,
+    f.requested_fhir_version,
+    COALESCE(v.name, 'Unknown') AS vendor_name,
+    CASE WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+         WHEN f.capability_fhir_version SIMILAR TO '[0-9]+\.[0-9]+\.[0-9]+-.*' THEN SUBSTRING(f.capability_fhir_version FROM 1 FOR POSITION('-' IN f.capability_fhir_version)-1)
+         ELSE f.capability_fhir_version
+    END AS fhir_version,
+    e.endpoint_names,
+    contact_obj->>'name' AS contact_name,
+    telecom_obj->>'system' AS contact_type,
+    telecom_obj->>'value' AS contact_value,
+    COALESCE((telecom_obj->>'rank')::integer, 999) AS contact_preference
+  FROM fhir_endpoints_info f
+  LEFT JOIN vendors v ON f.vendor_id = v.id
+  LEFT JOIN endpoint_export e ON f.url = e.url AND f.requested_fhir_version = e.requested_fhir_version
+  LEFT JOIN LATERAL jsonb_array_elements(f.capability_statement::jsonb->'contact') contact_obj
+    ON f.capability_statement::jsonb != 'null'
+  LEFT JOIN LATERAL jsonb_array_elements(contact_obj->'telecom') telecom_obj
+    ON TRUE
+  WHERE f.requested_fhir_version = 'None'
+),
+endpoints_with_metrics AS (
+  -- Calculate metrics and prepare for final view
+  SELECT
+    cd.url,
+    cd.requested_fhir_version,
+    cd.vendor_name,
+    cd.fhir_version,
+    cd.endpoint_names,
+    cd.contact_name,
+    cd.contact_type,
+    cd.contact_value,
+    cd.contact_preference,
+    -- Pre-process endpoint names for display (handling as text)
+    -- Pre-process endpoint names for display (handling as text and removing braces/quotes)
+CASE
+  WHEN cd.endpoint_names IS NULL THEN NULL
+  WHEN cd.endpoint_names::text = '' THEN NULL
+  ELSE
+    -- Remove curly braces and quotes
+    REGEXP_REPLACE(
+      REGEXP_REPLACE(
+        REGEXP_REPLACE(
+          CASE
+            -- Count semicolons to determine if there are more than 5 entries
+            WHEN (LENGTH(cd.endpoint_names::text) - LENGTH(REPLACE(cd.endpoint_names::text, ';', ''))) / LENGTH(';') >= 5 THEN
+              -- Take portion up to the 5th semicolon and add "[more]"
+              SUBSTRING(
+                cd.endpoint_names::text,
+                1,
+                COALESCE(NULLIF(STRPOS(
+                  SUBSTRING(
+                    cd.endpoint_names::text,
+                    COALESCE(NULLIF(STRPOS(
+                      SUBSTRING(
+                        cd.endpoint_names::text,
+                        COALESCE(NULLIF(STRPOS(
+                          SUBSTRING(
+                            cd.endpoint_names::text,
+                            COALESCE(NULLIF(STRPOS(cd.endpoint_names::text, ';'), 0), 0) + 1
+                          ),
+                          ';'
+                        ), 0), 0) + 1
+                      ),
+                      ';'
+                    ), 0), 0) + 1
+                  ),
+                  ';'
+                ), 0), LENGTH(cd.endpoint_names::text))
+              ) || ' [more]'
+            ELSE cd.endpoint_names::text
+          END,
+          '\\{|\\}', '', 'g'  -- Remove curly braces
+        ),
+        '"', '', 'g'  -- Remove double quotes
+      ),
+      '\\\\', '', 'g'  -- Remove escape backslashes
+    )
+END AS condensed_endpoint_names,
+    -- Calculate other metrics
+    COUNT(*) OVER (PARTITION BY cd.url) AS num_contacts,
+    CASE
+      WHEN cd.contact_name IS NOT NULL OR cd.contact_type IS NOT NULL OR cd.contact_value IS NOT NULL
+      THEN TRUE ELSE FALSE
+    END AS has_contact,
+    ROW_NUMBER() OVER (PARTITION BY cd.url ORDER BY cd.contact_preference) AS contact_rank
+  FROM contact_data cd
+)
+SELECT *
+FROM endpoints_with_metrics;
+
+-- Create necessary indexes
+CREATE UNIQUE INDEX mv_contact_information_uniq
+  ON mv_contact_information (url, requested_fhir_version, COALESCE(contact_rank, -1));
+CREATE INDEX mv_contact_information_fhir_version_idx
+  ON mv_contact_information (fhir_version);
+CREATE INDEX mv_contact_information_vendor_name_idx
+  ON mv_contact_information (vendor_name);
+CREATE INDEX mv_contact_information_has_contact_idx
+  ON mv_contact_information (has_contact);
+
+-- LANTERN-839
+-- Create materialized view for NPI organization matches
+CREATE MATERIALIZED VIEW mv_npi_organization_matches AS
+SELECT 
+    url,
+    requested_fhir_version,
+    vendor_name,
+    fhir_version,
+    organization_name,
+    organization_secondary_name,
+    npi_id,
+    zipcode,
+    match_score * 100 AS match_score,
+    CASE
+        WHEN match_score * 100 = 100 THEN '100'
+        WHEN match_score * 100 >= 99 AND match_score * 100 < 100 THEN '99-100'
+        WHEN match_score * 100 >= 98 AND match_score * 100 < 99 THEN '98-100'
+        WHEN match_score * 100 >= 97 AND match_score * 100 < 98 THEN '97-100'
+        ELSE 'below_97'
+    END AS confidence_range
+FROM
+    organization_location
+WHERE
+    match_score >= 0.97
+ORDER BY
+    organization_name, url;
+
+-- Create indexes for NPI organization matches materialized view
+CREATE INDEX idx_mv_npi_org_fhir ON mv_npi_organization_matches(fhir_version);
+CREATE INDEX idx_mv_npi_org_vendor ON mv_npi_organization_matches(vendor_name);
+CREATE INDEX idx_mv_npi_org_confidence ON mv_npi_organization_matches(confidence_range);
+CREATE INDEX idx_mv_npi_org_url ON mv_npi_organization_matches(url);
+CREATE INDEX idx_mv_npi_org_requested_fhir ON mv_npi_organization_matches(requested_fhir_version);
+
+-- Create materialized view for endpoint list organizations
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
+
+CREATE MATERIALIZED VIEW mv_endpoint_list_organizations AS
+SELECT DISTINCT
+    url,
+
+    -- Handle NULL and empty values in endpoint_names, trim spaces properly
+    UNNEST(
+        CASE
+            WHEN endpoint_names IS NULL THEN ARRAY['Unknown']  -- Convert NULL to "Unknown"
+            ELSE ARRAY(
+                SELECT TRIM(REGEXP_REPLACE(UNNEST(string_to_array(REGEXP_REPLACE(elem, '["]', '', 'g'), ';')), '\s+', ' ', 'g'))
+                FROM UNNEST(endpoint_names) AS elem
+            )
+        END
+    ) AS organization_name,
+
+    -- Replace empty fhir_version values with "No Cap Stat"
+    CASE
+        WHEN fhir_version = '' THEN 'No Cap Stat'
+        ELSE fhir_version
+    END AS fhir_version,
+
+    -- Replace NULL vendor_name with "Unknown"
+    COALESCE(vendor_name, 'Unknown') AS vendor_name,
+
+    requested_fhir_version
+FROM endpoint_export
+ORDER BY organization_name, url;
+
+-- Create indexes for endpoint list organizations materialized view
+CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, requested_fhir_version);
+CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
+CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
+CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+
+-- Create materialized view for endpoint locations
+CREATE MATERIALIZED VIEW mv_endpoint_locations AS
+SELECT
+    ol.url,
+    ol.endpoint_names[1] as endpoint_name,
+    ol.organization_name,
+    ol.fhir_version,
+    ol.vendor_name,
+    ol.match_score,
+    left(ol.zipcode, 5) as zipcode,
+    ol.npi_id,
+    ol.requested_fhir_version
+FROM 
+    organization_location ol;
+
+-- Create indexes for endpoint locations materialized view
+CREATE INDEX idx_mv_endpoint_loc_fhir ON mv_endpoint_locations(fhir_version);
+CREATE INDEX idx_mv_endpoint_loc_vendor ON mv_endpoint_locations(vendor_name);
+CREATE INDEX idx_mv_endpoint_loc_url ON mv_endpoint_locations(url);
