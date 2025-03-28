@@ -1020,16 +1020,6 @@ output$endpoint_location_map  <- renderLeaflet({
     res
   })
 
-  get_endpoint_npi_orgs <- reactive({
-    endpoint <- current_endpoint()
-
-    res <- get_npi_organization_matches(db_tables)
-    res <- res %>%
-    filter(url == endpoint$url) %>%
-    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
-    mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
-    res
-  })
 
   output$endpoint_list_org_table <- DT::renderDataTable({
     datatable(get_endpoint_list_orgs() %>% distinct(organization_name),
