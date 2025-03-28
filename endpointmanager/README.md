@@ -170,9 +170,6 @@ Contains helpful functions that are used commonly throughout the project, such a
 
 Prunes the fhir_endpoints_info_history table to remove consecutive duplicate endpoint entries older than the 2x the LANTERN_PRUNING_THRESHOLD environment variable and deletes any associated validation table entries.
 
-### JSON Export
-
-Creates a JSON export file by formatting the data from the fhir_endpoints_info and fhir_endpoints_info_history tables into a JSON file formatted as specified in the `shinydashboard/lantern/fhir_endpoints_fields_json.md`.
 
 ### NPPES Querier
 
