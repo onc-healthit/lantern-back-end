@@ -8,20 +8,8 @@ downloadsmodule_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
-             p("The files below include the endpoint data over time in the JSON format,
-              the current endpoint data found on the endpoints tab in the CSV format,
-              and the endpoint tab table field descriptions in both the JSON and CSV format.")
-      )
-    ),
-    fluidRow(
-      column(width = 12,
-             h2("JSON Downloads"),
-             downloadButton(ns("download_data_json"), "Download Endpoint Data"),
-             downloadButton(ns("download_descriptions_markdown"), "Download Field Descriptions"),
-      ),
-      column(width = 12,
-            p("Formerly, the json export file included all data, but now only includes the past 30 days. To see export files for previous months created by Lantern, visit the repository ",
-            a("available here.", href = "https://github.com/onc-healthit/onc-open-data", target = "_blank"))
+             p("The files below include the current endpoint data found on the endpoints tab in the CSV format,
+              and the endpoint tab table field descriptions in the CSV format.")
       )
     ),
     fluidRow(
@@ -55,24 +43,6 @@ downloadsmodule <- function(
   session
 ) {
   ns <- session$ns
-
-  output$download_data_json <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints.json"
-    },
-    content = function(file) {
-      file.copy("/srv/shiny-server/exportfolder/fhir_endpoints_fields.json", file)
-    }
-  )
-
-  output$download_descriptions_markdown <- downloadHandler(
-    filename = function() {
-      "fhir_endpoints_fields_json.md"
-    },
-    content = function(file) {
-      file.copy("fhir_endpoints_fields_json.md", file)
-    }
-  )
 
   # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
