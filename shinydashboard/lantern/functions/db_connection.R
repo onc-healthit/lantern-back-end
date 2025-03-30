@@ -38,7 +38,8 @@ db_tables <- list(
   vendors                     = tbl(db_connection, "vendors"),
   mv_endpoint_totals          = tbl(db_connection, "mv_endpoint_totals"),
   mv_vendor_fhir_counts       = tbl(db_connection, "mv_vendor_fhir_counts"),
-  mv_response_tally          = tbl(db_connection, "mv_response_tally")
+  mv_response_tally           = tbl(db_connection, "mv_response_tally"),
+  mv_contacts_info            = tbl(db_connection, "mv_contacts_info")
 )
 
 valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
