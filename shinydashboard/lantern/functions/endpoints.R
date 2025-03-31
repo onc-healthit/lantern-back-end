@@ -871,6 +871,9 @@ get_selected_endpoints <- function(db_connection, fhir_version, vendor) {
   if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
     query <- query %>% filter(vendor_name == !!vendor)
   }
+
+  # Remove unique_id column
+  query <- query %>% select(-mv_id) 
   
   # Collect the filtered data
   result <- query %>% collect()
