@@ -879,14 +879,26 @@ get_validation_results <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-get_endpoint_list_matches <- function() {
-    el <- app$endpoint_export_tbl() %>%
-          separate_rows(endpoint_names, sep = ";") %>%
-          select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
-          rename(organization_name = endpoint_names) %>%
-          tidyr::replace_na(list(organization_name = "Unknown")) %>%
-          mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
-    el
+get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_endpoint_list_organizations")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>%
+    collect() %>%
+    tidyr::replace_na(list(organization_name = "Unknown")) %>%
+    mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
+
+  return(result)
 }
 
 get_npi_organization_matches <- function(db_tables) {
