@@ -47,7 +47,7 @@ func main() {
 	go se.HistoryPruning(ctx, &wg, capInterval, store, errs)
 
 	wg.Add(1)
-	go se.ValidationPruning(ctx, &wg, store, errs)
+	go se.ValidationPruning(ctx, &wg, capInterval, store, errs)
 
 	for elem := range errs {
 		log.Warn(elem)

@@ -98,12 +98,15 @@ func HistoryPruning(
 func ValidationPruning(
 	ctx context.Context,
 	wg *sync.WaitGroup,
+	qInterval int,
 	store *postgresql.Store,
 	errs chan<- error) {
 
 	defer wg.Done()
-
-	log.Info("Starting validation pruning")
-	validationpruning.PruneValidationInfo(ctx, store)
+	for {
+		log.Info("Starting validation pruning")
+		validationpruning.PruneValidationInfo(ctx, store)
+		time.Sleep(time.Duration(qInterval) * time.Minute)
+	}
 
 }
