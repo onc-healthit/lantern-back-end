@@ -14,7 +14,7 @@ WITH contact_info_extracted AS (
   WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'
 ),
 endpoint_details AS (
-  SELECT
+  SELECT DISTINCT -- Added DISTINCT to eliminate potential duplication
     url,
     vendor_name,
     CASE 
@@ -30,7 +30,7 @@ endpoint_details AS (
 endpoint_names_grouped AS (
   SELECT 
     url, 
-    string_agg(endpoint_names_list, ';') AS endpoint_names
+    string_agg(DISTINCT endpoint_names_list, ';') AS endpoint_names -- Added DISTINCT to avoid duplications
   FROM (
     SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list 
     FROM endpoint_export 
@@ -38,43 +38,87 @@ endpoint_names_grouped AS (
     ORDER BY endpoint_names_list
   ) AS unnested
   GROUP BY url
+),
+-- First, get URLs with contact info
+urls_with_contacts AS (
+  SELECT DISTINCT url
+  FROM contact_info_extracted
+),
+-- Then, get URLs without contact info
+urls_without_contacts AS (
+  SELECT DISTINCT e.url
+  FROM endpoint_details e
+  LEFT JOIN urls_with_contacts c ON e.url = c.url
+  WHERE c.url IS NULL
+),
+-- Combine contact data
+joined_with_contacts AS (
+  SELECT 
+    e.url,
+    e.vendor_name,
+    e.fhir_version,
+    eng.endpoint_names,
+    e.requested_fhir_version,
+    c.contact_name,
+    c.contact_type,
+    c.contact_value,
+    COALESCE(c.contact_preference, 999) AS contact_preference,
+    TRUE AS has_contact,
+    MD5(CONCAT(
+      e.url, 
+      COALESCE(c.contact_name, ''), 
+      COALESCE(c.contact_type, ''), 
+      COALESCE(c.contact_value, ''),
+      COALESCE(c.contact_preference::text, '999'),
+      COALESCE(random()::text, '')  -- Add randomness to handle duplicates
+    )) AS unique_hash
+  FROM 
+    endpoint_details e
+  INNER JOIN 
+    urls_with_contacts uc ON e.url = uc.url
+  LEFT JOIN 
+    endpoint_names_grouped eng ON e.url = eng.url
+  LEFT JOIN 
+    contact_info_extracted c ON e.url = c.url
+),
+-- Handle URLs without contacts
+joined_without_contacts AS (
+  SELECT 
+    e.url,
+    e.vendor_name,
+    e.fhir_version,
+    eng.endpoint_names,
+    e.requested_fhir_version,
+    NULL AS contact_name,
+    NULL AS contact_type,
+    NULL AS contact_value,
+    999 AS contact_preference,
+    FALSE AS has_contact,
+    MD5(CONCAT(
+      e.url, 
+      'no_contact',
+      COALESCE(random()::text, '')  -- Add randomness to handle duplicates
+    )) AS unique_hash
+  FROM 
+    endpoint_details e
+  INNER JOIN 
+    urls_without_contacts nc ON e.url = nc.url
+  LEFT JOIN 
+    endpoint_names_grouped eng ON e.url = eng.url
 )
-SELECT 
-  e.url,
-  e.vendor_name,
-  e.fhir_version,
-  eng.endpoint_names,
-  e.requested_fhir_version,
-  c.contact_name,
-  c.contact_type,
-  c.contact_value,
-  COALESCE(c.contact_preference, 999) AS contact_preference,
-  CASE WHEN c.contact_name IS NOT NULL OR c.contact_type IS NOT NULL OR c.contact_value IS NOT NULL 
-       THEN TRUE ELSE FALSE END AS has_contact,
-  -- Add a hash column for uniqueness - not visible in normal queries
-  MD5(CONCAT(
-    e.url, 
-    COALESCE(c.contact_name, ''), 
-    COALESCE(c.contact_type, ''), 
-    COALESCE(c.contact_value, ''),
-    COALESCE(c.contact_preference::text, '999'),
-    COALESCE(random()::text, '')  -- Add randomness to handle duplicates
-  )) AS unique_hash
-FROM 
-  endpoint_details e
-LEFT JOIN 
-  endpoint_names_grouped eng ON e.url = eng.url
-LEFT JOIN 
-  contact_info_extracted c ON e.url = c.url
+-- Combine both sets
+SELECT * FROM joined_with_contacts
+UNION ALL
+SELECT * FROM joined_without_contacts
 ORDER BY 
-  e.url, 
-  COALESCE(c.contact_preference, 999);
+  url, 
+  contact_preference;
 
--- Create unique index on the hash for concurrent refresh
+-- Create unique index for concurrent refresh
 DROP INDEX IF EXISTS idx_mv_contacts_info_unique;
 CREATE UNIQUE INDEX idx_mv_contacts_info_unique ON mv_contacts_info(unique_hash);
 
--- Create standard indexes to improve query performance
+-- Create indexes to improve query performance
 DROP INDEX IF EXISTS idx_mv_contacts_info_url;
 CREATE INDEX idx_mv_contacts_info_url ON mv_contacts_info(url);
 
