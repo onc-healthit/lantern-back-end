@@ -64,30 +64,62 @@ valuesmodule <- function(
     header
   })
 
-  selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$capstat_values())
-    req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
-    res <- res %>% filter(filter_fhir_version %in% sel_fhir_version())
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
+  # selected_fhir_endpoints <- reactive({
+  #   res <- isolate(app_data$capstat_values())
+  #   req(sel_fhir_version(), sel_vendor())
+  #   # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
+  #   # the capability statement fields by which fhir verison they're associated with
+  #   res <- res %>% filter(filter_fhir_version %in% sel_fhir_version())
+  #   # Same as above but with the vendor dropdown
+  #   if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+  #     res <- res %>% filter(vendor_name == sel_vendor())
+  #   }
+  #   # Filter by the versions that the given field exists in
+  #   value_versions_list <- get_value_versions()
+  #   res <- res %>% filter(filter_fhir_version %in% value_versions_list)
+  #   # Repeat with filtering fields to see values
+  #   res <- res %>%
+  #     rename(fhirVersion = fhir_version, software.name = software_name, software.version = software_version, software.releaseDate = software_release_date, implementation.description = implementation_description, implementation.url = implementation_url, implementation.custodian = implementation_custodian) %>%
+  #     group_by_at(vars("vendor_name", "filter_fhir_version", sel_capstat_values())) %>%
+  #     count() %>%
+  #     rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = filter_fhir_version) %>%
+  #     rename(field_value = sel_capstat_values()) %>%
+  #     # If the field is empty then put an "[Empty]" string
+  #     tidyr::replace_na(list(field_value = "[Empty]"))
+  #   res
+  # })
+
+selected_fhir_endpoints <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values()) 
+
+    fhir_versions <- sel_fhir_version()  
+    vendor <- sel_vendor()               
+    field_name <- sel_capstat_values()  
+
+    # Properly format fhir_versions for SQL query
+    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+
+    query_str <- glue_sql("
+        SELECT * 
+        FROM selected_fhir_endpoints_values_mv 
+        WHERE \"FHIR Version\" IN {DBI::SQL(fhir_versions_sql)}", 
+        .con = db_connection
+    )
+
+    # Add vendor filtering only if a specific vendor is selected
+    if (vendor != ui_special_values$ALL_DEVELOPERS) {
+        query_str <- glue_sql("{query_str} AND \"Developer\" = {vendor}", .con = db_connection)
     }
-    # Filter by the versions that the given field exists in
-    value_versions_list <- get_value_versions()
-    res <- res %>% filter(filter_fhir_version %in% value_versions_list)
-    # Repeat with filtering fields to see values
-    res <- res %>%
-      rename(fhirVersion = fhir_version, software.name = software_name, software.version = software_version, software.releaseDate = software_release_date, implementation.description = implementation_description, implementation.url = implementation_url, implementation.custodian = implementation_custodian) %>%
-      group_by_at(vars("vendor_name", "filter_fhir_version", sel_capstat_values())) %>%
-      count() %>%
-      rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = filter_fhir_version) %>%
-      rename(field_value = sel_capstat_values()) %>%
-      # If the field is empty then put an "[Empty]" string
-      tidyr::replace_na(list(field_value = "[Empty]"))
-    res
-  })
+
+    query <- sql(query_str)
+
+    res <- tbl(db_connection, query) %>%
+        collect() %>%
+        filter(field == field_name) %>%  # Use "field" as per the materialized view
+        select("Developer", "FHIR Version", field_value, "Endpoints")
+
+    return(res)
+})
 
   capstatPageSizeNum <- reactiveVal(NULL)
 

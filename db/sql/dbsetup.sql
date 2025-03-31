@@ -774,3 +774,132 @@ CREATE INDEX mv_resource_interactions_resource_type_idx
 
 CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
+
+
+--LANTERN-848
+CREATE MATERIALIZED VIEW get_capstat_values_mv AS
+WITH valid_fhir_versions AS (
+    -- Dynamically extract all distinct FHIR versions from the dataset
+    SELECT DISTINCT 
+        CASE 
+            WHEN capability_fhir_version LIKE '%-%' THEN SPLIT_PART(capability_fhir_version, '-', 1)
+            ELSE capability_fhir_version
+        END AS version
+    FROM fhir_endpoints_info
+    WHERE capability_fhir_version IS NOT NULL
+)
+SELECT 
+    f.id AS endpoint_id,
+    f.vendor_id,
+    COALESCE(vendors.name, 'Unknown') AS vendor_name,
+    CASE 
+        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
+        ELSE f.capability_fhir_version 
+    END AS fhir_version,
+    -- Extract the major version dynamically
+    CASE 
+        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
+        ELSE f.capability_fhir_version 
+    END AS raw_filter_fhir_version,
+    -- Check dynamically against extracted valid FHIR versions
+    CASE 
+        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN (
+            CASE 
+                WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
+                ELSE f.capability_fhir_version 
+            END
+        ) IN (SELECT version FROM valid_fhir_versions) 
+        THEN (
+            CASE 
+                WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
+                ELSE f.capability_fhir_version 
+            END
+        ) 
+        ELSE 'Unknown' 
+    END AS filter_fhir_version,
+    f.capability_statement->>'url' AS url,
+    f.capability_statement->>'version' AS version,
+    f.capability_statement->>'name' AS name,
+    f.capability_statement->>'title' AS title,
+    f.capability_statement->>'date' AS date,
+    f.capability_statement->>'publisher' AS publisher,
+    f.capability_statement->>'description' AS description,
+    f.capability_statement->>'purpose' AS purpose,
+    f.capability_statement->>'copyright' AS copyright,
+    f.capability_statement->'software'->>'name' AS software_name,
+    f.capability_statement->'software'->>'version' AS software_version,
+    f.capability_statement->'software'->>'releaseDate' AS software_release_date,
+    f.capability_statement->'implementation'->>'description' AS implementation_description,
+    f.capability_statement->'implementation'->>'url' AS implementation_url,
+    f.capability_statement->'implementation'->>'custodian' AS implementation_custodian
+FROM fhir_endpoints_info f
+LEFT JOIN vendors ON f.vendor_id = vendors.id
+WHERE f.capability_statement::jsonb IS NOT NULL
+AND f.requested_fhir_version = 'None';
+
+-- Create indexes for performance optimization
+CREATE INDEX idx_get_capstat_values_mv_endpoint_id ON get_capstat_values_mv(endpoint_id);
+CREATE INDEX idx_get_capstat_values_mv_vendor_id ON get_capstat_values_mv(vendor_id);
+CREATE INDEX idx_get_capstat_values_mv_filter_fhir_version ON get_capstat_values_mv(filter_fhir_version);
+CREATE INDEX idx_get_capstat_values_mv_vendor_name ON get_capstat_values_mv(vendor_name);
+
+-- Create a unique composite index
+CREATE UNIQUE INDEX idx_get_capstat_values_mv_unique ON get_capstat_values_mv(endpoint_id, vendor_id, filter_fhir_version);
+
+CREATE MATERIALIZED VIEW selected_fhir_endpoints_values_mv AS
+WITH base AS (
+    SELECT 
+        g.vendor_name AS "Developer",
+        g.filter_fhir_version AS "FHIR Version",
+        g.url,
+        g.fhir_version AS "fhirVersion",
+        g.name,
+        g.title,
+        g.date,
+        g.publisher,
+        g.description,
+        g.purpose,
+        g.copyright,
+        g.software_name AS "software.name",
+        g.software_version AS "software.version",
+        g.software_release_date AS "software.releaseDate",
+        g.implementation_description AS "implementation.description",
+        g.implementation_url AS "implementation.url",
+        g.implementation_custodian AS "implementation.custodian"
+    FROM get_capstat_values_mv g
+),
+aggregated AS (
+    SELECT 
+        "Developer",
+        "FHIR Version",
+        UNNEST(ARRAY[
+            'url', 'fhirVersion', 'name', 'title', 'date', 'publisher', 'description', 'purpose', 'copyright', 
+            'software.name', 'software.version', 'software.releaseDate', 
+            'implementation.description', 'implementation.url', 'implementation.custodian'
+        ]) AS Field,
+        UNNEST(ARRAY[
+            url, "fhirVersion", name, title, date, publisher, description, purpose, copyright, 
+            "software.name", "software.version", "software.releaseDate", 
+            "implementation.description", "implementation.url", "implementation.custodian"
+        ]) AS field_value
+    FROM base
+)
+SELECT 
+    "Developer",
+    "FHIR Version",
+    Field,
+    COALESCE(field_value, '[Empty]') AS field_value,
+    COUNT(*)::INT AS "Endpoints"
+FROM aggregated
+GROUP BY "Developer", "FHIR Version", Field, field_value;
+
+-- Create indexes for performance optimization
+CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_mv("Developer");
+CREATE INDEX idx_selected_fhir_endpoints_fhir_version ON selected_fhir_endpoints_values_mv("FHIR Version");
+CREATE INDEX idx_selected_fhir_endpoints_field ON selected_fhir_endpoints_values_mv(Field);
+CREATE INDEX idx_selected_fhir_endpoints_field_value ON selected_fhir_endpoints_values_mv(field_value);
+
+-- Create a unique composite index
+CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);

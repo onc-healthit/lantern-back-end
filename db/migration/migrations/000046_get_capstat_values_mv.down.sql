@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS get_capstat_values_mv CASCADE;
+
+COMMIT;
