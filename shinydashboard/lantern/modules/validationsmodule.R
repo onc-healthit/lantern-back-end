@@ -192,16 +192,18 @@ validationsmodule <- function(
     
     # Execute the filtered query
     query <- paste0("
-      SELECT rule_name, valid, SUM(count) as count
+      SELECT rule_name, valid, COUNT(*) as count
       FROM mv_validation_results_plot
       WHERE fhir_version IN (", fhir_versions, ")
       ", vendor_filter, "
       ", validation_group_filter, "
       GROUP BY rule_name, valid
+      ORDER BY rule_name
     ")
     
     res <- dbGetQuery(db_connection, query) %>%
-      mutate(valid = if_else(valid == TRUE, "Success", "Failure"))
+      mutate(valid = if_else(valid == TRUE, "Success", "Failure")) %>%
+      mutate(count = as.double(count))
     
     return(res)
   })
@@ -234,7 +236,7 @@ validationsmodule <- function(
     
     # Query to get failed validations for the selected rule
     query <- paste0("
-      SELECT url, fhir_version, vendor_name, expected, actual
+      SELECT fhir_version, url, expected, actual, vendor_name
       FROM mv_validation_failures
       WHERE rule_name = '", selected_rule, "'
       AND fhir_version IN (", fhir_versions, ")
