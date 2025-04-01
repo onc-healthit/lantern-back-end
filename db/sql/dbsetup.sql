@@ -778,32 +778,54 @@ CREATE INDEX mv_resource_interactions_operations_idx
 
 --LANTERN-security_tab_mv
 CREATE MATERIALIZED VIEW security_endpoints_mv AS
+WITH valid_fhir_versions AS (
+    -- Dynamically extract all distinct valid FHIR versions from the dataset
+    SELECT DISTINCT 
+        CASE 
+            WHEN fhir_version LIKE '%-%' THEN SPLIT_PART(fhir_version, '-', 1)
+            ELSE fhir_version
+        END AS version
+    FROM endpoint_export
+    WHERE fhir_version IS NOT NULL AND fhir_version != ''
+)
 SELECT 
     ROW_NUMBER() OVER () AS id,  -- Generate a unique sequential ID
 	e.url,
-    REPLACE(REPLACE(REPLACE(e.endpoint_names::TEXT, '{', ''), '}', ''), '"', '') AS organization_names,
+    -- Completely remove ALL double quotes, matching the gsub operations in R
+    REPLACE(
+        REPLACE(
+            REPLACE(
+                REPLACE(e.endpoint_names::TEXT, '{', ''), 
+                '}', ''
+            ), 
+            '","', '; '
+        ),
+        '"', ''
+    ) AS organization_names,
     COALESCE(e.vendor_name, 'Unknown') AS vendor_name,
     CASE 
         WHEN e.fhir_version = '' THEN 'No Cap Stat'
         ELSE e.fhir_version 
     END AS capability_fhir_version,
-    CASE 
-        WHEN e.fhir_version ~ '-' THEN SPLIT_PART(e.fhir_version, '-', 1)
-        ELSE e.fhir_version 
-    END AS fhir_version,
-    CASE 
-        WHEN (CASE 
-                 WHEN e.fhir_version ~ '-' THEN SPLIT_PART(e.fhir_version, '-', 1)
-                 ELSE e.fhir_version 
-              END) IN ('1.0.2', '3.0.1', '4.0.1', '4.3.0', '5.0.0') 
-        THEN (CASE 
-                 WHEN e.fhir_version ~ '-' THEN SPLIT_PART(e.fhir_version, '-', 1)
-                 ELSE e.fhir_version 
-              END) 
-        ELSE 'Unknown' 
-    END AS fhir_version_final,
     e.tls_version,
-    json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code
+    -- Extract the code exactly like in the original query
+    json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code,
+    -- Dynamically check against valid_fhir_versions
+    CASE 
+        WHEN (
+            CASE 
+                WHEN e.fhir_version LIKE '%-%' THEN SPLIT_PART(e.fhir_version, '-', 1)
+                ELSE e.fhir_version 
+            END
+        ) IN (SELECT version FROM valid_fhir_versions) 
+        THEN (
+            CASE 
+                WHEN e.fhir_version LIKE '%-%' THEN SPLIT_PART(e.fhir_version, '-', 1)
+                ELSE e.fhir_version 
+            END
+        ) 
+        ELSE 'Unknown' 
+    END AS fhir_version_final
 FROM endpoint_export e
 JOIN fhir_endpoints_info f ON e.url = f.url
 WHERE f.requested_fhir_version = 'None';
