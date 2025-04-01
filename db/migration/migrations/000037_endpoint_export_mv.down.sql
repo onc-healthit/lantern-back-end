@@ -2,6 +2,8 @@ BEGIN;
 
 DROP MATERIALIZED VIEW IF EXISTS endpoint_export_mv CASCADE;
 
-DROP INDEX IF EXISTS endpoint_export_mv_unique_idx;
+DROP MATERIALIZED VIEW IF EXISTS fhir_endpoint_comb_mv CASCADE;
+
+DROP MATERIALIZED VIEW IF EXISTS selected_fhir_endpoints_mv CASCADE;
 
 COMMIT;
