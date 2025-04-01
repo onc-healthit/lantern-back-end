@@ -1,0 +1,3 @@
+BEGIN;
+DROP MATERIALIZED VIEW IF EXISTS mv_validation_results_plot CASCADE;
+COMMIT;
