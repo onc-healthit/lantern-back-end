@@ -789,6 +789,16 @@ grouped_organizations AS (
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
     GROUP BY url
 ),
+valid_fhir_versions AS (
+    -- Dynamically extract all distinct valid FHIR versions from the dataset
+    SELECT DISTINCT 
+        CASE 
+            WHEN fhir_version LIKE '%-%' THEN SPLIT_PART(fhir_version, '-', 1)
+            ELSE fhir_version
+        END AS version
+    FROM endpoint_export
+    WHERE fhir_version IS NOT NULL AND fhir_version != ''
+),
 processed_versions AS (
     SELECT 
         e.*,
@@ -797,7 +807,6 @@ processed_versions AS (
             WHEN e.fhir_version = '' THEN 'No Cap Stat'
             ELSE e.fhir_version
         END AS capability_fhir_version,
-
         -- Step 2: Extract version before "-" if present
         CASE 
             WHEN e.fhir_version = '' THEN 'No Cap Stat'
@@ -807,19 +816,17 @@ processed_versions AS (
     FROM endpoint_export e
 )
 SELECT 
-    p.url,
-    p.list_source,
+    p.url, 
+    p.list_source, 
     COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') AS vendor_name,
     p.capability_fhir_version,
-
-    -- Step 3: Validate against the correct set of FHIR versions
+    -- Step 3: Validate against dynamically determined valid FHIR versions
     CASE 
         WHEN p.capability_fhir_version = 'No Cap Stat' THEN 'No Cap Stat'  -- Ensure "No Cap Stat" is preserved
-        WHEN p.fhir_version_raw IN ('1.0.2', '1.4.0', '3.0.1', '3.0.2', '4.0.0', '4.0.1', '4.3.0', '5.0.0') 
+        WHEN p.fhir_version_raw IN (SELECT version FROM valid_fhir_versions)
             THEN p.fhir_version_raw
         ELSE 'Unknown'  
     END AS fhir_version,
-
     p.tls_version,
     p.mime_types,
     p.http_response,
