@@ -30,15 +30,19 @@ capabilitystatementsizemodule <- function(
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$capstat_sizes_tbl())
-    req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    # Get current filter values
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+
+    req(current_fhir, current_vendor)
+
+    # Get filtered data from the materialized view function
+    res <- get_cap_stat_sizes(
+      db_connection,
+      fhir_version = current_fhir,
+      vendor = current_vendor
+    )
+
     res
   })
 
