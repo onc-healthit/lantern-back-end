@@ -838,21 +838,24 @@ get_endpoint_implementation_guide <- function(db_connection, endpointURL, reques
   res
 }
 
-get_cap_stat_sizes <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          pg_column_size(capability_statement::text) as size,
-          capability_fhir_version as fhir_version,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_fhir_version != ''
-          AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+get_cap_stat_sizes <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_capstat_sizes_tbl")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>%
+    collect()
+  
+  return(result)
 }
 
 get_validation_results <- function(db_connection) {
