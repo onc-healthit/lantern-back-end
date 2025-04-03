@@ -410,19 +410,7 @@ get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhi
 }
 
 get_supported_profiles <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      f.url,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(supported_profiles::json) ->> 'Resource' as resource,
-      json_array_elements(supported_profiles::json) ->> 'ProfileURL' as profileurl,
-      json_array_elements(supported_profiles::json) ->> 'ProfileName' as profilename
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE supported_profiles != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
+  res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect() %>%
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%

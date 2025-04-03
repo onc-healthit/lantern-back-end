@@ -9,7 +9,7 @@ library(dygraphs)
 function(input, output, session) { #nolint
 
 selected_fhir_endpoint_profiles <- reactive({
-    res <- isolate(app_data$supported_profiles())
+    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
     res <- res %>% filter(fhir_version %in% input$fhir_version)
@@ -445,7 +445,7 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   profile_options <- reactive({
-    res <- isolate(app_data$supported_profiles())
+    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
     res <- res %>% filter(fhir_version %in% input$fhir_version)
@@ -468,7 +468,7 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   resource_options <- reactive({
-    res <- isolate(app_data$supported_profiles())
+    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
     res <- res %>%

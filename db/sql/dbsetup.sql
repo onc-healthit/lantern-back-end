@@ -774,3 +774,22 @@ CREATE INDEX mv_resource_interactions_resource_type_idx
 
 CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
+
+CREATE MATERIALIZED VIEW supported_profiles_view AS
+SELECT
+  f.id AS endpoint_id,
+  f.url,
+  vendor_id,
+  vendors.name AS vendor_name,
+  capability_fhir_version AS fhir_version,
+  json_array_elements(supported_profiles::json) ->> 'Resource' AS resource,
+  json_array_elements(supported_profiles::json) ->> 'ProfileURL' AS profileurl,
+  json_array_elements(supported_profiles::json) ->> 'ProfileName' AS profilename
+FROM
+  fhir_endpoints_info f
+LEFT JOIN
+  vendors ON f.vendor_id = vendors.id
+WHERE
+  supported_profiles != 'null'
+  AND requested_fhir_version = 'None';
+
