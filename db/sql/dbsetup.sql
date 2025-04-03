@@ -792,7 +792,11 @@ WITH contact_info_extracted AS (
 endpoint_details AS (
   SELECT DISTINCT -- Added DISTINCT to eliminate potential duplication
     url,
-    vendor_name,
+    -- Fix for handling Unknown vendor - make sure empty or NULL is replaced with 'Unknown'
+    CASE 
+      WHEN vendor_name IS NULL OR vendor_name = '' THEN 'Unknown' 
+      ELSE vendor_name 
+    END AS vendor_name,
     CASE 
       WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
       WHEN position('-' in fhir_version) > 0 THEN substring(fhir_version from 1 for position('-' in fhir_version) - 1)
