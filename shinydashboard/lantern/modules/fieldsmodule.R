@@ -61,49 +61,38 @@ fieldsmodule <- function(
 
   ns <- session$ns
 
-  get_capstat_values <- function(extension) {
-    res <- isolate(app_data$capstat_fields())
-
+  get_capstat_values_mv <- function(extension) {
     req(sel_fhir_version())
 
     if (extension) {
-      res <- res %>%
-      filter(extension == "true")
+      mv <- "mv_capstat_values_extension"
     } else {
-      res <- res %>%
-      filter(extension == "false")
+      mv <- "mv_capstat_values_fields"
     }
-    res <- res %>%
-    group_by(field) %>%
-    arrange(fhir_version, .by_group = TRUE)
 
-    # Unknown FHIR versions default to DSTU2
-    res <- res %>% mutate(fhir_version_name = case_when(
-    fhir_version %in% dstu2 ~ "DSTU2",
-    fhir_version %in% stu3 ~ "STU3",
-    fhir_version %in% r4 ~ "R4",
-    TRUE ~ "DSTU2"
-    ))
+    # Build filtering conditions for the SQL query
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
 
-    fvn <- res %>% summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
+    # Direct query to the required materialized view
+    query <- paste0("
+        SELECT DISTINCT field_version 
+        FROM ", mv, "
+        WHERE fhir_version IN (", fhir_versions, ")
+      ")
 
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+    # Execute the query
+    res <- dbGetQuery(db_connection, query) %>% collect()
 
-    res <- res %>%
-    left_join(fvn %>% select(field, fhir_version_names),
-      by = c("field" = "field"))
-
+    # Remove fhir_version info if only one fhir version selected
     if (length(sel_fhir_version()) == 1) {
-      res$field_version <- res$field
-    } else {
-      res$field_version <- paste(res$field, " (", res$fhir_version_names, ")", sep = "")
+      res <- res %>% mutate(field_version = sub(" \\(.*\\)", "", field_version), field_version)
     }
-    res <- res %>% distinct(field_version)
-    res
+
+    return(res)
 }
 
 output$capstat_fields_text <- renderUI({
-    col <- get_capstat_values(FALSE)
+    col <- get_capstat_values_mv(FALSE)
     liElem <- tagList()
     if (length(col) > 0) {
       liElem <- apply(col, 1, function(x) tags$li(x["field_version"]))
@@ -114,7 +103,7 @@ output$capstat_fields_text <- renderUI({
   })
 
 output$capstat_extension_text <- renderUI({
-    col <- get_capstat_values(TRUE)
+    col <- get_capstat_values_mv(TRUE)
     liElem <- tagList()
     if (length(col) > 0) {
       liElem <- apply(col, 1, function(x) tags$li(x["field_version"]))
@@ -125,24 +114,28 @@ output$capstat_extension_text <- renderUI({
 })
 
   selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$capstat_fields())
-    req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    # Get current filter values
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+
+    req(current_fhir, current_vendor)
+
+    # Get filtered data from the materialized view function
+    res <- get_capstat_fields_mv(
+      db_connection,
+      fhir_version = current_fhir,
+      vendor = current_vendor
+    )
+
     res
   })
 
   capstat_field_count <- reactive({
-    get_capstat_fields_count(selected_fhir_endpoints(), "false")
+    get_capstat_fields_count(sel_fhir_version(), sel_vendor(), "false")
   })
 
   capstat_extension_count <- reactive({
-    get_capstat_fields_count(selected_fhir_endpoints(), "true")
+    get_capstat_fields_count(sel_fhir_version(), sel_vendor(), "true")
   })
 
   # Required Capability Statement fields that we are tracking

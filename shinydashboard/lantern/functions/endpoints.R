@@ -373,7 +373,6 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
   table
 }
 
-
 get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection,
     sql("SELECT f.id as endpoint_id,
@@ -391,6 +390,25 @@ get_capstat_fields <- function(db_connection) {
     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+}
+
+get_capstat_fields_mv <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_capstat_fields")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>% collect()
+
+  return(result)
 }
 
 get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, extensionBool) {
@@ -451,16 +469,32 @@ get_implementation_guide_count <- function(fhir_resources_tbl) {
     rename(Implementation = implementation_guide, Endpoints = n)
 }
 
-get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
-  res <- capstat_fields_tbl %>%
-    group_by(field, exist, fhir_version, extension) %>%
-    count() %>%
-    filter(exist == "true") %>%
-    filter(extension == extensionBool) %>%
-    ungroup() %>%
-    select(-exist) %>%
-    select(-extension) %>%
-    rename(Fields = field, Endpoints = n)
+get_capstat_fields_count <- function(sel_fhir_version, sel_vendor, extensionBool) {
+  # Build filtering conditions for the SQL query
+  fhir_versions <- paste0("'", paste(sel_fhir_version, collapse = "','"), "'")
+  vendor_filter <- if(!is.null(sel_vendor) && sel_vendor != ui_special_values$ALL_DEVELOPERS) {
+    paste0("AND vendor_name = '", sel_vendor, "'")
+  } else {
+    ""
+  }
+  
+  # Direct query to the materialized view
+  query <- paste0("
+      SELECT field as \"Fields\", fhir_version, COUNT(*) as \"Endpoints\"
+      FROM mv_capstat_fields
+      WHERE fhir_version IN (", fhir_versions, ")
+      ", vendor_filter, "
+      ", "AND exist = 'true'", 
+      " AND extension = '", extensionBool, "'",
+      "
+      GROUP BY field, fhir_version
+    ")
+  
+  # Execute the query
+  res <- dbGetQuery(db_connection, query) %>% collect()
+
+  res <- res %>% mutate(Endpoints = as.integer(Endpoints)) %>% as_tibble()
+  return(res)
 }
 
 # get contact information
