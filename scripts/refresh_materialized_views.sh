@@ -126,4 +126,109 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_resource_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_resource_interactions_operations_idx." >> $log_file
 }
 
+# Lantern-854
+# Refresh the capstat_fields materialized view
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_fields;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_fields." >> $log_file
+}
+
+# Add new indexes for mv_capstat_fields
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_fields_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_fields_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_capstat_fields_unique ON mv_capstat_fields(endpoint_id, fhir_version, field);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_fields_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_fields_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_fields_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_fields_vendor ON mv_capstat_fields(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_fields_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_fields_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_fields_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_fields_fhir ON mv_capstat_fields(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_fields_fhir." >> $log_file
+}
+
+# Reindex the mv_capstat_fields indexes
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_unique;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_vendor;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_fhir;" -U lantern -d lantern
+
+# Refresh the capstat_fields_text materialized view
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_values_fields;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_values_fields." >> $log_file
+}
+
+# Add new indexes for mv_capstat_values_fields
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_fields_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_fields_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_capstat_values_fields_unique ON mv_capstat_values_fields(fhir_version, field_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_fields_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_fields_field_version;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_fields_field_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_values_fields_field_version ON mv_capstat_values_fields(field_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_fields_field_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_fields_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_fields_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_values_fields_fhir ON mv_capstat_values_fields(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_fields_fhir." >> $log_file
+}
+
+# Reindex the mv_capstat_fields indexes
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_unique;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_field_version;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_fhir;" -U lantern -d lantern
+
+# Refresh the capstat_extension_text materialized view
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_values_extension;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_values_extension." >> $log_file
+}
+
+# Add new indexes for mv_capstat_values_extension
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_extension_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_extension_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_capstat_values_extension_unique ON mv_capstat_values_extension(fhir_version, field_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_extension_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_extension_field_version;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_extension_field_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_values_extension_field_version ON mv_capstat_values_extension(field_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_extension_field_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_capstat_values_extension_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_capstat_values_extension_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_extension_fhir." >> $log_file
+}
+
+# Reindex the mv_capstat_fields indexes
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_unique;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_field_version;" -U lantern -d lantern
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_fhir;" -U lantern -d lantern
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
