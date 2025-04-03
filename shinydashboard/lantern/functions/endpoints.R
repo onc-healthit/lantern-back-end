@@ -465,26 +465,7 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
 
 # get contact information
 get_contact_information <- function(db_connection) {
-
-  contacts_tbl <- tbl(db_connection,
-    sql("SELECT DISTINCT
-				  url,
-				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
-        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
-          FROM fhir_endpoints_info
-          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect()
-
-
-    res <- app$endpoint_export_tbl() %>%
-        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
-        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == "None") %>%
-        left_join(contacts_tbl, by = c("url" = "url"))
-
-    res
+  tbl(db_connection, "mv_contacts_info") %>% collect()
 }
 
 # get values from specific fields we're interested in displaying
