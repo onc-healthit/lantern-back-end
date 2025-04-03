@@ -776,5 +776,3 @@ CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
 
 CREATE TABLE daily_querying_status (status BOOLEAN);
-
-INSERT INTO daily_querying_status VALUES (TRUE);
