@@ -43,7 +43,7 @@ func GetEnptsAndSend(
 		durationToSleep := time.Until(targetTime)
 
 		// Set the process completion status to true to ensure that the status has not remained false in the case previous process was interrupted and terminated.
-		err := store.UpdateProcessCompletionStatus(ctx, true)
+		err := store.UpdateProcessCompletionStatus(ctx, "true")
 		if err != nil {
 			log.Errorf("Failed to set process completion status: %v", err)
 		}
@@ -54,7 +54,7 @@ func GetEnptsAndSend(
 		log.Info("Starting daily querying process")
 
 		// Set the process completion status to false to indicate that the process is in progress
-		err = store.UpdateProcessCompletionStatus(ctx, false)
+		err = store.UpdateProcessCompletionStatus(ctx, "false")
 		if err != nil {
 			log.Errorf("Failed to set process completion status: %v", err)
 		}
@@ -89,7 +89,7 @@ func GetEnptsAndSend(
 		}
 
 		// Set the process completion status to false to indicate that the process has completed
-		err = store.UpdateProcessCompletionStatus(ctx, true)
+		err = store.UpdateProcessCompletionStatus(ctx, "true")
 		if err != nil {
 			log.Errorf("Failed to set process completion status: %v", err)
 		}

@@ -651,7 +651,7 @@ func organizationInformationValid(organizationName sql.NullString, organizationZ
 }
 
 // UpdateProcessCompletionStatus updates the completion status of the daily querying process.
-func (s *Store) UpdateProcessCompletionStatus(ctx context.Context, status bool) error {
+func (s *Store) UpdateProcessCompletionStatus(ctx context.Context, status string) error {
 	var err error
 
 	_, err = updateProcessCompletionStatusStatement.ExecContext(ctx, status)
