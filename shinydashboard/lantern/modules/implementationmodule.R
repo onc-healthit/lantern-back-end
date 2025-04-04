@@ -26,23 +26,12 @@ implementationmodule <- function(  #nolint
   ns <- session$ns
 
   implementation_count <- reactive({
-    get_implementation_guide_count(selected_implementation_guide())
+    req(sel_fhir_version(), sel_vendor())
+    get_implementation_guide_count(sel_fhir_version(), sel_vendor())
   })
 
   vendor <- reactive({
     sel_vendor()
-  })
-
-  selected_implementation_guide <- reactive({
-    res <- isolate(app_data$implementation_guide())
-    req(sel_fhir_version(), sel_vendor())
-
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-    res
   })
 
   # Default plot heights are not good for large number of bars, so base on
