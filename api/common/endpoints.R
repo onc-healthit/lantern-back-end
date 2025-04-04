@@ -363,11 +363,7 @@ get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhi
 }
 
 get_supported_profiles <- function(db_connection) {
-  res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect()
 }
 
 get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion) {

@@ -56,38 +56,9 @@ profilemodule <- function(
 
   output$profile_table <- renderUI({
     if (length(sel_profile()) > 0) {
-      if (sel_profile() != ui_special_values$ALL_PROFILES) {
         tagList(
-          reactable::reactableOutput(ns("filter_profile_table"))
+            DT::dataTableOutput("filter_profile_table")
         )
-      } else {
-        tagList(
-            DT::dataTableOutput("no_filter_profile_table")
-        )
-     }
     }
-  })
-
-  output$filter_profile_table <- reactable::renderReactable({
-     reactable(
-              selected_fhir_endpoint_profiles(),
-              defaultColDef = colDef(
-                align = "center"
-              ),
-              columns = list(
-                  url = colDef(name = "Endpoint", minWidth = 300, sortable = TRUE, align = "left", html = TRUE),
-                  profileurl = colDef(name = "Profile URL", minWidth = 300, align = "left", sortable = FALSE),
-                  profilename = colDef(name = "Profile Name", minWidth = 200, sortable = FALSE),
-                  resource = colDef(name = "Resource", minWidth = 200, sortable = FALSE),
-                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
-              ),
-              striped = TRUE,
-              searchable = TRUE,
-              showSortIcon = TRUE,
-              highlight = TRUE,
-              defaultPageSize = 10
-
-     )
   })
 }

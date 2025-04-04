@@ -24,9 +24,9 @@ selected_fhir_endpoint_profiles <- reactive({
         }
     }
 
-    if (length(input$profile_resource) > 0) {
-        if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-          res <- res %>% filter(resource == input$profile_resource)
+    if (length(input$profiles) > 0) {
+        if (input$profiles != ui_special_values$ALL_PROFILES) {
+        res <- res %>% filter(profileurl == input$profiles)
         }
     }
 
@@ -1314,7 +1314,7 @@ output$endpoint_http_response_table <- reactable::renderReactable({
     ))
   })
 
-output$no_filter_profile_table <- DT::renderDataTable({
+output$filter_profile_table <- DT::renderDataTable({
       DT::datatable(
         selected_fhir_endpoint_profiles(),
         escape = FALSE,
