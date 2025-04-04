@@ -14,7 +14,7 @@ current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
 QUERY=$(echo "SELECT status FROM daily_querying_status;")
 STATUS=$(docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}" | xargs) || echo "Error fetching daily querying status"
 
-if [ "$STATUS" = "t" ]; then
+if [ "$STATUS" = "true" ]; then
     BACKUP=lantern_backup_$(date +%Y%m%d%H%M%S).sql
     docker exec lantern-back-end_postgres_1 pg_dump -Fc -U ${DB_USER} -d ${DB_NAME} > "${BACKUP}" || {
         echo "$current_datetime - Database Error: Lantern Staging Backup failed" >> $log_file
