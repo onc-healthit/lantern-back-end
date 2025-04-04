@@ -12,7 +12,10 @@ current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Check whether there are entries in the fhir_endpoints_info table having the same validation_result_id
 QUERY=$(echo "SELECT status FROM daily_querying_status;")
-STATUS=$(docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}" | xargs) || echo "Error fetching daily querying status"
+STATUS=$(docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error fetching daily querying status"
+
+# Remove unwanted characters and trim whitespace and new lines
+STATUS=$(echo "$STATUS" | tr -d "'\r\n" | xargs)
 
 if [ "$STATUS" = "true" ]; then
     BACKUP=lantern_backup_$(date +%Y%m%d%H%M%S).sql
