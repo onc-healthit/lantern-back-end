@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS endpoint_supported_profiles_mv CASCADE;
+
+COMMIT;
