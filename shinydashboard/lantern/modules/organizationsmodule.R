@@ -9,14 +9,12 @@ organizationsmodule_UI <- function(id) {
 
   tagList(
     fluidRow(
-      h2("Endpoint Organizations")
+      h2("Endpoint List Organizations")
     ),
-    tabsetPanel(id = "organization_tabset", type = "tabs",
-              tabPanel("Endpoint List Organizations",
-                        h3("Endpoint List Organization Matches"),
-                        p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
-                        reactable::reactableOutput(ns("endpoint_list_orgs_table")),
-                        htmlOutput(ns("note_text")))
+    fluidRow(
+      p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
+      reactable::reactableOutput(ns("endpoint_list_orgs_table")),
+      htmlOutput(ns("note_text"))
     )
   )
 }
