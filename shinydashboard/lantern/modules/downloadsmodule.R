@@ -17,6 +17,10 @@ downloadsmodule_UI <- function(id) {
               h2("CSV Download"),
               downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
               downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+      ),
+      column(width = 12,
+            p("To see export files for previous months created by Lantern, visit the repository ",
+            a("available here.", href = "https://github.com/onc-healthit/onc-open-data/tree/main/lantern-daily-data", target = "_blank"))
       )
     ),
     fluidRow(
