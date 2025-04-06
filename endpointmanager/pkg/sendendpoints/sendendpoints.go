@@ -9,7 +9,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 
-	//"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
@@ -58,19 +57,7 @@ func GetEnptsAndSend(
 				errs <- err
 			}
 		}
-		log.Info("Waiting 30 minutes to start history pruning and json export")
-		// Wait 30 minutes to ensure querier is done before starting history pruning and json export
-		// time.Sleep(time.Duration(30) * time.Minute)
-		//log.Info("Starting json export")
-		//err = jsonexport.CreateJSONExport(ctx, store, "/etc/lantern/exportfolder/fhir_endpoints_fields.json", "30days")
-		//if err != nil {
-		//	log.Infof("Failed to export JSON due to %d", err)
-		//If there is an error, wait for the duration to try it again, instead of overloading the memory with repeated tries
-		//	log.Infof("Waiting %d minutes", qInterval)
-		//	time.Sleep(time.Duration(qInterval) * time.Minute)
-		//	errs <- err
-		//}
-
+		log.Info("Waiting 30 minutes to start history pruning.")
 		log.Infof("Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
