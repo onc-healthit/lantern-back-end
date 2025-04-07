@@ -132,6 +132,14 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh endpoint_supported_profiles_mv." >> $log_file
 }
 
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS endpoint_supported_profiles_mv_uidx;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop endpoint_supported_profiles_mv_uidx." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX endpoint_supported_profiles_mv_uidx ON endpoint_supported_profiles_mv(mv_id);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create endpoint_supported_profiles_mv_uidx." >> $log_file
+}
+
 docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_profiles_fhir_version;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_profiles_fhir_version." >> $log_file
 }
