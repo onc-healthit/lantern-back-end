@@ -777,6 +777,7 @@ CREATE INDEX mv_resource_interactions_operations_idx
 
 CREATE MATERIALIZED VIEW endpoint_supported_profiles_mv AS
 SELECT
+  row_number() OVER () AS mv_id,
   f.id AS endpoint_id,
   f.url,
   f.vendor_id,
@@ -805,6 +806,7 @@ WHERE
   f.supported_profiles::text <> 'null'
   AND f.requested_fhir_version = 'None';
 
+CREATE UNIQUE INDEX endpoint_supported_profiles_mv_uidx ON endpoint_supported_profiles_mv(mv_id);
 CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv(fhir_version);
 CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv(vendor_name);
 CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv(profileurl);
