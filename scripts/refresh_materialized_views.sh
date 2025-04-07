@@ -136,7 +136,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_profiles_fhir_version." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv USING GIN (operations);" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv(fhir_version);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_profiles_fhir_version." >> $log_file
 }
 
@@ -144,7 +144,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_profiles_vendor_name." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv USING GIN (operations);" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv(vendor_name);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_profiles_vendor_name." >> $log_file
 }
 
@@ -152,7 +152,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_profiles_profileurl." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv USING GIN (operations);" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv(profileurl);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_profiles_profileurl." >> $log_file
 }
 
