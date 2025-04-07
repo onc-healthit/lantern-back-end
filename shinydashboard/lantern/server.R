@@ -445,26 +445,29 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   profile_options <- reactive({
-    res <- get_supported_profiles(db_connection)
-    req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
+    query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
+      filter(fhir_version %in% !!input$fhir_version)
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      query <- query %>% filter(vendor_name == !!input$vendor)
     }
 
-    res <- res %>%
-    distinct(profileurl) %>%
-    arrange(profileurl) %>%
-    split(.$profileurl) %>%
-    purrr::map(~ .$profileurl)
+  res <-  query %>%
+      select(profileurl) %>%
+      distinct() %>%
+      arrange(profileurl) %>%
+      collect()
 
-    profile_list <- list(
-      "All Profiles" = ui_special_values$ALL_PROFILES
-    )
+    # split(.$profileurl) %>%
+    # purrr::map(~ .$profileurl)
 
-    return(c(profile_list, res))
+  res <- split(res$profileurl, res$profileurl)
+
+  profile_list <- list(
+    "All Profiles" = ui_special_values$ALL_PROFILES
+  )
+
+  return(c(profile_list, res))
   })
 
   resource_options <- reactive({

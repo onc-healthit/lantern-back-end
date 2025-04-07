@@ -805,3 +805,6 @@ WHERE
   f.supported_profiles::text <> 'null'
   AND f.requested_fhir_version = 'None';
 
+CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv(fhir_version);
+CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv(vendor_name);
+CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv(profileurl);
