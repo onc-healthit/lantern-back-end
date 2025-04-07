@@ -1009,7 +1009,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
-  safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
   safe_execute("app_data$validation_tbl", app_data$validation_tbl(get_validation_results(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
