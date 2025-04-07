@@ -488,6 +488,7 @@ get_capstat_fields_count <- function(sel_fhir_version, sel_vendor, extensionBool
       " AND extension = '", extensionBool, "'",
       "
       GROUP BY field, fhir_version
+      ORDER BY field, fhir_version
     ")
   
   # Execute the query
