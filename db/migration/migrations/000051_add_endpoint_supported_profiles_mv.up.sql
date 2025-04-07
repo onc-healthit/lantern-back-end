@@ -32,10 +32,12 @@ WHERE
   f.supported_profiles::text <> 'null'
   AND f.requested_fhir_version = 'None';
 
+DROP INDEX IF EXISTS endpoint_supported_profiles_mv_uidx;
 DROP INDEX IF EXISTS idx_profiles_fhir_version;
 DROP INDEX IF EXISTS idx_profiles_vendor_name;
 DROP INDEX IF EXISTS idx_profiles_profileurl;
 
+CREATE UNIQUE INDEX endpoint_supported_profiles_mv_uidx ON endpoint_supported_profiles_mv(mv_id);
 CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv(fhir_version);
 CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv(vendor_name);
 CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv(profileurl);
