@@ -374,23 +374,29 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
 }
 
 
+# get_capstat_fields <- function(db_connection) {
+#   res <- tbl(db_connection,
+#     sql("SELECT f.id as endpoint_id,
+#       vendor_id,
+#       vendors.name as vendor_name,
+#       capability_fhir_version as fhir_version,
+#       json_array_elements(included_fields::json) ->> 'Field' as field,
+#       json_array_elements(included_fields::json) ->> 'Exists' as exist,
+#       json_array_elements(included_fields::json) ->> 'Extension' as extension
+#       from fhir_endpoints_info f
+#       LEFT JOIN vendors on f.vendor_id = vendors.id
+#       WHERE included_fields != 'null' AND requested_fhir_version = 'None'
+#       ORDER BY field")) %>%
+#     collect() %>%
+#     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
+#     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
+#     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+# }
+
 get_capstat_fields <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(included_fields::json) ->> 'Field' as field,
-      json_array_elements(included_fields::json) ->> 'Exists' as exist,
-      json_array_elements(included_fields::json) ->> 'Extension' as extension
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE included_fields != 'null' AND requested_fhir_version = 'None'
-      ORDER BY field")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  res <- tbl(db_connection, sql("SELECT * FROM get_capstat_fields_mv")) %>% 
+    collect()
+  return(res)
 }
 
 get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, extensionBool) {

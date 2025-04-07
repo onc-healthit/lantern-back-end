@@ -29,16 +29,32 @@ valuesmodule <- function(
 
   ns <- session$ns
 
+  # get_value_versions <- reactive({
+  #   res <- isolate(app_data$capstat_fields())
+  #   req(sel_capstat_values())
+  #   res <- res %>%
+  #   group_by(field) %>%
+  #   arrange(fhir_version, .by_group = TRUE) %>%
+  #   subset(field == sel_capstat_values())
+  #   versions <- c(unique(res$fhir_version))
+  #   versions
+  # })
   get_value_versions <- reactive({
-    res <- isolate(app_data$capstat_fields())
-    req(sel_capstat_values())
-    res <- res %>%
-    group_by(field) %>%
-    arrange(fhir_version, .by_group = TRUE) %>%
-    subset(field == sel_capstat_values())
-    versions <- c(unique(res$fhir_version))
-    versions
-  })
+  req(sel_capstat_values())
+  # Query the materialized view for the selected field
+  result <- tbl(db_connection, 
+                sql(paste0("SELECT unnest(fhir_versions) AS fhir_version 
+                           FROM get_value_versions_mv 
+                           WHERE field = '", sel_capstat_values(), "'"))) %>%
+    collect()
+  # Extract the versions as a character vector
+  if (nrow(result) > 0) {
+    versions <- result$fhir_version
+  } else {
+    versions <- character(0)  # Empty character vector if no results
+  }
+  return(versions)
+})
 
   get_value_table_header <- reactive({
     res <- isolate(app_data$capstat_fields())
@@ -90,34 +106,34 @@ valuesmodule <- function(
   # })
 
 selected_fhir_endpoints <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values()) 
-
-    fhir_versions <- sel_fhir_version()  
-    vendor <- sel_vendor()               
-    field_name <- sel_capstat_values()  
-
-    # Properly format fhir_versions for SQL query
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    # Get the selected values
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
+    field_name <- sel_capstat_values()
+    # Create SQL for FHIR versions filtering
     fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
-
-    query_str <- glue_sql("
-        SELECT * 
-        FROM selected_fhir_endpoints_values_mv 
-        WHERE \"FHIR Version\" IN {DBI::SQL(fhir_versions_sql)}", 
-        .con = db_connection
-    )
-
-    # Add vendor filtering only if a specific vendor is selected
+    # Get the valid versions for the selected field
+    valid_versions <- tbl(db_connection, 
+                        sql(paste0("SELECT unnest(fhir_versions) AS version 
+                                  FROM get_value_versions_mv 
+                                  WHERE field = '", field_name, "'"))) %>%
+                      collect() %>%
+                      pull(version)
+    # Create a comma-separated string of valid versions for SQL
+    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+    # Build the base query with field and FHIR version filtering
+    query_str <- paste0("
+        SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\"
+        FROM selected_fhir_endpoints_values_mv
+        WHERE field = '", field_name, "'
+        AND \"FHIR Version\" IN ", fhir_versions_sql, "
+        AND \"FHIR Version\" IN ", valid_versions_sql)
+    # Add vendor filtering if needed
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
-        query_str <- glue_sql("{query_str} AND \"Developer\" = {vendor}", .con = db_connection)
+        query_str <- paste0(query_str, " AND \"Developer\" = '", vendor, "'")
     }
-
-    query <- sql(query_str)
-
-    res <- tbl(db_connection, query) %>%
-        collect() %>%
-        filter(field == field_name) %>%  # Use "field" as per the materialized view
-        select("Developer", "FHIR Version", field_value, "Endpoints")
-
+    res <- tbl(db_connection, sql(query_str)) %>% collect()
     return(res)
 })
 

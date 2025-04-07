@@ -836,7 +836,7 @@ SELECT
     f.capability_statement->'implementation'->>'custodian' AS implementation_custodian
 FROM fhir_endpoints_info f
 LEFT JOIN vendors ON f.vendor_id = vendors.id
-WHERE f.capability_statement::jsonb IS NOT NULL
+WHERE f.capability_statement::jsonb != 'null'
 AND f.requested_fhir_version = 'None';
 
 -- Create indexes for performance optimization
@@ -848,13 +848,81 @@ CREATE INDEX idx_get_capstat_values_mv_vendor_name ON get_capstat_values_mv(vend
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_get_capstat_values_mv_unique ON get_capstat_values_mv(endpoint_id, vendor_id, filter_fhir_version);
 
+CREATE MATERIALIZED VIEW get_capstat_fields_mv AS
+WITH valid_fhir_versions AS (
+    SELECT unnest(ARRAY['No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
+                         '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
+                         '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
+                         '4.0.0', '4.0.1']) AS version
+)
+SELECT 
+    f.id AS endpoint_id,
+    f.vendor_id,
+    COALESCE(vendors.name, 'Unknown') AS vendor_name,
+    CASE 
+        -- Extract FHIR version without the part after hyphen
+        WHEN POSITION('-' IN f.capability_fhir_version) > 0 
+        THEN SUBSTRING(f.capability_fhir_version FROM 1 FOR POSITION('-' IN f.capability_fhir_version) - 1)
+        ELSE f.capability_fhir_version 
+    END AS raw_version,
+    CASE 
+        -- Check if simplified version is in the valid_fhir_versions list
+        WHEN (
+            CASE 
+                WHEN POSITION('-' IN f.capability_fhir_version) > 0 
+                THEN SUBSTRING(f.capability_fhir_version FROM 1 FOR POSITION('-' IN f.capability_fhir_version) - 1)
+                ELSE f.capability_fhir_version 
+            END
+        ) IN (SELECT version FROM valid_fhir_versions) 
+        THEN (
+            CASE 
+                WHEN POSITION('-' IN f.capability_fhir_version) > 0 
+                THEN SUBSTRING(f.capability_fhir_version FROM 1 FOR POSITION('-' IN f.capability_fhir_version) - 1)
+                ELSE f.capability_fhir_version 
+            END
+        ) 
+        ELSE 'Unknown' 
+    END AS fhir_version,
+    json_array_elements(included_fields::json) ->> 'Field' AS field,
+    json_array_elements(included_fields::json) ->> 'Exists' AS exist,
+    json_array_elements(included_fields::json) ->> 'Extension' AS extension
+FROM fhir_endpoints_info f
+LEFT JOIN vendors ON f.vendor_id = vendors.id
+WHERE included_fields != 'null' AND requested_fhir_version = 'None'
+ORDER BY (json_array_elements(included_fields::json) ->> 'Field');
+
+CREATE UNIQUE INDEX idx_get_capstat_fields_mv_endpoint_id_field ON get_capstat_fields_mv(endpoint_id, field);
+CREATE INDEX idx_get_capstat_fields_mv_fhir_version ON get_capstat_fields_mv(fhir_version);
+CREATE INDEX idx_get_capstat_fields_mv_field ON get_capstat_fields_mv(field);
+CREATE INDEX idx_get_capstat_fields_mv_vendor_id ON get_capstat_fields_mv(vendor_id);
+
+CREATE MATERIALIZED VIEW get_value_versions_mv AS
+SELECT 
+    field,
+    array_agg(DISTINCT fhir_version ORDER BY fhir_version) AS fhir_versions
+FROM 
+    get_capstat_fields_mv
+GROUP BY 
+    field;
+
+CREATE UNIQUE INDEX idx_get_value_versions_mv_field ON get_value_versions_mv(field);
+
 CREATE MATERIALIZED VIEW selected_fhir_endpoints_values_mv AS
-WITH base AS (
+WITH base_data AS (
+    -- Start with the capstat values data
     SELECT 
         g.vendor_name AS "Developer",
         g.filter_fhir_version AS "FHIR Version",
-        g.url,
         g.fhir_version AS "fhirVersion",
+        g.software_name AS "software.name",
+        g.software_version AS "software.version",
+        g.software_release_date AS "software.releaseDate",
+        g.implementation_description AS "implementation.description",
+        g.implementation_url AS "implementation.url",
+        g.implementation_custodian AS "implementation.custodian",
+        -- All other fields from capability statement
+        g.url,
+        g.version,
         g.name,
         g.title,
         g.date,
@@ -862,38 +930,50 @@ WITH base AS (
         g.description,
         g.purpose,
         g.copyright,
-        g.software_name AS "software.name",
-        g.software_version AS "software.version",
-        g.software_release_date AS "software.releaseDate",
-        g.implementation_description AS "implementation.description",
-        g.implementation_url AS "implementation.url",
-        g.implementation_custodian AS "implementation.custodian"
+        g.endpoint_id
     FROM get_capstat_values_mv g
 ),
-aggregated AS (
+-- Create a cross join of all possible field combinations
+field_combinations AS (
     SELECT 
-        "Developer",
-        "FHIR Version",
-        UNNEST(ARRAY[
-            'url', 'fhirVersion', 'name', 'title', 'date', 'publisher', 'description', 'purpose', 'copyright', 
-            'software.name', 'software.version', 'software.releaseDate', 
-            'implementation.description', 'implementation.url', 'implementation.custodian'
-        ]) AS Field,
-        UNNEST(ARRAY[
-            url, "fhirVersion", name, title, date, publisher, description, purpose, copyright, 
-            "software.name", "software.version", "software.releaseDate", 
-            "implementation.description", "implementation.url", "implementation.custodian"
-        ]) AS field_value
-    FROM base
+        b."Developer",
+        b."FHIR Version",
+        v.field,
+        UNNEST(v.fhir_versions) AS field_version,
+        -- Create a lateral join to get the value for each field
+        CASE 
+            WHEN v.field = 'url' THEN b.url
+            WHEN v.field = 'version' THEN b.version
+            WHEN v.field = 'name' THEN b.name
+            WHEN v.field = 'title' THEN b.title
+            WHEN v.field = 'date' THEN b.date
+            WHEN v.field = 'publisher' THEN b.publisher
+            WHEN v.field = 'description' THEN b.description
+            WHEN v.field = 'purpose' THEN b.purpose
+            WHEN v.field = 'copyright' THEN b.copyright
+            WHEN v.field = 'software.name' THEN b."software.name"
+            WHEN v.field = 'software.version' THEN b."software.version"
+            WHEN v.field = 'software.releaseDate' THEN b."software.releaseDate"
+            WHEN v.field = 'implementation.description' THEN b."implementation.description"
+            WHEN v.field = 'implementation.url' THEN b."implementation.url"
+            WHEN v.field = 'implementation.custodian' THEN b."implementation.custodian"
+            ELSE NULL
+        END AS field_value,
+        b.endpoint_id
+    FROM base_data b
+    CROSS JOIN get_value_versions_mv v
+    WHERE b."FHIR Version" IN (SELECT UNNEST(v.fhir_versions) FROM get_value_versions_mv WHERE field = v.field)
 )
+-- Final aggregation
 SELECT 
     "Developer",
     "FHIR Version",
-    Field,
+    field,
     COALESCE(field_value, '[Empty]') AS field_value,
-    COUNT(*)::INT AS "Endpoints"
-FROM aggregated
-GROUP BY "Developer", "FHIR Version", Field, field_value;
+    COUNT(DISTINCT endpoint_id)::INT AS "Endpoints"  -- Explicitly cast to INT
+FROM field_combinations
+GROUP BY "Developer", "FHIR Version", field, field_value
+ORDER BY "Developer", "FHIR Version", field, field_value;
 
 -- Create indexes for performance optimization
 CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_mv("Developer");
