@@ -1163,7 +1163,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
   safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
@@ -1175,10 +1174,7 @@ database_fetcher <- reactive({
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
-  safe_execute("app_data$smart_response_capabilities", app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection)))
-  safe_execute("app_data$well_known_endpoints_tbl", app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection)))
   safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
-  safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
