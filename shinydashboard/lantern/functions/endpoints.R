@@ -1003,7 +1003,7 @@ database_fetcher <- reactive({
   safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
-  safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
+  #safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
   safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
