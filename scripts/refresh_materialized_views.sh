@@ -128,7 +128,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_resource_
 
 # Lantern-854
 # Refresh the capstat_fields materialized view
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_fields;" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_capstat_fields;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_fields." >> $log_file
 }
 
@@ -157,13 +157,8 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capst
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_fields_fhir." >> $log_file
 }
 
-# Reindex the mv_capstat_fields indexes
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_unique;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_vendor;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_fields_fhir;" -U lantern -d lantern
-
 # Refresh the capstat_fields_text materialized view
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_values_fields;" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_capstat_values_fields;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_values_fields." >> $log_file
 }
 
@@ -192,13 +187,8 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capst
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_fields_fhir." >> $log_file
 }
 
-# Reindex the mv_capstat_fields indexes
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_unique;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_field_version;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_fields_fhir;" -U lantern -d lantern
-
 # Refresh the capstat_extension_text materialized view
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW mv_capstat_values_extension;" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_capstat_values_extension;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_capstat_values_extension." >> $log_file
 }
 
@@ -227,8 +217,4 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_capst
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_values_extension_fhir." >> $log_file
 }
 
-# Reindex the mv_capstat_fields indexes
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_unique;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_field_version;" -U lantern -d lantern
-docker exec -t lantern-back-end_postgres_1 psql -t -c "REINDEX INDEX idx_mv_capstat_values_extension_fhir;" -U lantern -d lantern
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
