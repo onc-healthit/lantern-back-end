@@ -88,7 +88,7 @@ func GetEnptsAndSend(
 			}
 		}
 
-		// Set the process completion status to false to indicate that the process has completed
+		// Set the process completion status to true to indicate that the process has completed
 		err = store.UpdateProcessCompletionStatus(ctx, "true")
 		if err != nil {
 			log.Errorf("Failed to set process completion status: %v", err)
