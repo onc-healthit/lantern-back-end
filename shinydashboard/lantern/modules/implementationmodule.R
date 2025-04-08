@@ -94,7 +94,7 @@ implementationmodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), now("UTC"))
     })
 
   output$implementation_guide_empty_plot <- renderPlot({
