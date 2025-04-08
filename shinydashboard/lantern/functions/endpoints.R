@@ -767,28 +767,6 @@ get_organization_locations <- function(db_connection) {
   res
 }
 
-get_endpoint_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          distinct(url),
-          endpoint_names[1] as endpoint_name,
-          organization_name,
-          fhir_version,
-          vendor_name,
-          match_score,
-          left(zipcode,5) as zipcode,
-          npi_id
-        FROM organization_location")
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-  res
-}
 
 get_single_endpoint_locations <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
@@ -995,7 +973,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
-  safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
   safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
   safe_execute("app_data$validation_tbl", app_data$validation_tbl(get_validation_results(db_connection)))
   end_time <- Sys.time()
