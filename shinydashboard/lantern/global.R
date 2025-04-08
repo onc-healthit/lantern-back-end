@@ -69,7 +69,6 @@ app_data <<- list(
   contact_info_tbl = reactiveVal(NULL),
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement
   capstat_values = reactiveVal(NULL),              # values of specific fields from the capability statement
-  supported_profiles = reactiveVal(NULL),          # Profiles from the capability statement/conformance resource
   last_updated = reactiveVal(NULL),                # time app_data was last updated
   security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint
   security_endpoints_tbl = reactiveVal(NULL),      # list of endpoints filterable by auth type
