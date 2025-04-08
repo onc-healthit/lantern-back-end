@@ -24,6 +24,216 @@ smartresponsemodule_UI <- function(id) {
   )
 }
 
+get_selected_smart_count_total <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_endpoint_export_tbl")
+  
+  # Apply filters in SQL
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Perform distinct and count in SQL before collecting
+  result <- query %>%
+    distinct(url) %>%
+    summarise(n = n()) %>%
+    collect() %>%
+    pull(n)
+  
+  return(result)
+}
+
+get_selected_smart_count_200 <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_http_pct")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Filter for HTTP 200 responses
+  query <- query %>% filter(http_response == 200)
+  
+  # Count the filtered rows directly in SQL
+  result <- query %>%
+    summarise(n = n()) %>%
+    collect() %>%
+    pull(n)
+  
+  # Return 0 if no rows were found
+  if (length(result) == 0) {
+    return(0)
+  } else {
+    return(result)
+  }
+}
+
+get_selected_well_known_endpoints_count <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_endpoint_export_tbl")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Filter for smart endpoints with HTTP response 200
+  query <- query %>% filter(smart_http_response == 200)
+  
+  # Count distinct URLs in SQL before collecting the result
+  result <- query %>%
+    distinct(url) %>%
+    summarise(n = n()) %>%
+    collect() %>%
+    pull(n)
+  
+  if (length(result) == 0) {
+    return(0)
+  } else {
+    return(result)
+  }
+}
+
+get_selected_well_known_count_doc <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_well_known_endpoints")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Count the rows in SQL before collecting the result
+  result <- query %>%
+    summarise(n = n()) %>%
+    collect() %>%
+    pull(n)
+  
+  if (length(result) == 0) {
+    return(0)
+  } else {
+    return(result)
+  }
+}
+
+get_selected_well_known_count_no_doc <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_well_known_no_doc")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Count the rows in SQL before collecting the result
+  result <- query %>%
+    summarise(n = n()) %>%
+    collect() %>%
+    pull(n)
+  
+  if (length(result) == 0) {
+    return(0)
+  } else {
+    return(result)
+  }
+}
+
+# Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
+get_smart_response_capability_count <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_smart_response_capabilities")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Group by fhir_version and capability, count the rows, and rename columns in SQL
+  result <- query %>%
+    group_by(fhir_version, capability) %>%
+    summarise(n = n(), .groups = "drop") %>%
+    rename("FHIR Version" = fhir_version, Capability = capability, Endpoints = n) %>%
+    collect()
+  
+  result
+}
+
+get_smart_vendor_table <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_smart_response_capabilities")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+  
+  # Group by FHIR version and vendor, and count distinct IDs in SQL
+  result <- query %>%
+    group_by(fhir_version, vendor_name) %>%
+    summarise(Endpoints = n_distinct(id), .groups = "drop") %>%
+    rename("FHIR Version" = fhir_version, "Developer" = vendor_name) %>%
+    collect()
+  
+  result
+}
+
+# Query fhir endpoints and return list of endpoints that have
+# returned a valid JSON document at /.well-known/smart-configuration
+# This implies a smart_http_response of 200.
+#
+get_well_known_endpoints_tbl <- function(db_connection) {
+  tbl(db_connection, "mv_well_known_endpoints") %>% collect()
+}
+
+get_selected_endpoints <- function(db_connection, fhir_version, vendor) {
+  query <- tbl(db_connection, "mv_selected_endpoints")
+  
+  # Apply filtering on fhir_version
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(capability_fhir_version %in% !!fhir_version)
+  }
+  
+  # Apply filtering on vendor
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Remove unique_id column
+  query <- query %>% select(-mv_id) 
+  
+  # Collect the filtered data
+  result <- query %>% collect()
+  result
+}
+
 smartresponsemodule <- function(
   input,
   output,
