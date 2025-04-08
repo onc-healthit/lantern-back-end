@@ -18,9 +18,10 @@ SELECT
     f.vendor_id,
     COALESCE(vendors.name, 'Unknown') AS vendor_name,
     CASE 
-        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
-        ELSE f.capability_fhir_version 
-    END AS fhir_version,
+	    WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+	    WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
+	    ELSE f.capability_fhir_version 
+	END AS fhir_version,
     -- Extract the major version dynamically
     CASE 
         WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'

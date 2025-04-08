@@ -793,9 +793,10 @@ SELECT
     f.vendor_id,
     COALESCE(vendors.name, 'Unknown') AS vendor_name,
     CASE 
-        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
-        ELSE f.capability_fhir_version 
-    END AS fhir_version,
+	    WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+	    WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
+	    ELSE f.capability_fhir_version 
+	END AS fhir_version,
     -- Extract the major version dynamically
     CASE 
         WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
@@ -957,7 +958,8 @@ field_combinations AS (
             WHEN v.field = 'implementation.description' THEN b."implementation.description"
             WHEN v.field = 'implementation.url' THEN b."implementation.url"
             WHEN v.field = 'implementation.custodian' THEN b."implementation.custodian"
-            ELSE NULL
+            WHEN v.field = 'fhirVersion' THEN b."fhirVersion"
+			ELSE NULL
         END AS field_value,
         b.endpoint_id
     FROM base_data b

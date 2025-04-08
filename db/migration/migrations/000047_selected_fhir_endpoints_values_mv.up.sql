@@ -68,7 +68,8 @@ field_combinations AS (
             WHEN v.field = 'implementation.description' THEN b."implementation.description"
             WHEN v.field = 'implementation.url' THEN b."implementation.url"
             WHEN v.field = 'implementation.custodian' THEN b."implementation.custodian"
-            ELSE NULL
+            WHEN v.field = 'fhirVersion' THEN b."fhirVersion"
+			ELSE NULL
         END AS field_value,
         b.endpoint_id
     FROM base_data b
