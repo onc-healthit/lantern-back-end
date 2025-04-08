@@ -301,7 +301,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), now("UTC"))
     }
   )
   output$fields_bar_empty_plot <- renderPlot({
@@ -346,7 +346,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), now("UTC"))
     }
   )
   output$extensions_bar_empty_plot <- renderPlot({

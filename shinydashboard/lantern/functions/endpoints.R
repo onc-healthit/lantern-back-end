@@ -923,7 +923,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
-  safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$security_endpoints_tbl", app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
