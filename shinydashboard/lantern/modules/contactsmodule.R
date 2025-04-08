@@ -3,6 +3,12 @@ library(purrr)
 library(reactable)
 library(htmlwidgets)
 
+# Get contact information function directly included in the module file
+get_contact_information <- function(db_connection) {
+  # Simply get all data from the materialized view
+  tbl(db_connection, "mv_contacts_info") %>% collect()
+}
+
 contactsmodule_UI <- function(id) {
   ns <- NS(id)
 
@@ -22,7 +28,8 @@ contactsmodule <- function(
     ns <- session$ns
 
     selected_contacts <- reactive({
-        res <- app_data$contact_info_tbl()
+        # Get data directly from the materialized view
+        res <- get_contact_information(db_connection)
         req(sel_fhir_version(), sel_vendor(), sel_has_contact())
 
         res <- res %>% filter(fhir_version %in% sel_fhir_version())

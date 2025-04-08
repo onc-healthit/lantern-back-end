@@ -463,11 +463,6 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
-# get contact information
-get_contact_information <- function(db_connection) {
-  tbl(db_connection, "mv_contacts_info") %>% collect()
-}
-
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
 # this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
@@ -982,7 +977,6 @@ database_fetcher <- reactive({
     pull(code)))
   safe_execute("app_data$smart_response_capabilities", app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection)))
   safe_execute("app_data$well_known_endpoints_tbl", app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection)))
-  safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
   safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
