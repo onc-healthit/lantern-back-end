@@ -373,26 +373,6 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
   table
 }
 
-
-# get_capstat_fields <- function(db_connection) {
-#   res <- tbl(db_connection,
-#     sql("SELECT f.id as endpoint_id,
-#       vendor_id,
-#       vendors.name as vendor_name,
-#       capability_fhir_version as fhir_version,
-#       json_array_elements(included_fields::json) ->> 'Field' as field,
-#       json_array_elements(included_fields::json) ->> 'Exists' as exist,
-#       json_array_elements(included_fields::json) ->> 'Extension' as extension
-#       from fhir_endpoints_info f
-#       LEFT JOIN vendors on f.vendor_id = vendors.id
-#       WHERE included_fields != 'null' AND requested_fhir_version = 'None'
-#       ORDER BY field")) %>%
-#     collect() %>%
-#     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-#     mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-#     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-# }
-
 get_capstat_fields <- function(db_connection) {
   res <- tbl(db_connection, sql("SELECT * FROM get_capstat_fields_mv")) %>% 
     collect()
@@ -496,38 +476,6 @@ get_contact_information <- function(db_connection) {
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
 # this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
-# get_capstat_values <- function(db_connection) {
-#   res <- tbl(db_connection,
-#     sql("SELECT f.id as endpoint_id,
-#       vendor_id,
-#       vendors.name as vendor_name,
-#       capability_fhir_version as fhir_version,
-#       capability_fhir_version as filter_fhir_version,
-#       capability_statement->>'url' as url,
-#       capability_statement->>'version' as version,
-#       capability_statement->>'name' as name,
-#       capability_statement->>'title' as title,
-#       capability_statement->>'date' as date,
-#       capability_statement->>'publisher' as publisher,
-#       capability_statement->>'description' as description,
-#       capability_statement->>'purpose' as purpose,
-#       capability_statement->>'copyright' as copyright,
-#       capability_statement->'software'->>'name' as software_name,
-#       capability_statement->'software'->>'version' as software_version,
-#       capability_statement->'software'->>'releaseDate' as software_release_date,
-#       capability_statement->'implementation'->>'description' as implementation_description,
-#       capability_statement->'implementation'->>'url' as implementation_url,
-#       capability_statement->'implementation'->>'custodian' as implementation_custodian
-#       from fhir_endpoints_info f
-#       LEFT JOIN vendors on f.vendor_id = vendors.id
-#       WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-#     collect() %>%
-#     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-#     mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-#     mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version)) %>%
-#     mutate(filter_fhir_version = if_else(filter_fhir_version %in% valid_fhir_versions, filter_fhir_version, "Unknown"))
-# }
-
 get_capstat_values <- function(db_connection) {
   res <- tbl(db_connection, sql("SELECT * FROM get_capstat_values_mv")) %>%
     collect()
@@ -1003,7 +951,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
-  #safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
   safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
