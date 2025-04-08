@@ -463,30 +463,6 @@ get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
     rename(Fields = field, Endpoints = n)
 }
 
-# get contact information
-get_contact_information <- function(db_connection) {
-
-  contacts_tbl <- tbl(db_connection,
-    sql("SELECT DISTINCT
-				  url,
-				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
-        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
-          FROM fhir_endpoints_info
-          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect()
-
-
-    res <- app$endpoint_export_tbl() %>%
-        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
-        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == "None") %>%
-        left_join(contacts_tbl, by = c("url" = "url"))
-
-    res
-}
-
 # get values from specific fields we're interested in displaying
 # get two fhir version fields, one for fhir version filter and one for field filter
 # this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
@@ -1001,7 +977,6 @@ database_fetcher <- reactive({
     pull(code)))
   safe_execute("app_data$smart_response_capabilities", app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection)))
   safe_execute("app_data$well_known_endpoints_tbl", app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection)))
-  safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
   safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))

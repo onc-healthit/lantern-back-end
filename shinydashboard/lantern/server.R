@@ -715,49 +715,53 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   observeEvent(input$show_contact_modal, {
-    showModal(modalDialog(
-      title = "All Contacts",
-      p(input$show_contact_modal),
-      p(ifelse(is.na(
-        app_data$contact_info_tbl() %>%
-          filter(url == input$show_contact_modal) %>%
-          distinct(endpoint_names) %>%
-          select(endpoint_names))
-          ||
-          app_data$contact_info_tbl() %>%
-          filter(url == input$show_contact_modal) %>%
-          distinct(endpoint_names) %>%
-          select(endpoint_names) == "",
-        "-",
-        app_data$contact_info_tbl() %>%
+  # Get contact data directly from the materialized view
+  contact_data <- tbl(db_connection, "mv_contacts_info") %>% collect()
+  
+  showModal(modalDialog(
+    title = "All Contacts",
+    p(input$show_contact_modal),
+    p(ifelse(is.na(
+      contact_data %>%
         filter(url == input$show_contact_modal) %>%
-        mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
         distinct(endpoint_names) %>%
-        select(endpoint_names)
-      ),
-      reactable::renderReactable({
-        reactable(
-          app_data$contact_info_tbl() %>%
-          mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
-          filter(url == input$show_contact_modal) %>%
-          arrange(contact_preference) %>%
-          mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
-          select(contact_name, contact_type, contact_value) %>%
-          mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
-              defaultColDef = colDef(
-                align = "center"
-              ),
-              columns = list(
-                  contact_name = colDef(name = "Contact Name"),
-                  contact_type = colDef(name = "Contact Type"),
-                  contact_value = colDef(name = "Contact Info")
-              ),
-              groupBy = "contact_name"
-        )
-      }),
-            easyClose = TRUE
+        select(endpoint_names))
+        ||
+        contact_data %>%
+        filter(url == input$show_contact_modal) %>%
+        distinct(endpoint_names) %>%
+        select(endpoint_names) == "",
+      "-",
+      contact_data %>%
+      filter(url == input$show_contact_modal) %>%
+      mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
+      distinct(endpoint_names) %>%
+      select(endpoint_names)
+    ),
+    reactable::renderReactable({
+      reactable(
+        contact_data %>%
+        mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
+        filter(url == input$show_contact_modal) %>%
+        arrange(contact_preference) %>%
+        mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
+        select(contact_name, contact_type, contact_value) %>%
+        mutate(contact_value = ifelse(contact_value == "", "-", contact_value)),
+            defaultColDef = colDef(
+              align = "center"
+            ),
+            columns = list(
+                contact_name = colDef(name = "Contact Name"),
+                contact_type = colDef(name = "Contact Type"),
+                contact_value = colDef(name = "Contact Info")
+            ),
+            groupBy = "contact_name"
+      )
+    }),
+    easyClose = TRUE
   )))
-  })
+})
+
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({
   splitString <- strsplit(input$endpoint_popup, "&&")
