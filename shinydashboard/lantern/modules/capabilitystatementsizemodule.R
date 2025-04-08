@@ -46,6 +46,26 @@ capabilitystatementsizemodule <- function(
     res
   })
 
+  get_cap_stat_sizes <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_capstat_sizes_tbl")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>%
+    collect()
+  
+  return(result)
+  }
+
   selected_fhir_endpoints_stats <- reactive({
     res <- summarise(selected_fhir_endpoints(), count = length(size), max = ifelse(all(is.na(size)), NA, max(size, na.rm = TRUE)), min = ifelse(all(is.na(size)), NA, min(size, na.rm = TRUE)), mean = mean(size), sd = sd(size))
     res
