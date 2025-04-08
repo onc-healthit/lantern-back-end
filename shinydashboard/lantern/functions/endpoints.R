@@ -599,33 +599,6 @@ get_security_endpoints <- function(db_connection) {
 # get tibble of endpoints which include a security service attribute
 # in their capability statement, each service coding as a row
 # for display in table of endpoints, with organization name and URL
-# get_security_endpoints_tbl <- function(db_connection) {
-#   res <- tbl(db_connection,
-#     sql("SELECT a.url,
-#             a.endpoint_names as organization_names,
-#             a.vendor_name,
-#             a.capability_fhir_version,
-#             a.tls_version,
-#             a.code
-#         FROM
-#           (SELECT e.url,
-#             e.endpoint_names,
-#             e.fhir_version as capability_fhir_version,
-#             e.tls_version,
-#             e.vendor_name,
-#             json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
-#           FROM endpoint_export e,fhir_endpoints_info f
-#           WHERE e.url = f.url AND f.requested_fhir_version = 'None') a")) %>%
-#     collect() %>%
-#     tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-#     mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
-#     mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-#     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-#     mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
-#     mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
-#     mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
-# }
-
 get_security_endpoints_tbl <- function(db_connection) {
   res <- tbl(db_connection, sql("SELECT url, 
                                         organization_names, 
@@ -1007,7 +980,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
   safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
-  safe_execute("app_data$security_endpoints_tbl", app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
