@@ -63,7 +63,6 @@ app <<- list(
 app_data <<- list(
   fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
   response_tally = reactiveVal(NULL),              # counts of http responses
-  http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
   vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   contact_info_tbl = reactiveVal(NULL),
@@ -76,9 +75,6 @@ app_data <<- list(
   auth_type_counts = reactiveVal(NULL),            # count and pct of endpoints by auth type and fhir_version
   endpoint_security_counts = reactiveVal(NULL),    # summary table of endpoint counts with security resource in cap statement
   security_code_list = reactiveVal(NULL),          # list of supported auth types for UI dropdown
-  smart_response_capabilities = reactiveVal(NULL), # smart core capabilities by endpoint, vendor, fhir_version
-  well_known_endpoints_tbl = reactiveVal(NULL),    # endpoints returning smart core capabilities JSON doc
-  well_known_endpoints_no_doc = reactiveVal(NULL), # well known endpoints reached, but no JSON doc returned
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
   implementation_guide = reactiveVal(NULL),        # implementation_guide table
   capstat_sizes_tbl = reactiveVal(NULL),           # capability statement size by vendor, fhir_version
