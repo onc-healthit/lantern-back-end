@@ -67,6 +67,13 @@ validationsmodule <- function(
     HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
   })
 
+  # Function to directly query validation results plot data from materialized view
+  get_validation_plot_data <- function() {
+    # Direct query to the materialized view
+    tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
+      collect()
+  }
+
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
@@ -145,9 +152,12 @@ validationsmodule <- function(
     res
   })
 
-  # Create table containing all the validations that pass current selected filtering criteria
+  # Create table containing all the validations that match current selected filtering criteria
   selected_validations <- reactive({
-    res <- isolate(app_data$validation_tbl())
+    # Get validation data directly from the validation_tbl function
+    query <- paste0("SELECT * FROM mv_validation_results_plot")
+    res <- dbGetQuery(db_connection, query)
+    
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
     if (sel_validation_group() != "All Groups") {
@@ -158,17 +168,7 @@ validationsmodule <- function(
     }
 
     res <- res %>%
-    mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
-  })
-
-  # This function is kept for compatibility but not actively used anymore
-  get_validation_versions <- reactive({
-    # Return empty dataframe with expected structure
-    data.frame(
-      validation_name = character(),
-      fhir_version_names = character(),
-      stringsAsFactors = FALSE
-    )
+      mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   # Creates table containing the filtered validation's rule name, if its valid, and it's count
@@ -307,7 +307,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), Sys.time())
     })
 
   # Renders an empty validation result count chart when no data available

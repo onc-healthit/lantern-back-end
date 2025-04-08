@@ -972,7 +972,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
   safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
-  safe_execute("app_data$validation_plot_data", app_data$validation_plot_data(get_validation_results_plot_data(db_connection)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
