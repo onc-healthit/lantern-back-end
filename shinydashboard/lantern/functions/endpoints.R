@@ -442,32 +442,6 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
     res
 }
 
-# Summarize count of implementation guides by implementation_guide, fhir_version
-get_implementation_guide_count <- function(sel_fhir_version, sel_vendor) {
-  # Build filtering conditions for the SQL query
-  fhir_versions <- paste0("'", paste(sel_fhir_version, collapse = "','"), "'")
-  vendor_filter <- if(!is.null(sel_vendor) && sel_vendor != ui_special_values$ALL_DEVELOPERS) {
-    paste0("AND vendor_name = '", sel_vendor, "'")
-  } else {
-    ""
-  }
-
-  # Direct query to the materialized view
-  query <- paste0("
-      SELECT implementation_guide as \"Implementation\", fhir_version, COUNT(*) as \"Endpoints\" 
-      FROM 
-        (SELECT * 
-        FROM mv_implementation_guide
-        WHERE fhir_version IN (", fhir_versions, ")
-        ", vendor_filter, ") T
-      GROUP BY implementation_guide, fhir_version
-    ")
-
-  # Execute the query
-  res <- dbGetQuery(db_connection, query) %>% collect()
-  res <- res %>% mutate(Endpoints = as.integer(Endpoints)) %>% as_tibble()
-}
-
 get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
   res <- capstat_fields_tbl %>%
     group_by(field, exist, fhir_version, extension) %>%
