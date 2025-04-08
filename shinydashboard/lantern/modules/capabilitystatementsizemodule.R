@@ -30,17 +30,41 @@ capabilitystatementsizemodule <- function(
   ns <- session$ns
 
   selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$capstat_sizes_tbl())
-    req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+    # Get current filter values
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+
+    req(current_fhir, current_vendor)
+
+    # Get filtered data from the materialized view function
+    res <- get_cap_stat_sizes(
+      db_connection,
+      fhir_version = current_fhir,
+      vendor = current_vendor
+    )
+
     res
   })
+
+  get_cap_stat_sizes <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_capstat_sizes_tbl")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>%
+    collect()
+  
+  return(result)
+  }
 
   selected_fhir_endpoints_stats <- reactive({
     res <- summarise(selected_fhir_endpoints(), count = length(size), max = ifelse(all(is.na(size)), NA, max(size, na.rm = TRUE)), min = ifelse(all(is.na(size)), NA, min(size, na.rm = TRUE)), mean = mean(size), sd = sd(size))
@@ -59,7 +83,7 @@ capabilitystatementsizemodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), now("UTC"))
     })
 
   output$notes_text <- renderUI({
