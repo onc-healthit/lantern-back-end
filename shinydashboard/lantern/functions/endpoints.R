@@ -410,23 +410,7 @@ get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhi
 }
 
 get_supported_profiles <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      f.url,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(supported_profiles::json) ->> 'Resource' as resource,
-      json_array_elements(supported_profiles::json) ->> 'ProfileURL' as profileurl,
-      json_array_elements(supported_profiles::json) ->> 'ProfileName' as profilename
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE supported_profiles != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect()
 }
 
 get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion) {
@@ -991,7 +975,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
-  safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
   safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$security_endpoints_tbl", app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection)))
