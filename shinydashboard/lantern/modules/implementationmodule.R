@@ -15,6 +15,32 @@ implementationmodule_UI <- function(id) {
   )
 }
 
+# Summarize count of implementation guides by implementation_guide, fhir_version
+get_implementation_guide_count <- function(sel_fhir_version, sel_vendor) {
+  # Build filtering conditions for the SQL query
+  fhir_versions <- paste0("'", paste(sel_fhir_version, collapse = "','"), "'")
+  vendor_filter <- if(!is.null(sel_vendor) && sel_vendor != ui_special_values$ALL_DEVELOPERS) {
+    paste0("AND vendor_name = '", sel_vendor, "'")
+  } else {
+    ""
+  }
+
+  # Direct query to the materialized view
+  query <- paste0("
+      SELECT implementation_guide as \"Implementation\", fhir_version, COUNT(*) as \"Endpoints\" 
+      FROM 
+        (SELECT * 
+        FROM mv_implementation_guide
+        WHERE fhir_version IN (", fhir_versions, ")
+        ", vendor_filter, ") T
+      GROUP BY implementation_guide, fhir_version
+    ")
+
+  # Execute the query
+  res <- dbGetQuery(db_connection, query) %>% collect()
+  res <- res %>% mutate(Endpoints = as.integer(Endpoints)) %>% as_tibble()
+}
+
 implementationmodule <- function(  #nolint
   input,
   output,
@@ -26,23 +52,12 @@ implementationmodule <- function(  #nolint
   ns <- session$ns
 
   implementation_count <- reactive({
-    get_implementation_guide_count(selected_implementation_guide())
+    req(sel_fhir_version(), sel_vendor())
+    get_implementation_guide_count(sel_fhir_version(), sel_vendor())
   })
 
   vendor <- reactive({
     sel_vendor()
-  })
-
-  selected_implementation_guide <- reactive({
-    res <- isolate(app_data$implementation_guide())
-    req(sel_fhir_version(), sel_vendor())
-
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-    res
   })
 
   # Default plot heights are not good for large number of bars, so base on
@@ -79,7 +94,7 @@ implementationmodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), now("UTC"))
     })
 
   output$implementation_guide_empty_plot <- renderPlot({

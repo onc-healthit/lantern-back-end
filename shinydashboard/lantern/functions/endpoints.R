@@ -442,15 +442,6 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
     res
 }
 
-# Summarize count of implementation guides by implementation_guide, fhir_version
-get_implementation_guide_count <- function(fhir_resources_tbl) {
-  res <- fhir_resources_tbl %>%
-    group_by(implementation_guide, fhir_version) %>%
-    filter(implementation_guide != "None") %>%
-    count() %>%
-    rename(Implementation = implementation_guide, Endpoints = n)
-}
-
 get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
   res <- capstat_fields_tbl %>%
     group_by(field, exist, fhir_version, extension) %>%
@@ -807,26 +798,6 @@ get_single_endpoint_locations <- function(db_connection, endpointURL, requestedF
   res
 }
 
-
-# get implementation guides stored in capability statement
-get_implementation_guide <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          capability_fhir_version as fhir_version,
-          json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id
-          WHERE requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    tidyr::replace_na(list(implementation_guide = "None")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
 get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
@@ -992,7 +963,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
-  safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$security_endpoints_tbl", app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
@@ -1004,7 +974,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
   safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
-  safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
   safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
   safe_execute("app_data$validation_tbl", app_data$validation_tbl(get_validation_results(db_connection)))
