@@ -68,8 +68,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_m
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_totals_date." >> $log_file
 }
 
-
-
+# Refresh mv_http_responses
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_http_responses;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_http_responses." >> $log_file
 }
@@ -90,6 +89,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_http_resp
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_http_responses_vendor_name_idx." >> $log_file
 }
 
+# Refresh mv_resource_interactions
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_resource_interactions;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_resource_interactions." >> $log_file
 }
@@ -132,6 +132,51 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS mv_r
 
 docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_resource_interactions_operations_idx ON mv_resource_interactions USING GIN (operations);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_resource_interactions_operations_idx." >> $log_file
+}
+
+# Refresh mv_contacts_info
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_contacts_info;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_contacts_info." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_contacts_info_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_contacts_info_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_contacts_info_unique ON mv_contacts_info(unique_hash);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_contacts_info_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_contacts_info_url;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_contacts_info_url." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_contacts_info_url ON mv_contacts_info(url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_contacts_info_url." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_contacts_info_fhir_version;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_contacts_info_fhir_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_contacts_info_fhir_version ON mv_contacts_info(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_contacts_info_fhir_version." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_contacts_info_vendor_name;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_contacts_info_vendor_name." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_contacts_info_vendor_name ON mv_contacts_info(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_contacts_info_vendor_name." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_contacts_info_has_contact;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_contacts_info_has_contact." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_contacts_info_has_contact ON mv_contacts_info(has_contact);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_contacts_info_has_contact." >> $log_file
 }
 
 # Lantern-856

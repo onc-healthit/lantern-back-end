@@ -374,31 +374,6 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
 }
 
 
-# get contact information
-get_contact_information <- function(db_connection) {
-
-  contacts_tbl <- tbl(db_connection,
-    sql("SELECT DISTINCT
-				  url,
-				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
-        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
-          FROM fhir_endpoints_info
-          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect()
-
-
-    res <- app$endpoint_export_tbl() %>%
-        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
-        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == "None") %>%
-        left_join(contacts_tbl, by = c("url" = "url"))
-
-    res
-}
-
-
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
@@ -718,7 +693,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
-  safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
   end_time <- Sys.time()
