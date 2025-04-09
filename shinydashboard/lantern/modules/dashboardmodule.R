@@ -256,7 +256,7 @@ dashboard <- function(
                                 height = 400,
                                 growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    app_data$last_updated()
+    now("UTC")
   }
 )
   
@@ -275,7 +275,7 @@ dashboard <- function(
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    list(app_data$last_updated(), sel_vendor())
+    list(now("UTC"), sel_vendor())
   })
 
   observeEvent(input$show_info, {
