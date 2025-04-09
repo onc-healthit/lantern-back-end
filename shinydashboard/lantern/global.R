@@ -81,8 +81,7 @@ app_data <<- list(
   well_known_endpoints_no_doc = reactiveVal(NULL), # well known endpoints reached, but no JSON doc returned
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
   implementation_guide = reactiveVal(NULL),        # implementation_guide table
-  capstat_sizes_tbl = reactiveVal(NULL),           # capability statement size by vendor, fhir_version
-  validation_tbl = reactiveVal(NULL)               # validation rules and results
+  capstat_sizes_tbl = reactiveVal(NULL)            # capability statement size by vendor, fhir_version
 )
 
 time_until_next_run <- function() {
