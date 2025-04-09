@@ -134,6 +134,37 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_resource_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_resource_interactions_operations_idx." >> $log_file
 }
 
+# Lantern-856
+# Refresh the implementation_guide materialized view
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_implementation_guide;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_implementation_guide." >> $log_file
+}
+
+# Add new indexes for mv_implementation_guide
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_implementation_guide_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_implementation_guide_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_implementation_guide_unique ON mv_implementation_guide(url, fhir_version, implementation_guide, vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_implementation_guide_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_implementation_guide_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_implementation_guide_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_implementation_guide_vendor ON mv_implementation_guide(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_implementation_guide_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_implementation_guide_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_implementation_guide_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_implementation_guide_fhir ON mv_implementation_guide(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_implementation_guide_fhir." >> $log_file
+}
+
 ## For profiles tab
 
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY endpoint_supported_profiles_mv;" -U lantern -d lantern || {
