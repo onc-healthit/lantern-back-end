@@ -127,24 +127,6 @@ get_endpoint_last_updated <- function(db_tables) {
   as.character.Date(last_updated)
 }
 
-# Compute the percentage of each response code for all responses received
-get_http_response_summary_tbl <- function(db_tables) {
-  db_tables$fhir_endpoints_info %>%
-    collect() %>%
-    filter(requested_fhir_version == "None") %>%
-    left_join(app$endpoint_export_tbl() %>%
-    select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
-    select(url, id, http_response, vendor_name, fhir_version) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
-}
 
 # LANTERN-831
 get_http_response_tbl <- function(vendor_name) {
@@ -596,27 +578,6 @@ get_security_endpoints <- function(db_connection) {
 
 }
 
-# Get list of SMART Core Capabilities supported by endpoints returning http 200
-get_smart_response_capabilities <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-      f.id,
-      m.smart_http_response,
-      v.name as vendor_name,
-      f.capability_fhir_version as fhir_version,
-      json_array_elements_text((smart_response->'capabilities')::json) as capability
-    FROM fhir_endpoints_info f
-    LEFT JOIN vendors v ON f.vendor_id = v.id
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    WHERE vendor_id = v.id AND f.metadata_id = m.id AND f.requested_fhir_version = 'None'
-    AND m.smart_http_response=200")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
 get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
@@ -638,62 +599,6 @@ get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersi
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res
-}
-
-# Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
-get_smart_response_capability_count <- function(endpoints_tbl) {
-  res <- endpoints_tbl %>%
-    group_by(fhir_version, capability) %>%
-    count() %>%
-    rename("FHIR Version" = fhir_version, Capability = capability, Endpoints = n)
-  res
-}
-
-# Query fhir endpoints and return list of endpoints that have
-# returned a valid JSON document at /.well-known/smart-configuration
-# This implies a smart_http_response of 200.
-#
-get_well_known_endpoints_tbl <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT e.url, e.endpoint_names as organization_names, e.vendor_name,
-      e.fhir_version as capability_fhir_version
-    FROM endpoint_export e
-    LEFT JOIN fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    LEFT JOIN vendors v on f.vendor_id = v.id
-    ON e.url = f.url
-    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response::jsonb) = 'object'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-    mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
-}
-
-# Find any endpoints which have returned a smart_http_response of 200
-# at the well known endpoint url /.well-known/smart-configuration
-# but did NOT return a valid JSON document when queried
-get_well_known_endpoints_no_doc <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id, e.url, f.vendor_id, e.endpoint_names as organization_names, e.vendor_name,
-      e.fhir_version,
-      m.smart_http_response,
-      f.smart_response
-    FROM endpoint_export e
-    LEFT JOIN fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    ON e.url = f.url
-    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response::jsonb) <> 'object'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get counts of authorization types supported by FHIR Version
@@ -945,7 +850,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
   safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
@@ -956,10 +860,7 @@ database_fetcher <- reactive({
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
-  safe_execute("app_data$smart_response_capabilities", app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection)))
-  safe_execute("app_data$well_known_endpoints_tbl", app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection)))
   safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
-  safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
