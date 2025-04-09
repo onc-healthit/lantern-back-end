@@ -10,6 +10,28 @@ custom_column_small <- function(...) {
     )
 }
 
+get_endpoint_totals_list <- function(db_tables) {
+  totals_data <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1)
+  
+  fhir_endpoint_totals <- list(
+    "all_endpoints"     = totals_data$all_endpoints,
+    "indexed_endpoints" = totals_data$indexed_endpoints,
+    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
+  )
+  
+  return(fhir_endpoint_totals)
+}
+
+get_response_tally_list <- function(db_tables) {
+  response_tally <- db_tables$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
+  
+  return(response_tally)
+}
+
 custom_column_large <- function(...) {
     tags$div(
       class = "col-md-8",
@@ -69,29 +91,61 @@ dashboard <- function(
 
   fhirVendorTableSize <- reactiveVal(NULL)
 
-  output$fhir_vendor_table <-  reactable::renderReactable({
-  vendor_table_data <- prepare_vendor_data(db_tables)
-  if (is.null(fhirVendorTableSize())) {
-    fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
-  }
-  
-  # Create a filtered version of the data for the table display
-  display_data <- vendor_table_data %>%
-    select(vendor_name, fhir_version, n, percentage)
+  # Fixed prepare_vendor_data to handle integer64 data type and sort based on top developers
+  prepare_vendor_data <- function(db_tables) {
+    # Directly use the materialized view and convert integer64 to regular integers
+    fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
+      collect() %>%
+      mutate(n = as.integer(n))  # Convert integer64 to regular integer
     
-  reactable(display_data,
-              columns = list(
-                vendor_name = colDef(name = "Vendor"),
-                fhir_version = colDef(name = "FHIR Version"),
-                n = colDef(name = "Count"),
-                percentage = colDef(name = "Developer Percentage")
-              ),
-              sortable = TRUE,
-              searchable = TRUE,
-              showSortIcon = TRUE,
-              defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
-  )
-})
+    # Replace NA values with "Unknown" in vendor_name and fhir_version
+    fhir_data <- fhir_data %>%
+      mutate(
+        vendor_name = ifelse(is.na(vendor_name), "Unknown", vendor_name),
+        fhir_version = ifelse(is.na(fhir_version), "Unknown", fhir_version)
+      )
+    
+    # Calculate percentage for each vendor
+    all_vendor_counts <- fhir_data %>%
+      group_by(vendor_name) %>%
+      summarise(developer_count = sum(n))
+    
+    # Join back to get percentages
+    fhir_data <- fhir_data %>%
+      left_join(all_vendor_counts, by = "vendor_name") %>%
+      mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
+      mutate(percentage = paste0(percentage, "%")) %>%
+      # Select only the columns needed
+      select(vendor_name, fhir_version, n, percentage, sort_order) %>%
+      # Arrange by sort_order for consistent display
+      arrange(sort_order)
+    
+    return(fhir_data)
+  }
+
+  output$fhir_vendor_table <-  reactable::renderReactable({
+    vendor_table_data <- prepare_vendor_data(db_tables)
+    if (is.null(fhirVendorTableSize())) {
+      fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
+    }
+    
+    # Create a filtered version of the data for the table display
+    display_data <- vendor_table_data %>%
+      select(vendor_name, fhir_version, n, percentage)
+      
+    reactable(display_data,
+                columns = list(
+                  vendor_name = colDef(name = "Vendor"),
+                  fhir_version = colDef(name = "FHIR Version"),
+                  n = colDef(name = "Count"),
+                  percentage = colDef(name = "Developer Percentage")
+                ),
+                sortable = TRUE,
+                searchable = TRUE,
+                showSortIcon = TRUE,
+                defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
+    )
+  })
 
   observeEvent(input$fhir_vendor_table_state$length, {
     page <- input$fhir_vendor_table_state$length
@@ -170,63 +224,41 @@ dashboard <- function(
     plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
   })
 
-  # Fixed prepare_vendor_data to handle integer64 data type
-# Updated prepare_vendor_data to rename NA to Unknown
-prepare_vendor_data <- function(db_tables) {
-  # Directly use the materialized view and convert integer64 to regular integers
-  fhir_data <- db_tables$mv_vendor_fhir_counts %>% 
-    collect() %>%
-    mutate(n = as.integer(n))  # Convert integer64 to regular integer
+  output$vendor_share_plot <- renderCachedPlot({
+  vendor_plot_data <- prepare_vendor_data(db_tables) %>%
+    filter(n > 0)  # Filter out zero counts
   
-  # Replace NA values with "Unknown" in vendor_name and fhir_version
-  fhir_data <- fhir_data %>%
-    mutate(
-      vendor_name = ifelse(is.na(vendor_name), "Unknown", vendor_name),
-      fhir_version = ifelse(is.na(fhir_version), "Unknown", fhir_version)
-    )
+  # Create ordered factor levels based on sort_order
+  # This ensures the plot shows vendors in the correct order
+  vendor_levels <- vendor_plot_data %>%
+    arrange(sort_order) %>%
+    distinct(vendor_name) %>%
+    pull(vendor_name)
   
-  # Calculate percentage for each vendor
-  all_vendor_counts <- fhir_data %>%
-    group_by(vendor_name) %>%
-    summarise(developer_count = sum(n))
-  
-  # Join back to get percentages
-  fhir_data <- fhir_data %>%
-    left_join(all_vendor_counts, by = "vendor_name") %>%
-    mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-    mutate(percentage = paste0(percentage, "%")) %>%
-    # Select only the columns needed
-    select(vendor_name, fhir_version, n, percentage)
-  
-  return(fhir_data)
-}
-
-# Restored vendor_share_plot with original visual appearance
-output$vendor_share_plot <- renderCachedPlot({
-   vendor_plot_data <- prepare_vendor_data(db_tables) %>%
-     filter(n > 0)  # Filter out zero counts
-   
-   # Ensure we have proper factor levels for vendor_name
-   vendor_plot_data$vendor_name <- factor(vendor_plot_data$vendor_name)
-   
-   ggplot(vendor_plot_data, aes(y = n, x = fct_rev(vendor_name), fill = fhir_version)) +
-      geom_col(width = 0.8) +
-      geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
-      theme(legend.position = "top") +
-      theme(text = element_text(size = 15)) +
-      labs(fill = "FHIR Version",
-           x = "",
-           y = "Number of Endpoints",
-           title = "Endpoints by Developer and FHIR Version") +
-      scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
-      coord_flip()
-  }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
-                                  growthRate = 1.2),
-    res = 72, cache = "app", cacheKeyExpr = {
-      app_data$last_updated()
-    }
+  vendor_plot_data$vendor_name <- factor(
+    vendor_plot_data$vendor_name,
+    levels = vendor_levels
   )
+  
+  ggplot(vendor_plot_data, aes(y = n, x = fct_rev(vendor_name), fill = fhir_version)) +
+    # Reduce bar width from 0.8 to 0.4 (half the current width)
+    geom_col(width = 0.4) +
+    geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
+    theme(legend.position = "top") +
+    theme(text = element_text(size = 15)) +
+    labs(fill = "FHIR Version",
+         x = "",
+         y = "Number of Endpoints",
+         title = "Endpoints by Developer and FHIR Version") +
+    scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
+    coord_flip()
+}, sizePolicy = sizeGrowthRatio(width = 400,
+                                height = 400,
+                                growthRate = 1.2),
+  res = 72, cache = "app", cacheKeyExpr = {
+    now("UTC")
+  }
+)
   
   output$response_code_plot <- renderCachedPlot({
     ggplot(selected_http_summary() %>% mutate(http_code = as.factor(http_code), Response = paste(http_code, "-", code_label)), aes(x = http_code, fill = as.factor(Response), y = count_endpoints)) +
@@ -243,7 +275,7 @@ output$vendor_share_plot <- renderCachedPlot({
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    list(app_data$last_updated(), sel_vendor())
+    list(now("UTC"), sel_vendor())
   })
 
   observeEvent(input$show_info, {

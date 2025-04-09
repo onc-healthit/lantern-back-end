@@ -63,7 +63,6 @@ app <<- list(
 app_data <<- list(
   fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
   response_tally = reactiveVal(NULL),              # counts of http responses
-  vendor_count_tbl = reactiveVal(NULL),            # endpoint counts by vendor
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   contact_info_tbl = reactiveVal(NULL),
   capstat_fields = reactiveVal(NULL),              # fields from the capability statement

@@ -109,14 +109,6 @@ get_fhir_endpoints_tbl <- function() {
     ))
 }
 
-# get the endpoint tally by http_response received
-get_response_tally_list <- function(db_tables) {
-  response_tally <- db_tables$mv_response_tally %>%
-                    as.data.frame() %>%
-                    slice(1)
-  
-  return(response_tally)
-}
 
 get_endpoint_last_updated <- function(db_tables) {
   last_updated <- db_tables$mv_endpoint_totals %>%
@@ -146,19 +138,6 @@ get_http_response_tbl_all <- function() {
   res
 }
 
-# Get the count of endpoints by vendor
-get_fhir_version_vendor_count <- function(endpoint_tbl) {
-  tbl <- endpoint_tbl %>%
-    distinct(vendor_name, url, fhir_version) %>%
-    group_by(vendor_name, fhir_version) %>%
-    tally() %>%
-    ungroup() %>%
-    select(vendor_name, fhir_version, n) %>%
-    left_join(vendor_short_names) %>%
-    mutate(short_name = ifelse(is.na(short_name), vendor_name, short_name))
-
-    tbl
-}
 
 get_fhir_version_factors <- function(endpoint_tbl) {
   mutate(endpoint_tbl,
@@ -629,6 +608,14 @@ get_single_endpoint_locations <- function(db_connection, endpointURL, requestedF
   res
 }
 
+get_response_tally_list <- function(db_tables) {
+  response_tally <- db_tables$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
+  
+  return(response_tally)
+}
+
 
 # get implementation guides stored in capability statement
 get_implementation_guide <- function(db_connection) {
@@ -778,7 +765,6 @@ database_fetcher <- reactive({
   start_time <- Sys.time()
   message("database_fetcher ***************************************")
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
-  safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
