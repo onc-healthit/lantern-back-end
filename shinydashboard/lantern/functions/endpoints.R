@@ -855,14 +855,6 @@ get_cap_stat_sizes <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-get_validation_results_plot_data <- function(db_connection) {
-  # Direct query to the materialized view
-  res <- tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
-    collect()
-  
-  return(res)
-}
-
 get_endpoint_list_matches <- function() {
     el <- app$endpoint_export_tbl() %>%
           separate_rows(endpoint_names, sep = ";") %>%

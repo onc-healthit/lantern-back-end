@@ -307,7 +307,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), Sys.time())
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), now("UTC"))
     })
 
   # Renders an empty validation result count chart when no data available
