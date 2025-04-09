@@ -82,6 +82,13 @@ endpointsmodule <- function(
   # })
 
 selected_fhir_endpoints <- reactive({
+    
+    # Ensure all required reactive values are available
+    req(sel_fhir_version())
+    req(sel_vendor())
+    req(sel_availability())
+    req(sel_is_chpl())
+    
     query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
     params <- list(vals = sel_fhir_version())
 
