@@ -398,18 +398,6 @@ get_implementation_guide_count <- function(fhir_resources_tbl) {
     rename(Implementation = implementation_guide, Endpoints = n)
 }
 
-get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
-  res <- capstat_fields_tbl %>%
-    group_by(field, exist, fhir_version, extension) %>%
-    count() %>%
-    filter(exist == "true") %>%
-    filter(extension == extensionBool) %>%
-    ungroup() %>%
-    select(-exist) %>%
-    select(-extension) %>%
-    rename(Fields = field, Endpoints = n)
-}
-
 # get contact information
 get_contact_information <- function(db_connection) {
 
@@ -433,6 +421,7 @@ get_contact_information <- function(db_connection) {
 
     res
 }
+
 
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
@@ -767,7 +756,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
-  safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
