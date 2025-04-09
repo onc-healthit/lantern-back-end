@@ -788,7 +788,7 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
   ORDER BY sub.url;
 
 -- Create indexes for mv_endpoint_organization_tbl
-CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_organization_tbl(url);
+CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for endpoint_export_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
