@@ -8,6 +8,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/validationpruning"
 
 	//"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
@@ -126,4 +127,20 @@ func HistoryPruning(
 		log.Infof("History Pruning complete. Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
+}
+
+func ValidationPruning(
+	ctx context.Context,
+	wg *sync.WaitGroup,
+	qInterval int,
+	store *postgresql.Store,
+	errs chan<- error) {
+
+	defer wg.Done()
+	for {
+		log.Info("Starting validation pruning")
+		validationpruning.PruneValidationInfo(ctx, store)
+		time.Sleep(time.Duration(qInterval) * time.Minute)
+	}
+
 }
