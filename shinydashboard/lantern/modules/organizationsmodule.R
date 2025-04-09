@@ -87,21 +87,27 @@ organizationsmodule <- function(
     res
   })
 
- selected_endpoint_list_orgs <- reactive({
-    res <- get_endpoint_list_matches()
-    req(sel_fhir_version(), sel_vendor())
 
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+  selected_endpoint_list_orgs <- reactive({
+      # Get current filter values
+      current_fhir <- sel_fhir_version()
+      current_vendor <- sel_vendor()
 
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+      req(current_fhir, current_vendor)
 
-    res <- res %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+      # Get filtered data from the materialized view function
+      res <- get_endpoint_list_matches(
+        db_connection,
+        fhir_version = current_fhir,
+        vendor = current_vendor
+      )
 
-    res
-  })
+      # Format URL for HTML display with modal popup
+      res <- res %>%
+        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+      
+      res
+    })
 
   output$npi_orgs_table <- reactable::renderReactable({
      reactable(
@@ -128,26 +134,46 @@ organizationsmodule <- function(
      )
   })
 
-    output$endpoint_list_orgs_table <- reactable::renderReactable({
+  output$endpoint_list_orgs_table <- reactable::renderReactable({
+     # Get all data
+     display_data <- selected_endpoint_list_orgs()
+
+     if (nrow(display_data) == 0) {
+       return(
+         reactable(
+           data.frame(Message = "No data matching the selected filters"),
+           pagination = FALSE,
+           searchable = FALSE
+         )
+       )
+     }
+
      reactable(
-              selected_endpoint_list_orgs() %>% select(organization_name, url, fhir_version, vendor_name) %>% distinct(organization_name, url, fhir_version, vendor_name) %>% group_by(organization_name),
-              defaultColDef = colDef(
-                align = "center"
-              ),
-              columns = list(
-                  organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
-                  url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
-                  fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
-              ),
-              groupBy = c("organization_name"),
-              striped = TRUE,
-              searchable = TRUE,
-              showSortIcon = TRUE,
-              highlight = TRUE,
-              defaultPageSize = 10
+       display_data %>% 
+         select(organization_name, url, fhir_version, vendor_name) %>% 
+         distinct(organization_name, url, fhir_version, vendor_name) %>% 
+         group_by(organization_name),
+       defaultColDef = colDef(
+         align = "center"
+       ),
+       columns = list(
+         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
+         url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
+         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
+       ),
+       groupBy = c("organization_name"),
+       striped = TRUE,
+       searchable = TRUE,
+       showSortIcon = TRUE,
+       highlight = TRUE,
+       defaultPageSize = 10,
+       showPageSizeOptions = TRUE,
+       pageSizeOptions = c(10, 25, 50, 100),
+       minRows = 10,
+       paginationType = "jump"
      )
-  })
+   })
 
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
