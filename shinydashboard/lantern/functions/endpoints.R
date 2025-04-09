@@ -786,6 +786,14 @@ get_single_endpoint_locations <- function(db_connection, endpointURL, requestedF
   res
 }
 
+get_response_tally_list <- function(db_tables) {
+  response_tally <- db_tables$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
+  
+  return(response_tally)
+}
+
 
 # get implementation guides stored in capability statement
 get_implementation_guide <- function(db_connection) {
@@ -998,6 +1006,7 @@ app_fetcher <- reactive({
   safe_execute("app$endpoint_export_tbl", app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables)))
   safe_execute("app$fhir_version_list_no_capstat", app$fhir_version_list_no_capstat(get_fhir_version_list(app$endpoint_export_tbl(), TRUE)))
   safe_execute("app$fhir_version_list", app$fhir_version_list(get_fhir_version_list(app$endpoint_export_tbl(), FALSE)))
+  safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
   safe_execute("app$distinct_fhir_version_list_no_capstat", app$distinct_fhir_version_list_no_capstat(get_distinct_fhir_version_list_no_capstat(app$endpoint_export_tbl())))
   safe_execute("app$distinct_fhir_version_list", app$distinct_fhir_version_list(get_distinct_fhir_version_list(app$endpoint_export_tbl())))
   safe_execute("app$vendor_list", app$vendor_list(get_vendor_list(app$endpoint_export_tbl())))

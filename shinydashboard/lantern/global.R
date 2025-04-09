@@ -62,6 +62,7 @@ app <<- list(
 # refreshed at interval specified by refresh_timeout_minutes in configuration.yml
 app_data <<- list(
   fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
+  response_tally = reactiveVal(NULL),
   http_pct = reactiveVal(NULL),                    # percentage of http responses for each endpoint
   endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
   contact_info_tbl = reactiveVal(NULL),
