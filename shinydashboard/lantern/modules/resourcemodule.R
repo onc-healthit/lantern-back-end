@@ -141,6 +141,6 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), now("UTC"))
     })
 }
