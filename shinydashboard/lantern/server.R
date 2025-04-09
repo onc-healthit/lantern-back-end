@@ -237,7 +237,7 @@ selected_fhir_endpoint_profiles <- reactive({
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
 
-  show_confidence_filter <- reactive(input$side_menu %in% c("organizations_tab") && (input$organization_tabset == "NPI Organizations"))
+  show_confidence_filter <- reactive(FALSE)
 
   page_name <- reactive({
     page_name_list[[input$side_menu]]

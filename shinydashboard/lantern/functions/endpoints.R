@@ -508,28 +508,6 @@ get_organization_locations <- function(db_connection) {
   res
 }
 
-get_endpoint_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          distinct(url),
-          endpoint_names[1] as endpoint_name,
-          organization_name,
-          fhir_version,
-          vendor_name,
-          match_score,
-          left(zipcode,5) as zipcode,
-          npi_id
-        FROM organization_location")
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-  res
-}
 
 get_single_endpoint_locations <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
@@ -590,16 +568,6 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
   return(result)
 }
 
-get_npi_organization_matches <- function(db_tables) {
-  nl <- db_tables$organization_location %>%
-    select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
-    collect() %>%
-    mutate(match_score = match_score * 100)  %>%
-    filter(match_score >= 97) %>%
-    tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown")) %>%
-    mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
-  nl
-}
 
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
@@ -694,7 +662,6 @@ database_fetcher <- reactive({
     distinct(code) %>%
     pull(code)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
-  safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")
