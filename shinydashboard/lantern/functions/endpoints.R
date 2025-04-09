@@ -473,20 +473,6 @@ get_contact_information <- function(db_connection) {
     res
 }
 
-# get values from specific fields we're interested in displaying
-# get two fhir version fields, one for fhir version filter and one for field filter
-# this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
-get_capstat_values <- function(db_connection) {
-  res <- tbl(db_connection, sql("SELECT * FROM get_capstat_values_mv")) %>%
-    collect()
-  
-  return(res)
-}
-
-get_capstat_values_list <- function(capstat_values_tbl) {
-  res <- capstat_values_tbl
-}
-
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days

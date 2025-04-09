@@ -70,6 +70,10 @@ valuesmodule <- function(
     header
   })
 
+get_capstat_values_list <- function(capstat_values_tbl) {
+  res <- capstat_values_tbl
+}
+
 selected_fhir_endpoints <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
     # Get the selected values
