@@ -596,22 +596,6 @@ get_security_endpoints <- function(db_connection) {
 
 }
 
-# get tibble of endpoints which include a security service attribute
-# in their capability statement, each service coding as a row
-# for display in table of endpoints, with organization name and URL
-get_security_endpoints_tbl <- function(db_connection) {
-  res <- tbl(db_connection, sql("SELECT url, 
-                                        organization_names, 
-                                        vendor_name, 
-                                        capability_fhir_version, 
-                                        fhir_version_final AS fhir_version, 
-                                        tls_version, 
-                                        code 
-                                 FROM security_endpoints_mv")) %>%
-    collect()
-  return(res)
-}
-
 # Get list of SMART Core Capabilities supported by endpoints returning http 200
 get_smart_response_capabilities <- function(db_connection) {
   res <- tbl(db_connection,
