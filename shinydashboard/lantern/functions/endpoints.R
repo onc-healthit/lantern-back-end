@@ -660,23 +660,6 @@ get_endpoint_implementation_guide <- function(db_connection, endpointURL, reques
   res
 }
 
-get_cap_stat_sizes <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          pg_column_size(capability_statement::text) as size,
-          capability_fhir_version as fhir_version,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_fhir_version != ''
-          AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
 get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor = NULL) {
   # Start with base query
   query <- tbl(db_connection, "mv_endpoint_list_organizations")
@@ -800,7 +783,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
   safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
-  safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
@@ -810,7 +792,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
   safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
-  safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")

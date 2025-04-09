@@ -74,8 +74,7 @@ app_data <<- list(
   endpoint_security_counts = reactiveVal(NULL),    # summary table of endpoint counts with security resource in cap statement
   security_code_list = reactiveVal(NULL),          # list of supported auth types for UI dropdown
   endpoint_locations = reactiveVal(NULL),          # endpoints with location information mappings
-  implementation_guide = reactiveVal(NULL),        # implementation_guide table
-  capstat_sizes_tbl = reactiveVal(NULL)            # capability statement size by vendor, fhir_version
+  implementation_guide = reactiveVal(NULL)        # implementation_guide table
 )
 
 time_until_next_run <- function() {
