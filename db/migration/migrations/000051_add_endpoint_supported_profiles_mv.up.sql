@@ -4,6 +4,7 @@ DROP MATERIALIZED VIEW IF EXISTS endpoint_supported_profiles_mv CASCADE;
 
 CREATE MATERIALIZED VIEW endpoint_supported_profiles_mv AS
 SELECT
+  row_number() OVER () AS mv_id,
   f.id AS endpoint_id,
   f.url,
   f.vendor_id,
