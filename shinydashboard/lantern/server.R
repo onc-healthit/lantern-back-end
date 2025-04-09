@@ -9,7 +9,7 @@ library(dygraphs)
 function(input, output, session) { #nolint
 
 selected_fhir_endpoint_profiles <- reactive({
-    res <- isolate(app_data$supported_profiles())
+    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
     res <- res %>% filter(fhir_version %in% input$fhir_version)
@@ -24,9 +24,9 @@ selected_fhir_endpoint_profiles <- reactive({
         }
     }
 
-    if (length(input$profile_resource) > 0) {
-        if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-          res <- res %>% filter(resource == input$profile_resource)
+    if (length(input$profiles) > 0) {
+        if (input$profiles != ui_special_values$ALL_PROFILES) {
+        res <- res %>% filter(profileurl == input$profiles)
         }
     }
 
@@ -445,30 +445,33 @@ selected_fhir_endpoint_profiles <- reactive({
   })
 
   profile_options <- reactive({
-    res <- isolate(app_data$supported_profiles())
-    req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
+    query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
+      filter(fhir_version %in% !!input$fhir_version)
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      query <- query %>% filter(vendor_name == !!input$vendor)
     }
 
-    res <- res %>%
-    distinct(profileurl) %>%
-    arrange(profileurl) %>%
-    split(.$profileurl) %>%
-    purrr::map(~ .$profileurl)
+  res <-  query %>%
+      select(profileurl) %>%
+      distinct() %>%
+      arrange(profileurl) %>%
+      collect()
 
-    profile_list <- list(
-      "All Profiles" = ui_special_values$ALL_PROFILES
-    )
+    # split(.$profileurl) %>%
+    # purrr::map(~ .$profileurl)
 
-    return(c(profile_list, res))
+  res <- split(res$profileurl, res$profileurl)
+
+  profile_list <- list(
+    "All Profiles" = ui_special_values$ALL_PROFILES
+  )
+
+  return(c(profile_list, res))
   })
 
   resource_options <- reactive({
-    res <- isolate(app_data$supported_profiles())
+    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
     res <- res %>%
@@ -1315,7 +1318,7 @@ output$endpoint_http_response_table <- reactable::renderReactable({
     ))
   })
 
-output$no_filter_profile_table <- DT::renderDataTable({
+output$filter_profile_table <- DT::renderDataTable({
       DT::datatable(
         selected_fhir_endpoint_profiles(),
         escape = FALSE,
