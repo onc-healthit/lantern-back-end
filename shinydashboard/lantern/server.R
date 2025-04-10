@@ -1013,7 +1013,6 @@ output$endpoint_location_map  <- renderLeaflet({
     endpoint <- current_endpoint()
 
     res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL)
-    res <- res %>% select(-mv_id)
     res <- res %>%
     filter(url == endpoint$url) %>%
     filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
