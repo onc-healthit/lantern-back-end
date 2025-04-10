@@ -777,7 +777,6 @@ CREATE INDEX mv_resource_interactions_operations_idx
 
 -- Lantern-856
 -- Create materialized view for implementation_guide
-DROP MATERIALIZED VIEW IF EXISTS mv_implementation_guide CASCADE;
 CREATE MATERIALIZED VIEW mv_implementation_guide AS 
 
 SELECT
