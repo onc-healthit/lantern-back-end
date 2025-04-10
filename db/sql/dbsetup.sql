@@ -776,8 +776,6 @@ CREATE INDEX mv_resource_interactions_operations_idx
   ON mv_resource_interactions USING GIN (operations);
 
 -- Lantern-852
-DROP MATERIALIZED VIEW IF EXISTS mv_capstat_sizes_tbl CASCADE;
-
 CREATE MATERIALIZED VIEW mv_capstat_sizes_tbl AS
 SELECT
     f.url,
