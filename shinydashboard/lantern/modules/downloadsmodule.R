@@ -61,7 +61,7 @@ downloadsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- get_fhir_endpoints_tbl() %>%
-      select(-label, -status, -availability, -fhir_version) %>%
+      select(-status, -availability, -fhir_version) %>%
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
       rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
