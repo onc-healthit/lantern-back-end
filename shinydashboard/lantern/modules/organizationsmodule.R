@@ -31,20 +31,25 @@ organizationsmodule <- function(
 
 
  selected_endpoint_list_orgs <- reactive({
-    res <- get_endpoint_list_matches()
-    req(sel_fhir_version(), sel_vendor())
+      # Get current filter values
+      current_fhir <- sel_fhir_version()
+      current_vendor <- sel_vendor()
 
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+      req(current_fhir, current_vendor)
 
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
+      # Get filtered data from the materialized view function
+      res <- get_endpoint_list_matches(
+        db_connection,
+        fhir_version = current_fhir,
+        vendor = current_vendor
+      )
 
-    res <- res %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
-
-    res
-  })
+      # Format URL for HTML display with modal popup
+      res <- res %>%
+        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
+      
+      res
+    })
 
 
   output$endpoint_list_orgs_table <- reactable::renderReactable({
