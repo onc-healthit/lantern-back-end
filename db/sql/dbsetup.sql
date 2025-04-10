@@ -777,7 +777,6 @@ CREATE INDEX mv_resource_interactions_operations_idx
 
 -- LANTERN-843
 -- Create materialized view for endpoint_organization_tbl
-DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_organization_tbl CASCADE;
 CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
  SELECT sub.url,
     array_agg(sub.endpoint_names_list ORDER BY sub.endpoint_names_list) AS endpoint_names_list
@@ -791,7 +790,6 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
 CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for endpoint_export_tbl
-DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
 CREATE MATERIALIZED VIEW mv_endpoint_export_tbl AS
 WITH base AS (
   SELECT 
@@ -883,7 +881,6 @@ CREATE INDEX idx_mv_endpoint_export_tbl_fhir ON mv_endpoint_export_tbl (fhir_ver
 CREATE INDEX idx_mv_endpoint_export_tbl_vendor_fhir ON mv_endpoint_export_tbl (vendor_name, fhir_version);
 
 -- Create materialized view for http_pct
-DROP MATERIALIZED VIEW IF EXISTS mv_http_pct CASCADE;
 CREATE MATERIALIZED VIEW mv_http_pct AS
 WITH grouped AS (
   SELECT
@@ -918,7 +915,6 @@ CREATE INDEX idx_mv_http_pct_fhir ON mv_http_pct (fhir_version);
 CREATE INDEX idx_mv_http_pct_vendor_fhir ON mv_http_pct (vendor_name, fhir_version);
 
 -- Create materialized view for well_known_endpoints
-DROP MATERIALIZED VIEW IF EXISTS mv_well_known_endpoints CASCADE;
 CREATE MATERIALIZED VIEW mv_well_known_endpoints AS
 
 WITH base AS (
@@ -962,7 +958,6 @@ CREATE INDEX idx_mv_well_known_fhir ON mv_well_known_endpoints(fhir_version);
 CREATE INDEX idx_mv_well_known_vendor_fhir ON mv_well_known_endpoints(vendor_name, fhir_version);
 
 -- Create materialized view for well_known_no_doc
-DROP MATERIALIZED VIEW IF EXISTS mv_well_known_no_doc CASCADE;
 CREATE MATERIALIZED VIEW mv_well_known_no_doc AS
 
 WITH base AS (
@@ -1013,7 +1008,6 @@ CREATE INDEX idx_mv_well_known_no_doc_fhir ON mv_well_known_no_doc(fhir_version)
 CREATE INDEX idx_mv_well_known_no_doc_vendor_fhir ON mv_well_known_no_doc(vendor_name, fhir_version);
 
 -- Create materialized view for smart_response_capabilities
-DROP MATERIALIZED VIEW IF EXISTS mv_smart_response_capabilities CASCADE;
 CREATE MATERIALIZED VIEW mv_smart_response_capabilities AS
 
 WITH original AS (
@@ -1050,7 +1044,6 @@ CREATE INDEX idx_mv_smart_response_capabilities_vendor_fhir ON mv_smart_response
 CREATE INDEX idx_mv_smart_response_capabilities_capability_fhir ON mv_smart_response_capabilities (capability, fhir_version);
 
 -- Create materialized view for selected_endpoints
-DROP MATERIALIZED VIEW IF EXISTS mv_selected_endpoints CASCADE;
 CREATE MATERIALIZED VIEW mv_selected_endpoints AS
 WITH original AS (
  SELECT
