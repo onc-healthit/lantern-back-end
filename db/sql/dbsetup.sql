@@ -846,16 +846,6 @@ grouped_organizations AS (
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
     GROUP BY url
 ),
-valid_fhir_versions AS (
-    -- Dynamically extract all distinct valid FHIR versions from the dataset
-    SELECT DISTINCT 
-        CASE 
-            WHEN fhir_version LIKE '%-%' THEN SPLIT_PART(fhir_version, '-', 1)
-            ELSE fhir_version
-        END AS version
-    FROM endpoint_export
-    WHERE fhir_version IS NOT NULL AND fhir_version != ''
-),
 processed_versions AS (
     SELECT 
         e.*,
@@ -877,10 +867,13 @@ SELECT
     p.list_source, 
     COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') AS vendor_name,
     p.capability_fhir_version,
-    -- Step 3: Validate against dynamically determined valid FHIR versions
+    -- Step 3: Use the fixed list of valid FHIR versions 
     CASE 
         WHEN p.capability_fhir_version = 'No Cap Stat' THEN 'No Cap Stat'  -- Ensure "No Cap Stat" is preserved
-        WHEN p.fhir_version_raw IN (SELECT version FROM valid_fhir_versions)
+        WHEN p.fhir_version_raw IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
+                                  '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
+                                  '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
+                                  '4.0.0', '4.0.1')
             THEN p.fhir_version_raw
         ELSE 'Unknown'  
     END AS fhir_version,
@@ -956,6 +949,7 @@ FROM (
         lsi.is_chpl,
         CASE 
             WHEN e.http_response = 200 THEN CONCAT('Success: ', e.http_response, ' - ', r.code_label)
+            WHEN e.http_response IS NULL OR e.http_response = 0 THEN 'Failure: 0 - NA'
             ELSE CONCAT('Failure: ', e.http_response, ' - ', r.code_label)
         END AS status,
         LOWER(CASE 
