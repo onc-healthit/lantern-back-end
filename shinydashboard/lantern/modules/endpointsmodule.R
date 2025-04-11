@@ -42,47 +42,7 @@ endpointsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
   })
 
-  # selected_fhir_endpoints <- reactive({
-  #   res <- get_fhir_endpoints_tbl()
-  #   req(sel_fhir_version(), sel_vendor(), sel_availability())
-
-  #   res <- res %>% filter(fhir_version %in% sel_fhir_version())
-
-  #   if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-  #     res <- res %>% filter(vendor_name == sel_vendor())
-  #   }
-
-  #   if (sel_is_chpl() != "All") {
-  #     res <- res %>% filter(is_chpl == toupper(sel_is_chpl()))
-  #   }
-
-  #   if (sel_availability() != "0-100") {
-  #     if (sel_availability() == "0" || sel_availability() == "100") {
-  #       availability_filter_num <- as.numeric(sel_availability()) / 100
-  #       availability_filter <- as.character(availability_filter_num)
-  #       res <- res %>% filter(availability == availability_filter)
-  #     } else {
-  #       availability_upper_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][2]) / 100
-  #       availability_lower_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][1]) / 100
-  #       availability_lower <- as.character(availability_lower_num)
-  #       availability_upper <- as.character(availability_upper_num)
-
-  #       res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
-  #     }
-  #   }
-
-  #   res <- res %>%
-  #   mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-  #   rowwise() %>%
-  #   mutate(condensed_endpoint_names = ifelse(length(endpoint_names) > 0, ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',\'", url, "\',{priority: \'event\'});\"> Click For More... </a>")), endpoint_names), endpoint_names)) %>%
-  #   mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
-
-  #   res <- res %>% mutate(availability = availability * 100)
-  #   res
-  # })
-
 selected_fhir_endpoints <- reactive({
-    
     # Ensure all required reactive values are available
     req(sel_fhir_version())
     req(sel_vendor())
