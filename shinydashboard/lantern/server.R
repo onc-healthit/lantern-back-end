@@ -993,22 +993,6 @@ endpoint_capabilities_page <- function() {
 
 ### Organizations Modal Page ###
 
-single_endpoint_locations <- reactive({
-  endpoint <- current_endpoint()
-
-  lt <- get_single_endpoint_locations(db_connection, endpoint$url, endpoint$requested_fhir_version)
-  lt
-})
-
-output$endpoint_location_map  <- renderLeaflet({
-  single_endpoint_locations()
-  map <- leaflet() %>%
-    addProviderTiles(providers$CartoDB.Positron) %>%
-    addCircles(data = single_endpoint_locations(), lat = ~ lat, lng = ~ lng, popup = paste0(isolate(single_endpoint_locations()$organization_name), "<br>NPI ID: ", isolate(single_endpoint_locations())$npi_id, "<br>Zipcode: ", isolate(single_endpoint_locations())$zipcode), weight = 10, color = "#33bb33", fillOpacity = 0.8, fillColor = "#00ff00") %>%
-    setView(-98.9, 37.7, zoom = 4)
-  map
-})
-
  get_endpoint_list_orgs <- reactive({
     endpoint <- current_endpoint()
 
@@ -1020,16 +1004,6 @@ output$endpoint_location_map  <- renderLeaflet({
     res
   })
 
-  get_endpoint_npi_orgs <- reactive({
-    endpoint <- current_endpoint()
-
-    res <- get_npi_organization_matches(db_tables)
-    res <- res %>%
-    filter(url == endpoint$url) %>%
-    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
-    mutate(organization_secondary_name = if_else(organization_secondary_name == "Unknown", "Not Available", organization_secondary_name))
-    res
-  })
 
   output$endpoint_list_org_table <- DT::renderDataTable({
     datatable(get_endpoint_list_orgs() %>% distinct(organization_name),
@@ -1039,13 +1013,6 @@ output$endpoint_location_map  <- renderLeaflet({
               options = list(scrollX = TRUE))
   })
 
-    output$npi_list_org_table <- DT::renderDataTable({
-    datatable(get_endpoint_npi_orgs() %>% select(organization_name, organization_secondary_name, npi_id, zipcode, match_score) %>% distinct(organization_name, organization_secondary_name, npi_id, zipcode, match_score),
-              colnames = c("Organization Name", "Organization Secondary Name", "NPI ID", "Zipcode", "Confidence"),
-              rownames = FALSE,
-              selection = "none",
-              options = list(scrollX = TRUE))
-  })
 
 organization_endpoint_page <- function() {
   page <- fluidPage(
@@ -1053,12 +1020,6 @@ organization_endpoint_page <- function() {
     bsCollapse(id = "organizations_collapse", multiple = TRUE,
       bsCollapsePanel("Endpoint List Organizations", fluidPage(
         DT::dataTableOutput("endpoint_list_org_table")
-      ), style = "info"),
-      bsCollapsePanel("Matched NPI Organizations", fluidPage(
-        DT::dataTableOutput("npi_list_org_table")
-      ), style = "info"),
-      bsCollapsePanel("Linked Organizations Locations", fluidPage(
-        leafletOutput("endpoint_location_map", width = "100%", height = "600px")
       ), style = "info")
     )
   )
