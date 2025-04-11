@@ -757,34 +757,6 @@ get_endpoint_security_counts <- function(db_connection) {
   )
 }
 
-get_organization_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-      sql("SELECT id, name, left(location->>'zipcode',5) as zipcode from npi_organizations")
-  ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat))
-  res
-}
-
-
-get_single_endpoint_locations <- function(db_connection, endpointURL, requestedFhirVersion) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
-          url,
-          organization_name,
-          npi_id,
-          match_score,
-          left(zipcode,5) as zipcode
-        FROM organization_location where url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    distinct(organization_name, match_score, zipcode, lat, lng, npi_id)
-  res
-}
-
 
 # get implementation guides stored in capability statement
 get_implementation_guide <- function(db_connection) {
