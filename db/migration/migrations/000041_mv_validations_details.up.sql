@@ -1,5 +1,5 @@
 BEGIN;
--- Materialized view for validation details
+-- Materialized view for validation details 
 DROP INDEX IF EXISTS mv_validation_details_unique_idx;
 DROP MATERIALIZED VIEW IF EXISTS mv_validation_details;
 
@@ -8,10 +8,10 @@ WITH validation_data AS (
     SELECT 
         COALESCE(vendors.name, 'Unknown') as vendor_name,
         CASE 
-            WHEN capability_fhir_version = '' THEN 'No Cap Stat'
-            WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
-            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown'
-            ELSE capability_fhir_version
+            WHEN capability_fhir_version = '' THEN 'No Cap Stat' 
+            WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) 
+            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'Unknown' 
+            ELSE capability_fhir_version 
         END AS fhir_version,
         rule_name,
         reference
@@ -22,14 +22,15 @@ WITH validation_data AS (
     AND v.rule_name IS NOT NULL
 ),
 validation_versions AS (
-    SELECT
+    SELECT 
         rule_name,
         STRING_AGG(
+            DISTINCT  -- Added DISTINCT here to prevent duplicates
             CASE 
-                WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2'
-                WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3'
-                WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4'
-                ELSE fhir_version
+                WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
+                WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
+                WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
+                ELSE fhir_version 
             END,
             ', ' ORDER BY fhir_version
         ) as fhir_version_names
@@ -39,14 +40,14 @@ validation_versions AS (
         WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat'
     ) AS distinct_versions
     GROUP BY rule_name
-)
+) 
 SELECT 
     vd.rule_name,
     COALESCE(vv.fhir_version_names, '') as fhir_version_names
 FROM (
     SELECT DISTINCT rule_name
     FROM validation_data
-) vd
+) vd 
 LEFT JOIN validation_versions vv ON vd.rule_name = vv.rule_name
 ORDER BY vd.rule_name;
 
