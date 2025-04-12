@@ -835,9 +835,10 @@ WITH validation_data AS (
     AND v.rule_name IS NOT NULL
 ),
 validation_versions AS (
-    SELECT
+    SELECT 
         rule_name,
         STRING_AGG(
+            DISTINCT  -- Added DISTINCT here to prevent duplicates
             CASE 
                 WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2'
                 WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3'
