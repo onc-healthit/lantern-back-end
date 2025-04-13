@@ -20,27 +20,36 @@ WITH validation_data AS (
     LEFT JOIN vendors on f.vendor_id = vendors.id 
     WHERE f.requested_fhir_version = 'None'
     AND v.rule_name IS NOT NULL 
-), 
-validation_versions AS ( 
-    SELECT 
-        rule_name, 
-        STRING_AGG(
-            DISTINCT  -- Added DISTINCT here to prevent duplicates
-            CASE 
-                WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
-                WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
-                WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
-                ELSE fhir_version 
-            END, 
-            ', ' ORDER BY fhir_version 
-        ) as fhir_version_names 
-    FROM ( 
-        SELECT DISTINCT rule_name, fhir_version 
-        FROM validation_data 
-        WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat' 
-    ) AS distinct_versions 
-    GROUP BY rule_name 
-) 
+),
+mapped_versions AS (
+    SELECT DISTINCT
+        rule_name,
+        CASE 
+            WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
+            WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
+            WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
+            ELSE fhir_version
+        END AS version_name,
+        -- Add a sort order to maintain the original ordering
+        CASE
+            WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 1 -- DSTU2
+            WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 2 -- STU3
+            WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 3 -- R4
+            ELSE 4 -- Others
+        END AS sort_order
+    FROM validation_data
+    WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat'
+),
+validation_versions AS (
+    SELECT
+        rule_name,
+        STRING_AGG(version_name, ', ' ORDER BY sort_order) as fhir_version_names
+    FROM (
+        SELECT DISTINCT rule_name, version_name, sort_order
+        FROM mapped_versions
+    ) AS unique_versions
+    GROUP BY rule_name
+)
 SELECT 
     vd.rule_name, 
     COALESCE(vv.fhir_version_names, '') as fhir_version_names 
