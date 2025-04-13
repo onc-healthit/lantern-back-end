@@ -833,38 +833,32 @@ WITH validation_data AS (
     LEFT JOIN vendors on f.vendor_id = vendors.id 
     WHERE f.requested_fhir_version = 'None'
     AND v.rule_name IS NOT NULL 
-), 
-validation_versions AS ( 
-    SELECT 
-        rule_name, 
-        STRING_AGG(
-            DISTINCT  -- Added DISTINCT here to prevent duplicates
-            CASE 
-                WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
-                WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
-                WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
-                ELSE fhir_version 
-            END, 
-            ', ' ORDER BY fhir_version 
-        ) as fhir_version_names 
-    FROM ( 
-        SELECT DISTINCT rule_name, fhir_version 
-        FROM validation_data 
-        WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat' 
-    ) AS distinct_versions 
-    GROUP BY rule_name 
-) 
+)
 SELECT 
     vd.rule_name, 
-    COALESCE(vv.fhir_version_names, '') as fhir_version_names 
-FROM ( 
-    SELECT DISTINCT rule_name 
-    FROM validation_data 
-) vd 
-LEFT JOIN validation_versions vv ON vd.rule_name = vv.rule_name 
+    STRING_AGG(
+        DISTINCT 
+        CASE 
+            WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
+            WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
+            WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
+            ELSE fhir_version 
+        END, 
+        ', '
+    ) as fhir_version_names
+FROM (
+    SELECT DISTINCT rule_name
+    FROM validation_data
+) vd
+JOIN (
+    SELECT DISTINCT rule_name, fhir_version
+    FROM validation_data
+    WHERE fhir_version != 'Unknown' AND fhir_version != 'No Cap Stat'
+) versions ON vd.rule_name = versions.rule_name
+GROUP BY vd.rule_name
 ORDER BY vd.rule_name;
 
-CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(rule_name);
+CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(rule_name); 
 
 -- Materialized view for validation failures
 CREATE MATERIALIZED VIEW mv_validation_failures AS
