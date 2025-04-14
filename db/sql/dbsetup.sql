@@ -2020,7 +2020,6 @@ CREATE INDEX idx_mv_selected_endpoints_vendor_fhir ON mv_selected_endpoints(vend
 
 -- Lantern-854
 -- Create materialized view for capstat_fields
-DROP MATERIALIZED VIEW IF EXISTS mv_capstat_fields CASCADE;
 CREATE MATERIALIZED VIEW mv_capstat_fields AS 
 
 SELECT 
@@ -2052,7 +2051,6 @@ CREATE INDEX idx_mv_capstat_fields_vendor ON mv_capstat_fields(vendor_name);
 CREATE INDEX idx_mv_capstat_fields_fhir ON mv_capstat_fields(fhir_version);
 
 -- Create materialized view for capstat_fields_text
-DROP MATERIALIZED VIEW IF EXISTS mv_capstat_values_fields CASCADE;
 CREATE MATERIALIZED VIEW mv_capstat_values_fields AS 
 
 WITH base AS (
@@ -2095,7 +2093,6 @@ CREATE INDEX idx_mv_capstat_values_fields_field_version ON mv_capstat_values_fie
 CREATE INDEX idx_mv_capstat_values_fields_fhir ON mv_capstat_values_fields(fhir_version);
 
 -- Create materialized view for capstat_extension_text
-DROP MATERIALIZED VIEW IF EXISTS mv_capstat_values_extension CASCADE;
 CREATE MATERIALIZED VIEW mv_capstat_values_extension AS 
 
 WITH base AS (

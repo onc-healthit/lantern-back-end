@@ -78,6 +78,7 @@ fieldsmodule <- function(
         SELECT DISTINCT field_version 
         FROM ", mv, "
         WHERE fhir_version IN (", fhir_versions, ")
+        ORDER BY field_version
       ")
 
     # Execute the query
