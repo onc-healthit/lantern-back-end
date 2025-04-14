@@ -77,7 +77,8 @@ WITH response_by_vendor AS (
             WHEN m.http_response = 511 THEN 'Network Authentication Required'
             ELSE 'Other'
         END AS code_label,
-        COUNT(DISTINCT f.url) AS count_endpoints
+        -- Cast the count to an integer
+        COUNT(DISTINCT f.url)::INTEGER AS count_endpoints
     FROM fhir_endpoints_info f
     LEFT JOIN vendors v
            ON f.vendor_id = v.id
@@ -92,7 +93,8 @@ response_all_devs AS (
         'ALL_DEVELOPERS' AS vendor_name,
         http_code,
         code_label,
-        SUM(count_endpoints) AS count_endpoints
+        -- Cast the sum to an integer to ensure it's not displayed as a decimal
+        SUM(count_endpoints)::INTEGER AS count_endpoints
     FROM response_by_vendor
     GROUP BY http_code, code_label
 )
