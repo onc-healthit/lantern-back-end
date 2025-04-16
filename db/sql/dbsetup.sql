@@ -272,7 +272,7 @@ CREATE TABLE validations (
     comment                 VARCHAR(500),
     reference               VARCHAR(500),
     implementation_guide    VARCHAR(500),
-    validation_result_id    INT REFERENCES validation_results(id) ON DELETE CASCADE
+    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL
 );
 
 CREATE TABLE info_history_pruning_metadata (

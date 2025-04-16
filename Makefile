@@ -126,6 +126,3 @@ migrate_validations:
 
 migrate_resources:
 	docker exec -it --workdir /go/src/app/cmd/migrateresources lantern-back-end_capability_receiver_1 go run main.go $(direction)
-
-validation_pruning:
-	docker exec -it --workdir /go/src/app/cmd/validationpruning lantern-back-end_endpoint_manager_1 go run main.go

@@ -36,11 +36,8 @@ func main() {
 	capInterval := viper.GetInt("capquery_qryintvl")
 	go se.GetEnptsAndSend(ctx, &wg, capQName, capInterval, store, &mq, &channelID, errs)
 
-	wg.Add(1)
+	wg.Add(2)
 	go se.HistoryPruning(ctx, &wg, capInterval, store, errs)
-
-	wg.Add(1)
-	go se.ValidationPruning(ctx, &wg, capInterval, store, errs)
 
 	for elem := range errs {
 		log.Warn(elem)
