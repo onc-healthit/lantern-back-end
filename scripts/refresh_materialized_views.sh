@@ -545,7 +545,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_selected_fhir_endpoints_unique." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);" -U lantern -d lantern || { 
+docker exec -t lantern-back-end_postgres_1 psql -t -c 'CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);' -U lantern -d lantern || { 
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_fhir_endpoints_unique." >> $log_file
 }
 
@@ -553,7 +553,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_selected_fhir_endpoints_dev." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_mv("Developer");" -U lantern -d lantern || { 
+docker exec -t lantern-back-end_postgres_1 psql -t -c 'CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_mv("Developer");' -U lantern -d lantern || { 
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_fhir_endpoints_dev." >> $log_file
 }
 
@@ -561,7 +561,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_selected_fhir_endpoints_fhir_version." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_selected_fhir_endpoints_fhir_version ON selected_fhir_endpoints_values_mv("FHIR Version");" -U lantern -d lantern || { 
+docker exec -t lantern-back-end_postgres_1 psql -t -c 'CREATE INDEX idx_selected_fhir_endpoints_fhir_version ON selected_fhir_endpoints_values_mv("FHIR Version");' -U lantern -d lantern || { 
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_fhir_endpoints_fhir_version." >> $log_file
 }
 
