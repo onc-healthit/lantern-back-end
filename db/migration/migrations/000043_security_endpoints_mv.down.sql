@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS security_endpoints_mv CASCADE;
+
+DROP MATERIALIZED VIEW IF EXISTS selected_security_endpoints_mv CASCADE;
+
+COMMIT;
