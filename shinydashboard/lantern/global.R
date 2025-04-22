@@ -60,10 +60,6 @@ app <<- list(
 
 # define global app_data which is computed at application startup, and
 # refreshed at interval specified by refresh_timeout_minutes in configuration.yml
-app_data <<- list(
-  endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
-  last_updated = reactiveVal(NULL)                # time app_data was last updated
-)
 
 time_until_next_run <- function() {
   current_time <- Sys.time()

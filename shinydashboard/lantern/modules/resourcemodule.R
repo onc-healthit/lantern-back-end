@@ -18,6 +18,11 @@ resourcemodule_UI <- function(id) {
   )
 }
 
+get_fhir_resource_types <- function(db_connection) {
+  tbl(db_connection, "mv_endpoint_resource_types") %>%
+    collect()
+}
+
 resourcemodule <- function(  #nolint
   input,
   output,
@@ -36,7 +41,11 @@ resourcemodule <- function(  #nolint
   })
 
   number_resources <- reactive({
-    res <- isolate(app_data$endpoint_resource_types()) %>% distinct(type) %>% count()
+    # Query the MV directly for counting distinct resource types
+    res <- tbl(db_connection, "mv_endpoint_resource_types") %>% 
+      distinct(type) %>% 
+      count() %>%
+      collect()
     res
   })
 
