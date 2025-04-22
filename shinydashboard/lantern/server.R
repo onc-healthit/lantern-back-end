@@ -496,33 +496,35 @@ selected_fhir_endpoint_profiles <- reactive({
 
 
   checkbox_resources <- reactive({
-    res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
-
+    
+    res <- tbl(db_connection, "mv_endpoint_resource_types")
+    
+    res <- res %>% 
+      filter(fhir_version %in% !!input$fhir_version)
+    
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      res <- res %>% filter(vendor_name == !!input$vendor)
     }
-
+    
     res <- res %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-
+      distinct(type) %>%
+      arrange(type) %>%
+      collect() %>%
+      split(.$type) %>%
+      purrr::map(~ .$type)
+    
     return(res)
   })
 
   checkbox_resources_no_filter <- reactive({
-    res <- isolate(app_data$endpoint_resource_types())
-
-    res <- res %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-
+    res <- tbl(db_connection, "mv_endpoint_resource_types") %>%
+      distinct(type) %>%
+      arrange(type) %>%
+      collect() %>%
+      split(.$type) %>%
+      purrr::map(~ .$type)
+    
     return(res)
   })
 
