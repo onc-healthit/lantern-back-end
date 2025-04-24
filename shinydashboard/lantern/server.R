@@ -430,12 +430,18 @@ selected_fhir_endpoint_profiles <- reactive({
 
   output$show_security_filter <- renderUI({
     if (show_security_filter()) {
+      # Get the list of security codes directly from the existing materialized view
+      security_codes <- tbl(db_connection, "mv_get_security_endpoints") %>%
+      distinct(code) %>%
+      collect() %>%
+      pull(code) 
+      
       fluidRow(
         column(width = 4,
           selectInput(
             inputId = "auth_type_code",
             label = "Supported Authorization Type:",
-            choices = isolate(app_data$security_code_list()),
+            choices = security_codes,
             selected = "SMART-on-FHIR",
             size = 1,
             selectize = FALSE)
