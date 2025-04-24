@@ -349,6 +349,31 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
     res
 }
 
+get_org_active_information <- function(db_connection) {
+
+  res <- tbl(db_connection,
+    sql("SELECT org_id, active FROM fhir_endpoint_organization_active")) %>%
+    collect()
+
+    res
+}
+
+get_org_identifiers_information <- function(db_connection) {
+
+  res <- tbl(db_connection,"fhir_endpoint_organization_identifiers") %>%
+    collect()
+
+    res
+}
+
+get_org_addresses_information <- function(db_connection) {
+
+  res <- tbl(db_connection,
+    sql("SELECT org_id, address FROM fhir_endpoint_organization_addresses")) %>%
+    collect()
+
+    res
+}
 
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
@@ -609,6 +634,9 @@ database_fetcher <- reactive({
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
+  safe_execute("app_data$org_active_info_tbl", app_data$org_active_info_tbl(get_org_active_information(db_connection)))
+  safe_execute("app_data$org_identifiers_info_tbl", app_data$org_identifiers_info_tbl(get_org_identifiers_information(db_connection)))
+  safe_execute("app_data$org_addresses_info_tbl", app_data$org_addresses_info_tbl(get_org_addresses_information(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))

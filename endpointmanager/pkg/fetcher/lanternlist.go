@@ -38,7 +38,18 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 				}
 				fhirEntry.OrganizationZipCode = zipCode
 			}
-
+			orgIdentifiers, orgIdOk := lanternList[entry]["OrganizationIdentifiers"]
+			if orgIdOk {
+				fhirEntry.OrganizationIdentifiers = orgIdentifiers.([]interface{})
+			}
+			orgAddresses, orgAddOk := lanternList[entry]["OrganizationAddresses"]
+			if orgAddOk {
+				fhirEntry.OrganizationAddresses = orgAddresses.([]interface{})
+			}
+			orgActive, orgActOk := lanternList[entry]["OrganizationActive"].(bool)
+			if orgActOk {
+				fhirEntry.OrganizationActive = orgActive
+			}
 			innerList = append(innerList, fhirEntry)
 		} else {
 			log.Warnf("No URL field in Lantern list. Returning an empty list of entries.")
