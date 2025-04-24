@@ -216,6 +216,7 @@ var nextechURL2 = "https://www.nextech.com/developers-portal"
 var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
 var wrshealthURL = "https://fhir-server.sam.wrs.dev/r4/ServiceBase"
+var smilecdrURL = "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html"
 
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
@@ -588,6 +589,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		ChntechsolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoobooksystemsURL) {
 		err = ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, smilecdrURL){
+		SmileCdrWebscraper(smilecdrURL, fileToWriteTo)
 	} else {
 		log.Info("Parsing via bundle parser for URL %s", chplURL)
 		BundleQuerierParser(chplURL, fileToWriteTo)
