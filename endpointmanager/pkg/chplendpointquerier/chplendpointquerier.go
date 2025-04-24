@@ -13,10 +13,13 @@ type EndpointList struct {
 }
 
 type LanternEntry struct {
-	URL                 string `json:"URL"`
-	OrganizationName    string `json:"OrganizationName"`
-	NPIID               string `json:"NPIID"`
-	OrganizationZipCode string `json:"OrganizationZipCode"`
+	URL                     string   `json:"URL"`
+	OrganizationName        string   `json:"OrganizationName"`
+	NPIID                   string   `json:"NPIID"`
+	OrganizationZipCode     string   `json:"OrganizationZipCode"`
+	OrganizationIdentifiers []string `json:"OrganizationIdentifiers"`
+	OrganizationAddresses   []string `json:"OrganizationAddresses"`
+	OrganizationActive      bool     `json:"OrganizationActive"`
 }
 
 var MedHostURL = "https://api.mhdi10xasayd.com/medhost-developer-composition/v1/fhir-base-urls.json"
