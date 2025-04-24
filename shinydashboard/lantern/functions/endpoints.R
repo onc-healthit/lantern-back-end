@@ -574,4 +574,5 @@ app_fetcher <- reactive({
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")
+  database_fetch(0)
 })

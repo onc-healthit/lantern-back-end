@@ -58,8 +58,6 @@ app <<- list(
   endpoint_export_tbl = reactiveVal(NULL)
 )
 
-# define global app_data which is computed at application startup, and
-# refreshed at interval specified by refresh_timeout_minutes in configuration.yml
 
 time_until_next_run <- function() {
   current_time <- Sys.time()
