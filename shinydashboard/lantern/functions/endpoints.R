@@ -597,24 +597,6 @@ safe_execute <- function(name, expr) {
   })
 }
 
-database_fetcher <- reactive({
-  timer()
-  start_time <- Sys.time()
-  message("database_fetcher ***************************************")
-  safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
-  safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
-  safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
-  safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
-  safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
-    distinct(code) %>%
-    pull(code)))
-  safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
-  end_time <- Sys.time()
-  time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
-  message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")
-  database_fetch(0)
-})
 
 app_fetcher <- reactive({
   timer()
@@ -634,4 +616,5 @@ app_fetcher <- reactive({
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")
+  database_fetch(0)
 })

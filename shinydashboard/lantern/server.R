@@ -61,7 +61,6 @@ selected_fhir_endpoint_profiles <- reactive({
         color = "#112446",
         text = "Please Wait, Lantern is fetching the most up-to-date data")
       app_fetcher()
-      database_fetcher()
       database_fetch(0)
       remove_modal_spinner()
     }
