@@ -763,7 +763,40 @@ selected_fhir_endpoint_profiles <- reactive({
     }),
     easyClose = TRUE
   )))
+  })
+
+observeEvent(input$show_organization_modal, {
+  showModal(modalDialog(
+    title = "Organization Details",
+
+    p("Organization Active Status: ",
+      paste(
+        app_data$org_active_info_tbl() %>%
+          filter(org_id == input$show_organization_modal) %>%
+          select(active)
+      )
+    ),
+
+    p("Organization Identifiers: ",
+      paste(
+        app_data$org_identifiers_info_tbl() %>%
+          filter(org_id == input$show_organization_modal) %>%
+          select(identifier)
+      )
+    ),
+
+    p("Organization Addresses: ",
+      paste(
+        app_data$org_addresses_info_tbl() %>%
+          filter(org_id == input$show_organization_modal) %>%
+          select(address)
+      )
+    ),
+
+    easyClose = TRUE
+  ))
 })
+
 
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({

@@ -356,6 +356,7 @@ EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
 CREATE or REPLACE VIEW joined_export_tables AS
 SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
+    endpt_orgnames.organization_ids AS endpoint_ids,
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
@@ -373,14 +374,15 @@ FROM fhir_endpoints AS endpts
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
-LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
+LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
 GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_names,
-    export_tables.vendor_name,
+    export_tables.endpoint_ids,
+	export_tables.vendor_name,
     export_tables.tls_version, export_tables.mime_types, export_tables.http_response,
     export_tables.response_time_seconds, export_tables.smart_http_response, export_tables.errors,
     export_tables.cap_stat_exists,
