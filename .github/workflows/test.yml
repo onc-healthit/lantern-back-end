@@ -1,7 +1,9 @@
 name: Tests
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - main
 jobs:
   test-unit:
     runs-on: ubuntu-22.04
