@@ -228,25 +228,6 @@ get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- c(vendor_list, vl)
 }
 
-# Return list of FHIR Resource Types by endpoint_id, type, fhir_version and vendor
-get_fhir_resource_types <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' as type
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE requested_fhir_version = 'None'
-      ORDER BY type")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
 # Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
 get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name) {
   
@@ -603,7 +584,6 @@ database_fetcher <- reactive({
   message("database_fetcher ***************************************")
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
