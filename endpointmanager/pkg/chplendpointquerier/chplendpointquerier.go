@@ -217,6 +217,7 @@ var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
 var wrshealthURL = "https://fhir-server.sam.wrs.dev/r4/ServiceBase"
 var smilecdrURL = "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html"
+var capellaEHRURL = "https://fhir-g10.capellaehr.com/fhir/r4/endpoints"
 
 func contains(arr [30]string, str string) bool {
 	for _, v := range arr {
@@ -383,8 +384,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CareCloudWebscraper("https://api-datamanager.carecloud.com/fhirurl", fileToWriteTo)
 	} else if URLsEqual(chplURL, ethizoURL) {
 		EthizoWebscraper(chplURL, fileToWriteTo)
-	// } else if URLsEqual(chplURL, hmsfirstURL) {
-	// 	HMSfirstWebscraper(chplURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, hmsfirstURL) {
+		// 	HMSfirstWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, praxisemrURL) {
 		PraxisEMRWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, escribeHOSTURL) {
@@ -589,8 +590,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		ChntechsolutionsWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, zoobooksystemsURL) {
 		err = ZoobooksystemsWebscraper(zoobooksystemsURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, smilecdrURL){
+	} else if URLsEqual(chplURL, smilecdrURL) {
 		SmileCdrWebscraper(smilecdrURL, fileToWriteTo)
+	} else if URLsEqual(chplURL, capellaEHRURL) {
+		CapellaEHRBundleParser(chplURL, fileToWriteTo)
 	} else {
 		log.Info("Parsing via bundle parser for URL %s", chplURL)
 		BundleQuerierParser(chplURL, fileToWriteTo)
