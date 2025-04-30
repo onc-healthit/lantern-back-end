@@ -44,7 +44,7 @@ selected_fhir_endpoint_profiles <- reactive({
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
