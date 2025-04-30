@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/csv"
 	"io"
 	"log"
@@ -129,6 +130,33 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 // QueryEndpointList queries the given endpoint list using http client and returns the response body of the GET request
 func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	client := &http.Client{}
+	req, err := http.NewRequest("GET", endpointListURL, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
+
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	respBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return respBody, nil
+}
+
+// QueryEndpointListWithTLSOption queries the given endpoint list with an option to skip TLS verification
+func QueryEndpointListWithTLSOption(endpointListURL string, skipTLSVerify bool) ([]byte, error) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: skipTLSVerify},
+	}
+	client := &http.Client{Transport: tr}
+
 	req, err := http.NewRequest("GET", endpointListURL, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 
