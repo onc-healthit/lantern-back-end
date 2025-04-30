@@ -401,23 +401,9 @@ get_endpoint_http_over_time <- function(db_connection, date, endpointURL, reques
 # get tibble of endpoints which include a security service attribute
 # in their capability statement, each service coding as a row
 get_security_endpoints <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.id,
-          f.vendor_id,
-          v.name,
-          capability_fhir_version as fhir_version,
-          json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code,
-          json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' as text
-        FROM fhir_endpoints_info f LEFT JOIN vendors v
-        ON f.vendor_id = v.id
-        WHERE requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-
+  res <- tbl(db_connection, "mv_get_security_endpoints") %>%
+    collect()
+  return(res)
 }
 
 get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion) {
@@ -444,15 +430,10 @@ get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersi
 }
 
 # Get counts of authorization types supported by FHIR Version
-get_auth_type_count <- function(security_endpoints) {
-  security_endpoints %>%
-    group_by(fhir_version) %>%
-    mutate(tc = n_distinct(id)) %>%
-    group_by(fhir_version, code, tc) %>%
-    count(name = "Endpoints") %>%
-    mutate(Percent = percent(Endpoints / tc))  %>%
-    ungroup() %>%
-    select("Code" = code, "FHIR Version" = fhir_version, Endpoints, Percent)
+get_auth_type_count <- function(db_connection) {
+  res <- tbl(db_connection, "mv_auth_type_count") %>%
+    collect()
+  return(res)
 }
 
 # Get count of endpoints which have NOT returned a valid capability statement
@@ -464,14 +445,10 @@ get_no_cap_statement_count <- function(db_connection) {
 
 # Return a summary table of information about endpoint security statements
 get_endpoint_security_counts <- function(db_connection) {
-  res <- tribble(
-    ~Status, ~Endpoints,
-    "Total Indexed Endpoints", as.integer(isolate(app_data$fhir_endpoint_totals()$all_endpoints)),
-    "Endpoints with successful response (HTTP 200)", as.integer(isolate(app_data$response_tally()$http_200)),
-    "Endpoints with unsuccessful response", as.integer(isolate(app_data$response_tally()$http_non200)),
-    "Endpoints without valid CapabilityStatement / Conformance Resource", as.integer(get_no_cap_statement_count(db_connection)),
-    "Endpoints with valid security resource", as.integer(nrow(isolate(app_data$security_endpoints()) %>% distinct(id)))
-  )
+  # Simply query the materialized view which contains all the pre-calculated data
+  res <- tbl(db_connection, "mv_endpoint_security_counts") %>%
+    collect()
+  return(res)
 }
 
 get_response_tally_list <- function(db_tables) {
@@ -601,15 +578,7 @@ database_fetcher <- reactive({
   timer()
   start_time <- Sys.time()
   message("database_fetcher ***************************************")
-  safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
-  safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
-  safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
-  safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
-  safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
-    distinct(code) %>%
-    pull(code)))
-  safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")
