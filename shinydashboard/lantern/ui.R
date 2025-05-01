@@ -57,33 +57,20 @@ ui <- dashboardPage(
       # Favicon with dimensions
       tags$link(rel = "shortcut icon", href = "images/favicon.webp", sizes = "32x32"),
       
-      # Critical CSS specifically for the dashboard h2 causing LCP issues
+      # Critical CSS inline for fast initial render
       tags$style(HTML("
-        /* Dashboard h2 optimization styles to reduce LCP time */
-        h2, #dashboard_page h2 {
-          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-          font-weight: 500 !important;
-          line-height: 1.1 !important;
-          color: inherit !important;
-          margin-top: 20px !important;
-          margin-bottom: 10px !important;
-          font-size: 30px !important;
-          display: block !important;
-          contain: content !important;
-        }
-        
-        /* Optimize dashboard elements that appear early */
+        /* Critical styles needed for initial render */
         .content-wrapper, .right-side { background-color: #F6F7F8; }
         .skin-blue .main-header .navbar { background-color: #1B5A7F; }
         .skin-blue .main-header .logo { background-color: #1B5A7F; }
-        
-        /* Dashboard-specific critical styles */
+        .show-on-focus { position: absolute; top: -10em; background: #fff; color: #112e51; display: block; font-weight: 600; }
+        .show-on-focus:focus { top: 5px; position: absolute; background: #fff; color: #112e51; display: block; font-weight: 600; font-size: 20px; }
         .small-box { color: black !important; position: relative; display: block; margin-bottom: 20px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         .small-box > .inner { padding: 10px; }
         .small-box h3 { font-size: 38px; font-weight: bold; margin: 0 0 10px 0; white-space: nowrap; padding: 0; }
         .small-box p { font-size: 20px; }
         
-        /* Font optimization */
+        /* Font display swap */
         @font-face {
           font-family: 'FontAwesome';
           font-display: swap;
@@ -92,8 +79,17 @@ ui <- dashboardPage(
         /* Utility styles */
         .badge { color: black !important; }
         .lantern-url { color: #0044FF !important; text-decoration: underline; }
-        .show-on-focus { position: absolute; top: -10em; background: #fff; color: #112e51; display: block; font-weight: 600; }
-        .show-on-focus:focus { top: 5px; position: absolute; background: #fff; color: #112e51; display: block; font-weight: 600; font-size: 20px; }
+        
+        /* Fix for duplicate h2 issue */
+        #prerender-duplicate-fix {
+          display: none !important;
+          visibility: hidden !important;
+          height: 0 !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          position: absolute !important;
+          left: -9999px !important;
+        }
       ")),
       
       # Non-blocking CSS loading
@@ -101,54 +97,38 @@ ui <- dashboardPage(
       tags$link(rel = "stylesheet", href = "css/lantern-styles.min.css", media = "print", onload = "this.media='all'"),
       tags$noscript(tags$link(rel = "stylesheet", href = "css/lantern-styles.min.css")),
       
-      # LCP optimization script
+      # Script to fix duplicate h2 issue
       tags$script(HTML("
-        // Immediately optimize h2 elements for LCP
         document.addEventListener('DOMContentLoaded', function() {
-          // Try to find all h2 elements
-          var h2Elements = document.querySelectorAll('h2');
-          
-          // Apply optimizations to all h2 elements
-          h2Elements.forEach(function(h2) {
-            // Make sure these elements are visible immediately
-            h2.style.visibility = 'visible';
-            h2.style.display = 'block';
+          // Give time for the real dashboard to load
+          setTimeout(function() {
+            var h2Elements = document.querySelectorAll('h2');
             
-            // Apply advanced rendering optimizations for modern browsers
-            if ('contentVisibility' in h2.style) {
-              h2.style.contentVisibility = 'auto';
-              h2.style.contain = 'content';
+            // If we have multiple h2s with the same text, hide all but the last one
+            if (h2Elements.length > 0) {
+              var h2Text = {};
               
-              // Measure and set intrinsic size to avoid layout shifts
-              var rect = h2.getBoundingClientRect();
-              h2.style.containIntrinsicSize = 'auto ' + rect.height + 'px';
-            }
-          });
-          
-          // Monitor LCP to confirm which element is causing it
-          if ('PerformanceObserver' in window) {
-            try {
-              var lcpObserver = new PerformanceObserver(function(list) {
-                var entries = list.getEntries();
-                var lastEntry = entries[entries.length - 1];
-                
-                // If we find the LCP element, prioritize it even more
-                if (lastEntry && lastEntry.element) {
-                  lastEntry.element.style.visibility = 'visible';
-                  lastEntry.element.style.display = 'block';
-                  
-                  if ('contentVisibility' in lastEntry.element.style) {
-                    lastEntry.element.style.contentVisibility = 'auto';
-                    lastEntry.element.style.contain = 'content';
+              // Find duplicate h2 elements
+              for (var i = 0; i < h2Elements.length; i++) {
+                var text = h2Elements[i].textContent.trim();
+                if (text in h2Text) {
+                  h2Text[text].push(h2Elements[i]);
+                } else {
+                  h2Text[text] = [h2Elements[i]];
+                }
+              }
+              
+              // For each set of duplicate h2s, hide all but the last one
+              for (var text in h2Text) {
+                if (h2Text[text].length > 1) {
+                  // Keep only the last instance visible (which is likely the 'real' one)
+                  for (var i = 0; i < h2Text[text].length - 1; i++) {
+                    h2Text[text][i].id = 'prerender-duplicate-fix';
                   }
                 }
-              });
-              
-              lcpObserver.observe({type: 'largest-contentful-paint', buffered: true});
-            } catch (e) {
-              // Silent fail - just a performance optimization
+              }
             }
-          }
+          }, 300); // Wait 300ms for dashboard to load
         });
       ")),
       
@@ -156,7 +136,6 @@ ui <- dashboardPage(
       tags$script(HTML("
         // Load non-critical scripts after page loads
         window.addEventListener('load', function() {
-          // Delay non-essential scripts
           setTimeout(function() {
             // Load GTM asynchronously
             var script = document.createElement('script');
@@ -180,16 +159,9 @@ ui <- dashboardPage(
     uiOutput("show_resource_profiles_dropdown"),
     uiOutput("organizations_filter"),
     tabItems(
-      # Dashboard tab with optimization for LCP
+      # Dashboard tab - removed the pre-rendered h2
       tabItem("dashboard_tab",
-              # Pre-render the h2 that's causing LCP issues
-              tags$div(
-                id = "dashboard-prerender",
-                # This is a static duplicate of the h2 from dashboard_UI
-                tags$h2("Current endpoint responses:", id = "prerendered-h2", style = "visibility: visible !important; display: block !important;"),
-                # Then include the real dashboard UI
-                dashboard_UI("dashboard_page")
-              )
+              dashboard_UI("dashboard_page")
       ),
       tabItem("endpoints_tab",
               endpointsmodule_UI("endpoints_page")
@@ -250,24 +222,6 @@ ui <- dashboardPage(
     uiOutput("htmlFooter"),
     
     # Load accessibility script with defer and async
-    tags$script(src = "js/accessibility.min.js", defer = TRUE, async = TRUE),
-    
-    # Script to hide duplicate h2 once real content loads
-    tags$script(HTML("
-      // Once the dashboard is fully loaded, remove the pre-rendered h2
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          var prerenderedH2 = document.getElementById('prerendered-h2');
-          if (prerenderedH2) {
-            // First check if the real h2 from dashboard_UI is loaded
-            var dashboardH2s = document.querySelectorAll('#dashboard_page h2');
-            if (dashboardH2s.length > 0) {
-              // If the real h2 exists, hide the pre-rendered one
-              prerenderedH2.style.display = 'none';
-            }
-          }
-        }, 500); // Check after half a second
-      });
-    "))
+    tags$script(src = "js/accessibility.min.js", defer = TRUE, async = TRUE)
   )
 )
