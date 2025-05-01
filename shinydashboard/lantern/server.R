@@ -769,29 +769,53 @@ observeEvent(input$show_organization_modal, {
   showModal(modalDialog(
     title = "Organization Details",
 
-    p("Organization Active Status: ",
+    p(HTML(paste("<b>Organization Active Status:</b><br/>",
       paste(
-        app_data$org_active_info_tbl() %>%
-          filter(org_id == input$show_organization_modal) %>%
-          select(active)
+        {
+          active_vals <- get_org_active_information(db_connection) %>%
+            filter(org_id == input$show_organization_modal) %>%
+            pull(active)
+          if (length(active_vals) == 0 || all(is.na(active_vals))) {
+            "N/A"
+          } else {
+            active_vals
+          }
+        },
+        collapse = "<br/>"
       )
-    ),
+    ))),
 
-    p("Organization Identifiers: ",
+    p(HTML(paste("<b>Organization Identifiers:</b><br/>",
       paste(
-        app_data$org_identifiers_info_tbl() %>%
+        {
+          identifier_vals <- get_org_identifiers_information(db_connection) %>%
           filter(org_id == input$show_organization_modal) %>%
-          select(identifier)
+          pull(identifier)
+          if (length(identifier_vals) == 0 || all(is.na(identifier_vals))) {
+            "N/A"
+          } else {
+            identifier_vals
+          }
+        },
+    collapse = "<br/>"
       )
-    ),
+    ))),
 
-    p("Organization Addresses: ",
+    p(HTML(paste("<b>Organization Addresses:</b><br/>",
       paste(
-        app_data$org_addresses_info_tbl() %>%
+        {
+          address_vals <- get_org_addresses_information(db_connection) %>%
           filter(org_id == input$show_organization_modal) %>%
-          select(address)
+          pull(address)
+          if (length(address_vals) == 0 || all(is.na(address_vals))) {
+            "N/A"
+          } else {
+            address_vals
+          }
+        },
+    collapse = "<br/>"
       )
-    ),
+    ))),
 
     easyClose = TRUE
   ))
