@@ -634,9 +634,6 @@ database_fetcher <- reactive({
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
-  safe_execute("app_data$org_active_info_tbl", app_data$org_active_info_tbl(get_org_active_information(db_connection)))
-  safe_execute("app_data$org_identifiers_info_tbl", app_data$org_identifiers_info_tbl(get_org_identifiers_information(db_connection)))
-  safe_execute("app_data$org_addresses_info_tbl", app_data$org_addresses_info_tbl(get_org_addresses_information(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))

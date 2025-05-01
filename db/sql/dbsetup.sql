@@ -1475,27 +1475,44 @@ CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoint
 CREATE TABLE daily_querying_status (status VARCHAR(500));
 
 -- Lantern-839
- CREATE MATERIALIZED VIEW mv_endpoint_list_organizations AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
+AS
 SELECT DISTINCT
-  url,
-  UNNEST(COALESCE(NULLIF(processed_names.cleaned_names, '{}'::text[]), ARRAY['Unknown'])) AS organization_name,
-  CASE
-	WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
-	ELSE endpoint_export.fhir_version
-  END AS fhir_version,
-  COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
-  requested_fhir_version
-FROM endpoint_export,
-LATERAL(
-  SELECT
+    endpoint_export.url,
+    COALESCE(
+        NULLIF(
+            btrim(
+                regexp_replace(name_id.cleaned_name, '\s+', ' ', 'g')
+            ), 
+        ''), 
+    'Unknown') AS organization_name,
+    
+    COALESCE(
+        name_id.cleaned_id::text,  -- Just cast to text
+        'Unknown'
+    ) AS organization_id,
+    
     CASE
-      WHEN endpoint_names IS NULL THEN ARRAY['Unknown']
-      ELSE ARRAY(
-        SELECT btrim(regexp_replace(unnest(string_to_array(regexp_replace(elem.elem::text, '["]', '', 'g'),';')),'\s+',' ','g'))
-        	FROM unnest(endpoint_names) elem(elem))
-    END AS cleaned_names
-) AS processed_names
-ORDER BY organization_name;
+        WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
+        ELSE endpoint_export.fhir_version
+    END AS fhir_version,
+    
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
+    endpoint_export.requested_fhir_version
+
+FROM
+    endpoint_export
+LEFT JOIN LATERAL (
+    SELECT
+        name_elem AS cleaned_name,
+        id_elem AS cleaned_id
+    FROM
+        unnest(endpoint_export.endpoint_names, endpoint_export.endpoint_ids) AS u(name_elem, id_elem)
+) AS name_id ON TRUE
+
+ORDER BY
+    organization_name
+WITH DATA;
 
  -- Create indexes for endpoint list organizations materialized view
  CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, requested_fhir_version);
