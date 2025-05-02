@@ -117,7 +117,7 @@ dashboard <- function(
       # Select only the columns needed
       select(vendor_name, fhir_version, n, percentage, sort_order) %>%
       # Arrange by sort_order for consistent display
-      arrange(sort_order)
+      arrange(sort_order, fhir_version)
     
     return(fhir_data)
   }
