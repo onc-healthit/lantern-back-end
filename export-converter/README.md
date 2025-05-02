@@ -17,6 +17,8 @@ This tool converts CSV data about FHIR endpoints into a structured JSON format t
 
 ## Usage
 
+Place the CSV file in the same directory as the go script, then
+
 1. Compile the Go script:
 
 ```bash
@@ -83,6 +85,10 @@ The output is a JSON array of endpoint objects with the following structure:
   ...
 ]
 ```
+
+Note: 
+ - The supported resoures key will be populated with new values only if the CSV file has the corresponding column.
+ - In case the endpoint has multiple list-sources, one of them is selected at random to be displayed in the JSON export.
 
 ## Error Handling
 
