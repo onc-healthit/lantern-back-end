@@ -1,0 +1,89 @@
+/* Dashboard-specific LCP optimization styles */
+h2, 
+#dashboard_page h2,
+.dashboard-header h2,
+.lcp-element {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  color: inherit !important;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
+  font-size: 30px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  contain: layout style !important;
+  content-visibility: auto !important;
+}
+
+/* Ensure immediate rendering for these elements */
+.dashboard-headers,
+.small-box,
+.info-box {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Pre-style dashboard elements to reduce layout shifts */
+.small-box {
+  position: relative;
+  display: block;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  color: black !important;
+}
+
+.small-box > .inner {
+  padding: 10px;
+}
+
+.small-box h3 {
+  font-size: 38px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.small-box p {
+  font-size: 20px;
+}
+
+.info-box {
+  min-height: 90px;
+  background: #fff;
+  width: 100%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+
+.info-box-icon {
+  display: block;
+  float: left;
+  height: 90px;
+  width: 90px;
+  text-align: center;
+  font-size: 45px;
+  line-height: 90px;
+  background: rgba(0,0,0,0.2);
+}
+
+.info-box-content {
+  padding: 5px 10px;
+  margin-left: 90px;
+}
+
+.info-box-text {
+  text-transform: uppercase;
+}
+
+.info-box-number {
+  display: block;
+  font-weight: bold;
+  font-size: 18px;
+}
