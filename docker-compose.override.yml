@@ -23,8 +23,12 @@ services:
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+    ports:
+      - "6060:6060"
     volumes:
       - ./resources/dev_resources/:/etc/lantern/resources
+      - ./profiles:/var/lantern/profiles  # Mount profiles directory
+    command: /etc/lantern/wait-for-it.sh lantern-mq:5672 -- /etc/lantern/wait-for-it.sh postgres:5432 -- ./main -httpprofile=:6060 -memprofile=/var/lantern/profiles/mem.prof
 
   capability_querier:
     environment:
