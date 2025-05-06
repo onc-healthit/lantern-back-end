@@ -725,24 +725,27 @@ func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpoi
 		if err != nil {
 			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
 		}
+
+		_, err = deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, org.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, org.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, org.ID)
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.ID)
 	if err != nil {
 		return err
 	}
-
-	_, err = deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, e.ID)
-	if err != nil {
-		return err
-	}
-
-	_, err = deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, e.ID)
-	if err != nil {
-		return err
-	}
-
-	_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, e.ID)
 
 	return err
 }
