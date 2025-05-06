@@ -39,11 +39,11 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 				fhirEntry.OrganizationZipCode = zipCode
 			}
 			orgIdentifiers, orgIdOk := lanternList[entry]["OrganizationIdentifiers"]
-			if orgIdOk {
+			if orgIdOk && orgIdentifiers != nil {
 				fhirEntry.OrganizationIdentifiers = orgIdentifiers.([]interface{})
 			}
 			orgAddresses, orgAddOk := lanternList[entry]["OrganizationAddresses"]
-			if orgAddOk {
+			if orgAddOk && orgAddresses != nil {
 				fhirEntry.OrganizationAddresses = orgAddresses.([]interface{})
 			}
 			orgActive, orgActOk := lanternList[entry]["OrganizationActive"].(bool)
