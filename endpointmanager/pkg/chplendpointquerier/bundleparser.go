@@ -45,6 +45,24 @@ type Address struct {
 	PostalCode string `json:"postalCode"`
 }
 
+func containsOrgId(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
+func containsOrgId(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
 func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var lanternEntryList []LanternEntry
 
@@ -73,8 +91,10 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						endpointId := endpointMap["reference"].(string)
 						endpointId = strings.TrimPrefix(endpointId, "Endpoint/")
 
-						// Store endpoint-to-organizations mapping
-						endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId)
+						// Store endpoint-to-organizations mapping (if not already present)
+						if !containsOrgId(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId) {
+							endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId)
+						}
 					}
 				}
 			}
@@ -114,7 +134,9 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 					finalString := strings.Join(result, ", ")
 
-					organizationAddresses[bundleEntry.Resource.OrgId] = append(organizationAddresses[bundleEntry.Resource.OrgId], finalString)
+					if !containsOrgId(organizationAddresses[bundleEntry.Resource.OrgId], finalString) {
+						organizationAddresses[bundleEntry.Resource.OrgId] = append(organizationAddresses[bundleEntry.Resource.OrgId], finalString)
+					}
 
 					postalCode, ok := addressMap["postalCode"].(string)
 					if ok {
@@ -143,7 +165,10 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 						if identifierMap["value"] != nil && identifierMap["value"].(string) != "" {
 							identifierStr := identifierCode + ": " + identifierMap["value"].(string)
-							organizationIdentifiers[bundleEntry.Resource.OrgId] = append(organizationIdentifiers[bundleEntry.Resource.OrgId], identifierStr)
+
+							if !containsOrgId(organizationIdentifiers[bundleEntry.Resource.OrgId], identifierStr) {
+								organizationIdentifiers[bundleEntry.Resource.OrgId] = append(organizationIdentifiers[bundleEntry.Resource.OrgId], identifierStr)
+							}
 
 							if identifierCode == "NPI" {
 								organizationNPI[bundleEntry.Resource.OrgId] = identifierMap["value"].(string)
@@ -179,15 +204,6 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 				}
 
 				for _, orgId := range endpointOrgMap[bundleEntry.Resource.OrgId] {
-
-					fmt.Println("OrgId:", orgId)
-					fmt.Println("URL:", strings.TrimSpace(entryURL))
-					fmt.Println("organizationName:", organizationName[orgId])
-					fmt.Println("organizationAddresses:", organizationAddresses[orgId])
-					fmt.Println("organizationIdentifiers:", organizationIdentifiers[orgId])
-					fmt.Println("organizationActive:", organizationActive[orgId])
-					fmt.Println("organizationNPI:", organizationNPI[orgId])
-					fmt.Println("organizationZip:", organizationZip[orgId])
 
 					entry.URL = strings.TrimSpace(entryURL)
 
