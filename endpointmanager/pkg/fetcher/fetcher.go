@@ -25,7 +25,7 @@ type EndpointEntry struct {
 	OrganizationZipCode     string
 	OrganizationIdentifiers []interface{}
 	OrganizationAddresses   []interface{}
-	OrganizationActive      bool
+	OrganizationActive      string
 }
 
 // ListOfEndpoints is a structure for the whole EndpointSources file
