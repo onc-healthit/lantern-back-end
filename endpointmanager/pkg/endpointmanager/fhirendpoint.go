@@ -30,7 +30,7 @@ type FHIREndpointOrganization struct {
 	OrganizationNPIID       string
 	OrganizationIdentifiers []interface{}
 	OrganizationAddresses   []interface{}
-	OrganizationActive      bool
+	OrganizationActive      string
 	UpdatedAt               time.Time
 }
 
