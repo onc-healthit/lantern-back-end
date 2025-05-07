@@ -2152,3 +2152,19 @@ ORDER BY field_version;
 CREATE UNIQUE INDEX idx_mv_capstat_values_extension_unique ON mv_capstat_values_extension(fhir_version, field_version);
 CREATE INDEX idx_mv_capstat_values_extension_field_version ON mv_capstat_values_extension(field_version);
 CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension(fhir_version);
+
+-- LANTERN-841: HTI-1 Final Rule Organization Data
+CREATE TABLE fhir_endpoint_organization_active (
+	org_id INT,
+	active VARCHAR(500)
+);
+
+CREATE TABLE fhir_endpoint_organization_addresses (
+	org_id INT,
+	address VARCHAR(500)
+);
+
+CREATE TABLE fhir_endpoint_organization_identifiers (
+	org_id INT,
+	identifier VARCHAR(500)
+);
