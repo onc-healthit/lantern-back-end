@@ -3,6 +3,7 @@ package chplendpointquerier
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -19,7 +20,7 @@ type BundleEntry struct {
 type BundleResource struct {
 	Address      interface{}          `json:"address"`
 	Identifier   interface{}          `json:"identifier"`
-	Active       bool                 `json:"active"`
+	Active       interface{}          `json:"active"`
 	Name         string               `json:"name"`
 	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
 	Orgs         []Organization       `json:"contained"`
@@ -62,7 +63,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var organizationName = make(map[string]string)
 	var organizationAddresses = make(map[string][]string)
 	var organizationIdentifiers = make(map[string][]string)
-	var organizationActive = make(map[string]bool)
+	var organizationActive = make(map[string]string)
 	var organizationNPI = make(map[string]string)
 
 	var structBundle FHIRBundle
@@ -169,7 +170,9 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 				}
 			}
 
-			organizationActive[bundleEntry.Resource.OrgId] = bundleEntry.Resource.Active
+			if bundleEntry.Resource.Active != nil {
+				organizationActive[bundleEntry.Resource.OrgId] = strconv.FormatBool(bundleEntry.Resource.Active.(bool))
+			}
 
 			organizationName[bundleEntry.Resource.OrgId] = bundleEntry.Resource.Name
 		}

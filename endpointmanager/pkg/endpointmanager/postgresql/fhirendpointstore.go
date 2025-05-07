@@ -587,7 +587,6 @@ func (s *Store) AddFHIREndpointOrganizationIdentifiers(ctx context.Context, orgI
 	var err error
 	var count int
 
-	// Ensure there are no entries in the table for the given organization
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_identifiers WHERE org_id=$1;", orgID)
 
 	err = row.Scan(&count)
@@ -595,13 +594,18 @@ func (s *Store) AddFHIREndpointOrganizationIdentifiers(ctx context.Context, orgI
 		return err
 	}
 
-	// If there is an entry in the fhir endpoints info table that has this id, do nothing
-	if count == 0 {
-		for _, identifier := range orgIdentifiers {
-			_, err = addFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, orgID, identifier.(string))
-			if err != nil {
-				return err
-			}
+	// If there are entries in the fhir_endpoint_organization_identifiers table that has this orgID, delete those first
+	if count > 0 {
+		_, err = deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, orgID)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, identifier := range orgIdentifiers {
+		_, err = addFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, orgID, identifier.(string))
+		if err != nil {
+			return err
 		}
 	}
 
@@ -612,7 +616,6 @@ func (s *Store) AddFHIREndpointOrganizationAddresses(ctx context.Context, orgID 
 	var err error
 	var count int
 
-	// Ensure there are no entries in the table for the given organization
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_addresses WHERE org_id=$1;", orgID)
 
 	err = row.Scan(&count)
@@ -620,24 +623,28 @@ func (s *Store) AddFHIREndpointOrganizationAddresses(ctx context.Context, orgID 
 		return err
 	}
 
-	// If there is an entry in the fhir endpoints info table that has this id, do nothing
-	if count == 0 {
-		for _, address := range orgAddresses {
-			_, err = addFHIREndpointOrganizationAddressStatement.ExecContext(ctx, orgID, address.(string))
-			if err != nil {
-				return err
-			}
+	// If there are entries in the fhir_endpoint_organization_addresses table that has this orgID, delete those first
+	if count > 0 {
+		_, err = deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, orgID)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, address := range orgAddresses {
+		_, err = addFHIREndpointOrganizationAddressStatement.ExecContext(ctx, orgID, address.(string))
+		if err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int, orgActive bool) error {
+func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int, orgActive string) error {
 	var err error
 	var count int
 
-	// Ensure there are no entries in the table for the given organization
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_active WHERE org_id=$1;", orgID)
 
 	err = row.Scan(&count)
@@ -645,8 +652,16 @@ func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int
 		return err
 	}
 
-	// If there is an entry in the fhir endpoints info table that has this id, do nothing
-	if count == 0 {
+	// If there are entries in the fhir_endpoint_organization_active table that has this orgID, delete those first
+	if count > 0 {
+		_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, orgID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Only insert organization active data if it was provided in the FHIR bundle
+	if orgActive != "" {
 		_, err = addFHIREndpointOrganizationActiveStatement.ExecContext(ctx, orgID, orgActive)
 		if err != nil {
 			return err
