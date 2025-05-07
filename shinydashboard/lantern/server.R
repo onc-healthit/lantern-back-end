@@ -836,15 +836,11 @@ output$endpoint_profile_table <- DT::renderDataTable({
 
 implementation_guide_profiles_page <- function() {
   page <- fluidPage(
-    h1("Endpoint IGs and Profiles"),
-    bsCollapse(id = "IGs_profiles_collapse", multiple = TRUE,
-      bsCollapsePanel("Implementation Guides", fluidPage(
-        DT::dataTableOutput("endpoint_IG_table"),
-      ), style = "info"),
-      bsCollapsePanel("Endpoint Profiles", fluidPage(
-        DT::dataTableOutput("endpoint_profile_table"),
-      ), style = "info")
-  ))
+    h3("Implementation Guides"),
+    DT::dataTableOutput("endpoint_IG_table"),
+
+    h3("Endpoint Profiles"),
+    DT::dataTableOutput("endpoint_profile_table"))
   page
 }
 
@@ -1024,12 +1020,9 @@ endpoint_capabilities_page <- function() {
 organization_endpoint_page <- function() {
   page <- fluidPage(
     h1("Endpoint Organizations"),
-    bsCollapse(id = "organizations_collapse", multiple = TRUE,
-      bsCollapsePanel("Endpoint List Organizations", fluidPage(
-        DT::dataTableOutput("endpoint_list_org_table")
-      ), style = "info")
+    DT::dataTableOutput("endpoint_list_org_table")
     )
-  )
+  page
 }
 
 ### Endpoint Details Modal Page ###
@@ -1220,27 +1213,19 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       ),
       br(),
       uiOutput("show_date_filters"),
-      bsCollapse(id = "performance_collapse", multiple = TRUE,
-          bsCollapsePanel("Response Time", fluidPage(
-            textOutput("no_plot"),
-            dygraphOutput("endpoint_response_time_plot"),
-            p("Click and drag on plot to zoom in, double-click to zoom out."),
-            htmlOutput("plot_note_text")
-          ), style = "info")
-      ),
+      textOutput("no_plot"),
+      dygraphOutput("endpoint_response_time_plot"),
+      p("Click and drag on plot to zoom in, double-click to zoom out."),
+      htmlOutput("plot_note_text"),
       br(),
       uiOutput("show_http_date_filters"),
-      bsCollapse(id = "http_over_time_collapse", multiple = TRUE,
-          bsCollapsePanel("HTTP Responses Over Time", fluidPage(
-            fluidRow(
-              textOutput("http_no_plot"),
-              dygraphOutput("endpoint_http_response_plot"),
-              p("Click and drag on plot to zoom in, double-click to zoom out.")
-            ),
-            fluidRow(
-              reactable::reactableOutput("endpoint_http_response_table")
-            )
-          ), style = "info")
+      fluidRow(
+            textOutput("http_no_plot"),
+            dygraphOutput("endpoint_http_response_plot"),
+            p("Click and drag on plot to zoom in, double-click to zoom out.")
+          ),
+      fluidRow(
+        reactable::reactableOutput("endpoint_http_response_table")
       )
     ),
     sidebarPanel(
