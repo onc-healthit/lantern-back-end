@@ -11,4 +11,7 @@ ENV GO111MODULE=on
 RUN go install ./...
 RUN go build cmd/main.go 
 
+# Expose port for profiling
+EXPOSE 6062
+
 CMD ["./main"]

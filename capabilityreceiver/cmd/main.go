@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 
@@ -46,6 +48,15 @@ func setupVersionsReception(ctx context.Context, store *postgresql.Store) {
 }
 
 func main() {
+	// Start pprof HTTP server on port 6062
+	// Port 6060 is used by endpoint manager and 6061 by capability querier
+	go func() {
+		log.Info("Starting pprof server on :6062")
+		if err := http.ListenAndServe("0.0.0.0:6062", nil); err != nil {
+			log.Errorf("Failed to start pprof server: %v", err)
+		}
+	}()
+
 	err := config.SetupConfig()
 	helpers.FailOnError("", err)
 

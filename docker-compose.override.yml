@@ -41,6 +41,8 @@ services:
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+    ports:
+      - "6062:6062"
 
   shinydashboard:
     build:
