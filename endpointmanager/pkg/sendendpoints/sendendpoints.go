@@ -2,12 +2,14 @@ package sendendpoints
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
+	"github.com/spf13/viper"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -32,7 +34,7 @@ func GetEnptsAndSend(
 		now := time.Now()
 		log.Info("Current Time: ", now)
 
-		targetTime := time.Date(now.Year(), now.Month(), now.Day(), 23, 0, 0, 0, now.Location())
+		targetTime := time.Date(now.Year(), now.Month(), now.Day(), 17, 0, 0, 0, now.Location())
 
 		// If the current time is after the target time, set the target time to the next day
 		if now.After(targetTime) {
@@ -125,4 +127,78 @@ func HistoryPruning(
 		log.Infof("History Pruning complete. Waiting %d minutes", qInterval)
 		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
+}
+
+// SendFHIREndpointsToQueue sets up the connection to the message queue and sends all endpoints to the queue
+func SendFHIREndpointsToQueue(ctx context.Context, store *postgresql.Store) error {
+	// Set up the message queue
+	qHost := viper.GetString("qhost")
+	qPort := viper.GetString("qport")
+	qUser := viper.GetString("quser")
+	qPassword := viper.GetString("qpassword")
+
+	// Get configuration values
+	qName := viper.GetString("endptinfo_capquery_qname")
+
+	// Connect to message queue
+	mq, ch, err := accessqueue.ConnectToServerAndQueue(qUser, qPassword, qHost, qPort, qName)
+	if err != nil {
+		return fmt.Errorf("error connecting to message queue: %w", err)
+	}
+	defer mq.Close()
+
+	// Get current time
+	now := time.Now()
+	log.Info("Current Time: ", now)
+
+	// Set the process completion status to true to ensure that the status has not remained false
+	// in the case previous process was interrupted and terminated.
+	err = store.UpdateProcessCompletionStatus(ctx, "true")
+	if err != nil {
+		log.Errorf("Failed to set process completion status: %v", err)
+	}
+
+	// Set the process completion status to false to indicate that the process is in progress
+	err = store.UpdateProcessCompletionStatus(ctx, "false")
+	if err != nil {
+		log.Errorf("Failed to set process completion status: %v", err)
+	}
+
+	listOfEndpoints, err := store.GetAllDistinctFHIREndpoints(ctx)
+	if err != nil {
+		return fmt.Errorf("error getting endpoints from database: %w", err)
+	}
+
+	// Shuffle Endpoints So that We Are Not Querying As Rapidly
+	rand.Shuffle(len(listOfEndpoints), func(i, j int) {
+		listOfEndpoints[i], listOfEndpoints[j] = listOfEndpoints[j], listOfEndpoints[i]
+	})
+
+	for i, endpt := range listOfEndpoints {
+		if i%10 == 0 {
+			log.Infof("Processed %d/%d messages", i, len(listOfEndpoints))
+		}
+		// Add a short time buffer as we enqueue items
+		time.Sleep(time.Duration(500 * time.Millisecond))
+		err = accessqueue.SendToQueue(ctx, endpt.URL, &mq, &ch, qName)
+		if err != nil {
+			return fmt.Errorf("error sending endpoint to queue: %w", err)
+		}
+	}
+
+	if len(listOfEndpoints) != 0 {
+		err = accessqueue.SendToQueue(ctx, "FINISHED", &mq, &ch, qName)
+		if err != nil {
+			return fmt.Errorf("error sending FINISHED message to queue: %w", err)
+		}
+	}
+
+	// Set the process completion status to true to indicate that the process has completed
+	err = store.UpdateProcessCompletionStatus(ctx, "true")
+	if err != nil {
+		log.Errorf("Failed to set process completion status: %v", err)
+	}
+
+	log.Info("Endpoint queuing process complete")
+	return nil
 }

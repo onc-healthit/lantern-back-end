@@ -9,6 +9,11 @@ COPY . .
 ENV GO111MODULE=on
 
 RUN go install ./...
-RUN go build cmd/main.go 
+
+# Build the command properly and put it in the expected location
+RUN cd cmd && go build -o /go/src/app/main .
+
+# Expose port for pprof
+EXPOSE 6061
 
 CMD ["./main"]

@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"runtime"
+	"runtime/pprof"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/capabilityquerier/pkg/capabilityquerier"
@@ -179,6 +183,50 @@ func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, 
 }
 
 func main() {
+	// Set up profiling server
+	StartProfilingServer(":6061")
+
+	// Set up signal handling for memory profile dump on SIGUSR1
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGUSR1)
+
+	go func() {
+		for sig := range sigChan {
+			if sig == syscall.SIGUSR1 {
+				log.Info("Received SIGUSR1, capturing memory profile...")
+
+				// Create a timestamped memory profile file
+				timestamp := time.Now().Format("20060102-150405")
+				filename := fmt.Sprintf("/tmp/memory-profile-%s.pprof", timestamp)
+
+				f, err := os.Create(filename)
+				if err != nil {
+					log.Errorf("Could not create memory profile: %v", err)
+					continue
+				}
+
+				// Run garbage collection before profiling
+				runtime.GC()
+
+				if err := pprof.WriteHeapProfile(f); err != nil {
+					log.Errorf("Could not write memory profile: %v", err)
+				}
+
+				f.Close()
+				log.Infof("Memory profile written to %s", filename)
+
+				// Write memory statistics to log
+				var memStats runtime.MemStats
+				runtime.ReadMemStats(&memStats)
+				log.Infof("Memory stats - Alloc: %v MB, TotalAlloc: %v MB, Sys: %v MB, NumGC: %v",
+					memStats.Alloc/1024/1024,
+					memStats.TotalAlloc/1024/1024,
+					memStats.Sys/1024/1024,
+					memStats.NumGC)
+			}
+		}
+	}()
+
 	err := config.SetupConfig()
 	helpers.FailOnError("", err)
 
@@ -206,5 +254,4 @@ func main() {
 	capQName := viper.GetString("capquery_qname")
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
 	setupQueue(store, userAgent, client, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
-
 }

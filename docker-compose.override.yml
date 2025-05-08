@@ -34,6 +34,8 @@ services:
     environment:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+    ports:
+      - "6061:6061"
 
   capability_receiver:
     environment:
