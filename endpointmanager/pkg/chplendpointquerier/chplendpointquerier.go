@@ -150,7 +150,7 @@ var dss2URL = "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints"
 var cozevaURL = "https://fhir.cozeva.com/endpoints"
 var fhirjunoURL = "https://fhirjuno-prod-web.dssinc.com/fhir/r4/endpoints"
 var hcsincURL = "https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api/Endpoint?connection-type=hl7-fhir-rest"
-var greenwayURL = "https://developers.greenwayhealth.com/developer-platform/page/fhir-base-urls"
+var greenwayURL = "https://fhir-servicebaseurl.fhirhlprod.greenwayhealth.com/servicebundle.json"
 var snfistURL = "https://fhir.thesnfist.com/endpointlist"
 var criterionsURL = "https://criterions.com/fhir-end-points/"
 var maximusURL = "https://documents.maximus.care"
@@ -471,7 +471,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, CarepathsURL) {
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, greenwayURL) {
-		CSVParser("https://greenway-fhir-base-url-list20230524071017901000000001.s3.us-east-2.amazonaws.com/greenwayFhirBaseUrls.csv", fileToWriteTo, "./ServiceBaseURLs.csv", -1, 1, true, 3, 0)
+		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, mPNSoftwareURL) {
 		CSVParser("https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv", fileToWriteTo, "./ServiceBaseURLs.csv", 1, 0, true, 3, 2)
 	} else if URLsEqual(chplURL, NexusURL) {

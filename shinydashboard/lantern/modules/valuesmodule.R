@@ -30,18 +30,24 @@ valuesmodule <- function(
   ns <- session$ns
 
   get_value_versions <- reactive({
-    res <- isolate(app_data$capstat_fields())
-    req(sel_capstat_values())
-    res <- res %>%
-    group_by(field) %>%
-    arrange(fhir_version, .by_group = TRUE) %>%
-    subset(field == sel_capstat_values())
-    versions <- c(unique(res$fhir_version))
-    versions
-  })
+  req(sel_capstat_values())
+  # Query the materialized view for the selected field
+  result <- tbl(db_connection, 
+                sql(paste0("SELECT unnest(fhir_versions) AS fhir_version 
+                           FROM get_value_versions_mv 
+                           WHERE field = '", sel_capstat_values(), "'"))) %>%
+    collect()
+  # Extract the versions as a character vector
+  if (nrow(result) > 0) {
+    versions <- result$fhir_version
+  } else {
+    versions <- character(0)  # Empty character vector if no results
+  }
+  return(versions)
+})
 
   get_value_table_header <- reactive({
-    res <- isolate(app_data$capstat_fields())
+    res <- isolate(get_capstat_fields(db_connection))
     req(sel_capstat_values(), sel_fhir_version())
     header <- ""
     if (length(sel_fhir_version()) == 1) {
@@ -64,30 +70,41 @@ valuesmodule <- function(
     header
   })
 
-  selected_fhir_endpoints <- reactive({
-    res <- isolate(app_data$capstat_values())
-    req(sel_fhir_version(), sel_vendor())
-    # If the selected dropdown value for the fhir verison is not the default "All FHIR Versions", filter
-    # the capability statement fields by which fhir verison they're associated with
-    res <- res %>% filter(filter_fhir_version %in% sel_fhir_version())
-    # Same as above but with the vendor dropdown
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
+get_capstat_values_list <- function(capstat_values_tbl) {
+  res <- capstat_values_tbl
+}
+
+selected_fhir_endpoints <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    # Get the selected values
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
+    field_name <- sel_capstat_values()
+    # Create SQL for FHIR versions filtering
+    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    # Get the valid versions for the selected field
+    valid_versions <- tbl(db_connection, 
+                        sql(paste0("SELECT unnest(fhir_versions) AS version 
+                                  FROM get_value_versions_mv 
+                                  WHERE field = '", field_name, "'"))) %>%
+                      collect() %>%
+                      pull(version)
+    # Create a comma-separated string of valid versions for SQL
+    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+    # Build the base query with field and FHIR version filtering
+    query_str <- paste0("
+        SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\"
+        FROM selected_fhir_endpoints_values_mv
+        WHERE field = '", field_name, "'
+        AND \"FHIR Version\" IN ", fhir_versions_sql, "
+        AND \"FHIR Version\" IN ", valid_versions_sql)
+    # Add vendor filtering if needed
+    if (vendor != ui_special_values$ALL_DEVELOPERS) {
+        query_str <- paste0(query_str, " AND \"Developer\" = '", vendor, "'")
     }
-    # Filter by the versions that the given field exists in
-    value_versions_list <- get_value_versions()
-    res <- res %>% filter(filter_fhir_version %in% value_versions_list)
-    # Repeat with filtering fields to see values
-    res <- res %>%
-      rename(fhirVersion = fhir_version, software.name = software_name, software.version = software_version, software.releaseDate = software_release_date, implementation.description = implementation_description, implementation.url = implementation_url, implementation.custodian = implementation_custodian) %>%
-      group_by_at(vars("vendor_name", "filter_fhir_version", sel_capstat_values())) %>%
-      count() %>%
-      rename(Endpoints = n, Developer = vendor_name, "FHIR Version" = filter_fhir_version) %>%
-      rename(field_value = sel_capstat_values()) %>%
-      # If the field is empty then put an "[Empty]" string
-      tidyr::replace_na(list(field_value = "[Empty]"))
-    res
-  })
+    res <- tbl(db_connection, sql(query_str)) %>% collect()
+    return(res)
+})
 
   capstatPageSizeNum <- reactiveVal(NULL)
 

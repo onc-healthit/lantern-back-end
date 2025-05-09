@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"os"
 	"sync"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -29,12 +28,6 @@ func main() {
 	log.Info("Successfully connected to capabilityquerier Queue!")
 
 	errs := make(chan error)
-
-	var emptyJSON []byte
-	if _, err := os.Stat("/etc/lantern/exportfolder/fhir_endpoints_fields.json"); os.IsNotExist(err) {
-		err = os.WriteFile("/etc/lantern/exportfolder/fhir_endpoints_fields.json", emptyJSON, 0644)
-		helpers.FailOnError("Failed to create empty JSON export file", err)
-	}
 
 	// Infinite query loop
 	var wg sync.WaitGroup
