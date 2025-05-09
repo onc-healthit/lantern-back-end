@@ -86,7 +86,7 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 
 		for rows.Next() {
 
-			operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2, valResID2, requestedFhirVersion2 := getRowInfo(rows)
+			operation2, fhirURL2, entryDate2, capStat2, tlsVersion2, mimeTypes2, smartResponse2, _, requestedFhirVersion2 := getRowInfo(rows)
 
 			equalFhirEntries := fhirURL1 == fhirURL2
 
@@ -129,29 +129,29 @@ func PruneInfoHistory(ctx context.Context, store *postgresql.Store, queryInterva
 					helpers.FailOnError("", err)
 				}
 
-				valResIDExists, err := store.CheckIfValidationResultIDExists(ctx, valResID2)
-				if err != nil {
-					Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
-					helpers.FailOnError("", err)
-				}
+				// valResIDExists, err := store.CheckIfValidationResultIDExists(ctx, valResID2)
+				// if err != nil {
+				// 	Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
+				// 	helpers.FailOnError("", err)
+				// }
 
-				// Only delete validations data if it does not exist in fhir_endpoints_info
-				if !valResIDExists {
-					// Delete the validation table entries for the history table row
-					err = store.PruningDeleteValidationTable(ctx, valResID2)
+				// // Only delete validations data if it does not exist in fhir_endpoints_info
+				// if !valResIDExists {
+				// 	// Delete the validation table entries for the history table row
+				// 	err = store.PruningDeleteValidationTable(ctx, valResID2)
 
-					if err != nil {
-						Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
-						helpers.FailOnError("", err)
-					}
+				// 	if err != nil {
+				// 		Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
+				// 		helpers.FailOnError("", err)
+				// 	}
 
-					err = store.PruningDeleteValidationResultEntry(ctx, valResID2)
+				// 	err = store.PruningDeleteValidationResultEntry(ctx, valResID2)
 
-					if err != nil {
-						Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
-						helpers.FailOnError("", err)
-					}
-				}
+				// 	if err != nil {
+				// 		Update(ctx, store, queryInterval, pruningMetadataId, false, numRowsProcessed, numRowsPruned)
+				// 		helpers.FailOnError("", err)
+				// 	}
+				// }
 
 				numRowsPruned++
 			} else {
