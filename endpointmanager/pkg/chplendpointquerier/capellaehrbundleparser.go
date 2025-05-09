@@ -5,13 +5,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
-
+func CapellaEHRBundleParser(CHPLURL string, fileToWriteTo string) {
 	var endpointEntryList EndpointList
 
-	respBody, err := helpers.QueryEndpointList(CHPLURL)
+	// Use the TLS-skipping option specifically for this domain
+	respBody, err := helpers.QueryEndpointListWithTLSOption(CHPLURL, true)
 	if err != nil {
-		log.Info("Error for the URL: ",CHPLURL)
+		log.Info("Error for the URL even with TLS verification disabled: ", CHPLURL)
 		log.Fatal(err)
 	}
 
@@ -20,7 +20,7 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Info("Error for the URL: ",CHPLURL)
+		log.Info("Error for the URL: ", CHPLURL)
 		log.Fatal(err)
 	}
 }

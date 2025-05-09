@@ -17,6 +17,7 @@ func HTMLtablewebscraper(vendorURL string, vendor string, fileToWriteTo string) 
 
 	doc, err := helpers.ChromedpQueryEndpointList(vendorURL, "")
 	if err != nil {
+		log.Info("Error getting data from: ", vendorURL)
 		log.Fatal(err)
 	}
 

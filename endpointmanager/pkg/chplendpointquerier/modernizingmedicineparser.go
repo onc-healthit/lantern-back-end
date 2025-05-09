@@ -17,19 +17,19 @@ func ModernizingMedicineQuerier(chplURL string, fileToWriteTo string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
+	endpointEntryList.Endpoints = BundleToLanternFormat(respBody, chplURL)
 
 	respBody, err = helpers.QueryEndpointList(gastroURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody)...)
+	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody, chplURL)...)
 
 	respBody, err = helpers.QueryEndpointList(exscribeURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody)...)
+	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody, chplURL)...)
 
 	//respBody, err = helpers.QueryEndpointList(traknetURL)
 	//if err != nil {

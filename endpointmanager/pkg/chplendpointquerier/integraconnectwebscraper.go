@@ -48,7 +48,7 @@ func IntegraConnectWebscraper(CHPLURL string, fileToWriteTo string) {
 	}
 
 	// convert bundle data to lantern format
-	endpointEntryList.Endpoints = BundleToLanternFormat(newJsonData)
+	endpointEntryList.Endpoints = BundleToLanternFormat(newJsonData, CHPLURL)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
