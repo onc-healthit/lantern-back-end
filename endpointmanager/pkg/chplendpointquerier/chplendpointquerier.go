@@ -89,7 +89,6 @@ var elationURL = "https://elationfhir.readme.io/reference/service-base-urls"
 var betterdayhealthURL = "https://betterdayhealth.net/fhir-docs"
 var carecloudURL = "https://api-datamanager.carecloud.com/"
 var ethizoURL = "https://fhir-api.ethizo.com/#55b1b3d2-fd9a-4afa-8d17-5bf78943702d"
-var hmsfirstURL = "https://fhir-api.hmsfirst.com/r4/EndPoints"
 var praxisemrURL = "https://www.praxisemr.com/applicationaccess/api/help/"
 var escribeHOSTURL = "https://ehr.escribe.com/ehr/api/fhir/swagger-ui/"
 var mdlogicEHRURL = "https://www.mdlogic.com/solutions/standard-api-documentation"
@@ -151,7 +150,6 @@ var cozevaURL = "https://fhir.cozeva.com/endpoints"
 var fhirjunoURL = "https://fhirjuno-prod-web.dssinc.com/fhir/r4/endpoints"
 var hcsincURL = "https://hcswebportal.corporate.hcsinc.net/HCSClinicals_FHIR/api/Endpoint?connection-type=hl7-fhir-rest"
 var greenwayURL = "https://fhir-servicebaseurl.fhirhlprod.greenwayhealth.com/servicebundle.json"
-var snfistURL = "https://fhir.thesnfist.com/endpointlist"
 var criterionsURL = "https://criterions.com/fhir-end-points/"
 var maximusURL = "https://documents.maximus.care"
 var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
@@ -196,7 +194,6 @@ var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
 var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
 var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
 var interopURL = "https://interop.ehnote.com/fhir"
-var fhirptURL = "https://fhirpt-stage.officeally.com/fhir/r4/endpoints"
 var chntechURL = "https://onc.chntechsolutions.com/ic-ehr-fhir-api/"
 var zoobooksystemsURL = "https://zoobooksystems.com/api-documentation/"
 
@@ -215,18 +212,8 @@ var abeoURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
 var nextechURL2 = "https://www.nextech.com/developers-portal"
 var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
-var wrshealthURL = "https://fhir-server.sam.wrs.dev/r4/ServiceBase"
 var smilecdrURL = "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html"
 var capellaEHRURL = "https://fhir-g10.capellaehr.com/fhir/r4/endpoints"
-
-func contains(arr [30]string, str string) bool {
-	for _, v := range arr {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -595,7 +582,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, capellaEHRURL) {
 		CapellaEHRBundleParser(chplURL, fileToWriteTo)
 	} else {
-		log.Info("Parsing via bundle parser for URL %s", chplURL)
+		log.Infof("Parsing via bundle parser for URL %s", chplURL)
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	}
 

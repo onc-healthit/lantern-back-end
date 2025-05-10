@@ -11,7 +11,7 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
-		log.Info("Error for the URL: ",CHPLURL)
+		log.Info("Error for the URL: ", CHPLURL)
 		log.Fatal(err)
 	}
 
@@ -20,7 +20,7 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
-		log.Info("Error for the URL: ",CHPLURL)
+		log.Info("Error for the URL: ", CHPLURL)
 		log.Fatal(err)
 	}
 }
