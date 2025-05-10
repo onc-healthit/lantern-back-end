@@ -49,7 +49,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	err := json.Unmarshal(bundle, &structBundle)
 	if err != nil {
 		log.Warn("Handler is required for url ", chplURL)
-		log.Fatal("More details about the error: ",err)
+		log.Fatal("More details about the error: ", err)
 	}
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {

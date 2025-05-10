@@ -6,7 +6,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
-	)
+)
 
 func SmileCdrWebscraper(CHPLURL string, fileToWriteTo string) {
 
