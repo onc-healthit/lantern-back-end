@@ -2133,3 +2133,13 @@ ORDER BY field_version;
 CREATE UNIQUE INDEX idx_mv_capstat_values_extension_unique ON mv_capstat_values_extension(fhir_version, field_version);
 CREATE INDEX idx_mv_capstat_values_extension_field_version ON mv_capstat_values_extension(field_version);
 CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension(fhir_version);
+
+-- LANTERN-838: Validation cleanup 
+CREATE INDEX fhir_endpoints_info_history_val_res_idx ON fhir_endpoints_info_history (validation_result_id);
+
+ALTER TABLE validations
+ADD CONSTRAINT fk_validations_validation_results
+FOREIGN KEY (validation_result_id) 
+REFERENCES validation_results(id)
+ON DELETE CASCADE;
+
