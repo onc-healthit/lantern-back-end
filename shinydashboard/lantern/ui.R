@@ -143,6 +143,7 @@ ui <- dashboardPage(
       .lantern-url {
         color: #0044FF!important;
         text-decoration: underline;
+        cursor: pointer;
       }
 
       /* Adds a border to the bottom of the Lantern sidebar */
@@ -221,6 +222,7 @@ ui <- dashboardPage(
       select:hover {
         border: 3px solid!important;
         background-color: white!important;
+        cursor: pointer;
       }
 
       /* Bold an a tag element when it is active */
