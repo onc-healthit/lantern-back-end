@@ -389,7 +389,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, ethizoURL) {
 		EthizoWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, hmsfirstURL) {
-		HMSfirstWebscraper(chplURL, fileToWriteTo)
+		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, praxisemrURL) {
 		PraxisEMRWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, escribeHOSTURL) {
