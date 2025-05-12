@@ -58,18 +58,6 @@ app <<- list(
   endpoint_export_tbl = reactiveVal(NULL)
 )
 
-# define global app_data which is computed at application startup, and
-# refreshed at interval specified by refresh_timeout_minutes in configuration.yml
-app_data <<- list(
-  fhir_endpoint_totals = reactiveVal(NULL),        # count of endpoints, indexed and nonindexed
-  response_tally = reactiveVal(NULL),              # counts of http responses
-  endpoint_resource_types = reactiveVal(NULL),     # Resource types from capability statement by endpoint
-  last_updated = reactiveVal(NULL),                # time app_data was last updated
-  security_endpoints = reactiveVal(NULL),          # security auth types supported by each endpoint
-  auth_type_counts = reactiveVal(NULL),            # count and pct of endpoints by auth type and fhir_version
-  endpoint_security_counts = reactiveVal(NULL),    # summary table of endpoint counts with security resource in cap statement
-  security_code_list = reactiveVal(NULL)          # list of supported auth types for UI dropdown
-)
 
 time_until_next_run <- function() {
   current_time <- Sys.time()
