@@ -93,12 +93,12 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		}
 	}
 
-	err := RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
+	err := RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
 
-	err = RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
+	err = RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
