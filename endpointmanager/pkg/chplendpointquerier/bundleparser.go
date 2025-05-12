@@ -207,9 +207,11 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					endpointId = bundleEntry.FullURL
 				}
 
-				var isPersisted bool
+				isPersisted := false
 
 				for _, orgId := range endpointOrgMap[endpointId] {
+
+					isPersisted = true
 
 					entry.URL = strings.TrimSpace(entryURL)
 
