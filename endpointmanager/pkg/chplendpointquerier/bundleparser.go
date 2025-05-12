@@ -15,6 +15,7 @@ type FHIRBundle struct {
 
 type BundleEntry struct {
 	Resource BundleResource `json:"resource"`
+	FullURL  string         `json:"fullUrl"`
 }
 
 type BundleResource struct {
@@ -82,6 +83,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					if endpointMap["reference"] != nil && endpointMap["reference"].(string) != "" {
 						endpointId := endpointMap["reference"].(string)
 						endpointId = strings.TrimPrefix(endpointId, "Endpoint/")
+						endpointId = strings.TrimPrefix(endpointId, "endpoint/")
 
 						// Store endpoint-to-organizations mapping (if not already present)
 						if !containsOrgId(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId) {
@@ -145,7 +147,8 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					var identifierCode string
 
 					if identifierMap["system"] != nil && identifierMap["system"].(string) != "" {
-						if identifierMap["system"].(string) == "http://hl7.org/fhir/sid/us-npi" {
+						if identifierMap["system"].(string) == "http://hl7.org/fhir/sid/us-npi" ||
+							identifierMap["system"].(string) == "http://hl7.org.fhir/sid/us-npi" {
 							identifierCode = "NPI"
 						} else if identifierMap["system"].(string) == "urn:oid:2.16.840.1.113883.4.7" {
 							identifierCode = "CLIA"
@@ -197,7 +200,16 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					}
 				}
 
-				for _, orgId := range endpointOrgMap[bundleEntry.Resource.OrgId] {
+				var endpointId string
+				if len(endpointOrgMap[bundleEntry.Resource.OrgId]) > 0 {
+					endpointId = bundleEntry.Resource.OrgId
+				} else {
+					endpointId = bundleEntry.FullURL
+				}
+
+				var isPersisted bool
+
+				for _, orgId := range endpointOrgMap[endpointId] {
 
 					entry.URL = strings.TrimSpace(entryURL)
 
@@ -231,6 +243,12 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
 					}
 
+					lanternEntryList = append(lanternEntryList, entry)
+				}
+
+				// Append only the endpoint URL if the organization data is not parsed
+				if !isPersisted {
+					entry.URL = strings.TrimSpace(entryURL)
 					lanternEntryList = append(lanternEntryList, entry)
 				}
 			}
