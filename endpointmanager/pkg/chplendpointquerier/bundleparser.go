@@ -47,14 +47,6 @@ type Address struct {
 	PostalCode string `json:"postalCode"`
 }
 
-func containsOrgId(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
 
 func containsOrgId(s []string, str string) bool {
 	for _, v := range s {
