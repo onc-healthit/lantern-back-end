@@ -114,11 +114,10 @@ dashboard <- function(
     fhir_data <- fhir_data %>%
       left_join(all_vendor_counts, by = "vendor_name") %>%
       mutate(percentage = as.integer(round((n / developer_count) * 100, digits = 0))) %>%
-      mutate(percentage = paste0(percentage, "%")) %>%
       # Select only the columns needed
       select(vendor_name, fhir_version, n, percentage, sort_order) %>%
       # Arrange by sort_order for consistent display
-      arrange(sort_order)
+      arrange(sort_order, fhir_version)
     
     return(fhir_data)
   }
@@ -138,7 +137,7 @@ dashboard <- function(
                   vendor_name = colDef(name = "Vendor"),
                   fhir_version = colDef(name = "FHIR Version"),
                   n = colDef(name = "Count"),
-                  percentage = colDef(name = "Developer Percentage")
+                  percentage = colDef(name = "Developer Percentage", format = colFormat(suffix = "%"))
                 ),
                 sortable = TRUE,
                 searchable = TRUE,
