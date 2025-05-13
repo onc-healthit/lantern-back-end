@@ -374,8 +374,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		CareCloudWebscraper("https://api-datamanager.carecloud.com/fhirurl", fileToWriteTo)
 	} else if URLsEqual(chplURL, ethizoURL) {
 		EthizoWebscraper(chplURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, hmsfirstURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, praxisemrURL) {
 		PraxisEMRWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, escribeHOSTURL) {
