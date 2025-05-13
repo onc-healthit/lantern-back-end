@@ -272,15 +272,15 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 0)
+	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 0)
+	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 0)
+	err = checkValidationCount(ctx, store, valRes5, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 0)
+	err = checkValidationCount(ctx, store, valRes6, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 2)
+	err = checkValidationResultCount(ctx, store, 6)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -329,11 +329,11 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// check the right entry still exists in the validation table (and validation_results)
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes7, 0)
+	err = checkValidationCount(ctx, store, valRes7, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 1)
+	err = checkValidationResultCount(ctx, store, 3)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -409,13 +409,13 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// check the right entry still exists in the validation table (and validation_results)
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes8, 0)
+	err = checkValidationCount(ctx, store, valRes8, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes9, 0)
+	err = checkValidationCount(ctx, store, valRes9, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes10, 0)
+	err = checkValidationCount(ctx, store, valRes10, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 1)
+	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -492,13 +492,13 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// check validation
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes11, 0)
+	err = checkValidationCount(ctx, store, valRes11, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes12, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes13, 0)
+	err = checkValidationCount(ctx, store, valRes13, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 2)
+	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -579,15 +579,15 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// check validation
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes12, 0)
+	err = checkValidationCount(ctx, store, valRes12, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 0)
+	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3)
+	err = checkValidationResultCount(ctx, store, 5)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -625,9 +625,9 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 2) // one + one leftover from previous test
+	err = checkValidationResultCount(ctx, store, 3) // one + one leftover from previous test
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -689,13 +689,13 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// Check validations
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 0)
+	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 2)
+	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -775,15 +775,15 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// Check validations
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 0)
+	err = checkValidationCount(ctx, store, valRes5, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3)
+	err = checkValidationResultCount(ctx, store, 5)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -868,17 +868,17 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// Check validations
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 0)
+	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes5, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 0)
+	err = checkValidationCount(ctx, store, valRes6, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3)
+	err = checkValidationResultCount(ctx, store, 6)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -938,13 +938,13 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// Check validations
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 0)
+	err = checkValidationCount(ctx, store, valRes5, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 2)
+	err = checkValidationResultCount(ctx, store, 4)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -1041,17 +1041,17 @@ func Test_PruneInfoHistory(t *testing.T) {
 	// Check validations. Since validation 5 had two rules, validation count will be 2
 	err = checkValidationCount(ctx, store, valRes1, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 0)
+	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes3, 1)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 0)
+	err = checkValidationCount(ctx, store, valRes4, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes5, 2)
 	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 0)
+	err = checkValidationCount(ctx, store, valRes6, 2)
 	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 4)
+	err = checkValidationResultCount(ctx, store, 8)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
