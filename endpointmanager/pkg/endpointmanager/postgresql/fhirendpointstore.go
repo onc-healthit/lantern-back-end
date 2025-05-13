@@ -569,6 +569,11 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 	}
 
 	err = s.AddFHIREndpointOrganizationAddresses(ctx, org.ID, org.OrganizationAddresses)
+	if err != nil {
+		return err
+	}
+
+	err = s.AddFHIREndpointOrganizationActive(ctx, org.ID, org.OrganizationActive)
 
 	return err
 }
