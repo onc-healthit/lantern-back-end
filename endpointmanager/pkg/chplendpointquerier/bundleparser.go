@@ -47,7 +47,6 @@ type Address struct {
 	PostalCode string `json:"postalCode"`
 }
 
-
 func containsOrgId(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -56,6 +55,7 @@ func containsOrgId(s []string, str string) bool {
 	}
 	return false
 }
+
 
 func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var lanternEntryList []LanternEntry
