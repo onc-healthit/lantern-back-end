@@ -770,7 +770,64 @@ selected_fhir_endpoint_profiles <- reactive({
     }),
     easyClose = TRUE
   )))
+  })
+
+observeEvent(input$show_organization_modal, {
+  showModal(modalDialog(
+    title = "Organization Details",
+
+    p(HTML(paste("<b>Organization Active Status:</b><br/>",
+      paste(
+        {
+          active_vals <- get_org_active_information(db_connection) %>%
+            filter(org_id == input$show_organization_modal) %>%
+            pull(active)
+          if (length(active_vals) == 0 || all(is.na(active_vals))) {
+            "N/A"
+          } else {
+            active_vals
+          }
+        },
+        collapse = "<br/>"
+      )
+    ))),
+
+    p(HTML(paste("<b>Organization Identifiers:</b><br/>",
+      paste(
+        {
+          identifier_vals <- get_org_identifiers_information(db_connection) %>%
+          filter(org_id == input$show_organization_modal) %>%
+          pull(identifier)
+          if (length(identifier_vals) == 0 || all(is.na(identifier_vals))) {
+            "N/A"
+          } else {
+            identifier_vals
+          }
+        },
+    collapse = "<br/>"
+      )
+    ))),
+
+    p(HTML(paste("<b>Organization Addresses:</b><br/>",
+      paste(
+        {
+          address_vals <- get_org_addresses_information(db_connection) %>%
+          filter(org_id == input$show_organization_modal) %>%
+          pull(address)
+          if (length(address_vals) == 0 || all(is.na(address_vals))) {
+            "N/A"
+          } else {
+            address_vals
+          }
+        },
+    collapse = "<br/>"
+      )
+    ))),
+
+    easyClose = TRUE
+  ))
 })
+
 
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({

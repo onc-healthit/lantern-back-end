@@ -330,6 +330,31 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
     res
 }
 
+get_org_active_information <- function(db_connection) {
+
+  res <- tbl(db_connection,
+    sql("SELECT org_id, active FROM fhir_endpoint_organization_active")) %>%
+    collect()
+
+    res
+}
+
+get_org_identifiers_information <- function(db_connection) {
+
+  res <- tbl(db_connection,"fhir_endpoint_organization_identifiers") %>%
+    collect()
+
+    res
+}
+
+get_org_addresses_information <- function(db_connection) {
+
+  res <- tbl(db_connection,
+    sql("SELECT org_id, address FROM fhir_endpoint_organization_addresses")) %>%
+    collect()
+
+    res
+}
 
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints

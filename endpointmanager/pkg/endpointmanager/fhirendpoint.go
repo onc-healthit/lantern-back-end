@@ -24,11 +24,14 @@ type FHIREndpoint struct {
 }
 
 type FHIREndpointOrganization struct {
-	ID                  int
-	OrganizationName    string
-	OrganizationZipCode string
-	OrganizationNPIID   string
-	UpdatedAt           time.Time
+	ID                      int
+	OrganizationName        string
+	OrganizationZipCode     string
+	OrganizationNPIID       string
+	OrganizationIdentifiers []interface{}
+	OrganizationAddresses   []interface{}
+	OrganizationActive      string
+	UpdatedAt               time.Time
 }
 
 // Equal checks each field of the two FHIREndpoints except for the database ID, CreatedAt and UpdatedAt fields to see if they are equal.
