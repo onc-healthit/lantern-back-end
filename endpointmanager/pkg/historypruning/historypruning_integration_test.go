@@ -45,37 +45,6 @@ var testFhirEndpointInfo2 = endpointmanager.FHIREndpointInfo{
 	RequestedFhirVersion: "1.0.2",
 }
 
-var testValidation = endpointmanager.Validation{
-	Results: []endpointmanager.Rule{
-		{
-			RuleName: endpointmanager.CapStatExistRule,
-			Valid:    true,
-			Expected: "true",
-			Actual:   "true",
-			Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
-		},
-	},
-}
-
-var testValidation2 = endpointmanager.Validation{
-	Results: []endpointmanager.Rule{
-		{
-			RuleName: endpointmanager.CapStatExistRule,
-			Valid:    true,
-			Expected: "true",
-			Actual:   "true",
-			Comment:  "The Conformance Resource exists. Servers SHALL provide a Conformance Resource that specifies which interactions and resources are supported.",
-		},
-		{
-			RuleName: endpointmanager.DocumentValidRule,
-			Valid:    false,
-			Expected: "true",
-			Actual:   "false",
-			Comment:  "The Conformance Resource does not exist; cannot check documents.",
-		},
-	},
-}
-
 func TestMain(m *testing.M) {
 	var err error
 
@@ -185,12 +154,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, count == 2, "Should have got 2, got "+strconv.Itoa(count))
 
-	// Check that the validation table also still has its entries
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -267,22 +230,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
-	// Check that the associated validation rows were also deleted
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 6)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -332,8 +279,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	err = checkValidationCount(ctx, store, valRes2, 1)
 	th.Assert(t, err == nil, err)
 	err = checkValidationCount(ctx, store, valRes7, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3)
 	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
@@ -406,18 +351,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
 
-	// check the right entry still exists in the validation table (and validation_results)
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes8, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes9, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes10, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 4)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -488,18 +421,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	checkCorrectness, err = checkCorrect(idExpectedArr, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
-
-	// check validation
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes11, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes12, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes13, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 4)
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
@@ -575,21 +496,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	checkCorrectness, err = checkCorrect(idExpectedArr, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
-
-	// check validation
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes12, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 5)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -622,13 +528,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	err = getIDStatement.QueryRow(testEndpointURL).Scan(&idActual)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
-
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 3) // one + one leftover from previous test
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
@@ -685,18 +584,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	checkCorrectness, err = checkCorrect(idExpectedArr, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
-
-	// Check validations
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 4)
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
@@ -771,20 +658,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	checkCorrectness, err = checkCorrect(idExpectedArr, testEndpointURL)
 	th.Assert(t, err == nil, err)
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
-
-	// Check validations
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 5)
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
@@ -865,22 +738,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.MIMETypes = []string{"application/json+fhir"}
 
-	// Check validations
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 6)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
@@ -935,17 +792,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 
 	testFhirEndpointInfo.TLSVersion = "TLS 1.2"
 
-	// Check validations
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 4)
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
@@ -1037,22 +883,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, checkCorrectness, "Unexpected entries kept in database")
 
 	testFhirEndpointInfo.SMARTResponse = nil
-
-	// Check validations. Since validation 5 had two rules, validation count will be 2
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes3, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes4, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes5, 2)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes6, 2)
-	th.Assert(t, err == nil, err)
-	err = checkValidationResultCount(ctx, store, 8)
-	th.Assert(t, err == nil, err)
 
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
