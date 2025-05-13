@@ -56,7 +56,6 @@ func containsOrgId(s []string, str string) bool {
 	return false
 }
 
-
 func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var lanternEntryList []LanternEntry
 
