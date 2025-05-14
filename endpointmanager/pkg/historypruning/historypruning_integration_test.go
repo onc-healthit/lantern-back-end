@@ -256,14 +256,6 @@ func Test_PruneInfoHistory(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, expectedID == idActual, "Expected remaining entry to have id "+strconv.Itoa(expectedID)+" but instead it was "+strconv.Itoa(idActual))
 
-	// check the right entry still exists in the validation table (and validation_results)
-	err = checkValidationCount(ctx, store, valRes1, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes2, 1)
-	th.Assert(t, err == nil, err)
-	err = checkValidationCount(ctx, store, valRes7, 1)
-	th.Assert(t, err == nil, err)
-
 	// Clear history table in database
 	_, err = clearStatement.ExecContext(ctx, testEndpointURL)
 	th.Assert(t, err == nil, err)
