@@ -16,8 +16,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 
-	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"strings"
+
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
 func main() {
@@ -97,12 +98,11 @@ func main() {
 		} else {
 			listSource = source
 		}
-		dbErr := endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listSource)
-		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
-
-		dbErr = endptQuerier.RemoveOldEndpointOrganizations(ctx, store, time.Now().Add(time.Hour*24), listSource)
+		dbErr := endptQuerier.RemoveOldEndpointOrganizations(ctx, store, time.Now().Add(time.Hour*24), listSource)
 		helpers.FailOnError("Deleting old endpoint organizations in fhir_endpoint_organizations database error: ", dbErr)
 
+		dbErr = endptQuerier.RemoveOldEndpoints(ctx, store, time.Now().Add(time.Hour*24), listSource)
+		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
 
 	addListSourceStatement := `

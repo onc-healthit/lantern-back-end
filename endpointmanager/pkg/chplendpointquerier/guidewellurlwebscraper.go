@@ -1,13 +1,15 @@
 package chplendpointquerier
 
 import (
+	"reflect"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 )
 
 func entryExists(lanternEntryList []LanternEntry, lanternEntry LanternEntry) bool {
 	for _, entry := range lanternEntryList {
-		if entry == lanternEntry {
+		if reflect.DeepEqual(entry, lanternEntry) {
 			return true
 		}
 	}
