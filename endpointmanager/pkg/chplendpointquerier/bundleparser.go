@@ -66,6 +66,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var organizationIdentifiers = make(map[string][]string)
 	var organizationActive = make(map[string]string)
 	var organizationNPI = make(map[string]string)
+	var seenIdentifiers = make(map[string]bool)
 
 	var structBundle FHIRBundle
 	err := json.Unmarshal(bundle, &structBundle)
@@ -76,7 +77,51 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
 
-			if bundleEntry.Resource.Endpoint != nil {
+			isIdentifierPresent := false
+			var identifierKey string
+
+			if bundleEntry.Resource.Identifier != nil {
+				identifierArr := bundleEntry.Resource.Identifier.([]interface{})
+
+				for _, identifier := range identifierArr {
+					identifierMap := identifier.(map[string]interface{})
+					var identifierCode string
+
+					if identifierMap["system"] != nil && identifierMap["system"].(string) != "" {
+						if identifierMap["system"].(string) == "http://hl7.org/fhir/sid/us-npi" ||
+							identifierMap["system"].(string) == "http://hl7.org.fhir/sid/us-npi" {
+							identifierCode = "NPI"
+						} else if identifierMap["system"].(string) == "urn:oid:2.16.840.1.113883.4.7" {
+							identifierCode = "CLIA"
+						} else if identifierMap["system"].(string) == "urn:oid:2.16.840.1.113883.6.300" {
+							identifierCode = "NAIC"
+						} else {
+							identifierCode = "Other"
+						}
+
+						if identifierMap["value"] != nil && identifierMap["value"].(string) != "" {
+							identifierStr := identifierCode + ": " + identifierMap["value"].(string)
+
+							if !isIdentifierPresent && !seenIdentifiers[identifierStr] {
+								isIdentifierPresent = true
+								identifierKey = identifierStr
+							}
+
+							seenIdentifiers[identifierStr] = true
+
+							if !containsOrgId(organizationIdentifiers[identifierKey], identifierStr) {
+								organizationIdentifiers[identifierKey] = append(organizationIdentifiers[identifierKey], identifierStr)
+							}
+
+							if identifierCode == "NPI" {
+								organizationNPI[identifierKey] = identifierMap["value"].(string)
+							}
+						}
+					}
+				}
+			}
+
+			if isIdentifierPresent && bundleEntry.Resource.Endpoint != nil {
 				endpointArr := bundleEntry.Resource.Endpoint.([]interface{})
 				for _, endpoint := range endpointArr {
 					endpointMap := endpoint.(map[string]interface{})
@@ -86,14 +131,14 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						endpointId = strings.TrimPrefix(endpointId, "endpoint/")
 
 						// Store endpoint-to-organizations mapping (if not already present)
-						if !containsOrgId(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId) {
-							endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], bundleEntry.Resource.OrgId)
+						if !containsOrgId(endpointOrgMap[endpointId], identifierKey) {
+							endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], identifierKey)
 						}
 					}
 				}
 			}
 
-			if bundleEntry.Resource.Address != nil {
+			if isIdentifierPresent && bundleEntry.Resource.Address != nil {
 				addressMapArr := bundleEntry.Resource.Address.([]interface{})
 				for _, address := range addressMapArr {
 					addressMap := address.(map[string]interface{})
@@ -128,56 +173,24 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 					finalString := strings.Join(result, ", ")
 
-					if !containsOrgId(organizationAddresses[bundleEntry.Resource.OrgId], finalString) {
-						organizationAddresses[bundleEntry.Resource.OrgId] = append(organizationAddresses[bundleEntry.Resource.OrgId], finalString)
+					if !containsOrgId(organizationAddresses[identifierKey], finalString) {
+						organizationAddresses[identifierKey] = append(organizationAddresses[identifierKey], finalString)
 					}
 
 					postalCode, ok := addressMap["postalCode"].(string)
 					if ok {
-						organizationZip[bundleEntry.Resource.OrgId] = postalCode
+						organizationZip[identifierKey] = postalCode
 					}
 				}
 			}
 
-			if bundleEntry.Resource.Identifier != nil {
-				identifierArr := bundleEntry.Resource.Identifier.([]interface{})
-
-				for _, identifier := range identifierArr {
-					identifierMap := identifier.(map[string]interface{})
-					var identifierCode string
-
-					if identifierMap["system"] != nil && identifierMap["system"].(string) != "" {
-						if identifierMap["system"].(string) == "http://hl7.org/fhir/sid/us-npi" ||
-							identifierMap["system"].(string) == "http://hl7.org.fhir/sid/us-npi" {
-							identifierCode = "NPI"
-						} else if identifierMap["system"].(string) == "urn:oid:2.16.840.1.113883.4.7" {
-							identifierCode = "CLIA"
-						} else if identifierMap["system"].(string) == "urn:oid:2.16.840.1.113883.6.300" {
-							identifierCode = "NAIC"
-						} else {
-							identifierCode = "Other"
-						}
-
-						if identifierMap["value"] != nil && identifierMap["value"].(string) != "" {
-							identifierStr := identifierCode + ": " + identifierMap["value"].(string)
-
-							if !containsOrgId(organizationIdentifiers[bundleEntry.Resource.OrgId], identifierStr) {
-								organizationIdentifiers[bundleEntry.Resource.OrgId] = append(organizationIdentifiers[bundleEntry.Resource.OrgId], identifierStr)
-							}
-
-							if identifierCode == "NPI" {
-								organizationNPI[bundleEntry.Resource.OrgId] = identifierMap["value"].(string)
-							}
-						}
-					}
-				}
+			if isIdentifierPresent && bundleEntry.Resource.Active != nil {
+				organizationActive[identifierKey] = strconv.FormatBool(bundleEntry.Resource.Active.(bool))
 			}
 
-			if bundleEntry.Resource.Active != nil {
-				organizationActive[bundleEntry.Resource.OrgId] = strconv.FormatBool(bundleEntry.Resource.Active.(bool))
+			if isIdentifierPresent {
+				organizationName[identifierKey] = bundleEntry.Resource.Name
 			}
-
-			organizationName[bundleEntry.Resource.OrgId] = bundleEntry.Resource.Name
 		}
 	}
 
@@ -209,38 +222,38 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 				isPersisted := false
 
-				for _, orgId := range endpointOrgMap[endpointId] {
+				for _, identifierKey := range endpointOrgMap[endpointId] {
 
 					isPersisted = true
 
 					entry.URL = strings.TrimSpace(entryURL)
 
-					orgName, ok := organizationName[orgId]
+					orgName, ok := organizationName[identifierKey]
 					if ok {
 						entry.OrganizationName = strings.TrimSpace(orgName)
 					}
 
-					address, ok := organizationAddresses[orgId]
+					address, ok := organizationAddresses[identifierKey]
 					if ok {
 						entry.OrganizationAddresses = address
 					}
 
-					identifier, ok := organizationIdentifiers[orgId]
+					identifier, ok := organizationIdentifiers[identifierKey]
 					if ok {
 						entry.OrganizationIdentifiers = identifier
 					}
 
-					npiID, ok := organizationNPI[orgId]
+					npiID, ok := organizationNPI[identifierKey]
 					if ok {
 						entry.NPIID = strings.TrimSpace(npiID)
 					}
 
-					active, ok := organizationActive[orgId]
+					active, ok := organizationActive[identifierKey]
 					if ok {
 						entry.OrganizationActive = active
 					}
 
-					postalCode, ok := organizationZip[orgId]
+					postalCode, ok := organizationZip[identifierKey]
 					if ok {
 						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
 					}
